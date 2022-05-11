@@ -1,6 +1,6 @@
 # Recyclone
 
-Dropchop's Common Library for rapid Java REST project development.
+Dropchop's Common Library for rapid Java RESTfull project development.
 
 It provides common model, REST, service and repository semantics with already implemented features:
 - localization,
