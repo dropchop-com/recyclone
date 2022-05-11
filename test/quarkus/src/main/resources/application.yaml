@@ -1,0 +1,64 @@
+quarkus:
+  log:
+    category:
+      "org.apache.shiro":
+        level: WARN
+      "com.dropchop.core":
+        level: DEBUG
+  index-dependency:
+    recyclone-model-dto:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-model-dto
+    recyclone-rest-jaxrs-shiro:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jaxrs-shiro
+    recyclone-rest-jaxrs-api:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jaxrs-api
+    recyclone-rest-jaxrs-server:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jaxrs-server
+    recyclone-repo-api:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-repo-api
+    recyclone-repo-jpa-blaze:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-repo-jpa-blaze
+    recyclone-service-api:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-service-api
+    recyclone-service-jpa-blaze:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-service-jpa-blaze
+
+  swagger-ui:
+    path: /api/spec/ui
+    always-include: true
+  smallrye-openapi:
+    path: /api/spec/openapi
+    operation-id-strategy: package-class-method
+  hibernate-orm:
+    database:
+      generation: none
+    sql-load-script: no-file
+    packages:
+      - com.blazebit.persistence.impl.function.entity
+      - com.dropchop.recyclone.model.api
+      - com.dropchop.recyclone.model.api.marker
+      - com.dropchop.recyclone.model.api.localization
+      - com.dropchop.recyclone.model.api.security
+      - com.dropchop.recyclone.model.entity.jpa
+      - com.dropchop.recyclone.model.entity.jpa.localization
+      - com.dropchop.recyclone.model.entity.jpa.security
+mp:
+  openapi:
+    filter:
+      - com.dropchop.recyclone.rest.jaxrs.server.openapi.ExternalOpsOnlyUiFilter
+
+
+dropchop:
+#  last:
+#    implementation:
+#      default: jpa_default
+  shiro:
+

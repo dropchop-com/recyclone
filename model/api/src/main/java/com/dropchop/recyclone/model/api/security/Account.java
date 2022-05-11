@@ -1,0 +1,11 @@
+package com.dropchop.recyclone.model.api.security;
+
+import com.dropchop.recyclone.model.api.Model;
+import com.dropchop.recyclone.model.api.marker.HasTitle;
+import com.dropchop.recyclone.model.api.marker.HasUuid;
+
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
+ */
+public interface Account extends Model, HasUuid, HasTitle {
+}

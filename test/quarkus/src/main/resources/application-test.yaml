@@ -1,0 +1,29 @@
+quarkus:
+  log:
+    category:
+      "org.apache.shiro":
+        level: DEBUG
+      "com.dropchop":
+        level: DEBUG
+
+  datasource:
+    db-kind: postgresql
+    username: last_dev_test
+    password: last_dev_test
+
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    sql-load-script: test-import.sql
+
+mp:
+  openapi:
+    filter:
+      - com.dropchop.recyclone.rest.jaxrs.server.openapi.CommonUiFilter
+
+dropchop:
+#  last:
+#    implementation:
+#      LanguageService: "jpa_test"
+#  shiro:
+
