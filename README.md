@@ -21,4 +21,6 @@ mvn clean install
 ```bash
 cd test/quarkus
 ./mvnw compile quarkus:dev
+
+# navigate to http://localhost:8080/api/spec/ui/
 ```

@@ -34,10 +34,10 @@ import java.util.Set;
     @Tag(name = "core", description = "Core functionality."),
   },*/
   info = @Info(
-    title="Example API",
+    title="Recyclone API",
     version = "1.0.1",
     contact = @Contact(
-      name = "Example API Support",
+      name = "Recyclone API Support",
       url = "http://exampleurl.com/contact",
       email = "techsupport@example.com"),
     license = @License(
