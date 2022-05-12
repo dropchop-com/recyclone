@@ -10,6 +10,8 @@ It provides common model, REST, service and repository semantics with already im
 
 Designed for JAX-RS CDI environment so it's best to run with Quarkus.
 
+![Overview](docs/imag/Recyclone.svg)
+
 ## Build
 
 ```bash 
