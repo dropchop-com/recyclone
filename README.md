@@ -10,7 +10,7 @@ It provides common model, REST, service and repository semantics with already im
 
 Designed for JAX-RS CDI environment so it's best to run with Quarkus.
 
-![Overview](https://github.com/ivlcic/recyclone/docs/imag/Recyclone.svg)
+![Overview](https://github.com/ivlcic/recyclone/blob/4ec9266f62f3b34cc231cdcb3d82eaaf5797033c/docs/img/Recyclone.svg)
 
 ## Build
 
