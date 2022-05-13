@@ -19,6 +19,7 @@ import java.util.Set;
 @Table(name = "security_action")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EAction extends ECode implements Action<ETitleTranslation> {
 
   @Column(name="title")

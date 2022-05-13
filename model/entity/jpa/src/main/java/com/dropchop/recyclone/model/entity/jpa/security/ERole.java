@@ -20,6 +20,7 @@ import java.util.SortedSet;
 @Table(name = "security_role")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class ERole extends ECode implements Role<ETitleTranslation, EAction, EDomain, EPermission> {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EPermission.class)

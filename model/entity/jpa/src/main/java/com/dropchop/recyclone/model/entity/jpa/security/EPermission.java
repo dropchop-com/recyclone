@@ -4,10 +4,7 @@ import com.dropchop.recyclone.model.api.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -23,6 +20,7 @@ import java.util.Set;
 @Table(name = "security_permission")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EPermission extends EUuid implements Permission<ETitleTranslation, EAction, EDomain> {
 
   @ManyToOne(targetEntity = EDomain.class)

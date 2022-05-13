@@ -20,6 +20,7 @@ import java.util.SortedSet;
 @Table(name = "security_domain")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EDomain extends ECode implements Domain<ETitleTranslation, EAction> {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EAction.class)

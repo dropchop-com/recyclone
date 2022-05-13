@@ -16,7 +16,8 @@ import java.util.Set;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "country")
 @NoArgsConstructor
