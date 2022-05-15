@@ -1,6 +1,6 @@
-package com.dropchop.recyclone.rest.jaxrs;
+package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.service.api.ImplementationLiteral;
+import com.dropchop.recyclone.service.api.ServiceTypeLiteral;
 import com.dropchop.recyclone.service.api.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.Config;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class ServiceSelector {
 
-  public static final String IMPL_CONFIG_PROP = "dropchop.last.implementation";
+  public static final String IMPL_CONFIG_PROP = "dropchop.service-type";
   public static final String IMPL_CONFIG_DEFAULT = IMPL_CONFIG_PROP + ".default";
 
   @Inject
@@ -30,7 +30,7 @@ public class ServiceSelector {
   Instance<Service> sInstances;
 
   private <S extends Service> S getOrThrow(Class<S> sClass, Instance<S> candidates, String annoValue) {
-    Instance<S> sInstance = candidates.select(sClass, new ImplementationLiteral(annoValue));
+    Instance<S> sInstance = candidates.select(sClass, new ServiceTypeLiteral(annoValue));
     if (!sInstance.isUnsatisfied()) {
       return sInstance.get();
     }

@@ -15,4 +15,6 @@ public interface EntityByIdService<D extends Dto, E extends Entity, ID> {
   Optional<E> findById(ID id);
 
   List<E> findById(List<ID> ids);
+
+  List<E> findAll();
 }

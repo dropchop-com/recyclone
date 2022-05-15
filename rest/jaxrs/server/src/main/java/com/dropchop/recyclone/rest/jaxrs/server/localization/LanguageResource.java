@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.ServiceSelector;
+import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.localization.LanguageService;
 import lombok.extern.slf4j.Slf4j;

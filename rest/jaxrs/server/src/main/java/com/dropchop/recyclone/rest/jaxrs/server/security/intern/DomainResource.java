@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Domain;
-import com.dropchop.recyclone.rest.jaxrs.ServiceSelector;
+import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.security.DomainService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

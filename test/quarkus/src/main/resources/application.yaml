@@ -57,8 +57,5 @@ mp:
 
 
 dropchop:
-#  last:
-#    implementation:
-#      default: jpa_default
-  shiro:
-
+#  service-type:
+#    default: rcyn_default

@@ -18,6 +18,10 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-entity-jpa</artifactId>
     </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

@@ -22,8 +22,5 @@ mp:
       - com.dropchop.recyclone.rest.jaxrs.server.openapi.CommonUiFilter
 
 dropchop:
-#  last:
-#    implementation:
-#      LanguageService: "jpa_test"
-#  shiro:
-
+#  service-type:
+#    LanguageService: "rcyn_test"

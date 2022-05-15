@@ -11,10 +11,11 @@ import com.dropchop.recyclone.model.dto.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
-import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
 import com.dropchop.recyclone.service.api.EntityByIdService;
+import com.dropchop.recyclone.service.api.ServiceSelector;
+import com.dropchop.recyclone.service.api.localization.LanguageService;
 import com.dropchop.recyclone.service.api.mapping.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.mapping.MappingContext;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   implements CrudService<D, P>, EntityByIdService<D, E, ID> {
 
   @Inject
-  LanguageRepository languageRepository;
+  ServiceSelector serviceSelector;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -72,6 +73,12 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   }
 
   @Override
+  public List<E> findAll() {
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
+    return conf.getRepository().find();
+  }
+
+  @Override
   public Result<D> search() {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
 
@@ -91,8 +98,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     );
 
     entities.removeIf(e -> !subject.isPermitted(ctx.getSecurityDomainAction(e.identifier())));
-    Result<D> result = conf.getToDtoMapper().toDtosResult(entities, mapContext);
-    return result;
+    return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
   private MappingContext<P> checkPermissionsAndConstructMapping(List<D> dtos) {
@@ -107,7 +113,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     return new FilteringDtoContext<P>()
       .of(ctx)
       .listener(new CrudServiceToEntityListener<>(
-        languageRepository.find()
+        serviceSelector.select(LanguageService.class).findAll()
           .stream()
           .collect(Collectors.toMap(ELanguage::getCode, Function.identity()))
       ));

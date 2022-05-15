@@ -5,12 +5,12 @@ import javax.enterprise.util.AnnotationLiteral;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.
  */
-public class ImplementationLiteral extends AnnotationLiteral<Implementation> implements Implementation {
+public class ServiceTypeLiteral extends AnnotationLiteral<ServiceType> implements ServiceType {
 
   private final String value;
 
 
-  public ImplementationLiteral(String value) {
+  public ServiceTypeLiteral(String value) {
     this.value = value;
   }
 
