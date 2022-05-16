@@ -1,6 +1,6 @@
 package com.dropchop.shiro.jaxrs;
 
-import com.dropchop.recyclone.model.api.Dto;
+import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;

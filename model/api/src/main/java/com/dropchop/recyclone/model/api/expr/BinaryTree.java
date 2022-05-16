@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.api.expr;
 
-import com.dropchop.recyclone.model.api.Model;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 

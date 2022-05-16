@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.server;
 
-import com.dropchop.recyclone.model.api.Dto;
+import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import lombok.extern.slf4j.Slf4j;

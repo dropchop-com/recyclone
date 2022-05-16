@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.model.api.Dto;
-import com.dropchop.recyclone.model.api.Entity;
+import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.base.Entity;
 
 import java.util.List;
 import java.util.Optional;

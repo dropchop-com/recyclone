@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.api.invoke;
 
-import com.dropchop.recyclone.model.api.Model;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.HasId;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.dto.rest;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.Model;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.model.api.Dto;
+import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
 
 /**

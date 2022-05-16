@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.api.mapping;
 
-import com.dropchop.recyclone.model.api.Entity;
+import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.marker.*;

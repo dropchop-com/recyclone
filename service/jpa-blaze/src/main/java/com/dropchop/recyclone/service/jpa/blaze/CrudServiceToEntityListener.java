@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.blaze;
 
-import com.dropchop.recyclone.model.api.Dto;
-import com.dropchop.recyclone.model.api.Entity;
+import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;

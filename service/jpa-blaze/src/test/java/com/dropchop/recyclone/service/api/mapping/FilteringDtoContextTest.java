@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.api.mapping;
 
-import com.dropchop.recyclone.model.api.Entity;
+import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
 import com.dropchop.recyclone.model.api.marker.HasTitle;
@@ -8,7 +8,6 @@ import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.dto.invoke.Params;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.test.Node;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;

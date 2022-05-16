@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.api.marker;
 
-import com.dropchop.recyclone.model.api.State;
+import com.dropchop.recyclone.model.api.base.State;
 
 import java.util.ArrayList;
 import java.util.List;

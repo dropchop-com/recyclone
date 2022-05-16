@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.api.security;
 
-import com.dropchop.recyclone.model.api.Model;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.HasTitle;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 

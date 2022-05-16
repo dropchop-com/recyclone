@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.api.marker.state;
 
-import com.dropchop.recyclone.model.api.State;
+import com.dropchop.recyclone.model.api.base.State;
 
 import java.util.HashMap;
 import java.util.Map;

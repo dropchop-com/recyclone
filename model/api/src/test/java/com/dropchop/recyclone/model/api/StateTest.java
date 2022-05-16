@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api;
 
+import com.dropchop.recyclone.model.api.base.State;
 import org.junit.jupiter.api.Test;
 
 import java.nio.CharBuffer;

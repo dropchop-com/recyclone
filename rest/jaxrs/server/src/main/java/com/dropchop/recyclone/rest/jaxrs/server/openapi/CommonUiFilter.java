@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.server.openapi;
 
-import com.dropchop.recyclone.model.api.State;
+import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import lombok.extern.slf4j.Slf4j;

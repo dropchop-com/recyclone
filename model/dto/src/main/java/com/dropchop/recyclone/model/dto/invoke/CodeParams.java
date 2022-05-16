@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.State;
+import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

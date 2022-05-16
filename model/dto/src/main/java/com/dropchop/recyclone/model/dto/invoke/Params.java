@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.State;
+import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.Dto;
+import com.dropchop.recyclone.model.api.base.Dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.dto;
 
-import com.dropchop.recyclone.model.api.Dto;
-import com.dropchop.recyclone.model.api.ModelWithId;
+import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.base.ModelWithId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

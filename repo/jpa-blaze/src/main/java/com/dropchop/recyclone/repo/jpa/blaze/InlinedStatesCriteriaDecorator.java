@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.State;
+import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.marker.state.HasState;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlined;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;

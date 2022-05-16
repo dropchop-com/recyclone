@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.api;
+package com.dropchop.recyclone.model.api.base;
 
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
