@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class Person extends DtoId implements com.dropchop.recyclone.model.api.Person {
+public class Person extends DtoId implements com.dropchop.recyclone.model.api.common.Person {
   private String firstName;
   private String lastName;
 }

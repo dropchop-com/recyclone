@@ -1,6 +1,7 @@
-package com.dropchop.recyclone.model.entity.jpa;
+package com.dropchop.recyclone.model.entity.jpa.common;
 
-import com.dropchop.recyclone.model.api.Person;
+import com.dropchop.recyclone.model.api.common.Person;
+import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import lombok.*;
 
 import javax.persistence.Column;

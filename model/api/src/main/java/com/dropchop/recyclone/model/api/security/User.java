@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.api.security;
 
 import com.dropchop.recyclone.model.api.Model;
-import com.dropchop.recyclone.model.api.Person;
+import com.dropchop.recyclone.model.api.common.Person;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 
 import java.util.List;

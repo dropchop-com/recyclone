@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
 import com.dropchop.recyclone.model.api.security.Domain;
-import com.dropchop.recyclone.model.entity.jpa.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import lombok.*;

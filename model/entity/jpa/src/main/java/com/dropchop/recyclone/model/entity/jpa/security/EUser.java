@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
 import com.dropchop.recyclone.model.api.security.User;
-import com.dropchop.recyclone.model.entity.jpa.EPerson;
-import com.dropchop.recyclone.model.entity.jpa.EUuid;
+import com.dropchop.recyclone.model.entity.jpa.common.EPerson;
+import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import lombok.*;
 

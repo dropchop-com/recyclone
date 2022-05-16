@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
 import com.dropchop.recyclone.model.api.security.UserAccount;
-import com.dropchop.recyclone.model.entity.jpa.EUuid;
+import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import lombok.*;
 
 /**

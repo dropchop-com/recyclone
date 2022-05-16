@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.localization.Language;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.entity.jpa.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import lombok.*;
 
 import javax.persistence.*;

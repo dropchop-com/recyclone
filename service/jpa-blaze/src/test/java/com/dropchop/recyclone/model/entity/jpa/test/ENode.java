@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.entity.jpa.test;
 
 import com.dropchop.recyclone.model.api.test.Node;
-import com.dropchop.recyclone.model.entity.jpa.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;

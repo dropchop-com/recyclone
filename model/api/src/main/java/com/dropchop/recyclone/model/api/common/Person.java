@@ -1,5 +1,6 @@
-package com.dropchop.recyclone.model.api;
+package com.dropchop.recyclone.model.api.common;
 
+import com.dropchop.recyclone.model.api.Model;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 
 /**
