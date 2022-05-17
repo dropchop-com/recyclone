@@ -13,9 +13,9 @@ public interface HasTitleTranslation<T extends TitleTranslation>
   extends HasTranslation<T> {
 
   default void setTitle(String langCode, String title) {
-    if (this instanceof HasEmbededTitleTranslation) {
-      ((HasEmbededTitleTranslation) this).setTitle(title);
-      ((HasEmbededTitleTranslation) this).setLang(langCode);
+    if (this instanceof HasEmbeddedTitleTranslation) {
+      ((HasEmbeddedTitleTranslation) this).setTitle(title);
+      ((HasEmbeddedTitleTranslation) this).setLang(langCode);
     } else {
 
     }
@@ -36,8 +36,8 @@ public interface HasTitleTranslation<T extends TitleTranslation>
     T trans = this.getTranslation(langCode);
     String title;
     if (trans == null) {
-      if (this instanceof HasEmbededTitleTranslation) {
-        title = ((HasEmbededTitleTranslation) this).getTitle();
+      if (this instanceof HasEmbeddedTitleTranslation) {
+        title = ((HasEmbeddedTitleTranslation) this).getTitle();
       } else {
         return defaultTitle;
       }

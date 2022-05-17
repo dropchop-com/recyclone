@@ -1,14 +1,12 @@
 package com.dropchop.recyclone.model.api.localization;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
+import com.dropchop.recyclone.model.api.marker.HasEmbeddedTranslation;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
-public interface Translation extends Model, HasLanguageCode {
-  String getLang();
-  void setLang(String languageCode);
+public interface Translation extends Model, HasEmbeddedTranslation {
 
   /**
    * Set to true if this is the default translation for the owning object.

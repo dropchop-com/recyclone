@@ -4,8 +4,7 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.localization.Translation;
-import com.dropchop.recyclone.model.api.marker.HasEmbededTitleTranslation;
-import com.dropchop.recyclone.model.api.marker.HasEmbededTranslation;
+import com.dropchop.recyclone.model.api.marker.HasEmbeddedTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTitle;
 import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
@@ -246,8 +245,8 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     if (swap == null) {
       return;
     }
-    if (target instanceof HasEmbededTranslation) {
-      String defaultLang = ((HasEmbededTranslation) target).getLang();
+    if (target instanceof HasEmbeddedTranslation) {
+      String defaultLang = ((HasEmbeddedTranslation) target).getLang();
       Translation defaultTrans = ((HasTranslation<?>) target).getTranslation(defaultLang);
       if (swap instanceof TitleTranslation) {
         if (defaultTrans == null) {
@@ -265,7 +264,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
           ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());
         }
       }
-      ((HasEmbededTranslation) target).setLang(swap.getLang());
+      ((HasEmbeddedTranslation) target).setLang(swap.getLang());
     }
   }
 
