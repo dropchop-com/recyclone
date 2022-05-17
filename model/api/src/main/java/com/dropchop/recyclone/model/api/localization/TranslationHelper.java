@@ -7,5 +7,5 @@ import com.dropchop.recyclone.model.api.marker.HasEmbeddedTitleTranslation;
  */
 public interface TranslationHelper<T extends Translation> {
 
-  T getTranslationInstance();
+  T getTranslationInstance(String lngCode);
 }

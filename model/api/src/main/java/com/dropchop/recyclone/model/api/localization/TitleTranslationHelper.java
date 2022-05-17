@@ -7,12 +7,13 @@ import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
  */
 public interface TitleTranslationHelper<T extends TitleTranslation> extends TranslationHelper<T>, HasTitleTranslation<T> {
 
-  T getTranslationInstance();
-
   default void setTitle(String langCode, String title) {
-    T t = getTranslationInstance();
-    t.setTitle(title);
+    T t = getTranslation(langCode);
+    if (t == null) {
+      t = getTranslationInstance(langCode);
+      this.getTranslations().add(t);
+    }
     t.setLang(langCode);
-    this.getTranslations().add(t);
+    t.setTitle(title);
   }
 }
