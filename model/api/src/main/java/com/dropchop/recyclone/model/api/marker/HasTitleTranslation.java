@@ -17,7 +17,7 @@ public interface HasTitleTranslation<T extends TitleTranslation>
       ((HasEmbeddedTitleTranslation) this).setTitle(title);
       ((HasEmbeddedTitleTranslation) this).setLang(langCode);
     } else {
-
+      //barba papa :D
     }
   }
 
