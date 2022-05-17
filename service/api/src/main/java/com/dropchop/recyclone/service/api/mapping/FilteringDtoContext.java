@@ -4,6 +4,8 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.localization.Translation;
+import com.dropchop.recyclone.model.api.marker.HasEmbededTitleTranslation;
+import com.dropchop.recyclone.model.api.marker.HasEmbededTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTitle;
 import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
@@ -244,25 +246,27 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     if (swap == null) {
       return;
     }
-    String defaultLang = ((HasTranslation<?>) target).getLang();
-    Translation defaultTrans = ((HasTranslation<?>) target).getTranslation(defaultLang);
-    if (swap instanceof TitleTranslation) {
-      if (defaultTrans == null) {
-        com.dropchop.recyclone.model.dto.localization.TitleTranslation trans = new com.dropchop.recyclone.model.dto.localization.TitleTranslation();
-        if (target instanceof HasTitle) {
-          trans.setTitle(((HasTitle) target).getTitle());
-          ((HasTitle)target).setTitle(((TitleTranslation) swap).getTitle());
+    if (target instanceof HasEmbededTranslation) {
+      String defaultLang = ((HasEmbededTranslation) target).getLang();
+      Translation defaultTrans = ((HasTranslation<?>) target).getTranslation(defaultLang);
+      if (swap instanceof TitleTranslation) {
+        if (defaultTrans == null) {
+          com.dropchop.recyclone.model.dto.localization.TitleTranslation trans = new com.dropchop.recyclone.model.dto.localization.TitleTranslation();
+          if (target instanceof HasTitle) {
+            trans.setTitle(((HasTitle) target).getTitle());
+            ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());
+          }
+          trans.setLang(defaultLang);
+          trans.setBase(true);
+          //noinspection unchecked
+          ((HasTranslation<TitleTranslation>) target).addTranslation(trans);
         }
-        trans.setLang(defaultLang);
-        trans.setBase(true);
-        //noinspection unchecked
-        ((HasTranslation<TitleTranslation>) target).addTranslation(trans);
+        if (target instanceof HasTitle) {
+          ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());
+        }
       }
-      if (target instanceof HasTitle) {
-        ((HasTitle)target).setTitle(((TitleTranslation) swap).getTitle());
-      }
+      ((HasEmbededTranslation) target).setLang(swap.getLang());
     }
-    ((HasTranslation<?>) target).setLang(swap.getLang());
   }
 
   public void after(Object source, Object target) {

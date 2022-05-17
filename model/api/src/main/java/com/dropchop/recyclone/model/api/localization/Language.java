@@ -2,6 +2,7 @@ package com.dropchop.recyclone.model.api.localization;
 
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.model.api.marker.HasEmbededTitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 
 import java.util.Locale;
@@ -10,7 +11,7 @@ import java.util.Locale;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 01. 22.
  */
 public interface Language<T extends TitleTranslation>
-  extends Model, HasCode, HasTitleTranslation<T> {
+  extends Model, HasCode, HasEmbededTitleTranslation, HasTitleTranslation<T> {
 
   /**
    * ISO 15924 4-letter script code

@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
  */
-public interface HasTranslation<T extends Translation> extends HasLanguageCode {
+public interface HasTranslation<T extends Translation> {
 
   Set<T> getTranslations();
   void setTranslations(Set<T> translations);

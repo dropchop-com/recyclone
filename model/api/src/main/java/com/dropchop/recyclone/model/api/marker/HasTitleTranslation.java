@@ -10,11 +10,15 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
  */
 public interface HasTitleTranslation<T extends TitleTranslation>
-  extends HasTitle, HasTranslation<T> {
+  extends HasTranslation<T> {
 
   default void setTitle(String langCode, String title) {
-    this.setTitle(title);
-    this.setLang(langCode);
+    if (this instanceof HasEmbededTitleTranslation) {
+      ((HasEmbededTitleTranslation) this).setTitle(title);
+      ((HasEmbededTitleTranslation) this).setLang(langCode);
+    } else {
+
+    }
   }
 
   @Override
@@ -32,7 +36,11 @@ public interface HasTitleTranslation<T extends TitleTranslation>
     T trans = this.getTranslation(langCode);
     String title;
     if (trans == null) {
-      title = this.getTitle();
+      if (this instanceof HasEmbededTitleTranslation) {
+        title = ((HasEmbededTitleTranslation) this).getTitle();
+      } else {
+        return defaultTitle;
+      }
     } else {
       title = trans.getTitle();
     }
