@@ -35,6 +35,5 @@ public class ETitleTranslation implements TitleTranslation {
   @Column(name="modified")
   private ZonedDateTime modified;
 
-
   transient Boolean base;
 }

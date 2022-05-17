@@ -12,15 +12,6 @@ import java.util.Set;
 public interface HasTitleTranslation<T extends TitleTranslation>
   extends HasTranslation<T> {
 
-  default void setTitle(String langCode, String title) {
-    if (this instanceof HasEmbeddedTitleTranslation) {
-      ((HasEmbeddedTitleTranslation) this).setTitle(title);
-      ((HasEmbeddedTitleTranslation) this).setLang(langCode);
-    } else {
-
-    }
-  }
-
   @Override
   void setTranslations(Set<T> translations);
 
