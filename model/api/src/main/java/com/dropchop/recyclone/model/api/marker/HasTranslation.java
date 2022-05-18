@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.localization.Language;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -23,6 +24,19 @@ public interface HasTranslation<T extends Translation> {
     }
     translations.remove(translation);
     translations.add(translation);
+  }
+
+
+  default void removeTranslation(T translation) {
+    Set<T> newTranslations = new LinkedHashSet<>(this.getTranslations());
+    newTranslations.remove(translation);
+    this.setTranslations(newTranslations);
+  }
+
+
+  default void removeTranslation(Locale lng) {
+    T t = this.getTranslation(lng);
+    this.removeTranslation(t);
   }
 
   default T getTranslation(String tag) {
