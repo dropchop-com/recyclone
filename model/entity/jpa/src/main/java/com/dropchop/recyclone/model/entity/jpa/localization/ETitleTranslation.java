@@ -14,10 +14,12 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 @MappedSuperclass
 @Embeddable
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ETitleTranslation implements TitleTranslation {
 
   @NonNull
   @Column(name = "lang")
+  @EqualsAndHashCode.Include
   private String lang;
 
   @OneToOne(targetEntity = ELanguage.class)

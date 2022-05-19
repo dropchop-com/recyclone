@@ -10,11 +10,16 @@ quarkus:
     db-kind: postgresql
     username: last_dev_test
     password: last_dev_test
+    devservices:
+      port: 35432
 
   hibernate-orm:
+    log:
+      sql: true
+      bind-parameters: true
     database:
       generation: drop-and-create
-    sql-load-script: test-import.sql
+    sql-load-script: dev-import.sql
 
 mp:
   openapi:

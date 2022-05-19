@@ -39,6 +39,13 @@ public interface HasTranslation<T extends Translation> {
     this.removeTranslation(t);
   }
 
+  default void removeTranslation(String languageTag) {
+    T t = this.getTranslation(languageTag);
+    if (t != null) {
+      this.getTranslations().remove(t);
+    }
+  }
+
   default T getTranslation(String tag) {
     Set<T> translations = this.getTranslations();
     if (translations == null) {
