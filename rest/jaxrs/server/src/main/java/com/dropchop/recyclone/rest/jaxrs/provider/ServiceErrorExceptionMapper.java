@@ -1,9 +1,9 @@
-package com.dropchop.recyclone.rest.jaxrs.server;
+package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
  */
 @Slf4j
-@Provider
 public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
 
   private void setErrorCodeResponseStatus(Response.ResponseBuilder builder, StatusMessage statusMessage) {

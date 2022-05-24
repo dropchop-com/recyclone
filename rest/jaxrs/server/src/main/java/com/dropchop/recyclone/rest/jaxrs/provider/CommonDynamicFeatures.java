@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jaxrs.server;
+package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
@@ -15,12 +15,19 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static javax.ws.rs.Priorities.HEADER_DECORATOR;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
 @Provider
 public class CommonDynamicFeatures implements DynamicFeature {
+
+  public interface Constants {
+    String RECYCLONE_PARAMS = "<<RECYCLONE_PARAMS>>";
+    String RECYCLONE_DATA = "<<RECYCLONE_DATA>>";
+  }
 
   private static void checkAdd(final Set<Class<? extends Params>> paramsClasses,
                                final Set<Class<? extends Dto>> dtoClasses,
@@ -70,15 +77,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
   public void configure(ResourceInfo ri, FeatureContext context) {
 
     context.register(
-      new ExecContextCreateFilter(), Priorities.AUTHENTICATION
-    );
-
-    context.register(
       new ExecContextWriteInterceptor(), Priorities.USER
-    );
-
-    context.register(
-      new ExecContextDestroyInterceptor(), Priorities.USER + 1000
     );
 
     Class<?> riClass = ri.getResourceClass();
@@ -91,7 +90,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
         //noinspection unchecked
         context.register(//register incoming params to thread local upon request
           new ParamsInterceptor((Class<? extends Params>) paramType),
-          Priorities.HEADER_DECORATOR
+          HEADER_DECORATOR
         );
         return;
       }
@@ -103,10 +102,10 @@ public class CommonDynamicFeatures implements DynamicFeature {
     for (Class<? extends Params> parametersClass : paramsClasses) {
       if (Params.class.isAssignableFrom(parametersClass) && !Params.class.equals(parametersClass)) {
         log.info("Registering [{}] for [{}.{}].",
-          ParamsFilterFactory.class.getSimpleName(), riClass.getSimpleName(), method.getName());
+          ParamsFactoryFilter.class.getSimpleName(), riClass.getSimpleName(), method.getName());
         context.register(//register new params to thread local execution context and decorate params upon request
-          new ParamsFilterFactory(parametersClass),
-          Priorities.HEADER_DECORATOR
+          new ParamsFactoryFilter(parametersClass),
+          HEADER_DECORATOR
         );
       }
     }
@@ -118,7 +117,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
               DtoDataInterceptor.class.getSimpleName(), riClass.getSimpleName(), method.getName());
             context.register(//register new params to thread local execution context and decorate params upon request
               new DtoDataInterceptor(dtoClass),
-              Priorities.HEADER_DECORATOR
+              HEADER_DECORATOR
             );
           }
         }

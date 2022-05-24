@@ -3,7 +3,7 @@ package com.dropchop.recyclone.rest.jaxrs.serialization;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.rest.jaxrs.server.ObjectMapperContextResolver;
+import com.dropchop.recyclone.rest.jaxrs.provider.ObjectMapperContextResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
@@ -20,43 +20,44 @@ class AttributeDeserializerTest {
 
   @Test
   void deserialize() throws Exception {
-    String json = "{\n" +
-      "  \"version\": \"v1_0\",\n" +
-      "  \"from\": 0,\n" +
-      "  \"size\": 0,\n" +
-      "  \"attributes\": [\n" +
-      "    {\n" +
-      "      \"name\": \"test\",\n" +
-      "      \"value\": \"2022-02-10T10:30:44.123+01:00\"\n" +
-      "    },\n" +
-      "    {\n" +
-      "      \"name\": \"test1\",\n" +
-      "      \"value\": [\n" +
-      "        {\n" +
-      "          \"name\": \"test\",\n" +
-      "          \"value\": \"2022-02-10T10:30:44.123+01:00\"\n" +
-      "        },\n" +
-      "        {\n" +
-      "          \"name\": \"test_bool\",\n" +
-      "          \"value\": true\n" +
-      "        },\n" +
-      "        {\n" +
-      "          \"name\": \"test_long\",\n" +
-      "          \"value\": 2132142335443553\n" +
-      "        },\n" +
-      "        {\n" +
-      "          \"name\": \"test_f\",\n" +
-      "          \"value\": 1.2132142335443553\n" +
-      "        }\n" +
-      "      ]\n" +
-      "    }\n" +
-      "  ],\n" +
-      "  \"lang\": \"en\",\n" +
-      "  \"requestId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n" +
-      "  \"codes\": [\n" +
-      "    \"sl\"\n" +
-      "  ]\n" +
-      "}";
+    String json = """
+      {
+        "version": "v1_0",
+        "from": 0,
+        "size": 0,
+        "attributes": [
+          {
+            "name": "test",
+            "value": "2022-02-10T10:30:44.123+01:00"
+          },
+          {
+            "name": "test1",
+            "value": [
+              {
+                "name": "test",
+                "value": "2022-02-10T10:30:44.123+01:00"
+              },
+              {
+                "name": "test_bool",
+                "value": true
+              },
+              {
+                "name": "test_long",
+                "value": 2132142335443553
+              },
+              {
+                "name": "test_f",
+                "value": 1.2132142335443553
+              }
+            ]
+          }
+        ],
+        "lang": "en",
+        "requestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "codes": [
+          "sl"
+        ]
+      }""";
 
     ObjectMapper mapper = ObjectMapperContextResolver.createObjectMapper();
     CodeParams params = mapper.readValue(json, CodeParams.class);

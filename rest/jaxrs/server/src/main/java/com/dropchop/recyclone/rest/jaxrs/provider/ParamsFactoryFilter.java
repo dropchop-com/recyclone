@@ -1,19 +1,18 @@
-package com.dropchop.recyclone.rest.jaxrs.server;
+package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.api.localization.Language;
-import com.dropchop.recyclone.service.api.CommonExecContextConsumer;
+import com.dropchop.recyclone.model.api.invoke.*;
+import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Creates correct Parameters instance initializes it with default parameters
@@ -22,11 +21,11 @@ import java.util.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
-public class ParamsFilterFactory implements ContainerRequestFilter {
+public class ParamsFactoryFilter implements ContainerRequestFilter {
 
   private final Class<? extends Params> parametersClass;
 
-  public <P extends Params> ParamsFilterFactory(Class<P> parametersClass) {
+  public <P extends Params> ParamsFactoryFilter(Class<P> parametersClass) {
     log.debug("Construct CommonParamsFilter [{}].", parametersClass);
     this.parametersClass = parametersClass;
   }
@@ -224,7 +223,7 @@ public class ParamsFilterFactory implements ContainerRequestFilter {
 
     decorate(p, requestContext);
 
-    log.debug("Created thread local [{}].", p);
-    CommonExecContextConsumer.provider.setParams(p);
+    log.debug("Created request local [{}].", p);
+    requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
   }
 }

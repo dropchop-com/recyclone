@@ -1,16 +1,14 @@
-package com.dropchop.recyclone.rest.jaxrs.server;
+package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.ext.Provider;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 01. 22.
  */
-@Provider
 @PreMatching
 public class DefaultContentTypeFilter implements ContainerRequestFilter {
 

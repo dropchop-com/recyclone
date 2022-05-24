@@ -1,7 +1,7 @@
-package com.dropchop.recyclone.rest.jaxrs.server;
+package com.dropchop.recyclone.rest.jaxrs.provider;
 
+import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.service.api.CommonExecContextConsumer;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.WebApplicationException;
@@ -30,7 +30,7 @@ public class ParamsInterceptor implements ReaderInterceptor {
     Object o = context.proceed();
     if (o != null && this.parametersClass.isAssignableFrom(o.getClass())) {
       log.debug("Intercept [{}].", o);
-      CommonExecContextConsumer.provider.setParams((Params) o);
+      context.setProperty(InternalContextVariables.RECYCLONE_PARAMS, o);
     }
     return o;
   }

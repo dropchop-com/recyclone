@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jaxrs.server;
+package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.rest.jaxrs.serialization.AttributeDeserializer;
@@ -11,12 +11,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 02. 22.
  */
-@Provider
 public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
 
   private final ObjectMapper mapper;

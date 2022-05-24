@@ -1,11 +1,8 @@
 package com.dropchop.shiro.jaxrs;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.service.api.CommonExecContext;
-import com.dropchop.recyclone.service.api.CommonExecContextConsumer;
 import com.dropchop.shiro.filter.AccessControlFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -85,29 +82,42 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
         }
         handler.assertAuthorized(authzSpec);
       }
-      CommonExecContext<Params, Dto> execContext = CommonExecContextConsumer.provider.get();
-      if (execContext != null) {
-        execContext.setSubject(subject);
+      //CommonExecContext<Params, Dto> execContext = CommonExecContextConsumer.provider.get();
+      //if (execContext != null) {
+        //execContext.setSubject(subject);
+        requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT, subject);
         if (requiredPermissions != null && requiredPermissions.length > 0) {
           String securityDomainAction = requiredPermissions[0];
           if (securityDomainAction != null && !securityDomainAction.isBlank()) {
-            execContext.setSecurityDomain(Constants.Permission.decomposeDomain(securityDomainAction));
-            execContext.setSecurityAction(Constants.Permission.decomposeAction(securityDomainAction));
-            log.trace("{} {}", execContext.getSecurityDomain(), execContext.getSecurityAction());
+            //execContext.setSecurityDomain(Constants.Permission.decomposeDomain(securityDomainAction));
+            requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN,
+              Constants.Permission.decomposeDomain(securityDomainAction));
+
+            //execContext.setSecurityAction(Constants.Permission.decomposeAction(securityDomainAction));
+            requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION,
+              Constants.Permission.decomposeAction(securityDomainAction));
+            //log.trace("{} {}", execContext.getSecurityDomain(), execContext.getSecurityAction());
+            log.error("Registering required security domain {} and action {}",
+              Constants.Permission.decomposeDomain(securityDomainAction),
+              Constants.Permission.decomposeAction(securityDomainAction));
           }
           if (requiredPermissions.length > 1) {
             log.warn("Only first permission in @RequiresPermissions annotation is passed to CommonExecContext!");
           }
-          execContext.setRequiredPermissions(Arrays.asList(requiredPermissions));
-          execContext.setRequiredPermissionsOp(requiredPermissionsOp);
+          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM,
+            Arrays.asList(requiredPermissions));
+          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP,
+            requiredPermissionsOp);
+          //execContext.setRequiredPermissions(Arrays.asList(requiredPermissions));
+          //execContext.setRequiredPermissionsOp(requiredPermissionsOp);
         }
-      }
+      //}
     } catch (AuthorizationException e) {
       threadState.clear();
       if (e instanceof UnauthenticatedException) {
         throw new ServiceException(authentication_error, "User is unauthenticated.");
       } else {
-        throw new ServiceException(authorization_error, "Blah blah");
+        throw new ServiceException(authorization_error, "User is unauthorized.");
       }
     }
   }
@@ -115,8 +125,7 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
   @Override
   public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
     Object threadStateObj = requestContext.getProperty("shiro.req.internal.thread.state");
-    if (threadStateObj instanceof ThreadState) {
-      ThreadState threadState = (ThreadState)threadStateObj;
+    if (threadStateObj instanceof ThreadState threadState) {
       threadState.clear();
     }
   }

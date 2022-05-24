@@ -1,9 +1,11 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.rest.jaxrs.server.CommonDynamicFeatures;
-import com.dropchop.recyclone.rest.jaxrs.server.DefaultContentTypeFilter;
-import com.dropchop.recyclone.rest.jaxrs.server.ObjectMapperContextResolver;
-import com.dropchop.recyclone.rest.jaxrs.server.ServiceErrorExceptionMapper;
+import com.dropchop.recyclone.rest.jaxrs.provider.ExecContextInitFilter;
+import com.dropchop.recyclone.rest.jaxrs.provider.CommonDynamicFeatures;
+import com.dropchop.recyclone.rest.jaxrs.provider.DefaultContentTypeFilter;
+import com.dropchop.recyclone.rest.jaxrs.provider.ObjectMapperContextResolver;
+import com.dropchop.recyclone.rest.jaxrs.provider.ServiceErrorExceptionMapper;
+import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.CountryResource;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.LanguageResource;
 import com.dropchop.recyclone.rest.jaxrs.server.security.intern.ActionResource;
 import com.dropchop.recyclone.rest.jaxrs.server.security.intern.DomainResource;
@@ -77,6 +79,7 @@ public class TestApplication extends Application {
     return Set.of(
       ServiceErrorExceptionMapper.class
       , ObjectMapperContextResolver.class
+      , ExecContextInitFilter.class
       , ShiroDynamicFeature.class
       , DefaultContentTypeFilter.class
       , CommonDynamicFeatures.class
@@ -86,6 +89,8 @@ public class TestApplication extends Application {
       , UserResource.class
       , com.dropchop.recyclone.rest.jaxrs.server.localization.LanguageResource.class
       , LanguageResource.class
+      , com.dropchop.recyclone.rest.jaxrs.server.localization.CountryResource.class
+      , CountryResource.class
     );
   }
 }
