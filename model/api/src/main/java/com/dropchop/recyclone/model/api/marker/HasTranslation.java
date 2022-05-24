@@ -1,10 +1,9 @@
 package com.dropchop.recyclone.model.api.marker;
 
-import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.localization.Language;
+import com.dropchop.recyclone.model.api.localization.Translation;
 
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -27,23 +26,25 @@ public interface HasTranslation<T extends Translation> {
   }
 
 
-  default void removeTranslation(T translation) {
-    Set<T> newTranslations = new LinkedHashSet<>(this.getTranslations());
+  default boolean removeTranslation(T translation) {
+    /*Set<T> newTranslations = new LinkedHashSet<>(this.getTranslations());
     newTranslations.remove(translation);
-    this.setTranslations(newTranslations);
+    this.setTranslations(newTranslations);*/
+    return this.getTranslations().remove(translation);
   }
 
 
-  default void removeTranslation(Locale lng) {
+  default boolean removeTranslation(Locale lng) {
     T t = this.getTranslation(lng);
-    this.removeTranslation(t);
+    return this.removeTranslation(t);
   }
 
-  default void removeTranslation(String languageTag) {
-    T t = this.getTranslation(languageTag);
-    if (t != null) {
-      this.getTranslations().remove(t);
+  default boolean removeTranslation(String languageTag) {
+    T translation = this.getTranslation(languageTag);
+    if (translation != null) {
+      return this.getTranslations().remove(translation);
     }
+    return false;
   }
 
   default T getTranslation(String tag) {
