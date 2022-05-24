@@ -25,6 +25,7 @@ public interface Constants {
 
     interface Localization {
       String LANGUAGE = "/localization/language";
+      String COUNTRY = "/localization/country";
     }
 
     interface Security {
