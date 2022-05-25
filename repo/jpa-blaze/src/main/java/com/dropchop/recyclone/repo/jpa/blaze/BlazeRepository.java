@@ -32,6 +32,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   EntityManager em;
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
   CriteriaBuilderFactory cbf;
 
   protected abstract Class<E> getRootClass();

@@ -2,26 +2,26 @@ package com.dropchop.recyclone.service.api;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.marker.Constants;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.subject.Subject;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
-import java.util.List;
 
 /**
+ * Conatiner and CDI provider for Request scoped {@link com.dropchop.recyclone.model.api.invoke.ExecContext}
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 24. 05. 22.
  */
 @Slf4j
 @RequestScoped
+@ExecContextType(Constants.Implementation.RCYN_DEFAULT)
 public class ExecContextProvider {
 
   CommonExecContext<?, ?> execContext;
 
   public <P extends Params, D extends Dto> CommonExecContext<P, D> create() {
     this.execContext = new CommonExecContext<>();
-    log.error("CREATED EXEC CONTEXT");
     //noinspection unchecked
     return (CommonExecContext<P, D>) this.execContext;
   }
@@ -29,7 +29,6 @@ public class ExecContextProvider {
   @Produces
   @RequestScoped
   public <P extends Params, D extends Dto> CommonExecContext<P, D> get() {
-    log.error("RETRIEVED EXEC CONTEXT");
     //noinspection unchecked
     return (CommonExecContext<P, D>) this.execContext;
   }

@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  * Creates correct Parameters instance initializes it with default parameters
- * and binds it to ThreadLocal ready to be used by CommonParamsConsumer
+ * and passes it to context property for further processing.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */

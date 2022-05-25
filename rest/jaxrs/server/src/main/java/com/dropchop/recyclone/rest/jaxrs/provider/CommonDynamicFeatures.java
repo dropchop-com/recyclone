@@ -24,11 +24,6 @@ import static javax.ws.rs.Priorities.HEADER_DECORATOR;
 @Provider
 public class CommonDynamicFeatures implements DynamicFeature {
 
-  public interface Constants {
-    String RECYCLONE_PARAMS = "<<RECYCLONE_PARAMS>>";
-    String RECYCLONE_DATA = "<<RECYCLONE_DATA>>";
-  }
-
   private static void checkAdd(final Set<Class<? extends Params>> paramsClasses,
                                final Set<Class<? extends Dto>> dtoClasses,
                                DynamicExecContext[] tagsArray) {
@@ -76,7 +71,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
   @Override
   public void configure(ResourceInfo ri, FeatureContext context) {
 
-    context.register(
+    context.register( // pass incoming params to JAX-RS context property
       new ExecContextWriteInterceptor(), Priorities.USER
     );
 
@@ -88,7 +83,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
       if (Params.class.isAssignableFrom(paramType)) {
         log.info("Registering [{}] for [{}.{}].", ParamsInterceptor.class.getSimpleName(), riClass.getSimpleName(), method.getName());
         //noinspection unchecked
-        context.register(//register incoming params to thread local upon request
+        context.register( // pass incoming params to JAX-RS context property
           new ParamsInterceptor((Class<? extends Params>) paramType),
           HEADER_DECORATOR
         );
@@ -103,7 +98,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
       if (Params.class.isAssignableFrom(parametersClass) && !Params.class.equals(parametersClass)) {
         log.info("Registering [{}] for [{}.{}].",
           ParamsFactoryFilter.class.getSimpleName(), riClass.getSimpleName(), method.getName());
-        context.register(//register new params to thread local execution context and decorate params upon request
+        context.register( // initialize and pass new params to JAX-RS context property
           new ParamsFactoryFilter(parametersClass),
           HEADER_DECORATOR
         );
@@ -115,7 +110,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
           if (Collection.class.isAssignableFrom(paramType)) {
             log.info("Registering [{}] for [{}.{}].",
               DtoDataInterceptor.class.getSimpleName(), riClass.getSimpleName(), method.getName());
-            context.register(//register new params to thread local execution context and decorate params upon request
+            context.register( // pass incoming dto data to JAX-RS context property
               new DtoDataInterceptor(dtoClass),
               HEADER_DECORATOR
             );

@@ -10,8 +10,9 @@ import javax.ws.rs.ext.ReaderInterceptorContext;
 import java.io.IOException;
 
 /**
- * This is to intercept methods with CommonParams to add them to thread local var
- * to be additionally decorated with CommonParamsFilter.
+ * This is to intercept methods with CommonParams to context property for further processing.
+ * Similar as {@link ParamsFactoryFilter} only this time parameters are already serialized since they
+ * are proper JAX-RS resource method parameter.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 01. 22.
  */

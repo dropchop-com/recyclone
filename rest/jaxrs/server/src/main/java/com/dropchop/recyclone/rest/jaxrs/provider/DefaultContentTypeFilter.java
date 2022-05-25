@@ -7,6 +7,8 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 
 /**
+ * Sets default request Accept content type to "application/json; charset=UTF-8" if missing or wildcard Accept header.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 01. 22.
  */
 @PreMatching

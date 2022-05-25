@@ -3,7 +3,9 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.service.api.ExecContextProvider;
+import com.dropchop.recyclone.service.api.ExecContextType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.subject.Subject;
@@ -19,6 +21,9 @@ import java.util.List;
 import static javax.ws.rs.Priorities.HEADER_DECORATOR;
 
 /**
+ * ContainerRequestFilter which initializes {@link com.dropchop.recyclone.model.api.invoke.ExecContext} from
+ * JAX-RS Recyclone internal context variables.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 02. 22.
  */
 @Slf4j
@@ -28,6 +33,7 @@ public class ExecContextInitFilter implements ContainerRequestFilter {
 
   @Inject
   @RequestScoped
+  @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
   ExecContextProvider execContextProvider;
 
 

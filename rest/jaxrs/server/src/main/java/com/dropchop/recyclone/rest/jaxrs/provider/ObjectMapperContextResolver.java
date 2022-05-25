@@ -13,6 +13,8 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import javax.ws.rs.ext.ContextResolver;
 
 /**
+ * Jackson mapper factory which supports {@link Attribute} deserialization.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 02. 22.
  */
 public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {

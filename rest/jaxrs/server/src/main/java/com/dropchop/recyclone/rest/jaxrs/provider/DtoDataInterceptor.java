@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is to intercept methods with Dto data to add them to thread local CommonExecContext var.
+ * This ReaderInterceptor is to intercept methods with Dto data to add them to JAX-RS context internal variable.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 01. 22.
  */

@@ -14,6 +14,8 @@ import java.util.List;
 import static com.dropchop.recyclone.model.api.security.Constants.Permission.compose;
 
 /**
+ * Container for common current execution variables.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 22.
  */
 @Getter
