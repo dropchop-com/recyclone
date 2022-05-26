@@ -20,13 +20,13 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public class CrudServiceToEntityListener<P extends Params>
+public class CommonToEntityListener<P extends Params>
   implements AfterToEntityListener<P> {
 
   final Map<String, ELanguage> languageMap;
 
 
-  public CrudServiceToEntityListener(Map<String, ELanguage> languageMap) {
+  public CommonToEntityListener(Map<String, ELanguage> languageMap) {
     this.languageMap = languageMap;
   }
 

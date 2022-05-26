@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.service.api.ServiceTypeLiteral;
-import com.dropchop.recyclone.service.api.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.Config;
 

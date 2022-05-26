@@ -6,7 +6,6 @@ import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import com.dropchop.recyclone.service.api.CommonExecContext;
-import com.dropchop.recyclone.service.api.EntityByIdService;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;

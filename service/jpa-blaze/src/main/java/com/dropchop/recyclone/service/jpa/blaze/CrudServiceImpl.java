@@ -15,7 +15,7 @@ import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
 import com.dropchop.recyclone.service.api.EntityByIdService;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.service.api.localization.LanguageService;
+import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.api.mapping.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.mapping.MappingContext;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +101,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
-  private MappingContext<P> checkPermissionsAndConstructMapping(List<D> dtos) {
+  protected void checkPermissions(List<D> dtos) {
     Subject subject = ctx.getSubject();
     for (D dto : dtos) {
       if (!subject.isPermitted(ctx.getSecurityDomainAction(dto.identifier()))) {
@@ -109,10 +109,12 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
           Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
       }
     }
+  }
 
+  protected MappingContext<P> constructToEntityMappingContext() {
     return new FilteringDtoContext<P>()
       .of(ctx)
-      .listener(new CrudServiceToEntityListener<>(
+      .listener(new CommonToEntityListener<>(
         serviceSelector.select(LanguageService.class).findAll()
           .stream()
           .collect(Collectors.toMap(ELanguage::getCode, Function.identity()))
@@ -123,7 +125,8 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   @Transactional
   public Result<D> create(List<D> dtos) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
-    MappingContext<P> mapContext = checkPermissionsAndConstructMapping(dtos);
+    checkPermissions(dtos);
+    MappingContext<P> mapContext = constructToEntityMappingContext();
 
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
     conf.getRepository().save(entities);
@@ -134,8 +137,8 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   @Transactional
   public Result<D> update(List<D> dtos) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
-
-    MappingContext<P> mapContext = checkPermissionsAndConstructMapping(dtos);
+    checkPermissions(dtos);
+    MappingContext<P> mapContext = constructToEntityMappingContext();
 
     List<E> entities = conf.getToEntityMapper()
       .updateEntities(dtos, this::findById, mapContext);
@@ -147,8 +150,8 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   @Transactional
   public Result<D> delete(List<D> dtos) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
-
-    MappingContext<P> mapContext = checkPermissionsAndConstructMapping(dtos);
+    checkPermissions(dtos);
+    MappingContext<P> mapContext = constructToEntityMappingContext();
 
     List<E> entities = conf.getToEntityMapper().updateEntities(dtos,
       dto -> {

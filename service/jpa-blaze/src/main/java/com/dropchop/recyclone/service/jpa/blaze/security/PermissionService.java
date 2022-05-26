@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
+import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
@@ -7,7 +8,9 @@ import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;
 import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.ServiceType;
+import com.dropchop.recyclone.service.api.mapping.MappingContext;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
+import com.dropchop.recyclone.service.jpa.blaze.PermissionToEntityListener;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +40,14 @@ public class PermissionService extends CrudServiceImpl<Permission, CodeParams, E
   @Inject
   PermissionToEntityMapper toEntityMapper;
 
+  @Inject
+  @ServiceType(RCYN_DEFAULT)
+  ActionService actionService;
+
+  @Inject
+  @ServiceType(RCYN_DEFAULT)
+  DomainService domainService;
+
   @Override
   public ServiceConfiguration<Permission, CodeParams, EPermission, UUID> getConfiguration(CommonExecContext<CodeParams, Permission> execContext) {
     return new ServiceConfiguration<>(
@@ -45,5 +56,12 @@ public class PermissionService extends CrudServiceImpl<Permission, CodeParams, E
       toEntityMapper,
       execContext
     );
+  }
+
+  @Override
+  protected MappingContext<CodeParams> constructToEntityMappingContext() {
+    MappingContext<CodeParams> context = super.constructToEntityMappingContext();
+    context.listeners().add(new PermissionToEntityListener<>(domainService, actionService));
+    return context;
   }
 }

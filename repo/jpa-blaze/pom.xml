@@ -32,6 +32,10 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-model-entity-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-repo-api</artifactId>
     </dependency>
   </dependencies>
