@@ -4,10 +4,10 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.marker.Constants;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.service.api.ExecContextProvider;
 import com.dropchop.recyclone.service.api.ExecContextType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.subject.Subject;
 
 import javax.annotation.Priority;

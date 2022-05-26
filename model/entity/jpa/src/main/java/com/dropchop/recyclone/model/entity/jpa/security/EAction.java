@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,8 +20,8 @@ import java.util.Set;
 @Table(name = "security_action")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class EAction extends ECode implements Action<ETitleTranslation> {
+@SuppressWarnings("JpaDataSourceORMInspection")
+public class EAction extends ECode implements HasELanguage, Action<ETitleTranslation> {
 
   @Column(name="title")
   private String title;

@@ -35,6 +35,7 @@ public class CountryService extends CrudServiceImpl<Country, CodeParams, ECountr
   @Inject
   CountryToEntityMapper toEntityMapper;
 
+
   @Override
   public ServiceConfiguration<Country, CodeParams, ECountry, String> getConfiguration(CommonExecContext<CodeParams, Country> ctx) {
     return new ServiceConfiguration<>(

@@ -4,10 +4,13 @@ import com.dropchop.recyclone.model.api.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +23,8 @@ import java.util.Set;
 @Table(name = "security_permission")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class EPermission extends EUuid implements Permission<ETitleTranslation, EAction, EDomain> {
+@SuppressWarnings("JpaDataSourceORMInspection")
+public class EPermission extends EUuid implements HasELanguage, Permission<ETitleTranslation, EAction, EDomain> {
 
   @ManyToOne(targetEntity = EDomain.class)
   @JoinColumn(name = "fk_security_domain_code",
@@ -44,7 +47,7 @@ public class EPermission extends EUuid implements Permission<ETitleTranslation, 
     joinColumns=@JoinColumn(name="fk_security_permission_uuid")
   )
   @Column(name="instance")
-  private List<String> instances;
+  private List<String> instances = new ArrayList<>();
 
   @Column(name="title")
   private String title;
@@ -67,7 +70,7 @@ public class EPermission extends EUuid implements Permission<ETitleTranslation, 
     foreignKey = @ForeignKey(name = "ssecurity_permission_l_fk_security_permission_uuid"),
     joinColumns=@JoinColumn(name="fk_security_permission_uuid")
   )
-  private Set<ETitleTranslation> translations;
+  private Set<ETitleTranslation> translations = new HashSet<>();
 
   @Column(name="created")
   private ZonedDateTime created;

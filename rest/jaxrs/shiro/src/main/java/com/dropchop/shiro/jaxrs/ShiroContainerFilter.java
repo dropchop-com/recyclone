@@ -1,5 +1,7 @@
 package com.dropchop.shiro.jaxrs;
 
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
@@ -7,7 +9,6 @@ import com.dropchop.shiro.filter.AccessControlFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
-import org.apache.shiro.authz.annotation.*;
 import org.apache.shiro.authz.aop.*;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
@@ -37,16 +38,17 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
   private static AuthorizingAnnotationHandler createHandler(Annotation annotation) {
     Class<?> t = annotation.annotationType();
     if (RequiresPermissions.class.equals(t)) return new PermissionAnnotationHandler();
-    else if (RequiresRoles.class.equals(t)) return new RoleAnnotationHandler();
+    /*else if (RequiresRoles.class.equals(t)) return new RoleAnnotationHandler();
     else if (RequiresUser.class.equals(t)) return new UserAnnotationHandler();
     else if (RequiresGuest.class.equals(t)) return new GuestAnnotationHandler();
-    else if (RequiresAuthentication.class.equals(t)) return new AuthenticatedAnnotationHandler();
+    else if (RequiresAuthentication.class.equals(t)) return new AuthenticatedAnnotationHandler();*/
     else throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
   }
 
   public ShiroContainerFilter(List<AccessControlFilter> accessControlFilters,
                               org.apache.shiro.mgt.SecurityManager securityManager,
-                              Collection<Annotation> authzSpecs) {
+                              Collection<Annotation> authzSpecs,
+                              String resourceClassName, String resourceMethodName) {
     Map<AuthorizingAnnotationHandler, Annotation> authChecks = new HashMap<>(authzSpecs.size());
     for (Annotation authSpec : authzSpecs) {
       authChecks.put(createHandler(authSpec), authSpec);
@@ -54,7 +56,8 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
     this.securityManager = securityManager;
     this.authzChecks = Collections.unmodifiableMap(authChecks);
     this.accessControlFilters = accessControlFilters;
-    log.trace("Constructed {}", this.getClass().getName());
+    log.debug("Constructed {} for [{}:{}] with [{}]",
+      this.getClass().getName(), resourceClassName, resourceMethodName, authzSpecs);
   }
 
   @Override
@@ -82,36 +85,29 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
         }
         handler.assertAuthorized(authzSpec);
       }
-      //CommonExecContext<Params, Dto> execContext = CommonExecContextConsumer.provider.get();
-      //if (execContext != null) {
-        //execContext.setSubject(subject);
-        requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT, subject);
-        if (requiredPermissions != null && requiredPermissions.length > 0) {
-          String securityDomainAction = requiredPermissions[0];
-          if (securityDomainAction != null && !securityDomainAction.isBlank()) {
-            //execContext.setSecurityDomain(Constants.Permission.decomposeDomain(securityDomainAction));
-            requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN,
-              Constants.Permission.decomposeDomain(securityDomainAction));
 
-            //execContext.setSecurityAction(Constants.Permission.decomposeAction(securityDomainAction));
-            requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION,
-              Constants.Permission.decomposeAction(securityDomainAction));
-            //log.trace("{} {}", execContext.getSecurityDomain(), execContext.getSecurityAction());
-            log.error("Registering required security domain {} and action {}",
-              Constants.Permission.decomposeDomain(securityDomainAction),
-              Constants.Permission.decomposeAction(securityDomainAction));
-          }
-          if (requiredPermissions.length > 1) {
-            log.warn("Only first permission in @RequiresPermissions annotation is passed to CommonExecContext!");
-          }
-          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM,
-            Arrays.asList(requiredPermissions));
-          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP,
-            requiredPermissionsOp);
-          //execContext.setRequiredPermissions(Arrays.asList(requiredPermissions));
-          //execContext.setRequiredPermissionsOp(requiredPermissionsOp);
+      requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT, subject);
+      if (requiredPermissions != null && requiredPermissions.length > 0) {
+        String securityDomainAction = requiredPermissions[0];
+        if (securityDomainAction != null && !securityDomainAction.isBlank()) {
+          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN,
+            Constants.Permission.decomposeDomain(securityDomainAction));
+
+          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION,
+            Constants.Permission.decomposeAction(securityDomainAction));
+
+          log.trace("Registering required security domain {} and action {}",
+            Constants.Permission.decomposeDomain(securityDomainAction),
+            Constants.Permission.decomposeAction(securityDomainAction));
         }
-      //}
+        if (requiredPermissions.length > 1) {
+          log.warn("Only first permission in @RequiresPermissions annotation is passed to CommonExecContext!");
+        }
+        requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM,
+          Arrays.asList(requiredPermissions));
+        requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP,
+          requiredPermissionsOp);
+      }
     } catch (AuthorizationException e) {
       threadState.clear();
       if (e instanceof UnauthenticatedException) {

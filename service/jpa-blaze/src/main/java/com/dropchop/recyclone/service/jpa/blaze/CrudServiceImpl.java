@@ -45,6 +45,10 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
 
   public abstract ServiceConfiguration<D, P, E, ID> getConfiguration(CommonExecContext<P, D> ctx);
 
+  @Override
+  public Class<E> getRootClass() {
+    return getConfiguration(ctx).getRepository().getRootClass();
+  }
 
   @Override
   public Optional<E> findById(D dto) {
@@ -124,8 +128,8 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   @Override
   @Transactional
   public Result<D> create(List<D> dtos) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
     checkPermissions(dtos);
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
     MappingContext<P> mapContext = constructToEntityMappingContext();
 
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
@@ -136,8 +140,8 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   @Override
   @Transactional
   public Result<D> update(List<D> dtos) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
     checkPermissions(dtos);
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
     MappingContext<P> mapContext = constructToEntityMappingContext();
 
     List<E> entities = conf.getToEntityMapper()
@@ -149,8 +153,8 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   @Override
   @Transactional
   public Result<D> delete(List<D> dtos) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
     checkPermissions(dtos);
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
     MappingContext<P> mapContext = constructToEntityMappingContext();
 
     List<E> entities = conf.getToEntityMapper().updateEntities(dtos,

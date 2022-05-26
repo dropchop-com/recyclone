@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,8 +21,8 @@ import java.util.SortedSet;
 @Table(name = "security_domain")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class EDomain extends ECode implements Domain<ETitleTranslation, EAction> {
+@SuppressWarnings("JpaDataSourceORMInspection")
+public class EDomain extends ECode implements HasELanguage, Domain<ETitleTranslation, EAction> {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EAction.class)
   @JoinTable(name = "security_domain_security_action",

@@ -35,8 +35,6 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   @SuppressWarnings("CdiInjectionPointsInspection")
   CriteriaBuilderFactory cbf;
 
-  protected abstract Class<E> getRootClass();
-
   public String getRootAlias() {
     return getRootClass().getSimpleName().toLowerCase();
   }

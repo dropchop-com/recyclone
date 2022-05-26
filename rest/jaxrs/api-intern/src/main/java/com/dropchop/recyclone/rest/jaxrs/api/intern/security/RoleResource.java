@@ -2,6 +2,10 @@ package com.dropchop.recyclone.rest.jaxrs.api.intern.security;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.rest.Constants.Tags;
+import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.model.api.security.Constants.Actions;
+import com.dropchop.recyclone.model.api.security.Constants.Domains;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
@@ -13,11 +17,14 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import javax.ws.rs.*;
 import java.util.List;
 
+import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @Path(Paths.Security.ROLE)
 @DynamicExecContext(CodeParams.class)
+@RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.VIEW)
 public interface RoleResource extends ClassicRestResource<Role> {
 
   @GET
@@ -76,12 +83,14 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.CREATE)
   Result<Role> create(List<Role> objects);
 
   @POST
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.CREATE)
   default List<Role> createRest(List<Role> roles) {
     return unwrap(create(roles));
   }
@@ -90,12 +99,14 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
   Result<Role> update(List<Role> objects);
 
   @PUT
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
   default List<Role> updateRest(List<Role> roles) {
     return unwrap(update(roles));
   }
@@ -104,12 +115,14 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.DELETE)
   Result<Role> delete(List<Role> objects);
 
   @DELETE
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.DELETE)
   default List<Role> deleteRest(List<Role> roles) {
     return unwrap(delete(roles));
   }

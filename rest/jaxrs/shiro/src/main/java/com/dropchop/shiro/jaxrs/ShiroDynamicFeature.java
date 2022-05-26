@@ -1,8 +1,10 @@
 package com.dropchop.shiro.jaxrs;
 
+import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.shiro.filter.AccessControlFilter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
@@ -11,8 +13,10 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
@@ -23,11 +27,11 @@ public class ShiroDynamicFeature implements DynamicFeature {
 
   private static final List<Class<? extends Annotation>> shiroAnnotations =
     List.of(
-      RequiresPermissions.class,
-      RequiresRoles.class,
+      RequiresPermissions.class
+      /*RequiresRoles.class,
       RequiresAuthentication.class,
       RequiresUser.class,
-      RequiresGuest.class
+      RequiresGuest.class*/
     );
 
   @Inject
@@ -37,33 +41,91 @@ public class ShiroDynamicFeature implements DynamicFeature {
   @SuppressWarnings("CdiInjectionPointsInspection")
   List<AccessControlFilter> accessControlFilters;
 
+
+  private static <T extends Annotation> boolean checkAdd(final List<Annotation> authzSpecs,
+                                                         final T[] annoArray) {
+    boolean added = false;
+    for (T anno : annoArray) {
+      authzSpecs.add(anno);
+      added = true;
+    }
+    return added;
+  }
+
+
+  public static <T extends Annotation> boolean findAnnotation(final Class<T> annotationType,
+                                                              final List<Annotation> authzSpecs,
+                                                              final Method myMethod) {
+    T[] annoArray = myMethod.getAnnotationsByType(annotationType);
+    if (checkAdd(authzSpecs, annoArray)) {
+      return true;
+    }
+    Class<?> declaringClass = myMethod.getDeclaringClass();
+    if (declaringClass.equals(Object.class)) {
+      return false;
+    }
+    annoArray = declaringClass.getAnnotationsByType(annotationType);
+    if (checkAdd(authzSpecs, annoArray)) {
+      return true;
+    }
+    for (Class<?> iface : declaringClass.getInterfaces()) {
+      try {
+        Method m = iface.getMethod(myMethod.getName(), myMethod.getParameterTypes());
+        if (findAnnotation(annotationType, authzSpecs, m)) {
+          return true;
+        }
+      } catch (NoSuchMethodException ignored) {
+      }
+    }
+    declaringClass = declaringClass.getSuperclass();
+    if (declaringClass == null) {
+      return false;
+    }
+    try {
+      Method m = declaringClass.getMethod(myMethod.getName(), myMethod.getParameterTypes());
+      if (findAnnotation(annotationType, authzSpecs, m)) {
+        return true;
+      }
+    } catch (NoSuchMethodException ignored) {
+    }
+
+    return false;
+  }
+
   @Override
   public void configure(ResourceInfo ri, FeatureContext context) {
     List<Annotation> authzSpecs = new ArrayList<>();
+    Class<?> rClass = ri.getResourceClass();
+    Method rMethod = ri.getResourceMethod();
     for (Class<? extends Annotation> annotationClass : shiroAnnotations) {
-      // XXX What is the performance of getAnnotation vs getAnnotations?
-      Annotation classAuthzSpec = ri.getResourceClass().getAnnotation(annotationClass);
-      Annotation methodAuthzSpec = ri.getResourceMethod().getAnnotation(annotationClass);
-
-      if (classAuthzSpec != null) {
-        authzSpecs.add(classAuthzSpec);
-        log.debug("Registering {} [{}::{}]", classAuthzSpec.getClass().getSimpleName(),
-          ri.getResourceClass().getSimpleName(), ri.getResourceMethod());
+      /*// XXX What is the performance of getAnnotation vs getAnnotations?
+      Annotation classAuthzSpec = rClass.getAnnotation(annotationClass);
+      Annotation methodAuthzSpec = rMethod.getAnnotation(annotationClass);
+      if (classAuthzSpec == null && methodAuthzSpec == null) {
+        ri.
       }
+
       if (methodAuthzSpec != null) {
         authzSpecs.add(methodAuthzSpec);
-        log.debug("Registering {} [{}::{}]", methodAuthzSpec.getClass().getSimpleName(),
-          ri.getResourceClass().getSimpleName(), ri.getResourceMethod());
-      }
+        log.trace("Registering shiro {} on method [{}::{}]",
+          annotationClass.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod());
+      } else if (classAuthzSpec != null) {
+        authzSpecs.add(classAuthzSpec);
+        log.trace("Registering shiro {} on resource [{}::{}]",
+          annotationClass.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod());
+      }*/
+      findAnnotation(annotationClass, authzSpecs, rMethod);
     }
 
     if (!authzSpecs.isEmpty()) {
-      log.debug("Registering ShiroFilter.");
+      log.trace("Registering ShiroFilter.");
       context.register(
         new ShiroContainerFilter(
           accessControlFilters,
           securityManager,
-          authzSpecs),
+          authzSpecs,
+          ri.getResourceClass().getSimpleName(),
+          ri.getResourceMethod().getName()),
         Priorities.AUTHORIZATION
       );
     }

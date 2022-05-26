@@ -4,9 +4,9 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import lombok.*;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.subject.Subject;
 
 import java.util.List;

@@ -2,6 +2,9 @@ package com.dropchop.recyclone.rest.jaxrs.api.intern.security;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.rest.Constants.Tags;
+import com.dropchop.recyclone.model.api.security.Constants.Actions;
+import com.dropchop.recyclone.model.api.security.Constants.Domains;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Permission;
@@ -14,11 +17,14 @@ import javax.ws.rs.*;
 import java.util.List;
 import java.util.UUID;
 
+import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @Path(Paths.Security.PERMISSION)
 @DynamicExecContext(IdentifierParams.class)
+@RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.VIEW)
 public interface PermissionResource extends ClassicRestResource<Permission> {
 
   @GET
@@ -77,12 +83,14 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.CREATE)
   Result<Permission> create(List<Permission> objects);
 
   @POST
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.CREATE)
   default List<Permission> createRest(List<Permission> permissions) {
     return unwrap(create(permissions));
   }
@@ -91,12 +99,14 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.UPDATE)
   Result<Permission> update(List<Permission> objects);
 
   @PUT
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.UPDATE)
   default List<Permission> updateRest(List<Permission> permissions) {
     return unwrap(update(permissions));
   }
@@ -105,12 +115,14 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.DELETE)
   Result<Permission> delete(List<Permission> objects);
 
   @DELETE
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.DELETE)
   default List<Permission> deleteRest(List<Permission> permissions) {
     return unwrap(delete(permissions));
   }

@@ -2,6 +2,10 @@ package com.dropchop.recyclone.rest.jaxrs.api.localization;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.rest.Constants.Tags;
+import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.model.api.security.Constants.Actions;
+import com.dropchop.recyclone.model.api.security.Constants.Domains;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -13,11 +17,14 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import javax.ws.rs.*;
 import java.util.List;
 
+import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
 @Path(Paths.Localization.LANGUAGE)
 @DynamicExecContext(CodeParams.class)
+@RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.VIEW)
 public interface LanguageResource extends ClassicRestResource<Language> {
 
   @GET

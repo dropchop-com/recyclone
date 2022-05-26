@@ -16,7 +16,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 public class RoleRepository extends BlazeRepository<ERole, String> {
 
   @Override
-  protected Class<ERole> getRootClass() {
+  public Class<ERole> getRootClass() {
     return ERole.class;
   }
 }

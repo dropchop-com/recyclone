@@ -61,7 +61,11 @@ public class TestShiroEnvironmentProvider extends ShiroEnvironmentProvider {
         ),
         Map.of(
           "admin", "*",
-          "staff", "localization.language:*",
+          "staff", "localization.language:*," +
+            "security.action:*," +
+            "security.domain:*," +
+            "security.permission:*," +
+            "security.role:*",
           "user", "localization.language:view"
         )
       )

@@ -1,13 +1,13 @@
 package com.dropchop.recyclone.rest.jaxrs.server.security.intern;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.service.api.CommonExecContext;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -22,7 +22,6 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  */
 @RequestScoped
 @Path(Paths.INTERNAL + Paths.Security.USER)
-@RequiresPermissions(Domains.Security.USER + PERM_DELIM + Constants.Actions.VIEW)
 public class UserResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.UserResource {
 

@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
@@ -26,19 +25,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PermissionResourceTest {
 
-  //@Test
-  //@Order(10)
-  public void languagesPostEndpoint() {
+  @Test
+  @Order(10)
+  public void permissionsPostEndpoint() {
     Domain domain = new Domain();
     domain.setCode(Constants.Domains.Localization.LANGUAGE);
     Action action = new Action();
     action.setCode(Constants.Actions.ALL);
     Permission permission = new Permission();
-    permission.setUuid("");
+    permission.setUuid("28c9e87d-befe-4c70-b582-c176653d917c");
     permission.setAction(action);
     permission.setDomain(domain);
     permission.setTitle("Permit all actions on Language");
-    permission.setLang("sl");
+    permission.setLang("en");
     permission.addTranslation(new TitleTranslation("sl", "Dovoli vse akcije na jezikih."));
 
     List<Permission> permissions = given()

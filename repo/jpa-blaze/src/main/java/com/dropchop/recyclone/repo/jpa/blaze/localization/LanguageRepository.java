@@ -16,7 +16,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 public class LanguageRepository extends BlazeRepository<ELanguage, String> {
 
   @Override
-  protected Class<ELanguage> getRootClass() {
+  public Class<ELanguage> getRootClass() {
     return ELanguage.class;
   }
 }

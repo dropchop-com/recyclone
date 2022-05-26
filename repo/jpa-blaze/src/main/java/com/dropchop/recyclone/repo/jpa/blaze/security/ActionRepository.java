@@ -16,7 +16,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 public class ActionRepository extends BlazeRepository<EAction, String> {
 
   @Override
-  protected Class<EAction> getRootClass() {
+  public Class<EAction> getRootClass() {
     return EAction.class;
   }
 }

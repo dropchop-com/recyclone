@@ -7,10 +7,7 @@ import com.dropchop.recyclone.rest.jaxrs.provider.ObjectMapperContextResolver;
 import com.dropchop.recyclone.rest.jaxrs.provider.ServiceErrorExceptionMapper;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.CountryResource;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.LanguageResource;
-import com.dropchop.recyclone.rest.jaxrs.server.security.intern.ActionResource;
-import com.dropchop.recyclone.rest.jaxrs.server.security.intern.DomainResource;
-import com.dropchop.recyclone.rest.jaxrs.server.security.intern.RoleResource;
-import com.dropchop.recyclone.rest.jaxrs.server.security.intern.UserResource;
+import com.dropchop.recyclone.rest.jaxrs.server.security.intern.*;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Components;
@@ -85,6 +82,7 @@ public class TestApplication extends Application {
       , CommonDynamicFeatures.class
       , ActionResource.class
       , DomainResource.class
+      , PermissionResource.class
       , RoleResource.class
       , UserResource.class
       , com.dropchop.recyclone.rest.jaxrs.server.localization.LanguageResource.class

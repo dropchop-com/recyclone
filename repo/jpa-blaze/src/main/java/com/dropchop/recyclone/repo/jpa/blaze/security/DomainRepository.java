@@ -16,7 +16,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 public class DomainRepository extends BlazeRepository<EDomain, String> {
 
   @Override
-  protected Class<EDomain> getRootClass() {
+  public Class<EDomain> getRootClass() {
     return EDomain.class;
   }
 }

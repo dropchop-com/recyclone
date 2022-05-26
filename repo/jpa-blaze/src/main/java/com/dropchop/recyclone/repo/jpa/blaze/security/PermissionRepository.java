@@ -17,7 +17,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 public class PermissionRepository extends BlazeRepository<EPermission, UUID> {
 
   @Override
-  protected Class<EPermission> getRootClass() {
+  public Class<EPermission> getRootClass() {
     return EPermission.class;
   }
 }

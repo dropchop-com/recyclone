@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,8 +21,8 @@ import java.util.SortedSet;
 @Table(name = "security_role")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class ERole extends ECode implements Role<ETitleTranslation, EAction, EDomain, EPermission> {
+@SuppressWarnings("JpaDataSourceORMInspection")
+public class ERole extends ECode implements HasELanguage, Role<ETitleTranslation, EAction, EDomain, EPermission> {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EPermission.class)
   @JoinTable(name = "security_role_security_permission",

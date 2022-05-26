@@ -9,7 +9,10 @@ import java.util.Optional;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
  */
-public interface EntityByIdService<D extends Dto, E extends Entity, ID> {
+public interface EntityByIdService<D extends Dto, E extends Entity, ID> extends Service {
+
+  Class<E> getRootClass();
+
   Optional<E> findById(D dto);
 
   Optional<E> findById(ID id);

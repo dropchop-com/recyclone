@@ -16,7 +16,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 public class CountryRepository extends BlazeRepository<ECountry, String> {
 
   @Override
-  protected Class<ECountry> getRootClass() {
+  public Class<ECountry> getRootClass() {
     return ECountry.class;
   }
 }
