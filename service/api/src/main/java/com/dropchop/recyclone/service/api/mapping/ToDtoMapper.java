@@ -111,7 +111,7 @@ public interface ToDtoMapper<D extends Dto, P extends Params, E extends Entity> 
   }
 
   @Condition
-  default boolean filter(@TargetProperty String propName, @Context MappingContext<P> context) {
+  default boolean filter(@TargetPropertyName String propName, @Context MappingContext<P> context) {
     if (context instanceof FilteringDtoContext<P>) {
       return ((FilteringDtoContext<P>) context).filter(propName);
     }
