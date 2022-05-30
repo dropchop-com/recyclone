@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegator;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -14,7 +15,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(
   componentModel = "cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  uses = EntityCreationDelegator.class
+  uses = EntityCreationDelegator.class,
+  injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface CountryToEntityMapper extends ToEntityMapper<Country, CodeParams, ECountry> {
 }
