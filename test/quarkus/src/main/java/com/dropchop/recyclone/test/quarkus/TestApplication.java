@@ -1,10 +1,6 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.rest.jaxrs.provider.ExecContextInitFilter;
-import com.dropchop.recyclone.rest.jaxrs.provider.CommonDynamicFeatures;
-import com.dropchop.recyclone.rest.jaxrs.provider.DefaultContentTypeFilter;
-import com.dropchop.recyclone.rest.jaxrs.provider.ObjectMapperContextResolver;
-import com.dropchop.recyclone.rest.jaxrs.provider.ServiceErrorExceptionMapper;
+import com.dropchop.recyclone.rest.jaxrs.provider.*;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.CountryResource;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.LanguageResource;
 import com.dropchop.recyclone.rest.jaxrs.server.security.intern.*;
@@ -76,10 +72,11 @@ public class TestApplication extends Application {
     return Set.of(
       ServiceErrorExceptionMapper.class
       , ObjectMapperContextResolver.class
-      , ExecContextInitFilter.class
       , ShiroDynamicFeature.class
       , DefaultContentTypeFilter.class
       , CommonDynamicFeatures.class
+      , ExecContextInitInterceptor.class
+      , ExecContextWriteInterceptor.class
       , ActionResource.class
       , DomainResource.class
       , PermissionResource.class

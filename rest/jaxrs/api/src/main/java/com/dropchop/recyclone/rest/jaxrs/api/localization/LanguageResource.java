@@ -2,7 +2,6 @@ package com.dropchop.recyclone.rest.jaxrs.api.localization;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.rest.Constants.Tags;
-import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.jpa.blaze;
+package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 05. 22.
  */
-public class RelatedAllPreloadedEntityLoader<D extends Dto, E extends Entity, ID, P extends Params>
-  extends RelatedEntityLoader<D, E, ID, P> {
+public class EntityAllPreloadDelegate<D extends Dto, E extends Entity, ID, P extends Params>
+  extends EntityLoadDelegate<D, E, ID, P> {
 
   private final Map<String, E> preloaded;
 
-  public RelatedAllPreloadedEntityLoader(EntityByIdService<D, E, ID> service) {
+  public EntityAllPreloadDelegate(EntityByIdService<D, E, ID> service) {
     super(service);
     preloaded = service.findAll()
       .stream()
@@ -27,6 +27,6 @@ public class RelatedAllPreloadedEntityLoader<D extends Dto, E extends Entity, ID
 
   @Override
   protected Optional<E> findById(D dto) {
-    return Optional.of(preloaded.get(dto.identifier()));
+    return Optional.ofNullable(preloaded.get(dto.identifier()));
   }
 }

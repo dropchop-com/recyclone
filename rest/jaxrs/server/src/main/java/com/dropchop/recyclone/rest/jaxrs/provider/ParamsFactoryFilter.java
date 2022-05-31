@@ -1,10 +1,16 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.service.api.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
@@ -21,6 +27,7 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
+@ConstrainedTo(RuntimeType.SERVER)
 public class ParamsFactoryFilter implements ContainerRequestFilter {
 
   private final Class<? extends Params> parametersClass;
@@ -213,6 +220,13 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
+    ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
+      .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    if (execContextProvider == null) {
+      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+      return;
+    }
+
     Params p;
     try {
       p = parametersClass.getDeclaredConstructor().newInstance();
@@ -224,6 +238,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     decorate(p, requestContext);
 
     log.debug("Created request local [{}].", p);
-    requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
+    execContextProvider.setParams(p);
+    //requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
   }
 }

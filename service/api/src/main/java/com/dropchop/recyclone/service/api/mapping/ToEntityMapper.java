@@ -2,10 +2,7 @@ package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Context;
@@ -15,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
@@ -25,10 +20,6 @@ public interface ToEntityMapper<D extends Dto, P extends Params, E extends Entit
 
   Logger log = LoggerFactory.getLogger(ToEntityMapper.class);
 
-  interface EntitySupplier<D, E> {
-    E get(D dto);
-  }
-
   E toEntity(D dto, @Context MappingContext<P> context);
 
   default List<E> toEntities(List<D> dtos, @Context MappingContext<P> context) {
@@ -36,22 +27,6 @@ public interface ToEntityMapper<D extends Dto, P extends Params, E extends Entit
     for (D dto : dtos) {
       entities.add(toEntity(dto, context));
     }
-    return entities;
-  }
-
-  E updateEntity(D dto, @MappingTarget E entity, @Context MappingContext<P> context);
-
-  default List<E> updateEntities(List<D> dtos, @Context EntitySupplier<D, Optional<E>> supplier, @Context MappingContext<P> context) {
-    List<E> entities = new ArrayList<>(dtos.size());
-    for (D dto : dtos) {
-      Optional<E> entity = supplier.get(dto);
-      if (entity.isEmpty()) {
-        throw new ServiceException(ErrorCode.not_found_error, "No such entity.",
-          Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
-      }
-      entities.add(updateEntity(dto, entity.get(), context));
-    }
-    context.setTotalCount(entities.size());
     return entities;
   }
 

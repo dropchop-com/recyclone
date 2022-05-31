@@ -4,43 +4,25 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.Translation;
-import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
 import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
-import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
-import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
 import com.dropchop.recyclone.service.api.mapping.MappingContext;
 
 import java.time.ZonedDateTime;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public class CommonToEntityListener<P extends Params>
+public class AfterSetModificationListener<P extends Params>
   implements AfterToEntityListener<P> {
-
-  final Map<String, ELanguage> languageMap;
-
-
-  public CommonToEntityListener(Map<String, ELanguage> languageMap) {
-    this.languageMap = languageMap;
-  }
 
   @Override
   public void after(Dto dto, Entity entity, MappingContext<P> context) {
     if (Actions.CREATE.equals(context.getSecurityAction())) {
-      if (entity instanceof HasLanguageCode && entity instanceof HasELanguage) {
-        String code = ((HasLanguageCode) entity).getLang();
-        ELanguage lang = languageMap.get(code);
-        if (lang != null) {
-          ((HasELanguage)entity).setLanguage(lang);
-        }
-      }
       if (entity instanceof HasCreated) {
         ((HasCreated) entity).setCreated(ZonedDateTime.now());
       }

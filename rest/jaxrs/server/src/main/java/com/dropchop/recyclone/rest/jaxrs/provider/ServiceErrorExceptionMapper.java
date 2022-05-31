@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.io.PrintWriter;
@@ -22,6 +24,7 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
  */
 @Slf4j
+@ConstrainedTo(RuntimeType.SERVER)
 public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
 
   private void setErrorCodeResponseStatus(Response.ResponseBuilder builder, StatusMessage statusMessage) {

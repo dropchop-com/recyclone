@@ -6,6 +6,7 @@ package com.dropchop.recyclone.model.api.invoke;
 public interface Constants {
 
   interface InternalContextVariables {
+    String RECYCLONE_EXEC_CONTEXT_PROVIDER = "<<RECYCLONE_EXEC_CONTEXT_PROVIDER>>";
     String RECYCLONE_PARAMS = "<<RECYCLONE_PARAMS>>";
     String RECYCLONE_DATA = "<<RECYCLONE_DATA>>";
     String RECYCLONE_SECURITY_SUBJECT = "<<RECYCLONE_SECURITY_SUBJECT>>";

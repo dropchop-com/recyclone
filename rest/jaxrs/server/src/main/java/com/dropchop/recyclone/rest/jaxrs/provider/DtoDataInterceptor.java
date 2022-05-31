@@ -3,8 +3,11 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.service.api.CommonExecContext;
+import com.dropchop.recyclone.service.api.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.ReaderInterceptorContext;
@@ -18,18 +21,25 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 01. 22.
  */
 @Slf4j
+@ConstrainedTo(RuntimeType.SERVER)
 public class DtoDataInterceptor implements ReaderInterceptor {
 
   private final Class<? extends Dto> dtoClass;
 
   public <D extends Dto> DtoDataInterceptor(Class<D> dtoClass) {
-    log.debug("Construct [{}] [{}].", this.getClass().getSimpleName(), dtoClass);
     this.dtoClass = dtoClass;
   }
 
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
     Object o = context.proceed();
+    ExecContextProvider execContextProvider = (ExecContextProvider)context
+      .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    if (execContextProvider == null) {
+      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
+      return o;
+    }
+
     if (o != null && this.dtoClass.isAssignableFrom(o.getClass())) {
       log.debug("Intercept [{}].", o);
       context.setProperty(InternalContextVariables.RECYCLONE_DATA, List.of((Dto)o));
@@ -38,15 +48,19 @@ public class DtoDataInterceptor implements ReaderInterceptor {
       if (((List<?>) o).iterator().hasNext()) {
         Object item = ((List<?>) o).iterator().next();
         if (item instanceof Dto) {
-          context.setProperty(InternalContextVariables.RECYCLONE_DATA, o);
+          //noinspection unchecked
+          execContextProvider.get().setData((List<Dto>)o);
+          //context.setProperty(InternalContextVariables.RECYCLONE_DATA, o);
           log.debug("Intercept added collection of [{}].", item.getClass().getSimpleName());
         } else {
-          context.setProperty(InternalContextVariables.RECYCLONE_DATA, new ArrayList<>());
+          execContextProvider.get().setData(new ArrayList<>());
+          //context.setProperty(InternalContextVariables.RECYCLONE_DATA, new ArrayList<>());
           log.warn("Skip add data to [{}] since data does not contain [{}] instance!",
             CommonExecContext.class.getSimpleName(), Dto.class.getSimpleName());
         }
       } else {
-        context.setProperty(InternalContextVariables.RECYCLONE_DATA, new ArrayList<>());
+        execContextProvider.get().setData(new ArrayList<>());
+        //context.setProperty(InternalContextVariables.RECYCLONE_DATA, new ArrayList<>());
       }
     }
     return o;

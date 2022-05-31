@@ -166,7 +166,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     return true;
   }
 
-  public boolean filter(@TargetProperty String propName) {
+  public boolean filter(@TargetPropertyName String propName) {
     this.lastProp = propName;
 
     FieldFilter.PathSegment segment = FieldFilter.computePath(path, propName);
@@ -181,7 +181,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     return !filterByContentDetail(segment, willNest);
   }
 
-  public void before(Object source, Object target) {
+  public void before(Object source, Object ignoredTarget) {
     if (source == null) {
       return;
     }
@@ -268,7 +268,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     }
   }
 
-  public void after(Object source, Object target) {
+  public void after(Object ignoredSource, Object target) {
     FieldFilter.PathSegment segment = this.path.pollLast();
     swapTranslations(target);
     patchContentDetailLevel(target, segment);

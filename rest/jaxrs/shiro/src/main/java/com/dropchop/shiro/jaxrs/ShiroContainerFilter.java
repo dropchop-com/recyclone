@@ -1,10 +1,12 @@
 package com.dropchop.shiro.jaxrs;
 
+import com.dropchop.recyclone.model.api.security.Constants.Permission;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.service.api.ExecContextProvider;
 import com.dropchop.shiro.filter.AccessControlFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -18,6 +20,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.ReaderInterceptorContext;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -62,6 +65,13 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
+    ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
+      .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    if (execContextProvider == null) {
+      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+      return;
+    }
+
     Subject subject = new Subject.Builder(securityManager).buildSubject();
     ThreadState threadState = new SubjectThreadState(subject);
     threadState.bind();
@@ -86,27 +96,33 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
         handler.assertAuthorized(authzSpec);
       }
 
-      requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT, subject);
+      //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT, subject);
+      execContextProvider.get().setSubject(subject);
       if (requiredPermissions != null && requiredPermissions.length > 0) {
         String securityDomainAction = requiredPermissions[0];
         if (securityDomainAction != null && !securityDomainAction.isBlank()) {
-          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN,
-            Constants.Permission.decomposeDomain(securityDomainAction));
+          //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN,
+            //Constants.Permission.decomposeDomain(securityDomainAction));
+          execContextProvider.get().setSecurityDomain(Permission.decomposeDomain(securityDomainAction));
 
-          requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION,
-            Constants.Permission.decomposeAction(securityDomainAction));
+          //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION,
+            //Constants.Permission.decomposeAction(securityDomainAction));
+
+          execContextProvider.get().setSecurityAction(Permission.decomposeAction(securityDomainAction));
 
           log.trace("Registering required security domain {} and action {}",
-            Constants.Permission.decomposeDomain(securityDomainAction),
-            Constants.Permission.decomposeAction(securityDomainAction));
+            Permission.decomposeDomain(securityDomainAction),
+            Permission.decomposeAction(securityDomainAction));
         }
         if (requiredPermissions.length > 1) {
           log.warn("Only first permission in @RequiresPermissions annotation is passed to CommonExecContext!");
         }
-        requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM,
-          Arrays.asList(requiredPermissions));
-        requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP,
-          requiredPermissionsOp);
+        //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM,
+          //Arrays.asList(requiredPermissions));
+        execContextProvider.get().setRequiredPermissions(Arrays.asList(requiredPermissions));
+        //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP,
+          //requiredPermissionsOp);
+        execContextProvider.get().setRequiredPermissionsOp(requiredPermissionsOp);
       }
     } catch (AuthorizationException e) {
       threadState.clear();

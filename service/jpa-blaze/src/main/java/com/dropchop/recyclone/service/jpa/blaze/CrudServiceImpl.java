@@ -6,15 +6,18 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
+import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.DtoCode;
 import com.dropchop.recyclone.model.dto.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
 import com.dropchop.recyclone.service.api.EntityByIdService;
 import com.dropchop.recyclone.service.api.ServiceSelector;
+import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegate;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.api.mapping.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.mapping.MappingContext;
@@ -26,8 +29,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
@@ -115,14 +116,29 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     }
   }
 
-  protected MappingContext<P> constructToEntityMappingContext() {
-    return new FilteringDtoContext<P>()
+  protected MappingContext<P> constructToEntityMappingContext(ServiceConfiguration<D, P, E, ID> conf) {
+    MappingContext<P> context = new FilteringDtoContext<P>()
       .of(ctx)
-      .listener(new CommonToEntityListener<>(
-        serviceSelector.select(LanguageService.class).findAll()
-          .stream()
-          .collect(Collectors.toMap(ELanguage::getCode, Function.identity()))
-      ));
+      .listener(
+        new AfterSetModificationListener<>()
+      )
+      .listener(
+        new EntityCreationDelegate<D, E, ID, P>(this)
+          .forActionOnly(Constants.Actions.UPDATE)
+          .forActionOnly(Constants.Actions.DELETE)
+      );
+
+    Class<?> rootClass = conf.getRepository().getRootClass();
+    if (
+      HasELanguage.class.isAssignableFrom(rootClass) &&
+      HasLanguageCode.class.isAssignableFrom(rootClass)
+    ) {
+      context.listener(
+        new AfterSetLanguageListener<>(serviceSelector.select(LanguageService.class))
+      );
+    }
+
+    return context;
   }
 
   @Override
@@ -130,7 +146,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   public Result<D> create(List<D> dtos) {
     checkPermissions(dtos);
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
-    MappingContext<P> mapContext = constructToEntityMappingContext();
+    MappingContext<P> mapContext = constructToEntityMappingContext(conf);
 
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
     conf.getRepository().save(entities);
@@ -142,11 +158,9 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   public Result<D> update(List<D> dtos) {
     checkPermissions(dtos);
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
-    MappingContext<P> mapContext = constructToEntityMappingContext();
-
-    List<E> entities = conf.getToEntityMapper()
-      .updateEntities(dtos, this::findById, mapContext);
-    conf.getRepository().save(entities);
+    MappingContext<P> mapContext = constructToEntityMappingContext(conf);
+    List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
+    conf.getRepository().delete(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
@@ -155,19 +169,9 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   public Result<D> delete(List<D> dtos) {
     checkPermissions(dtos);
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration(ctx);
-    MappingContext<P> mapContext = constructToEntityMappingContext();
-
-    List<E> entities = conf.getToEntityMapper().updateEntities(dtos,
-      dto -> {
-        Optional<E> oEntity = findById(dto);
-        if (oEntity.isPresent()) {
-          conf.getRepository().delete(oEntity.get());
-        } else {
-          log.warn("Missing entity for dto [{}]", dto);
-        }
-        return oEntity;
-      },
-      mapContext);
+    MappingContext<P> mapContext = constructToEntityMappingContext(conf);
+    List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
+    conf.getRepository().delete(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 }

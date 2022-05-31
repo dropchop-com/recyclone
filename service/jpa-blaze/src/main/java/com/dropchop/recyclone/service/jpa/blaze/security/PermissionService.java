@@ -14,14 +14,12 @@ import com.dropchop.recyclone.service.api.CommonExecContext;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.mapping.MappingContext;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
-import com.dropchop.recyclone.service.jpa.blaze.RelatedAllPreloadedEntityLoader;
-import com.dropchop.recyclone.service.jpa.blaze.RelatedEntityLoader;
+import com.dropchop.recyclone.service.api.mapping.EntityCreationAllPreloadDelegate;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.List;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
@@ -65,19 +63,14 @@ public class PermissionService extends CrudServiceImpl<Permission, CodeParams, E
   }
 
   @Override
-  protected MappingContext<CodeParams> constructToEntityMappingContext() {
-    MappingContext<CodeParams> context = super.constructToEntityMappingContext();
-    context.listeners()
-      .addAll(
-        List.of(
-          new RelatedAllPreloadedEntityLoader<Action, EAction, String, CodeParams>(actionService)
-            .forActionOnly(Actions.CREATE)
-            .forActionOnly(Actions.UPDATE),
-          new RelatedEntityLoader<Domain, EDomain, String, CodeParams>(domainService)
-            .forActionOnly(Actions.CREATE)
-            .forActionOnly(Actions.UPDATE)
-        )
-      );
+  protected MappingContext<CodeParams> constructToEntityMappingContext(ServiceConfiguration<Permission, CodeParams, EPermission, UUID> conf) {
+    MappingContext<CodeParams> context = super.constructToEntityMappingContext(conf);
+    context.listener(new EntityCreationAllPreloadDelegate<Action, EAction, String, CodeParams>(actionService)
+        .forActionOnly(Actions.CREATE)
+        .forActionOnly(Actions.UPDATE))
+      .listener(new EntityCreationAllPreloadDelegate<Domain, EDomain, String, CodeParams>(domainService)
+        .forActionOnly(Actions.CREATE)
+        .forActionOnly(Actions.UPDATE));
     return context;
   }
 }

@@ -71,10 +71,6 @@ public class CommonDynamicFeatures implements DynamicFeature {
   @Override
   public void configure(ResourceInfo ri, FeatureContext context) {
 
-    context.register( // pass incoming params to JAX-RS context property
-      new ExecContextWriteInterceptor(), Priorities.USER
-    );
-
     Class<?> riClass = ri.getResourceClass();
     Method method = ri.getResourceMethod();
 

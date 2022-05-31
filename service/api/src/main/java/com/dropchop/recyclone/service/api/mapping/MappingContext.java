@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.service.api.mapping;
 
+import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
@@ -20,15 +22,20 @@ import java.util.List;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class MappingContext<P extends Params>
-  extends ParamsExecContext<P, MappingListener<P>> implements TotalCountExecContextListener {
+  extends ParamsExecContext<P, MappingListener<P>>
+  implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener<P>> {
 
   private long totalCount;
   private String securityAction;
   private String securityDomain;
   private Subject subject;
+  private List<Dto> data;
+
 
   public MappingContext<P> of(CommonExecContext<?, ?> sourceContext) {
     super.of(sourceContext);
+    //noinspection unchecked
+    this.setData((List<Dto>) sourceContext.getData());
     this.setSubject(sourceContext.getSubject());
     this.setSecurityAction(sourceContext.getSecurityAction());
     this.setSecurityDomain(sourceContext.getSecurityDomain());
