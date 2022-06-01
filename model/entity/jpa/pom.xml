@@ -31,6 +31,15 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-api</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -40,12 +49,10 @@
         <artifactId>lombok-maven-plugin</artifactId>
       </plugin>
       <!--Add when weaving would be applied otherwise AJC compiler is missing sources.-->
-      <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
       </plugin>
-      -->
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
       </plugin>

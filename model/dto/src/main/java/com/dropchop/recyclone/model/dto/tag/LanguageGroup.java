@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.dto.tag;
 
 import com.dropchop.recyclone.model.api.tag.NamedTag;
+import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import lombok.*;
 
 /**
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class LanguageGroup extends Tag implements NamedTag {
+public class LanguageGroup extends Tag<TitleTranslation> implements NamedTag<TitleTranslation> {
   @NonNull
   private String name;
 }

@@ -375,7 +375,6 @@
           </executions>
           <configuration>
             <addOutputDirectory>false</addOutputDirectory>
-            <!--<outputDirectory>${project.build.directory}/delombok</outputDirectory>-->
             <sourceDirectory>src/main/java</sourceDirectory>
           </configuration>
           <dependencies>
@@ -416,7 +415,6 @@
             </weaveDependencies>-->
             <sources>
               <source>
-                <!--<basedir>${project.build.directory}/delombok</basedir>-->
                 <basedir>${project.build.directory}/generated-sources/delombok</basedir>
               </source>
             </sources>
