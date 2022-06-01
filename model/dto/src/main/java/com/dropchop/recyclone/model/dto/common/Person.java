@@ -1,5 +1,6 @@
-package com.dropchop.recyclone.model.dto;
+package com.dropchop.recyclone.model.dto.common;
 
+import com.dropchop.recyclone.model.dto.base.DtoId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

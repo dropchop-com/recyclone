@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.localization;
 
-import com.dropchop.recyclone.model.dto.DtoCode;
+import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 

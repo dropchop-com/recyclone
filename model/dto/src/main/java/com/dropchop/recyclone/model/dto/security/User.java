@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.dto.security;
 
-import com.dropchop.recyclone.model.dto.DtoId;
-import com.dropchop.recyclone.model.dto.Person;
+import com.dropchop.recyclone.model.dto.base.DtoId;
+import com.dropchop.recyclone.model.dto.common.Person;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

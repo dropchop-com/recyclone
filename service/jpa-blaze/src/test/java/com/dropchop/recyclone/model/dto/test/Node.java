@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.dto.test;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.dto.DtoCode;
+import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

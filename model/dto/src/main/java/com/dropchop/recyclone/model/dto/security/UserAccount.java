@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.security;
 
-import com.dropchop.recyclone.model.dto.DtoId;
+import com.dropchop.recyclone.model.dto.base.DtoId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.dto;
+package com.dropchop.recyclone.model.dto.base;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.ModelWithCode;

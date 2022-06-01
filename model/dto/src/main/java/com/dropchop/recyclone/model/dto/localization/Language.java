@@ -3,7 +3,7 @@ package com.dropchop.recyclone.model.dto.localization;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.dto.DtoCode;
+import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
