@@ -38,7 +38,7 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
   @Override
   public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
     Object entity = context.getEntity();
-    log.debug("[{}].aroundWriteTo [{}].", this.getClass().getSimpleName(), entity);
+    log.trace("[{}].aroundWriteTo [{}].", this.getClass().getSimpleName(), entity);
     if (entity == null) {
       context.proceed();
       return;
