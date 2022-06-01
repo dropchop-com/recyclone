@@ -13,7 +13,7 @@ import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
 import com.dropchop.recyclone.service.api.mapping.EntityAllPreloadDelegate;
-import com.dropchop.recyclone.service.api.mapping.MappingContext;
+import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 
 import java.util.List;

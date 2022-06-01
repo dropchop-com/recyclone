@@ -2,7 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.service.api.ExecContextProvider;
+import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.service.api.ExecContextType;
 import lombok.extern.slf4j.Slf4j;
 

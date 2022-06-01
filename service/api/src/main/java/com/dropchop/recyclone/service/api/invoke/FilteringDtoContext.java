@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Params;
@@ -15,6 +15,8 @@ import org.mapstruct.*;
 import java.util.*;
 
 /**
+ * MappingContext that can filter (include/exclude) object graph paths based on REST client parameters.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 04. 22.
  */
 @Slf4j
@@ -91,8 +93,8 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
   }
 
   private boolean filterByLevel(FieldFilter.PathSegment segment, boolean willNest) {
-    boolean isForAll = FilteringConditions.isDetailForAll(this.contentDetailLevel);
-    boolean isForNested = FilteringConditions.isDetailForNested(this.contentDetailLevel);
+    boolean isForAll = FilteringDtoContextConditions.isDetailForAll(this.contentDetailLevel);
+    boolean isForNested = FilteringDtoContextConditions.isDetailForNested(this.contentDetailLevel);
 
     if (segment.level >= this.contentTreeLevel && willNest && !(isForAll || isForNested)) {
       return true;
@@ -102,20 +104,20 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
   }
 
   private boolean filterByContentDetail(FieldFilter.PathSegment segment, boolean willNest) {
-    boolean isForAll = FilteringConditions.isDetailForAll(this.contentDetailLevel);
-    boolean isForNested = FilteringConditions.isDetailForNested(this.contentDetailLevel);
+    boolean isForAll = FilteringDtoContextConditions.isDetailForAll(this.contentDetailLevel);
+    boolean isForNested = FilteringDtoContextConditions.isDetailForNested(this.contentDetailLevel);
     if (!(isForAll || isForNested)) {
       return false;
     }
 
-    boolean isPropId = FilteringConditions.isPropertyIdCode(segment);
-    boolean isPropTitle = FilteringConditions.isPropertyTitle(segment);
-    boolean isPropLang = FilteringConditions.isPropertyLang(segment);
-    boolean isSpecialCollection = FilteringConditions.isSpecialCollection(segment, false);
-    boolean isSpecialInstance = FilteringConditions.isSpecialClass(segment, false);
-    boolean isTranslationCollection = FilteringConditions.isSpecialCollection(segment, true);
-    boolean isTranslationInstance = FilteringConditions.isSpecialClass(segment, true);
-    boolean isTranslatableInstance = FilteringConditions.isTranslatableInstance(segment);
+    boolean isPropId = FilteringDtoContextConditions.isPropertyIdCode(segment);
+    boolean isPropTitle = FilteringDtoContextConditions.isPropertyTitle(segment);
+    boolean isPropLang = FilteringDtoContextConditions.isPropertyLang(segment);
+    boolean isSpecialCollection = FilteringDtoContextConditions.isSpecialCollection(segment, false);
+    boolean isSpecialInstance = FilteringDtoContextConditions.isSpecialClass(segment, false);
+    boolean isTranslationCollection = FilteringDtoContextConditions.isSpecialCollection(segment, true);
+    boolean isTranslationInstance = FilteringDtoContextConditions.isSpecialClass(segment, true);
+    boolean isTranslatableInstance = FilteringDtoContextConditions.isTranslatableInstance(segment);
 
     //print this level and decide if progress
     if (isForNested) {
@@ -174,7 +176,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     if (filterByFields(segment)) {
       return false;
     }
-    boolean willNest = FilteringConditions.willPropertyNest(segment);
+    boolean willNest = FilteringDtoContextConditions.willPropertyNest(segment);
     if (filterByLevel(segment, willNest)) {
       return false;
     }
@@ -212,8 +214,8 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
     if (segment == null) {
       return;
     }
-    boolean isForAll = FilteringConditions.isDetailForAll(this.contentDetailLevel);
-    boolean isForNested = FilteringConditions.isDetailForNested(this.contentDetailLevel);
+    boolean isForAll = FilteringDtoContextConditions.isDetailForAll(this.contentDetailLevel);
+    boolean isForNested = FilteringDtoContextConditions.isDetailForNested(this.contentDetailLevel);
     if (!(isForNested || isForAll)) {
       return;
     }
@@ -228,7 +230,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
         ContentDetail.NESTED_OBJS_IDCODE.equals(this.contentDetailLevel);
       boolean isLevelTitle = ContentDetail.ALL_OBJS_IDCODE_TITLE.equals(this.contentDetailLevel) ||
         ContentDetail.NESTED_OBJS_IDCODE_TITLE.equals(this.contentDetailLevel);
-      if ((isLevelIdCode || isLevelTitle) && FilteringConditions.isObjectTranslatable(target)) {
+      if ((isLevelIdCode || isLevelTitle) && FilteringDtoContextConditions.isObjectTranslatable(target)) {
         ((HasTranslation<?>) target).setTranslations(null);
       }
     }

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.service.api.invoke;
 
 import org.junit.jupiter.api.Test;
 

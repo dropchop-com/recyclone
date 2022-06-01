@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.attr.Attribute;
@@ -14,9 +14,9 @@ import java.util.Collection;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 05. 22.
  */
-public interface FilteringConditions {
+public interface FilteringDtoContextConditions {
 
-  Logger log = LoggerFactory.getLogger(FilteringConditions.class);
+  Logger log = LoggerFactory.getLogger(FilteringDtoContextConditions.class);
 
   static boolean willPropertyNest(FieldFilter.PathSegment segment) {
     boolean willNest = false;

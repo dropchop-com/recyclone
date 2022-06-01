@@ -3,6 +3,7 @@ package com.dropchop.recyclone.service.api.mapping;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Context;

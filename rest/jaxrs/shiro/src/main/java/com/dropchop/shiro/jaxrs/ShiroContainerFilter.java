@@ -5,8 +5,7 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.service.api.ExecContextProvider;
+import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import com.dropchop.shiro.filter.AccessControlFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
@@ -20,7 +19,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.ext.ReaderInterceptorContext;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.*;

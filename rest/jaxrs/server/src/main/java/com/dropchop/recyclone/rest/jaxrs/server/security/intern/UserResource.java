@@ -1,21 +1,16 @@
 package com.dropchop.recyclone.rest.jaxrs.server.security.intern;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
-import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.service.api.CommonExecContext;
+import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
 import java.util.List;
 import java.util.UUID;
-
-import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.

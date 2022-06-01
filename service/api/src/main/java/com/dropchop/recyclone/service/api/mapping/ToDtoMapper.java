@@ -6,6 +6,8 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;
+import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
+import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import org.mapstruct.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

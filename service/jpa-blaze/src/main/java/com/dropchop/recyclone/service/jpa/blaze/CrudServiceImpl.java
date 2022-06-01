@@ -13,14 +13,14 @@ import com.dropchop.recyclone.model.dto.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
-import com.dropchop.recyclone.service.api.CommonExecContext;
+import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
 import com.dropchop.recyclone.service.api.EntityByIdService;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegate;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
-import com.dropchop.recyclone.service.api.mapping.FilteringDtoContext;
-import com.dropchop.recyclone.service.api.mapping.MappingContext;
+import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
+import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.subject.Subject;
 

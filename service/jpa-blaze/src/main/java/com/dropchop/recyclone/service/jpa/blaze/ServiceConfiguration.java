@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.*;
-import com.dropchop.recyclone.service.api.CommonExecContext;
+import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.service.api.invoke;
 
 import lombok.NonNull;
 
@@ -8,9 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * FieldFilter is a container object for current graph path.
+ * It contains path in a form of path segments list.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 5. 05. 22.
  */
 class FieldFilter {
+
   public static final String ROOT_OBJECT = ".";
   public static final String PATH_DELIM = ".";
   public static final String SIBLING_DELIM = ";";

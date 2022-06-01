@@ -22,12 +22,6 @@ public class EPerson extends EUuid implements Person {
   @Column(name="last_name")
   private String lastName;
 
-  @Column(name="default_email")
-  private String defaultEmail;
-
-  @Column(name="default_phone")
-  private String defaultPhone;
-
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString());

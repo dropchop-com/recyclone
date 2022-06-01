@@ -9,7 +9,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
-import com.dropchop.recyclone.service.api.mapping.MappingContext;
+import com.dropchop.recyclone.service.api.invoke.MappingContext;
 
 import java.time.ZonedDateTime;
 import java.util.Set;

@@ -39,6 +39,12 @@ public class EUser<O extends EUuid> extends EPerson
   @OrderBy("code ASC")
   SortedSet<ERole> roles;
 
+  @Column(name="default_email")
+  private String defaultEmail;
+
+  @Column(name="default_phone")
+  private String defaultPhone;
+
   @Column(name="created")
   private ZonedDateTime created;
 

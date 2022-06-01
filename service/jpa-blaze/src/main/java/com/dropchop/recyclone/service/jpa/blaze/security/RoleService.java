@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.ERole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
-import com.dropchop.recyclone.service.api.CommonExecContext;
+import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;

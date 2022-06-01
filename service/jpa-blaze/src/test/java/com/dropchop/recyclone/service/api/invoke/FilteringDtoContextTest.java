@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasCode;
