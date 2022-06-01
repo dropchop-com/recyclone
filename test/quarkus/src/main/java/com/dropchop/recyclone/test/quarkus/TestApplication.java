@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.rest.jaxrs.provider.*;
-import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.CountryResource;
-import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.LanguageResource;
-import com.dropchop.recyclone.rest.jaxrs.server.security.intern.*;
+import com.dropchop.recyclone.rest.jaxrs.server.RecycloneApplicationRegistry;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Components;
@@ -18,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -69,23 +67,11 @@ public class TestApplication extends Application {
 
   @Override
   public Set<Class<?>> getClasses() {
-    return Set.of(
-      ServiceErrorExceptionMapper.class
-      , ObjectMapperContextResolver.class
-      , ShiroDynamicFeature.class
-      , DefaultContentTypeFilter.class
-      , CommonDynamicFeatures.class
-      , ExecContextInitInterceptor.class
-      , ExecContextWriteInterceptor.class
-      , ActionResource.class
-      , DomainResource.class
-      , PermissionResource.class
-      , RoleResource.class
-      , UserResource.class
-      , com.dropchop.recyclone.rest.jaxrs.server.localization.LanguageResource.class
-      , LanguageResource.class
-      , com.dropchop.recyclone.rest.jaxrs.server.localization.CountryResource.class
-      , CountryResource.class
-    );
+    Set<Class<?>> classes = new LinkedHashSet<>();
+    classes.add(ShiroDynamicFeature.class);
+    classes.addAll(RecycloneApplicationRegistry.getRestLayerRegistrationClasses());
+    classes.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
+    classes.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
+    return classes;
   }
 }
