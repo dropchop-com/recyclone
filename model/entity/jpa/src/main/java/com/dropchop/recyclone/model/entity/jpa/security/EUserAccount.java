@@ -10,7 +10,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EUserAccount extends EUuid implements UserAccount {
   private String title;
 }

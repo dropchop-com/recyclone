@@ -21,7 +21,6 @@ import java.util.UUID;
 @Table(name = "\"user\"")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EUser<O extends EUuid> extends EPerson
   implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O> {
 
