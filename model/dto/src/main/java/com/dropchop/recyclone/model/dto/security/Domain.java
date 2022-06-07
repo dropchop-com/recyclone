@@ -21,26 +21,21 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@JsonInclude(NON_NULL)
 public class Domain extends DtoCode
   implements com.dropchop.recyclone.model.api.security.Domain<TitleTranslation, Action> {
-  @JsonInclude(NON_NULL)
+
   SortedSet<Action> actions;
 
-  @JsonInclude(NON_NULL)
   private String title;
 
-  @JsonInclude(NON_NULL)
   private String lang;
 
-  @JsonInclude(NON_NULL)
   private Set<TitleTranslation> translations;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime created;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime modified;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime deactivated;
 }

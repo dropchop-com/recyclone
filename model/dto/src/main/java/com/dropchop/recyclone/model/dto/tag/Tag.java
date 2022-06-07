@@ -20,25 +20,20 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@JsonInclude(NON_NULL)
 public abstract class Tag<T extends TitleTranslation>
   extends DtoId implements com.dropchop.recyclone.model.api.tag.Tag<T> {
 
-  @JsonInclude(NON_NULL)
   private String title;
 
-  @JsonInclude(NON_NULL)
   private String lang;
 
-  @JsonInclude(NON_NULL)
   private Set<T> translations;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime created;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime modified;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime deactivated;
 
   private final String type = this.getClass().getSimpleName();

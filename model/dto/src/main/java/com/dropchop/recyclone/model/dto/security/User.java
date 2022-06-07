@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.dto.security;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.common.Person;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.SortedSet;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
  */
@@ -19,6 +22,7 @@ import java.util.SortedSet;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@JsonInclude(NON_NULL)
 public class User<O extends DtoId> extends Person
   implements com.dropchop.recyclone.model.api.security.User<UserAccount, TitleTranslation, Action, Domain, Permission, Role, O> {
 

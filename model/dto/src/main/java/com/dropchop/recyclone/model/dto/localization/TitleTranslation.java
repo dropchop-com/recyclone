@@ -11,6 +11,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@JsonInclude(NON_NULL)
 public class TitleTranslation implements com.dropchop.recyclone.model.api.localization.TitleTranslation {
 
   @NonNull
@@ -20,6 +21,5 @@ public class TitleTranslation implements com.dropchop.recyclone.model.api.locali
   @EqualsAndHashCode.Exclude
   private String title;
 
-  @JsonInclude(NON_NULL)
   private Boolean base;
 }
