@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 06. 22.
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class JoinEntityHelper<E extends Entity, JD extends Dto, JE extends Entity, JID> {
 
   public interface JoinApplier<E extends Entity, JE extends Entity> {
