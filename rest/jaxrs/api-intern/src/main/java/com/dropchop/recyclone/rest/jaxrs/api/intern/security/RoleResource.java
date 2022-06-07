@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.api.rest.Constants.Tags;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @Path(Paths.Security.ROLE)
-@DynamicExecContext(value = CodeParams.class, dataClass = Role.class)
+@DynamicExecContext(value = RoleParams.class, dataClass = Role.class)
 @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.VIEW)
 public interface RoleResource extends ClassicRestResource<Role> {
 
@@ -30,7 +30,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Path("")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Role> get();
 
@@ -39,7 +39,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
   default List<Role> getRest() {
     return unwrap(get());
   }
@@ -48,7 +48,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Path("{code : [a-z_\\-.]{3,255}}")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Role> getByCode(@PathParam("code") String code);
 
@@ -56,25 +56,25 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Path("{code : [a-z_\\-.]{3,255}}")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
   @Produces(MediaType.APPLICATION_JSON)
   default List<Role> getByCodeRest(@PathParam("code") String code) {
     return unwrap(getByCode(code));
   }
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<Role> search(CodeParams params);
+  Result<Role> search(RoleParams params);
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Role> searchRest(CodeParams params) {
+  default List<Role> searchRest(RoleParams params) {
     return unwrap(search(params));
   }
 
@@ -124,5 +124,45 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.DELETE)
   default List<Role> deleteRest(List<Role> roles) {
     return unwrap(delete(roles));
+  }
+
+  @PUT
+  @Path(Paths.Security.PERMISSION_SEGMENT)
+  @Tag(name = Tags.SECURITY)
+  @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
+  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
+  Result<Role> addPermissions(RoleParams params);
+
+  @PUT
+  @Path(Paths.Security.PERMISSION_SEGMENT)
+  @Tag(name = Tags.SECURITY)
+  @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
+  default List<Role> addPermissionsRest(RoleParams params) {
+    return unwrap(addPermissions(params));
+  }
+
+  @DELETE
+  @Path(Paths.Security.PERMISSION_SEGMENT)
+  @Tag(name = Tags.SECURITY)
+  @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
+  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
+  Result<Role> removePermissions(RoleParams params);
+
+  @DELETE
+  @Path(Paths.Security.PERMISSION_SEGMENT)
+  @Tag(name = Tags.SECURITY)
+  @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.RoleParams")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
+  default List<Role> removePermissionsRest(RoleParams params) {
+    return unwrap(removePermissions(params));
   }
 }

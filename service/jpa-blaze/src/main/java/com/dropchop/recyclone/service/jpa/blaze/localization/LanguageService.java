@@ -36,12 +36,11 @@ public class LanguageService extends CrudServiceImpl<Language, CodeParams, ELang
   LanguageToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Language, CodeParams, ELanguage, String> getConfiguration(CommonExecContext<CodeParams, Language> ctx) {
+  public ServiceConfiguration<Language, CodeParams, ELanguage, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
-      toEntityMapper,
-      ctx
+      toEntityMapper
     );
   }
 }

@@ -63,14 +63,14 @@ public interface CountryResource extends ClassicRestResource<Country> {
   }
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.LOCALIZATION)
   @Tag(name = Tags.DynamicContext.PUBLIC)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Country> search(CodeParams parameters);
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.LOCALIZATION)
   @Tag(name = Tags.DynamicContext.PUBLIC)
   @Produces(MediaType.APPLICATION_JSON)

@@ -21,23 +21,31 @@ public interface Constants {
   }
 
   interface Paths {
-    String SEARCH = "/search";
+    String SEARCH_SEGMENT = "/search";
+    String LOCALIZATION_SEGMENT = "/localization";
+    String SECURITY_SEGMENT = "/security";
+    String INTERNAL_SEGMENT = "/internal";
+    String PUBLIC_SEGMENT = "/public";
 
     interface Localization {
-      String LANGUAGE = "/localization/language";
-      String COUNTRY = "/localization/country";
+      String LANGUAGE_SEGMENT = "/language";
+      String LANGUAGE = LOCALIZATION_SEGMENT + LANGUAGE_SEGMENT;
+      String COUNTRY_SEGMENT = "/country";
+      String COUNTRY = LOCALIZATION_SEGMENT + COUNTRY_SEGMENT;
     }
 
     interface Security {
-      String ACTION     = "/security/action";
-      String DOMAIN     = "/security/domain";
-      String ROLE       = "/security/role";
-      String PERMISSION = "/security/permission";
-      String USER       = "/security/user";
+      String ACTION_SEGMENT = "/action";
+      String ACTION = SECURITY_SEGMENT + ACTION_SEGMENT;
+      String DOMAIN_SEGMENT = "/domain";
+      String DOMAIN = SECURITY_SEGMENT + DOMAIN_SEGMENT;
+      String ROLE_SEGMENT = "/role";
+      String ROLE = SECURITY_SEGMENT + ROLE_SEGMENT;
+      String PERMISSION_SEGMENT = "/permission";
+      String PERMISSION = SECURITY_SEGMENT + PERMISSION_SEGMENT;
+      String USER_SEGMENT = "/user";
+      String USER = SECURITY_SEGMENT + USER_SEGMENT;
     }
-
-    String INTERNAL = "/internal";
-    String PUBLIC   = "/public";
   }
 
   interface ContentDetail {

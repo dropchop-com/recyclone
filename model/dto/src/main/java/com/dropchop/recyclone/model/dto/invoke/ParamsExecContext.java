@@ -71,6 +71,9 @@ public class ParamsExecContext<P extends Params, L extends Listener>
   }
 
   public ParamsExecContext<P, L> listener(L listener) {
+    if (listener == null) {
+      return this;
+    }
     this.getListeners().add(listener);
     return this;
   }

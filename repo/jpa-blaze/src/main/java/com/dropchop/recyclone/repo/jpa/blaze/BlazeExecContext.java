@@ -62,6 +62,9 @@ public class BlazeExecContext<E, P extends Params>
 
   @Override
   public BlazeExecContext<E, P> listener(Listener listener) {
+    if (listener == null) {
+      return this;
+    }
     super.listener(listener);
     return this;
   }

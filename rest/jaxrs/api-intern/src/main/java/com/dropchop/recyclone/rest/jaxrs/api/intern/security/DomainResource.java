@@ -63,14 +63,14 @@ public interface DomainResource extends ClassicRestResource<Domain> {
   }
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Domain> search(CodeParams params);
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)

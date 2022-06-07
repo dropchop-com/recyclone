@@ -36,12 +36,11 @@ public class DomainService extends CrudServiceImpl<Domain, CodeParams, EDomain, 
   DomainToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Domain, CodeParams, EDomain, String> getConfiguration(CommonExecContext<CodeParams, Domain> execContext) {
+  public ServiceConfiguration<Domain, CodeParams, EDomain, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
-      toEntityMapper,
-      execContext
+      toEntityMapper
     );
   }
 }

@@ -85,6 +85,9 @@ public class MappingContext<P extends Params>
 
   @Override
   public MappingContext<P> listener(MappingListener<P> listener) {
+    if (listener == null) {
+      return this;
+    }
     super.listener(listener);
     return this;
   }

@@ -37,12 +37,11 @@ public class CountryService extends CrudServiceImpl<Country, CodeParams, ECountr
 
 
   @Override
-  public ServiceConfiguration<Country, CodeParams, ECountry, String> getConfiguration(CommonExecContext<CodeParams, Country> ctx) {
+  public ServiceConfiguration<Country, CodeParams, ECountry, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
-      toEntityMapper,
-      ctx
+      toEntityMapper
     );
   }
 }

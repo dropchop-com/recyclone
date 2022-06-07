@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.rest.jaxrs.server.security.intern;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.ServiceSelector;
+import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.security.RoleService;
 
 import javax.enterprise.context.RequestScoped;
@@ -17,7 +17,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-@Path(Paths.INTERNAL + Paths.Security.ROLE)
+@Path(Paths.INTERNAL_SEGMENT + Paths.Security.ROLE)
 public class RoleResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.RoleResource {
 
@@ -26,7 +26,7 @@ public class RoleResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<CodeParams, Role> ctx;
+  CommonExecContext<RoleParams, Role> ctx;
 
   @Override
   public Result<Role> get() {
@@ -35,13 +35,13 @@ public class RoleResource implements
 
   @Override
   public Result<Role> getByCode(String code) {
-    CodeParams params = ctx.getParams();
+    RoleParams params = ctx.getParams();
     params.setCodes(List.of(code));
     return selector.select(RoleService.class).search();
   }
 
   @Override
-  public Result<Role> search(CodeParams params) {
+  public Result<Role> search(RoleParams params) {
     return selector.select(RoleService.class).search();
   }
 
@@ -58,5 +58,15 @@ public class RoleResource implements
   @Override
   public Result<Role> update(List<Role> roles) {
     return selector.select(RoleService.class).update(roles);
+  }
+
+  @Override
+  public Result<Role> addPermissions(RoleParams params) {
+    return selector.select(RoleService.class).addPermissions(params);
+  }
+
+  @Override
+  public Result<Role> removePermissions(RoleParams params) {
+    return selector.select(RoleService.class).removePermissions(params);
   }
 }

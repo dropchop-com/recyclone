@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.ERole;
-import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegator;
+import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -18,5 +18,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   uses = EntityCreationDelegator.class,
   injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-public interface RoleToEntityMapper extends ToEntityMapper<Role, CodeParams, ERole> {
+public interface RoleToEntityMapper extends ToEntityMapper<Role, RoleParams, ERole> {
 }

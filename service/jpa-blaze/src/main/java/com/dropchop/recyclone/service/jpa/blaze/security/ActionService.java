@@ -37,12 +37,11 @@ public class ActionService extends CrudServiceImpl<Action, CodeParams, EAction, 
   ActionToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Action, CodeParams, EAction, String> getConfiguration(CommonExecContext<CodeParams, Action> execContext) {
+  public ServiceConfiguration<Action, CodeParams, EAction, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
-      toEntityMapper,
-      execContext
+      toEntityMapper
     );
   }
 }

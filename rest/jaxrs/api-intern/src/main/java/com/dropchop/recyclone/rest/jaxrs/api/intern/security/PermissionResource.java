@@ -64,14 +64,14 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   }
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Permission> search(IdentifierParams params);
 
   @POST
-  @Path(Paths.SEARCH)
+  @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
