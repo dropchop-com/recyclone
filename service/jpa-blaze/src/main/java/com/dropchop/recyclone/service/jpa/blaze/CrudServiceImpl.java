@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
@@ -17,7 +16,7 @@ import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
 import com.dropchop.recyclone.service.api.EntityByIdService;
-import com.dropchop.recyclone.service.api.ServiceJoinEntityHelper;
+import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
@@ -114,13 +113,11 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     return findAndFilter(null, repositoryExecContext);
   }
 
-  protected <CD extends Dto, CE extends Entity, CID> ServiceJoinEntityHelper<E, CD, CE, CID> getJoinHelper(EntityByIdService<CD, CE, CID> service,
-                                                                                                           ExecContext.Listener listener) {
+  protected <JD extends Dto, JE extends Entity, JID> JoinEntityHelper<E, JD, JE, JID> getJoinHelper(EntityByIdService<JD, JE, JID> service) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    return new ServiceJoinEntityHelper<>(service,
+    return new JoinEntityHelper<>(service,
       find(new BlazeExecContext<E, P>()
         .of(ctx)
-        .listener(listener)
         .criteriaDecorators(conf.getCriteriaDecorators())
       )
     );
@@ -128,13 +125,12 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
 
   @Override
   public Result<D> search() {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-
     Subject subject = ctx.getSubject();
     if (subject.isPermitted(ctx.getSecurityDomainAction())) {
       log.trace("search [{}] is permitted to view [{}]!", subject.getPrincipal(), ctx.getParams());
     }
     MappingContext<P> mapContext = new FilteringDtoContext<P>().of(ctx);
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     List<E> entities = findAndFilter(
       e -> !subject.isPermitted(ctx.getSecurityDomainAction(e.identifier())) ? null : e, new BlazeExecContext<E, P>()
       .of(ctx)

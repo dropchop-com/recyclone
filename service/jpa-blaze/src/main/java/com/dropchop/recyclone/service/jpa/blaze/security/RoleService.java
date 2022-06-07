@@ -12,7 +12,7 @@ import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.ServiceJoinEntityHelper;
+import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +50,7 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
   CommonExecContext<RoleParams, Role> ctx;
 
   @Inject
+  @ServiceType(RCYN_DEFAULT)
   PermissionService permissionService;
 
   @Override
@@ -62,28 +63,27 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
   }
 
   public Result<Role> addPermissions(RoleParams params) {
-    ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
-    ServiceJoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService, mapContext);
+    JoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService);
     List<ERole> roles = helper.apply(params::getPermissionUuids, ctx, (entity, bound) -> {
       entity.getPermissions().addAll(bound);
       repository.save(entity);
     });
+    ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
     return conf.getToDtoMapper().toDtosResult(roles, mapContext);
   }
 
-
-
   public Result<Role> removePermissions(RoleParams params) {
-    ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
+
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
-    ServiceJoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService, mapContext);
+    JoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService);
     List<ERole> roles = helper.apply(params::getPermissionUuids, ctx, (entity, bound) -> {
       for (EPermission permission : bound) {
         entity.getPermissions().remove(permission);
       }
       repository.save(entity);
     });
+    ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
     return conf.getToDtoMapper().toDtosResult(roles, mapContext);
   }
 }
