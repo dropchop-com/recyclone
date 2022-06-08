@@ -1,8 +1,12 @@
 package com.dropchop.recyclone.model.api.invoke;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.api.attr.AttributeString;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,9 +16,22 @@ import java.util.Set;
 public class ServiceException extends RuntimeException {
 
   private List<StatusMessage> statusMessages = new ArrayList<>();
-  private boolean fromWrappedCall = false;
 
   public ServiceException(StatusMessage statusMessage) {
+    this.statusMessages.add(statusMessage);
+  }
+
+  public ServiceException(StatusMessage statusMessage, Throwable cause) {
+    super(cause);
+    Set<Attribute<?>> details = statusMessage.getDetails();
+    if (details == null) {
+      details = new LinkedHashSet<>();
+      statusMessage.setDetails(details);
+    }
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    cause.printStackTrace(pw);
+    details.add(new AttributeString("trace", sw.toString()));
     this.statusMessages.add(statusMessage);
   }
 
@@ -22,8 +39,16 @@ public class ServiceException extends RuntimeException {
     this(new StatusMessage(code, message, details));
   }
 
+  public ServiceException(ErrorCode code, String message, Set<Attribute<?>> details, Throwable cause) {
+    this(new StatusMessage(code, message, details), cause);
+  }
+
   public ServiceException(ErrorCode code, String message) {
     this(new StatusMessage(code, message, null));
+  }
+
+  public ServiceException(ErrorCode code, String message, Throwable cause) {
+    this(new StatusMessage(code, message, null), cause);
   }
 
   public ServiceException(List<StatusMessage> statusMessages) {
@@ -31,14 +56,6 @@ public class ServiceException extends RuntimeException {
       throw new NullPointerException("Missing messages argument");
     }
     this.statusMessages = statusMessages;
-  }
-
-  public boolean isFromWrappedCall() {
-    return fromWrappedCall;
-  }
-
-  public void setFromWrappedCall(boolean fromWrappedCall) {
-    this.fromWrappedCall = fromWrappedCall;
   }
 
   public List<StatusMessage> getStatusMessages() {

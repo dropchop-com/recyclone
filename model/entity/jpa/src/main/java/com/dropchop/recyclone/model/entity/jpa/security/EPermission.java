@@ -31,7 +31,7 @@ public class EPermission extends EUuid implements HasELanguage, Permission<ETitl
     foreignKey = @ForeignKey(name = "security_permission_fk_security_domain_code"))
   private EDomain domain;
 
-  @ManyToOne(targetEntity = EDomain.class)
+  @ManyToOne(targetEntity = EAction.class)
   @JoinColumn(name = "fk_security_action_code",
     foreignKey = @ForeignKey(name = "security_permission_fk_security_action_code"))
   private EAction action;
@@ -55,7 +55,7 @@ public class EPermission extends EUuid implements HasELanguage, Permission<ETitl
   @Column(name = "lang", insertable = false, updatable = false)
   private String lang;
 
-  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, targetEntity = ELanguage.class)
+  @OneToOne(targetEntity = ELanguage.class)
   @JoinColumn(name = "lang", referencedColumnName = "code",
     foreignKey = @ForeignKey(name = "security_permission_fk_language_code"))
   private ELanguage language;
@@ -68,7 +68,7 @@ public class EPermission extends EUuid implements HasELanguage, Permission<ETitl
       columnNames = {"fk_security_permission_uuid", "lang"}
     ),
     foreignKey = @ForeignKey(name = "ssecurity_permission_l_fk_security_permission_uuid"),
-    joinColumns=@JoinColumn(name="fk_security_permission_uuid")
+    joinColumns = @JoinColumn(name="fk_security_permission_uuid")
   )
   private Set<ETitleTranslation> translations = new HashSet<>();
 

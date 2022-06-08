@@ -36,7 +36,7 @@ public class JoinEntityHelper<E extends Entity, JD extends Dto, JE extends Entit
       throw new ServiceException(ErrorCode.parameter_validation_error, "Missing parameter ids for bound model!");
     }
     List<JE> entities = service.findById(ids);
-    if (entities.size() != entities.size()) {
+    if (entities.size() != ids.size()) {
       throw new ServiceException(ErrorCode.data_validation_error, "Loaded entities size does not match parameters size!");
     }
     return entities;

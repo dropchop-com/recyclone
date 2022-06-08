@@ -40,8 +40,9 @@ public class EntityCreationDelegator {
       }
       return type.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
-      throw new ServiceException(ErrorCode.internal_error, "Unable to instantiate!",
-        Set.of(new AttributeString("class", type.getName())));
+      throw new ServiceException(ErrorCode.internal_error,
+        String.format("Unable to instantiate [%s]!", type),
+        Set.of(new AttributeString("class", type.getName())), e);
     }
   }
 }

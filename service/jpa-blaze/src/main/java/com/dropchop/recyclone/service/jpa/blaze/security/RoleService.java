@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
+import com.dropchop.recyclone.model.api.attr.AttributeString;
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Permission;
@@ -19,8 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
@@ -62,6 +68,7 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
     );
   }
 
+  @Transactional
   public Result<Role> addPermissions(RoleParams params) {
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
     JoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService);
@@ -73,13 +80,22 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
     return conf.getToDtoMapper().toDtosResult(roles, mapContext);
   }
 
+  @Transactional
   public Result<Role> removePermissions(RoleParams params) {
 
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
     JoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService);
     List<ERole> roles = helper.apply(params::getPermissionUuids, ctx, (entity, bound) -> {
+      SortedSet<EPermission> permissions = entity.getPermissions();
       for (EPermission permission : bound) {
-        entity.getPermissions().remove(permission);
+        if (!permissions.remove(permission)) {
+          throw new ServiceException(ErrorCode.authorization_error, "Missing permission for role!",
+            Set.of(
+              new AttributeString(entity.identifierField(), entity.identifier()),
+              new AttributeString(permission.identifierField(), permission.identifier())
+            )
+          );
+        }
       }
       repository.save(entity);
     });

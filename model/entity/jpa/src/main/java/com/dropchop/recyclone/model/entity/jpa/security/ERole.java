@@ -46,7 +46,7 @@ public class ERole extends ECode implements HasELanguage, Role<ETitleTranslation
   @Column(name = "lang", insertable = false, updatable = false)
   private String lang;
 
-  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, targetEntity = ELanguage.class)
+  @OneToOne(targetEntity = ELanguage.class)
   @JoinColumn(name = "lang", referencedColumnName = "code", foreignKey = @ForeignKey(name = "security_role_fk_language_code"))
   private ELanguage language;
 

@@ -7,6 +7,7 @@ import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegator;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 /**
@@ -15,6 +16,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(
   componentModel = "cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+  nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
   uses = EntityCreationDelegator.class,
   injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )

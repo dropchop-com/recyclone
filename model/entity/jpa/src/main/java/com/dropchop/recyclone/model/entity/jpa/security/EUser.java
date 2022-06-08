@@ -30,7 +30,7 @@ public class EUser<O extends EUuid> extends EPerson
   @Transient
   SortedSet<EPermission> permissions;
 
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = ERole.class)
+  @ManyToMany(targetEntity = ERole.class)
   @JoinTable(name = "security_user_role",
     joinColumns = {@JoinColumn(name = "fk_user_uuid", foreignKey = @ForeignKey(name = "security_user_role_fk_user_uuid"))},
     inverseJoinColumns = {@JoinColumn(name = "fk_role_code", foreignKey = @ForeignKey(name = "security_user_role_fk_role_code"))}

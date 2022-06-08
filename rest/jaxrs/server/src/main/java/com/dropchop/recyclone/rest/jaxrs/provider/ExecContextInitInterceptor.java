@@ -43,49 +43,6 @@ public class ExecContextInitInterceptor implements ContainerRequestFilter {
     execContextProvider.create();
     requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContextProvider);
   }
-
-
-  /*
-  @Override
-  public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
-
-    Params params = (Params) context.getProperty(InternalContextVariables.RECYCLONE_PARAMS);
-    if (params != null) {
-      execContextProvider.setParams(params);
-    }
-    @SuppressWarnings("unchecked")
-    List<Dto> dtos = (List<Dto>) context.getProperty(InternalContextVariables.RECYCLONE_DATA);
-    if (dtos != null) {
-      execContextProvider.get().setData(dtos);
-    }
-    Subject subject = (Subject) context.getProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT);
-    if (subject != null) {
-      execContextProvider.get().setSubject(subject);
-    }
-    String securityDomain = (String) context.getProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN);
-    if (securityDomain != null) {
-      execContextProvider.get().setSecurityDomain(securityDomain);
-    }
-    String securityAction = (String) context.getProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION);
-    if (securityAction != null) {
-      execContextProvider.get().setSecurityAction(securityAction);
-    }
-
-    @SuppressWarnings("unchecked")
-    List<String> requiredPermissions = (List<String>) context
-      .getProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM);
-    if (requiredPermissions != null) {
-      execContextProvider.get().setRequiredPermissions(requiredPermissions);
-    }
-
-    Logical requiredPermissionsOp = (Logical) context
-      .getProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP);
-    if (requiredPermissionsOp != null) {
-      execContextProvider.get().setRequiredPermissionsOp(requiredPermissionsOp);
-    }
-
-    return context.proceed();
-  }*/
 }
 
 
