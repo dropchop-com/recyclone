@@ -117,10 +117,10 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
     String alias = getRootAlias();
     Class<E> tClass = getRootClass();
     DeleteCriteriaBuilder<E> cb = cbf.delete(em, getRootClass(), alias);
-    if (HasUuid.class.isAssignableFrom(tClass)) {
-      cb.where(alias + ".uuid").in(ids);
-    } else if (HasCode.class.isAssignableFrom(tClass)) {
+    if (HasCode.class.isAssignableFrom(tClass)) {
       cb.where(alias + ".code").in(ids);
+    } else if (HasUuid.class.isAssignableFrom(tClass)) {
+      cb.where(alias + ".uuid").in(ids);
     }
     return cb.executeUpdate();
   }
