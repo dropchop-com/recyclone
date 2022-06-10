@@ -23,7 +23,7 @@ import java.util.List;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class MappingContext<P extends Params>
   extends ParamsExecContext<P, MappingListener<P>>
-  implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener<P>> {
+  implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener<P>>, SecurityExecContext {
 
   private long totalCount;
   private String securityAction;

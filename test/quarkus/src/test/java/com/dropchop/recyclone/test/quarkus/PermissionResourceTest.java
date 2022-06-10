@@ -51,13 +51,23 @@ public class PermissionResourceTest {
       .and()
       .body(List.of(permission))
       .when()
-      .post("/api/internal/security/permission")
+      .post("/api/internal/security/permission?c_level=2")
       .then()
       .statusCode(200)
       .extract()
       .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
-    assertEquals(permission, permissions.get(0));
+    Permission retPermission = permissions.get(0);
+    assertEquals(permission, retPermission);
+    assertEquals(permission.getDomain(), retPermission.getDomain());
+    assertEquals("Localization/Languages", retPermission.getDomain().getTitle());
+    assertEquals("en", retPermission.getDomain().getLang());
+    assertEquals(permission.getAction(), retPermission.getAction());
+    assertEquals("All", retPermission.getAction().getTitle());
+    assertEquals("en", retPermission.getAction().getLang());
+    assertEquals("Permit all actions on Language", retPermission.getTitle());
+    assertEquals("en", retPermission.getLang());
+    assertEquals(Set.of(new TitleTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
   }
 
   @Test

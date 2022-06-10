@@ -7,11 +7,14 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
+import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
+import com.dropchop.recyclone.repo.api.CrudRepository;
+import com.dropchop.recyclone.repo.api.Repository;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
@@ -21,8 +24,11 @@ import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegate;
+import com.dropchop.recyclone.service.api.mapping.AfterSetDeactivatedListener;
+import com.dropchop.recyclone.service.api.mapping.AfterSetModificationListener;
+import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
+import com.dropchop.recyclone.service.jpa.blaze.mapping.AfterSetLanguageListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.subject.Subject;
 
@@ -67,7 +73,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   }
 
   @Override
-  public List<E> findById(List<ID> ids) {
+  public List<E> findById(Collection<ID> ids) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     return conf.getRepository().findById(ids);
   }
@@ -113,7 +119,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     return findAndFilter(null, repositoryExecContext);
   }
 
-  protected <JD extends Dto, JE extends Entity, JID> JoinEntityHelper<E, JD, JE, JID> getJoinHelper(EntityByIdService<JD, JE, JID> service) {
+  protected <JD extends Dto, JE extends Entity, JID> JoinEntityHelper<E, JE, JID> getJoinHelper(EntityByIdService<?, JE, JID> service) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     return new JoinEntityHelper<>(service,
       find(new BlazeExecContext<E, P>()
@@ -140,28 +146,23 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   }
 
   protected MappingContext<P> constructToEntityMappingContext(ServiceConfiguration<D, P, E, ID> conf) {
-    MappingContext<P> context = new FilteringDtoContext<P>()
+    Class<?> rootClass = conf.getRepository().getRootClass();
+    return new FilteringDtoContext<P>()
       .of(ctx)
       .listener(
-        new AfterSetModificationListener<>()
+        new AfterSetModificationListener<>(rootClass)
       )
       .listener(
-        new EntityCreationDelegate<D, E, ID, P>(this)
+        new EntityDelegateFactory<D, E, ID, P>(this)
           .forActionOnly(Constants.Actions.UPDATE)
           .forActionOnly(Constants.Actions.DELETE)
+      )
+      .listener(
+        new AfterSetLanguageListener<>(serviceSelector.select(LanguageService.class), rootClass)
+      )
+      .listener(
+        new AfterSetDeactivatedListener<>(rootClass)
       );
-
-    Class<?> rootClass = conf.getRepository().getRootClass();
-    if (
-      HasELanguage.class.isAssignableFrom(rootClass) &&
-      HasLanguageCode.class.isAssignableFrom(rootClass)
-    ) {
-      context.listener(
-        new AfterSetLanguageListener<>(serviceSelector.select(LanguageService.class))
-      );
-    }
-
-    return context;
   }
 
   protected Result<D> save(List<D> dtos) {
@@ -169,7 +170,11 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     MappingContext<P> mapContext = constructToEntityMappingContext(conf);
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
-    conf.getRepository().save(entities);
+    CrudRepository<E, ID> repository = conf.getRepository();
+    repository.save(entities);
+    if (ctx.getParams().getContentTreeLevel() >= 2) {
+      repository.refresh(entities);
+    }
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 

@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
-import com.dropchop.recyclone.service.api.mapping.EntityCreationDelegator;
+import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
@@ -17,7 +17,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   componentModel = "cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  uses = EntityCreationDelegator.class,
+  uses = EntityFactoryInvoker.class,
   injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface DomainToEntityMapper extends ToEntityMapper<Domain, CodeParams, EDomain> {

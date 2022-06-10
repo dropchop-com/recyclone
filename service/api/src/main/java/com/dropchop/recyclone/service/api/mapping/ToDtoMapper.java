@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -25,7 +26,7 @@ public interface ToDtoMapper<D extends Dto, P extends Params, E extends Entity> 
 
   D toDto(E entity, @Context MappingContext<P> context);
 
-  default List<D> toDtos(List<E> entities, MappingContext<P> context) {
+  default List<D> toDtos(Collection<E> entities, MappingContext<P> context) {
     List<D> dtos = new ArrayList<>(entities.size());
     for (E entity : entities) {
       dtos.add(toDto(entity, context));
@@ -33,7 +34,7 @@ public interface ToDtoMapper<D extends Dto, P extends Params, E extends Entity> 
     return dtos;
   }
 
-  default Result<D> toDtosResult(List<E> entities, MappingContext<P> context, Supplier<ResultStatus> statusSupplier) {
+  default Result<D> toDtosResult(Collection<E> entities, MappingContext<P> context, Supplier<ResultStatus> statusSupplier) {
     List<D> dtos = toDtos(entities, context);
     Result<D> objResult = new Result<>();
     if (dtos != null) {
@@ -56,7 +57,7 @@ public interface ToDtoMapper<D extends Dto, P extends Params, E extends Entity> 
     return objResult;
   }
 
-  default Result<D> toDtosResult(List<E> entities, MappingContext<P> context) {
+  default Result<D> toDtosResult(Collection<E> entities, MappingContext<P> context) {
     return toDtosResult(entities, context, null);
   }
 

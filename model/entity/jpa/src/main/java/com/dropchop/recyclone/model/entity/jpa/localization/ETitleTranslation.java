@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.model.entity.jpa.localization;
 
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 
@@ -16,7 +18,8 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 @Embeddable
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ETitleTranslation implements HasELanguage, TitleTranslation {
+public class ETitleTranslation
+  implements HasELanguage, TitleTranslation, HasCreated, HasModified {
 
   @NonNull
   @Column(name = "lang")

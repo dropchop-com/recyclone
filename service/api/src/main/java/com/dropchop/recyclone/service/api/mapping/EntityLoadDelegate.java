@@ -31,6 +31,10 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends P
     return service.getRootClass();
   }
 
+  public EntityByIdService<D, E, ID> getService() {
+    return service;
+  }
+
   public EntityLoadDelegate<D, E, ID, P> forActionOnly(String action) {
     onlyForRegisteredActions.add(action);
     return this;

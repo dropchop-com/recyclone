@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
@@ -24,7 +27,8 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class EPermission extends EUuid implements HasELanguage, Permission<ETitleTranslation, EAction, EDomain> {
+public class EPermission extends EUuid
+  implements HasELanguage, Permission<ETitleTranslation, EAction, EDomain>, HasCreated, HasModified, HasDeactivated {
 
   @ManyToOne(targetEntity = EDomain.class)
   @JoinColumn(name = "fk_security_domain_code",

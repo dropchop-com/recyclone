@@ -49,7 +49,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   }
 
   @Override
-  public List<E> findById(List<ID> ids) {
+  public List<E> findById(Collection<ID> ids) {
     String alias = getRootAlias();
     Class<E> tClass = getRootClass();
     CriteriaBuilder<E> cb = getBuilder().from(getRootClass(), alias);
@@ -94,11 +94,14 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
     return cb.getResultList();
   }
 
-  public <S extends E> List<S> detach(List<S> entities) {
-    for (E entity : entities) {
-      em.detach(entity);
+  public <S extends E> List<S> refresh(List<S> entities) {
+    List<S> refreshed = new ArrayList<>();
+    for (S entity : entities) {
+      em.flush();
+      em.refresh(entity);
+      refreshed.add(entity);
     }
-    return entities;
+    return refreshed;
   }
 
   @Override

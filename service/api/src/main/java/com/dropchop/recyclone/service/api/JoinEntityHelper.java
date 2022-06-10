@@ -1,58 +1,109 @@
 package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.service.api.invoke.SecurityExecContext;
+import org.apache.shiro.subject.Subject;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 06. 22.
  */
-@SuppressWarnings("ClassCanBeRecord")
-public class JoinEntityHelper<E extends Entity, JD extends Dto, JE extends Entity, JID> {
+public class JoinEntityHelper<E extends Entity, JE extends Entity, JID> {
 
-  public interface JoinApplier<E extends Entity, JE extends Entity> {
-    void apply(E entity, List<JE> joined);
+  public interface Joiner<E extends Entity, JE extends Entity> {
+    void join(E entity, Collection<JE> joined);
   }
 
-  private final EntityByIdService<JD, JE, JID> service;
-  private final List<E> parentEntities;
+  public interface Permitter<JID> {
+    boolean permit(JID joinedId);
+  }
 
-  public JoinEntityHelper(EntityByIdService<JD, JE, JID> service, List<E> parentEntities) {
+  public interface JoinedIdSupplier<JID, E extends Entity> {
+    List<JID> get(E toJoin);
+  }
+
+  public class ViewPermitter<ID> implements Permitter<ID> {
+    private final SecurityExecContext ctx;
+
+    public ViewPermitter(SecurityExecContext ctx) {
+      this.ctx = ctx;
+    }
+
+    @Override
+    public boolean permit(ID joined) {
+      String securityDomain = JoinEntityHelper.this.service.getSecurityDomain();
+      Subject subject = ctx.getSubject();
+      return subject.isPermitted(
+        Constants.Permission.compose(securityDomain, Constants.Actions.VIEW, joined.toString())
+      );
+    }
+  }
+
+  private final EntityByIdService<?, JE, JID> service;
+  private final Collection<E> parentEntities;
+
+  public JoinEntityHelper(EntityByIdService<?, JE, JID> service) {
+    this.service = service;
+    this.parentEntities = null;
+  }
+
+  public JoinEntityHelper(EntityByIdService<?, JE, JID> service, Collection<E> parentEntities) {
     this.service = service;
     this.parentEntities = parentEntities;
   }
 
-  public List<JE> load(Supplier<List<JID>> idSupplier) {
-    List<JID> ids = idSupplier.get();
-    if (!ids.iterator().hasNext()) {
-      throw new ServiceException(ErrorCode.parameter_validation_error, "Missing parameter ids for bound model!");
+  public Collection<E> join(Collection<E> parentEntities, JoinedIdSupplier<JID, E> joinedIdSupplier,
+                            Permitter<JID> joinPermitter, Joiner<E, JE> joinApplier) {
+    if (parentEntities == null) {
+      return null;
     }
-    List<JE> entities = service.findById(ids);
-    if (entities.size() != ids.size()) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Loaded entities size does not match parameters size!");
-    }
-    return entities;
-  }
-
-  public <D extends Dto, P extends Params> List<E> apply(Supplier<List<JID>> joinedIdSupplier,
-                                                         CommonExecContext<P, D> ctx,
-                                                         JoinApplier<E, JE> joinApplier) {
-    List<JE> joined = load(joinedIdSupplier);
     for (E entity : parentEntities) {
-      if (!ctx.getSubject().isPermitted(ctx.getSecurityDomainAction(entity.identifier()))) {
-        throw new ServiceException(ErrorCode.authorization_error, "Update for entity not permitted!",
-          Set.of(new AttributeString(entity.identifierField(), entity.identifier())));
+
+      Collection<JID> ids = joinedIdSupplier.get(entity);
+      if (!ids.iterator().hasNext()) {
+        throw new ServiceException(ErrorCode.parameter_validation_error, "Missing ids for joined model!");
       }
-      joinApplier.apply(entity, joined);
+
+      Collection<JID> permitted = joinPermitter != null ? new ArrayList<>() : ids;
+      if (joinPermitter != null) {
+        for (JID joinId : ids) {
+          if (joinPermitter.permit(joinId)) {
+            permitted.add(joinId);
+          }
+        }
+      }
+      Collection<JE> joined = service.findById(permitted);
+      if (joined.size() != permitted.size()) {
+        throw new ServiceException(ErrorCode.data_validation_error,
+          "Loaded joined entities size does not match join model permitted ids size!");
+      }
+
+      joinApplier.join(entity, joined);
     }
     return parentEntities;
+  }
+
+  public Collection<E> join(Collection<E> parentEntities,
+                            JoinedIdSupplier<JID, E> joinedIdSupplier,
+                            Joiner<E, JE> joinApplier) {
+    return this.join(parentEntities, joinedIdSupplier, null, joinApplier);
+  }
+
+  public Collection<E> join(JoinedIdSupplier<JID, E> joinedIdSupplier,
+                            Permitter<JID> joinPermitter,
+                            Joiner<E, JE> joinApplier) {
+    return join(this.parentEntities, joinedIdSupplier, joinPermitter, joinApplier);
+  }
+
+  public Collection<E> join(JoinedIdSupplier<JID, E> joinedIdSupplier,
+                            Joiner<E, JE> joinApplier) {
+    return join(this.parentEntities, joinedIdSupplier, null, joinApplier);
   }
 }

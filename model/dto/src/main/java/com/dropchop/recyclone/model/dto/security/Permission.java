@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.model.dto.security;
 
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +28,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class Permission extends DtoId
   implements com.dropchop.recyclone.model.api.security.Permission<TitleTranslation, Action, Domain>,
-  Comparable<Permission> {
+  Comparable<Permission>, HasCreated, HasModified, HasDeactivated {
 
   private Domain domain;
 
@@ -37,6 +41,12 @@ public class Permission extends DtoId
   private String lang;
 
   private Set<TitleTranslation> translations;
+
+  private ZonedDateTime created;
+
+  private ZonedDateTime modified;
+
+  private ZonedDateTime deactivated;
 
   @JsonIgnore
   private String getDescriptor() {

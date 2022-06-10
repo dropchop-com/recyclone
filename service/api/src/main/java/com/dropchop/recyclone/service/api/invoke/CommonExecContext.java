@@ -23,7 +23,8 @@ import static com.dropchop.recyclone.model.api.security.Constants.Permission.com
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class CommonExecContext<P extends Params, D extends Dto>
-  extends ParamsExecContext<P, Listener> implements DataExecContext<D, Listener> {
+  extends ParamsExecContext<P, Listener>
+  implements DataExecContext<D, Listener>, SecurityExecContext {
 
   @NonNull
   Subject subject;
@@ -46,13 +47,4 @@ public class CommonExecContext<P extends Params, D extends Dto>
 
   List<String> requiredPermissions;
   Logical requiredPermissionsOp;
-
-
-  public String getSecurityDomainAction() {
-    return compose(getSecurityDomain(), getSecurityAction());
-  }
-
-  public String getSecurityDomainAction(String identifiers) {
-    return compose(getSecurityDomain(), getSecurityAction(), identifiers);
-  }
 }

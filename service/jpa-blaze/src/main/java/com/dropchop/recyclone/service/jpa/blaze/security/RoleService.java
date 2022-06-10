@@ -11,11 +11,11 @@ import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.ERole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.ServiceType;
+import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
@@ -71,34 +70,41 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
-    JoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService);
-    List<ERole> roles = helper.apply(params::getPermissionUuids, ctx, (entity, bound) -> {
-      entity.getPermissions().addAll(bound);
-      repository.save(entity);
-    });
+    JoinEntityHelper<ERole, EPermission, UUID> helper = getJoinHelper(permissionService);
+    Collection<ERole> roles = helper.join(
+      toJoin -> params.getPermissionUuids(),
+      helper.new ViewPermitter<>(ctx),
+      (entity, join) -> {
+        entity.getPermissions().addAll(join);
+        repository.save(entity);
+      }
+    );
     ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
     return conf.getToDtoMapper().toDtosResult(roles, mapContext);
   }
 
   @Transactional
   public Result<Role> removePermissions(RoleParams params) {
-
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
-    JoinEntityHelper<ERole, Permission, EPermission, UUID> helper = getJoinHelper(permissionService);
-    List<ERole> roles = helper.apply(params::getPermissionUuids, ctx, (entity, bound) -> {
-      SortedSet<EPermission> permissions = entity.getPermissions();
-      for (EPermission permission : bound) {
-        if (!permissions.remove(permission)) {
-          throw new ServiceException(ErrorCode.authorization_error, "Missing permission for role!",
-            Set.of(
-              new AttributeString(entity.identifierField(), entity.identifier()),
-              new AttributeString(permission.identifierField(), permission.identifier())
-            )
-          );
+    JoinEntityHelper<ERole, EPermission, UUID> helper = getJoinHelper(permissionService);
+    Collection<ERole> roles = helper.join(
+      toJoin -> params.getPermissionUuids(),
+      helper.new ViewPermitter<>(ctx),
+      (entity, join) -> {
+        SortedSet<EPermission> permissions = entity.getPermissions();
+        for (EPermission permission : join) {
+          if (!permissions.remove(permission)) {
+            throw new ServiceException(ErrorCode.data_validation_error, "Missing permission for role!",
+              Set.of(
+                new AttributeString(entity.identifierField(), entity.identifier()),
+                new AttributeString(permission.identifierField(), permission.identifier())
+              )
+            );
+          }
         }
+        repository.save(entity);
       }
-      repository.save(entity);
-    });
+    );
     ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
     return conf.getToDtoMapper().toDtosResult(roles, mapContext);
   }

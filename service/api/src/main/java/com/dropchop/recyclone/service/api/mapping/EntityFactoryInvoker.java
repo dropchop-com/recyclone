@@ -20,7 +20,7 @@ import java.util.Set;
  */
 @Slf4j
 @ApplicationScoped
-public class EntityCreationDelegator {
+public class EntityFactoryInvoker {
 
   @ObjectFactory
   public <E extends Entity, D extends Dto, P extends Params> E create(D dto,
@@ -28,10 +28,10 @@ public class EntityCreationDelegator {
                                                                       @TargetType Class<E> type) {
     try {
       for (MappingListener<P> listener : context.listeners()) {
-        if (listener instanceof CreateEntityListener<?, ?, ?>) {
-          Class<E> entityType = ((CreateEntityListener<D, E, P>) listener).getEntityType();
+        if (listener instanceof EntityFactoryListener<?, ?, ?>) {
+          Class<E> entityType = ((EntityFactoryListener<D, E, P>) listener).getEntityType();
           if (entityType.equals(type)) {
-            E entity = ((CreateEntityListener<D, E, P>) listener).create(dto, context);
+            E entity = ((EntityFactoryListener<D, E, P>) listener).create(dto, context);
             if (entity != null) {
               return entity;
             }

@@ -3,6 +3,7 @@ package com.dropchop.recyclone.service.api;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface EntityByIdService<D extends Dto, E extends Entity, ID> extends 
 
   Optional<E> findById(ID id);
 
-  List<E> findById(List<ID> ids);
+  List<E> findById(Collection<ID> ids);
 
   List<E> findAll();
 }

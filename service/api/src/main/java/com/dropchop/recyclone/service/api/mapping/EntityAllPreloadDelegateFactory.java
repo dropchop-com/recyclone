@@ -9,28 +9,28 @@ import com.dropchop.recyclone.service.api.invoke.MappingContext;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
-public class EntityCreationAllPreloadDelegate<D extends Dto, E extends Entity, ID, P extends Params>
+public class EntityAllPreloadDelegateFactory<D extends Dto, E extends Entity, ID, P extends Params>
   extends EntityAllPreloadDelegate<D, E, ID, P>
-  implements CreateEntityListener<D, E, P> {
+  implements EntityFactoryListener<D, E, P> {
 
-  public EntityCreationAllPreloadDelegate(EntityByIdService<D, E, ID> service) {
+  public EntityAllPreloadDelegateFactory(EntityByIdService<D, E, ID> service) {
     super(service);
   }
 
   @Override
-  public EntityCreationAllPreloadDelegate<D, E, ID, P> forActionOnly(String action) {
+  public EntityAllPreloadDelegateFactory<D, E, ID, P> forActionOnly(String action) {
     super.forActionOnly(action);
     return this;
   }
 
   @Override
-  public EntityCreationAllPreloadDelegate<D, E, ID, P> failIfMissing(boolean failIfMissing) {
+  public EntityAllPreloadDelegateFactory<D, E, ID, P> failIfMissing(boolean failIfMissing) {
     super.failIfMissing(failIfMissing);
     return this;
   }
 
   @Override
-  public EntityCreationAllPreloadDelegate<D, E, ID, P> failIfPresent(boolean failIfPresent) {
+  public EntityAllPreloadDelegateFactory<D, E, ID, P> failIfPresent(boolean failIfPresent) {
     super.failIfPresent(failIfPresent);
     return this;
   }

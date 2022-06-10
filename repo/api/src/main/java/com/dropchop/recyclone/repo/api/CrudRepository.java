@@ -15,13 +15,13 @@ public interface CrudRepository<E, ID> extends Repository<E, ID> {
   <S extends E> List<S> save(Collection<S> entities);
   <S extends E> S save(S entity);
 
-  List<E> findById(List<ID> ids);
+  List<E> findById(Collection<ID> ids);
   Optional<E> findById(ID id);
 
   <P extends Params> List<E> find(RepositoryExecContext<E, P> context);
   List<E> find();
 
-  <S extends E> List<S> detach(List<S> entities);
+  <S extends E> List<S> refresh(List<S> entities);
 
   int deleteById(Collection<? extends ID> ids);
   int deleteById(ID id);
