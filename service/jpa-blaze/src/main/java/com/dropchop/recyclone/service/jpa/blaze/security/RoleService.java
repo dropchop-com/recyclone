@@ -5,7 +5,6 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.ERole;
@@ -75,11 +74,9 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
     helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(ctx),
-      (entity, join) -> {
-        entity.getPermissions().addAll(join);
-        repository.save(entity);
-      }
+      (entity, join) -> entity.getPermissions().addAll(join)
     );
+    save(roles);
     return toDtoMapper.toDtosResult(roles, mapContext);
   }
 
@@ -103,9 +100,9 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
             );
           }
         }
-        repository.save(entity);
       }
     );
+    save(roles);
     return toDtoMapper.toDtosResult(roles, mapContext);
   }
 }

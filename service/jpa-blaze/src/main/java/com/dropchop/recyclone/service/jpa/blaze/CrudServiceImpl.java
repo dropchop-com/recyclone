@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.base.DtoId;
@@ -125,7 +126,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
       .criteriaDecorators(conf.getCriteriaDecorators())
     );
     entities = entities.stream().filter(
-      e -> !subject.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
+      e -> subject.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
@@ -140,40 +141,66 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
           .forActionOnly(Constants.Actions.UPDATE)
           .forActionOnly(Constants.Actions.DELETE)
       )
-      .afterMappingApply(
+      .afterMapping(
         new SetModification<>(rootClass)
       )
-      .afterMappingApply(
+      .afterMapping(
         new SetLanguage<>(serviceSelector.select(LanguageService.class), rootClass)
       )
-      .afterMappingApply(
+      .afterMapping(
         new SetDeactivated<>(rootClass)
       );
   }
 
-  protected Result<D> save(List<D> dtos) {
+  protected boolean shouldRefreshAfterSave() {
+    P params = ctx.getParams();
+    String cDetail = params.getContentDetailLevel();
+    if (cDetail == null) {
+      cDetail = ContentDetail.NESTED_OBJS_IDCODE;
+    }
+    Integer cLevel = params.getContentTreeLevel();
+    if (cLevel == null) {
+      cLevel = 1;
+    }
+    if (cLevel >= 2) {
+      return true;
+    }
+    return cLevel == 1 &&
+      (
+        ContentDetail.ALL_OBJS_IDCODE_TITLE.equals(cDetail) ||
+        ContentDetail.NESTED_OBJS_IDCODE.equals(cDetail) ||
+        ContentDetail.NESTED_OBJS_IDCODE_TITLE.equals(cDetail)
+      );
+  }
+
+  protected void save(Collection<E> entities) {
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    CrudRepository<E, ID> repository = conf.getRepository();
+    repository.save(entities);
+    if (shouldRefreshAfterSave()) {
+      repository.refresh(entities);
+    }
+  }
+
+  protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     MappingContext<P> mapContext = constructToEntityMappingContext(conf);
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
-    CrudRepository<E, ID> repository = conf.getRepository();
-    repository.save(entities);
-    if (ctx.getParams().getContentTreeLevel() >= 2) {
-      repository.refresh(entities);
-    }
+    save(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
   @Override
   @Transactional
   public Result<D> create(List<D> dtos) {
-    return save(dtos);
+    return createOrUpdate(dtos);
   }
 
   @Override
   @Transactional
   public Result<D> update(List<D> dtos) {
-    return save(dtos);
+    return createOrUpdate(dtos);
   }
 
   @Override

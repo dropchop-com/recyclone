@@ -103,7 +103,7 @@ public class MappingContext<P extends Params>
     return this;
   }
 
-  public MappingContext<P> beforeMappingApply(BeforeMappingListener<P> listener) {
+  public MappingContext<P> beforeMapping(BeforeMappingListener<P> listener) {
     if (listener == null) {
       return this;
     }
@@ -111,7 +111,7 @@ public class MappingContext<P extends Params>
     return this;
   }
 
-  public MappingContext<P> afterMappingApply(AfterMappingListener<P> listener) {
+  public MappingContext<P> afterMapping(AfterMappingListener<P> listener) {
     if (listener == null) {
       return this;
     }

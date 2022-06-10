@@ -21,7 +21,7 @@ public interface CrudRepository<E, ID> extends Repository<E, ID> {
   <P extends Params> List<E> find(RepositoryExecContext<E, P> context);
   List<E> find();
 
-  <S extends E> List<S> refresh(List<S> entities);
+  <S extends E> void refresh(Collection<S> entities);
 
   int deleteById(Collection<? extends ID> ids);
   int deleteById(ID id);

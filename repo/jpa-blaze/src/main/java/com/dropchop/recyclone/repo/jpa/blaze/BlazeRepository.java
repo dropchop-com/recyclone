@@ -94,14 +94,12 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
     return cb.getResultList();
   }
 
-  public <S extends E> List<S> refresh(List<S> entities) {
-    List<S> refreshed = new ArrayList<>();
+  @Override
+  public <S extends E> void refresh(Collection<S> entities) {
     for (S entity : entities) {
       em.flush();
       em.refresh(entity);
-      refreshed.add(entity);
     }
-    return refreshed;
   }
 
   @Override

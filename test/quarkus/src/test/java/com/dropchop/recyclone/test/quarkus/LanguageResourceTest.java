@@ -33,7 +33,8 @@ public class LanguageResourceTest {
       .get("/api/public/localization/language/sl")
       .then()
       .statusCode(200)
-      .body("[0].code", equalTo("sl"));
+      .log().all()
+      .body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
   @Test

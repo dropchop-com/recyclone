@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.api.rest.Constants.Tags;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
@@ -21,7 +22,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
  */
 @Path(Paths.Localization.COUNTRY)
-@DynamicExecContext(dataClass = Country.class)
+@DynamicExecContext(value = CodeParams.class, dataClass = Country.class)
 @RequiresPermissions(Domains.Localization.COUNTRY + PERM_DELIM + Actions.VIEW)
 public interface CountryResource extends ClassicRestResource<Country> {
 
