@@ -10,12 +10,12 @@ import com.dropchop.recyclone.service.api.invoke.MappingContext;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public class AfterSetDeactivatedListener<P extends Params> extends RestrictedAfterToEntityListener<P> {
+public class SetDeactivated<P extends Params> extends RestrictedAfterToEntityListener<P> {
 
-  public AfterSetDeactivatedListener() {
+  public SetDeactivated() {
   }
 
-  public AfterSetDeactivatedListener(Class<?> onlyForEntity) {
+  public SetDeactivated(Class<?> onlyForEntity) {
     super(onlyForEntity);
   }
 

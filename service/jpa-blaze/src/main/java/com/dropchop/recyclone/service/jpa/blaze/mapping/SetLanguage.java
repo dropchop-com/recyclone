@@ -22,18 +22,18 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
-public class AfterSetLanguageListener<D extends Dto, P extends Params>
+public class SetLanguage<D extends Dto, P extends Params>
   extends EntityAllPreloadDelegate<Language, ELanguage, String, P>
   implements AfterToEntityListener<P> {
 
   final Class<?> onlyForEntity;
 
-  public AfterSetLanguageListener(LanguageService service) {
+  public SetLanguage(LanguageService service) {
     super(service);
     this.onlyForEntity = null;
   }
 
-  public AfterSetLanguageListener(LanguageService service, Class<?> onlyForEntity) {
+  public SetLanguage(LanguageService service, Class<?> onlyForEntity) {
     super(service);
     this.onlyForEntity = onlyForEntity;
   }

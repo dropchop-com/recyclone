@@ -6,36 +6,34 @@ import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.repo.api.CrudRepository;
-import com.dropchop.recyclone.repo.api.Repository;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.service.api.CrudService;
 import com.dropchop.recyclone.service.api.EntityByIdService;
-import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.AfterSetDeactivatedListener;
-import com.dropchop.recyclone.service.api.mapping.AfterSetModificationListener;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
+import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
+import com.dropchop.recyclone.service.api.mapping.SetModification;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
-import com.dropchop.recyclone.service.jpa.blaze.mapping.AfterSetLanguageListener;
+import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.subject.Subject;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
@@ -100,33 +98,17 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     }
   }
 
-  protected List<E> findAndFilter(Function<E, E> filter, RepositoryExecContext<E, P> repositoryExecContext) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    List<E> entites = conf.getRepository().find(repositoryExecContext);
-    if (filter != null) {
-      for (Iterator<E> iterator = entites.listIterator(); iterator.hasNext(); ) {
-        E entity = iterator.next();
-        E tmp = filter.apply(entity);
-        if (tmp == null) {
-          iterator.remove();
-        }
-      }
-    }
-    return entites;
-  }
-
   protected List<E> find(RepositoryExecContext<E, P> repositoryExecContext) {
-    return findAndFilter(null, repositoryExecContext);
+    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    if (repositoryExecContext == null) {
+      repositoryExecContext = new BlazeExecContext<E, P>().of(ctx)
+        .criteriaDecorators(conf.getCriteriaDecorators());
+    }
+    return conf.getRepository().find(repositoryExecContext);
   }
 
-  protected <JD extends Dto, JE extends Entity, JID> JoinEntityHelper<E, JE, JID> getJoinHelper(EntityByIdService<?, JE, JID> service) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    return new JoinEntityHelper<>(service,
-      find(new BlazeExecContext<E, P>()
-        .of(ctx)
-        .criteriaDecorators(conf.getCriteriaDecorators())
-      )
-    );
+  protected List<E> find() {
+    return find(null);
   }
 
   @Override
@@ -137,11 +119,15 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     }
     MappingContext<P> mapContext = new FilteringDtoContext<P>().of(ctx);
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    List<E> entities = findAndFilter(
-      e -> !subject.isPermitted(ctx.getSecurityDomainAction(e.identifier())) ? null : e, new BlazeExecContext<E, P>()
+    List<E> entities = find(new BlazeExecContext<E, P>()
       .of(ctx)
-      .listener(mapContext)
-      .criteriaDecorators(conf.getCriteriaDecorators()));
+      .listener(mapContext) // get total count and save it
+      .criteriaDecorators(conf.getCriteriaDecorators())
+    );
+    entities = entities.stream().filter(
+      e -> !subject.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
+    ).collect(Collectors.toList());
+
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
@@ -149,19 +135,19 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
     Class<?> rootClass = conf.getRepository().getRootClass();
     return new FilteringDtoContext<P>()
       .of(ctx)
-      .listener(
-        new AfterSetModificationListener<>(rootClass)
-      )
-      .listener(
+      .createWith(
         new EntityDelegateFactory<D, E, ID, P>(this)
           .forActionOnly(Constants.Actions.UPDATE)
           .forActionOnly(Constants.Actions.DELETE)
       )
-      .listener(
-        new AfterSetLanguageListener<>(serviceSelector.select(LanguageService.class), rootClass)
+      .afterMappingApply(
+        new SetModification<>(rootClass)
       )
-      .listener(
-        new AfterSetDeactivatedListener<>(rootClass)
+      .afterMappingApply(
+        new SetLanguage<>(serviceSelector.select(LanguageService.class), rootClass)
+      )
+      .afterMappingApply(
+        new SetDeactivated<>(rootClass)
       );
   }
 

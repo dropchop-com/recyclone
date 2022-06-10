@@ -70,8 +70,9 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
-    JoinEntityHelper<ERole, EPermission, UUID> helper = getJoinHelper(permissionService);
-    Collection<ERole> roles = helper.join(
+    Collection<ERole> roles = find();
+    JoinEntityHelper<ERole, EPermission, UUID> helper = new JoinEntityHelper<>(permissionService, roles);
+    helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(ctx),
       (entity, join) -> {
@@ -79,15 +80,15 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
         repository.save(entity);
       }
     );
-    ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
-    return conf.getToDtoMapper().toDtosResult(roles, mapContext);
+    return toDtoMapper.toDtosResult(roles, mapContext);
   }
 
   @Transactional
   public Result<Role> removePermissions(RoleParams params) {
     MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
-    JoinEntityHelper<ERole, EPermission, UUID> helper = getJoinHelper(permissionService);
-    Collection<ERole> roles = helper.join(
+    Collection<ERole> roles = find();
+    JoinEntityHelper<ERole, EPermission, UUID> helper = new JoinEntityHelper<>(permissionService, roles);
+    helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(ctx),
       (entity, join) -> {
@@ -105,7 +106,6 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
         repository.save(entity);
       }
     );
-    ServiceConfiguration<Role, RoleParams, ERole, String> conf = getConfiguration();
-    return conf.getToDtoMapper().toDtosResult(roles, mapContext);
+    return toDtoMapper.toDtosResult(roles, mapContext);
   }
 }

@@ -16,13 +16,13 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public class AfterSetModificationListener<P extends Params>
+public class SetModification<P extends Params>
   extends RestrictedAfterToEntityListener<P> {
 
-  public AfterSetModificationListener() {
+  public SetModification() {
   }
 
-  public AfterSetModificationListener(Class<?> onlyForEntity) {
+  public SetModification(Class<?> onlyForEntity) {
     super(onlyForEntity);
   }
 

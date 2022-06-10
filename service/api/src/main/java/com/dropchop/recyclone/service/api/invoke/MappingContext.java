@@ -5,6 +5,9 @@ import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
+import com.dropchop.recyclone.service.api.mapping.AfterMappingListener;
+import com.dropchop.recyclone.service.api.mapping.BeforeMappingListener;
+import com.dropchop.recyclone.service.api.mapping.FactoryMappingListener;
 import com.dropchop.recyclone.service.api.mapping.MappingListener;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -85,6 +88,30 @@ public class MappingContext<P extends Params>
 
   @Override
   public MappingContext<P> listener(MappingListener<P> listener) {
+    if (listener == null) {
+      return this;
+    }
+    super.listener(listener);
+    return this;
+  }
+
+  public MappingContext<P> createWith(FactoryMappingListener<P> listener) {
+    if (listener == null) {
+      return this;
+    }
+    super.listener(listener);
+    return this;
+  }
+
+  public MappingContext<P> beforeMappingApply(BeforeMappingListener<P> listener) {
+    if (listener == null) {
+      return this;
+    }
+    super.listener(listener);
+    return this;
+  }
+
+  public MappingContext<P> afterMappingApply(AfterMappingListener<P> listener) {
     if (listener == null) {
       return this;
     }

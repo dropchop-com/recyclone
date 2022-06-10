@@ -9,6 +9,6 @@ import com.dropchop.recyclone.service.api.invoke.MappingContext;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
 public interface AfterToDtoListener<P extends Params>
-  extends MappingListener<P> {
+  extends AfterMappingListener<P> {
   void after(Entity entity, Dto dto, MappingContext<P> context);
 }
