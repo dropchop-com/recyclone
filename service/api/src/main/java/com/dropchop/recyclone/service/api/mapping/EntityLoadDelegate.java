@@ -50,7 +50,7 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends P
     return this;
   }
 
-  protected Optional<E> findById(D dto) {
+  protected E findById(D dto) {
     return service.findById(dto);
   }
 
@@ -67,8 +67,8 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends P
         }
         return null;
       }
-      Optional<E> optEntity = findById(dto);
-      if (optEntity.isEmpty()) {
+      E entity = findById(dto);
+      if (entity == null) {
         if (failIfMissing) {
           throw new ServiceException(ErrorCode.data_validation_error, "Missing entity for DTO identifier!",
             Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
@@ -79,7 +79,7 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends P
         throw new ServiceException(ErrorCode.data_validation_error, "Entity for DTO identifier is already present!",
           Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
       }
-      return optEntity.get();
+      return entity;
     }
 
     return null;

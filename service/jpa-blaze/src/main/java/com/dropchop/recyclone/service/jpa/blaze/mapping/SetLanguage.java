@@ -50,8 +50,10 @@ public class SetLanguage<D extends Dto, P extends Params>
           throw new ServiceException(ErrorCode.internal_error, "Missing language code in lang field for DTO!",
             Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
         }
-        Optional<ELanguage> lang = this.findById(new Language(code));
-        lang.ifPresent(eLanguage -> ((HasELanguage) entity).setLanguage(eLanguage));
+        ELanguage lang = this.findById(new Language(code));
+        if (lang != null) {
+          ((HasELanguage) entity).setLanguage(lang);
+        }
       }
     }
   }

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,9 +32,8 @@ public class RepositoryTranslationTest {
   @Order(1)
   @Transactional
   public void translationsRemove() {
-    Optional<EAction> optAction = actionRepository.findById(Constants.Actions.VIEW);
-    if (optAction.isPresent()) {
-      EAction action = optAction.get();
+    EAction action = actionRepository.findById(Constants.Actions.VIEW);
+    if (action != null) {
       action.getTranslations().remove(new ETitleTranslation("sl", "Karkoli"));
       assertEquals(0, action.getTranslations().size());
     }
@@ -45,9 +43,8 @@ public class RepositoryTranslationTest {
   @Order(2)
   @Transactional
   public void testTranslationsRemovedAndAddBack() {
-    Optional<EAction> optAction = actionRepository.findById(Constants.Actions.VIEW);
-    if (optAction.isPresent()) {
-      EAction action = optAction.get();
+    EAction action = actionRepository.findById(Constants.Actions.VIEW);
+    if (action != null) {
       assertEquals(0, action.getTranslations().size());
       action.getTranslations().add(new ETitleTranslation("sl", "Ogled"));
       assertEquals(1, action.getTranslations().size());
@@ -58,9 +55,8 @@ public class RepositoryTranslationTest {
   @Order(3)
   @Transactional
   public void testTranslationsRemovedAddedTranslationBack() {
-    Optional<EAction> optAction = actionRepository.findById(Constants.Actions.VIEW);
-    if (optAction.isPresent()) {
-      EAction action = optAction.get();
+    EAction action = actionRepository.findById(Constants.Actions.VIEW);
+    if (action != null) {
       assertEquals(1, action.getTranslations().size());
     }
   }
@@ -69,9 +65,8 @@ public class RepositoryTranslationTest {
   @Order(4)
   @Transactional
   public void removeTranslation() {
-    Optional<EAction> optAction = actionRepository.findById(Constants.Actions.VIEW);
-    if (optAction.isPresent()) {
-      EAction action = optAction.get();
+    EAction action = actionRepository.findById(Constants.Actions.VIEW);
+    if (action != null) {
       action.removeTranslation("sl");
       assertEquals(0, action.getTranslations().size());
     }

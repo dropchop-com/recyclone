@@ -58,7 +58,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   }
 
   @Override
-  public Optional<E> findById(D dto) {
+  public E findById(D dto) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     if (dto instanceof DtoCode) {
       //noinspection unchecked
@@ -78,7 +78,7 @@ public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends
   }
 
   @Override
-  public Optional<E> findById(ID id) {
+  public E findById(ID id) {
     ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
     return conf.getRepository().findById(id);
   }

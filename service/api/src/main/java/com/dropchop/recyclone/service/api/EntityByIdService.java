@@ -14,9 +14,9 @@ public interface EntityByIdService<D extends Dto, E extends Entity, ID> extends 
 
   Class<E> getRootClass();
 
-  Optional<E> findById(D dto);
+  E findById(D dto);
 
-  Optional<E> findById(ID id);
+  E findById(ID id);
 
   List<E> findById(Collection<ID> ids);
 

@@ -6,7 +6,6 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.service.api.EntityByIdService;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class EntityAllPreloadDelegate<D extends Dto, E extends Entity, ID, P ext
   }
 
   @Override
-  protected Optional<E> findById(D dto) {
-    return Optional.ofNullable(preloaded.get(dto.identifier()));
+  protected E findById(D dto) {
+    return preloaded.get(dto.identifier());
   }
 }

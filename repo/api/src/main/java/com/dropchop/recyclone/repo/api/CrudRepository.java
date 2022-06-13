@@ -16,7 +16,7 @@ public interface CrudRepository<E, ID> extends Repository<E, ID> {
   <S extends E> S save(S entity);
 
   List<E> findById(Collection<ID> ids);
-  Optional<E> findById(ID id);
+  E findById(ID id);
 
   <P extends Params> List<E> find(RepositoryExecContext<E, P> context);
   List<E> find();

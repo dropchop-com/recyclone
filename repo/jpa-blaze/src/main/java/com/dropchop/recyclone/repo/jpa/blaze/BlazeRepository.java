@@ -44,8 +44,9 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   }
 
   @Override
-  public Optional<E> findById(ID id) {
-    return findById(List.of(id)).stream().findFirst();
+  public E findById(ID id) {
+    List<E> entities = findById(List.of(id));
+    return entities.isEmpty() ? null : entities.get(0);
   }
 
   @Override
