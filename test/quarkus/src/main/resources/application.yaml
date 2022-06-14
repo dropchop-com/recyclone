@@ -57,5 +57,7 @@ mp:
 
 
 dropchop:
+  application:
+    class: com.dropchop.recyclone.test.quarkus.TestApplication
 #  service-type:
 #    default: rcyn_default

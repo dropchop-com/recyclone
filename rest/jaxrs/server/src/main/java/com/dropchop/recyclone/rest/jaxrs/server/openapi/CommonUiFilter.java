@@ -5,6 +5,8 @@ import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.Operation;
@@ -12,6 +14,7 @@ import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.tags.Tag;
 
+import javax.ws.rs.core.Application;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -29,6 +32,8 @@ import static com.dropchop.recyclone.model.api.invoke.CommonParams.*;
 @Slf4j
 @SuppressWarnings("SameParameterValue")
 public class CommonUiFilter implements OASFilter {
+
+  private final String CONF_PROP_NAME_DC_APP_CLASS = "dropchop.application.class";
 
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
@@ -134,12 +139,63 @@ public class CommonUiFilter implements OASFilter {
     return tag;
   }
 
+  private final Set<Class<?>> registeredClasses = new LinkedHashSet<>();
+
+  private Set<Class<?>> getApplicationClasses() {
+
+    Config conf = ConfigProvider.getConfig();
+    String appClassName = conf.getConfigValue(CONF_PROP_NAME_DC_APP_CLASS).getValue();
+    log.error("filter [{}]", appClassName);
+    if (appClassName == null) {
+      log.warn("Missing [{}] config property unable to properly filter operations!",
+        CONF_PROP_NAME_DC_APP_CLASS);
+      return null;
+    }
+    try {
+      @SuppressWarnings("unchecked")
+      Class<Application> appClass = (Class<Application>)Thread.currentThread()
+        .getContextClassLoader().loadClass(appClassName);
+      Application app = appClass.getDeclaredConstructor().newInstance();
+      return app.getClasses();
+    } catch (Exception e) {
+      log.warn("Unable to instantiate javax.ws.rs.core.Application [{}]! Unable to properly filter operations!",
+        appClassName, e);
+    }
+    return null;
+  }
+
   @Override
   public Operation filterOperation(Operation operation) {
     //filter out non-impl operations or we get duplicated swagger ui output
     String opId = operation.getOperationId();
     if (opId != null && !opId.contains(".server.") && !opId.contains(".impl.")) {
       return null;
+    }
+
+    try {
+      int idx = opId.lastIndexOf('_');
+      if (idx > -1) {
+        Class<?> c = Thread.currentThread()
+          .getContextClassLoader().loadClass(opId.substring(0, idx));
+        if (c.isInterface()) {
+          return null;
+        }
+        // look at all registered classes from Application class and cache them
+        synchronized (this) {
+          if (this.registeredClasses.isEmpty()) {
+            Set<Class<?>> registeredClasses = getApplicationClasses();
+            if (registeredClasses != null) {
+              this.registeredClasses.addAll(registeredClasses);
+            }
+          }
+        }
+        if (!this.registeredClasses.isEmpty() && !this.registeredClasses.contains(c)) {
+          return null;
+        }
+      }
+    } catch (ClassNotFoundException e) {
+      log.warn("Unable to get resource class for operation [{}]!", opId);
+      return operation;
     }
 
     List<String> tags = operation.getTags();

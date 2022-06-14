@@ -67,11 +67,11 @@ public class TestApplication extends Application {
 
   @Override
   public Set<Class<?>> getClasses() {
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    classes.add(ShiroDynamicFeature.class);
-    classes.addAll(RecycloneApplicationRegistry.getRestLayerRegistrationClasses());
-    classes.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
-    classes.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
-    return classes;
+    Set<Class<?>> container = new LinkedHashSet<>();
+    container.add(ShiroDynamicFeature.class);
+    container.addAll(RecycloneApplicationRegistry.getRestLayerRegistrationClasses());
+    container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
+    container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
+    return container;
   }
 }
