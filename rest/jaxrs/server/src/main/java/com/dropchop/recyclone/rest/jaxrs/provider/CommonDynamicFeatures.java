@@ -2,6 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,11 +24,11 @@ import static javax.ws.rs.Priorities.HEADER_DECORATOR;
 @Provider
 public class CommonDynamicFeatures implements DynamicFeature {
 
-  private static void checkAdd(final Set<Class<? extends CommonParams>> paramsClasses,
+  private static void checkAdd(final Set<Class<? extends Params>> paramsClasses,
                                final Set<Class<? extends Dto>> dtoClasses,
                                DynamicExecContext[] tagsArray) {
     for (DynamicExecContext tag : tagsArray) {
-      Class<? extends CommonParams> paramsClass = tag.value();
+      Class<? extends Params> paramsClass = tag.value();
       if (paramsClass != null) {
         paramsClasses.add(paramsClass);
       }
@@ -38,7 +39,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
     }
   }
 
-  public static void findDynamicExecContextAnnotation(final Set<Class<? extends CommonParams>> paramsClasses,
+  public static void findDynamicExecContextAnnotation(final Set<Class<? extends Params>> paramsClasses,
                                                       final Set<Class<? extends Dto>> dtoClasses,
                                                       final Method myMethod) {
     DynamicExecContext[] tagsArray = myMethod.getAnnotationsByType(DynamicExecContext.class);
@@ -86,10 +87,10 @@ public class CommonDynamicFeatures implements DynamicFeature {
       }
     }
 
-    Set<Class<? extends CommonParams>> paramsClasses = new HashSet<>();
+    Set<Class<? extends Params>> paramsClasses = new HashSet<>();
     Set<Class<? extends Dto>> dtoClasses = new HashSet<>();
     findDynamicExecContextAnnotation(paramsClasses, dtoClasses, method);
-    for (Class<? extends CommonParams> parametersClass : paramsClasses) {
+    for (Class<? extends Params> parametersClass : paramsClasses) {
       if (CommonParams.class.isAssignableFrom(parametersClass) && !CommonParams.class.equals(parametersClass)) {
         log.info("Registering [{}] for [{}.{}].",
           ParamsFactoryFilter.class.getSimpleName(), riClass.getSimpleName(), method.getName());

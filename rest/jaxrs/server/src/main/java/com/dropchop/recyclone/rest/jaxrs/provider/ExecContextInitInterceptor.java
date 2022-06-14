@@ -34,7 +34,7 @@ public class ExecContextInitInterceptor implements ContainerRequestFilter {
   ExecContextProvider execContextProvider;
 
   public ExecContextInitInterceptor() {
-    log.error("ExecContextInitInterceptor constructor");
+    log.trace("ExecContextInitInterceptor constructor");
   }
 
   @Override

@@ -35,4 +35,10 @@ public class ResultStatus implements Model {
 
   @JsonInclude(NON_NULL)
   private List<StatusMessage> details;
+
+  public ResultStatus(@NonNull ResultCode code, long time, long total) {
+    this.code = code;
+    this.time = time;
+    this.total = total;
+  }
 }

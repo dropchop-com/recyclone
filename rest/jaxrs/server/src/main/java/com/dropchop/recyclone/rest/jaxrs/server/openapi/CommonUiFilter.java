@@ -2,6 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.server.openapi;
 
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.OASFactory;
@@ -29,19 +30,19 @@ import static com.dropchop.recyclone.model.api.invoke.CommonParams.*;
 @SuppressWarnings("SameParameterValue")
 public class CommonUiFilter implements OASFilter {
 
-  private final Map<String, CommonParams> paramsInstanceCache = new HashMap<>();
+  private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
-  private CommonParams createInstance(String className) {
-    Class<CommonParams> parametersClass;
+  private Params createInstance(String className) {
+    Class<Params> parametersClass;
     try {
       ClassLoader loader = Thread.currentThread().getContextClassLoader();
       //noinspection unchecked
-      parametersClass = (Class<CommonParams>)loader.loadClass(className);
+      parametersClass = (Class<Params>)loader.loadClass(className);
     } catch (Exception e) {
       log.warn("Unable to load [{}] parameters class!", className, e);
       return null;
     }
-    CommonParams parameters;
+    Params parameters;
     try {
       parameters = parametersClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
@@ -135,9 +136,9 @@ public class CommonUiFilter implements OASFilter {
 
   @Override
   public Operation filterOperation(Operation operation) {
-    //filter out non-impl operations
+    //filter out non-impl operations or we get duplicated swagger ui output
     String opId = operation.getOperationId();
-    if (opId != null && !(opId.contains(".server.") || opId.contains(".impl."))) {
+    if (opId != null && !opId.contains(".server.") && !opId.contains(".impl.")) {
       return null;
     }
 
@@ -166,8 +167,8 @@ public class CommonUiFilter implements OASFilter {
             operation.getOperationId());
         }
 
-        CommonParams dtoParameters = paramsInstanceCache.computeIfAbsent(descr[1], this::createInstance);
-        if (dtoParameters == null) {
+        Params dtoParameters = paramsInstanceCache.computeIfAbsent(descr[1], this::createInstance);
+        if (!(dtoParameters instanceof CommonParams commonParams)) {
           return operation;
         }
 
@@ -201,7 +202,7 @@ public class CommonUiFilter implements OASFilter {
             "<b>.sl</b> for default and Slovene translated response."
         ));
 
-        Collection<State.Code> hiddenStates = dtoParameters.getHiddenStates();
+        Collection<State.Code> hiddenStates = commonParams.getHiddenStates();
         newParameters.add(createStatesParam(
           Parameter.In.QUERY,
           "Also include resources with selected state which are not normally shown in output.",
@@ -212,7 +213,7 @@ public class CommonUiFilter implements OASFilter {
           Parameter.In.QUERY,
           "Sort result by field name, prefixed with <b>[+/-]</b> for ascending / descending order. " +
             "<br /> If prefix is omitted ascending sort order is assumed",
-          dtoParameters.getSortFields()
+          commonParams.getSortFields()
         ));
 
         newParameters.add(createStrArrayParam(
@@ -223,7 +224,7 @@ public class CommonUiFilter implements OASFilter {
         newParameters.add(createStrParam(
           Parameter.In.QUERY, CLEVEL_QUERY,
           "Level and detail of objects to output in <b>[N].[detail_level]</b> string notation, Where N is tree depth and " +
-            "<br />detail_level can be for instance one of " + dtoParameters.getAvailableLevelOfContentDetails() + "."
+            "<br />detail_level can be for instance one of " + commonParams.getAvailableLevelOfContentDetails() + "."
         ));
         newParameters.add(createStrArrayParam(
           Parameter.In.HEADER, CFIELDS_HEADER,
@@ -233,13 +234,13 @@ public class CommonUiFilter implements OASFilter {
         newParameters.add(createStrParam(
           Parameter.In.HEADER, CLEVEL_HEADER,
           "Level and detail of objects to output in <b>[N].[detail_level]</b> string notation, Where N is tree depth and " +
-            "<br />detail_level can be for instance one of " + dtoParameters.getAvailableLevelOfContentDetails() + "."
+            "<br />detail_level can be for instance one of " + commonParams.getAvailableLevelOfContentDetails() + "."
         ));
 
         newParameters.add(createStrEnumParam(
           Parameter.In.HEADER, VERSION_HEADER,
           "Requested content response version.",
-          dtoParameters.getAvailableVersions()
+          commonParams.getAvailableVersions()
         ));
         operation.setParameters(newParameters);
       }

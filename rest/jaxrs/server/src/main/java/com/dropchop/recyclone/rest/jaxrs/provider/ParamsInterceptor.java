@@ -2,6 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,9 +24,9 @@ import java.io.IOException;
 @ConstrainedTo(RuntimeType.SERVER)
 public class ParamsInterceptor implements ReaderInterceptor {
 
-  private final Class<? extends CommonParams> parametersClass;
+  private final Class<? extends Params> parametersClass;
 
-  public <P extends CommonParams> ParamsInterceptor(Class<P> parametersClass) {
+  public <P extends Params> ParamsInterceptor(Class<P> parametersClass) {
     log.debug("Construct [{}] [{}].", this.getClass().getSimpleName(), parametersClass);
     this.parametersClass = parametersClass;
   }

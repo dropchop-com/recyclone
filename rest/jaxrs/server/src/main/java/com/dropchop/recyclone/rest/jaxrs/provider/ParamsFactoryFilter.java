@@ -27,9 +27,9 @@ import java.util.Set;
 @ConstrainedTo(RuntimeType.SERVER)
 public class ParamsFactoryFilter implements ContainerRequestFilter {
 
-  private final Class<? extends CommonParams> parametersClass;
+  private final Class<? extends Params> parametersClass;
 
-  public <P extends CommonParams> ParamsFactoryFilter(Class<P> parametersClass) {
+  public <P extends Params> ParamsFactoryFilter(Class<P> parametersClass) {
     log.debug("Construct CommonParamsFilter [{}].", parametersClass);
     this.parametersClass = parametersClass;
   }
