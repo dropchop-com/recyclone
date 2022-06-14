@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
-public class PageCriteriaDecorator<T, P extends Params> extends BlazeCriteriaDecorator<T, P> {
+public class PageCriteriaDecorator<T, P extends CommonParams> extends BlazeCriteriaDecorator<T, P> {
 
   @Override
   public void decorate() {

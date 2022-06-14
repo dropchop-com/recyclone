@@ -1,14 +1,14 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 
 import java.util.List;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
-public class SortCriteriaDecorator<T, P extends Params> extends BlazeCriteriaDecorator<T, P> {
+public class SortCriteriaDecorator<T, P extends CommonParams> extends BlazeCriteriaDecorator<T, P> {
 
   private boolean nullsFirst = false;
 

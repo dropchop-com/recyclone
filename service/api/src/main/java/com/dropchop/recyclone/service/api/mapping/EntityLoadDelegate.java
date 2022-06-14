@@ -10,7 +10,6 @@ import com.dropchop.recyclone.service.api.EntityByIdService;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**

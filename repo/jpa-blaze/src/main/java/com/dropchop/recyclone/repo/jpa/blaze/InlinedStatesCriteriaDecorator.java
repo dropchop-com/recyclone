@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasState;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlined;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCurrent;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
-public class InlinedStatesCriteriaDecorator<T, P extends Params> extends BlazeCriteriaDecorator<T, P> {
+public class InlinedStatesCriteriaDecorator<T, P extends CommonParams> extends BlazeCriteriaDecorator<T, P> {
 
   @Override
   public void decorate() {

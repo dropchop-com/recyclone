@@ -11,8 +11,6 @@ import org.apache.shiro.subject.Subject;
 
 import java.util.List;
 
-import static com.dropchop.recyclone.model.api.security.Constants.Permission.compose;
-
 /**
  * Container for common current execution variables.
  *

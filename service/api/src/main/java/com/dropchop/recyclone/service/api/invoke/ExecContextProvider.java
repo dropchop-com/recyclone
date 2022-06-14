@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.RequestScoped;
@@ -22,7 +22,7 @@ public class ExecContextProvider {
 
   CommonExecContext<?, ?> execContext;
 
-  public <P extends Params, D extends Dto> CommonExecContext<P, D> create() {
+  public <P extends CommonParams, D extends Dto> CommonExecContext<P, D> create() {
     this.execContext = new CommonExecContext<>();
     //noinspection unchecked
     return (CommonExecContext<P, D>) this.execContext;

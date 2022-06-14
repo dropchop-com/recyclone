@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
 import com.dropchop.recyclone.model.api.security.Constants;
@@ -32,7 +32,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
  */
 @Slf4j
-public abstract class CrudServiceImpl<D extends Dto, P extends Params, E extends Entity, ID>
+public abstract class CrudServiceImpl<D extends Dto, P extends CommonParams, E extends Entity, ID>
   implements CrudService<D, P>, EntityByIdService<D, E, ID> {
 
   @Inject

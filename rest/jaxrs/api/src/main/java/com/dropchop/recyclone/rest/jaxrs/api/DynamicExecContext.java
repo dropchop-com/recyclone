@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.api;
 
 import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DynamicExecContext {
-  Class<? extends Params> value() default Params.class;
+  Class<? extends CommonParams> value() default CommonParams.class;
   Class<? extends Dto> dataClass() default Dto.class;
 }

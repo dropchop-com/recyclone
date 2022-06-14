@@ -6,7 +6,7 @@ import com.blazebit.persistence.DeleteCriteriaBuilder;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.QueryExecContextListener;
@@ -20,7 +20,6 @@ import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
@@ -63,7 +62,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   }
 
   @Override
-  public <P extends Params> List<E> find(RepositoryExecContext<E, P> context) {
+  public <P extends CommonParams> List<E> find(RepositoryExecContext<E, P> context) {
     String alias = getRootAlias();
     CriteriaBuilder<E> cb = getBuilder().from(getRootClass(), alias);
     TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();

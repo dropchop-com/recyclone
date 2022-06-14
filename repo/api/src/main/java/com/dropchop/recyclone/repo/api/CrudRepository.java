@@ -1,11 +1,10 @@
 package com.dropchop.recyclone.repo.api;
 
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
@@ -18,7 +17,7 @@ public interface CrudRepository<E, ID> extends Repository<E, ID> {
   List<E> findById(Collection<ID> ids);
   E findById(ID id);
 
-  <P extends Params> List<E> find(RepositoryExecContext<E, P> context);
+  <P extends CommonParams> List<E> find(RepositoryExecContext<E, P> context);
   List<E> find();
 
   <S extends E> void refresh(Collection<S> entities);

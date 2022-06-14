@@ -1,11 +1,8 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
+import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,9 +27,9 @@ import java.util.Set;
 @ConstrainedTo(RuntimeType.SERVER)
 public class ParamsFactoryFilter implements ContainerRequestFilter {
 
-  private final Class<? extends Params> parametersClass;
+  private final Class<? extends CommonParams> parametersClass;
 
-  public <P extends Params> ParamsFactoryFilter(Class<P> parametersClass) {
+  public <P extends CommonParams> ParamsFactoryFilter(Class<P> parametersClass) {
     log.debug("Construct CommonParamsFilter [{}].", parametersClass);
     this.parametersClass = parametersClass;
   }
@@ -100,13 +97,13 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     }
   }
 
-  private void parseLanguage(Params params, String str) {
+  private void parseLanguage(CommonParams params, String str) {
     str = str.replaceAll(";q=\\d+.\\d+", "");
     String[] parts = str.split("\\.", -1);
     if (parts.length < 1 || parts.length > 2) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse language codes parameter",
-        Set.of(new AttributeString(Params.LANG_QUERY, str))));
+        Set.of(new AttributeString(CommonParams.LANG_QUERY, str))));
     }
     if (parts[0] != null && !parts[0].isBlank()) {
       parts[0] = parts[0].trim();
@@ -128,7 +125,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     }
   }
 
-  private void parseContentLevel(Params params, String str) {
+  private void parseContentLevel(CommonParams params, String str) {
     if (str == null || str.isBlank()) {
       return;
     }
@@ -136,7 +133,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     if (parts.length <= 0 || parts.length > 2) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse content level parameter",
-        Set.of(new AttributeString(Params.CLEVEL_QUERY, str))));
+        Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
     }
 
     try {
@@ -144,7 +141,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     } catch (NumberFormatException e) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse content level tree depth parameter",
-        Set.of(new AttributeString(Params.CLEVEL_QUERY, str))));
+        Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
     }
 
     if (parts.length == 2) {
@@ -153,32 +150,32 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       } catch (NumberFormatException e) {
         throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
           "Unable parse content level tree depth parameter",
-          Set.of(new AttributeString(Params.CLEVEL_QUERY, str))));
+          Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
       }
     }
   }
 
-  private void decorate(Params params, ContainerRequestContext requestContext) {
+  private void decorate(CommonParams params, ContainerRequestContext requestContext) {
     UriInfo uriInfo = requestContext.getUriInfo();
-    int from = getInteger(Params.FROM_QUERY, Params.FROM_QUERY_DEFAULT, Params.FROM_QUERY_MIN,
+    int from = getInteger(CommonParams.FROM_QUERY, CommonParams.FROM_QUERY_DEFAULT, CommonParams.FROM_QUERY_MIN,
       uriInfo.getQueryParameters());
     params.setFrom(from);
 
-    int size = getInteger(Params.SIZE_QUERY, Params.SIZE_QUERY_DEFAULT, Params.SIZE_QUERY_MIN,
+    int size = getInteger(CommonParams.SIZE_QUERY, CommonParams.SIZE_QUERY_DEFAULT, CommonParams.SIZE_QUERY_MIN,
       uriInfo.getQueryParameters());
     params.setSize(size);
 
-    String languageStr = getString(Params.LANG_QUERY, Params.LANG_HEADER, requestContext);
+    String languageStr = getString(CommonParams.LANG_QUERY, CommonParams.LANG_HEADER, requestContext);
     if (languageStr != null && !languageStr.isBlank()) {
       parseLanguage(params, languageStr);
     }
 
-    List<String> tmp = getStringList(Params.SORT_QUERY, null, requestContext);
+    List<String> tmp = getStringList(CommonParams.SORT_QUERY, null, requestContext);
     if (tmp != null) {
       params.setSort(tmp);
     }
 
-    tmp = getStringList(Params.CFIELDS_QUERY, Params.CFIELDS_HEADER, requestContext);
+    tmp = getStringList(CommonParams.CFIELDS_QUERY, CommonParams.CFIELDS_HEADER, requestContext);
     if (tmp != null) {
       List<String> includes = new ArrayList<>();
       List<String> excludes = new ArrayList<>();
@@ -202,17 +199,17 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       }
     }
 
-    String tmpLevel = getString(Params.CLEVEL_QUERY, Params.CLEVEL_HEADER, requestContext);
+    String tmpLevel = getString(CommonParams.CLEVEL_QUERY, CommonParams.CLEVEL_HEADER, requestContext);
     if (tmpLevel != null && !tmpLevel.isBlank()) {
       parseContentLevel(params, tmpLevel);
     }
 
-    tmp = getStringList(Params.STATE_QUERY, "<<undefined>>", requestContext);
+    tmp = getStringList(CommonParams.STATE_QUERY, "<<undefined>>", requestContext);
     if (tmp != null && !tmp.isEmpty()) {
       params.setStates(tmp);
     }
 
-    String contentVersion = getString(null, Params.VERSION_HEADER, requestContext);
+    String contentVersion = getString(null, CommonParams.VERSION_HEADER, requestContext);
     if (contentVersion != null && !contentVersion.isBlank()) {
       params.setVersion(contentVersion);
     }
@@ -235,7 +232,9 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
         "Unable to instantiate parameter class [" + this.parametersClass + "]", null));
     }
 
-    decorate(p, requestContext);
+    if (p instanceof CommonParams) {
+      decorate((CommonParams) p, requestContext);
+    }
 
     log.debug("Created request local [{}].", p);
     execContextProvider.setParams(p);

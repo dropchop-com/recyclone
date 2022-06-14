@@ -23,7 +23,7 @@ public class ExternalOpsOnlyUiFilter extends CommonUiFilter {
         return super.filterOperation(operation);
       }
       if (Tags.DynamicContext.PUBLIC.equalsIgnoreCase(tag)) {
-         return super.filterOperation(operation);
+        return super.filterOperation(operation);
       }
     }
     return null;

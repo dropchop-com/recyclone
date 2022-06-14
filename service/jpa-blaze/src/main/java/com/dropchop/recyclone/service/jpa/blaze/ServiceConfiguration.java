@@ -2,7 +2,7 @@ package com.dropchop.recyclone.service.jpa.blaze;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.*;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 2. 05. 22.
  */
-public class ServiceConfiguration<D extends Dto, P extends Params, E extends Entity, ID> {
+public class ServiceConfiguration<D extends Dto, P extends CommonParams, E extends Entity, ID> {
 
   final CrudRepository<E, ID> repository;
   final ToDtoMapper<D, P, E> toDtoMapper;

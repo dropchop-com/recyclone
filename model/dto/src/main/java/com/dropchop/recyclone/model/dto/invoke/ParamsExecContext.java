@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.UUID;
  */
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class ParamsExecContext<P extends Params, L extends Listener>
+public class ParamsExecContext<P extends com.dropchop.recyclone.model.api.invoke.Params, L extends Listener>
   implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<P, L> {
 
   @NonNull

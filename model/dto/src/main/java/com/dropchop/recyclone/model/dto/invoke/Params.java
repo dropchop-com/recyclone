@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.dto.invoke;
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -19,30 +20,30 @@ import java.util.*;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class Params implements Dto, com.dropchop.recyclone.model.api.invoke.Params {
+public class Params implements Dto, CommonParams {
 
   @Override
   @JsonIgnore
   public List<String> getAvailableVersions() {
-    return com.dropchop.recyclone.model.api.invoke.Params.super.getAvailableVersions();
+    return CommonParams.super.getAvailableVersions();
   }
 
   @Override
   @JsonIgnore
   public List<String> getAvailableLevelOfContentDetails() {
-    return com.dropchop.recyclone.model.api.invoke.Params.super.getAvailableLevelOfContentDetails();
+    return CommonParams.super.getAvailableLevelOfContentDetails();
   }
 
   @Override
   @JsonIgnore
   public Collection<State.Code> getHiddenStates() {
-    return com.dropchop.recyclone.model.api.invoke.Params.super.getHiddenStates();
+    return CommonParams.super.getHiddenStates();
   }
 
   @Override
   @JsonIgnore
   public String[] getSortFields() {
-    return com.dropchop.recyclone.model.api.invoke.Params.super.getSortFields();
+    return CommonParams.super.getSortFields();
   }
 
   private String requestId;

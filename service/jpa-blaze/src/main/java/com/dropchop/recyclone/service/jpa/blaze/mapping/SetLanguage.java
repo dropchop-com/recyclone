@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
 import com.dropchop.recyclone.model.api.security.Constants;
@@ -16,13 +16,12 @@ import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
 import com.dropchop.recyclone.service.api.mapping.EntityAllPreloadDelegate;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
-public class SetLanguage<D extends Dto, P extends Params>
+public class SetLanguage<D extends Dto, P extends CommonParams>
   extends EntityAllPreloadDelegate<Language, ELanguage, String, P>
   implements AfterToEntityListener<P> {
 

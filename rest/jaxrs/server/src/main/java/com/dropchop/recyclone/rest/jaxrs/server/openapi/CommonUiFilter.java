@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.server.openapi;
 
 import com.dropchop.recyclone.model.api.base.State;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.OASFactory;
@@ -14,7 +14,7 @@ import org.eclipse.microprofile.openapi.models.tags.Tag;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.dropchop.recyclone.model.api.invoke.Params.*;
+import static com.dropchop.recyclone.model.api.invoke.CommonParams.*;
 
 /**
  * OpenAPI user interface filter.
@@ -29,19 +29,19 @@ import static com.dropchop.recyclone.model.api.invoke.Params.*;
 @SuppressWarnings("SameParameterValue")
 public class CommonUiFilter implements OASFilter {
 
-  private final Map<String, Params> paramsInstanceCache = new HashMap<>();
+  private final Map<String, CommonParams> paramsInstanceCache = new HashMap<>();
 
-  private Params createInstance(String className) {
-    Class<Params> parametersClass;
+  private CommonParams createInstance(String className) {
+    Class<CommonParams> parametersClass;
     try {
       ClassLoader loader = Thread.currentThread().getContextClassLoader();
       //noinspection unchecked
-      parametersClass = (Class<Params>)loader.loadClass(className);
+      parametersClass = (Class<CommonParams>)loader.loadClass(className);
     } catch (Exception e) {
       log.warn("Unable to load [{}] parameters class!", className, e);
       return null;
     }
-    Params parameters;
+    CommonParams parameters;
     try {
       parameters = parametersClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
@@ -137,7 +137,7 @@ public class CommonUiFilter implements OASFilter {
   public Operation filterOperation(Operation operation) {
     //filter out non-impl operations
     String opId = operation.getOperationId();
-    if (opId != null && !opId.contains(".server.")) {
+    if (opId != null && !(opId.contains(".server.") || opId.contains(".impl."))) {
       return null;
     }
 
@@ -166,7 +166,7 @@ public class CommonUiFilter implements OASFilter {
             operation.getOperationId());
         }
 
-        Params dtoParameters = paramsInstanceCache.computeIfAbsent(descr[1], this::createInstance);
+        CommonParams dtoParameters = paramsInstanceCache.computeIfAbsent(descr[1], this::createInstance);
         if (dtoParameters == null) {
           return operation;
         }

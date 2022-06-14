@@ -5,7 +5,6 @@ import com.dropchop.recyclone.model.api.base.Entity;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.

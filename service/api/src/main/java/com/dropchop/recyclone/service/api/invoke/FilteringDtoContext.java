@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.localization.Translation;
@@ -35,31 +36,33 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
   @Override
   public void setParams(@NonNull P params) {
     super.setParams(params);
-    Integer contentTreeLevel = params.getContentTreeLevel();
-    if (contentTreeLevel != null) {
-      this.contentTreeLevel = contentTreeLevel;
-      this.contentDetailLevel = null;
-    }
-    String contentDetailLevel = params.getContentDetailLevel();
-    if (contentDetailLevel != null && !contentDetailLevel.isBlank()) {
-      this.contentDetailLevel = contentDetailLevel;
-    }
-
-    String translationLang = params.getTranslationLang();
-    if (translationLang != null && !translationLang.isBlank()) {
-      this.translationLang = translationLang;
-    }
-
-    List<String> includes = params.getContentIncludes();
-    if (includes != null) {
-      for (String includeStr : includes) {
-        this.includes.add(new FieldFilter().parseFilterSegments(includeStr));
+    if (params instanceof CommonParams commonParams) {
+      Integer contentTreeLevel = commonParams.getContentTreeLevel();
+      if (contentTreeLevel != null) {
+        this.contentTreeLevel = contentTreeLevel;
+        this.contentDetailLevel = null;
       }
-    }
-    List<String> excludes = params.getContentExcludes();
-    if (excludes != null) {
-      for (String excludeStr : excludes) {
-        this.excludes.add(new FieldFilter().parseFilterSegments(excludeStr));
+      String contentDetailLevel = commonParams.getContentDetailLevel();
+      if (contentDetailLevel != null && !contentDetailLevel.isBlank()) {
+        this.contentDetailLevel = contentDetailLevel;
+      }
+
+      String translationLang = commonParams.getTranslationLang();
+      if (translationLang != null && !translationLang.isBlank()) {
+        this.translationLang = translationLang;
+      }
+
+      List<String> includes = commonParams.getContentIncludes();
+      if (includes != null) {
+        for (String includeStr : includes) {
+          this.includes.add(new FieldFilter().parseFilterSegments(includeStr));
+        }
+      }
+      List<String> excludes = commonParams.getContentExcludes();
+      if (excludes != null) {
+        for (String excludeStr : excludes) {
+          this.excludes.add(new FieldFilter().parseFilterSegments(excludeStr));
+        }
       }
     }
   }
