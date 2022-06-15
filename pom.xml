@@ -90,10 +90,10 @@
     <aspectj.version>1.9.9.1</aspectj.version>
     <lombok.version>1.18.24</lombok.version>
     <!--<mapstruct.version>1.4.2.Final</mapstruct.version>-->
-    <mapstruct.version>1.5.0-SNAPSHOT</mapstruct.version>
+    <mapstruct.version>1.6.0-SNAPSHOT</mapstruct.version>
     <blaze-persistence.version>1.6.6</blaze-persistence.version>
     <jackson.version>2.13.1</jackson.version>
-    <quarkus.version>2.8.0.Final</quarkus.version>
+    <quarkus.version>2.9.2.Final</quarkus.version>
     <junit.version>5.8.2</junit.version>
     <jakarta.ws.rs.version>2.1.6</jakarta.ws.rs.version>
     <jakarta.cdi-api.version>2.0.2</jakarta.cdi-api.version>

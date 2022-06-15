@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mapstruct</groupId>
   <artifactId>mapstruct-processor</artifactId>
-  <version>1.5.0-SNAPSHOT</version>
+  <version>1.6.0-SNAPSHOT</version>
   <name>MapStruct Processor</name>
   <description>An annotation processor for generating type-safe bean mappers</description>
   <url>http://mapstruct.org/mapstruct-processor/</url>
@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
-      <version>1.5.0-SNAPSHOT</version>
+      <version>1.6.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
