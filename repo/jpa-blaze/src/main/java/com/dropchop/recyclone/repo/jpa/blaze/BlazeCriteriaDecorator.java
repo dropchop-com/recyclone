@@ -8,6 +8,8 @@ import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
  */
 public abstract class BlazeCriteriaDecorator<T, P extends Params> implements CriteriaDecorator<T> {
 
+  public static final String DELIM = ".";
+
   private BlazeExecContext<T, P> context;
 
   public void init(BlazeExecContext<T, P> executionContext) {
