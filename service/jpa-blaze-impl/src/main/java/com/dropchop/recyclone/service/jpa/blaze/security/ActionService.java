@@ -1,11 +1,10 @@
-package com.dropchop.recyclone.service.jpa.blaze.localization;
+package com.dropchop.recyclone.service.jpa.blaze.security;
 
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.localization.Language;
-import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
+import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.model.entity.jpa.security.EAction;
 import com.dropchop.recyclone.repo.api.RepositoryType;
-import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.repo.jpa.blaze.security.ActionRepository;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
 import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
@@ -16,27 +15,28 @@ import javax.inject.Inject;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
 
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class LanguageService extends CrudServiceImpl<Language, CodeParams, ELanguage, String>
-  implements com.dropchop.recyclone.service.api.localization.LanguageService {
+public class ActionService extends CrudServiceImpl<Action, CodeParams, EAction, String>
+  implements com.dropchop.recyclone.service.api.security.ActionService {
 
   @Inject
   @RepositoryType(RCYN_DEFAULT)
-  LanguageRepository repository;
+  ActionRepository repository;
 
   @Inject
-  LanguageToDtoMapper toDtoMapper;
+  ActionToDtoMapper toDtoMapper;
 
   @Inject
-  LanguageToEntityMapper toEntityMapper;
+  ActionToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Language, CodeParams, ELanguage, String> getConfiguration() {
+  public ServiceConfiguration<Action, CodeParams, EAction, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

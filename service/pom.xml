@@ -23,6 +23,7 @@
 
   <modules>
     <module>api</module>
-    <module>jpa-blaze</module>
+    <module>jpa-blaze-api</module>
+    <module>jpa-blaze-impl</module>
   </modules>
 </project>

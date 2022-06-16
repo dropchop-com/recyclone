@@ -103,7 +103,7 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-jpa-blaze</artifactId>
+      <artifactId>recyclone-service-jpa-blaze-impl</artifactId>
       <version>${recyclone.version}</version>
     </dependency>
 
