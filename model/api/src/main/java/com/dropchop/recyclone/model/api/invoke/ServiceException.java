@@ -5,10 +5,7 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
@@ -24,14 +21,17 @@ public class ServiceException extends RuntimeException {
   public ServiceException(StatusMessage statusMessage, Throwable cause) {
     super(cause);
     Set<Attribute<?>> details = statusMessage.getDetails();
+    Set<Attribute<?>> copy = new LinkedHashSet<>();
     if (details == null) {
-      details = new LinkedHashSet<>();
-      statusMessage.setDetails(details);
+      statusMessage.setDetails(copy);
+    } else {
+      copy.addAll(details);
+      statusMessage.setDetails(copy);
     }
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     cause.printStackTrace(pw);
-    details.add(new AttributeString("trace", sw.toString()));
+    copy.add(new AttributeString("trace", sw.toString()));
     this.statusMessages.add(statusMessage);
   }
 

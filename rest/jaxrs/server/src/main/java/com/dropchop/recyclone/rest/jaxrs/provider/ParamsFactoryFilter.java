@@ -141,7 +141,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     } catch (NumberFormatException e) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse content level tree depth parameter",
-        Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
+        Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))), e);
     }
 
     if (parts.length == 2) {
@@ -150,7 +150,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       } catch (NumberFormatException e) {
         throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
           "Unable parse content level tree depth parameter",
-          Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
+          Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))), e);
       }
     }
   }
