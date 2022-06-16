@@ -72,6 +72,10 @@ public interface Constants {
       String PERMISSION = "security.permission";
       String USER       = "security.user";
     }
+
+    interface Tagging {
+      String TAG = "tagging.tag";
+    }
   }
 
   interface Actions {

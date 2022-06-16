@@ -8,6 +8,7 @@ public interface Constants {
   interface Tags {
     String LOCALIZATION = "localization";
     String SECURITY     = "security";
+    String TAGGING      = "tagging";
 
     String DYNAMIC_PREFIX  = "dyn-";
     String DYNAMIC_DELIM   = ":";
@@ -24,6 +25,8 @@ public interface Constants {
     String SEARCH_SEGMENT = "/search";
     String LOCALIZATION_SEGMENT = "/localization";
     String SECURITY_SEGMENT = "/security";
+    String TAGGING_SEGMENT = "/tagging";
+
     String INTERNAL_SEGMENT = "/internal";
     String PUBLIC_SEGMENT = "/public";
 
@@ -45,6 +48,11 @@ public interface Constants {
       String PERMISSION = SECURITY_SEGMENT + PERMISSION_SEGMENT;
       String USER_SEGMENT = "/user";
       String USER = SECURITY_SEGMENT + USER_SEGMENT;
+    }
+
+    interface Tagging {
+      String TAG_SEGMENT = "/tag";
+      String TAG = TAGGING_SEGMENT + TAG_SEGMENT;
     }
   }
 

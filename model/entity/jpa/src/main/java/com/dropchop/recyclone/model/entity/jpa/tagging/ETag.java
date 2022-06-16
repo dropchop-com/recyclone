@@ -1,6 +1,6 @@
-package com.dropchop.recyclone.model.entity.jpa.tag;
+package com.dropchop.recyclone.model.entity.jpa.tagging;
 
-import com.dropchop.recyclone.model.api.tag.Tag;
+import com.dropchop.recyclone.model.api.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;

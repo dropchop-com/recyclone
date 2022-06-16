@@ -72,6 +72,7 @@ public class TestApplication extends Application {
     container.addAll(RecycloneApplicationRegistry.getRestLayerRegistrationClasses());
     container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
     container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
+    container.addAll(RecycloneApplicationRegistry.getRestTaggingResourceClasses());
     return container;
   }
 }

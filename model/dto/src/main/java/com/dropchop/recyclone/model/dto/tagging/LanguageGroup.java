@@ -1,6 +1,6 @@
-package com.dropchop.recyclone.model.dto.tag;
+package com.dropchop.recyclone.model.dto.tagging;
 
-import com.dropchop.recyclone.model.api.tag.NamedTag;
+import com.dropchop.recyclone.model.api.tagging.NamedTag;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.api.tag;
+package com.dropchop.recyclone.model.api.tagging;
 
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasName;

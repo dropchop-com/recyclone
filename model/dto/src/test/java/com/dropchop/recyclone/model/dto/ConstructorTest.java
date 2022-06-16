@@ -3,7 +3,7 @@ package com.dropchop.recyclone.model.dto;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
-import com.dropchop.recyclone.model.dto.tag.LanguageGroup;
+import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,8 +25,7 @@ class ConstructorTest {
     new Country("SI");
     new LanguageGroup();
 
-    IdentifierParams params = new IdentifierParams();
-    params = IdentifierParams.builder().identifier("a").identifier("b").build();
+    IdentifierParams params = IdentifierParams.builder().identifier("a").identifier("b").build();
     assertEquals(List.of("a", "b"), params.getIdentifiers());
   }
 }

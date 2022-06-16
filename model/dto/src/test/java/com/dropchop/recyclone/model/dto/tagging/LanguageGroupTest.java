@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.dto.tag;
+package com.dropchop.recyclone.model.dto.tagging;
 
 import com.dropchop.recyclone.model.api.utils.Uuid;
 import org.junit.jupiter.api.Test;

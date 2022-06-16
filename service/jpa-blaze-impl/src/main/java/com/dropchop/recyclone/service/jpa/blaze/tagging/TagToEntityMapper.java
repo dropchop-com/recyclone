@@ -1,8 +1,9 @@
-package com.dropchop.recyclone.service.jpa.blaze.security;
+package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
-import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
+import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.InjectionStrategy;
@@ -20,5 +21,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   uses = {EntityFactoryInvoker.class},
   injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-public interface PermissionToEntityMapper extends ToEntityMapper<Permission, IdentifierParams, EPermission> {
+public interface TagToEntityMapper extends ToEntityMapper<Tag<TitleTranslation>, IdentifierParams, ETag> {
 }

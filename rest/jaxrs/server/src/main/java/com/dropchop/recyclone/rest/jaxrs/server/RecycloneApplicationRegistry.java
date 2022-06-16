@@ -4,6 +4,7 @@ import com.dropchop.recyclone.rest.jaxrs.provider.*;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.CountryResource;
 import com.dropchop.recyclone.rest.jaxrs.server.localization.intern.LanguageResource;
 import com.dropchop.recyclone.rest.jaxrs.server.security.intern.*;
+import com.dropchop.recyclone.rest.jaxrs.server.tagging.intern.TagResource;
 
 import java.util.Set;
 
@@ -16,7 +17,6 @@ public class RecycloneApplicationRegistry {
     return Set.of(
       ServiceErrorExceptionMapper.class
       , ObjectMapperContextResolver.class
-      //, ShiroDynamicFeature.class
       , DefaultContentTypeFilter.class
       , CommonDynamicFeatures.class
       , ExecContextInitInterceptor.class
@@ -30,6 +30,13 @@ public class RecycloneApplicationRegistry {
       , LanguageResource.class
       , com.dropchop.recyclone.rest.jaxrs.server.localization.CountryResource.class
       , CountryResource.class
+    );
+  }
+
+  public static Set<Class<?>> getRestTaggingResourceClasses() {
+    return Set.of(
+      com.dropchop.recyclone.rest.jaxrs.server.tagging.TagResource.class
+      , TagResource.class
     );
   }
 

@@ -1,6 +1,6 @@
-package com.dropchop.recyclone.model.entity.jpa.tag;
+package com.dropchop.recyclone.model.entity.jpa.tagging;
 
-import com.dropchop.recyclone.model.api.tag.NamedTag;
+import com.dropchop.recyclone.model.api.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

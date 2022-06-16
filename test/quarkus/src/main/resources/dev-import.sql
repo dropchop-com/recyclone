@@ -31,6 +31,7 @@ insert into security_domain(code, title, lang, created, modified) values ('secur
 insert into security_domain(code, title, lang, created, modified) values ('security.domain', 'Security/Domains', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('security.permission', 'Security/Permissions', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('security.role', 'Security/Roles', 'en', now(), now());
+insert into security_domain(code, title, lang, created, modified) values ('tagging.tag', 'Tagging/Tags', 'en', now(), now());
 
 insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('*', 'Vse', 'sl', now(), now());
 insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('localization.language', 'Lokalizacija/Jeziki', 'sl', now(), now());
@@ -39,6 +40,7 @@ insert into security_domain_l(fk_security_domain_code, title, lang, created, mod
 insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.domain', 'Varnost/Področja', 'sl', now(), now());
 insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.permission', 'Varnost/Dovoljenja', 'sl', now(), now());
 insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.role', 'Varnost/Vloge', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('tagging.tag', 'Označevanje/Oznake', 'sl', now(), now());
 
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('*', '*');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('*', 'view');
@@ -51,30 +53,35 @@ insert into security_domain_security_action(fk_security_domain_code, fk_security
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.domain', '*');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.permission', '*');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.role', '*');
+insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('tagging.tag', '*');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.language', 'view');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.country', 'view');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.action', 'view');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.domain', 'view');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.permission', 'view');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.role', 'view');
+insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('tagging.tag', 'view');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.language', 'create');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.country', 'create');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.action', 'create');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.domain', 'create');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.permission', 'create');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.role', 'create');
+insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('tagging.tag', 'create');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.language', 'delete');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.country', 'delete');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.action', 'delete');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.domain', 'delete');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.permission', 'delete');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.role', 'delete');
+insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('tagging.tag', 'delete');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.language', 'update');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('localization.country', 'update');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.action', 'update');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.domain', 'update');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.permission', 'update');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('security.role', 'update');
+insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('tagging.tag', 'update');
 
 insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
 values ('03965584-7609-44b4-8cf4-b54a3ac9e472', '*', '*', now(), now());
@@ -145,6 +152,17 @@ values ('9966baa8-d201-4b5c-9e5a-c9b9ab802073', 'security.role', 'update', now()
 insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
 values ('c002b667-4a26-49c6-b67f-0de21e3dba7c', 'security.role', 'delete', now(), now());
 
+insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
+values ('fd0aad8c-a155-4589-af08-33b94b879860', 'tagging.tag', '*', now(), now());
+insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
+values ('065e80ac-7f1e-41d2-8097-94783cf54717', 'tagging.tag', 'view', now(), now());
+insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
+values ('8d011b3c-e190-46f8-85aa-7b5658b2e895', 'tagging.tag', 'create', now(), now());
+insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
+values ('27892b9a-7af8-49e0-9777-12022e46f2eb', 'tagging.tag', 'update', now(), now());
+insert into security_permission(uuid, fk_security_domain_code, fk_security_action_code, created, modified)
+values ('19e5c479-e763-4dcf-92f0-c18a10ed1eac', 'tagging.tag', 'delete', now(), now());
+
 insert into security_role(code, title, lang, created, modified) values('admin', 'Administrator', 'en', now(), now());
 insert into security_role_l(fk_security_role_code, title, lang, created, modified) values ('admin', 'Skrbnik', 'sl', now(), now());
 insert into security_role(code, title, lang, created, modified) values('staff', 'Staff', 'en', now(), now());
@@ -167,8 +185,12 @@ insert into security_role_security_permission(fk_security_role_code, fk_security
 values ('staff', '8c10fe8e-91c7-4423-b58f-4c30fc1295d8');
 insert into security_role_security_permission(fk_security_role_code, fk_security_permission_uuid)
 values ('staff', '0ee92699-5ca2-42e0-ae62-201828fad6d2');
+insert into security_role_security_permission(fk_security_role_code, fk_security_permission_uuid)
+values ('staff', 'fd0aad8c-a155-4589-af08-33b94b879860');
 
 insert into security_role_security_permission(fk_security_role_code, fk_security_permission_uuid)
 values ('user', '0edf37b1-8b7c-4d81-9f17-05f683f54570');
 insert into security_role_security_permission(fk_security_role_code, fk_security_permission_uuid)
 values ('user', '91a9b501-1038-4d29-b35c-fa1109a7703a');
+insert into security_role_security_permission(fk_security_role_code, fk_security_permission_uuid)
+values ('user', '065e80ac-7f1e-41d2-8097-94783cf54717');

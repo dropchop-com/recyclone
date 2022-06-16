@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.dto.tag;
+package com.dropchop.recyclone.model.dto.tagging;
 
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.base.DtoId;
@@ -21,8 +21,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
-public abstract class Tag<T extends TitleTranslation>
-  extends DtoId implements com.dropchop.recyclone.model.api.tag.Tag<T> {
+public class Tag<T extends TitleTranslation>
+  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<T> {
 
   private String title;
 
