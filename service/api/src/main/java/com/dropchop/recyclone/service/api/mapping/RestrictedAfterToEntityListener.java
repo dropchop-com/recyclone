@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
  */
 public abstract class RestrictedAfterToEntityListener<P extends Params> implements AfterToEntityListener<P> {
 
-  final Class<?> onlyForEntity;
+  protected final Class<?> onlyForEntity;
 
   public RestrictedAfterToEntityListener() {
     this.onlyForEntity = null;
