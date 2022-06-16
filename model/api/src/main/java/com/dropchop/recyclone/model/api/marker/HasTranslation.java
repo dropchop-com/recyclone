@@ -27,9 +27,6 @@ public interface HasTranslation<T extends Translation> {
 
 
   default boolean removeTranslation(T translation) {
-    /*Set<T> newTranslations = new LinkedHashSet<>(this.getTranslations());
-    newTranslations.remove(translation);
-    this.setTranslations(newTranslations);*/
     return this.getTranslations().remove(translation);
   }
 

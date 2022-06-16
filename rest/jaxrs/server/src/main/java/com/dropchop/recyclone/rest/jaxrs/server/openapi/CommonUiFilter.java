@@ -33,7 +33,8 @@ import static com.dropchop.recyclone.model.api.invoke.CommonParams.*;
 @SuppressWarnings("SameParameterValue")
 public class CommonUiFilter implements OASFilter {
 
-  private final String CONF_PROP_NAME_DC_APP_CLASS = "dropchop.application.class";
+  @SuppressWarnings("FieldCanBeLocal")
+  public final String CONF_PROP_NAME_DC_APP_CLASS = "dropchop.application.class";
 
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
@@ -166,9 +167,12 @@ public class CommonUiFilter implements OASFilter {
 
   @Override
   public Operation filterOperation(Operation operation) {
-    //filter out non-impl operations or we get duplicated swagger ui output
+    //filter out non-impl operations, or we get duplicated swagger ui output
     String opId = operation.getOperationId();
-    if (opId != null && !opId.contains(".server.") && !opId.contains(".impl.")) {
+    if (opId == null) {
+      return null;
+    }
+    if (!opId.contains(".server.") && !opId.contains(".impl.")) {
       return null;
     }
 

@@ -23,8 +23,9 @@ public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
   private String code;
 
   @Override
+  @SuppressWarnings("ConstantConditions")
   public int compareTo(@NonNull DtoCode o) {
-    /*if (this.code == null && o.code != null) {
+    if (this.code == null && o.code != null) {
       return -1;
     }
     if (this.code != null && o.code == null) {
@@ -32,7 +33,7 @@ public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
     }
     if (this.code == null && o.code == null) {
       return 0;
-    }*/
+    }
     return this.code.compareTo(o.code);
   }
 }

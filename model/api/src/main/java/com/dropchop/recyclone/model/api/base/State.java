@@ -73,9 +73,12 @@ public interface State extends Model, HasCode, HasCreated, HasCreatedBy {
 
       @Override
       public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseCode)) return false;
-        BaseCode baseCode = (BaseCode) o;
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof BaseCode baseCode)) {
+          return false;
+        }
         return code.equals(baseCode.code);
       }
 

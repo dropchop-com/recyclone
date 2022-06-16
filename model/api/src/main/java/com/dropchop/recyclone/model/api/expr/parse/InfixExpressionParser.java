@@ -108,7 +108,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
 
     Node left = subExpression.peekFirst();
     if (node instanceof BinaryLeafOperator) { // ... NOT text = DirtyHarry
-      if (left instanceof BinaryOperator) { // AND AND is illegal
+      if (left instanceof BinaryOperator) { // AND and AND is illegal
         throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.MISSING_LEFT_OPERAND));
       }
       // we support unary operator in front of binary leaf operator: NOT k1 NEAR k3 is equivalent to k1 NOT NEAR k3
@@ -120,7 +120,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
           throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.ILLEGAL_LEAF_OPERATOR_USE));
         }
         Node prev = subExpression.peekFirst();
-        if (prev != null && !(prev instanceof BinaryOperator)) { // but we don't support NOT k1 NOT NEAR k3
+        if (prev != null && !(prev instanceof BinaryOperator)) { // but we don't support expr "NOT k1 NOT NEAR k3"
           throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.ILLEGAL_LEAF_OPERATOR_USE));
         }
         subExpression.push(left); // unary operator
@@ -449,7 +449,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
         continue;
       }
 
-      // sub-tree expression start (SUB_EXPRESSION_SYMBOL_START marks
+      // subtree expression start (SUB_EXPRESSION_SYMBOL_START marks
       // when we should stop popping stacks later when we drain)
       if (ParserHelper.isNotEscapedSymbol(window, ReservedSymbols.SUB_EXPRESSION_SYMBOL_START)) {
         log.trace("Sub-expression start.");

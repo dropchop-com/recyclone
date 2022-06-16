@@ -21,12 +21,11 @@ class FieldFilter {
   public static final String ANY = "*";
 
   static class PathSegment {
-    String name;
+    final String name;
     Object referer;
     int index = -1;
     int level = 0;
     String path = null;
-    List<String> propertiesToClear = null;
 
     public PathSegment(String name, int index, Object referer) {
       this.name = name;
@@ -78,7 +77,7 @@ class FieldFilter {
     }
   }
 
-  LinkedList<FilterPathSegment> path = new LinkedList<>();
+  final LinkedList<FilterPathSegment> path = new LinkedList<>();
 
 
   static PathSegment computePath(@NonNull Deque<PathSegment> path, @NonNull String lastProp) {

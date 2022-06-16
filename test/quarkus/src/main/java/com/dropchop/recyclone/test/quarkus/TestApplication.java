@@ -31,7 +31,7 @@ import java.util.Set;
     version = "1.0.1",
     contact = @Contact(
       name = "Recyclone API Support",
-      url = "http://exampleurl.com/contact",
+      url = "https://exampleurl.com/contact",
       email = "techsupport@example.com"),
     license = @License(
       name = "Apache 2.0",

@@ -24,9 +24,7 @@ public class EPerson extends EUuid implements Person {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder(super.toString());
-    sb.append("first='").append(firstName).append('\'');
-    sb.append(", last='").append(lastName).append('\'');
-    return sb.toString();
+    return super.toString() + "first='" + firstName + '\'' +
+      ", last='" + lastName + '\'';
   }
 }

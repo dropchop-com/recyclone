@@ -94,18 +94,11 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
         handler.assertAuthorized(authzSpec);
       }
 
-      //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_SUBJECT, subject);
       execContextProvider.get().setSubject(subject);
       if (requiredPermissions != null && requiredPermissions.length > 0) {
         String securityDomainAction = requiredPermissions[0];
         if (securityDomainAction != null && !securityDomainAction.isBlank()) {
-          //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_DOMAIN,
-            //Constants.Permission.decomposeDomain(securityDomainAction));
           execContextProvider.get().setSecurityDomain(Permission.decomposeDomain(securityDomainAction));
-
-          //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_ACTION,
-            //Constants.Permission.decomposeAction(securityDomainAction));
-
           execContextProvider.get().setSecurityAction(Permission.decomposeAction(securityDomainAction));
 
           log.trace("Registering required security domain {} and action {}",
@@ -115,11 +108,7 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
         if (requiredPermissions.length > 1) {
           log.warn("Only first permission in @RequiresPermissions annotation is passed to CommonExecContext!");
         }
-        //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM,
-          //Arrays.asList(requiredPermissions));
         execContextProvider.get().setRequiredPermissions(Arrays.asList(requiredPermissions));
-        //requestContext.setProperty(InternalContextVariables.RECYCLONE_SECURITY_REQUIRED_PERM_OP,
-          //requiredPermissionsOp);
         execContextProvider.get().setRequiredPermissionsOp(requiredPermissionsOp);
       }
     } catch (AuthorizationException e) {
@@ -133,7 +122,7 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
   }
 
   @Override
-  public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+  public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     Object threadStateObj = requestContext.getProperty("shiro.req.internal.thread.state");
     if (threadStateObj instanceof ThreadState threadState) {
       threadState.clear();

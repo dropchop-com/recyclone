@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public interface HasStateInlinedCommon extends HasStateInlined {
 
-  static Set<? extends State.Code> allStateCodes(Class clazz) {
+  static Set<? extends State.Code> allStateCodes(Class<?> clazz) {
     Set<State.Code> codes = new HashSet<>();
     if (HasCreated.class.isAssignableFrom(clazz)) {
       codes.add(HasCreated.created);

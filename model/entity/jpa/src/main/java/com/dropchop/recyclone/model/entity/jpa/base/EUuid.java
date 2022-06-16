@@ -30,9 +30,12 @@ public abstract class EUuid implements Entity, HasUuid, Comparable<EUuid> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof EUuid)) return false;
-    EUuid eUuid = (EUuid) o;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof EUuid eUuid)) {
+      return false;
+    }
     return Objects.equals(uuid, eUuid.uuid);
   }
 
@@ -43,8 +46,6 @@ public abstract class EUuid implements Entity, HasUuid, Comparable<EUuid> {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("");
-    sb.append("uuid=").append(uuid);
-    return sb.toString();
+    return "uuid=" + uuid;
   }
 }

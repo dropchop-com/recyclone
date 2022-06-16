@@ -23,15 +23,15 @@ import java.util.*;
 @Slf4j
 public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
 
-  Deque<FieldFilter.PathSegment> path = new LinkedList<>();
-  String lastProp = null;
+  private final Deque<FieldFilter.PathSegment> path = new LinkedList<>();
+  private String lastProp = null;
 
-  Integer contentTreeLevel = 1;
-  String contentDetailLevel = ContentDetail.NESTED_OBJS_IDCODE;
-  String translationLang = null;
-  List<FieldFilter> includes = new ArrayList<>();
-  List<FieldFilter> excludes = new ArrayList<>();
+  private final List<FieldFilter> includes = new ArrayList<>();
+  private final List<FieldFilter> excludes = new ArrayList<>();
 
+  private Integer contentTreeLevel = 1;
+  private String contentDetailLevel = ContentDetail.NESTED_OBJS_IDCODE;
+  private String translationLang = null;
 
   @Override
   public void setParams(@NonNull P params) {

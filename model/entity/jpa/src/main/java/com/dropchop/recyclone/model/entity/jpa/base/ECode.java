@@ -29,9 +29,12 @@ public abstract class ECode implements Entity, HasCode, Comparable<ECode> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof ECode)) return false;
-    ECode eCode = (ECode) o;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof ECode eCode)) {
+      return false;
+    }
     return Objects.equals(code, eCode.code);
   }
 
@@ -42,8 +45,6 @@ public abstract class ECode implements Entity, HasCode, Comparable<ECode> {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("code=").append(code);
-    return sb.toString();
+    return "code=" + code;
   }
 }
