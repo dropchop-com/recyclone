@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.dto.tagging;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 public class Tag<T extends TitleTranslation>
   extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<T> {
 
@@ -36,7 +38,7 @@ public class Tag<T extends TitleTranslation>
 
   private ZonedDateTime deactivated;
 
-  private final String type = this.getClass().getSimpleName();
+  private final String type = this.getClass().getName();
 
   public String getType() {
     return this.type;

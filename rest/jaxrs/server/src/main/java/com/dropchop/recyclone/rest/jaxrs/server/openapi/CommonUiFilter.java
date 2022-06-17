@@ -146,7 +146,6 @@ public class CommonUiFilter implements OASFilter {
 
     Config conf = ConfigProvider.getConfig();
     String appClassName = conf.getConfigValue(CONF_PROP_NAME_DC_APP_CLASS).getValue();
-    log.error("filter [{}]", appClassName);
     if (appClassName == null) {
       log.warn("Missing [{}] config property unable to properly filter operations!",
         CONF_PROP_NAME_DC_APP_CLASS);

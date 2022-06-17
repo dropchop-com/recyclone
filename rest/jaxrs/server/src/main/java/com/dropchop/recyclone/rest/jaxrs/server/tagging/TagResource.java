@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.server.tagging;
 
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
+import com.dropchop.recyclone.model.dto.invoke.TagParams;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
@@ -22,14 +22,14 @@ import java.util.UUID;
 @Slf4j
 @RequestScoped
 @Path(Constants.Paths.PUBLIC_SEGMENT + Constants.Paths.Tagging.TAG)
-public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.tagging.TagResource {
+public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.tagging.TagResource<Tag<TitleTranslation>> {
 
   @Inject
   ServiceSelector selector;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<IdentifierParams, Tag<TitleTranslation>> ctx;
+  CommonExecContext<TagParams, Tag<TitleTranslation>> ctx;
 
   @Override
   public Result<Tag<TitleTranslation>> get() {
@@ -38,14 +38,14 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
 
   @Override
   public Result<Tag<TitleTranslation>> getById(UUID uuid) {
-    IdentifierParams params = ctx.getParams();
+    TagParams params = ctx.getParams();
     params.setIdentifiers(List.of(uuid.toString()));
     return selector.select(TagService.class).search();
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> search(IdentifierParams parameters) {
-    IdentifierParams thContext = ctx.getParams();
+  public Result<Tag<TitleTranslation>> search(TagParams parameters) {
+    TagParams thContext = ctx.getParams();
     log.info("search() [{}] [{}] vs [{}]", thContext == parameters, thContext, parameters);
     return selector.select(TagService.class).search();
   }

@@ -25,7 +25,5 @@ mp:
   openapi:
     filter:
       - com.dropchop.recyclone.rest.jaxrs.server.openapi.CommonUiFilter
-
-dropchop:
 #  service-type:
 #    LanguageService: "rcyn_test"

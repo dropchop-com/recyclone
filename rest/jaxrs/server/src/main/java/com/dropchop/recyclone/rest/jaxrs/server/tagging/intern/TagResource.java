@@ -19,7 +19,8 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @Path(Constants.Paths.INTERNAL_SEGMENT + Constants.Paths.Tagging.TAG)
-public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource {
+public class TagResource
+  implements com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource<Tag<TitleTranslation>> {
 
   @Inject
   ServiceSelector selector;
