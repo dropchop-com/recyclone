@@ -1,6 +1,10 @@
 package com.dropchop.recyclone.rest.jaxrs.server.security.intern;
 
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
+import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
@@ -22,7 +26,7 @@ public class UserResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<UserParams, User<?>> ctx;
+  CommonExecContext<User<?>> ctx;
 
   @Override
   public Result<User<?>> get() {
@@ -36,8 +40,12 @@ public class UserResource implements
 
   @Override
   public Result<User<?>> getByUuid(UUID id) {
-    UserParams params = ctx.getParams();
-    params.setIdentifiers(List.of(id.toString()));
+    Params params = ctx.getParams();
+    if (!(params instanceof IdentifierParams identifierParams)) {
+      throw new ServiceException(ErrorCode.parameter_validation_error,
+        String.format("Invalid parameter type: should be [%s]", IdentifierParams.class));
+    }
+    identifierParams.setIdentifiers(List.of(id.toString()));
     return null;
   }
 }

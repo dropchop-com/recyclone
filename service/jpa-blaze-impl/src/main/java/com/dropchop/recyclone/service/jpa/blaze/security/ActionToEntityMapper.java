@@ -20,5 +20,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   uses = EntityFactoryInvoker.class,
   injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-public interface ActionToEntityMapper extends ToEntityMapper<Action, CodeParams, EAction> {
+public interface ActionToEntityMapper extends ToEntityMapper<Action, EAction> {
 }

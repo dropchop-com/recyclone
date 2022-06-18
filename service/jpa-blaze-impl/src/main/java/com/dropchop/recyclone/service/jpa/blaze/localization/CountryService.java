@@ -21,7 +21,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class CountryService extends CrudServiceImpl<Country, CodeParams, ECountry, String>
+public class CountryService extends CrudServiceImpl<Country, ECountry, String>
   implements com.dropchop.recyclone.service.api.localization.CountryService {
 
   @Inject
@@ -36,7 +36,7 @@ public class CountryService extends CrudServiceImpl<Country, CodeParams, ECountr
 
 
   @Override
-  public ServiceConfiguration<Country, CodeParams, ECountry, String> getConfiguration() {
+  public ServiceConfiguration<Country, ECountry, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

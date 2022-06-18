@@ -1,6 +1,10 @@
 package com.dropchop.recyclone.rest.jaxrs.server.tagging;
 
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants;
+import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.TagParams;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -29,7 +33,7 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<TagParams, Tag<TitleTranslation>> ctx;
+  CommonExecContext<Tag<TitleTranslation>> ctx;
 
   @Override
   public Result<Tag<TitleTranslation>> get() {
@@ -37,16 +41,18 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> getById(UUID uuid) {
-    TagParams params = ctx.getParams();
-    params.setIdentifiers(List.of(uuid.toString()));
+  public Result<Tag<TitleTranslation>> getById(UUID id) {
+    Params params = ctx.getParams();
+    if (!(params instanceof IdentifierParams identifierParams)) {
+      throw new ServiceException(ErrorCode.parameter_validation_error,
+        String.format("Invalid parameter type: should be [%s]", IdentifierParams.class));
+    }
+    identifierParams.setIdentifiers(List.of(id.toString()));
     return selector.select(TagService.class).search();
   }
 
   @Override
   public Result<Tag<TitleTranslation>> search(TagParams parameters) {
-    TagParams thContext = ctx.getParams();
-    log.info("search() [{}] [{}] vs [{}]", thContext == parameters, thContext, parameters);
     return selector.select(TagService.class).search();
   }
 }

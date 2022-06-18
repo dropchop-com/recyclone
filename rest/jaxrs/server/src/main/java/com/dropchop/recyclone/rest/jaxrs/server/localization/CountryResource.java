@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.rest.jaxrs.server.localization;
 
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
@@ -28,7 +31,7 @@ public class CountryResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<CodeParams, Country> ctx;
+  CommonExecContext<Country> ctx;
 
   @Override
   public Result<Country> get() {
@@ -37,15 +40,17 @@ public class CountryResource implements
 
   @Override
   public Result<Country> getByCode(String code) {
-    CodeParams params = ctx.getParams();
-    params.setCodes(List.of(code));
+    Params params = ctx.getParams();
+    if (!(params instanceof CodeParams codeParams)) {
+      throw new ServiceException(ErrorCode.parameter_validation_error,
+        String.format("Invalid parameter type: should be [%s]", CodeParams.class));
+    }
+    codeParams.setCodes(List.of(code));
     return selector.select(CountryService.class).search();
   }
 
   @Override
   public Result<Country> search(CodeParams parameters) {
-    CodeParams thContext = ctx.getParams();
-    log.info("search() [{}] [{}] vs [{}]", thContext == parameters, thContext, parameters);
     return selector.select(CountryService.class).search();
   }
 }

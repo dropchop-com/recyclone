@@ -2,7 +2,6 @@ package com.dropchop.recyclone.service.jpa.blaze;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.*;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
@@ -13,17 +12,17 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 2. 05. 22.
  */
-public class ServiceConfiguration<D extends Dto, P extends CommonParams, E extends Entity, ID> {
+public class ServiceConfiguration<D extends Dto, E extends Entity, ID> {
 
   final CrudRepository<E, ID> repository;
-  final ToDtoMapper<D, P, E> toDtoMapper;
-  final ToEntityMapper<D, P, E> toEntityMapper;
-  final Iterable<BlazeCriteriaDecorator<E, P>> criteriaDecorators;
+  final ToDtoMapper<D, E> toDtoMapper;
+  final ToEntityMapper<D, E> toEntityMapper;
+  final Iterable<BlazeCriteriaDecorator<E>> criteriaDecorators;
 
   public ServiceConfiguration(CrudRepository<E, ID> repository,
-                              ToDtoMapper<D, P, E> toDtoMapper,
-                              ToEntityMapper<D, P, E> toEntityMapper,
-                              Iterable<BlazeCriteriaDecorator<E, P>> criteriaDecorators) {
+                              ToDtoMapper<D, E> toDtoMapper,
+                              ToEntityMapper<D, E> toEntityMapper,
+                              Iterable<BlazeCriteriaDecorator<E>> criteriaDecorators) {
     this.repository = repository;
     this.toDtoMapper = toDtoMapper;
     this.toEntityMapper = toEntityMapper;
@@ -31,8 +30,8 @@ public class ServiceConfiguration<D extends Dto, P extends CommonParams, E exten
   }
 
   public ServiceConfiguration(CrudRepository<E, ID> repository,
-                              ToDtoMapper<D, P, E> toDtoMapper,
-                              ToEntityMapper<D, P, E> toEntityMapper) {
+                              ToDtoMapper<D, E> toDtoMapper,
+                              ToEntityMapper<D, E> toEntityMapper) {
     this(repository, toDtoMapper, toEntityMapper, List.of(
       new LikeIdentifierCriteriaDecorator<>(),
       new InlinedStatesCriteriaDecorator<>(),
@@ -45,15 +44,15 @@ public class ServiceConfiguration<D extends Dto, P extends CommonParams, E exten
     return repository;
   }
 
-  public ToDtoMapper<D, P, E> getToDtoMapper() {
+  public ToDtoMapper<D, E> getToDtoMapper() {
     return toDtoMapper;
   }
 
-  public ToEntityMapper<D, P, E> getToEntityMapper() {
+  public ToEntityMapper<D, E> getToEntityMapper() {
     return toEntityMapper;
   }
 
-  public Iterable<BlazeCriteriaDecorator<E, P>> getCriteriaDecorators() {
+  public Iterable<BlazeCriteriaDecorator<E>> getCriteriaDecorators() {
     return criteriaDecorators;
   }
 }

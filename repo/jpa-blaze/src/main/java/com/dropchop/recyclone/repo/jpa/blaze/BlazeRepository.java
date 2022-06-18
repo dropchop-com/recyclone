@@ -6,7 +6,6 @@ import com.blazebit.persistence.DeleteCriteriaBuilder;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.QueryExecContextListener;
@@ -62,13 +61,13 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   }
 
   @Override
-  public <P extends CommonParams> List<E> find(RepositoryExecContext<E, P> context) {
+  public List<E> find(RepositoryExecContext<E> context) {
     String alias = getRootAlias();
     CriteriaBuilder<E> cb = getBuilder().from(getRootClass(), alias);
     TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();
     if (context != null) {
       if (context instanceof BlazeExecContext) {
-        ((BlazeExecContext<E, ?>) context).init(getRootClass(), alias, cb);
+        ((BlazeExecContext<E>) context).init(getRootClass(), alias, cb);
       }
       for (CriteriaDecorator<E> decorator : context.getCriteriaDecorators()) {
         if (decorator instanceof PageCriteriaDecorator) {

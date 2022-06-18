@@ -21,7 +21,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class DomainService extends CrudServiceImpl<Domain, CodeParams, EDomain, String>
+public class DomainService extends CrudServiceImpl<Domain, EDomain, String>
   implements com.dropchop.recyclone.service.api.security.DomainService {
 
   @Inject
@@ -35,7 +35,7 @@ public class DomainService extends CrudServiceImpl<Domain, CodeParams, EDomain, 
   DomainToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Domain, CodeParams, EDomain, String> getConfiguration() {
+  public ServiceConfiguration<Domain, EDomain, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

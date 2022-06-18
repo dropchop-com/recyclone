@@ -9,7 +9,7 @@ import com.dropchop.recyclone.service.api.CrudService;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
  */
-public interface RoleService extends CrudService<Role, RoleParams> {
+public interface RoleService extends CrudService<Role> {
 
   @Override
   default String getSecurityDomain() {

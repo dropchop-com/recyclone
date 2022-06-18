@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
@@ -33,17 +34,17 @@ import java.util.stream.Collectors;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
  */
 @Slf4j
-public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E extends Entity, ID>
-  implements CrudService<D, P>, EntityByIdService<D, E, ID> {
+public abstract class BaseCrudService<D extends Dto, E extends Entity, ID>
+  implements CrudService<D>, EntityByIdService<D, E, ID> {
 
   @Inject
   ServiceSelector serviceSelector;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<P, D> ctx;
+  CommonExecContext<D> ctx;
 
-  public abstract ServiceConfiguration<D, P, E, ID> getConfiguration();
+  public abstract ServiceConfiguration<D, E, ID> getConfiguration();
 
   @Override
   public Class<E> getRootClass() {
@@ -52,7 +53,7 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
 
   @Override
   public E findById(D dto) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     if (dto instanceof DtoCode) {
       //noinspection unchecked
       return conf.getRepository().findById((ID)((DtoCode) dto).getCode());
@@ -66,19 +67,19 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
 
   @Override
   public List<E> findById(Collection<ID> ids) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     return conf.getRepository().findById(ids);
   }
 
   @Override
   public E findById(ID id) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     return conf.getRepository().findById(id);
   }
 
   @Override
   public List<E> findAll() {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     return conf.getRepository().find();
   }
 
@@ -92,10 +93,10 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
     }
   }
 
-  protected List<E> find(RepositoryExecContext<E, P> repositoryExecContext) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+  protected List<E> find(RepositoryExecContext<E> repositoryExecContext) {
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     if (repositoryExecContext == null) {
-      repositoryExecContext = new BlazeExecContext<E, P>().of(ctx)
+      repositoryExecContext = new BlazeExecContext<E>().of(ctx)
         .criteriaDecorators(conf.getCriteriaDecorators());
     }
     return conf.getRepository().find(repositoryExecContext);
@@ -111,9 +112,9 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
     if (subject.isPermitted(ctx.getSecurityDomainAction())) {
       log.trace("search [{}] is permitted to view [{}]!", subject.getPrincipal(), ctx.getParams());
     }
-    MappingContext<P> mapContext = new FilteringDtoContext<P>().of(ctx);
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    List<E> entities = find(new BlazeExecContext<E, P>()
+    MappingContext mapContext = new FilteringDtoContext().of(ctx);
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
+    List<E> entities = find(new BlazeExecContext<E>()
       .of(ctx)
       .listener(mapContext) // get total count and save it
       .criteriaDecorators(conf.getCriteriaDecorators())
@@ -125,15 +126,19 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
-  protected abstract MappingContext<P> constructToEntityMappingContext(ServiceConfiguration<D, P, E, ID> conf);
+  protected abstract MappingContext constructToEntityMappingContext(ServiceConfiguration<D, E, ID> conf);
 
   protected boolean shouldRefreshAfterSave() {
-    P params = ctx.getParams();
-    String cDetail = params.getContentDetailLevel();
+    Params params = ctx.getParams();
+    String cDetail = null;
+    Integer cLevel = null;
+    if (params instanceof CommonParams commonParams) {
+      cDetail = commonParams.getContentDetailLevel();
+      cLevel = commonParams.getContentTreeLevel();
+    }
     if (cDetail == null) {
       cDetail = ContentDetail.NESTED_OBJS_IDCODE;
     }
-    Integer cLevel = params.getContentTreeLevel();
     if (cLevel == null) {
       cLevel = 1;
     }
@@ -149,7 +154,7 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
   }
 
   protected void save(Collection<E> entities) {
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     CrudRepository<E, ID> repository = conf.getRepository();
     repository.save(entities);
     if (shouldRefreshAfterSave()) {
@@ -159,8 +164,8 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
 
   protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    MappingContext<P> mapContext = constructToEntityMappingContext(conf);
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
+    MappingContext mapContext = constructToEntityMappingContext(conf);
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
     save(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
@@ -182,8 +187,8 @@ public abstract class BaseCrudService<D extends Dto, P extends CommonParams, E e
   @Transactional
   public Result<D> delete(List<D> dtos) {
     checkDtoPermissions(dtos);
-    ServiceConfiguration<D, P, E, ID> conf = getConfiguration();
-    MappingContext<P> mapContext = constructToEntityMappingContext(conf);
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
+    MappingContext mapContext = constructToEntityMappingContext(conf);
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
     conf.getRepository().delete(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);

@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.service.api.ExecContextType;
@@ -20,25 +19,24 @@ import javax.enterprise.inject.Produces;
 @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
 public class ExecContextProvider {
 
-  CommonExecContext<?, ?> execContext;
+  CommonExecContext<?> execContext;
 
-  public <P extends CommonParams, D extends Dto> CommonExecContext<P, D> create() {
+  public <D extends Dto> CommonExecContext<D> create() {
     this.execContext = new CommonExecContext<>();
     //noinspection unchecked
-    return (CommonExecContext<P, D>) this.execContext;
+    return (CommonExecContext<D>) this.execContext;
   }
 
   @Produces
   @RequestScoped
-  public <P extends Params, D extends Dto> CommonExecContext<P, D> get() {
+  public <P extends Params, D extends Dto> CommonExecContext<D> get() {
     //noinspection unchecked
-    return (CommonExecContext<P, D>) this.execContext;
+    return (CommonExecContext<D>) this.execContext;
   }
 
   public <P extends Params> void setParams(P p) {
     if (p instanceof com.dropchop.recyclone.model.dto.invoke.Params params) {
-      @SuppressWarnings("unchecked")
-      CommonExecContext<P, ?> execContext = (CommonExecContext<P, ?>)this.execContext;
+      CommonExecContext<?> execContext = this.execContext;
       if (params.getRequestId() != null) {
         execContext.setId(params.getRequestId());
       } else {

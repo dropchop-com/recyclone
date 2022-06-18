@@ -3,7 +3,6 @@ package com.dropchop.recyclone.repo.jpa.blaze;
 import com.blazebit.persistence.CriteriaBuilder;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import lombok.*;
@@ -18,10 +17,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BlazeExecContext<E, P extends Params>
-  extends ParamsExecContext<P, Listener> implements RepositoryExecContext<E, P> {
+public class BlazeExecContext<E>
+  extends ParamsExecContext<Listener> implements RepositoryExecContext<E> {
 
-  private Iterable<? extends BlazeCriteriaDecorator<E, P>> criteriaDecorators = new ArrayList<>();
+  private Iterable<? extends BlazeCriteriaDecorator<E>> criteriaDecorators = new ArrayList<>();
 
   @NonNull
   private CriteriaBuilder<E> criteriaBuilder;
@@ -38,30 +37,30 @@ public class BlazeExecContext<E, P extends Params>
     this.rootAlias = rootAlias;
     this.criteriaBuilder = builder;
 
-    for (BlazeCriteriaDecorator<E, P> decorator : criteriaDecorators) {
+    for (BlazeCriteriaDecorator<E> decorator : criteriaDecorators) {
       decorator.init(this);
     }
   }
 
   @Override
-  public BlazeExecContext<E, P> of(ExecContext<?> sourceContext) {
+  public BlazeExecContext<E> of(ExecContext<?> sourceContext) {
     super.of(sourceContext);
     return this;
   }
 
-  public BlazeExecContext<E, P> criteriaDecorators(Iterable<? extends BlazeCriteriaDecorator<E, P>> criteriaDecorators) {
+  public BlazeExecContext<E> criteriaDecorators(Iterable<? extends BlazeCriteriaDecorator<E>> criteriaDecorators) {
     this.setCriteriaDecorators(criteriaDecorators);
     return this;
   }
 
   @Override
-  public BlazeExecContext<E, P> listeners(List<Listener> listeners) {
+  public BlazeExecContext<E> listeners(List<Listener> listeners) {
     super.listeners(listeners);
     return this;
   }
 
   @Override
-  public BlazeExecContext<E, P> listener(Listener listener) {
+  public BlazeExecContext<E> listener(Listener listener) {
     if (listener == null) {
       return this;
     }

@@ -23,7 +23,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class PermissionService extends CrudServiceImpl<Permission, IdentifierParams, EPermission, UUID>
+public class PermissionService extends CrudServiceImpl<Permission, EPermission, UUID>
   implements com.dropchop.recyclone.service.api.security.PermissionService {
 
   @Inject
@@ -37,7 +37,7 @@ public class PermissionService extends CrudServiceImpl<Permission, IdentifierPar
   PermissionToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Permission, IdentifierParams, EPermission, UUID> getConfiguration() {
+  public ServiceConfiguration<Permission, EPermission, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

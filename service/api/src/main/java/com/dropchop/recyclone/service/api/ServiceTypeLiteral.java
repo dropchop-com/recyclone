@@ -9,7 +9,6 @@ public class ServiceTypeLiteral extends AnnotationLiteral<ServiceType> implement
 
   private final String value;
 
-
   public ServiceTypeLiteral(String value) {
     this.value = value;
   }

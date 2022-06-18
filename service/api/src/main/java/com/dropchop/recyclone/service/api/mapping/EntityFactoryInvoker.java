@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +22,16 @@ import java.util.Set;
 public class EntityFactoryInvoker {
 
   @ObjectFactory
-  public <E extends Entity, D extends Dto, P extends Params> E create(D dto,
-                                                                      @Context MappingContext<P> context,
-                                                                      @TargetType Class<E> type) {
+  @SuppressWarnings("unchecked")
+  public <E extends Entity, D extends Dto> E create(D dto,
+                                                    @Context MappingContext context,
+                                                    @TargetType Class<E> type) {
     try {
-      for (MappingListener<P> listener : context.listeners()) {
-        if (listener instanceof EntityFactoryListener<?, ?, ?>) {
-          Class<E> entityType = ((EntityFactoryListener<D, E, P>) listener).getEntityType();
+      for (MappingListener listener : context.listeners()) {
+        if (listener instanceof EntityFactoryListener<?, ?>) {
+          Class<E> entityType = ((EntityFactoryListener<D, E>) listener).getEntityType();
           if (entityType.equals(type)) {
-            E entity = ((EntityFactoryListener<D, E, P>) listener).create(dto, context);
+            E entity = ((EntityFactoryListener<D, E>) listener).create(dto, context);
             if (entity != null) {
               return entity;
             }

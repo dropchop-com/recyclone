@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class ActionService extends CrudServiceImpl<Action, CodeParams, EAction, String>
+public class ActionService extends CrudServiceImpl<Action, EAction, String>
   implements com.dropchop.recyclone.service.api.security.ActionService {
 
   @Inject
@@ -36,7 +36,7 @@ public class ActionService extends CrudServiceImpl<Action, CodeParams, EAction, 
   ActionToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Action, CodeParams, EAction, String> getConfiguration() {
+  public ServiceConfiguration<Action, EAction, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

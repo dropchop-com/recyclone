@@ -21,7 +21,7 @@ import java.util.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 04. 22.
  */
 @Slf4j
-public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
+public class FilteringDtoContext extends MappingContext {
 
   private final Deque<FieldFilter.PathSegment> path = new LinkedList<>();
   private String lastProp = null;
@@ -34,7 +34,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
   private String translationLang = null;
 
   @Override
-  public void setParams(@NonNull P params) {
+  public void setParams(@NonNull Params params) {
     super.setParams(params);
     if (params instanceof CommonParams commonParams) {
       Integer contentTreeLevel = commonParams.getContentTreeLevel();
@@ -68,7 +68,7 @@ public class FilteringDtoContext<P extends Params> extends MappingContext<P> {
   }
 
   @Override
-  public FilteringDtoContext<P> params(P params) {
+  public FilteringDtoContext params(Params params) {
     this.setParams(params);
     return this;
   }

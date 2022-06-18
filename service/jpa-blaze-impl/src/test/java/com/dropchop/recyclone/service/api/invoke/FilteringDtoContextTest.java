@@ -92,7 +92,7 @@ class FilteringDtoContextTest {
     eDomains.add(eDomain);
 
 
-    MappingContext<CodeParams> mappingContext = new FilteringDtoContext<>();
+    MappingContext mappingContext = new FilteringDtoContext();
     mappingContext.setTotalCount(eDomains.size());
     mappingContext.setSecurityAction(VIEW);
     mappingContext.setSecurityDomain(Security.DOMAIN);
@@ -126,8 +126,8 @@ class FilteringDtoContextTest {
     return parentNodes;
   }
 
-  private MappingContext<CodeParams> createMappingContext(List<ENode> roots, Integer treeLevel, String detail) {
-    MappingContext<CodeParams> mappingContext = new FilteringDtoContext<>();
+  private MappingContext createMappingContext(List<ENode> roots, Integer treeLevel, String detail) {
+    MappingContext mappingContext = new FilteringDtoContext();
     mappingContext.setTotalCount(roots.size());
     mappingContext.setSecurityAction(VIEW);
     mappingContext.setSecurityDomain(Security.DOMAIN);
@@ -148,7 +148,7 @@ class FilteringDtoContextTest {
   void filterContentLevelDefaultTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, null, null);
+    MappingContext mappingContext = createMappingContext(roots, null, null);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -184,7 +184,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevel2Test() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, null);
+    MappingContext mappingContext = createMappingContext(roots, 2, null);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -220,7 +220,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevel3Test() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 3, null);
+    MappingContext mappingContext = createMappingContext(roots, 3, null);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -268,7 +268,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelOneDetailAllIdTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE);
+    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -291,7 +291,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelTwoDetailAllIdTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE);
+    MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -323,7 +323,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelOneDetailAllIdTitleTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
+    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -345,7 +345,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelTwoDetailAllIdTitleTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
+    MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -379,7 +379,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelOneDetailAllIdTitleTransTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
+    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -405,7 +405,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelTwoDetailAllIdTitleTransTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
+    MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -446,7 +446,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelOneDetailNestedIdTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE);
+    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -482,7 +482,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelTwoDetailNestedIdTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE);
+    MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -533,7 +533,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelOneDetailNestedIdTitleTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
+    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -570,7 +570,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelTwoDetailNestedIdTitleTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
+    MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -620,7 +620,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelOneDetailNestedIdTitleTransTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
+    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
@@ -660,7 +660,7 @@ class FilteringDtoContextTest {
   void filterContentTreeLevelTwoDetailNestedIdTitleTransTest() {
     List<ENode> roots = createTree();
 
-    MappingContext<CodeParams> mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
+    MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
     NodeToDtoMapper mapper = new NodeToDtoMapperImpl();

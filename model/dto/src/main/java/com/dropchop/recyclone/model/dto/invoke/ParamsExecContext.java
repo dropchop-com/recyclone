@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -12,8 +13,8 @@ import java.util.UUID;
  */
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class ParamsExecContext<P extends com.dropchop.recyclone.model.api.invoke.Params, L extends Listener>
-  implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<P, L> {
+public class ParamsExecContext<L extends Listener>
+  implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<L> {
 
   @NonNull
   @Getter
@@ -31,13 +32,13 @@ public class ParamsExecContext<P extends com.dropchop.recyclone.model.api.invoke
   @NonNull
   @Getter
   @Setter
-  P params;
+  Params params;
 
   public String id() {
     return id;
   }
 
-  public ParamsExecContext<P, L> id(String id) {
+  public ParamsExecContext<L> id(String id) {
     this.setId(id);
     return this;
   }
@@ -46,7 +47,7 @@ public class ParamsExecContext<P extends com.dropchop.recyclone.model.api.invoke
     return startTime;
   }
 
-  public ParamsExecContext<P, L> startTime(Long startTime) {
+  public ParamsExecContext<L> startTime(Long startTime) {
     this.setStartTime(startTime);
     return this;
   }
@@ -64,12 +65,12 @@ public class ParamsExecContext<P extends com.dropchop.recyclone.model.api.invoke
     return listeners;
   }
 
-  public ParamsExecContext<P, L> listeners(List<L> listeners) {
+  public ParamsExecContext<L> listeners(List<L> listeners) {
     this.setListeners(listeners);
     return this;
   }
 
-  public ParamsExecContext<P, L> listener(L listener) {
+  public ParamsExecContext<L> listener(L listener) {
     if (listener == null) {
       return this;
     }
@@ -77,11 +78,12 @@ public class ParamsExecContext<P extends com.dropchop.recyclone.model.api.invoke
     return this;
   }
 
-  public P params() {
-    return params;
+  public <P extends Params> P params() {
+    //noinspection unchecked
+    return (P)params;
   }
 
-  public ParamsExecContext<P, L> params(P params) {
+  public <P extends Params> ParamsExecContext<L> params(P params) {
     this.setParams(params);
     return this;
   }

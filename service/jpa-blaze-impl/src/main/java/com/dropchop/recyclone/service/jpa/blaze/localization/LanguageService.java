@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.service.jpa.blaze.localization;
 
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.repo.api.RepositoryType;
@@ -21,7 +20,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class LanguageService extends CrudServiceImpl<Language, CodeParams, ELanguage, String>
+public class LanguageService extends CrudServiceImpl<Language, ELanguage, String>
   implements com.dropchop.recyclone.service.api.localization.LanguageService {
 
   @Inject
@@ -35,7 +34,7 @@ public class LanguageService extends CrudServiceImpl<Language, CodeParams, ELang
   LanguageToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Language, CodeParams, ELanguage, String> getConfiguration() {
+  public ServiceConfiguration<Language, ELanguage, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

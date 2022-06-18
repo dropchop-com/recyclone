@@ -4,18 +4,18 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.WhereOrBuilder;
 import com.dropchop.recyclone.model.api.invoke.CodeParams;
 import com.dropchop.recyclone.model.api.invoke.IdentifierParams;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.Params;
 
 import java.util.List;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
-public class LikeIdentifierCriteriaDecorator<T, P extends CommonParams> extends BlazeCriteriaDecorator<T, P> {
+public class LikeIdentifierCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
 
   @Override
   public void decorate() {
-    P params = getContext().getParams();
+    Params params = getContext().getParams();
     List<String> ids;
 
     String alias = getContext().getRootAlias();

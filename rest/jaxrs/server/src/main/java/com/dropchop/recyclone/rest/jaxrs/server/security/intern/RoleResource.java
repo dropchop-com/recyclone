@@ -1,6 +1,10 @@
 package com.dropchop.recyclone.rest.jaxrs.server.security.intern;
 
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
@@ -26,7 +30,7 @@ public class RoleResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<RoleParams, Role> ctx;
+  CommonExecContext<Role> ctx;
 
   @Override
   public Result<Role> get() {
@@ -35,8 +39,12 @@ public class RoleResource implements
 
   @Override
   public Result<Role> getByCode(String code) {
-    RoleParams params = ctx.getParams();
-    params.setCodes(List.of(code));
+    Params params = ctx.getParams();
+    if (!(params instanceof CodeParams codeParams)) {
+      throw new ServiceException(ErrorCode.parameter_validation_error,
+        String.format("Invalid parameter type: should be [%s]", CodeParams.class));
+    }
+    codeParams.setCodes(List.of(code));
     return selector.select(RoleService.class).search();
   }
 

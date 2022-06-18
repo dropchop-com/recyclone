@@ -36,7 +36,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String>
+public class RoleService extends CrudServiceImpl<Role, ERole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
 
   @Inject
@@ -51,14 +51,14 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<RoleParams, Role> ctx;
+  CommonExecContext<Role> ctx;
 
   @Inject
   @ServiceType(RCYN_DEFAULT)
   PermissionService permissionService;
 
   @Override
-  public ServiceConfiguration<Role, RoleParams, ERole, String> getConfiguration() {
+  public ServiceConfiguration<Role, ERole, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
@@ -68,7 +68,7 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
 
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
-    MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
+    MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
     JoinEntityHelper<ERole, EPermission, UUID> helper = new JoinEntityHelper<>(permissionService, roles);
     helper.join(
@@ -82,7 +82,7 @@ public class RoleService extends CrudServiceImpl<Role, RoleParams, ERole, String
 
   @Transactional
   public Result<Role> removePermissions(RoleParams params) {
-    MappingContext<RoleParams> mapContext = new FilteringDtoContext<RoleParams>().of(ctx);
+    MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
     JoinEntityHelper<ERole, EPermission, UUID> helper = new JoinEntityHelper<>(permissionService, roles);
     helper.join(

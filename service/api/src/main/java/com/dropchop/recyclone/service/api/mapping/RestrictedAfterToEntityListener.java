@@ -1,11 +1,9 @@
 package com.dropchop.recyclone.service.api.mapping;
 
-import com.dropchop.recyclone.model.api.invoke.Params;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 06. 22.
  */
-public abstract class RestrictedAfterToEntityListener<P extends Params> implements AfterToEntityListener<P> {
+public abstract class RestrictedAfterToEntityListener implements AfterToEntityListener {
 
   protected final Class<?> onlyForEntity;
 

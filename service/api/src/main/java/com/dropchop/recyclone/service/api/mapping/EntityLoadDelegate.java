@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.service.api.EntityByIdService;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
@@ -15,7 +14,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
-public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends Params> {
+public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {
   private final EntityByIdService<D, E, ID> service;
   private final Set<String> onlyForRegisteredActions = new HashSet<>();
 
@@ -34,17 +33,17 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends P
     return service;
   }
 
-  public EntityLoadDelegate<D, E, ID, P> forActionOnly(String action) {
+  public EntityLoadDelegate<D, E, ID> forActionOnly(String action) {
     onlyForRegisteredActions.add(action);
     return this;
   }
 
-  public EntityLoadDelegate<D, E, ID, P> failIfMissing(boolean failIfMissing) {
+  public EntityLoadDelegate<D, E, ID> failIfMissing(boolean failIfMissing) {
     this.failIfMissing = failIfMissing;
     return this;
   }
 
-  public EntityLoadDelegate<D, E, ID, P> failIfPresent(boolean failIfPresent) {
+  public EntityLoadDelegate<D, E, ID> failIfPresent(boolean failIfPresent) {
     this.failIfPresent = failIfPresent;
     return this;
   }
@@ -53,7 +52,7 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID, P extends P
     return service.findById(dto);
   }
 
-  public E load(D dto, MappingContext<P> context) {
+  public E load(D dto, MappingContext context) {
     if (
       onlyForRegisteredActions.isEmpty() ||
         onlyForRegisteredActions.contains(context.getSecurityAction())

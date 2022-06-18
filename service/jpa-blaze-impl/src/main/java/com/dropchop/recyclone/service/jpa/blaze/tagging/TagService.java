@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.TagParams;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
@@ -35,7 +34,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class TagService extends CrudServiceImpl<Tag<TitleTranslation>, TagParams, ETag, UUID>
+public class TagService extends CrudServiceImpl<Tag<TitleTranslation>, ETag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 
   @Inject
@@ -54,13 +53,13 @@ public class TagService extends CrudServiceImpl<Tag<TitleTranslation>, TagParams
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<TagParams, Tag<TitleTranslation>> ctx;
+  CommonExecContext<Tag<TitleTranslation>> ctx;
 
   @Inject
   ContextAwarePolymorphicRegistry polymorphicRegistry;
 
   @Override
-  public ServiceConfiguration<Tag<TitleTranslation>, TagParams, ETag, UUID> getConfiguration() {
+  public ServiceConfiguration<Tag<TitleTranslation>, ETag, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
@@ -68,26 +67,26 @@ public class TagService extends CrudServiceImpl<Tag<TitleTranslation>, TagParams
     );
   }
 
-  protected MappingContext<TagParams> constructToEntityMappingContext(
-    ServiceConfiguration<Tag<TitleTranslation>, TagParams, ETag, UUID> conf) {
+  protected MappingContext constructToEntityMappingContext(
+    ServiceConfiguration<Tag<TitleTranslation>, ETag, UUID> conf) {
     log.warn("We got mapping for [{}] -> [{}]",
       ELanguageGroup.class, polymorphicRegistry.mapsTo(ELanguageGroup.class, RCYN_DEFAULT));
     Class<?> rootClass = conf.getRepository().getRootClass();
-    return new FilteringDtoContext<TagParams>()
+    return new FilteringDtoContext()
       .of(ctx)
       .createWith(
-        new EntityDelegateFactory<Tag<TitleTranslation>, ETag, UUID, TagParams>(this)
+        new EntityDelegateFactory<>(this)
           .forActionOnly(Constants.Actions.UPDATE)
           .forActionOnly(Constants.Actions.DELETE)
       )
       .afterMapping(
-        new SetModification<>(rootClass)
+        new SetModification(rootClass)
       )
       .afterMapping(
-        new SetLanguage<Tag<TitleTranslation>, TagParams>(languageService, rootClass)
+        new SetLanguage(languageService, rootClass)
       )
       .afterMapping(
-        new SetDeactivated<>(rootClass)
+        new SetDeactivated(rootClass)
       );
   }
 }

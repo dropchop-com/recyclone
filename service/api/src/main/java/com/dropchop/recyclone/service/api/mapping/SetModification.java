@@ -2,7 +2,6 @@ package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
@@ -16,8 +15,8 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public class SetModification<P extends Params>
-  extends RestrictedAfterToEntityListener<P> {
+public class SetModification
+  extends RestrictedAfterToEntityListener {
 
   public SetModification() {
   }
@@ -27,7 +26,7 @@ public class SetModification<P extends Params>
   }
 
   @Override
-  public void after(Dto dto, Entity entity, MappingContext<P> context) {
+  public void after(Dto dto, Entity entity, MappingContext context) {
     if (onlyForEntity != null && !entity.getClass().isAssignableFrom(onlyForEntity)) {
       return;
     }

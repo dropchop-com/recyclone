@@ -21,9 +21,9 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
-public class SetLanguage<D extends Dto, P extends CommonParams>
-  extends EntityAllPreloadDelegate<Language, ELanguage, String, P>
-  implements AfterToEntityListener<P> {
+public class SetLanguage
+  extends EntityAllPreloadDelegate<Language, ELanguage, String>
+  implements AfterToEntityListener {
 
   final Class<?> onlyForEntity;
 
@@ -38,7 +38,7 @@ public class SetLanguage<D extends Dto, P extends CommonParams>
   }
 
   @Override
-  public void after(Dto dto, Entity entity, MappingContext<P> context) {
+  public void after(Dto dto, Entity entity, MappingContext context) {
     if (onlyForEntity != null && !entity.getClass().isAssignableFrom(onlyForEntity)) {
       return;
     }

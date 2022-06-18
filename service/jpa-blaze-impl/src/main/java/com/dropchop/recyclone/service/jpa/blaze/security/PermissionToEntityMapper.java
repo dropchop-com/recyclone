@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
@@ -20,5 +19,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   uses = {EntityFactoryInvoker.class},
   injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-public interface PermissionToEntityMapper extends ToEntityMapper<Permission, IdentifierParams, EPermission> {
+public interface PermissionToEntityMapper extends ToEntityMapper<Permission, EPermission> {
 }

@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.rest.jaxrs.server.security.intern;
 
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -26,12 +29,16 @@ public class ActionResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<CodeParams, Action> ctx;
+  CommonExecContext<Action> ctx;
 
   @Override
   public Result<Action> getByCode(String code) {
-    CodeParams params = ctx.getParams();
-    params.setCodes(List.of(code));
+    Params params = ctx.getParams();
+    if (!(params instanceof CodeParams codeParams)) {
+      throw new ServiceException(ErrorCode.parameter_validation_error,
+        String.format("Invalid parameter type: should be [%s]", CodeParams.class));
+    }
+    codeParams.setCodes(List.of(code));
     return selector.select(ActionService.class).search();
   }
 

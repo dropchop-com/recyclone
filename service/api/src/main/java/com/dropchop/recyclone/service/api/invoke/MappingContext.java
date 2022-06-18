@@ -24,9 +24,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class MappingContext<P extends Params>
-  extends ParamsExecContext<P, MappingListener<P>>
-  implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener<P>>, SecurityExecContext {
+public class MappingContext
+  extends ParamsExecContext<MappingListener>
+  implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener>, SecurityExecContext {
 
   private long totalCount;
   private String securityAction;
@@ -35,7 +35,7 @@ public class MappingContext<P extends Params>
   private List<Dto> data;
 
 
-  public MappingContext<P> of(CommonExecContext<?, ?> sourceContext) {
+  public MappingContext of(CommonExecContext<?> sourceContext) {
     super.of(sourceContext);
     //noinspection unchecked
     this.setData((List<Dto>) sourceContext.getData());
@@ -57,7 +57,7 @@ public class MappingContext<P extends Params>
     return this.getTotalCount();
   }
 
-  public MappingContext<P> totalCount(long totalCount) {
+  public MappingContext totalCount(long totalCount) {
     this.setTotalCount(totalCount);
     return this;
   }
@@ -66,7 +66,7 @@ public class MappingContext<P extends Params>
     return this.getSecurityAction();
   }
 
-  public MappingContext<P> securityAction(String securityAction) {
+  public MappingContext securityAction(String securityAction) {
     this.setSecurityAction(securityAction);
     return this;
   }
@@ -75,19 +75,19 @@ public class MappingContext<P extends Params>
     return this.getSecurityDomain();
   }
 
-  public MappingContext<P> securityDomain(String securityDomain) {
+  public MappingContext securityDomain(String securityDomain) {
     this.setSecurityDomain(securityDomain);
     return this;
   }
 
   @Override
-  public MappingContext<P> listeners(List<MappingListener<P>> listeners) {
+  public MappingContext listeners(List<MappingListener> listeners) {
     super.listeners(listeners);
     return this;
   }
 
   @Override
-  public MappingContext<P> listener(MappingListener<P> listener) {
+  public MappingContext listener(MappingListener listener) {
     if (listener == null) {
       return this;
     }
@@ -95,7 +95,7 @@ public class MappingContext<P extends Params>
     return this;
   }
 
-  public MappingContext<P> createWith(FactoryMappingListener<P> listener) {
+  public MappingContext createWith(FactoryMappingListener listener) {
     if (listener == null) {
       return this;
     }
@@ -103,7 +103,7 @@ public class MappingContext<P extends Params>
     return this;
   }
 
-  public MappingContext<P> beforeMapping(BeforeMappingListener<P> listener) {
+  public MappingContext beforeMapping(BeforeMappingListener listener) {
     if (listener == null) {
       return this;
     }
@@ -111,7 +111,7 @@ public class MappingContext<P extends Params>
     return this;
   }
 
-  public MappingContext<P> afterMapping(AfterMappingListener<P> listener) {
+  public MappingContext afterMapping(AfterMappingListener listener) {
     if (listener == null) {
       return this;
     }

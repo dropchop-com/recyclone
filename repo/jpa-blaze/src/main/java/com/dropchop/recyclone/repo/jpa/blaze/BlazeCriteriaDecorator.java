@@ -6,17 +6,17 @@ import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
-public abstract class BlazeCriteriaDecorator<T, P extends Params> implements CriteriaDecorator<T> {
+public abstract class BlazeCriteriaDecorator<T> implements CriteriaDecorator<T> {
 
   public static final String DELIM = ".";
 
-  private BlazeExecContext<T, P> context;
+  private BlazeExecContext<T> context;
 
-  public void init(BlazeExecContext<T, P> executionContext) {
+  public void init(BlazeExecContext<T> executionContext) {
     this.context = executionContext;
   }
 
-  public BlazeExecContext<T, P> getContext() {
+  public BlazeExecContext<T> getContext() {
     return context;
   }
 }
