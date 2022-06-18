@@ -15,8 +15,8 @@ import com.dropchop.recyclone.service.api.mapping.ContextAwarePolymorphicRegistr
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
 import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
 import com.dropchop.recyclone.service.api.mapping.SetModification;
-import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
-import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
+import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
+import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class TagService extends CrudServiceImpl<Tag<TitleTranslation>, ETag, UUID>
+public class TagService extends RecycloneCrudServiceImpl<Tag<TitleTranslation>, ETag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 
   @Inject
@@ -65,28 +65,5 @@ public class TagService extends CrudServiceImpl<Tag<TitleTranslation>, ETag, UUI
       toDtoMapper,
       toEntityMapper
     );
-  }
-
-  protected MappingContext constructToEntityMappingContext(
-    ServiceConfiguration<Tag<TitleTranslation>, ETag, UUID> conf) {
-    log.warn("We got mapping for [{}] -> [{}]",
-      ELanguageGroup.class, polymorphicRegistry.mapsTo(ELanguageGroup.class, RCYN_DEFAULT));
-    Class<?> rootClass = conf.getRepository().getRootClass();
-    return new FilteringDtoContext()
-      .of(ctx)
-      .createWith(
-        new EntityDelegateFactory<>(this)
-          .forActionOnly(Constants.Actions.UPDATE)
-          .forActionOnly(Constants.Actions.DELETE)
-      )
-      .afterMapping(
-        new SetModification(rootClass)
-      )
-      .afterMapping(
-        new SetLanguage(languageService, rootClass)
-      )
-      .afterMapping(
-        new SetDeactivated(rootClass)
-      );
   }
 }

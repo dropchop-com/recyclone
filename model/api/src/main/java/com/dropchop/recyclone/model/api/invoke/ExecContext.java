@@ -26,6 +26,14 @@ public interface ExecContext<L extends ExecContext.Listener> extends Model, HasI
   List<L> getListeners();
   void setListeners(List<L> listeners);
 
+  default ExecContext<L> listener(L listener) {
+    if (listener == null) {
+      return this;
+    }
+    this.getListeners().add(listener);
+    return this;
+  }
+
 
   default <C extends ExecContext<? extends Listener>> C copyAs(C context) {
     String id = getId();

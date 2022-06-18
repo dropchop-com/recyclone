@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.jpa.blaze;
+package com.dropchop.recyclone.service.api;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
@@ -8,18 +8,19 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
+import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
+import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
-import com.dropchop.recyclone.service.api.CrudService;
-import com.dropchop.recyclone.service.api.EntityByIdService;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
+import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
+import com.dropchop.recyclone.service.api.mapping.SetModification;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.subject.Subject;
 
@@ -34,11 +35,8 @@ import java.util.stream.Collectors;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
  */
 @Slf4j
-public abstract class BaseCrudService<D extends Dto, E extends Entity, ID>
+public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   implements CrudService<D>, EntityByIdService<D, E, ID> {
-
-  @Inject
-  ServiceSelector serviceSelector;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -93,17 +91,45 @@ public abstract class BaseCrudService<D extends Dto, E extends Entity, ID>
     }
   }
 
+  protected MappingContext getMappingContextForRead() {
+    return new FilteringDtoContext().of(ctx);
+  }
+
+  protected MappingContext getMappingContextForModify() {
+    ServiceConfiguration<D, E, ID> conf = getConfiguration();
+    Class<?> rootClass = conf.getRepository().getRootClass();
+    return new FilteringDtoContext()
+      .of(ctx)
+      .createWith(
+        new EntityDelegateFactory<>(this)
+          .forActionOnly(Constants.Actions.UPDATE)
+          .forActionOnly(Constants.Actions.DELETE)
+      )
+      .afterMapping(
+        new SetModification(rootClass)
+      )
+      .afterMapping(
+        new SetDeactivated(rootClass)
+      );
+  }
+
+  protected abstract Iterable<CriteriaDecorator> getCommonCriteriaDecorators();
+
+  protected abstract RepositoryExecContext<E> getRepositoryExecContext();
+
+  protected RepositoryExecContext<E> getRepositoryExecContextWithTotalCount() {
+    RepositoryExecContext<E> context = getRepositoryExecContext();
+    context.totalCount(getMappingContextForRead()); // get total count and save it
+    return context;
+  }
+
   protected List<E> find(RepositoryExecContext<E> repositoryExecContext) {
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    if (repositoryExecContext == null) {
-      repositoryExecContext = new BlazeExecContext<E>().of(ctx)
-        .criteriaDecorators(conf.getCriteriaDecorators());
-    }
     return conf.getRepository().find(repositoryExecContext);
   }
 
   protected List<E> find() {
-    return find(null);
+    return find(getRepositoryExecContext());
   }
 
   @Override
@@ -112,21 +138,15 @@ public abstract class BaseCrudService<D extends Dto, E extends Entity, ID>
     if (subject.isPermitted(ctx.getSecurityDomainAction())) {
       log.trace("search [{}] is permitted to view [{}]!", subject.getPrincipal(), ctx.getParams());
     }
-    MappingContext mapContext = new FilteringDtoContext().of(ctx);
+    MappingContext mapContext = getMappingContextForRead();
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    List<E> entities = find(new BlazeExecContext<E>()
-      .of(ctx)
-      .listener(mapContext) // get total count and save it
-      .criteriaDecorators(conf.getCriteriaDecorators())
-    );
+    List<E> entities = find(getRepositoryExecContextWithTotalCount());
     entities = entities.stream().filter(
       e -> subject.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
-
-  protected abstract MappingContext constructToEntityMappingContext(ServiceConfiguration<D, E, ID> conf);
 
   protected boolean shouldRefreshAfterSave() {
     Params params = ctx.getParams();
@@ -165,7 +185,7 @@ public abstract class BaseCrudService<D extends Dto, E extends Entity, ID>
   protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    MappingContext mapContext = constructToEntityMappingContext(conf);
+    MappingContext mapContext = getMappingContextForModify();
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
     save(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
@@ -188,7 +208,7 @@ public abstract class BaseCrudService<D extends Dto, E extends Entity, ID>
   public Result<D> delete(List<D> dtos) {
     checkDtoPermissions(dtos);
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    MappingContext mapContext = constructToEntityMappingContext(conf);
+    MappingContext mapContext = getMappingContextForModify();
     List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
     conf.getRepository().delete(entities);
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);

@@ -2,13 +2,12 @@ package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
+import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContextListener;
+import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 03. 22.
@@ -17,10 +16,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class BlazeExecContext<E>
-  extends ParamsExecContext<Listener> implements RepositoryExecContext<E> {
-
-  private Iterable<? extends BlazeCriteriaDecorator<E>> criteriaDecorators = new ArrayList<>();
+public class BlazeExecContext<E> extends ParamsExecContext<RepositoryExecContextListener>
+  implements RepositoryExecContext<E> {
 
   @NonNull
   private CriteriaBuilder<E> criteriaBuilder;
@@ -37,8 +34,10 @@ public class BlazeExecContext<E>
     this.rootAlias = rootAlias;
     this.criteriaBuilder = builder;
 
-    for (BlazeCriteriaDecorator<E> decorator : criteriaDecorators) {
-      decorator.init(this);
+    for (RepositoryExecContextListener decorator : listeners()) {
+      if (decorator instanceof BlazeCriteriaDecorator blazeCriteriaDecorator) {
+        blazeCriteriaDecorator.init(this);
+      }
     }
   }
 
@@ -48,23 +47,24 @@ public class BlazeExecContext<E>
     return this;
   }
 
-  public BlazeExecContext<E> criteriaDecorators(Iterable<? extends BlazeCriteriaDecorator<E>> criteriaDecorators) {
-    this.setCriteriaDecorators(criteriaDecorators);
-    return this;
-  }
-
   @Override
-  public BlazeExecContext<E> listeners(List<Listener> listeners) {
-    super.listeners(listeners);
-    return this;
-  }
-
-  @Override
-  public BlazeExecContext<E> listener(Listener listener) {
+  public BlazeExecContext<E> listener(RepositoryExecContextListener listener) {
     if (listener == null) {
       return this;
     }
     super.listener(listener);
+    return this;
+  }
+
+  @Override
+  public BlazeExecContext<E> totalCount(TotalCountExecContextListener listener) {
+    RepositoryExecContext.super.totalCount(listener);
+    return this;
+  }
+
+  @Override
+  public BlazeExecContext<E> decorateWith(CriteriaDecorator listener) {
+    RepositoryExecContext.super.decorateWith(listener);
     return this;
   }
 }

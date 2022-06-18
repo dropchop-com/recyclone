@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
-public class LikeIdentifierCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
+public class LikeIdentifierCriteriaDecorator extends BlazeCriteriaDecorator {
 
   @Override
   public void decorate() {
@@ -34,7 +34,6 @@ public class LikeIdentifierCriteriaDecorator<T> extends BlazeCriteriaDecorator<T
       return;
     }
 
-    CriteriaBuilder<T> cb = getContext().getCriteriaBuilder();
     boolean enableLike = false;
     for (String id : ids) {
       if (id.endsWith("*")) {
@@ -43,10 +42,11 @@ public class LikeIdentifierCriteriaDecorator<T> extends BlazeCriteriaDecorator<T
       }
     }
 
+    CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     if (!enableLike) {
       cb.where(idColName).in(ids);
     } else {
-      WhereOrBuilder<CriteriaBuilder<T>> wob = cb.whereOr();
+      WhereOrBuilder<? extends CriteriaBuilder<?>> wob = cb.whereOr();
       for (String id : ids) {
         wob.where(idColName).like().value(id.replace("*", "%").replace("?", "_")).noEscape();
       }

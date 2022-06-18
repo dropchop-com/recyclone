@@ -7,10 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.repo.api.CrudRepository;
-import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
-import com.dropchop.recyclone.repo.api.ctx.QueryExecContextListener;
-import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
+import com.dropchop.recyclone.repo.api.ctx.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -69,12 +66,14 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
       if (context instanceof BlazeExecContext) {
         ((BlazeExecContext<E>) context).init(getRootClass(), alias, cb);
       }
-      for (CriteriaDecorator<E> decorator : context.getCriteriaDecorators()) {
-        if (decorator instanceof PageCriteriaDecorator) {
+      for (RepositoryExecContextListener listener : context.getListeners()) {
+        if (listener instanceof PageCriteriaDecorator) {
           //get count query before page-ing;
           countQuery = cb.getQueryRootCountQuery();
         }
-        decorator.decorate();
+        if (listener instanceof CriteriaDecorator decorator) {
+          decorator.decorate();
+        }
       }
       long total = Long.MIN_VALUE;
       for (ExecContext.Listener listener : context.getListeners()) {

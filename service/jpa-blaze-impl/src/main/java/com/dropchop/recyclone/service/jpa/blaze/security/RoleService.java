@@ -15,8 +15,8 @@ import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
-import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
+import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
+import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -36,7 +36,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class RoleService extends CrudServiceImpl<Role, ERole, String>
+public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
 
   @Inject

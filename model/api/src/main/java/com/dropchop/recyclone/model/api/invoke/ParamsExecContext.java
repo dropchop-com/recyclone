@@ -30,4 +30,10 @@ public interface ParamsExecContext<L extends ExecContext.Listener> extends ExecC
     }
     return this;
   }
+
+  @Override
+  default ParamsExecContext<L> listener(L listener) {
+    ExecContext.super.listener(listener);
+    return this;
+  }
 }

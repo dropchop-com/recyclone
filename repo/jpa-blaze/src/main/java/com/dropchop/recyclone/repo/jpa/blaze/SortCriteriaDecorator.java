@@ -11,16 +11,16 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
 @Slf4j
-public class SortCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
+public class SortCriteriaDecorator extends BlazeCriteriaDecorator {
 
   private boolean nullsFirst = false;
 
-  public SortCriteriaDecorator<T> nullsFirst() {
+  public SortCriteriaDecorator nullsFirst() {
     this.nullsFirst = true;
     return this;
   }
 
-  public SortCriteriaDecorator<T> nullsLast() {
+  public SortCriteriaDecorator nullsLast() {
     this.nullsFirst = false;
     return this;
   }
@@ -33,7 +33,7 @@ public class SortCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
       return;
     }
     List<String> sortFieldList = parameters.getSort();
-    CriteriaBuilder<T> cb = getContext().getCriteriaBuilder();
+    CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     String alias = getContext().getRootAlias();
 
     for (String sortField : sortFieldList) {

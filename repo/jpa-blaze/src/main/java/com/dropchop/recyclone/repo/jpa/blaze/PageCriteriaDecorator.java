@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
 @Slf4j
-public class PageCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
+public class PageCriteriaDecorator extends BlazeCriteriaDecorator {
 
   @Override
   public void decorate() {
@@ -18,7 +18,7 @@ public class PageCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
       log.warn("Wrong parameters instance [{}] should be [{}]", params.getClass(), CommonParams.class);
       return;
     }
-    CriteriaBuilder<T> cb = getContext().getCriteriaBuilder();
+    CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     if (parameters.getSize() >= 0) {
       cb.setMaxResults(parameters.getSize());
     }

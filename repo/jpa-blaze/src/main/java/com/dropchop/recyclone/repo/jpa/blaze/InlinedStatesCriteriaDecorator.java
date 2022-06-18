@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
  */
 @Slf4j
-public class InlinedStatesCriteriaDecorator<T> extends BlazeCriteriaDecorator<T> {
+public class InlinedStatesCriteriaDecorator extends BlazeCriteriaDecorator {
 
   @Override
   public void decorate() {
@@ -29,8 +29,8 @@ public class InlinedStatesCriteriaDecorator<T> extends BlazeCriteriaDecorator<T>
     }
     List<String> showStates = parameters.getStates();
     Collection<State.Code> hiddenStates = parameters.getHiddenStates();
-    Class<T> tClass = getContext().getRootClass();
-    CriteriaBuilder<T> cb = getContext().getCriteriaBuilder();
+    Class<?> tClass = getContext().getRootClass();
+    CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     String alias = getContext().getRootAlias();
     if (!HasStateInlined.class.isAssignableFrom(tClass)) {
       return;

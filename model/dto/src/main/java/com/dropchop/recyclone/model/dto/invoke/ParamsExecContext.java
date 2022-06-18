@@ -61,21 +61,13 @@ public class ParamsExecContext<L extends Listener>
     this.listeners = listeners;
   }
 
+  public ParamsExecContext<L> listener(L listener) {
+    com.dropchop.recyclone.model.api.invoke.ParamsExecContext.super.listener(listener);
+    return this;
+  }
+
   public List<L> listeners() {
     return listeners;
-  }
-
-  public ParamsExecContext<L> listeners(List<L> listeners) {
-    this.setListeners(listeners);
-    return this;
-  }
-
-  public ParamsExecContext<L> listener(L listener) {
-    if (listener == null) {
-      return this;
-    }
-    this.getListeners().add(listener);
-    return this;
   }
 
   public <P extends Params> P params() {

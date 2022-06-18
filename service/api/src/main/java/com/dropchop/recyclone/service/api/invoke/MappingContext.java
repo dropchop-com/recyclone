@@ -2,7 +2,6 @@ package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
 import com.dropchop.recyclone.service.api.mapping.AfterMappingListener;
@@ -77,12 +76,6 @@ public class MappingContext
 
   public MappingContext securityDomain(String securityDomain) {
     this.setSecurityDomain(securityDomain);
-    return this;
-  }
-
-  @Override
-  public MappingContext listeners(List<MappingListener> listeners) {
-    super.listeners(listeners);
     return this;
   }
 

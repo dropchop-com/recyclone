@@ -1,13 +1,12 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.service.jpa.blaze.CrudServiceImpl;
-import com.dropchop.recyclone.service.jpa.blaze.ServiceConfiguration;
+import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
+import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,7 +22,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class PermissionService extends CrudServiceImpl<Permission, EPermission, UUID>
+public class PermissionService extends RecycloneCrudServiceImpl<Permission, EPermission, UUID>
   implements com.dropchop.recyclone.service.api.security.PermissionService {
 
   @Inject
