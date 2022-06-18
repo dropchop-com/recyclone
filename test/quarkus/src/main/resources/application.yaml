@@ -27,12 +27,9 @@ quarkus:
     recyclone-service-api:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-api
-    recyclone-service-jpa-blaze-api:
+    recyclone-service-jpa-blaze:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-jpa-blaze-api
-    recyclone-service-jpa-blaze-impl:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-jpa-blaze-impl
+      artifact-id: recyclone-service-jpa-blaze
 
   swagger-ui:
     path: /api/spec/ui
