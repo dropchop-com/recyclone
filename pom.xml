@@ -21,9 +21,10 @@
   <modules>
     <module>model</module>
     <module>rest</module>
-    <module>service</module>
-    <module>test</module>
     <module>repo</module>
+    <module>service</module>
+    <module>extension</module>
+    <module>test</module>
   </modules>
 
   <scm>
@@ -236,11 +237,6 @@
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jaxrs-shiro</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-rest-jaxrs-server</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -262,6 +258,11 @@
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-service-jpa-blaze</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-extension-shiro</artifactId>
         <version>${project.version}</version>
       </dependency>
 

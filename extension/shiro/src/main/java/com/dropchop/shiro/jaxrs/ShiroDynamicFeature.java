@@ -1,7 +1,7 @@
 package com.dropchop.shiro.jaxrs;
 
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.shiro.filter.AccessControlFilter;
+import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -32,12 +32,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
     );
 
   @Inject
-  org.apache.shiro.mgt.SecurityManager securityManager;
-
-  @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  List<AccessControlFilter> accessControlFilters;
-
+  ShiroAuthorizationService authorizationService;
 
   private static <T extends Annotation> boolean checkAdd(final List<Annotation> authzSpecs,
                                                          final T[] annoArray) {
@@ -95,22 +90,6 @@ public class ShiroDynamicFeature implements DynamicFeature {
     Class<?> rClass = ri.getResourceClass();
     Method rMethod = ri.getResourceMethod();
     for (Class<? extends Annotation> annotationClass : shiroAnnotations) {
-      /*// XXX What is the performance of getAnnotation vs getAnnotations?
-      Annotation classAuthzSpec = rClass.getAnnotation(annotationClass);
-      Annotation methodAuthzSpec = rMethod.getAnnotation(annotationClass);
-      if (classAuthzSpec == null && methodAuthzSpec == null) {
-        ri.
-      }
-
-      if (methodAuthzSpec != null) {
-        authzSpecs.add(methodAuthzSpec);
-        log.trace("Registering shiro {} on method [{}::{}]",
-          annotationClass.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod());
-      } else if (classAuthzSpec != null) {
-        authzSpecs.add(classAuthzSpec);
-        log.trace("Registering shiro {} on resource [{}::{}]",
-          annotationClass.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod());
-      }*/
       findAnnotation(annotationClass, authzSpecs, rMethod);
     }
 
@@ -118,8 +97,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
       log.trace("Registering ShiroFilter.");
       context.register(
         new ShiroContainerFilter(
-          accessControlFilters,
-          securityManager,
+          authorizationService,
           authzSpecs,
           ri.getResourceClass().getSimpleName(),
           ri.getResourceMethod().getName()),

@@ -18,7 +18,7 @@ public interface User<C extends UserAccount,
   P extends Permission<T, A, D>,
   R extends Role<T, A, D, P>,
   O extends Model>
-  extends Person {
+  extends Person, PermissionBearer {
 
   SortedSet<R> getRoles();
   void setRoles(SortedSet<R> roles);

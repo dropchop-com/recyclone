@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
 import com.dropchop.recyclone.service.api.mapping.AfterMappingListener;
@@ -12,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.shiro.subject.Subject;
 
 import java.util.List;
 
@@ -28,9 +28,8 @@ public class MappingContext
   implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener>, SecurityExecContext {
 
   private long totalCount;
-  private String securityAction;
-  private String securityDomain;
-  private Subject subject;
+  List<String> requiredPermissions;
+  Logical requiredPermissionsOp = Logical.AND;
   private List<Dto> data;
 
 
@@ -38,9 +37,8 @@ public class MappingContext
     super.of(sourceContext);
     //noinspection unchecked
     this.setData((List<Dto>) sourceContext.getData());
-    this.setSubject(sourceContext.getSubject());
-    this.setSecurityAction(sourceContext.getSecurityAction());
-    this.setSecurityDomain(sourceContext.getSecurityDomain());
+    this.setRequiredPermissions(sourceContext.getRequiredPermissions());
+    this.setRequiredPermissionsOp(sourceContext.getRequiredPermissionsOp());
     return this;
   }
 
@@ -58,24 +56,6 @@ public class MappingContext
 
   public MappingContext totalCount(long totalCount) {
     this.setTotalCount(totalCount);
-    return this;
-  }
-
-  public String securityAction() {
-    return this.getSecurityAction();
-  }
-
-  public MappingContext securityAction(String securityAction) {
-    this.setSecurityAction(securityAction);
-    return this;
-  }
-
-  public String securityDomain() {
-    return this.getSecurityDomain();
-  }
-
-  public MappingContext securityDomain(String securityDomain) {
-    this.setSecurityDomain(securityDomain);
     return this;
   }
 

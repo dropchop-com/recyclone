@@ -46,12 +46,6 @@
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
     </dependency>
 
-    <!-- TODO check if needed => transitivity -->
-    <dependency>
-      <groupId>org.apache.shiro</groupId>
-      <artifactId>shiro-core</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-dto</artifactId>

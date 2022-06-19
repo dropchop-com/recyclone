@@ -9,9 +9,6 @@ quarkus:
     recyclone-model-dto:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-model-dto
-    recyclone-rest-jaxrs-shiro:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jaxrs-shiro
     recyclone-rest-jaxrs-api:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-rest-jaxrs-api
@@ -30,6 +27,9 @@ quarkus:
     recyclone-service-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-jpa-blaze
+    recyclone-extension-shiro:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-extension-shiro
 
   swagger-ui:
     path: /api/spec/ui

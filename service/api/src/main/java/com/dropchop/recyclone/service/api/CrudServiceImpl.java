@@ -21,8 +21,8 @@ import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
 import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
 import com.dropchop.recyclone.service.api.mapping.SetModification;
+import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.subject.Subject;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -41,6 +41,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   CommonExecContext<D> ctx;
+
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  AuthorizationService authorizationService;
 
   public abstract ServiceConfiguration<D, E, ID> getConfiguration();
 
@@ -82,9 +86,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   protected void checkDtoPermissions(List<D> dtos) {
-    Subject subject = ctx.getSubject();
     for (D dto : dtos) {
-      if (!subject.isPermitted(ctx.getSecurityDomainAction(dto.identifier()))) {
+      if (!authorizationService.isSubjectPermited(ctx.getSecurityDomainAction(dto.identifier()))) {
         throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
           Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
       }
@@ -134,15 +137,14 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   @Override
   public Result<D> search() {
-    Subject subject = ctx.getSubject();
-    if (subject.isPermitted(ctx.getSecurityDomainAction())) {
-      log.trace("search [{}] is permitted to view [{}]!", subject.getPrincipal(), ctx.getParams());
+    if (authorizationService.isSubjectPermited(ctx.getSecurityDomainAction())) {
+      log.trace("search [{}] is permitted to view [{}]!", authorizationService.getCurrentSubject(), ctx.getParams());
     }
     MappingContext mapContext = getMappingContextForRead();
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     List<E> entities = find(getRepositoryExecContextWithTotalCount());
     entities = entities.stream().filter(
-      e -> subject.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
+      e -> authorizationService.isSubjectPermited(ctx.getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);

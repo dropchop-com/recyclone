@@ -10,7 +10,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 
 /**
- * Conatiner and CDI provider for Request scoped {@link com.dropchop.recyclone.model.api.invoke.ExecContext}
+ * Container and CDI provider for Request scoped {@link com.dropchop.recyclone.model.api.invoke.ExecContext}
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 24. 05. 22.
  */

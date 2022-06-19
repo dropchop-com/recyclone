@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static com.dropchop.recyclone.model.api.security.Constants.*;
 import static com.dropchop.recyclone.model.api.security.Constants.Actions.CREATE;
 import static com.dropchop.recyclone.model.api.security.Constants.Actions.VIEW;
 import static com.dropchop.recyclone.model.api.security.Constants.Domains.Security;
@@ -94,8 +95,7 @@ class FilteringDtoContextTest {
 
     MappingContext mappingContext = new FilteringDtoContext();
     mappingContext.setTotalCount(eDomains.size());
-    mappingContext.setSecurityAction(VIEW);
-    mappingContext.setSecurityDomain(Security.DOMAIN);
+    mappingContext.setRequiredPermissions(List.of(Permission.compose(Security.DOMAIN, VIEW)));
 
     DomainToDtoMapper mapper = new DomainToDtoMapperImpl();
     Result<Domain> result = mapper.toDtosResult(eDomains, mappingContext);
@@ -129,8 +129,7 @@ class FilteringDtoContextTest {
   private MappingContext createMappingContext(List<ENode> roots, Integer treeLevel, String detail) {
     MappingContext mappingContext = new FilteringDtoContext();
     mappingContext.setTotalCount(roots.size());
-    mappingContext.setSecurityAction(VIEW);
-    mappingContext.setSecurityDomain(Security.DOMAIN);
+    mappingContext.setRequiredPermissions(List.of(Permission.compose(Security.DOMAIN, VIEW)));
 
     CodeParams params = new CodeParams();
     if (treeLevel != null) {

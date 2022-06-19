@@ -15,6 +15,7 @@ import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,10 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   CommonExecContext<Role> ctx;
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  AuthorizationService authorizationService;
+
+  @Inject
   @ServiceType(RCYN_DEFAULT)
   PermissionService permissionService;
 
@@ -70,7 +75,8 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   public Result<Role> addPermissions(RoleParams params) {
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
-    JoinEntityHelper<ERole, EPermission, UUID> helper = new JoinEntityHelper<>(permissionService, roles);
+    JoinEntityHelper<ERole, EPermission, UUID> helper =
+      new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(ctx),
@@ -84,7 +90,8 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   public Result<Role> removePermissions(RoleParams params) {
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
-    JoinEntityHelper<ERole, EPermission, UUID> helper = new JoinEntityHelper<>(permissionService, roles);
+    JoinEntityHelper<ERole, EPermission, UUID> helper =
+      new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(ctx),

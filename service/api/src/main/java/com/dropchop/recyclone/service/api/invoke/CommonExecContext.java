@@ -6,7 +6,6 @@ import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import lombok.*;
-import org.apache.shiro.subject.Subject;
 
 import java.util.List;
 
@@ -24,24 +23,8 @@ public class CommonExecContext<D extends Dto>
   implements DataExecContext<D, Listener>, SecurityExecContext {
 
   @NonNull
-  Subject subject;
-
-  @NonNull
   List<D> data;
 
-  /**
-   * Default shiro security domain used in current execution
-   * (First domain used in @see org.apache.shiro.authz.annotation.RequiresPermissions) REST layer.
-   */
-  String securityDomain;
-
-  /**
-   * Default shiro security action used in current execution
-   * (First action used in @see org.apache.shiro.authz.annotation.RequiresPermissions) REST layer.
-   */
-  String securityAction;
-
-
   List<String> requiredPermissions;
-  Logical requiredPermissionsOp;
+  Logical requiredPermissionsOp = Logical.AND;
 }
