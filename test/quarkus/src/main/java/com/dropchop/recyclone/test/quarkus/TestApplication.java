@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.rest.jaxrs.server.RecycloneApplicationRegistry;
+import com.dropchop.shiro.RecycloneShiroExtension;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Components;
@@ -68,7 +69,7 @@ public class TestApplication extends Application {
   @Override
   public Set<Class<?>> getClasses() {
     Set<Class<?>> container = new LinkedHashSet<>();
-    container.add(ShiroDynamicFeature.class);
+    container.addAll(RecycloneShiroExtension.getRestLayerRegistrationClasses());
     container.addAll(RecycloneApplicationRegistry.getRestLayerRegistrationClasses());
     container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
     container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
