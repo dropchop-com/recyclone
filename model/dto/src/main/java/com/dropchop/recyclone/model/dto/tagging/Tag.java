@@ -22,7 +22,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 public class Tag<T extends TitleTranslation>
   extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<T> {
 
@@ -38,7 +38,7 @@ public class Tag<T extends TitleTranslation>
 
   private ZonedDateTime deactivated;
 
-  private final String type = this.getClass().getName();
+  private final String type = this.getClass().getSimpleName();
 
   public String getType() {
     return this.type;

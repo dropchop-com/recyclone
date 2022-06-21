@@ -1,7 +1,9 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.service.api.mapping.ContextAwarePolymorphicRegistry;
-import com.dropchop.recyclone.service.api.mapping.DefaultContextAwarePolymorphicRegistry;
+import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
+import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
+import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -13,7 +15,12 @@ import javax.enterprise.inject.Produces;
 public class TestApplicationConfiguration {
 
   @Produces
-  ContextAwarePolymorphicRegistry getContextAwarePolymorphicRegistry() {
-    return new DefaultContextAwarePolymorphicRegistry();
+  PolymorphicRegistry getPolymorphicRegistry() {
+    return new DefaultPolymorphicRegistry()
+      .registerDtoEntityMapping(LanguageGroup.class, ELanguageGroup.class)
+      .registerSerializationConfig(new PolymorphicRegistry
+        .SerializationConfig()
+          .addSubType("LanguageGroup", LanguageGroup.class)
+      );
   }
 }

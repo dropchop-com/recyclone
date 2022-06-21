@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
 import com.dropchop.recyclone.model.api.security.Constants;
@@ -39,7 +38,7 @@ public class SetLanguage
 
   @Override
   public void after(Dto dto, Entity entity, MappingContext context) {
-    if (onlyForEntity != null && !entity.getClass().isAssignableFrom(onlyForEntity)) {
+    if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
     if (Constants.Actions.CREATE.equals(context.getSecurityAction())) { // for other actions it has no sense

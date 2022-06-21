@@ -20,7 +20,7 @@ public class SetDeactivated extends RestrictedAfterToEntityListener {
 
   @Override
   public void after(Dto dto, Entity entity, MappingContext context) {
-    if (onlyForEntity != null && !entity.getClass().isAssignableFrom(onlyForEntity)) {
+    if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
     if (Actions.CREATE.equals(context.getSecurityAction())) {

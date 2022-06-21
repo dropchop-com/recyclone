@@ -3,22 +3,20 @@ package com.dropchop.recyclone.service.jpa.blaze.tagging;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
+import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
-import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.ContextAwarePolymorphicRegistry;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
-import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
-import com.dropchop.recyclone.service.api.mapping.SetModification;
+import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
-import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
+import com.dropchop.recyclone.service.jpa.blaze.mapping.SetName;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -48,15 +46,8 @@ public class TagService extends RecycloneCrudServiceImpl<Tag<TitleTranslation>, 
   TagToEntityMapper toEntityMapper;
 
   @Inject
-  @ServiceType(RCYN_DEFAULT)
-  LanguageService languageService;
-
-  @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<Tag<TitleTranslation>> ctx;
-
-  @Inject
-  ContextAwarePolymorphicRegistry polymorphicRegistry;
+  PolymorphicRegistry polymorphicRegistry;
 
   @Override
   public ServiceConfiguration<Tag<TitleTranslation>, ETag, UUID> getConfiguration() {
@@ -65,5 +56,16 @@ public class TagService extends RecycloneCrudServiceImpl<Tag<TitleTranslation>, 
       toDtoMapper,
       toEntityMapper
     );
+  }
+
+  @Override
+  protected MappingContext getMappingContextForModify() {
+    MappingContext context = super.getMappingContextForModify();
+    context
+      .createWith(
+        new EntityPolymorphicCreateFactory<>(this, polymorphicRegistry)
+      )
+      .afterMapping(new SetName());
+    return context;
   }
 }

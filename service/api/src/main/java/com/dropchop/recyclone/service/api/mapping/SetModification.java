@@ -27,7 +27,7 @@ public class SetModification
 
   @Override
   public void after(Dto dto, Entity entity, MappingContext context) {
-    if (onlyForEntity != null && !entity.getClass().isAssignableFrom(onlyForEntity)) {
+    if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
     boolean isCreateOrUpdate = Actions.CREATE.equals(context.getSecurityAction()) || Actions.UPDATE.equals(context.getSecurityAction());
