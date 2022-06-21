@@ -12,7 +12,7 @@ import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;

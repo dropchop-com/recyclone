@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.jpa.blaze.mapping;
+package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;

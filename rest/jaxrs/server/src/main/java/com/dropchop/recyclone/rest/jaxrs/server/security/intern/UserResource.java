@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

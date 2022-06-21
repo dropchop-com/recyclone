@@ -1,10 +1,9 @@
-package com.dropchop.recyclone.service.api.invoke;
+package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
-import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import lombok.*;
 
 import java.util.List;

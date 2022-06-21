@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
-import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
@@ -8,15 +7,11 @@ import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
 import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
-import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
-import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
-import com.dropchop.recyclone.service.jpa.blaze.mapping.SetName;
+import com.dropchop.recyclone.service.api.mapping.SetName;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;

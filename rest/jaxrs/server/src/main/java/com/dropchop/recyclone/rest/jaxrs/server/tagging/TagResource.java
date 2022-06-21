@@ -10,7 +10,7 @@ import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.tagging.TagService;
 import lombok.extern.slf4j.Slf4j;
 

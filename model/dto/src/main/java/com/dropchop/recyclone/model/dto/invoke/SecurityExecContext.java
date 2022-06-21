@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.api.invoke;
+package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 

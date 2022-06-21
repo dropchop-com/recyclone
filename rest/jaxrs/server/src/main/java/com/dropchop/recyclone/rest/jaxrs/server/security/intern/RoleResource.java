@@ -9,7 +9,7 @@ import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.service.api.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.security.RoleService;
 
 import javax.enterprise.context.RequestScoped;

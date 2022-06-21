@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.service.api.invoke.SecurityExecContext;
+import com.dropchop.recyclone.model.dto.invoke.SecurityExecContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 
 import java.util.ArrayList;
