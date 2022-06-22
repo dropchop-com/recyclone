@@ -1,8 +1,8 @@
 package com.dropchop.shiro.cdi;
 
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.security.PermissionBearer;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.SecurityExecContext;
@@ -40,14 +40,14 @@ import static com.dropchop.recyclone.model.api.invoke.ErrorCode.authorization_er
 public class ShiroAuthorizationService implements AuthorizationService {
 
   @Inject
-  org.apache.shiro.mgt.SecurityManager securityManager;
+  org.apache.shiro.mgt.SecurityManager shiroSecurityManager;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   List<AccessControlFilter> accessControlFilters;
 
   public void bindSubjectToThreadStateInRequestContext(ContainerRequestContext requestContext) {
-    Subject subject = new Subject.Builder(securityManager).buildSubject();
+    Subject subject = new Subject.Builder(shiroSecurityManager).buildSubject();
     ThreadState threadState = new SubjectThreadState(subject);
     threadState.bind();
     requestContext.setProperty("shiro.req.internal.thread.state", threadState);
@@ -105,7 +105,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
     }
   }
 
-  public boolean isSubjectPermited(Iterable<String> permissions, Logical op) {
+  public boolean isPermitted(Iterable<String> permissions, Logical op) {
     if (op == null) {
       op = Logical.AND;
     }
@@ -129,37 +129,25 @@ public class ShiroAuthorizationService implements AuthorizationService {
   }
 
   @Override
-  public boolean isSubjectPermited(String permission) {
-    return this.isSubjectPermited(Collections.singleton(permission), Logical.AND);
+  public boolean isPermitted(String permission) {
+    return this.isPermitted(Collections.singleton(permission), Logical.AND);
   }
 
   @Override
-  public boolean isSubjectPermited(String domain, String action) {
-    return this.isSubjectPermited(Constants.Permission.compose(domain, action));
+  public boolean isPermitted(String domain, String action) {
+    return this.isPermitted(Constants.Permission.compose(domain, action));
   }
 
   @Override
-  public boolean isSubjectPermited(PermissionBearer subject, String domain, String action) {
+  public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String domain, String action) {
     throw new UnsupportedOperationException("not yet implemented");
   }
 
   @Override
-  public boolean isSubjectPermited(PermissionBearer subject, String domainAction) {
+  public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String permission) {
     throw new UnsupportedOperationException("not yet implemented");
   }
 
-  @Override
-  public PermissionBearer getCurrentSubject() {
-    Subject subject = SecurityUtils.getSubject();
-    Object principal = subject.getPrincipal();
-    if (principal == null) {
-      log.warn("Shiro Subject is missing its principal!");
-      return null;
-    }
-    if (principal instanceof PermissionBearer permissionBearer) {
-      return permissionBearer;
-    }
-    log.warn("Shiro Subject principal is not of type [{}]!", PermissionBearer.class);
-    return null;
-  }
+
+
 }

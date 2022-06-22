@@ -87,7 +87,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   protected void checkDtoPermissions(List<D> dtos) {
     for (D dto : dtos) {
-      if (!authorizationService.isSubjectPermited(ctx.getSecurityDomainAction(dto.identifier()))) {
+      if (!authorizationService.isPermitted(ctx.getSecurityDomainAction(dto.identifier()))) {
         throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
           Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
       }
@@ -137,14 +137,14 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   @Override
   public Result<D> search() {
-    if (authorizationService.isSubjectPermited(ctx.getSecurityDomainAction())) {
-      log.trace("search [{}] is permitted to view [{}]!", authorizationService.getCurrentSubject(), ctx.getParams());
+    if (authorizationService.isPermitted(ctx.getSecurityDomainAction())) {
+      //log.trace("search [{}] is permitted to view [{}]!", authorizationService.getCurrentSubject(), ctx.getParams());
     }
     MappingContext mapContext = getMappingContextForRead();
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     List<E> entities = find(getRepositoryExecContextWithTotalCount());
     entities = entities.stream().filter(
-      e -> authorizationService.isSubjectPermited(ctx.getSecurityDomainAction(e.identifier()))
+      e -> authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);

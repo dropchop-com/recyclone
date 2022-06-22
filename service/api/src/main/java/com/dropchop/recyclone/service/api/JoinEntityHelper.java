@@ -38,7 +38,7 @@ public class JoinEntityHelper<E extends Entity, JE extends Entity, JID> {
     @Override
     public boolean permit(ID joined) {
       String securityDomain = dataService.getSecurityDomain();
-      return authorizationService.isSubjectPermited(
+      return authorizationService.isPermitted(
         Constants.Permission.compose(securityDomain, Constants.Actions.VIEW, joined.toString())
       );
     }

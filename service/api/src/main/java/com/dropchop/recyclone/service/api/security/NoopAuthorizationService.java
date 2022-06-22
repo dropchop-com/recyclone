@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.api.security;
 
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.security.PermissionBearer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,32 +16,28 @@ import javax.enterprise.inject.Alternative;
 public class NoopAuthorizationService implements AuthorizationService {
 
   @Override
-  public boolean isSubjectPermited(String domain, String action) {
+  public boolean isPermitted(String domain, String action) {
     log.warn("Using [{}]", NoopAuthorizationService.class);
     return true;
   }
 
   @Override
-  public boolean isSubjectPermited(String permission) {
+  public boolean isPermitted(String permission) {
     log.warn("Using [{}]", NoopAuthorizationService.class);
     return true;
   }
 
   @Override
-  public boolean isSubjectPermited(PermissionBearer subject, String domain, String action) {
+  public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String domain, String action) {
     log.warn("Using [{}]", NoopAuthorizationService.class);
     return true;
   }
 
   @Override
-  public boolean isSubjectPermited(PermissionBearer subject, String domainAction) {
+  public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String permission) {
     log.warn("Using [{}]", NoopAuthorizationService.class);
     return true;
   }
 
-  @Override
-  public PermissionBearer getCurrentSubject() {
-    log.warn("Using [{}]", NoopAuthorizationService.class);
-    return null;
-  }
+
 }

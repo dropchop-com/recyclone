@@ -1,17 +1,15 @@
 package com.dropchop.recyclone.service.api.security;
 
-import com.dropchop.recyclone.model.api.security.PermissionBearer;
+import com.dropchop.recyclone.model.api.base.Model;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 06. 22.
  */
 public interface AuthorizationService {
 
-  boolean isSubjectPermited(String domain, String action);
-  boolean isSubjectPermited(String permission);
-  boolean isSubjectPermited(PermissionBearer subject, String domain, String action);
-  boolean isSubjectPermited(PermissionBearer subject, String domainAction);
-
-  PermissionBearer getCurrentSubject();
+  boolean isPermitted(String domain, String action);
+  boolean isPermitted(String permission);
+  <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String domain, String action);
+  <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String permission);
 
 }
