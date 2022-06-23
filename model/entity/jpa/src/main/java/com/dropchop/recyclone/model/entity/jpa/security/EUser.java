@@ -1,8 +1,11 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
+import com.dropchop.recyclone.model.api.localization.Country;
 import com.dropchop.recyclone.model.api.security.User;
 import com.dropchop.recyclone.model.entity.jpa.common.EPerson;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
+import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
+import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import lombok.*;
 
@@ -22,7 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class EUser<O extends EUuid> extends EPerson
-  implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O> {
+  implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage> {
 
   @Transient
   List<? extends EUserAccount> accounts;
