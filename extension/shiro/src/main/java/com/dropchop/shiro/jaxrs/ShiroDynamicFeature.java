@@ -87,16 +87,19 @@ public class ShiroDynamicFeature implements DynamicFeature {
   @Override
   public void configure(ResourceInfo ri, FeatureContext context) {
     List<Annotation> authzSpecs = new ArrayList<>();
-    Class<?> rClass = ri.getResourceClass();
     Method rMethod = ri.getResourceMethod();
     for (Class<? extends Annotation> annotationClass : shiroAnnotations) {
       findAnnotation(annotationClass, authzSpecs, rMethod);
     }
 
+    context.register(
+      new ShiroThreadStateFilter(authorizationService), Priorities.AUTHORIZATION - 100
+    );
+
     if (!authzSpecs.isEmpty()) {
       log.trace("Registering ShiroFilter.");
       context.register(
-        new ShiroContainerFilter(
+        new ShiroAuthorizationFilter(
           authorizationService,
           authzSpecs,
           ri.getResourceClass().getSimpleName(),

@@ -10,8 +10,6 @@ import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +20,7 @@ import java.util.Map;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
-public class ShiroContainerFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class ShiroAuthorizationFilter implements ContainerRequestFilter {
 
   private final Map<AuthorizingAnnotationHandler, Annotation> authzChecks;
 
@@ -40,9 +38,9 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
     else throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
   }
 
-  public ShiroContainerFilter(ShiroAuthorizationService authorizationService,
-                              Collection<Annotation> authzSpecs,
-                              String resourceClassName, String resourceMethodName) {
+  public ShiroAuthorizationFilter(ShiroAuthorizationService authorizationService,
+                                  Collection<Annotation> authzSpecs,
+                                  String resourceClassName, String resourceMethodName) {
     Map<AuthorizingAnnotationHandler, Annotation> authChecks = new HashMap<>(authzSpecs.size());
     for (Annotation authSpec : authzSpecs) {
       authChecks.put(createHandler(authSpec), authSpec);
@@ -55,7 +53,6 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    this.authorizationService.bindSubjectToThreadStateInRequestContext(requestContext);
     this.authorizationService.invokeFilterChain(requestContext);
     ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
@@ -64,10 +61,5 @@ public class ShiroContainerFilter implements ContainerRequestFilter, ContainerRe
       return;
     }
     this.authorizationService.extractRequiredPermissionsToExecContext(execContextProvider.get(), authzChecks);
-  }
-
-  @Override
-  public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-    this.authorizationService.unbindSubjectFromThreadStateInRequestContext(requestContext);
   }
 }

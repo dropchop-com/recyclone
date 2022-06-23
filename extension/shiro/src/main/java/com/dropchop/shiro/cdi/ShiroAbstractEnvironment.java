@@ -9,11 +9,9 @@ import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.config.Ini;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -30,19 +28,19 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
 public abstract class ShiroAbstractEnvironment {
-  @Inject //(required = false)
+
+  @Inject
   protected CacheManager cacheManager;
 
-  @Inject //(required = false)
+  @Inject
   protected RolePermissionResolver rolePermissionResolver;
 
-  @Inject //(required = false)
+  @Inject
   protected PermissionResolver permissionResolver;
 
   @Inject
   protected EventBus eventBus;
 
-  //@Value("#{ @environment['shiro.sessionManager.deleteInvalidSessions'] ?: true }")
   protected boolean sessionManagerDeleteInvalidSessions = true;
 
 
@@ -130,11 +128,6 @@ public abstract class ShiroAbstractEnvironment {
     ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
     authenticator.setAuthenticationStrategy(authenticationStrategy());
     return authenticator;
-  }
-
-  protected Realm iniRealmFromLocation(String iniLocation) {
-    Ini ini = Ini.fromResourcePath(iniLocation);
-    return new IniRealm( ini );
   }
 
 }

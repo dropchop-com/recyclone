@@ -26,6 +26,7 @@ import java.util.List;
 @Alternative
 @ApplicationScoped
 public class ShiroEnvironmentProvider {
+
   @Produces
   public CacheManager getCacheManager() {
     return null;
