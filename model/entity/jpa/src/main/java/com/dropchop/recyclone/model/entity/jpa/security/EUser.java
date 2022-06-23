@@ -28,7 +28,7 @@ public class EUser<O extends EUuid> extends EPerson
   implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage> {
 
   @Transient
-  List<? extends EUserAccount> accounts;
+  List<EUserAccount> accounts;
 
   @Transient
   SortedSet<EPermission> permissions;

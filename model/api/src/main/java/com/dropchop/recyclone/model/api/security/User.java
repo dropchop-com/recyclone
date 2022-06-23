@@ -34,9 +34,9 @@ public interface User<
 
   void setPermissions(SortedSet<P> permissions);
 
-  List<? extends UA> getAccounts();
+  List<UA> getAccounts();
 
-  void setAccounts(List<? extends UA> accounts);
+  void setAccounts(List<UA> accounts);
 
   O getOwner();
 
