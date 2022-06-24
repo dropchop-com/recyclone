@@ -24,7 +24,7 @@ public class Result<T> implements Model, HasId {
 
   @NonNull
   @EqualsAndHashCode.Exclude
-  private ResultStatus status;
+  private ResultStatus status = new ResultStatus();
 
   @NonNull
   @EqualsAndHashCode.Exclude
