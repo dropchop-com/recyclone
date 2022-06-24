@@ -15,4 +15,5 @@ public interface SecurityLoaderService {
   <O extends DtoId> User<O> loadPrincipalById(UUID id);
 
   <M extends Model> Set<Permission> loadPermissions(Class<M> subject, UUID identifier);
+
 }
