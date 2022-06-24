@@ -13,6 +13,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -40,7 +41,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
   @Override
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     User<DtoId> p = (User<DtoId>) principals.getPrimaryPrincipal();
-    Set< Permission> permissions = this.securityLoaderService.loadPermissions(p.getClass(), p.getUuid());
+    List<Permission> permissions = this.securityLoaderService.loadPermissions(p.getClass(), p.getUuid());
     return null;
   }
 
