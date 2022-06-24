@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.User;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,6 +15,6 @@ public interface SecurityLoaderService {
   <O extends DtoId> User<O> loadPrincipalByToken(String token);
   <O extends DtoId> User<O> loadPrincipalById(UUID id);
 
-  <M extends Model> Set<Permission> loadPermissions(Class<M> subject, UUID identifier);
+  <M extends Model> List<Permission> loadPermissions(Class<M> subject, UUID identifier);
 
 }

@@ -3,6 +3,7 @@ package com.dropchop.shiro.utils;
 import com.dropchop.recyclone.model.dto.security.Permission;
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -10,5 +11,5 @@ import java.util.List;
  */
 public interface Resolver {
 
-  List<Permission> resolve(String subject, String subjectIdentifier, String subSubject, String subSubjectIdentifier);
+  List<Permission> resolve(String subject, UUID subjectIdentifier, String subSubject, UUID subSubjectIdentifier);
 }
