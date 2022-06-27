@@ -23,7 +23,7 @@ public class TokenRealm extends BaseAuthenticatingRealm {
   @Override
   protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token) {
     if (token instanceof BearerToken) {
-      User<DtoId> p = this.getSecurityLoaderService().loadPrincipalByToken(String.valueOf(token.getPrincipal()));
+      User<DtoId> p = this.getSecurityLoaderService().loadByToken(String.valueOf(token.getPrincipal()));
       if (p != null && p.getDeactivated() == null) {
         UserAccount account = p.getAccounts().stream().filter(a -> a instanceof TokenAccount).findFirst().orElse(null);
         if (account != null) {

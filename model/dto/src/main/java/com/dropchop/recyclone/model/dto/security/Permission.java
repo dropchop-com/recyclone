@@ -49,17 +49,41 @@ public class Permission extends DtoId
   private ZonedDateTime deactivated;
 
   @JsonIgnore
-  private String getDescriptor() {
-    String code = this.domain != null ? this.domain.getCode() : "";
-    code += this.action != null ? this.action.getCode() : "";
-    code += this.getUuid();
-    return code;
+  public String getWildcardString() {
+    StringBuilder buff = new StringBuilder();
+    if (this.domain != null) {
+      buff.append(this.domain.getCode());
+    }
+    if (this.action != null) {
+      if (buff.length() == 0) {
+        buff.append("*");
+      }
+      buff.append(":");
+      buff.append(this.action.getCode());
+    }
+    if (this.instances != null && !this.instances.isEmpty()) {
+      if (buff.length() == 0) {
+        buff.append("*:*");
+      }
+      buff.append(":");
+      for (int i = 0; i < this.instances.size(); i++) {
+        if (i > 0) {
+          buff.append(",");
+        }
+        buff.append(this.instances.get(i));
+      }
+    }
+    if (buff.length() == 0) {
+      buff.append("*");
+    }
+    return buff.toString();
   }
+
 
   @Override
   public int compareTo(Permission permission) {
-    String my = this.getDescriptor();
-    String other = permission.getDescriptor();
+    String my = this.getWildcardString();
+    String other = permission.getWildcardString();
     return my.compareTo(other);
   }
 }

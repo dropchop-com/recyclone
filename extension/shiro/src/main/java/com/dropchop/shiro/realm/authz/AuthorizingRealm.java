@@ -11,10 +11,13 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.authz.permission.WildcardPermission;
 import org.apache.shiro.subject.PrincipalCollection;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -41,8 +44,12 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
   @Override
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     User<DtoId> p = (User<DtoId>) principals.getPrimaryPrincipal();
-    List<Permission> permissions = this.securityLoaderService.loadPermissions(p.getClass(), p.getUuid());
-    return null;
+    List<Permission> permissions = this.securityLoaderService.loadPermissions(p.getClass(), p.getUuid(), null, null);
+    SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+    if (!permissions.isEmpty()) {
+      info.setStringPermissions(permissions.stream().map(Permission::getWildcardString).collect(Collectors.toSet()));
+    }
+    return info;
   }
 
 }
