@@ -25,7 +25,6 @@ public class UsernamePasswordRealm extends BaseAuthenticatingRealm {
       if (p != null && p.getDeactivated() == null) {
         UserAccount account = p.getAccounts().stream().filter(a -> a instanceof LoginAccount).findFirst().orElse(null);
         if (account != null) {
-          //TODO: fill principal settings from customer if needed
           return new SimpleAuthenticationInfo(p, ((LoginAccount)account).getPassword(), this.getName());
         }
         log.debug("No user Login account found for [{}]", loginName);
