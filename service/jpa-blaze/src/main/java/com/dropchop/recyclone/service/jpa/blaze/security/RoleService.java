@@ -73,7 +73,9 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
 
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
-    params.setContentTreeLevel(4);
+    if (params.getContentTreeLevel() < 4) {
+      params.setContentTreeLevel(4);
+    }
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
     JoinEntityHelper<ERole, EPermission, UUID> helper =
@@ -89,7 +91,9 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
 
   @Transactional
   public Result<Role> removePermissions(RoleParams params) {
-    params.setContentTreeLevel(4);
+    if (params.getContentTreeLevel() < 4) {
+      params.setContentTreeLevel(4);
+    }
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
     JoinEntityHelper<ERole, EPermission, UUID> helper =
