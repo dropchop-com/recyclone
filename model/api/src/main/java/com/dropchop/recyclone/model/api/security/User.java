@@ -5,6 +5,8 @@ import com.dropchop.recyclone.model.api.common.Person;
 import com.dropchop.recyclone.model.api.localization.Country;
 import com.dropchop.recyclone.model.api.localization.Language;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTags;
+import com.dropchop.recyclone.model.api.tagging.Tag;
 
 import java.util.List;
 import java.util.SortedSet;
@@ -22,9 +24,10 @@ public interface User<
     R extends Role<T, A, D, P>,
     O extends Model,
     C extends Country<T>,
-    L extends Language<T>
+    L extends Language<T>,
+    TAG extends Tag<T>
     >
-    extends Person<C, L, T>, PermissionBearer {
+    extends Person<C, L, T>, PermissionBearer, HasTags<TAG, T> {
 
   SortedSet<R> getRoles();
 
