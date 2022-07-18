@@ -34,7 +34,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
-      new LikeIdentifierCriteriaDecorator(),
+      new LikeIdentifiersCriteriaDecorator(),
       new InlinedStatesCriteriaDecorator(),
       new SortCriteriaDecorator(),
       new PageCriteriaDecorator()

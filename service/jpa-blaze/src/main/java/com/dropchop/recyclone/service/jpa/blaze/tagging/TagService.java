@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
-import com.dropchop.recyclone.repo.jpa.blaze.TypeCriteriaDecorator;
+import com.dropchop.recyclone.repo.jpa.blaze.LikeTypeCriteriaDecorator;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -61,7 +61,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag<TitleTranslation>, 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     Collection<CriteriaDecorator> commonDecorators = super.getCommonCriteriaDecorators();
     ArrayList<CriteriaDecorator> tagDecorators = new ArrayList<>(commonDecorators);
-    tagDecorators.add(new TypeCriteriaDecorator());
+    tagDecorators.add(new LikeTypeCriteriaDecorator());
     return tagDecorators;
   }
 
