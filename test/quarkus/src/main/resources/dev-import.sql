@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 insert into language (code, title, lang, created, modified) values ('en', 'English', 'en', now(), now());
 insert into language (code, title, lang, created, modified) values ('sl', 'Slovene', 'en', now(), now());
 insert into language (code, title, lang, created, modified) values ('sl-nonstandard', 'Slovene (non standard)', 'en', now(), now());
@@ -9,6 +11,15 @@ insert into language (code, title, lang, created, modified) values ('sr-Cyrl-ME'
 
 insert into language_l (fk_language_code, title, lang, created, modified) values ('en', 'Angleščina', 'sl', now(), now());
 insert into language_l (fk_language_code, title, lang, created, modified) values ('sl', 'Slovenščina', 'sl', now(), now());
+
+insert into tag (uuid, title, lang, "type", "name", created, modified, deactivated)
+values ('c73847a8-836a-3ad3-b4f8-4a331248088d', 'Slavic', 'en', 'LanguageGroup', 'slavic', now(), now(), now());
+
+insert into tag_l (fk_tag_uuid, title, lang, created, modified)
+values ('c73847a8-836a-3ad3-b4f8-4a331248088d', 'Slovanski Jezik', 'sl', now(), now());
+insert into tag_l (fk_tag_uuid, title, lang, created, modified)
+values ('c73847a8-836a-3ad3-b4f8-4a331248088d', 'Slovanski Jezik', 'hr', now(), now());
+
 
 insert into security_action(code, title, lang, created, modified) values ('*', 'All', 'en', now(), now());
 insert into security_action(code, title, lang, created, modified) values ('view', 'View', 'en', now(), now());
@@ -33,14 +44,22 @@ insert into security_domain(code, title, lang, created, modified) values ('secur
 insert into security_domain(code, title, lang, created, modified) values ('security.role', 'Security/Roles', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('tagging.tag', 'Tagging/Tags', 'en', now(), now());
 
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('*', 'Vse', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('localization.language', 'Lokalizacija/Jeziki', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('localization.country', 'Lokalizacija/Države', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.action', 'Varnost/Akcije', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.domain', 'Varnost/Področja', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.permission', 'Varnost/Dovoljenja', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('security.role', 'Varnost/Vloge', 'sl', now(), now());
-insert into security_domain_l(fk_security_domain_code, title, lang, created, modified) values ('tagging.tag', 'Označevanje/Oznake', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('*', 'Vse', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('localization.language', 'Lokalizacija/Jeziki', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('localization.country', 'Lokalizacija/Države', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('security.action', 'Varnost/Akcije', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('security.domain', 'Varnost/Področja', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('security.permission', 'Varnost/Dovoljenja', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('security.role', 'Varnost/Vloge', 'sl', now(), now());
+insert into security_domain_l(fk_security_domain_code, title, lang, created, modified)
+values ('tagging.tag', 'Označevanje/Oznake', 'sl', now(), now());
 
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('*', '*');
 insert into security_domain_security_action(fk_security_domain_code, fk_security_action_code) values ('*', 'view');

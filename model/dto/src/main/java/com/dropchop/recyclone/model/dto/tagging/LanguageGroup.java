@@ -1,8 +1,7 @@
 package com.dropchop.recyclone.model.dto.tagging;
 
-import com.dropchop.recyclone.model.api.tagging.NamedTag;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -15,7 +14,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
-public class LanguageGroup extends Tag<TitleTranslation> implements NamedTag<TitleTranslation> {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+public class LanguageGroup extends com.dropchop.recyclone.model.dto.tagging.NamedTag {
   @NonNull
   private String name;
 }

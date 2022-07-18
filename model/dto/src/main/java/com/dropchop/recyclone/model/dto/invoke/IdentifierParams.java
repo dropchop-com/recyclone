@@ -16,7 +16,7 @@ import java.util.List;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class IdentifierParams extends Params implements com.dropchop.recyclone.model.api.invoke.IdentifierParams {
 
-  @ToString.Include
   @Singular
+  @ToString.Include
   private List<String> identifiers = new ArrayList<>();
 }

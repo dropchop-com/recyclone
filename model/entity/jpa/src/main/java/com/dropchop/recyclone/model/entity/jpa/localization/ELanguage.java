@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.localization.Language;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
@@ -24,7 +25,7 @@ import java.util.Set;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ELanguage extends ECode
-  implements HasCreated, HasModified, HasDeactivated, HasELanguage, Language<ETitleTranslation> {
+  implements HasCreated, HasModified, HasDeactivated, HasELanguage, Language<ETitleTranslation>, HasStateInlinedCommon {
 
   static void componentsFromLocale(ELanguage language, Locale locale) {
     language.langCode = locale.getLanguage();

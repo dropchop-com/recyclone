@@ -63,6 +63,24 @@ public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.
     return unwrap(getById(id));
   }
 
+  @GET
+  @Path("{type: [A-Z][a-zA-Z\\d]{2,}(%2A)*}")
+  @Tag(name = Tags.TAGGING)
+  @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.TagParams")
+  Result<T> getByType(@PathParam("type") String type);
+
+  @GET
+  @Path("{type: [A-Z][a-zA-Z\\d*]{2,}(%2A)*}")
+  @Tag(name = Tags.TAGGING)
+  @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Produces(MediaType.APPLICATION_JSON)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.TagParams")
+  default List<T> getByTypeRest(@PathParam("type") String type) {
+    return unwrap(getByType(type));
+  }
+
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.TAGGING)

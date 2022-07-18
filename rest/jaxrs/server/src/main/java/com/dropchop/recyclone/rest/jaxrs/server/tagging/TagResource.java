@@ -43,11 +43,22 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
   @Override
   public Result<Tag<TitleTranslation>> getById(UUID id) {
     Params params = ctx.getParams();
-    if (!(params instanceof IdentifierParams identifierParams)) {
+    if (!(params instanceof TagParams tagParams)) {
       throw new ServiceException(ErrorCode.parameter_validation_error,
         String.format("Invalid parameter type: should be [%s]", IdentifierParams.class));
     }
-    identifierParams.setIdentifiers(List.of(id.toString()));
+    tagParams.setIdentifiers(List.of(id.toString()));
+    return selector.select(TagService.class).search();
+  }
+
+  @Override
+  public Result<Tag<TitleTranslation>> getByType(String type) {
+    Params params = ctx.getParams();
+    if (!(params instanceof TagParams tagParams)) {
+      throw new ServiceException(ErrorCode.parameter_validation_error,
+        String.format("Invalid parameter type: should be [%s]", IdentifierParams.class));
+    }
+    tagParams.setTypes(List.of(type));
     return selector.select(TagService.class).search();
   }
 

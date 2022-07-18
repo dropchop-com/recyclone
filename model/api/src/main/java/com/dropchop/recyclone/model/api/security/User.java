@@ -25,7 +25,7 @@ public interface User<
     O extends Model,
     C extends Country<T>,
     L extends Language<T>,
-    TAG extends Tag<T>
+    TAG extends Tag<T> // TODO: does user really need tags?
     >
     extends Person<C, L, T>, PermissionBearer, HasTags<TAG, T> {
 

@@ -15,6 +15,7 @@ import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
   @Inject
   ServiceSelector serviceSelector;
 
-  protected Iterable<CriteriaDecorator> getCommonCriteriaDecorators() {
+  protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
       new LikeIdentifierCriteriaDecorator(),
       new InlinedStatesCriteriaDecorator(),

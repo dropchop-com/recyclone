@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.entity.jpa.tagging;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
@@ -28,7 +29,8 @@ import java.util.Set;
 @DiscriminatorColumn(name="type",
   discriminatorType = DiscriminatorType.STRING)
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class ETag extends EUuid implements HasCreated, HasDeactivated, HasModified, HasELanguage, Tag<ETitleTranslation> {
+public class ETag extends EUuid
+  implements HasCreated, HasDeactivated, HasModified, HasELanguage, Tag<ETitleTranslation>, HasStateInlinedCommon {
 
   @Column(name = "type", insertable = false, updatable = false)
   private String type;

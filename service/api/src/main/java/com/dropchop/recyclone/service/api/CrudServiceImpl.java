@@ -120,9 +120,9 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   protected abstract RepositoryExecContext<E> getRepositoryExecContext();
 
-  protected RepositoryExecContext<E> getRepositoryExecContextWithTotalCount() {
+  protected RepositoryExecContext<E> getRepositoryExecContextWithTotalCount(MappingContext mapContext) {
     RepositoryExecContext<E> context = getRepositoryExecContext();
-    context.totalCount(getMappingContextForRead()); // get total count and save it
+    context.totalCount(mapContext); // get total count and save it
     return context;
   }
 
@@ -137,12 +137,9 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   @Override
   public Result<D> search() {
-    if (authorizationService.isPermitted(ctx.getSecurityDomainAction())) {
-      //log.trace("search [{}] is permitted to view [{}]!", authorizationService.getCurrentSubject(), ctx.getParams());
-    }
     MappingContext mapContext = getMappingContextForRead();
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    List<E> entities = find(getRepositoryExecContextWithTotalCount());
+    List<E> entities = find(getRepositoryExecContextWithTotalCount(mapContext));
     entities = entities.stream().filter(
       e -> authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
