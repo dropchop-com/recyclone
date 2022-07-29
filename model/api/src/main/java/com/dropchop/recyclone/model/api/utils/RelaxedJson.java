@@ -21,8 +21,16 @@ import static com.dropchop.recyclone.model.api.expr.parse.ParserHelper.makeError
  * Simple "relaxed" JSON-like string parser.
  * It supports missing quotes on names and parses ISO 8601 strings to ZonedDateTime.
  *
- * Rewriten <a href="https://github.com/jtchen/jsonsingle">jsonsingle</a> to support JSON relaxation and ZonedDateTime,
+ * Rewritten <a href="https://github.com/jtchen/jsonsingle">jsonsingle</a> to support JSON relaxation and ZonedDateTime,
  * but more importantly to support pluggable object structure instantiation by @see Listener.
+ *
+ * Relaxation is:
+ * - no need for name / value quoting,
+ * {color: #FDFDFD} == {'color': '#FDFDFD'}
+ * - dangling value w/o name is interpreted as __untitled property.
+ * {color: #FDFDFD, 12.3} == {'color': '#FDFDFD', '__untitled': 12.3}
+ * - dangling value that can't be parsed as decimal, boolean or date is interpreted as and empty object.
+ * {'test': 'some string', dangling} == {'test': 'some string', 'dangling': {}}
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27.7.2022.
  */
