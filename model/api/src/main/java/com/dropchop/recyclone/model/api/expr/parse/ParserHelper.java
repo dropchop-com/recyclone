@@ -29,7 +29,7 @@ import static com.dropchop.recyclone.model.api.expr.parse.ParserState.WINDOW_OFF
  */
 public class ParserHelper {
 
-  static ParserError makeError(Position pos, ParserState state, ParserError.Code code) {
+  public static ParserError makeError(Position pos, ParserState state, ParserError.Code code) {
     ParserError error = new ParserError();
     if (state != null) {
       error.setColumnNum(state.pos + 1);
@@ -140,13 +140,13 @@ public class ParserHelper {
     return value;
   }
 
+  // TODO use AttributeMarshaller
   static void parseAttributeValue(ParserState state, Deque<Set<Attribute<?>>> attributeStack, Set<Attribute<?>> attributes,
                                   String name, String value) throws ParseException {
     if (value.isEmpty()) {
       Set<Attribute<?>> nested = attributeStack.pollFirst();
       if (nested == null) {
-        //noinspection SortedCollectionWithNonComparableKeys
-        nested = new TreeSet<>();
+        nested = new LinkedHashSet<>();
       }
       AttributeSet attribute = new AttributeSet(name, nested);
       attributes.add(attribute);
@@ -171,6 +171,7 @@ public class ParserHelper {
     attributes.add(new AttributeString(name, value));
   }
 
+  // TODO use AttributeMarshaller
   static Set<Attribute<?>> parseAttributeObject(ParserState state, Deque<Set<Attribute<?>>> attributeStack, String s)
     throws ParseException {
     if (s.startsWith(ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_START)) {

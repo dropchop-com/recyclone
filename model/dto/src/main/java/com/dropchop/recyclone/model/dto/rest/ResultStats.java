@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.
  */
 @Data
-public class ResultStats implements Model, HasAttributes<Attribute<?>> {
+public class ResultStats implements Model, HasAttributes {
   @EqualsAndHashCode.Exclude
   private Set<Attribute<?>> attributes;
 }

@@ -1,14 +1,15 @@
 package com.dropchop.recyclone.model.api.attr;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
  */
-@Data
+@Getter
+@Setter
+@SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class AttributeBool extends AttributeBase<Boolean> {
   @NonNull
   private Boolean value;

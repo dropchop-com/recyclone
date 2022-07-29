@@ -23,7 +23,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Node extends DtoCode
-  implements com.dropchop.recyclone.model.api.test.Node<TitleTranslation, Attribute<?>, Node> {
+  implements com.dropchop.recyclone.model.api.test.Node<TitleTranslation, Node> {
   @JsonInclude(NON_NULL)
   SortedSet<Node> children;
 

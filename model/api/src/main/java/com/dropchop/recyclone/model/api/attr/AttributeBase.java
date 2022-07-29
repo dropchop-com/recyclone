@@ -4,11 +4,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
  */
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
 public abstract class AttributeBase<T> implements Attribute<T> {

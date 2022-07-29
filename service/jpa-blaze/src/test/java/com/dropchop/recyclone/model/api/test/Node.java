@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.model.api.test;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import com.dropchop.recyclone.model.api.marker.HasCode;
@@ -15,8 +14,8 @@ import java.util.SortedSet;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 05. 22.
  */
-public interface Node<T extends TitleTranslation, A extends Attribute<?>, N extends Node<T, A, N>>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T>, HasAttributes<A>, HasCreated, HasModified {
+public interface Node<T extends TitleTranslation, N extends Node<T, N>>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T>, HasAttributes, HasCreated, HasModified {
 
   SortedSet<N> getChildren();
   void setChildren(SortedSet<N> children);

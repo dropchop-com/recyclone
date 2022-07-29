@@ -2,16 +2,26 @@ package com.dropchop.recyclone.model.api.marker;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
-public interface HasAttributes<A extends Attribute<?>> {
-  Set<A> getAttributes();
-  void setAttributes(Set<A> attributes);
+public interface HasAttributes {
+  Set<Attribute<?>> getAttributes();
+  void setAttributes(Set<Attribute<?>> attributes);
 
-  static <T, X extends Attribute<?>> T getAttributeValue(Set<X> attributes, String name, T defaultValue) {
+  default void addAttribute(Attribute<?> attribute) {
+    Set<Attribute<?>> attributes = getAttributes();
+    if (attributes == null) {
+      attributes = new LinkedHashSet<>();
+      setAttributes(attributes);
+    }
+    attributes.add(attribute);
+  }
+
+  static <T> T getAttributeValue(Set<Attribute<?>> attributes, String name, T defaultValue) {
     if (attributes == null) {
       return defaultValue;
     }

@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.model.api.expr;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import com.dropchop.recyclone.model.api.marker.HasId;
 
@@ -9,7 +8,7 @@ import com.dropchop.recyclone.model.api.marker.HasId;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
  */
-public interface Node extends Model, HasId, HasAttributes<Attribute<?>> {
+public interface Node extends Model, HasId, HasAttributes {
 
   Position getPosition();
   void setPosition(Position position);

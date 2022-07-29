@@ -1,8 +1,9 @@
 package com.dropchop.recyclone.model.entity.jpa.test;
 
 import com.dropchop.recyclone.model.api.test.Node;
-import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
+import com.dropchop.recyclone.model.entity.jpa.attr.HasEAttributes;
+import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import lombok.Getter;
@@ -20,11 +21,12 @@ import java.util.SortedSet;
  */
 @Getter
 @Setter
-@Entity
-@Table(name = "test_node")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class ENode extends ECode implements Node<ETitleTranslation, EAttribute<?>, ENode> {
+@Entity
+@Table(name = "test_node")
+@SuppressWarnings("JpaDataSourceORMInspection")
+public class ENode extends ECode implements Node<ETitleTranslation, ENode>, HasEAttributes {
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = ENode.class)
   @JoinTable(name = "test_node_test_node",
     joinColumns = {
@@ -51,7 +53,7 @@ public class ENode extends ECode implements Node<ETitleTranslation, EAttribute<?
     foreignKey = @ForeignKey(name = "test_node_a_fk_test_node_code"),
     joinColumns = @JoinColumn(name="fk_test_node_code")
   )
-  private Set<EAttribute<?>> attributes;
+  private Set<EAttribute<?>> eAttributes;
 
   @Column(name="title")
   private String title;

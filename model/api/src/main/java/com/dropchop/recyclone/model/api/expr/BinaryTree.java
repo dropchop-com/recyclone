@@ -1,13 +1,12 @@
 package com.dropchop.recyclone.model.api.expr;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
  */
-public interface BinaryTree extends HasAttributes<Attribute<?>>, Model {
+public interface BinaryTree extends HasAttributes, Model {
   String getId();
   void setId(String id);
 
