@@ -1,15 +1,20 @@
 package com.dropchop.recyclone.model.api.expr.parse;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.api.attr.AttributeMarshaller;
+import com.dropchop.recyclone.model.api.attr.AttributeSet;
 import com.dropchop.recyclone.model.api.expr.operand.Name;
 import com.dropchop.recyclone.model.api.expr.operand.Phrase;
 import com.dropchop.recyclone.model.api.expr.operand.Token;
 import com.dropchop.recyclone.model.api.expr.relational.Eq;
 import com.dropchop.recyclone.model.api.expr.*;
+import com.dropchop.recyclone.model.api.utils.RelaxedJson;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+import static com.dropchop.recyclone.model.api.expr.ParserError.*;
+import static com.dropchop.recyclone.model.api.expr.parse.ParserHelper.makeError;
 import static com.dropchop.recyclone.model.api.expr.parse.ParserState.WINDOW_OFFSET;
 
 /**
@@ -88,13 +93,13 @@ public abstract class InfixExpressionParser implements ExpressionParser {
     log.trace("Operator: [{}]", operator);
     Operator node = tryOperator(operator);
     if (operator == null) {
-      throw new ParseException(ParserHelper.makeError(state, ParserError.Code.UNKNOWW_OPERATOR));
+      throw new ParseException(makeError(state, Code.UNKNOWW_OPERATOR));
     }
     Deque<Node> subExpression = state.currentSubExpression();
 
     if (node instanceof BinaryOperator) {
       if (subExpression == null || subExpression.isEmpty()) {
-        throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_LEFT_OPERAND));
+        throw new ParseException(makeError(state, Code.MISSING_LEFT_OPERAND));
       }
     }
 
@@ -109,7 +114,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
     Node left = subExpression.peekFirst();
     if (node instanceof BinaryLeafOperator) { // ... NOT text = DirtyHarry
       if (left instanceof BinaryOperator) { // AND and AND is illegal
-        throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.MISSING_LEFT_OPERAND));
+        throw new ParseException(makeError(node.getPosition(), state, Code.MISSING_LEFT_OPERAND));
       }
       // we support unary operator in front of binary leaf operator: NOT k1 NEAR k3 is equivalent to k1 NOT NEAR k3
       // we just swap it
@@ -117,23 +122,23 @@ public abstract class InfixExpressionParser implements ExpressionParser {
         subExpression.pollFirst(); // pop left operator
         Node operand = subExpression.pollFirst();
         if (!(operand instanceof Operand)) {
-          throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.ILLEGAL_LEAF_OPERATOR_USE));
+          throw new ParseException(makeError(node.getPosition(), state, Code.ILLEGAL_LEAF_OPERATOR_USE));
         }
         Node prev = subExpression.peekFirst();
         if (prev != null && !(prev instanceof BinaryOperator)) { // but we don't support expr "NOT k1 NOT NEAR k3"
-          throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.ILLEGAL_LEAF_OPERATOR_USE));
+          throw new ParseException(makeError(node.getPosition(), state, Code.ILLEGAL_LEAF_OPERATOR_USE));
         }
         subExpression.push(left); // unary operator
         subExpression.push(operand); // operand
       } else if (!(left instanceof Operand)) {
-        throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.ILLEGAL_LEAF_OPERATOR_USE));
+        throw new ParseException(makeError(node.getPosition(), state, Code.ILLEGAL_LEAF_OPERATOR_USE));
       }
     } else if (!(node instanceof UnaryOperator) && subExpression.isEmpty()) {
-      throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.MISSING_LEFT_OPERAND));
+      throw new ParseException(makeError(node.getPosition(), state, Code.MISSING_LEFT_OPERAND));
     } else if (node instanceof BinaryOperator && left instanceof BinaryOperator) {
       BinaryNode binOp = ((BinaryNode) left);
       if (binOp.getLeft() == null && binOp.getRight() == null) { // unprocessed binary operator
-        throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.MISSING_LEFT_OPERAND));
+        throw new ParseException(makeError(node.getPosition(), state, Code.MISSING_LEFT_OPERAND));
       }
     }
 
@@ -169,7 +174,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
     if (!subExpression.isEmpty()) {
       Node operator = subExpression.peekFirst();
       if (!(operator instanceof Operator)) {
-        throw new ParseException(ParserHelper.makeError(node.getPosition(), state, ParserError.Code.MISSING_OPERATOR));
+        throw new ParseException(makeError(node.getPosition(), state, Code.MISSING_OPERATOR));
       }
     }
     state.currentSubExpression().push(node);
@@ -241,10 +246,10 @@ public abstract class InfixExpressionParser implements ExpressionParser {
     Node left = currParent.getLeft();
 
     if (!(left instanceof Name) || !(right instanceof Operand)) {
-      throw new ParseException(ParserHelper.makeError(currParent.getPosition(), state, ParserError.Code.ILLEGAL_RELATIONAL_OPERATOR_USE));
+      throw new ParseException(makeError(currParent.getPosition(), state, Code.ILLEGAL_RELATIONAL_OPERATOR_USE));
     }
     if (right instanceof TextOperand && !(currParent instanceof Eq)) {
-      throw new ParseException(ParserHelper.makeError(currParent.getPosition(), state, ParserError.Code.ILLEGAL_RELATIONAL_OPERATOR_TEXT_OPERAND_USE));
+      throw new ParseException(makeError(currParent.getPosition(), state, Code.ILLEGAL_RELATIONAL_OPERATOR_TEXT_OPERAND_USE));
     }
   }
 
@@ -252,14 +257,14 @@ public abstract class InfixExpressionParser implements ExpressionParser {
     Node right = currParent.getRight();
 
     if (!(right instanceof RelationalOperator) || !(right instanceof Operand)) {
-      throw new ParseException(ParserHelper.makeError(currParent.getPosition(), state, ParserError.Code.ILLEGAL_LEAF_OPERATOR_USE));
+      throw new ParseException(makeError(currParent.getPosition(), state, Code.ILLEGAL_LEAF_OPERATOR_USE));
     }
   }
 
   private void drainStack(Expression searchExpr, ParserState state) throws ParseException {
     Node root = null;
     if (state.emptyExpressions()) {
-      throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_OPEN_BRACKET));
+      throw new ParseException(makeError(state, Code.MISSING_OPEN_BRACKET));
     }
 
     String defaultNameOperandValue = getDefaultNameOperandValue();
@@ -280,7 +285,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
           if (unOp.getRight() == null) { // we have to set right child
             subExprIt.previous(); // move back to operator
             if (!subExprIt.hasPrevious()) {
-              throw new ParseException(ParserHelper.makeError(unOp.getPosition(), state, ParserError.Code.MISSING_RIGHT_OPERAND));
+              throw new ParseException(makeError(unOp.getPosition(), state, Code.MISSING_RIGHT_OPERAND));
             }
             Node right = subExprIt.previous(); // move to right operand
             subExprIt.remove(); // remove right operand
@@ -300,7 +305,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
           BinaryNode binOp = ((BinaryNode) operator);
           if (binOp.getLeft() == null) { // we have to set left child
             if (!subExprIt.hasNext()) {
-              throw new ParseException(ParserHelper.makeError(binOp.getPosition(), state, ParserError.Code.MISSING_LEFT_OPERAND));
+              throw new ParseException(makeError(binOp.getPosition(), state, Code.MISSING_LEFT_OPERAND));
             }
             Node left = subExprIt.next(); // move to left operand
             subExprIt.remove(); // remove left operand
@@ -352,43 +357,39 @@ public abstract class InfixExpressionParser implements ExpressionParser {
 
 
   private void parseAttributes(ParserState state) throws ParseException {
-    Deque<StringBuilder> attributeBuffers = new ArrayDeque<>();
-    attributeBuffers.push(new StringBuilder());
-    Deque<Set<Attribute<?>>> parsedAttributes = new ArrayDeque<>();
+    int attributeDataCount = 1;
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("{");
     do {
       char[] window = ParserHelper.getWindow(state, -ReservedSymbols.ESCAPE_SYMBOL.length(), ReservedSymbols.MAX_SYMBOL_LEN);
       if (ParserHelper.isNotEscapedSymbol(window, ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_START)) {
-        if (attributeBuffers.size() == 0) {
-          throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_ATTRIBUTES_DATA_END));
+        if (attributeDataCount == 0) {
+          throw new ParseException(makeError(state, Code.MISSING_ATTRIBUTES_DATA_END));
         }
-        attributeBuffers.push(new StringBuilder());
+        attributeDataCount++;
         continue;
       }
       if (ParserHelper.isNotEscapedSymbol(window, ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_END)) {
-        StringBuilder buffer = attributeBuffers.pollFirst();
-        if (buffer == null) {
-          throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_ATTRIBUTES_DATA_START));
+        if (attributeDataCount <= 0) {
+          throw new ParseException(makeError(state, Code.MISSING_ATTRIBUTES_DATA_START));
         }
-        Set<Attribute<?>> attributes = ParserHelper.parseAttributeObject(state, parsedAttributes, buffer.toString());
-        parsedAttributes.push(attributes);
-        if (attributeBuffers.size() == 0) { // terminate
+        attributeDataCount--;
+        if (attributeDataCount == 0) { // terminate
           break;
         }
         continue;
       }
-      StringBuilder buffer = attributeBuffers.peek();
-      if (buffer == null) {
-        throw new ParseException(ParserHelper.makeError(state, ParserError.Code.PARSE_ATTRIBUTES_DATA_ERROR));
-      }
       buffer.append(state.charAt());
     } while (state.inc(1) > Integer.MIN_VALUE);
+    buffer.append("}");
 
-    Set<Attribute<?>> attributes = parsedAttributes.pollFirst();
+    AttributeSet attributeSet = AttributeMarshaller.parse(state, buffer.toString());
+    Set<Attribute<?>> attributes = attributeSet.getAttributes();
     if (attributes == null) {
-      throw new ParseException(ParserHelper.makeError(state, ParserError.Code.PARSE_ATTRIBUTES_DATA_ERROR));
+      throw new ParseException(makeError(state, Code.PARSE_ATTRIBUTES_DATA_ERROR));
     }
-    if (!attributeBuffers.isEmpty()) {
-      throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_ATTRIBUTES_DATA_END));
+    if (attributeDataCount > 0) {
+      throw new ParseException(makeError(state, Code.MISSING_ATTRIBUTES_DATA_END));
     }
 
     if (state.justEndedAttributes) { //[term1 OR term2]{attributes}
@@ -397,13 +398,13 @@ public abstract class InfixExpressionParser implements ExpressionParser {
         toFill.addAll(attributes);
         log.trace("Operand set attr: [{}]", attributes);
       } else {
-        throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_ATTRIBUTES_START));
+        throw new ParseException(makeError(state, Code.MISSING_ATTRIBUTES_START));
       }
     } else if (state.justPushedNode != null) { // my_simple_term{attributes}
       state.justPushedNode.setAttributes(attributes);
       log.trace("Node attr: [{}] -> [{}]", state.justPushedNode.getClass().getSimpleName(), attributes);
     } else {
-      throw new ParseException(ParserHelper.makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_START));
+      throw new ParseException(makeError(state, Code.INVALID_ATTRIBUTE_DATA_START));
     }
     state.buffer = new StringBuilder();
   }
@@ -434,7 +435,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
       }
 
       if (ParserHelper.isNotEscapedSymbol(window, ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_END)) {
-        throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_ATTRIBUTES_START));
+        throw new ParseException(makeError(state, Code.MISSING_ATTRIBUTES_START));
       }
 
       // mark nodes with attributes
@@ -463,7 +464,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
         drainStack(searchExpr, state);
         state.bracketCount--;
         if (state.bracketCount < 0) {
-          throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_OPEN_BRACKET));
+          throw new ParseException(makeError(state, Code.MISSING_OPEN_BRACKET));
         }
         log.trace("Sub-expression end.");
         continue;
@@ -482,7 +483,7 @@ public abstract class InfixExpressionParser implements ExpressionParser {
 
       // read until phrase ends
       if (ParserHelper.isNotEscapedSymbol(window, ReservedSymbols.TextSearch.PHRASE_SYMBOL)) {
-        ParserHelper.readUntil(state, ReservedSymbols.TextSearch.PHRASE_SYMBOL, ParserError.Code.UNTERMINATED_PHRASE);
+        ParserHelper.readUntil(state, ReservedSymbols.TextSearch.PHRASE_SYMBOL, Code.UNTERMINATED_PHRASE);
         state.justPushedNode = initPushOperand(searchExpr, state, state.buffer.toString());
         state.buffer = new StringBuilder();
         state.dec(1); //backtrack since attributes might start
@@ -517,17 +518,17 @@ public abstract class InfixExpressionParser implements ExpressionParser {
     if (!state.emptyExpression()) {
       drainStack(searchExpr, state);
       if (state.bracketCount < 0) {
-        throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_OPEN_BRACKET));
+        throw new ParseException(makeError(state, Code.MISSING_OPEN_BRACKET));
       }
       if (state.bracketCount > 0) {
-        throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_CLOSE_BRACKET));
+        throw new ParseException(makeError(state, Code.MISSING_CLOSE_BRACKET));
       }
       log.trace("Expression end.");
     }
 
     Set<Attribute<?>> attributes = state.popAttributes();
     if (attributes != null) {
-      throw new ParseException(ParserHelper.makeError(state, ParserError.Code.MISSING_ATTRIBUTES_END));
+      throw new ParseException(makeError(state, Code.MISSING_ATTRIBUTES_END));
     }
 
     return searchExpr;

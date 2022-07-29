@@ -83,6 +83,10 @@ public abstract class RelaxedJson {
     return s;
   }
 
+  private static boolean validNameStringValueSymbol(char c) {
+    return c == '+' || c == '-' || c == '#' || c == '_';
+  }
+
   public static <C, L> Object next(ParserState state, Listener<C, L> listener,
                                    StringCharacterIterator it, boolean valueExpected, int depth)
     throws ParseException {
@@ -166,7 +170,8 @@ public abstract class RelaxedJson {
           break;
         }
       }
-    } else if (c == '"' || c == '\'' || (Character.isAlphabetic(c) && !valueExpected)) { // relaxed naming
+    } else if (c == '"' || c == '\'' ||
+      ((Character.isAlphabetic(c) || validNameStringValueSymbol(c)) && !valueExpected)) { // relaxed name / value
       char enclosed = 0;
       if (c == '"' || c == '\'') {
         enclosed = c;
@@ -231,10 +236,11 @@ public abstract class RelaxedJson {
         sb.append(c);
       }
       String s = sb.toString();
-      Object tmp = parseValue(s);
+      return parseValue(s);
+      /*Object tmp = parseValue(s);
       if (!s.equals(tmp)) {
         return tmp;
-      }
+      }*/
     }
     throw new ParseException("Unexpected symbol!",
       makeError(new Position(it.current(), 0, 0), state, ParserError.Code.PARSE_ATTRIBUTES_DATA_ERROR));

@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.api.expr.bool.Not;
 import com.dropchop.recyclone.model.api.expr.bool.Or;
 import com.dropchop.recyclone.model.api.expr.bool.Xor;
 import com.dropchop.recyclone.model.api.expr.*;
+import com.dropchop.recyclone.model.api.expr.func.Independent;
 import com.dropchop.recyclone.model.api.expr.relational.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,19 +32,19 @@ public class InfixBoolExpressionParser extends InfixExpressionParser {
 
   static {
     Map<String, Operator> map = new LinkedHashMap<>();
-    map.put(ReservedSymbols.Bool.INDEPENDENT_WORD, new Near(ReservedSymbols.Bool.INDEPENDENT_WORD));
+    map.put(ReservedSymbols.Bool.INDEPENDENT_WORD, new Independent(ReservedSymbols.Bool.INDEPENDENT_WORD));
     map.put(ReservedSymbols.Bool.NEAR_WORD, new Near(ReservedSymbols.Bool.NEAR_WORD));
     map.put(ReservedSymbols.Bool.AND_WORD, new And(ReservedSymbols.Bool.AND_WORD));
     map.put(ReservedSymbols.Bool.XOR_WORD, new Xor(ReservedSymbols.Bool.XOR_WORD));
     map.put(ReservedSymbols.Bool.NOT_WORD, new Not(ReservedSymbols.Bool.NOT_WORD));
-
     map.put(ReservedSymbols.Bool.OR_WORD, new Or(ReservedSymbols.Bool.OR_WORD));
+
     map.put(ReservedSymbols.Bool.XOR_SYMBOL, new Xor(ReservedSymbols.Bool.XOR_SYMBOL));
     map.put(ReservedSymbols.Bool.OR_SYMBOL, new Or(ReservedSymbols.Bool.OR_SYMBOL));
     map.put(ReservedSymbols.Bool.AND_SYMBOL, new And(ReservedSymbols.Bool.AND_SYMBOL));
     map.put(ReservedSymbols.Bool.NEAR_SYMBOL, new Near(ReservedSymbols.Bool.NEAR_SYMBOL));
     map.put(ReservedSymbols.Bool.NOT_SYMBOL, new Not(ReservedSymbols.Bool.NOT_SYMBOL));
-    map.put(ReservedSymbols.Bool.INDEPENDENT_SYMBOL, new Not(ReservedSymbols.Bool.INDEPENDENT_SYMBOL));
+    map.put(ReservedSymbols.Bool.INDEPENDENT_SYMBOL, new Independent(ReservedSymbols.Bool.INDEPENDENT_SYMBOL));
 
     map.put(ReservedSymbols.Relational.LTE_SYMBOL, new Lte(ReservedSymbols.Relational.LTE_SYMBOL));
     map.put(ReservedSymbols.Relational.GTE_SYMBOL, new Gte(ReservedSymbols.Relational.GTE_SYMBOL));

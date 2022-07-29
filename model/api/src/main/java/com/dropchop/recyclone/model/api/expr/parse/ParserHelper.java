@@ -1,28 +1,18 @@
 package com.dropchop.recyclone.model.api.expr.parse;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.api.attr.AttributeDecimal;
-import com.dropchop.recyclone.model.api.attr.AttributeSet;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.expr.Operand;
-import com.dropchop.recyclone.model.api.expr.ParserError;
-import com.dropchop.recyclone.model.api.expr.Position;
-import com.dropchop.recyclone.model.api.expr.ReservedSymbols;
+import com.dropchop.recyclone.model.api.expr.*;
 import com.dropchop.recyclone.model.api.expr.operand.*;
-import com.dropchop.recyclone.model.api.expr.ParseException;
-import com.dropchop.recyclone.model.api.expr.operand.Bool;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.dropchop.recyclone.model.api.utils.Iso8601.*;
 import static com.dropchop.recyclone.model.api.expr.parse.ParserState.WINDOW_OFFSET;
+import static com.dropchop.recyclone.model.api.utils.Iso8601.dateTimePattern;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 11. 21.
@@ -138,98 +128,6 @@ public class ParserHelper {
       value = value.substring(0, value.length() - ReservedSymbols.VALUE_SYMBOL.length());
     }
     return value;
-  }
-
-  // TODO use AttributeMarshaller
-  static void parseAttributeValue(ParserState state, Deque<Set<Attribute<?>>> attributeStack, Set<Attribute<?>> attributes,
-                                  String name, String value) throws ParseException {
-    if (value.isEmpty()) {
-      Set<Attribute<?>> nested = attributeStack.pollFirst();
-      if (nested == null) {
-        nested = new LinkedHashSet<>();
-      }
-      AttributeSet attribute = new AttributeSet(name, nested);
-      attributes.add(attribute);
-      return;
-    }
-    if ("TRUE".equalsIgnoreCase(value)) {
-      attributes.add(new AttributeBool(value, Boolean.TRUE));
-      return;
-    }
-    if ("FALSE".equalsIgnoreCase(value)) {
-      attributes.add(new AttributeBool(value, Boolean.FALSE));
-    }
-    if (value.matches("-*[0-9]+(\\.[0-9]+)*")) {
-      try {
-        attributes.add(new AttributeDecimal(name, new BigDecimal(value)));
-        return;
-      } catch (NumberFormatException ex0) {
-        throw new ParseException(ex0.getMessage(),
-          makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-    }
-    attributes.add(new AttributeString(name, value));
-  }
-
-  // TODO use AttributeMarshaller
-  static Set<Attribute<?>> parseAttributeObject(ParserState state, Deque<Set<Attribute<?>>> attributeStack, String s)
-    throws ParseException {
-    if (s.startsWith(ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_START)) {
-      s = s.substring(ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_START.length());
-    }
-    if (s.endsWith(ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_END)) {
-      s = s.substring(0, s.length() - ReservedSymbols.ATTRIBUTE_DATA_SYMBOL_END.length());
-    }
-    String[] metaNameValues = s.split(ReservedSymbols.ATTRIBUTE_DATA_DELIM);
-    Set<Attribute<?>> attributes = new LinkedHashSet<>();
-    for (String metaNameValueStr : metaNameValues) {
-      if (metaNameValueStr == null) {
-        throw new ParseException("Missing name value pair",
-          makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-      metaNameValueStr = metaNameValueStr.trim();
-      if (metaNameValueStr.isEmpty()) {
-        throw new ParseException("Empty name value pair.",
-          makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-      String[] metaNameValue = metaNameValueStr.split(ReservedSymbols.NAME_DELIM, 2);
-      if (metaNameValue.length <= 0) {
-        throw new ParseException(makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-      if (metaNameValue.length > 2) {
-        throw new ParseException("Too many delimiter >:< characters.",
-          makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-      metaNameValue[0] = metaNameValue[0].trim();
-      if (metaNameValue[0].isEmpty()) {
-        throw new ParseException("Empty name.", makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-      if (metaNameValue[0].contains(" ")) {
-        throw new ParseException("Missing name value delimiter >:< characters.",
-          makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-      }
-      String name = trimUnwrap(metaNameValue[0]);
-      if (metaNameValue.length == 1) {
-        if (name.matches("-*[0-9]+(\\.[0-9]+)*") || "TRUE".equalsIgnoreCase(name) || "FALSE".equalsIgnoreCase(name)) {
-          parseAttributeValue(state, attributeStack, attributes, ReservedSymbols.DEFAULT_ATTR_NAME, name);
-        } else {
-          parseAttributeValue(state, attributeStack, attributes, name, "");
-        }
-      } else {
-        if (metaNameValue[1] == null) {
-          throw new ParseException("Missing value.",
-            makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-        }
-        String value = trimUnwrap(metaNameValue[1]);
-        if (value.contains(":")) {
-          throw new ParseException("Too many delimiter >:< characters.",
-            makeError(state, ParserError.Code.INVALID_ATTRIBUTE_DATA_NAME_VALUE_PAIR));
-        }
-        parseAttributeValue(state, attributeStack, attributes, name, value);
-      }
-    }
-
-    return attributes;
   }
 
   static List<Token> parseTokenList(ParserState state, String s) throws ParseException {
