@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.dto.tagging;
 
+import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,6 +32,8 @@ public class Tag<T extends TitleTranslation>
   private String lang;
 
   private Set<T> translations;
+
+  private Set<Attribute<?>> attributes;
 
   private ZonedDateTime created;
 

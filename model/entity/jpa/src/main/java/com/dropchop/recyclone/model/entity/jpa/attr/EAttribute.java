@@ -87,7 +87,7 @@ public class EAttribute<T> implements Attribute<T> {
     }
     attribute.setName(eAttribute.getName());
 
-    return eAttribute;
+    return attribute;
   }
 
   public static <T> EAttribute<T> fromAttribute(Attribute<T> attribute) {

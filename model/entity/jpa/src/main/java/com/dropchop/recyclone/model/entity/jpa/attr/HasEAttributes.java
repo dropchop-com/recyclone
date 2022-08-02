@@ -11,20 +11,23 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 25. 07. 22.
  */
 public interface HasEAttributes extends HasAttributes {
-
+  @Override
   default Set<Attribute<?>> getAttributes() {
-    Set<Attribute<?>> attributes = new HashSet<>();
+    Set<Attribute<?>> attributes = new LinkedHashSet<>();
     Set<EAttribute<?>> eAttributes = getEAttributes();
     if (eAttributes == null) {
       return attributes;
     }
+
     for (EAttribute<?> eAttribute : eAttributes) {
       Attribute<?> attribute = EAttribute.toAttribute(eAttribute);
       attributes.add(attribute);
     }
+
     return attributes;
   }
 
+  @Override
   default void addAttribute(Attribute<?> attribute) {
     Set<EAttribute<?>> eAttributes = getEAttributes();
     if (eAttributes == null) {
@@ -35,6 +38,7 @@ public interface HasEAttributes extends HasAttributes {
     eAttributes.add(eAttribute);
   }
 
+  @Override
   default void setAttributes(Set<Attribute<?>> attributes) {
     Set<EAttribute<?>> eAttributes = new HashSet<>();
     for (Attribute<?> attribute : attributes) {
@@ -42,6 +46,47 @@ public interface HasEAttributes extends HasAttributes {
       eAttributes.add(eAttribute);
     }
     setEAttributes(eAttributes);
+  }
+
+  default <T> T getAttributeValue(String name, T defaultValue) {
+    Set<EAttribute<?>> eAttributes = getEAttributes();
+    if (eAttributes == null) {
+      return defaultValue;
+    }
+    if (name == null) {
+      return defaultValue;
+    }
+    for (EAttribute<?> eAttribute : eAttributes) {
+      String attrName = eAttribute.getName();
+      if (name.equals(attrName)) {
+        Attribute<?> attribute = EAttribute.toAttribute(eAttribute);
+        //noinspection unchecked
+        return HasAttributes.getValueChecked((Attribute<T>)attribute, defaultValue);
+      }
+    }
+    return defaultValue;
+  }
+
+  default <T> T getAttributeValue(String name) {
+    return getAttributeValue(name, null);
+  }
+
+  default <T> Attribute<T> getAttribute(String name) {
+    Set<EAttribute<?>> eAttributes = getEAttributes();
+    if (eAttributes == null) {
+      return null;
+    }
+    if (name == null) {
+      return null;
+    }
+    for (EAttribute<?> eAttribute : eAttributes) {
+      String attrName = eAttribute.getName();
+      if (name.equals(attrName)) {
+        //noinspection unchecked
+        return (Attribute<T>) EAttribute.toAttribute(eAttribute);
+      }
+    }
+    return null;
   }
 
   Set<EAttribute<?>> getEAttributes();

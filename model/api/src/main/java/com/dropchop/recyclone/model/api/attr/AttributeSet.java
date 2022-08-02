@@ -31,4 +31,8 @@ public class AttributeSet extends AttributeBase<Set<Attribute<?>>> implements Ha
   public void setAttributes(Set<Attribute<?>> attributes) {
     setValue(attributes);
   }
+
+  public <T> Attribute<T> getAttribute(String name) {
+    return HasAttributes.super.getAttribute(this.value, name);
+  }
 }

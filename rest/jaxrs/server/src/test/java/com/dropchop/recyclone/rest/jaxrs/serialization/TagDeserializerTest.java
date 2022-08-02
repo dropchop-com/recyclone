@@ -46,7 +46,8 @@ class TagDeserializerTest {
           }
       ]""";
 
-    ObjectMapper mapper = ObjectMapperContextResolver.createObjectMapper(
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper mapper = factory.createObjectMapper(
       new DefaultPolymorphicRegistry()
         .registerSerializationConfig(
           new SerializationConfig()

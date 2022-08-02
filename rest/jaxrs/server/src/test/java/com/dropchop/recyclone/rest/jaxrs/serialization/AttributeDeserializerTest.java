@@ -60,7 +60,8 @@ class AttributeDeserializerTest {
         ]
       }""";
 
-    ObjectMapper mapper = ObjectMapperContextResolver.createObjectMapper(new DefaultPolymorphicRegistry());
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper mapper = factory.createObjectMapper(new DefaultPolymorphicRegistry());
     CodeParams params = mapper.readValue(json, CodeParams.class);
 
     assertNotNull(params.getAttributes());

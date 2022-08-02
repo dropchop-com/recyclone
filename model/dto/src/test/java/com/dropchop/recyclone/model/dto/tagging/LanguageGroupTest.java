@@ -12,9 +12,14 @@ public class LanguageGroupTest {
 
   @Test
   void construct() {
-    LanguageGroup group = new LanguageGroup("slavic");
-    String id = group.getId();
-    assertEquals(Uuid.getNameBasedV3(LanguageGroup.class, "slavic").toString(), id);
-    assertEquals(id, group.getUuid().toString());
+    LanguageGroup group1 = new LanguageGroup("slavic");
+    String id1 = group1.getId();
+    assertEquals(Uuid.getNameBasedV3(LanguageGroup.class, "slavic").toString(), id1);
+    assertEquals(id1, group1.getUuid().toString());
+
+    LanguageGroup group2 = new LanguageGroup("ex_yu");
+    String id2 = group2.getId();
+    assertEquals(Uuid.getNameBasedV3(LanguageGroup.class, "ex_yu").toString(), id2);
+    assertEquals(id2, group2.getUuid().toString());
   }
 }

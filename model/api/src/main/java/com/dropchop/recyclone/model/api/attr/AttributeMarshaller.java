@@ -141,7 +141,7 @@ public class AttributeMarshaller {
       return (Attribute<T>) new AttributeDecimal(name, new BigDecimal(strValue));
     } else if (ZonedDateTime.class.isAssignableFrom(tClass)) {
       //noinspection unchecked
-      return (Attribute<T>) new AttributeDate(name, (ZonedDateTime) DATE_TIME_MS_TZ_FORMATTER.get().parse(strValue));
+      return (Attribute<T>) new AttributeDate(name, ZonedDateTime.parse(strValue, DATE_TIME_MS_TZ_FORMATTER.get()));
     } else if (Set.class.isAssignableFrom(tClass)) {
       String trimmed = strValue.trim();
       if (!trimmed.startsWith("{")) {
@@ -157,7 +157,7 @@ public class AttributeMarshaller {
         trimmed = "{" + ReservedSymbols.DEFAULT_ATTR_NAME + ":" + trimmed + "}";
       }
       AttributeSet set = parse(trimmed);
-      return set.getAttributeValue(ReservedSymbols.DEFAULT_ATTR_NAME);
+      return set.getAttribute(ReservedSymbols.DEFAULT_ATTR_NAME);
     } else {
       throw new UnsupportedOperationException("Invalid attribute value for string conversion!");
     }
