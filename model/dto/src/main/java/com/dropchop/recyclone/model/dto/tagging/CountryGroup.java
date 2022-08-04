@@ -16,8 +16,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
-public class LanguageGroup extends com.dropchop.recyclone.model.dto.tagging.NamedTag
-  implements com.dropchop.recyclone.model.api.tagging.LanguageGroup<TitleTranslation> {
+public class CountryGroup extends NamedTag
+  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<TitleTranslation> {
 
   @NonNull
   private String name;

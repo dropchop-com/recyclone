@@ -32,8 +32,8 @@ import java.util.Set;
 @DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ETag extends EUuid
-  implements HasCreated, HasDeactivated, HasModified, HasELanguage,
-  Tag<ETitleTranslation>, HasStateInlinedCommon, HasEAttributes {
+  implements Tag<ETitleTranslation>,
+  HasCreated, HasDeactivated, HasModified, HasELanguage, HasStateInlinedCommon, HasEAttributes {
 
   @Transient
   private String type = this.getClass().getSimpleName().substring(1);
