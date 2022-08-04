@@ -11,8 +11,12 @@ import java.util.SortedSet;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
  */
-public interface Role<T extends TitleTranslation, A extends Action<T>, D extends Domain<T, A>, P extends Permission<T, A, D>>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T> {
+public interface Role<
+  TT extends TitleTranslation,
+  A extends Action<TT>,
+  D extends Domain<TT, A>,
+  P extends Permission<TT, A, D>>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
 
   SortedSet<P> getPermissions();
   void setPermissions(SortedSet<P> permissions);

@@ -14,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class IdentifierParams extends Params implements com.dropchop.recyclone.model.api.invoke.IdentifierParams {
+public class IdentifierParams extends Params
+  implements com.dropchop.recyclone.model.api.invoke.IdentifierParams {
 
   @Singular
   @ToString.Include

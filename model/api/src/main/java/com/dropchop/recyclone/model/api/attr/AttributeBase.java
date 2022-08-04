@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
-public abstract class AttributeBase<T> implements Attribute<T> {
+public abstract class AttributeBase<X> implements Attribute<X> {
   @NonNull
   private String name;
 }

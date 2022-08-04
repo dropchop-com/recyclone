@@ -10,8 +10,8 @@ import java.util.Locale;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 01. 22.
  */
-public interface Language<T extends TitleTranslation>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T> {
+public interface Language<TT extends TitleTranslation>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
 
   /**
    * ISO 15924 4-letter script code

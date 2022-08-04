@@ -26,7 +26,7 @@ import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.unmarsha
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class EAttribute<T> implements Attribute<T> {
+public class EAttribute<X> implements Attribute<X> {
 
   public enum Type {
     str,
@@ -49,39 +49,39 @@ public class EAttribute<T> implements Attribute<T> {
   private String strValue;
 
   @Transient
-  private transient T value;
+  private transient X value;
 
   @Transient
-  public T getValue() {
+  public X getValue() {
     return this.value;
   }
 
   @Transient
-  public void setValue(T value) {
+  public void setValue(X value) {
     this.value = value;
   }
 
 
-  public static <T> Attribute<T> toAttribute(EAttribute<T> eAttribute) {
-    Attribute<T> attribute;
+  public static <X> Attribute<X> toAttribute(EAttribute<X> eAttribute) {
+    Attribute<X> attribute;
     if (Type.str == eAttribute.type) {
       //noinspection unchecked
-      attribute = (Attribute<T>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), String.class);
+      attribute = (Attribute<X>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), String.class);
     } else if (Type.bool == eAttribute.type) {
       //noinspection unchecked
-      attribute = (Attribute<T>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), Boolean.class);
+      attribute = (Attribute<X>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), Boolean.class);
     } else if (Type.date == eAttribute.type) {
       //noinspection unchecked
-      attribute = (Attribute<T>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), ZonedDateTime.class);
+      attribute = (Attribute<X>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), ZonedDateTime.class);
     } else if (Type.num == eAttribute.type) {
       //noinspection unchecked
-      attribute = (Attribute<T>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), BigDecimal.class);
+      attribute = (Attribute<X>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), BigDecimal.class);
     } else if (Type.set == eAttribute.type) {
       //noinspection unchecked
-      attribute = (Attribute<T>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), Set.class);
+      attribute = (Attribute<X>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), Set.class);
     } else if (Type.list == eAttribute.type) {
       //noinspection unchecked
-      attribute = (Attribute<T>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), List.class);
+      attribute = (Attribute<X>) unmarshall(eAttribute.getName(), eAttribute.getStrValue(), List.class);
     } else {
       throw new UnsupportedOperationException("Unsupported EAttribute to Attribute conversion");
     }
@@ -90,8 +90,8 @@ public class EAttribute<T> implements Attribute<T> {
     return attribute;
   }
 
-  public static <T> EAttribute<T> fromAttribute(Attribute<T> attribute) {
-    EAttribute<T> eAttribute = new EAttribute<>();
+  public static <X> EAttribute<X> fromAttribute(Attribute<X> attribute) {
+    EAttribute<X> eAttribute = new EAttribute<>();
     eAttribute.setName(attribute.getName());
     eAttribute.setValue(attribute.getValue());
     eAttribute.setStrValue(marshall(attribute));

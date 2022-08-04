@@ -11,10 +11,10 @@ import java.time.ZonedDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class UserAccount extends DtoId implements com.dropchop.recyclone.model.api.security.UserAccount {
+public class UserAccount extends DtoId
+  implements com.dropchop.recyclone.model.api.security.UserAccount {
 
   private String title;
 
   private ZonedDateTime deactivated;
-
 }

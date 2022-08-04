@@ -17,17 +17,17 @@ import java.util.SortedSet;
 @SuppressWarnings("unused")
 public interface User<
     UA extends UserAccount,
-    T extends TitleTranslation,
-    A extends Action<T>,
-    D extends Domain<T, A>,
-    P extends Permission<T, A, D>,
-    R extends Role<T, A, D, P>,
+    TT extends TitleTranslation,
+    A extends Action<TT>,
+    D extends Domain<TT, A>,
+    P extends Permission<TT, A, D>,
+    R extends Role<TT, A, D, P>,
     O extends Model,
-    C extends Country<T>,
-    L extends Language<T>,
-    TAG extends Tag<T> // TODO: does user really need tags?
+    C extends Country<TT>,
+    L extends Language<TT>,
+    T extends Tag<TT>
     >
-    extends Person<C, L, T>, PermissionBearer, HasTags<TAG, T> {
+    extends Person<C, L, TT>, PermissionBearer, HasTags<T, TT> {
 
   SortedSet<R> getRoles();
 

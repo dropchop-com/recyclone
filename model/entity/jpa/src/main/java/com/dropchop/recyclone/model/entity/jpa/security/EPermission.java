@@ -28,7 +28,8 @@ import java.util.Set;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EPermission extends EUuid
-  implements HasELanguage, Permission<ETitleTranslation, EAction, EDomain>, HasCreated, HasModified, HasDeactivated {
+  implements Permission<ETitleTranslation, EAction, EDomain>,
+  HasELanguage, HasCreated, HasModified, HasDeactivated {
 
   @ManyToOne(targetEntity = EDomain.class)
   @JoinColumn(name = "fk_security_domain_code",

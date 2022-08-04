@@ -21,7 +21,9 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class EAction extends ECode implements HasELanguage, Action<ETitleTranslation> {
+public class EAction extends ECode
+  implements Action<ETitleTranslation>,
+  HasELanguage {
 
   @Column(name="title")
   private String title;

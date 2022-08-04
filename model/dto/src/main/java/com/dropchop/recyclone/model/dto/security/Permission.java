@@ -79,7 +79,6 @@ public class Permission extends DtoId
     return buff.toString();
   }
 
-
   @Override
   public int compareTo(Permission permission) {
     String my = this.getWildcardString();

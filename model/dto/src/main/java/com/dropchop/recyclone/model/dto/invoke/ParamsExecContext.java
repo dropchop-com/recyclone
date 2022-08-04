@@ -13,8 +13,8 @@ import java.util.UUID;
  */
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class ParamsExecContext<L extends Listener>
-  implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<L> {
+public class ParamsExecContext<ECL extends Listener>
+  implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<ECL> {
 
   @NonNull
   @Getter
@@ -27,7 +27,7 @@ public class ParamsExecContext<L extends Listener>
   @Setter
   private Long startTime = System.currentTimeMillis();
 
-  private List<L> listeners = new ArrayList<>();
+  private List<ECL> listeners = new ArrayList<>();
 
   @NonNull
   @Getter
@@ -38,7 +38,7 @@ public class ParamsExecContext<L extends Listener>
     return id;
   }
 
-  public ParamsExecContext<L> id(String id) {
+  public ParamsExecContext<ECL> id(String id) {
     this.setId(id);
     return this;
   }
@@ -47,26 +47,26 @@ public class ParamsExecContext<L extends Listener>
     return startTime;
   }
 
-  public ParamsExecContext<L> startTime(Long startTime) {
+  public ParamsExecContext<ECL> startTime(Long startTime) {
     this.setStartTime(startTime);
     return this;
   }
 
   @Override
-  public List<L> getListeners() {
+  public List<ECL> getListeners() {
     return listeners;
   }
 
-  public void setListeners(List<L> listeners) {
+  public void setListeners(List<ECL> listeners) {
     this.listeners = listeners;
   }
 
-  public ParamsExecContext<L> listener(L listener) {
+  public ParamsExecContext<ECL> listener(ECL listener) {
     com.dropchop.recyclone.model.api.invoke.ParamsExecContext.super.listener(listener);
     return this;
   }
 
-  public List<L> listeners() {
+  public List<ECL> listeners() {
     return listeners;
   }
 
@@ -75,7 +75,7 @@ public class ParamsExecContext<L extends Listener>
     return (P)params;
   }
 
-  public <P extends Params> ParamsExecContext<L> params(P params) {
+  public <P extends Params> ParamsExecContext<ECL> params(P params) {
     this.setParams(params);
     return this;
   }

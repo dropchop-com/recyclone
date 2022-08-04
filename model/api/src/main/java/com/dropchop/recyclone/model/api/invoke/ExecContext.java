@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
-public interface ExecContext<L extends ExecContext.Listener> extends Model, HasId {
+public interface ExecContext<ECL extends ExecContext.Listener> extends Model, HasId {
   interface Listener {
   }
 
@@ -23,10 +23,10 @@ public interface ExecContext<L extends ExecContext.Listener> extends Model, HasI
     return System.currentTimeMillis() - start;
   }
 
-  List<L> getListeners();
-  void setListeners(List<L> listeners);
+  List<ECL> getListeners();
+  void setListeners(List<ECL> listeners);
 
-  default ExecContext<L> listener(L listener) {
+  default ExecContext<ECL> listener(ECL listener) {
     if (listener == null) {
       return this;
     }
@@ -35,7 +35,7 @@ public interface ExecContext<L extends ExecContext.Listener> extends Model, HasI
   }
 
 
-  default <C extends ExecContext<? extends Listener>> C copyAs(C context) {
+  default <EC extends ExecContext<? extends Listener>> EC copyAs(EC context) {
     String id = getId();
     if (id != null) {
       context.setId(id);
@@ -48,7 +48,7 @@ public interface ExecContext<L extends ExecContext.Listener> extends Model, HasI
   }
 
 
-  default ExecContext<L> of(ExecContext<?> sourceContext) {
+  default ExecContext<ECL> of(ExecContext<?> sourceContext) {
     String id = sourceContext.getId();
     if (id != null) {
       this.setId(id);

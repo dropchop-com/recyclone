@@ -15,9 +15,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
-public class TokenAccount extends UserAccount implements com.dropchop.recyclone.model.api.security.TokenAccount {
+public class TokenAccount extends UserAccount
+  implements com.dropchop.recyclone.model.api.security.TokenAccount {
 
   @NonNull
   private String token;
-
 }

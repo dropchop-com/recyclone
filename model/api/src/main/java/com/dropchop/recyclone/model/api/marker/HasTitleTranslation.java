@@ -9,14 +9,14 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
  */
-public interface HasTitleTranslation<T extends TitleTranslation>
-  extends HasTranslation<T> {
+public interface HasTitleTranslation<TT extends TitleTranslation>
+  extends HasTranslation<TT> {
 
   @Override
-  void setTranslations(Set<T> translations);
+  void setTranslations(Set<TT> translations);
 
   default String getTranslation(String langCode, String defaultTitle) {
-    T trans = this.getTranslation(langCode);
+    TT trans = this.getTranslation(langCode);
     if (trans == null) {
       return defaultTitle;
     }
@@ -24,7 +24,7 @@ public interface HasTitleTranslation<T extends TitleTranslation>
   }
 
   default String getTranslationOrTitle(String langCode, String defaultTitle) {
-    T trans = this.getTranslation(langCode);
+    TT trans = this.getTranslation(langCode);
     String title;
     if (trans == null) {
       if (this instanceof HasEmbeddedTitleTranslation) {

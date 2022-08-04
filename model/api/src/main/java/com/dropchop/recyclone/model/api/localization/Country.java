@@ -8,6 +8,6 @@ import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
  */
-public interface Country<T extends TitleTranslation>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T> {
+public interface Country<TT extends TitleTranslation>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
 }

@@ -25,7 +25,7 @@ import java.util.Set;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ELanguage extends ECode
-  implements HasCreated, HasModified, HasDeactivated, HasELanguage, Language<ETitleTranslation>, HasStateInlinedCommon {
+  implements Language<ETitleTranslation>, HasCreated, HasModified, HasDeactivated, HasELanguage, HasStateInlinedCommon {
 
   static void componentsFromLocale(ELanguage language, Locale locale) {
     language.langCode = locale.getLanguage();

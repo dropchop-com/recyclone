@@ -124,31 +124,31 @@ public class AttributeMarshaller {
    * @param tClass expected value type class.
    * @return attribute instance (One of AttributeString, AttributeBool, AttributeDate,
    * AttributeDecimal, AttributeSet, AttributeValueList)
-   * @param <T> expected value type.
+   * @param <X> expected value type.
    */
-  public static <T> Attribute<T> unmarshall(String name, String strValue, Class<T> tClass) {
+  public static <X> Attribute<X> unmarshall(String name, String strValue, Class<X> tClass) {
     if (strValue == null) {
       return null;
     }
     if (String.class.isAssignableFrom(tClass)) {
       //noinspection unchecked
-      return (Attribute<T>) new AttributeString(name, strValue);
+      return (Attribute<X>) new AttributeString(name, strValue);
     } else if (Boolean.class.isAssignableFrom(tClass)) {
       //noinspection unchecked
-      return (Attribute<T>) new AttributeBool(name, Boolean.valueOf(strValue));
+      return (Attribute<X>) new AttributeBool(name, Boolean.valueOf(strValue));
     } else if (BigDecimal.class.isAssignableFrom(tClass)) {
       //noinspection unchecked
-      return (Attribute<T>) new AttributeDecimal(name, new BigDecimal(strValue));
+      return (Attribute<X>) new AttributeDecimal(name, new BigDecimal(strValue));
     } else if (ZonedDateTime.class.isAssignableFrom(tClass)) {
       //noinspection unchecked
-      return (Attribute<T>) new AttributeDate(name, ZonedDateTime.parse(strValue, DATE_TIME_MS_TZ_FORMATTER.get()));
+      return (Attribute<X>) new AttributeDate(name, ZonedDateTime.parse(strValue, DATE_TIME_MS_TZ_FORMATTER.get()));
     } else if (Set.class.isAssignableFrom(tClass)) {
       String trimmed = strValue.trim();
       if (!trimmed.startsWith("{")) {
         trimmed = "{" + trimmed + "}";
       }
       //noinspection unchecked
-      return (Attribute<T>) parse(trimmed);
+      return (Attribute<X>) parse(trimmed);
     } else if (List.class.isAssignableFrom(tClass)) {
       String trimmed = strValue.trim();
       if (!trimmed.startsWith("[")) {

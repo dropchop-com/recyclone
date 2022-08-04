@@ -10,13 +10,13 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
  */
-public interface HasTranslation<T extends Translation> {
+public interface HasTranslation<TR extends Translation> {
 
-  Set<T> getTranslations();
-  void setTranslations(Set<T> translations);
+  Set<TR> getTranslations();
+  void setTranslations(Set<TR> translations);
 
-  default void addTranslation(T translation) {
-    Set<T> translations = this.getTranslations();
+  default void addTranslation(TR translation) {
+    Set<TR> translations = this.getTranslations();
     if (translations == null) {
       translations = new HashSet<>();
       this.setTranslations(translations);
@@ -26,30 +26,30 @@ public interface HasTranslation<T extends Translation> {
   }
 
 
-  default boolean removeTranslation(T translation) {
+  default boolean removeTranslation(TR translation) {
     return this.getTranslations().remove(translation);
   }
 
 
   default boolean removeTranslation(Locale lng) {
-    T t = this.getTranslation(lng);
+    TR t = this.getTranslation(lng);
     return this.removeTranslation(t);
   }
 
   default boolean removeTranslation(String languageTag) {
-    T translation = this.getTranslation(languageTag);
+    TR translation = this.getTranslation(languageTag);
     if (translation != null) {
       return this.getTranslations().remove(translation);
     }
     return false;
   }
 
-  default T getTranslation(String tag) {
-    Set<T> translations = this.getTranslations();
+  default TR getTranslation(String tag) {
+    Set<TR> translations = this.getTranslations();
     if (translations == null) {
       return null;
     }
-    for (T translation : translations) {
+    for (TR translation : translations) {
       if (translation == null) {
         continue;
       }
@@ -64,11 +64,11 @@ public interface HasTranslation<T extends Translation> {
     return null;
   }
 
-  default T getTranslation(Locale locale) {
+  default TR getTranslation(Locale locale) {
     return getTranslation(Language.tagFromLocale(locale));
   }
 
-  default T getTranslation(Language<?> language) {
+  default TR getTranslation(Language<?> language) {
     return getTranslation(language.toTag());
   }
 }

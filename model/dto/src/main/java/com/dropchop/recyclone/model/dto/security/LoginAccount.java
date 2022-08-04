@@ -16,7 +16,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
-public class LoginAccount extends UserAccount implements com.dropchop.recyclone.model.api.security.LoginAccount {
+public class LoginAccount extends UserAccount
+  implements com.dropchop.recyclone.model.api.security.LoginAccount {
+
   @NonNull
   private String loginName;
 

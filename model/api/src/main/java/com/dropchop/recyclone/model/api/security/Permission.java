@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
  */
-public interface Permission<T extends TitleTranslation, A extends Action<T>, D extends Domain<T, A>>
-  extends Model, HasUuid, HasEmbeddedTitleTranslation, HasTitleTranslation<T> {
+public interface Permission<TT extends TitleTranslation, A extends Action<TT>, D extends Domain<TT, A>>
+  extends Model, HasUuid, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
   D getDomain();
   void setDomain(D domain);
 

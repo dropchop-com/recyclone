@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class TypeParams extends IdentifierParams implements com.dropchop.recyclone.model.api.invoke.TypeParams {
+public class TypeParams extends IdentifierParams
+  implements com.dropchop.recyclone.model.api.invoke.TypeParams {
   private List<String> types;
 }

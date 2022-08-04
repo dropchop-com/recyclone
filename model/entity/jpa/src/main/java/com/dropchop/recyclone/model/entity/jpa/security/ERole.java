@@ -22,7 +22,8 @@ import java.util.SortedSet;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class ERole extends ECode implements HasELanguage, Role<ETitleTranslation, EAction, EDomain, EPermission> {
+public class ERole extends ECode
+  implements Role<ETitleTranslation, EAction, EDomain, EPermission>, HasELanguage {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EPermission.class)
   @JoinTable(name = "security_role_security_permission",

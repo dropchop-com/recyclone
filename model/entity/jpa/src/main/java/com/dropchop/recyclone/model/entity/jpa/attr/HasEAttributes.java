@@ -48,7 +48,7 @@ public interface HasEAttributes extends HasAttributes {
     setEAttributes(eAttributes);
   }
 
-  default <T> T getAttributeValue(String name, T defaultValue) {
+  default <X> X getAttributeValue(String name, X defaultValue) {
     Set<EAttribute<?>> eAttributes = getEAttributes();
     if (eAttributes == null) {
       return defaultValue;
@@ -61,17 +61,17 @@ public interface HasEAttributes extends HasAttributes {
       if (name.equals(attrName)) {
         Attribute<?> attribute = EAttribute.toAttribute(eAttribute);
         //noinspection unchecked
-        return HasAttributes.getValueChecked((Attribute<T>)attribute, defaultValue);
+        return HasAttributes.getValueChecked((Attribute<X>)attribute, defaultValue);
       }
     }
     return defaultValue;
   }
 
-  default <T> T getAttributeValue(String name) {
+  default <X> X getAttributeValue(String name) {
     return getAttributeValue(name, null);
   }
 
-  default <T> Attribute<T> getAttribute(String name) {
+  default <X> Attribute<X> getAttribute(String name) {
     Set<EAttribute<?>> eAttributes = getEAttributes();
     if (eAttributes == null) {
       return null;
@@ -83,7 +83,7 @@ public interface HasEAttributes extends HasAttributes {
       String attrName = eAttribute.getName();
       if (name.equals(attrName)) {
         //noinspection unchecked
-        return (Attribute<T>) EAttribute.toAttribute(eAttribute);
+        return (Attribute<X>) EAttribute.toAttribute(eAttribute);
       }
     }
     return null;

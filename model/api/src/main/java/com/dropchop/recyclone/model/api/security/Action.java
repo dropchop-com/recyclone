@@ -9,6 +9,6 @@ import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
  */
-public interface Action<T extends TitleTranslation>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T> {
+public interface Action<TT extends TitleTranslation>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
 }

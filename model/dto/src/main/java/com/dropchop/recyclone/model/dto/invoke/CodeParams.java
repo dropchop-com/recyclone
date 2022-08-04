@@ -19,7 +19,8 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class CodeParams extends Params implements com.dropchop.recyclone.model.api.invoke.CodeParams {
+public class CodeParams extends Params
+  implements com.dropchop.recyclone.model.api.invoke.CodeParams {
 
   @Override
   @JsonIgnore

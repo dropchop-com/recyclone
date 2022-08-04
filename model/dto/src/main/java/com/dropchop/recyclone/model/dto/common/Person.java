@@ -4,10 +4,13 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
@@ -16,7 +19,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class Person extends DtoId implements com.dropchop.recyclone.model.api.common.Person<Country, Language, TitleTranslation> {
+@JsonInclude(NON_NULL)
+public class Person extends DtoId
+  implements com.dropchop.recyclone.model.api.common.Person<Country, Language, TitleTranslation> {
+
   private Country country;
   private Language language;
   private String firstName;

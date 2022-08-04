@@ -14,8 +14,9 @@ import java.util.SortedSet;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 05. 22.
  */
-public interface Node<T extends TitleTranslation, N extends Node<T, N>>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T>, HasAttributes, HasCreated, HasModified {
+public interface Node<TT extends TitleTranslation, N extends Node<TT, N>>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT>,
+  HasAttributes, HasCreated, HasModified {
 
   SortedSet<N> getChildren();
   void setChildren(SortedSet<N> children);

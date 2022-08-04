@@ -24,14 +24,14 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
-public class Tag<T extends TitleTranslation>
-  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<T> {
+public class Tag<TT extends TitleTranslation>
+  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<TT> {
 
   private String title;
 
   private String lang;
 
-  private Set<T> translations;
+  private Set<TT> translations;
 
   private Set<Attribute<?>> attributes;
 

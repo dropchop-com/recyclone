@@ -11,8 +11,8 @@ import java.util.SortedSet;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
  */
-public interface Domain<T extends TitleTranslation, A extends Action<T>>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<T> {
+public interface Domain<TT extends TitleTranslation, A extends Action<TT>>
+  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
 
   SortedSet<A> getActions();
   void setActions(SortedSet<A> actions);

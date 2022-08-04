@@ -3,27 +3,27 @@ package com.dropchop.recyclone.model.api.invoke;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
-public interface ParamsExecContext<L extends ExecContext.Listener> extends ExecContext<L> {
+public interface ParamsExecContext<ECL extends ExecContext.Listener> extends ExecContext<ECL> {
   <P extends Params> P getParams();
   <P extends Params> void setParams(P params);
 
-  default <C extends ExecContext<? extends Listener>> C copyAs(C targetContext) {
-    C context = ExecContext.super.copyAs(targetContext);
+  default <EC extends ExecContext<? extends Listener>> EC copyAs(EC targetContext) {
+    EC context = ExecContext.super.copyAs(targetContext);
     if (context instanceof ParamsExecContext) {
       Params params = getParams();
       if (params != null) {
         //noinspection unchecked
-        ((ParamsExecContext<L>) context).setParams(params);
+        ((ParamsExecContext<ECL>) context).setParams(params);
       }
     }
     return context;
   }
 
-  default ParamsExecContext<L> of(ExecContext<?> sourceContext) {
+  default ParamsExecContext<ECL> of(ExecContext<?> sourceContext) {
     ExecContext.super.of(sourceContext);
     if (sourceContext instanceof ParamsExecContext) {
       @SuppressWarnings("unchecked")
-      Params params = ((ParamsExecContext<L>) sourceContext).getParams();
+      Params params = ((ParamsExecContext<ECL>) sourceContext).getParams();
       if (params != null) {
         this.setParams(params);
       }
@@ -32,7 +32,7 @@ public interface ParamsExecContext<L extends ExecContext.Listener> extends ExecC
   }
 
   @Override
-  default ParamsExecContext<L> listener(L listener) {
+  default ParamsExecContext<ECL> listener(ECL listener) {
     ExecContext.super.listener(listener);
     return this;
   }

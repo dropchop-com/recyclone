@@ -22,7 +22,9 @@ import java.util.SortedSet;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class EDomain extends ECode implements HasELanguage, Domain<ETitleTranslation, EAction> {
+public class EDomain extends ECode
+  implements Domain<ETitleTranslation, EAction>,
+  HasELanguage {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EAction.class)
   @JoinTable(name = "security_domain_security_action",

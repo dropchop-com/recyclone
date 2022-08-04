@@ -12,11 +12,11 @@ import java.util.List;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-public class AttributeValueList<T> extends AttributeBase<List<T>> {
+public class AttributeValueList<X> extends AttributeBase<List<X>> {
   @NonNull
-  private List<T> value;
+  private List<X> value;
 
-  public AttributeValueList(@NonNull String name, @NonNull List<T> value) {
+  public AttributeValueList(@NonNull String name, @NonNull List<X> value) {
     super(name);
     this.value = value;
   }
