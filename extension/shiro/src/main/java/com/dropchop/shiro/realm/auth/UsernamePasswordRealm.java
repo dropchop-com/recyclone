@@ -21,7 +21,7 @@ public class UsernamePasswordRealm extends BaseAuthenticatingRealm {
   protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token) {
     String loginName = ((UsernamePasswordToken) token).getUsername();
     if (token instanceof UsernamePasswordToken) {
-      User<DtoId> p = this.getSecurityLoaderService().loadByLoginName(loginName);
+      User<?> p = this.getSecurityLoaderService().loadByLoginName(loginName);
       if (p != null && p.getDeactivated() == null) {
         UserAccount account = p.getAccounts().stream().filter(a -> a instanceof LoginAccount).findFirst().orElse(null);
         if (account != null) {

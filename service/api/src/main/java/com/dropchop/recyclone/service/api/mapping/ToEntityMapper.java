@@ -23,6 +23,9 @@ public interface ToEntityMapper<D extends Dto, E extends Entity> {
   E toEntity(D dto, @Context MappingContext context);
 
   default List<E> toEntities(List<D> dtos, @Context MappingContext context) {
+    if (dtos == null) {
+      return null;
+    }
     List<E> entities = new ArrayList<>(dtos.size());
     for (D dto : dtos) {
       entities.add(toEntity(dto, context));

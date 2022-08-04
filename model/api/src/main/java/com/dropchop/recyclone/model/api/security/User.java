@@ -25,7 +25,7 @@ public interface User<
     O extends Model,
     C extends Country<TT>,
     L extends Language<TT>,
-    T extends Tag<TT>
+    T extends Tag<T, TT>
     >
     extends Person<C, L, TT>, PermissionBearer, HasTags<T, TT> {
 

@@ -18,6 +18,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,7 +33,7 @@ import java.util.Set;
 @DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ETag extends EUuid
-  implements Tag<ETitleTranslation>,
+  implements Tag<ETag, ETitleTranslation>,
   HasCreated, HasDeactivated, HasModified, HasELanguage, HasStateInlinedCommon, HasEAttributes {
 
   @Transient
@@ -67,6 +68,9 @@ public class ETag extends EUuid
     joinColumns = @JoinColumn(name="fk_tag_uuid")
   )
   private Set<EAttribute<?>> eAttributes = new HashSet<>();
+
+  @Transient
+  private List<ETag> tags;
 
   @Column(name="created")
   private ZonedDateTime created;

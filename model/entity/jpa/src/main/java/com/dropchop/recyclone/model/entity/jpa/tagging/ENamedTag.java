@@ -17,7 +17,8 @@ import javax.persistence.Entity;
 @Entity
 @NoArgsConstructor
 @SuppressWarnings("JpaDataSourceORMInspection")
-public class ENamedTag extends ETag implements NamedTag<ETitleTranslation> {
+public class ENamedTag extends ETag
+  implements NamedTag<ETag, ETitleTranslation> {
 
   @Column(name="name")
   private String name;

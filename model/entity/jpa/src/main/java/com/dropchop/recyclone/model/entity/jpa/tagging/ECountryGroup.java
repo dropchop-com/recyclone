@@ -17,5 +17,5 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("CountryGroup")
 public class ECountryGroup extends ENamedTag
-  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<ETitleTranslation>{
+  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<ETag, ETitleTranslation>{
 }

@@ -5,5 +5,5 @@ import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 08. 22.
  */
-public interface LanguageGroup<TT extends TitleTranslation> extends NamedTag<TT> {
+public interface LanguageGroup<T extends Tag<T, TT>, TT extends TitleTranslation> extends NamedTag<T, TT> {
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -25,13 +26,17 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 public class Tag<TT extends TitleTranslation>
-  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<TT> {
+  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<Tag<TT>, TT> {
+
+  private final String type = this.getClass().getSimpleName();
 
   private String title;
 
   private String lang;
 
   private Set<TT> translations;
+
+  private List<Tag<TT>> tags;
 
   private Set<Attribute<?>> attributes;
 
@@ -40,8 +45,6 @@ public class Tag<TT extends TitleTranslation>
   private ZonedDateTime modified;
 
   private ZonedDateTime deactivated;
-
-  private final String type = this.getClass().getSimpleName();
 
   public String getType() {
     return this.type;
