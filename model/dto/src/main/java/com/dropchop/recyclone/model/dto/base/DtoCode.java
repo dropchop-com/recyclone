@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -14,6 +15,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
  */
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
@@ -25,15 +27,22 @@ public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
   @Override
   @SuppressWarnings("ConstantConditions")
   public int compareTo(@NonNull DtoCode o) {
-    if (this.code == null && o.code != null) {
+    String _code = this.getCode();
+    String ocode = o != null ? o.getCode() : null;
+    if (_code == null && ocode != null) {
       return -1;
     }
-    if (this.code != null && o.code == null) {
+    if (_code != null && ocode == null) {
       return 1;
     }
-    if (this.code == null && o.code == null) {
+    if (_code == null && ocode == null) {
       return 0;
     }
-    return this.code.compareTo(o.code);
+    return _code.compareTo(ocode);
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ":" + code;
   }
 }

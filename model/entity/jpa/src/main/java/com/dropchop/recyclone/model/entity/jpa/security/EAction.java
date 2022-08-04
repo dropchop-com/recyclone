@@ -1,5 +1,9 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
@@ -23,7 +27,7 @@ import java.util.Set;
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EAction extends ECode
   implements Action<ETitleTranslation>,
-  HasELanguage {
+  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @Column(name="title")
   private String title;

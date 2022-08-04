@@ -14,8 +14,8 @@ import java.util.List;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @SuperBuilder
+@NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class TagParams extends TypeParams {
 

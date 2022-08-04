@@ -27,7 +27,7 @@ import java.util.Set;
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ECountry extends ECode
   implements Country<ETitleTranslation>,
-  HasCreated, HasModified, HasDeactivated, HasELanguage, HasStateInlinedCommon {
+  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @Column(name="title")
   private String title;

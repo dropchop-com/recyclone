@@ -5,10 +5,7 @@ import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.security.EAction;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValueCheckStrategy;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
@@ -18,7 +15,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
   uses = EntityFactoryInvoker.class,
-  injectionStrategy = InjectionStrategy.CONSTRUCTOR
+  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+  builder = @Builder(disableBuilder = true)
 )
 public interface ActionToEntityMapper extends ToEntityMapper<Action, EAction> {
 }

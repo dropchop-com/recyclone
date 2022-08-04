@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -13,7 +14,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(
   componentModel = "cdi",
   uses = {DtoPolymorphicFactory.class},
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+  builder = @Builder(disableBuilder = true)
 )
 public interface NormalTagToDtoMapper extends TagToDtoMapper<Tag<TitleTranslation>, ETag> {
 }

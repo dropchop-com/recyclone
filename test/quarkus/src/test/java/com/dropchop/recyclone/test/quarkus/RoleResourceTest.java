@@ -189,7 +189,7 @@ public class RoleResourceTest {
       .extract()
       .body().jsonPath().getList(".", Role.class);
     //TODO: FIX TESTS CAUSE IT'S NO LONGER ENOUGH TO POST PERMISSION UUIDS !!!!
-    //assertEquals(1, roles.size());
+    assertEquals(1, roles.size());
     Role respRole = roles.get(0);
     assertEquals(0, respRole.getPermissions().size());
   }

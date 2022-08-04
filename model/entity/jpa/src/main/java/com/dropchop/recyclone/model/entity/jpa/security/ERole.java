@@ -1,5 +1,9 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
@@ -23,7 +27,8 @@ import java.util.SortedSet;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ERole extends ECode
-  implements Role<ETitleTranslation, EAction, EDomain, EPermission>, HasELanguage {
+  implements Role<ETitleTranslation, EAction, EDomain, EPermission>,
+  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EPermission.class)
   @JoinTable(name = "security_role_security_permission",

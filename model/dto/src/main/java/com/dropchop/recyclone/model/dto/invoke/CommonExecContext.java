@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@RequiredArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class CommonExecContext<D extends Dto>
   extends ParamsExecContext<Listener>

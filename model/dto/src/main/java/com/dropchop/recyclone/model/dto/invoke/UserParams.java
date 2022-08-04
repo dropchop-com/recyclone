@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -11,8 +8,8 @@ import lombok.experimental.SuperBuilder;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @SuperBuilder
+@NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class UserParams extends IdentifierParams {
 }

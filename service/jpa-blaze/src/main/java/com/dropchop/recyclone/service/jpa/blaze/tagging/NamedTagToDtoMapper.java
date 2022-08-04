@@ -3,6 +3,7 @@ package com.dropchop.recyclone.service.jpa.blaze.tagging;
 import com.dropchop.recyclone.model.dto.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ENamedTag;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -12,7 +13,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(
   componentModel = "cdi",
   uses = {DtoPolymorphicFactory.class},
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+  builder = @Builder(disableBuilder = true)
 )
 public interface NamedTagToDtoMapper extends TagToDtoMapper<NamedTag, ENamedTag> {
 }

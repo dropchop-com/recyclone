@@ -1,14 +1,21 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.localization.Country;
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.User;
-import com.dropchop.recyclone.model.entity.jpa.common.EPerson;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
+import com.dropchop.recyclone.model.entity.jpa.common.EPerson;
 import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -25,8 +32,10 @@ import java.util.UUID;
 @Table(name = "\"user\"")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@SuppressWarnings("JpaDataSourceORMInspection")
 public class EUser<O extends EUuid> extends EPerson
-  implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage, ETag> {
+  implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage, ETag>,
+  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @Transient
   List<EUserAccount> accounts;

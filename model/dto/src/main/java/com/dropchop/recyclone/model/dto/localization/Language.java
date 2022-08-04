@@ -1,14 +1,19 @@
 package com.dropchop.recyclone.model.dto.localization;
 
+import com.dropchop.recyclone.model.api.marker.HasTags;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
+import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -21,13 +26,17 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
-@Data
+@Getter
+@Setter
+@SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@ToString(callSuper = true)
+@JsonInclude(NON_NULL)
 @SuppressWarnings("unused")
 public class Language extends DtoCode
-  implements HasCreated, HasModified, HasDeactivated, com.dropchop.recyclone.model.api.localization.Language<TitleTranslation> {
+  implements com.dropchop.recyclone.model.api.localization.Language<TitleTranslation>,
+  HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon,
+  HasTags<Tag<TitleTranslation>, TitleTranslation> {
 
   static void componentsFromLocale(Language language, Locale locale) {
     language.langCode = locale.getLanguage();
@@ -49,9 +58,6 @@ public class Language extends DtoCode
     }
   }
 
-  @NonNull
-  private String code;
-
   @JsonIgnore
   @Setter(AccessLevel.NONE)
   private String langCode;
@@ -68,27 +74,24 @@ public class Language extends DtoCode
   @Setter(AccessLevel.NONE)
   private String variant;
 
-  @JsonInclude(NON_NULL)
   private String title;
 
-  @JsonInclude(NON_NULL)
   private String lang;
 
   @JsonInclude(NON_EMPTY)
   private Set<TitleTranslation> translations;
 
-  @JsonInclude(NON_NULL)
+  @Singular
+  private List<Tag<TitleTranslation>> tags;
+
   private ZonedDateTime created;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime modified;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime deactivated;
 
-
   public Language(@NonNull String code) {
-    this.code = code;
+    super(code);
     componentsFromLocale(this, toLocale());
   }
 
@@ -97,7 +100,7 @@ public class Language extends DtoCode
     this.script = script;
     this.region = region != null ? region.toUpperCase() : null;
     this.variant = variant;
-    this.code = tagFromComponents();
+    super.setCode(tagFromComponents());
   }
 
   public Language(@NonNull String iso639, Script script, @NonNull Country region, String variant) {
@@ -122,7 +125,7 @@ public class Language extends DtoCode
 
   @Override
   public void setCode(@NonNull String code) {
-    this.code = code;
+    super.setCode(code);
     componentsFromLocale(this, toLocale());
   }
 }

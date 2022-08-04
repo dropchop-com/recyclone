@@ -34,7 +34,7 @@ import java.util.Set;
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ETag extends EUuid
   implements Tag<ETag, ETitleTranslation>,
-  HasCreated, HasDeactivated, HasModified, HasELanguage, HasStateInlinedCommon, HasEAttributes {
+  HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon, HasELanguage, HasEAttributes {
 
   @Transient
   private String type = this.getClass().getSimpleName().substring(1);
