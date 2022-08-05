@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.server.tagging.intern;
 
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.service.api.ServiceSelector;
@@ -20,23 +19,23 @@ import java.util.List;
 @RequestScoped
 @Path(Constants.Paths.INTERNAL_SEGMENT + Constants.Paths.Tagging.TAG)
 public class TagResource
-  implements com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource<Tag<TitleTranslation>> {
+  implements com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource<Tag> {
 
   @Inject
   ServiceSelector selector;
 
   @Override
-  public Result<Tag<TitleTranslation>> create(List<Tag<TitleTranslation>> tags) {
+  public Result<Tag> create(List<Tag> tags) {
     return selector.select(TagService.class).create(tags);
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> delete(List<Tag<TitleTranslation>> tags) {
+  public Result<Tag> delete(List<Tag> tags) {
     return selector.select(TagService.class).delete(tags);
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> update(List<Tag<TitleTranslation>> tags) {
+  public Result<Tag> update(List<Tag> tags) {
     return selector.select(TagService.class).update(tags);
   }
 }

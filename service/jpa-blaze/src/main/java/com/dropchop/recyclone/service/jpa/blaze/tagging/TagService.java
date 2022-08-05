@@ -31,7 +31,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class TagService extends RecycloneCrudServiceImpl<Tag<TitleTranslation>, ETag, UUID>
+public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 
   @Inject
@@ -49,7 +49,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag<TitleTranslation>, 
   PolymorphicRegistry polymorphicRegistry;
 
   @Override
-  public ServiceConfiguration<Tag<TitleTranslation>, ETag, UUID> getConfiguration() {
+  public ServiceConfiguration<Tag, ETag, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

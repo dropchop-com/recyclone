@@ -17,7 +17,6 @@ import java.util.Set;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
 @RequiredArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class CodeParams extends Params

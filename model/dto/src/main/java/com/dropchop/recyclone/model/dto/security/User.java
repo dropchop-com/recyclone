@@ -29,7 +29,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class User<O extends DtoId> extends Person
   implements com.dropchop.recyclone.model.api.security.User<UserAccount, TitleTranslation, Action, Domain, Permission,
-  Role, O, Country, Language, Tag<TitleTranslation>> {
+  Role, O, Country, Language, Tag> {
 
   private SortedSet<Role> roles;
   private SortedSet<Permission> permissions;
@@ -50,5 +50,5 @@ public class User<O extends DtoId> extends Person
 
   O owner;
 
-  private List<Tag<TitleTranslation>> tags;
+  private List<Tag> tags;
 }

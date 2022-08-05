@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
@@ -17,5 +16,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   builder = @Builder(disableBuilder = true)
 )
-public interface NormalTagToDtoMapper extends TagToDtoMapper<Tag<TitleTranslation>, ETag> {
+public interface NormalTagToDtoMapper extends TagToDtoMapper<Tag, ETag> {
 }

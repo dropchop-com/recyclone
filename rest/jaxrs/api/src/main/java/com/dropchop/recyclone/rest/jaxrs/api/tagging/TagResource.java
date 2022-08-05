@@ -25,7 +25,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Tagging.TAG)
 @DynamicExecContext(TagParams.class)
 @RequiresPermissions(Domains.Tagging.TAG + PERM_DELIM + Actions.VIEW)
-public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.Tag<TitleTranslation>> extends ClassicRestResource<T> {
+public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.Tag> extends ClassicRestResource<T> {
 
   @GET
   @Path("")

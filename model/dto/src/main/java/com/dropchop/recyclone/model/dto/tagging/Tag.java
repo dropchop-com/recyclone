@@ -20,6 +20,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
@@ -28,8 +29,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
-public class Tag<TT extends TitleTranslation>
-  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<Tag<TT>, TT> {
+public class Tag
+  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<Tag, TitleTranslation> {
 
   private final String type = this.getClass().getSimpleName();
 
@@ -38,9 +39,10 @@ public class Tag<TT extends TitleTranslation>
   private String lang;
 
   @JsonInclude(NON_EMPTY)
-  private Set<TT> translations;
+  private Set<TitleTranslation> translations;
 
-  private List<Tag<TT>> tags;
+  @JsonInclude(NON_EMPTY)
+  private List<Tag> tags;
 
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes;

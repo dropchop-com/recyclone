@@ -7,10 +7,12 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
+import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -80,9 +82,19 @@ public class ELanguage extends ECode
     uniqueConstraints = @UniqueConstraint(
       name = "uq_language_l_fk_language_code_lang", columnNames = {"fk_language_code", "lang"}),
     foreignKey = @ForeignKey(name = "language_l_fk_language_code"),
-    joinColumns=@JoinColumn(name="fk_language_code")
+    joinColumns = @JoinColumn(name="fk_language_code")
   )
   private Set<ETitleTranslation> translations;
+
+  @OneToMany
+  @JoinTable(
+    name="language_t",
+    uniqueConstraints = @UniqueConstraint(
+      name = "uq_language_t_fk_country_code_fk_tag_uuid", columnNames = {"fk_language_code", "fk_tag_uuid"}),
+    joinColumns = @JoinColumn( name="fk_language_code", foreignKey = @ForeignKey(name = "language_t_fk_language_code")),
+    inverseJoinColumns = @JoinColumn( name="fk_tag_uuid", foreignKey = @ForeignKey(name = "language_t_fk_tag_uuid"))
+  )
+  private List<ETag> tags;
 
   @Column(name="created")
   private ZonedDateTime created;

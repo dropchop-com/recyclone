@@ -6,7 +6,6 @@ import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.TagParams;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
@@ -24,7 +23,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Tagging.TAG)
 @DynamicExecContext(value = TagParams.class, dataClass = Tag.class)
 @RequiresPermissions(Domains.Tagging.TAG + PERM_DELIM + Actions.VIEW)
-public interface TagResource<T extends Tag<TitleTranslation>> extends ClassicRestResource<T> {
+public interface TagResource<T extends Tag> extends ClassicRestResource<T> {
 
   @POST
   @org.eclipse.microprofile.openapi.annotations.tags.Tag(name = Tags.TAGGING)

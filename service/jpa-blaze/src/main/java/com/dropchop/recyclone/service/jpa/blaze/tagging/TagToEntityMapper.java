@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
@@ -18,5 +17,5 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface TagToEntityMapper extends ToEntityMapper<Tag<TitleTranslation>, ETag> {
+public interface TagToEntityMapper extends ToEntityMapper<Tag, ETag> {
 }

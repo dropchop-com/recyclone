@@ -4,13 +4,12 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants;
+import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.TagParams;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 import com.dropchop.recyclone.service.api.tagging.TagService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,22 +25,22 @@ import java.util.UUID;
 @Slf4j
 @RequestScoped
 @Path(Constants.Paths.PUBLIC_SEGMENT + Constants.Paths.Tagging.TAG)
-public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.tagging.TagResource<Tag<TitleTranslation>> {
+public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.tagging.TagResource<Tag> {
 
   @Inject
   ServiceSelector selector;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<Tag<TitleTranslation>> ctx;
+  CommonExecContext<Tag> ctx;
 
   @Override
-  public Result<Tag<TitleTranslation>> get() {
+  public Result<Tag> get() {
     return selector.select(TagService.class).search();
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> getById(UUID id) {
+  public Result<Tag> getById(UUID id) {
     Params params = ctx.getParams();
     if (!(params instanceof TagParams tagParams)) {
       throw new ServiceException(ErrorCode.parameter_validation_error,
@@ -52,7 +51,7 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> getByType(String type) {
+  public Result<Tag> getByType(String type) {
     Params params = ctx.getParams();
     if (!(params instanceof TagParams tagParams)) {
       throw new ServiceException(ErrorCode.parameter_validation_error,
@@ -63,7 +62,7 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
   }
 
   @Override
-  public Result<Tag<TitleTranslation>> search(TagParams parameters) {
+  public Result<Tag> search(TagParams parameters) {
     return selector.select(TagService.class).search();
   }
 }
