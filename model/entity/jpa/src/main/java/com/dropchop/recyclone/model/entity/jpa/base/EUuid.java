@@ -48,6 +48,6 @@ public abstract class EUuid implements Entity, HasUuid, Comparable<EUuid> {
 
   @Override
   public String toString() {
-    return "uuid=" + this.getUuid();
+    return this.getClass().getSimpleName() + ":" + getUuid();
   }
 }

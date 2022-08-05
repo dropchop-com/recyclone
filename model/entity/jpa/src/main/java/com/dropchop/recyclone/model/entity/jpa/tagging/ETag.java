@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
-import com.dropchop.recyclone.model.entity.jpa.attr.HasEAttributes;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasEAttributes;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
@@ -14,6 +14,8 @@ import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -26,7 +28,9 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tag")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

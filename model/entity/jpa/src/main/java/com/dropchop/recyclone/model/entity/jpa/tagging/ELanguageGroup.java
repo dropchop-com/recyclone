@@ -1,10 +1,7 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.DiscriminatorValue;
@@ -17,6 +14,7 @@ import javax.persistence.Entity;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @DiscriminatorValue("LanguageGroup")
 public class ELanguageGroup extends ENamedTag

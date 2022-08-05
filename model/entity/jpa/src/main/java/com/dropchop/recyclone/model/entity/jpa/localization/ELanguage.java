@@ -9,6 +9,7 @@ import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -21,10 +22,11 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@Entity
-@Table(name = "language")
+@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "language")
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ELanguage extends ECode
   implements Language<ETitleTranslation>,

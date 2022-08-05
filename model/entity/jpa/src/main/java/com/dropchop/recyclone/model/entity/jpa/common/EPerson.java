@@ -5,7 +5,9 @@ import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -53,7 +55,7 @@ public class EPerson extends EUuid implements Person<ECountry, ELanguage, ETitle
 
   @Override
   public String toString() {
-    return super.toString() + "first='" + firstName + '\'' +
+    return super.toString() + ",first='" + firstName + '\'' +
       ", last='" + lastName + '\'';
   }
 }

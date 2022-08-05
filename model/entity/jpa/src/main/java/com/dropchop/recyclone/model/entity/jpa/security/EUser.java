@@ -20,6 +20,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
 
@@ -28,17 +29,21 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@Entity
-@Table(name = "\"user\"")
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "\"user\"")
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EUser<O extends EUuid> extends EPerson
   implements User<EUserAccount, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage, ETag>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
-  @Transient
-  List<EUserAccount> accounts;
+  @OneToMany
+  @JoinColumn(
+    name="fk_security_user_uuid",
+    foreignKey = @ForeignKey(name = "security_user_account_fk_security_user_uuid")
+  )
+  Set<EUserAccount> accounts;
 
   @Transient
   SortedSet<EPermission> permissions;

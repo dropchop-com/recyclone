@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ENamedTag extends ETag

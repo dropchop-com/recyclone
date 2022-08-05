@@ -10,6 +10,7 @@ import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -21,10 +22,11 @@ import java.util.SortedSet;
  */
 @Getter
 @Setter
-@Entity
-@Table(name = "security_domain")
+@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "security_domain")
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EDomain extends ECode
   implements Domain<ETitleTranslation, EAction>,

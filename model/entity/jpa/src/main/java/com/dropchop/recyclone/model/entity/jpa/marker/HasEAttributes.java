@@ -1,7 +1,8 @@
-package com.dropchop.recyclone.model.entity.jpa.attr;
+package com.dropchop.recyclone.model.entity.jpa.marker;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
+import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;

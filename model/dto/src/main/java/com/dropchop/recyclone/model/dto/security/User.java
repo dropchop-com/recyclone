@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -34,7 +32,7 @@ public class User<O extends DtoId> extends Person
   private SortedSet<Role> roles;
   private SortedSet<Permission> permissions;
 
-  private List<UserAccount> accounts = new LinkedList<>();
+  private Set<UserAccount> accounts = new LinkedHashSet<>();
 
   private ZonedDateTime created;
   private String createdBy;

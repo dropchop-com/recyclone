@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTags;
 import com.dropchop.recyclone.model.api.tagging.Tag;
 
-import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -37,9 +37,9 @@ public interface User<
 
   void setPermissions(SortedSet<P> permissions);
 
-  List<UA> getAccounts();
+  Set<UA> getAccounts();
 
-  void setAccounts(List<UA> accounts);
+  void setAccounts(Set<UA> accounts);
 
   O getOwner();
 

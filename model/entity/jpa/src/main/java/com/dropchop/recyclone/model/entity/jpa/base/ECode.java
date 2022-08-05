@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.entity.jpa.base;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -13,6 +14,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
 @MappedSuperclass
@@ -46,6 +48,6 @@ public abstract class ECode implements Entity, HasCode, Comparable<ECode> {
 
   @Override
   public String toString() {
-    return "code=" + this.getCode();
+    return this.getClass().getSimpleName() + ":" + this.getCode();
   }
 }

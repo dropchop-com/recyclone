@@ -43,6 +43,6 @@ public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName() + ":" + code;
+    return this.getClass().getSimpleName() + ":" + this.getCode();
   }
 }
