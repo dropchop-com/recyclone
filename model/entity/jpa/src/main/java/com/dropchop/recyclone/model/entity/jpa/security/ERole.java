@@ -74,4 +74,8 @@ public class ERole extends ECode
 
   @Column(name="deactivated")
   private ZonedDateTime deactivated;
+
+  public ERole(@NonNull String code) {
+    super(code);
+  }
 }

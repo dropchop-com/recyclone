@@ -86,14 +86,15 @@ public class ELanguage extends ECode
   )
   private Set<ETitleTranslation> translations;
 
-  @OneToMany
+  @ManyToMany
   @JoinTable(
     name="language_t",
     uniqueConstraints = @UniqueConstraint(
-      name = "uq_language_t_fk_country_code_fk_tag_uuid", columnNames = {"fk_language_code", "fk_tag_uuid"}),
+      name = "uq_language_t_fk_language_code_fk_tag_uuid", columnNames = {"fk_language_code", "fk_tag_uuid"}),
     joinColumns = @JoinColumn( name="fk_language_code", foreignKey = @ForeignKey(name = "language_t_fk_language_code")),
     inverseJoinColumns = @JoinColumn( name="fk_tag_uuid", foreignKey = @ForeignKey(name = "language_t_fk_tag_uuid"))
   )
+  @OrderColumn(name = "idx")
   private List<ETag> tags;
 
   @Column(name="created")

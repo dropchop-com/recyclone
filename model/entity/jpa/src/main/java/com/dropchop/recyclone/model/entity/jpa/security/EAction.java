@@ -57,4 +57,8 @@ public class EAction extends ECode
 
   @Column(name="deactivated")
   private ZonedDateTime deactivated;
+
+  public EAction(@NonNull String code) {
+    super(code);
+  }
 }

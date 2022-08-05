@@ -75,6 +75,14 @@ public class EUser<O extends EUuid> extends EPerson
   @Transient
   private O owner;
 
-  @Transient
+  @ManyToMany
+  @JoinTable(
+    name="user_t",
+    uniqueConstraints = @UniqueConstraint(
+      name = "uq_user_t_fk_user_uuid_fk_tag_uuid", columnNames = {"fk_user_uuid", "fk_tag_uuid"}),
+    joinColumns = @JoinColumn( name="fk_user_uuid", foreignKey = @ForeignKey(name = "user_t_fk_user_uuid")),
+    inverseJoinColumns = @JoinColumn( name="fk_tag_uuid", foreignKey = @ForeignKey(name = "user_t_fk_tag_uuid"))
+  )
+  @OrderColumn(name = "idx")
   private List<ETag> tags;
 }

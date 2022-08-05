@@ -2,9 +2,8 @@ package com.dropchop.recyclone.model.entity.jpa.tagging;
 
 import com.dropchop.recyclone.model.api.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +13,15 @@ import javax.persistence.Entity;
  */
 @Getter
 @Setter
-@Entity
+@SuperBuilder
 @NoArgsConstructor
+@RequiredArgsConstructor
+@Entity
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ENamedTag extends ETag
   implements NamedTag<ETag, ETitleTranslation> {
 
+  @NonNull
   @Column(name="name")
   private String name;
 }

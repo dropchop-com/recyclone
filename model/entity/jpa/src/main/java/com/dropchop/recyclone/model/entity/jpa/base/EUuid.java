@@ -27,7 +27,7 @@ public abstract class EUuid implements Entity, HasUuid, Comparable<EUuid> {
 
   @Override
   public int compareTo(EUuid o) {
-    return this.uuid.compareTo(o.uuid);
+    return this.getUuid().compareTo(o.getUuid());
   }
 
   @Override
@@ -35,19 +35,19 @@ public abstract class EUuid implements Entity, HasUuid, Comparable<EUuid> {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof EUuid eUuid)) {
+    if (!(o instanceof EUuid oUuid)) {
       return false;
     }
-    return Objects.equals(uuid, eUuid.uuid);
+    return Objects.equals(this.getUuid(), oUuid.getUuid());
   }
 
   @Override
   public int hashCode() {
-    return uuid.hashCode();
+    return this.getUuid().hashCode();
   }
 
   @Override
   public String toString() {
-    return "uuid=" + uuid;
+    return "uuid=" + this.getUuid();
   }
 }

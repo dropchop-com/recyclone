@@ -69,7 +69,7 @@ public class ETag extends EUuid
   )
   private Set<EAttribute<?>> eAttributes = new HashSet<>();
 
-  @OneToMany
+  @ManyToMany
   @JoinTable(
     name="tag_t",
     uniqueConstraints = @UniqueConstraint(
@@ -77,6 +77,7 @@ public class ETag extends EUuid
     joinColumns = @JoinColumn( name="fk_tag_uuid", foreignKey = @ForeignKey(name = "tag_t_fk_tag_uuid")),
     inverseJoinColumns = @JoinColumn( name="fk_next_tag_uuid", foreignKey = @ForeignKey(name = "tag_t_fk_next_tag_uuid"))
   )
+  @OrderColumn(name = "idx")
   private List<ETag> tags;
 
   @Column(name="created")

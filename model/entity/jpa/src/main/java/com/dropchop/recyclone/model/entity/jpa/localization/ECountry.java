@@ -73,4 +73,8 @@ public class ECountry extends ECode
 
   @Column(name="deactivated")
   private ZonedDateTime deactivated;
+
+  public ECountry(@NonNull String code) {
+    super(code);
+  }
 }

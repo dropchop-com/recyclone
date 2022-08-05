@@ -76,4 +76,8 @@ public class EDomain extends ECode
 
   @Column(name="deactivated")
   private ZonedDateTime deactivated;
+
+  public EDomain(@NonNull String code) {
+    super(code);
+  }
 }

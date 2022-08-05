@@ -24,7 +24,8 @@ public abstract class ECode implements Entity, HasCode, Comparable<ECode> {
 
   @Override
   public int compareTo(ECode o) {
-    return this.code.compareTo(o.code);
+    String _code = this.getCode();
+    return _code.compareTo(o.getCode());
   }
 
   @Override
@@ -35,7 +36,7 @@ public abstract class ECode implements Entity, HasCode, Comparable<ECode> {
     if (!(o instanceof ECode eCode)) {
       return false;
     }
-    return Objects.equals(code, eCode.code);
+    return Objects.equals(this.getCode(), eCode.getCode());
   }
 
   @Override
@@ -45,6 +46,6 @@ public abstract class ECode implements Entity, HasCode, Comparable<ECode> {
 
   @Override
   public String toString() {
-    return "code=" + code;
+    return "code=" + this.getCode();
   }
 }
