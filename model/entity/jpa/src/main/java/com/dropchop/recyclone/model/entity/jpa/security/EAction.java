@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
-import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -28,11 +28,14 @@ import java.util.Set;
 @Table(name = "security_action")
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EAction extends ECode
-  implements Action<ETitleTranslation>,
+  implements Action<ETitleDescriptionTranslation>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @Column(name="title")
   private String title;
+
+  @Column(name="description")
+  private String description;
 
   @Column(name = "lang", insertable = false, updatable = false)
   private String lang;
@@ -49,7 +52,7 @@ public class EAction extends ECode
     foreignKey = @ForeignKey(name = "security_action_l_fk_security_action_code"),
     joinColumns = @JoinColumn(name="fk_security_action_code")
   )
-  private Set<ETitleTranslation> translations;
+  private Set<ETitleDescriptionTranslation> translations;
 
   @Column(name="created")
   private ZonedDateTime created;

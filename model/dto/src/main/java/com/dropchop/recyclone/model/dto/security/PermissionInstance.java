@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.security;
 
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
-public class PermissionInstance extends Permission implements com.dropchop.recyclone.model.api.security.PermissionInstance<TitleTranslation, Action, Domain> {
+public class PermissionInstance extends Permission
+  implements com.dropchop.recyclone.model.api.security.PermissionInstance<TitleDescriptionTranslation, Action, Domain> {
 
   private UUID permissionId;
   private String subject;

@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.common.Person;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,8 +27,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 public class User<O extends DtoId> extends Person
-  implements com.dropchop.recyclone.model.api.security.User<UserAccount, TitleTranslation, Action, Domain, Permission,
-  Role, O, Country, Language, Tag> {
+  implements com.dropchop.recyclone.model.api.security.User<
+  UserAccount, TitleDescriptionTranslation, TitleTranslation,
+  Action, Domain, Permission, Role, O, Country, Language, Tag> {
 
   private SortedSet<Role> roles;
   private SortedSet<Permission> permissions;

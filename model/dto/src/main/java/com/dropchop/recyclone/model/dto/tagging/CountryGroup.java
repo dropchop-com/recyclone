@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.tagging;
 
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   property = "type"
 )
 public class CountryGroup extends NamedTag
-  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<Tag, TitleTranslation> {
+  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<Tag, TitleDescriptionTranslation> {
 
   public CountryGroup(@NonNull String name) {
     super(name);

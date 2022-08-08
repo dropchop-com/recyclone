@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.EAction;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.ActionRepository;
@@ -34,7 +34,7 @@ public class RepositoryTranslationTest {
   public void translationsRemove() {
     EAction action = actionRepository.findById(Constants.Actions.VIEW);
     if (action != null) {
-      action.getTranslations().remove(new ETitleTranslation("sl", "Karkoli"));
+      action.getTranslations().remove(new ETitleDescriptionTranslation("sl", "Karkoli"));
       assertEquals(0, action.getTranslations().size());
     }
   }
@@ -46,7 +46,7 @@ public class RepositoryTranslationTest {
     EAction action = actionRepository.findById(Constants.Actions.VIEW);
     if (action != null) {
       assertEquals(0, action.getTranslations().size());
-      action.getTranslations().add(new ETitleTranslation("sl", "Ogled"));
+      action.getTranslations().add(new ETitleDescriptionTranslation("sl", "Ogled"));
       assertEquals(1, action.getTranslations().size());
     }
   }

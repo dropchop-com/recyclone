@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
-import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("CountryGroup")
 public class ECountryGroup extends ENamedTag
-  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<ETag, ETitleTranslation> {
+  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<ETag, ETitleDescriptionTranslation> {
   public ECountryGroup(@NonNull String name) {
     super(name);
   }

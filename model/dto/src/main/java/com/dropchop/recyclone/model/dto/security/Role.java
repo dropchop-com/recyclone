@@ -5,9 +5,12 @@ import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
@@ -28,7 +31,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class Role extends DtoCode
-  implements com.dropchop.recyclone.model.api.security.Role<TitleTranslation, Action, Domain, Permission>,
+  implements com.dropchop.recyclone.model.api.security.Role<TitleDescriptionTranslation, Action, Domain, Permission>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
   @JsonInclude(NON_EMPTY)
@@ -36,10 +39,12 @@ public class Role extends DtoCode
 
   private String title;
 
+  private String description;
+
   private String lang;
 
   @JsonInclude(NON_EMPTY)
-  private Set<TitleTranslation> translations;
+  private Set<TitleDescriptionTranslation> translations;
 
   private ZonedDateTime created;
 

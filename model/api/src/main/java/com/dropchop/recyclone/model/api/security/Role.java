@@ -1,10 +1,8 @@
 package com.dropchop.recyclone.model.api.security;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.localization.TitleTranslation;
-import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasEmbeddedTitleTranslation;
-import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
+import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.model.api.marker.*;
 
 import java.util.SortedSet;
 
@@ -12,11 +10,11 @@ import java.util.SortedSet;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
  */
 public interface Role<
-  TT extends TitleTranslation,
-  A extends Action<TT>,
-  D extends Domain<TT, A>,
-  P extends Permission<TT, A, D>>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
+  TDT extends TitleDescriptionTranslation,
+  A extends Action<TDT>,
+  D extends Domain<TDT, A>,
+  P extends Permission<TDT, A, D>>
+  extends Model, HasCode, HasTranslationInlinedTitleDescription, HasTitleDescriptionTranslation<TDT> {
 
   SortedSet<P> getPermissions();
   void setPermissions(SortedSet<P> permissions);

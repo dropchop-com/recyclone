@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.common.Person;
 import com.dropchop.recyclone.model.api.localization.Country;
 import com.dropchop.recyclone.model.api.localization.Language;
+import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTags;
 import com.dropchop.recyclone.model.api.tagging.Tag;
@@ -17,17 +18,18 @@ import java.util.SortedSet;
 @SuppressWarnings("unused")
 public interface User<
     UA extends UserAccount,
+    TDT extends TitleDescriptionTranslation,
     TT extends TitleTranslation,
-    A extends Action<TT>,
-    D extends Domain<TT, A>,
-    P extends Permission<TT, A, D>,
-    R extends Role<TT, A, D, P>,
+    A extends Action<TDT>,
+    D extends Domain<TDT, A>,
+    P extends Permission<TDT, A, D>,
+    R extends Role<TDT, A, D, P>,
     O extends Model,
     C extends Country<TT>,
     L extends Language<TT>,
-    T extends Tag<T, TT>
+    T extends Tag<T, TDT>
     >
-    extends Person<C, L, TT>, PermissionBearer, HasTags<T, TT> {
+    extends Person<C, L, TT>, PermissionBearer, HasTags<T, TDT> {
 
   SortedSet<R> getRoles();
 

@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
+import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasEAttributes;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
@@ -37,7 +38,7 @@ import java.util.Set;
 @DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ETag extends EUuid
-  implements Tag<ETag, ETitleTranslation>,
+  implements Tag<ETag, ETitleDescriptionTranslation>,
   HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon, HasELanguage, HasEAttributes {
 
   @Transient
@@ -45,6 +46,9 @@ public class ETag extends EUuid
 
   @Column(name="title")
   private String title;
+
+  @Column(name="description")
+  private String description;
 
   @Column(name = "lang", insertable = false, updatable = false)
   private String lang;
@@ -61,7 +65,7 @@ public class ETag extends EUuid
     foreignKey = @ForeignKey(name = "tag_l_fk_tag_uuid"),
     joinColumns = @JoinColumn(name="fk_tag_uuid")
   )
-  private Set<ETitleTranslation> translations;
+  private Set<ETitleDescriptionTranslation> translations;
 
   @ElementCollection
   @CollectionTable(

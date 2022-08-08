@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
@@ -40,7 +41,7 @@ public class PermissionResourceTest {
     permission.setDomain(domain);
     permission.setTitle("Permit all actions on Language");
     permission.setLang("en");
-    permission.addTranslation(new TitleTranslation("sl", "Dovoli vse akcije na jezikih."));
+    permission.addTranslation(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih."));
 
     List<Permission> permissions = given()
       //.log().all()
@@ -67,7 +68,7 @@ public class PermissionResourceTest {
     assertEquals("en", retPermission.getAction().getLang());
     assertEquals("Permit all actions on Language", retPermission.getTitle());
     assertEquals("en", retPermission.getLang());
-    assertEquals(Set.of(new TitleTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
+    assertEquals(Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
   }
 
   @Test
@@ -107,7 +108,7 @@ public class PermissionResourceTest {
     assertEquals("en", retPermission.getAction().getLang());
     assertEquals("Permit all actions on Language", retPermission.getTitle());
     assertEquals("en", retPermission.getLang());
-    assertEquals(Set.of(new TitleTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
+    assertEquals(Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
   }
 
   @Test
@@ -141,6 +142,6 @@ public class PermissionResourceTest {
     assertEquals("en", retPermission.getAction().getLang());
     assertEquals("Permit all actions on Language", retPermission.getTitle());
     assertEquals("en", retPermission.getLang());
-    assertEquals(Set.of(new TitleTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
+    assertEquals(Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
   }
 }

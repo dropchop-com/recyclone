@@ -1,18 +1,20 @@
 package com.dropchop.recyclone.model.api.security;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.localization.TitleTranslation;
+import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasEmbeddedTitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescription;
 
 import java.util.SortedSet;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
  */
-public interface Domain<TT extends TitleTranslation, A extends Action<TT>>
-  extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
+public interface Domain<
+  TDT extends TitleDescriptionTranslation,
+  A extends Action<TDT>>
+  extends Model, HasCode, HasTranslationInlinedTitleDescription, HasTitleTranslation<TDT> {
 
   SortedSet<A> getActions();
   void setActions(SortedSet<A> actions);

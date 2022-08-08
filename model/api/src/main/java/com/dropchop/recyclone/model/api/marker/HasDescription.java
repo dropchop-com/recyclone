@@ -5,5 +5,5 @@ package com.dropchop.recyclone.model.api.marker;
  */
 public interface HasDescription {
   String getDescription();
-  void setDecription(String decription);
+  void setDescription(String description);
 }

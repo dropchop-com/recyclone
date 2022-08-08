@@ -13,6 +13,7 @@ import com.dropchop.recyclone.model.dto.test.Node;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Domain;
+import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.EAction;
 import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
@@ -52,13 +53,13 @@ class FilteringDtoContextTest {
       ((HasLanguageCode) entity).setLang("en");
     }
     if (entity instanceof HasTitleTranslation<?>) {
-      Set<ETitleTranslation> translations = new HashSet<>();
+      Set<ETitleDescriptionTranslation> translations = new HashSet<>();
       for (int i = 0; i < numTranslations; i++) {
         if (numTranslations >= availableLangs.size()) {
           break;
         }
         String lang = availableLangs.get(i);
-        ETitleTranslation titleTranslation = new ETitleTranslation();
+        ETitleDescriptionTranslation titleTranslation = new ETitleDescriptionTranslation();
         titleTranslation.setTitle(title + " [" + lang + "]");
         titleTranslation.setLang(lang);
         titleTranslation.setCreated(ZonedDateTime.now());
@@ -66,7 +67,7 @@ class FilteringDtoContextTest {
         translations.add(titleTranslation);
       }
       //noinspection unchecked
-      ((HasTitleTranslation<ETitleTranslation>) entity).setTranslations(translations);
+      ((HasTitleTranslation<ETitleDescriptionTranslation>) entity).setTranslations(translations);
     }
     if (entity instanceof HasModified) {
       ((HasModified) entity).setModified(ZonedDateTime.now());

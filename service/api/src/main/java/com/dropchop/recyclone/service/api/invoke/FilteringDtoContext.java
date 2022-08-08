@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.localization.Translation;
-import com.dropchop.recyclone.model.api.marker.HasEmbeddedTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTranslationInlined;
 import com.dropchop.recyclone.model.api.marker.HasTitle;
 import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
@@ -250,8 +250,8 @@ public class FilteringDtoContext extends MappingContext {
     if (swap == null) {
       return;
     }
-    if (target instanceof HasEmbeddedTranslation) {
-      String defaultLang = ((HasEmbeddedTranslation) target).getLang();
+    if (target instanceof HasTranslationInlined) {
+      String defaultLang = ((HasTranslationInlined) target).getLang();
       Translation defaultTrans = ((HasTranslation<?>) target).getTranslation(defaultLang);
       if (swap instanceof TitleTranslation) {
         if (defaultTrans == null) {
@@ -269,7 +269,7 @@ public class FilteringDtoContext extends MappingContext {
           ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());
         }
       }
-      ((HasEmbeddedTranslation) target).setLang(swap.getLang());
+      ((HasTranslationInlined) target).setLang(swap.getLang());
     }
   }
 

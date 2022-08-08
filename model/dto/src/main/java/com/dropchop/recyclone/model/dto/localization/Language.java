@@ -36,7 +36,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class Language extends DtoCode
   implements com.dropchop.recyclone.model.api.localization.Language<TitleTranslation>,
   HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon,
-  HasTags<Tag, TitleTranslation> {
+  HasTags<Tag, TitleDescriptionTranslation> {
 
   static void componentsFromLocale(Language language, Locale locale) {
     language.langCode = locale.getLanguage();

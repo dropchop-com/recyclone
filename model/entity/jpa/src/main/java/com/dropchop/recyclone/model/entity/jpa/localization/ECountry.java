@@ -33,7 +33,7 @@ import java.util.Set;
 public class ECountry extends ECode
   implements Country<ETitleTranslation>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage,
-  HasTags<ETag, ETitleTranslation> {
+  HasTags<ETag, ETitleDescriptionTranslation> {
 
   @Column(name="title")
   private String title;

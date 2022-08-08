@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.entity.jpa.localization;
 
 import com.dropchop.recyclone.model.api.localization.Language;
+import com.dropchop.recyclone.model.api.marker.HasTags;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
@@ -30,7 +31,8 @@ import java.util.Set;
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ELanguage extends ECode
   implements Language<ETitleTranslation>,
-  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
+  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage,
+  HasTags<ETag, ETitleDescriptionTranslation> {
 
   static void componentsFromLocale(ELanguage language, Locale locale) {
     language.langCode = locale.getLanguage();

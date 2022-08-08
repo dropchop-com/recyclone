@@ -32,7 +32,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class Country extends DtoCode
   implements com.dropchop.recyclone.model.api.localization.Country<TitleTranslation>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon,
-  HasTags<Tag, TitleTranslation> {
+  HasTags<Tag, TitleDescriptionTranslation> {
 
   public Country(@NonNull String code) {
     super(code);

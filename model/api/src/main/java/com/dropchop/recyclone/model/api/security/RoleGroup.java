@@ -1,16 +1,16 @@
 package com.dropchop.recyclone.model.api.security;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.localization.TitleTranslation;
+import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasEmbeddedTitleTranslation;
-import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTitleDescriptionTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescription;
 
 public interface RoleGroup<
-  TT extends TitleTranslation,
-  A extends Action<TT>,
-  D extends Domain<TT, A>,
-  P extends Permission<TT, A, D>,
-  R extends Role<TT, A, D, P>>
-    extends Model, HasCode, HasEmbeddedTitleTranslation, HasTitleTranslation<TT> {
+  TDT extends TitleDescriptionTranslation,
+  A extends Action<TDT>,
+  D extends Domain<TDT, A>,
+  P extends Permission<TDT, A, D>,
+  R extends Role<TDT, A, D, P>>
+    extends Model, HasCode, HasTranslationInlinedTitleDescription, HasTitleDescriptionTranslation<TDT> {
 }

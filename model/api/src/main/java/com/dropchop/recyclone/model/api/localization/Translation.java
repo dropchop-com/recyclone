@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.model.api.localization;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.marker.HasEmbeddedTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTranslationInlined;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
-public interface Translation extends Model, HasEmbeddedTranslation {
+public interface Translation extends Model, HasTranslationInlined {
 
   /**
    * Set to true if this is the default translation for the owning object.

@@ -27,8 +27,8 @@ public interface HasTitleTranslation<TT extends TitleTranslation>
     TT trans = this.getTranslation(langCode);
     String title;
     if (trans == null) {
-      if (this instanceof HasEmbeddedTitleTranslation) {
-        title = ((HasEmbeddedTitleTranslation) this).getTitle();
+      if (this instanceof HasTranslationInlinedTitle) {
+        title = ((HasTranslationInlinedTitle) this).getTitle();
       } else {
         return defaultTitle;
       }

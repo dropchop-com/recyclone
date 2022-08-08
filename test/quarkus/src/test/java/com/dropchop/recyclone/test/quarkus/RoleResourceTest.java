@@ -2,6 +2,7 @@ package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
@@ -61,7 +62,7 @@ public class RoleResourceTest {
     role.setCode("test_role");
     role.setLang("en");
     role.setTitle("Test");
-    role.addTranslation(new TitleTranslation("sl", "Test"));
+    role.addTranslation(new TitleDescriptionTranslation("sl", "Test"));
 
     List<Role> result = given()
       //.log().all()
