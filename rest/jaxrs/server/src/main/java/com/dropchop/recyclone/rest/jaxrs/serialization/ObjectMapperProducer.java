@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
@@ -19,10 +20,17 @@ import javax.inject.Inject;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
  */
 @Slf4j
+@ApplicationScoped
 public class ObjectMapperProducer {
 
+
+  private final PolymorphicRegistry polymorphicRegistry;
+
   @Inject
-  PolymorphicRegistry polymorphicRegistry;
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  public ObjectMapperProducer(PolymorphicRegistry polymorphicRegistry) {
+    this.polymorphicRegistry = polymorphicRegistry;
+  }
 
   @Produces
   public ObjectMapper createObjectMapper() {

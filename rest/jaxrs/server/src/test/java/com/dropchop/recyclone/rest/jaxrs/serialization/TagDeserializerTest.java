@@ -45,12 +45,11 @@ class TagDeserializerTest {
           }
       ]""";
 
-    ObjectMapperProducer producer = new ObjectMapperProducer();
-    producer.polymorphicRegistry = new DefaultPolymorphicRegistry()
+    ObjectMapperProducer producer = new ObjectMapperProducer(new DefaultPolymorphicRegistry()
       .registerSerializationConfig(
         new SerializationConfig()
           .addSubType("LanguageGroup", LanguageGroup.class)
-      );
+      ));
     ObjectMapper mapper = producer.createObjectMapper();
     List<LanguageGroup> groups = mapper.readValue(json, CollectionsTypeFactory.listOf(LanguageGroup.class));
     assertEquals(2, groups.size());
