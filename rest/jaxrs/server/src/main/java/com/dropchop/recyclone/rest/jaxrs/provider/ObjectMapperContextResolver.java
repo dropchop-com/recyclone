@@ -1,8 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
-import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,10 +20,8 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
   private final ObjectMapper mapper;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  public ObjectMapperContextResolver(PolymorphicRegistry polymorphicRegistry) {
-    ObjectMapperFactory factory = new ObjectMapperFactory();
-    this.mapper = factory.createObjectMapper(polymorphicRegistry);
+  public ObjectMapperContextResolver(ObjectMapper mapper) {
+    this.mapper = mapper;
   }
 
   @Override

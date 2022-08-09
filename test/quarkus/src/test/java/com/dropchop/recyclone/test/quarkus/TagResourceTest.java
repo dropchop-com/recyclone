@@ -7,14 +7,11 @@ import com.dropchop.recyclone.model.api.attr.AttributeValueList;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
-import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
-import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
@@ -34,17 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TagResourceTest {
 
   @Inject
-  PolymorphicRegistry polymorphicRegistry;
-
-  private final ObjectMapperFactory factory = new ObjectMapperFactory();
-
-  @Inject
   ObjectMapper mapper;
 
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(objectMapperConfig().jackson2ObjectMapperFactory(
-      (type, s) -> factory.decorate(mapper, polymorphicRegistry)
+      (type, s) -> mapper
     ));
   }
 

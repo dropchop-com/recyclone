@@ -12,13 +12,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
  */
 @Slf4j
-public class ObjectMapperFactory {
+public class ObjectMapperProducer {
 
-  public ObjectMapper decorate(ObjectMapper mapper, PolymorphicRegistry polymorphicRegistry) {
+  @Inject
+  PolymorphicRegistry polymorphicRegistry;
+
+  @Produces
+  public ObjectMapper createObjectMapper() {
+    ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.disable(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL);
@@ -37,16 +45,11 @@ public class ObjectMapperFactory {
           (key, value) -> mapper.registerSubtypes(new NamedType(value, key))
         );
         serializationConfig.getMixIns().forEach(mapper::addMixIn);
+
       }
     } else {
       log.warn("Missing polymorphic registry while creating JSON mapper!");
     }
-    return mapper;
-  }
-
-  public ObjectMapper createObjectMapper(PolymorphicRegistry polymorphicRegistry) {
-    ObjectMapper mapper = new ObjectMapper();
-    decorate(mapper, polymorphicRegistry);
     return mapper;
   }
 }

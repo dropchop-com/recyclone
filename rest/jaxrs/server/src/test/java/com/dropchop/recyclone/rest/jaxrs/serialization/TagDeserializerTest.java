@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.serialization;
 
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.rest.jaxrs.provider.ObjectMapperContextResolver;
 import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
 import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry.SerializationConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -46,14 +45,13 @@ class TagDeserializerTest {
           }
       ]""";
 
-    ObjectMapperFactory factory = new ObjectMapperFactory();
-    ObjectMapper mapper = factory.createObjectMapper(
-      new DefaultPolymorphicRegistry()
-        .registerSerializationConfig(
-          new SerializationConfig()
-            .addSubType("LanguageGroup", LanguageGroup.class)
-        )
-    );
+    ObjectMapperProducer producer = new ObjectMapperProducer();
+    producer.polymorphicRegistry = new DefaultPolymorphicRegistry()
+      .registerSerializationConfig(
+        new SerializationConfig()
+          .addSubType("LanguageGroup", LanguageGroup.class)
+      );
+    ObjectMapper mapper = producer.createObjectMapper();
     List<LanguageGroup> groups = mapper.readValue(json, CollectionsTypeFactory.listOf(LanguageGroup.class));
     assertEquals(2, groups.size());
   }

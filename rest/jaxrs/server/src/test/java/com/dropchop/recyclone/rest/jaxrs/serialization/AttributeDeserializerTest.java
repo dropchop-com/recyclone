@@ -3,7 +3,6 @@ package com.dropchop.recyclone.rest.jaxrs.serialization;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.rest.jaxrs.provider.ObjectMapperContextResolver;
 import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -60,8 +59,9 @@ class AttributeDeserializerTest {
         ]
       }""";
 
-    ObjectMapperFactory factory = new ObjectMapperFactory();
-    ObjectMapper mapper = factory.createObjectMapper(new DefaultPolymorphicRegistry());
+    ObjectMapperProducer producer = new ObjectMapperProducer();
+    producer.polymorphicRegistry = new DefaultPolymorphicRegistry();
+    ObjectMapper mapper = producer.createObjectMapper();
     CodeParams params = mapper.readValue(json, CodeParams.class);
 
     assertNotNull(params.getAttributes());
