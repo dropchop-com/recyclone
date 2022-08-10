@@ -17,6 +17,10 @@ public interface NamespaceUuidWeaver {
   Logger log = LoggerFactory.getLogger(NamespaceUuidWeaver.class);
 
   default void changeClassWithName(Object oModel, String name) {
+    if (name == null) {
+      log.warn("Name for [{}] is null will not set UUID.", oModel);
+      return;
+    }
     HasUuidV3 model = (HasUuidV3)oModel;
     UUID newUuid = Uuid.getNameBasedV3(oModel.getClass(), name);
     log.trace("Will change uuid {} with {} based on name {}", model.getUuid(), newUuid, name);
@@ -24,6 +28,10 @@ public interface NamespaceUuidWeaver {
   }
 
   default void changeClassWithCode(Object oModel, String code) {
+    if (code == null) {
+      log.warn("Code for [{}] is null will not set UUID.", oModel);
+      return;
+    }
     HasUuidV3 model = (HasUuidV3)oModel;
     UUID newUuid = Uuid.getNameBasedV3(oModel.getClass(), code);
     log.trace("Will change uuid {} with {} based on code {}", model.getUuid(), newUuid, code);

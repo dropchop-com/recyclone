@@ -16,9 +16,13 @@ public interface SameIdAsUuidWeaver {
   Logger log = LoggerFactory.getLogger(SameIdAsUuidWeaver.class);
 
   default void changeClassWithId(Object oModel, String id) {
-    UUID uuid = UUID.fromString(id);
+    if (id == null) {
+      log.warn("Id for [{}] is null will not set UUID.", oModel);
+      return;
+    }
     HasUuid model = (HasUuid)oModel;
     UUID oldId = model.getUuid();
+    UUID uuid = UUID.fromString(id);
     if (uuid.equals(oldId)) {
       return;
     }
@@ -27,6 +31,10 @@ public interface SameIdAsUuidWeaver {
   }
 
   default void changeClassWithUuid(Object oModel, UUID uuid) {
+    if (uuid == null) {
+      log.warn("UUID for [{}] is null will not set Id.", oModel);
+      return;
+    }
     HasId model = (HasId)oModel;
     String id = uuid.toString();
     String oldId = model.getId();

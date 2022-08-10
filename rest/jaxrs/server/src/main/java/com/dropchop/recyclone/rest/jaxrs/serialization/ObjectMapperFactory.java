@@ -21,18 +21,16 @@ import javax.inject.Inject;
  */
 @Slf4j
 @ApplicationScoped
-public class ObjectMapperProducer {
-
+public class ObjectMapperFactory {
 
   private final PolymorphicRegistry polymorphicRegistry;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  public ObjectMapperProducer(PolymorphicRegistry polymorphicRegistry) {
+  public ObjectMapperFactory(PolymorphicRegistry polymorphicRegistry) {
     this.polymorphicRegistry = polymorphicRegistry;
   }
 
-  @Produces
   public ObjectMapper createObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

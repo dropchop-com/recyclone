@@ -45,7 +45,7 @@ class TagDeserializerTest {
           }
       ]""";
 
-    ObjectMapperProducer producer = new ObjectMapperProducer(new DefaultPolymorphicRegistry()
+    ObjectMapperFactory producer = new ObjectMapperFactory(new DefaultPolymorphicRegistry()
       .registerSerializationConfig(
         new SerializationConfig()
           .addSubType("LanguageGroup", LanguageGroup.class)

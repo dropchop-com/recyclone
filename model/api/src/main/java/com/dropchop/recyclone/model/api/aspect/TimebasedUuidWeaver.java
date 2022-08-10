@@ -20,6 +20,10 @@ public interface TimebasedUuidWeaver {
   Logger log = LoggerFactory.getLogger(TimebasedUuidWeaver.class);
 
   default void changeClassWithCreated(Object oModel, ZonedDateTime created) {
+    if (created == null) {
+      log.warn("Created for [{}] is null will not set UUID.", oModel);
+      return;
+    }
     HasUuidV1 model = (HasUuidV1)oModel;
     UUID oldUuid = model.getUuid();
     if (oldUuid == null || oldUuid.version() != 1) {
@@ -32,6 +36,10 @@ public interface TimebasedUuidWeaver {
   }
 
   default void changeClassWithUuid(Object oModel, UUID uuid) {
+    if (uuid == null) {
+      log.warn("Uuid for [{}] is null will not set ZonedDateTime created.", oModel);
+      return;
+    }
     HasUuidV1 model = (HasUuidV1)oModel;
     if (uuid.version() == 1) {
       Instant instant = Uuid.toInstant(uuid);

@@ -4,17 +4,28 @@ import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.dto.tagging.CountryGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ECountryGroup;
+import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
 import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.
  */
 @ApplicationScoped
 public class TestApplicationConfiguration {
+
+  @Inject
+  ObjectMapperFactory objectMapperFactory;
+
+  @Produces
+  ObjectMapper getObjectMapper() {
+    return objectMapperFactory.createObjectMapper();
+  }
 
   @Produces
   PolymorphicRegistry getPolymorphicRegistry() {
