@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.model.dto.rest;
 
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.marker.HasId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -16,7 +14,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Result<T> implements Model, HasId {
+public class Result<T> implements com.dropchop.recyclone.model.api.rest.Result<T, ResultStatus, ResultStats> {
 
   @NonNull
   @JsonInclude(NON_NULL)

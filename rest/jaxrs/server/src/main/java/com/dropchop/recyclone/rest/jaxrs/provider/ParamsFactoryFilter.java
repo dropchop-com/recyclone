@@ -3,6 +3,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
@@ -217,10 +218,10 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
+    ExecContextProvider execContextProvider = (DefaultExecContextProvider)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", DefaultExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
       return;
     }
 

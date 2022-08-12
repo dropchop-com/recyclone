@@ -3,7 +3,7 @@ package com.dropchop.recyclone.service.api.mapping;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.rest.ResultCode;
+import com.dropchop.recyclone.model.api.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;

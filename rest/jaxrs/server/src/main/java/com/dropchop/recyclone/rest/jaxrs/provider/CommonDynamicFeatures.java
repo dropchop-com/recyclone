@@ -3,6 +3,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.rest.Result;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static javax.ws.rs.Priorities.HEADER_DECORATOR;
+import static javax.ws.rs.Priorities.USER;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
@@ -74,9 +76,17 @@ public class CommonDynamicFeatures implements DynamicFeature {
     Class<?> riClass = ri.getResourceClass();
     Method method = ri.getResourceMethod();
 
+    Class<?> ret = method.getReturnType();
+    if (Result.class.isAssignableFrom(ret)) {
+      context.register( // initialize and pass new params to JAX-RS context property
+        new ExecContextWriteInterceptor(),
+        USER
+      );
+    }
+
     Class<?>[] paramTypes = method.getParameterTypes();
     for (Class<?> paramType : paramTypes) {
-      if (CommonParams.class.isAssignableFrom(paramType)) {
+      if (Params.class.isAssignableFrom(paramType)) {
         log.info("Registering [{}] for [{}.{}].", ParamsInterceptor.class.getSimpleName(), riClass.getSimpleName(), method.getName());
         //noinspection unchecked
         context.register( // pass incoming params to JAX-RS context property

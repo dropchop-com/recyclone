@@ -3,7 +3,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.ConstrainedTo;
@@ -33,10 +33,10 @@ public class DtoDataInterceptor implements ReaderInterceptor {
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
     Object o = context.proceed();
-    ExecContextProvider execContextProvider = (ExecContextProvider)context
+    DefaultExecContextProvider execContextProvider = (DefaultExecContextProvider)context
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", DefaultExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
       return o;
     }
 

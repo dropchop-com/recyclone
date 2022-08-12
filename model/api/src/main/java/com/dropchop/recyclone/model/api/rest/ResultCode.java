@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.dto.rest;
+package com.dropchop.recyclone.model.api.rest;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.

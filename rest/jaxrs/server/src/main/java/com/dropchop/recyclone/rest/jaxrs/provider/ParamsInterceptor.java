@@ -3,6 +3,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 /**
  * This is to intercept methods with CommonParams to context property for further processing.
- * Similar as {@link ParamsFactoryFilter} only this time parameters are already serialized since they
+ * Similar as {@link ParamsFactoryFilter} only this time parameters are already deserialized since they
  * are proper JAX-RS resource method parameter.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 01. 22.
@@ -34,15 +35,15 @@ public class ParamsInterceptor implements ReaderInterceptor {
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
     Object o = context.proceed();
-    ExecContextProvider execContextProvider = (ExecContextProvider)context
+    ExecContextProvider execContextProvider = (DefaultExecContextProvider)context
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", DefaultExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
       return o;
     }
     if (o != null && this.parametersClass.isAssignableFrom(o.getClass())) {
       log.debug("Intercept [{}].", o);
-      execContextProvider.setParams((CommonParams) o);
+      execContextProvider.setParams((Params) o);
       //context.setProperty(InternalContextVariables.RECYCLONE_PARAMS, o);
     }
     return o;

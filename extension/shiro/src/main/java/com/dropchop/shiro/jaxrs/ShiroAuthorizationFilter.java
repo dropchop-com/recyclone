@@ -2,7 +2,7 @@ package com.dropchop.shiro.jaxrs;
 
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
@@ -54,10 +54,10 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) {
     this.authorizationService.invokeFilterChain(requestContext);
-    ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
+    DefaultExecContextProvider execContextProvider = (DefaultExecContextProvider)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", DefaultExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
       return;
     }
     this.authorizationService.extractRequiredPermissionsToExecContext(execContextProvider.get(), authzChecks);
