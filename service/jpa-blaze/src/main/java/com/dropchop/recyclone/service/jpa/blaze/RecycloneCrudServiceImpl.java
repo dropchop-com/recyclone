@@ -8,7 +8,7 @@ import com.dropchop.recyclone.repo.jpa.blaze.*;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
@@ -27,7 +27,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<D> ctx;
+  DefaultExecContext<D> ctx;
 
   @Inject
   ServiceSelector serviceSelector;

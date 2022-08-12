@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.security.PermissionService;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,7 +30,7 @@ public class PermissionResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<Permission> ctx;
+  DefaultExecContext<Permission> ctx;
 
   @Override
   public Result<Permission> get() {

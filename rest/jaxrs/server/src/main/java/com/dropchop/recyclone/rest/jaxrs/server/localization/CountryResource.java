@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.localization.CountryService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class CountryResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<Country> ctx;
+  DefaultExecContext<Country> ctx;
 
   @Override
   public Result<Country> get() {

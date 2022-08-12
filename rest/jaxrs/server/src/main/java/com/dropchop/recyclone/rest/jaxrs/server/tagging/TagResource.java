@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.TagParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -32,7 +32,7 @@ public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.taggin
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<Tag> ctx;
+  DefaultExecContext<Tag> ctx;
 
   @Override
   public Result<Tag> get() {

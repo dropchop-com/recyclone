@@ -1,11 +1,9 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -13,11 +11,9 @@ import javax.ws.rs.core.UriInfo;
  */
 public interface ExecContextProvider {
 
-  <D extends Dto> CommonExecContext<D> create(UriInfo uriInfo);
+  Class<? extends ExecContext> getContextClass();
 
-  @Produces
-  @RequestScoped
-  <P extends Params, D extends Dto> CommonExecContext<D> get();
+  <D extends Dto> ExecContext<?> create(UriInfo uriInfo);
 
-  <P extends Params> void setParams(P p);
+  <D extends Dto> ExecContext<?> produce();
 }

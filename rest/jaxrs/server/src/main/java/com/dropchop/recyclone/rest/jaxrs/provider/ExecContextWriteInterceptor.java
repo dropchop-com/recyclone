@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,6 +10,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
 import java.io.IOException;
+
+import static com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 
 /**
  * WriterInterceptor that supports execution context's execution time and
@@ -31,8 +32,8 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       return;
     }
 
-    ExecContextProvider execContextProvider = (DefaultExecContextProvider)context
-      .getProperty(com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    ExecContextProvider execContextProvider = (ExecContextProvider)context
+      .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
 
     if (execContextProvider == null) {
       context.proceed();
@@ -43,8 +44,8 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       return;
     }
     log.debug("[{}].aroundWriteTo done.", this.getClass().getSimpleName());
-    ((Result<?>) entity).setId(execContextProvider.get().getId());
-    ((Result<?>) entity).getStatus().setTime(execContextProvider.get().getExecTime());
+    ((Result<?>) entity).setId(execContextProvider.produce().getId());
+    ((Result<?>) entity).getStatus().setTime(execContextProvider.produce().getExecTime());
     context.proceed();
   }
 }

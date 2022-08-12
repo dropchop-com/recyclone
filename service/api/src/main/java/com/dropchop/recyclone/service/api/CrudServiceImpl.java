@@ -15,7 +15,7 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
@@ -40,7 +40,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<D> ctx;
+  DefaultExecContext<D> ctx;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")

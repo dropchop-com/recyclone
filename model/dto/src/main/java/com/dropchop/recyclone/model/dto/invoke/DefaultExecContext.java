@@ -1,8 +1,9 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.DataExecContext;
+import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
+import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import lombok.*;
 
@@ -18,13 +19,14 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class CommonExecContext<D extends Dto>
+public class DefaultExecContext<D extends Dto>
   extends ParamsExecContext<Listener>
-  implements DataExecContext<D, Listener>, SecurityExecContext {
+  implements CommonExecContext<D, Listener>, SecurityExecContext {
 
   @NonNull
   List<D> data;
 
   List<String> requiredPermissions;
+
   Logical requiredPermissionsOp = Logical.AND;
 }

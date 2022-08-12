@@ -1,21 +1,15 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.marker.Constants;
-import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
+import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.service.api.invoke.ExecContextProviderFactory;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.Priority;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.ws.rs.ConstrainedTo;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Provider;
 
 /**
  * ContainerRequestFilter which initializes {@link com.dropchop.recyclone.model.api.invoke.ExecContext} from
@@ -24,23 +18,22 @@ import javax.ws.rs.ext.Provider;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 02. 22.
  */
 @Slf4j
-@Provider
-@Priority(Priorities.AUTHENTICATION)
 @ConstrainedTo(RuntimeType.SERVER)
 public class ExecContextInitInterceptor implements ContainerRequestFilter {
 
-  @Inject
-  @RequestScoped
-  @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
-  DefaultExecContextProvider execContextProvider;
+  private final ExecContextProviderFactory execContextProviderFactory;
+  private final Class<?> execContextClass;
 
-  public ExecContextInitInterceptor() {
-    log.trace("ExecContextInitInterceptor constructor");
+  public ExecContextInitInterceptor(Class<?> execContextClass, ExecContextProviderFactory execContextProviderFactory) {
+    log.trace("ExecContextInitInterceptor2 constructor");
+    this.execContextProviderFactory = execContextProviderFactory;
+    this.execContextClass = execContextClass;
   }
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    log.debug("filter");
+    ExecContextProvider execContextProvider = execContextProviderFactory.getExecContextProvider(this.execContextClass);
+    log.error("Filter for execution context class [{}] and provider [{}].", this.execContextClass, execContextProvider);
     UriInfo info = requestContext.getUriInfo();
     execContextProvider.create(info);
     requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContextProvider);

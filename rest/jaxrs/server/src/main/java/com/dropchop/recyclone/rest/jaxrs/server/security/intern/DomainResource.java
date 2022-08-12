@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Domain;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.security.DomainService;
 
@@ -29,7 +29,7 @@ public class DomainResource implements
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContext<Domain> ctx;
+  DefaultExecContext<Domain> ctx;
 
   @Override
   public Result<Domain> get() {

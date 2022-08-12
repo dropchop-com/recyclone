@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.model.dto.invoke.SecurityExecContext;
+import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.shiro.filter.AccessControlFilter;
 import com.dropchop.shiro.jaxrs.ShiroSecurityContext;

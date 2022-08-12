@@ -19,8 +19,6 @@ public class RecycloneApplicationRegistry {
       , ObjectMapperContextResolver.class
       , DefaultContentTypeFilter.class
       , CommonDynamicFeatures.class
-      , ExecContextInitInterceptor.class
-      , ExecContextWriteInterceptor.class
     );
   }
 

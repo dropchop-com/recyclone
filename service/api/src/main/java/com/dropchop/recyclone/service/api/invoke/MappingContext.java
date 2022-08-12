@@ -3,9 +3,9 @@ package com.dropchop.recyclone.service.api.invoke;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
-import com.dropchop.recyclone.model.dto.invoke.SecurityExecContext;
+import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
 import com.dropchop.recyclone.service.api.mapping.AfterMappingListener;
 import com.dropchop.recyclone.service.api.mapping.BeforeMappingListener;
@@ -35,7 +35,7 @@ public class MappingContext
   private List<Dto> data;
 
 
-  public MappingContext of(CommonExecContext<?> sourceContext) {
+  public MappingContext of(DefaultExecContext<?> sourceContext) {
     super.of(sourceContext);
     //noinspection unchecked
     this.setData((List<Dto>) sourceContext.getData());

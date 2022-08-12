@@ -1,15 +1,14 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.marker.Constants;
-import com.dropchop.recyclone.model.dto.invoke.CommonExecContext;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.ExecContextType;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -20,35 +19,27 @@ import javax.ws.rs.core.UriInfo;
 @Slf4j
 @RequestScoped
 @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
-public class DefaultExecContextProvider implements ExecContextProvider {
+public class DefaultExecContextProvider implements ExecContextProvider, ParamsExecContextProvider {
 
-  CommonExecContext<?> execContext;
+  DefaultExecContext<?> execContext;
 
   @Override
-  public <D extends Dto> CommonExecContext<D> create(UriInfo info) {
-    this.execContext = new CommonExecContext<>();
-    //noinspection unchecked
-    return (CommonExecContext<D>) this.execContext;
+  @SuppressWarnings("rawtypes")
+  public Class<? extends ExecContext> getContextClass() {
+    return DefaultExecContext.class;
   }
 
   @Override
+  public <D extends Dto> DefaultExecContext<D> create(UriInfo uriInfo) {
+    this.execContext = new DefaultExecContext<>();
+    //noinspection unchecked
+    return (DefaultExecContext<D>) this.execContext;
+  }
+
   @Produces
   @RequestScoped
-  public <P extends Params, D extends Dto> CommonExecContext<D> get() {
+  public <D extends Dto> DefaultExecContext<D> produce() {
     //noinspection unchecked
-    return (CommonExecContext<D>) this.execContext;
-  }
-
-  @Override
-  public <P extends Params> void setParams(P p) {
-    if (p instanceof com.dropchop.recyclone.model.dto.invoke.Params params) {
-      CommonExecContext<?> execContext = this.execContext;
-      if (params.getRequestId() != null) {
-        execContext.setId(params.getRequestId());
-      } else {
-        params.setRequestId(execContext.getId());
-      }
-      execContext.setParams(p);
-    }
+    return (DefaultExecContext<D>) this.execContext;
   }
 }

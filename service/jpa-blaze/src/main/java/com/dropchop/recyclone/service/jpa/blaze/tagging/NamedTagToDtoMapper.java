@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.dto.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ENamedTag;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
 import org.mapstruct.Builder;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -14,6 +15,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   componentModel = "cdi",
   uses = {DtoPolymorphicFactory.class},
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
 public interface NamedTagToDtoMapper extends TagToDtoMapper<NamedTag, ENamedTag> {
