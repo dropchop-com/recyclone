@@ -32,6 +32,7 @@ public class DefaultExecContextProvider implements ExecContextProvider, ParamsEx
   @Override
   public <D extends Dto> DefaultExecContext<D> create(UriInfo uriInfo) {
     this.execContext = new DefaultExecContext<>();
+    log.debug("Created [{}] [{}]", this, this.execContext);
     //noinspection unchecked
     return (DefaultExecContext<D>) this.execContext;
   }
