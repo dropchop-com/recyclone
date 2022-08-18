@@ -33,7 +33,7 @@ public class ExecContextInitInterceptor implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) {
     ExecContextProvider execContextProvider = execContextProviderFactory.getExecContextProvider(this.execContextClass);
-    log.error("Filter for execution context class [{}] and provider [{}].", this.execContextClass, execContextProvider);
+    log.debug("Creating execution context class [{}] with provider [{}].", this.execContextClass, execContextProvider);
     UriInfo info = requestContext.getUriInfo();
     execContextProvider.create(info);
     requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContextProvider);
