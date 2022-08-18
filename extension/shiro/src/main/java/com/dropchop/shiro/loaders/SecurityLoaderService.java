@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.PermissionInstance;
 import com.dropchop.recyclone.model.dto.security.PermissionTemplate;
 import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.shiro.utils.SubjectMapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.UUID;
  *
  */
 public interface SecurityLoaderService {
+
+  SubjectMapper getSubjectMapper();
 
   <O extends DtoId> User<O> loadByLoginName(String loginName);
   <O extends DtoId> User<O> loadByToken(String token);

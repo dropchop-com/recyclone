@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public interface Resolver {
 
-  <M extends Model> List<Permission> resolve(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier);
+  <M extends Model> void resolve(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier, List<List<? extends PermissionInstance>> targetList);
 
 
   /**
@@ -29,6 +29,6 @@ public interface Resolver {
         resolvedPermissions.put(pi.getPermissionId(), pi.getAllowed());
       }
     }
-    return resolvedPermissions.entrySet().stream().filter( (e) -> {return e.getValue();}).map(e -> e.getKey()).collect(Collectors.toList());
+    return resolvedPermissions.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(Collectors.toList());
   }
 }
