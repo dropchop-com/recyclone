@@ -28,7 +28,32 @@ public interface SecurityLoaderService {
   <O extends DtoId> User<O> loadByToken(String token);
   <O extends DtoId> User<O> loadById(UUID id);
 
+  /**
+   * Will load allowed only permissions for subject or subject of subject (sub subject).
+   * Subject represents any model that can have permission attached to it.
+   *
+   * @param subject - subject
+   * @param identifier - subject identifier
+   * @param subSubject - sub subject
+   * @param subSubjectIdentifier - sub subject identifier
+   * @return list of allowed permissions for subject or sub subject.
+   * @param <M>
+   */
   <M extends Model> List<Permission> loadPermissions(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier);
+
+  /**
+   * Will load permissions for subject or subject of subject (sub subject).
+   * Subject represents any model that can have permission attached to it.
+   *
+   * @param subject - subject
+   * @param identifier - subject identifier
+   * @param subSubject - sub subject
+   * @param subSubjectIdentifier - sub subject identifier
+   * @param onlyAllowed - filter permissions by allowed flag
+   * @return list of permissions for subject or sub subject
+   * @param <M>
+   */
+  <M extends Model> List<Permission> loadPermissions(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier, boolean onlyAllowed);
   List<Permission> loadPermissionsById(Collection<UUID> ids);
 
   <M extends Model> List<PermissionTemplate> loadTemplates(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier);

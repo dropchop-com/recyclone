@@ -1,7 +1,6 @@
 package com.dropchop.shiro.utils;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.PermissionInstance;
 
 import java.util.*;
@@ -21,7 +20,7 @@ public interface Resolver {
    * @param permissionsList contains lists of permissions for each hierarchy level.
    * @return list of UUIDs of allowed permissions.
    */
-  default List<UUID> mergePermissions(List<List<? extends PermissionInstance>> permissionsList) {
+  default List<UUID> mergePermissions(List<List<? extends PermissionInstance>> permissionsList, boolean allowedOnly) {
 
     Map<UUID, Boolean> resolvedPermissions = new LinkedHashMap<>();
     for (List<? extends PermissionInstance> levelPermissions : permissionsList) {
@@ -29,6 +28,10 @@ public interface Resolver {
         resolvedPermissions.put(pi.getPermissionId(), pi.getAllowed());
       }
     }
-    return resolvedPermissions.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(Collectors.toList());
+    if (allowedOnly) {
+      //filter allowed only permissions
+      return resolvedPermissions.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(Collectors.toList());
+    }
+    return new ArrayList<>(resolvedPermissions.keySet());
   }
 }
