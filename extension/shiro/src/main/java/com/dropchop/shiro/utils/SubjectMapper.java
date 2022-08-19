@@ -8,7 +8,7 @@ import java.util.*;
 
 
 /**
- * User subject mapper to map Dto and Entity types to String representation in data source.
+ * Subject mapper to map Dto and Entity types to String representation in data source.
  * Use case:
  * Usually Entities and Dto types are representing the same data object, so you want to use same subject name
  * to represent this Model types in datasource.
