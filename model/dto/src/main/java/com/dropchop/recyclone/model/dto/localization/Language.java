@@ -92,7 +92,7 @@ public class Language extends DtoCode
 
   public Language(@NonNull String code) {
     super(code);
-    componentsFromLocale(this, toLocale());
+    componentsFromLocale(this, Locale.forLanguageTag(code));
   }
 
   public Language(@NonNull String iso639, Script script, String region, String variant) {
@@ -126,6 +126,6 @@ public class Language extends DtoCode
   @Override
   public void setCode(@NonNull String code) {
     super.setCode(code);
-    componentsFromLocale(this, toLocale());
+    componentsFromLocale(this, Locale.forLanguageTag(code));
   }
 }
