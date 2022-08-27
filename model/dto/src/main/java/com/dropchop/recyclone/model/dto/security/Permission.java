@@ -35,6 +35,8 @@ public class Permission extends DtoId
 
   private Action action;
 
+  @Singular
+  @JsonInclude(NON_EMPTY)
   private List<String> instances;
 
   private String title;
@@ -43,6 +45,7 @@ public class Permission extends DtoId
 
   private String lang;
 
+  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleDescriptionTranslation> translations;
 

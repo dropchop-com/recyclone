@@ -78,6 +78,7 @@ public class Language extends DtoCode
 
   private String lang;
 
+  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleTranslation> translations;
 

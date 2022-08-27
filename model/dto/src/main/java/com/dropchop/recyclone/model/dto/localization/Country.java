@@ -42,6 +42,7 @@ public class Country extends DtoCode
 
   private String lang;
 
+  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleTranslation> translations;
 

@@ -7,10 +7,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
@@ -33,6 +30,7 @@ public class Domain extends DtoCode
   implements com.dropchop.recyclone.model.api.security.Domain<TitleDescriptionTranslation, Action>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
+  @Singular
   @JsonInclude(NON_EMPTY)
   private SortedSet<Action> actions;
 
@@ -42,6 +40,7 @@ public class Domain extends DtoCode
 
   private String lang;
 
+  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleDescriptionTranslation> translations;
 
