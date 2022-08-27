@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.api.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;
@@ -19,29 +20,29 @@ import java.util.function.Supplier;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public interface ToDtoMapper<D extends Dto, E extends Entity> {
+public interface ToDtoMapper<D extends Dto, X extends Model> {
 
   Logger log = LoggerFactory.getLogger(ToDtoMapper.class);
 
-  D toDto(E entity, @Context MappingContext context);
+  D toDto(X model, @Context MappingContext context);
 
-  default List<D> toDtos(Collection<E> entities, MappingContext context) {
+  default List<D> toDtos(Collection<X> entities, MappingContext context) {
     List<D> dtos = new ArrayList<>(entities.size());
-    for (E entity : entities) {
+    for (X entity : entities) {
       dtos.add(toDto(entity, context));
     }
     return dtos;
   }
 
-  default Result<D> toDtosResult(Collection<E> entities, MappingContext context, Supplier<ResultStatus> statusSupplier) {
-    List<D> dtos = toDtos(entities, context);
+  default Result<D> toDtosResult(Collection<X> models, MappingContext context, Supplier<ResultStatus> statusSupplier) {
+    List<D> dtos = toDtos(models, context);
     Result<D> objResult = new Result<>();
     if (dtos != null) {
       objResult.getData().addAll(dtos);
     }
 
     if (context.getTotalCount() <= 0) {
-      context.setTotalCount(entities.size());
+      context.setTotalCount(models.size());
     }
 
     ResultStatus status = new ResultStatus(ResultCode.success, 0, context.getTotalCount(), null, null, null);
@@ -56,8 +57,8 @@ public interface ToDtoMapper<D extends Dto, E extends Entity> {
     return objResult;
   }
 
-  default Result<D> toDtosResult(Collection<E> entities, MappingContext context) {
-    return toDtosResult(entities, context, null);
+  default Result<D> toDtosResult(Collection<X> models, MappingContext context) {
+    return toDtosResult(models, context, null);
   }
 
   @BeforeMapping

@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
@@ -26,7 +27,7 @@ public class SetModification
   }
 
   @Override
-  public void after(Dto dto, Entity entity, MappingContext context) {
+  public void after(Model model, Entity entity, MappingContext context) {
     if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
@@ -35,8 +36,8 @@ public class SetModification
       if (entity instanceof HasModified && ((HasModified) entity).getModified() == null) {
         ((HasModified) entity).setModified(ZonedDateTime.now());
       }
-      if (entity instanceof HasTranslation<?> && dto instanceof HasTranslation<?>) {
-        Set<? extends Translation> dtoTranslations = ((HasTranslation<?>) dto).getTranslations();
+      if (entity instanceof HasTranslation<?> && model instanceof HasTranslation<?>) {
+        Set<? extends Translation> dtoTranslations = ((HasTranslation<?>) model).getTranslations();
         if (dtoTranslations != null) {
           for (Translation t : dtoTranslations) {
             Translation entityTrans = ((HasTranslation<?>) entity).getTranslation(t.getLang());

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.api.mapping;
 
-import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
@@ -16,37 +16,37 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public interface ToEntityMapper<D extends Dto, E extends Entity> {
+public interface ToEntityMapper<M extends Model, E extends Entity> {
 
   Logger log = LoggerFactory.getLogger(ToEntityMapper.class);
 
-  E toEntity(D dto, @Context MappingContext context);
+  E toEntity(M dto, @Context MappingContext context);
 
-  default List<E> toEntities(List<D> dtos, @Context MappingContext context) {
-    if (dtos == null) {
+  default List<E> toEntities(List<M> models, @Context MappingContext context) {
+    if (models == null) {
       return null;
     }
-    List<E> entities = new ArrayList<>(dtos.size());
-    for (D dto : dtos) {
+    List<E> entities = new ArrayList<>(models.size());
+    for (M dto : models) {
       entities.add(toEntity(dto, context));
     }
     return entities;
   }
 
   @BeforeMapping
-  default void beforeToEntity(Dto dto, @MappingTarget Entity entity, @Context MappingContext context) {
+  default void beforeToEntity(Model model, @MappingTarget Entity entity, @Context MappingContext context) {
     for (MappingListener listener : context.listeners()) {
       if (listener instanceof BeforeToEntityListener beforeListener) {
-        beforeListener.before(dto, entity, context);
+        beforeListener.before(model, entity, context);
       }
     }
   }
 
   @AfterMapping
-  default void afterToEntity(Dto dto, @MappingTarget Entity entity, @Context MappingContext context) {
+  default void afterToEntity(Model model, @MappingTarget Entity entity, @Context MappingContext context) {
     for (MappingListener listener : context.listeners()) {
       if (listener instanceof AfterToEntityListener afterListener) {
-        afterListener.after(dto, entity, context);
+        afterListener.after(model, entity, context);
       }
     }
   }

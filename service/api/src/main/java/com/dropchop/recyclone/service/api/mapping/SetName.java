@@ -1,11 +1,10 @@
 package com.dropchop.recyclone.service.api.mapping;
 
-import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.HasName;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
@@ -23,7 +22,7 @@ public class SetName implements AfterToEntityListener {
   }
 
   @Override
-  public void after(Dto dto, Entity entity, MappingContext context) {
+  public void after(Model dto, Entity entity, MappingContext context) {
     if (onlyForEntity != null && !entity.getClass().isAssignableFrom(onlyForEntity)) {
       return;
     }

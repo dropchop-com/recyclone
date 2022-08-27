@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.service.jpa.blaze.mapping;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
@@ -37,7 +37,7 @@ public class SetLanguage
   }
 
   @Override
-  public void after(Dto dto, Entity entity, MappingContext context) {
+  public void after(Model dto, Entity entity, MappingContext context) {
     if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }

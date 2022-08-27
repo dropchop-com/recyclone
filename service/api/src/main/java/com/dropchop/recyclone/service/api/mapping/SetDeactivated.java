@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.api.mapping;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
@@ -19,7 +20,7 @@ public class SetDeactivated extends RestrictedAfterToEntityListener {
   }
 
   @Override
-  public void after(Dto dto, Entity entity, MappingContext context) {
+  public void after(Model model, Entity entity, MappingContext context) {
     if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
@@ -28,8 +29,8 @@ public class SetDeactivated extends RestrictedAfterToEntityListener {
         ((HasDeactivated) entity).setDeactivated(null);
       }
     } else if (Actions.UPDATE.equals(context.getSecurityAction())) {
-      if (entity instanceof HasDeactivated && dto instanceof HasDeactivated) {
-        ((HasDeactivated) entity).setDeactivated(((HasDeactivated) dto).getDeactivated());
+      if (entity instanceof HasDeactivated && model instanceof HasDeactivated) {
+        ((HasDeactivated) entity).setDeactivated(((HasDeactivated) model).getDeactivated());
       }
     }
   }
