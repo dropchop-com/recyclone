@@ -66,10 +66,10 @@ public interface ToDtoMapper<D extends Dto, X extends Model> {
     if (context instanceof FilteringDtoContext) {
       ((FilteringDtoContext) context).before(source, target);
     }
-    if (source instanceof Entity && target instanceof Dto) {
+    if (source instanceof Model && target instanceof Dto) {
       for (MappingListener listener : context.listeners()) {
         if (listener instanceof BeforeToDtoListener) {
-          ((BeforeToDtoListener) listener).before((Entity) source, (Dto) target, context);
+          ((BeforeToDtoListener) listener).before((Model) source, (Dto) target, context);
         }
       }
     }
@@ -77,10 +77,10 @@ public interface ToDtoMapper<D extends Dto, X extends Model> {
 
   @AfterMapping
   default void after(Object source, @MappingTarget Object target, @Context MappingContext context) {
-    if (source instanceof Entity && target instanceof Dto) {
+    if (source instanceof Model && target instanceof Dto) {
       for (MappingListener listener : context.listeners()) {
         if (listener instanceof AfterToDtoListener) {
-          ((AfterToDtoListener) listener).after((Entity) source, (Dto) target, context);
+          ((AfterToDtoListener) listener).after((Model) source, (Dto) target, context);
         }
       }
     }

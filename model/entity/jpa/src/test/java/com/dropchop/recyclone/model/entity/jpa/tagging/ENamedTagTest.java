@@ -17,5 +17,10 @@ class ENamedTagTest {
     String id = group.getUuid().toString();
     assertEquals(Uuid.getNameBasedV3("NamedTag.some_name").toString(), id);
     assertEquals(id, group.getUuid().toString());
+
+    /*ENamedTag group1 = ENamedTag.builder().name("some_name").build();
+    id = group1.getUuid().toString();
+    assertEquals(Uuid.getNameBasedV3("NamedTag.some_name").toString(), id);
+    assertEquals(id, group.getUuid().toString());*/
   }
 }

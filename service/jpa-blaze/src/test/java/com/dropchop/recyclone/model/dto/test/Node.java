@@ -1,8 +1,11 @@
 package com.dropchop.recyclone.model.dto.test;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.api.marker.HasTags;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
@@ -22,29 +25,30 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@JsonInclude(NON_NULL)
 public class Node extends DtoCode
-  implements com.dropchop.recyclone.model.api.test.Node<TitleTranslation, Node> {
-  @JsonInclude(NON_NULL)
+  implements com.dropchop.recyclone.model.api.test.Node<TitleTranslation, Node>,
+  HasTags<Tag, TitleDescriptionTranslation> {
+
+  @JsonInclude(NON_EMPTY)
   SortedSet<Node> children;
 
-  @JsonInclude(NON_NULL)
   private String title;
 
-  @JsonInclude(NON_NULL)
   private String lang;
 
-  @JsonInclude(NON_NULL)
-  private Set<TitleTranslation> translations;
+  @JsonInclude(NON_EMPTY)
+  private Set<TitleTranslation> translations = new LinkedHashSet<>();
 
-  @JsonInclude(NON_NULL)
-  private Set<Attribute<?>> attributes;
+  @JsonInclude(NON_EMPTY)
+  private Set<Attribute<?>> attributes = new LinkedHashSet<>();
 
-  @JsonInclude(NON_NULL)
+  @JsonInclude(NON_EMPTY)
+  private List<Tag> tags = new ArrayList<>();
+
   private ZonedDateTime created;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime modified;
 
-  @JsonInclude(NON_NULL)
   private ZonedDateTime deactivated;
 }
