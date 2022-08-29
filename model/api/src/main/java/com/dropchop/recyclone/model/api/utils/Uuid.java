@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
-import java.util.Calendar;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
@@ -213,5 +211,30 @@ public interface Uuid {
 
   static String getRandom() {
     return UUID.randomUUID().toString();
+  }
+
+  static boolean isUuid(String uuid) {
+    if (uuid == null || uuid.isEmpty()) {
+      return false;
+    }
+    try {
+      if (uuid.length() != 36) {
+        return false;
+      }
+      //noinspection ResultOfMethodCallIgnored
+      UUID.fromString(uuid);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  static boolean isUuids(Collection<String> uuids) {
+    for (String uuid : uuids) {
+      if (!isUuid(uuid)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
