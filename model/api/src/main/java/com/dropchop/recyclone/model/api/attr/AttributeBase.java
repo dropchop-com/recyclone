@@ -16,4 +16,8 @@ import lombok.experimental.SuperBuilder;
 public abstract class AttributeBase<X> implements Attribute<X> {
   @NonNull
   private String name;
+
+  public String toString() {
+    return this.getClass().getSimpleName() + ":" + this.getName();
+  }
 }

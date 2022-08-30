@@ -21,5 +21,6 @@ public class TitleTranslation implements com.dropchop.recyclone.model.api.locali
   @EqualsAndHashCode.Exclude
   private String title;
 
+  @EqualsAndHashCode.Exclude
   private Boolean base;
 }

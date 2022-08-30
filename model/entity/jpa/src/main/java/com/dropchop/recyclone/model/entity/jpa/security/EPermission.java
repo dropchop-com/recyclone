@@ -11,7 +11,6 @@ import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -28,7 +27,6 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "security_permission")
 @SuppressWarnings("JpaDataSourceORMInspection")

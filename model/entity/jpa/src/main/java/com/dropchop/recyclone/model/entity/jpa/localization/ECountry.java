@@ -26,7 +26,6 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "country")
 @SuppressWarnings("JpaDataSourceORMInspection")

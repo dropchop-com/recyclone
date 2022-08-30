@@ -25,7 +25,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class User<O extends DtoId> extends Person
   implements com.dropchop.recyclone.model.api.security.User<

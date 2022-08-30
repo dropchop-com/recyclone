@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @DiscriminatorValue("LoginAccount")
 public class ELoginAccount extends EUserAccount implements LoginAccount {

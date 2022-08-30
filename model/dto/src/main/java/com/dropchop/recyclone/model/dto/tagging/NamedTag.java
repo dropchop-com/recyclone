@@ -13,7 +13,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
-@ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
@@ -25,4 +24,9 @@ public class NamedTag extends Tag
 
   @NonNull
   private String name;
+
+  @Override
+  public String toString() {
+    return super.toString() + ",n" + ":" + getName();
+  }
 }

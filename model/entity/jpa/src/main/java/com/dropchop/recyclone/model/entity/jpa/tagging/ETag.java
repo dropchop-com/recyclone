@@ -31,7 +31,6 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tag")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

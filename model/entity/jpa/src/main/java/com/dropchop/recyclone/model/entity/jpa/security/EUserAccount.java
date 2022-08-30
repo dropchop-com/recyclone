@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "security_user_account")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

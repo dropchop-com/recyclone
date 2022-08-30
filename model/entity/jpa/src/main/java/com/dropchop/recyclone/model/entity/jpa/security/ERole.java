@@ -8,9 +8,11 @@ import com.dropchop.recyclone.model.api.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
-import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -25,7 +27,6 @@ import java.util.SortedSet;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "security_role")
 @SuppressWarnings("JpaDataSourceORMInspection")

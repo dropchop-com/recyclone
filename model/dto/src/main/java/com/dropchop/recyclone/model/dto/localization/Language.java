@@ -30,7 +30,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 @SuppressWarnings("unused")
 public class Language extends DtoCode

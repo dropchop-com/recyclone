@@ -25,7 +25,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class Permission extends DtoId
   implements com.dropchop.recyclone.model.api.security.Permission<TitleDescriptionTranslation, Action, Domain>,
@@ -95,5 +94,10 @@ public class Permission extends DtoId
     String my = this.getWildcardString();
     String other = permission.getWildcardString();
     return my.compareTo(other);
+  }
+
+  @Override
+  public String toString() {
+    return super.toString() + ",ws" + ":" + getWildcardString();
   }
 }

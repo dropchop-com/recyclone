@@ -20,6 +20,5 @@ public class TitleDescriptionTranslation
     super(lang, title);
   }
 
-  @EqualsAndHashCode.Exclude
   private String description;
 }

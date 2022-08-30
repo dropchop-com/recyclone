@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @DiscriminatorValue("LanguageGroup")
 public class ELanguageGroup extends ENamedTag

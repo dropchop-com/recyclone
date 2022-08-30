@@ -31,7 +31,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "\"user\"")
 @SuppressWarnings("JpaDataSourceORMInspection")

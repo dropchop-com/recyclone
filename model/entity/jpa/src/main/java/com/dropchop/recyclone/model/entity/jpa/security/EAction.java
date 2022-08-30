@@ -23,7 +23,6 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "security_action")
 @SuppressWarnings("JpaDataSourceORMInspection")

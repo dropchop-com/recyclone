@@ -16,7 +16,6 @@ import javax.persistence.Entity;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ENamedTag extends ETag
@@ -25,4 +24,9 @@ public class ENamedTag extends ETag
   @NonNull
   @Column(name="name")
   private String name;
+
+  @Override
+  public String toString() {
+    return super.toString() + ",n" + ":" + getName();
+  }
 }

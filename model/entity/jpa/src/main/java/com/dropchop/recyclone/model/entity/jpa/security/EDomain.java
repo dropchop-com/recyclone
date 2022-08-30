@@ -24,7 +24,6 @@ import java.util.SortedSet;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "security_domain")
 @SuppressWarnings("JpaDataSourceORMInspection")
