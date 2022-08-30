@@ -10,13 +10,11 @@ import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Domain;
-import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.dto.test.Node;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.EAction;
@@ -24,8 +22,6 @@ import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
 import com.dropchop.recyclone.model.entity.jpa.test.ENode;
 import com.dropchop.recyclone.service.jpa.blaze.security.DomainToDtoMapper;
 import com.dropchop.recyclone.service.jpa.blaze.security.DomainToDtoMapperImpl;
-import com.dropchop.recyclone.service.jpa.blaze.test.NodeDtoToDtoMapper;
-import com.dropchop.recyclone.service.jpa.blaze.test.NodeDtoToDtoMapperImpl;
 import com.dropchop.recyclone.service.jpa.blaze.test.NodeToDtoMapper;
 import com.dropchop.recyclone.service.jpa.blaze.test.NodeToDtoMapperImpl;
 import org.junit.jupiter.api.Test;
@@ -143,30 +139,6 @@ class FilteringDtoContextTest {
       createMockModel(new ENode(), "parent_1", 3)
     );
     for (ENode node: parentNodes) {
-      node.setChildren(childNodes);
-    }
-    return parentNodes;
-  }
-
-  private List<Node> createDtoTree() {
-    SortedSet<Node> grandChildNodes = new TreeSet<>(Set.of(
-      createMockModel(new Node(), "grand_child_1", 2),
-      createMockModel(new Node(), "grand_child_2", 3)
-    ));
-
-    SortedSet<Node> childNodes = new TreeSet<>(Set.of(
-      createMockModel(new Node(), "child_1", 2),
-      createMockModel(new Node(), "child_2", 3)
-    ));
-    for (Node node: childNodes) {
-      node.setChildren(grandChildNodes);
-    }
-
-    List<Node> parentNodes = List.of(
-      createMockModel(new Node(), "parent_1", 2),
-      createMockModel(new Node(), "parent_1", 3)
-    );
-    for (Node node: parentNodes) {
       node.setChildren(childNodes);
     }
     return parentNodes;
@@ -752,115 +724,5 @@ class FilteringDtoContextTest {
     assertNotNull(translation.getLang());
     assertNotNull(translation.getTitle());
     assertNull(node.getChildren());
-  }
-
-  @Test
-  void filterContentTreeLevelWithTags() {
-    LanguageGroup indoEu = new LanguageGroup("indo_european");
-    indoEu.setTitle("Indo-European");
-    indoEu.setLang("en");
-    indoEu.setTags(new ArrayList<>());
-    indoEu.setAttributes(new LinkedHashSet<>());
-    indoEu.addTranslation(new TitleDescriptionTranslation("sl", "Indoevropski"));
-    indoEu.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-    indoEu.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-
-    LanguageGroup baltoSlav = new LanguageGroup("balto_slavic");
-    baltoSlav.setTitle("Balto-Slavic");
-    baltoSlav.setLang("en");
-    baltoSlav.addTag(indoEu);
-    baltoSlav.setAttributes(new LinkedHashSet<>());
-    baltoSlav.addTranslation(new TitleDescriptionTranslation("sl", "Baltoslovanski"));
-    baltoSlav.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-    baltoSlav.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-
-    LanguageGroup slavic = new LanguageGroup("slavic");
-    slavic.setTitle("Slavic");
-    slavic.setLang("en");
-    slavic.addTag(baltoSlav);
-    slavic.setAttributes(new LinkedHashSet<>());
-    slavic.addTranslation(new TitleDescriptionTranslation("sl", "Slovanski"));
-    slavic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-    slavic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-
-    LanguageGroup germanic = new LanguageGroup("germanic");
-    germanic.setTitle("Germanic");
-    germanic.setLang("en");
-    germanic.addTag(indoEu);
-    germanic.setAttributes(new LinkedHashSet<>());
-    germanic.addTranslation(new TitleDescriptionTranslation("sl", "Germanski"));
-    germanic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-    germanic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-
-    LanguageGroup southSlavic = new LanguageGroup("south_slavic");
-    southSlavic.setTitle("South Slavic");
-    southSlavic.setLang("en");
-    southSlavic.addTag(slavic);
-    southSlavic.setAttributes(new LinkedHashSet<>());
-    southSlavic.addTranslation(new TitleDescriptionTranslation("sl", "Južno slovanski"));
-    southSlavic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-    southSlavic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-
-    LanguageGroup westGermanic = new LanguageGroup("west_germanic");
-    westGermanic.setTitle("West Germanic");
-    westGermanic.setLang("en");
-    westGermanic.addTag(germanic);
-    westGermanic.setAttributes(new LinkedHashSet<>());
-    westGermanic.addTranslation(new TitleDescriptionTranslation("sl", "Zahodno Germanski"));
-    westGermanic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-    westGermanic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
-
-    List<Node> roots = createDtoTree();
-    for (Node root : roots) {
-      root.addTag(southSlavic);
-    }
-
-    MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE);
-
-    //ignore missing class ... compile with maven first then debug works in intellij
-    NodeDtoToDtoMapper mapper = new NodeDtoToDtoMapperImpl();
-    List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
-    assertNotNull(result);
-    assertEquals(2, result.size());
-    /*
-    Node node = result.get(0);
-    assertNotNull(node);
-    assertNotNull(node.getCode());
-    assertNotNull(node.getLang());
-    assertNotNull(node.getTitle());
-    assertNotNull(node.getCreated());
-    assertNotNull(node.getModified());
-    assertNotNull(node.getTranslations());
-    TitleTranslation translation = node.getTranslations().iterator().next();
-    assertNotNull(translation.getLang());
-    assertNotNull(translation.getTitle());
-    assertNotNull(node.getChildren());
-    assertEquals(2, node.getChildren().size());
-
-    node = node.getChildren().iterator().next();
-    assertNotNull(node);
-    assertNotNull(node.getCode());
-    assertNotNull(node.getLang());
-    assertNotNull(node.getTitle());
-    assertNotNull(node.getCreated());
-    assertNotNull(node.getModified());
-    assertNotNull(node.getTranslations());
-    translation = node.getTranslations().iterator().next();
-    assertNotNull(translation.getLang());
-    assertNotNull(translation.getTitle());
-    assertNotNull(node.getChildren());
-
-    node = node.getChildren().iterator().next();
-    assertNotNull(node);
-    assertNotNull(node.getCode());
-    assertNotNull(node.getLang());
-    assertNotNull(node.getTitle());
-    assertNull(node.getCreated());
-    assertNull(node.getModified());
-    assertNotNull(node.getTranslations());
-    translation = node.getTranslations().iterator().next();
-    assertNotNull(translation.getLang());
-    assertNotNull(translation.getTitle());
-    assertNull(node.getChildren());*/
   }
 }

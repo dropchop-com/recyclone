@@ -38,13 +38,13 @@ public class Node extends DtoCode
   private String lang;
 
   @JsonInclude(NON_EMPTY)
-  private Set<TitleTranslation> translations = new LinkedHashSet<>();
+  private Set<TitleTranslation> translations;
 
   @JsonInclude(NON_EMPTY)
-  private Set<Attribute<?>> attributes = new LinkedHashSet<>();
+  private Set<Attribute<?>> attributes;
 
   @JsonInclude(NON_EMPTY)
-  private List<Tag> tags = new ArrayList<>();
+  private List<Tag> tags;
 
   private ZonedDateTime created;
 
