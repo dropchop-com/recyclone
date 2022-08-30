@@ -44,6 +44,7 @@ public class ParamsInterceptor implements ReaderInterceptor {
       log.debug("Intercept [{}].", o);
       if (execContextProvider instanceof ParamsExecContextProvider paramsExecContextProvider) {
         paramsExecContextProvider.setParams((Params) o);
+        context.setProperty(InternalContextVariables.RECYCLONE_PARAMS, o);
       }
     }
     return o;

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.api.invoke;
 
+import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.service.api.ExecContextType;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import javax.inject.Inject;
  */
 @Slf4j
 @ApplicationScoped
-public class ExecContextProviderFactory {
+public class ExecContextProviderProducer {
 
   @Inject
   @Any
@@ -30,11 +31,27 @@ public class ExecContextProviderFactory {
     for (ExecContextProvider execContextProvider : execContextProviders) {
       Class<?> clazz = execContextProvider.getContextClass();
       if (clazz.equals(execContextClass)) {
-        log.debug("Returning provider [{}] for context [{}].", execContextProvider, execContextClass);
+        log.trace("Returning provider [{}] for context [{}].", execContextProvider, execContextClass);
         return execContextProvider;
       }
     }
-    log.debug("Returning default provider [{}] for context [{}].", defaultExecContextProvider, execContextClass);
+    log.trace("Returning default provider [{}] for context [{}].", defaultExecContextProvider, execContextClass);
+    return defaultExecContextProvider;
+  }
+
+  public ExecContextProvider getFirstInitializedExecContextProvider() {
+    for (ExecContextProvider execContextProvider : execContextProviders) {
+      ExecContext<?> context = execContextProvider.produce();
+      if (context != null) {
+        log.trace("Returning initialized provider [{}].", execContextProvider);
+        return execContextProvider;
+      }
+    }
+    log.trace("Returning initialized provider [{}].", defaultExecContextProvider);
+    ExecContext<?> context = defaultExecContextProvider.produce();
+    if (context == null) {
+      return null;
+    }
     return defaultExecContextProvider;
   }
 }

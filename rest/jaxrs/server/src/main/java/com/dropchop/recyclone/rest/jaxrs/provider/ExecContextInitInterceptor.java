@@ -2,7 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProviderFactory;
+import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.ConstrainedTo;
@@ -21,18 +21,18 @@ import javax.ws.rs.core.UriInfo;
 @ConstrainedTo(RuntimeType.SERVER)
 public class ExecContextInitInterceptor implements ContainerRequestFilter {
 
-  private final ExecContextProviderFactory execContextProviderFactory;
+  private final ExecContextProviderProducer execContextProviderProducer;
   private final Class<?> execContextClass;
 
-  public ExecContextInitInterceptor(Class<?> execContextClass, ExecContextProviderFactory execContextProviderFactory) {
+  public ExecContextInitInterceptor(Class<?> execContextClass, ExecContextProviderProducer execContextProviderProducer) {
     log.trace("ExecContextInitInterceptor2 constructor");
-    this.execContextProviderFactory = execContextProviderFactory;
+    this.execContextProviderProducer = execContextProviderProducer;
     this.execContextClass = execContextClass;
   }
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    ExecContextProvider execContextProvider = execContextProviderFactory.getExecContextProvider(this.execContextClass);
+    ExecContextProvider execContextProvider = execContextProviderProducer.getExecContextProvider(this.execContextClass);
     log.debug("Creating execution context class [{}] with provider [{}].", this.execContextClass, execContextProvider);
     UriInfo info = requestContext.getUriInfo();
     execContextProvider.create(info);

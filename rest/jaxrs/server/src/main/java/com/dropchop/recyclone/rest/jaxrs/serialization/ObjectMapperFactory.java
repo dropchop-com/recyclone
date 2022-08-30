@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.serialization;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.rest.jaxrs.filtering.PropertyFilterSerializerModifier;
 import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +24,14 @@ import javax.inject.Inject;
 public class ObjectMapperFactory {
 
   private final PolymorphicRegistry polymorphicRegistry;
+  private final PropertyFilterSerializerModifier serializerModifier;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  public ObjectMapperFactory(PolymorphicRegistry polymorphicRegistry) {
+  public ObjectMapperFactory(PolymorphicRegistry polymorphicRegistry,
+                             PropertyFilterSerializerModifier serializerModifier) {
     this.polymorphicRegistry = polymorphicRegistry;
+    this.serializerModifier = serializerModifier;
   }
 
   public ObjectMapper createObjectMapper() {
@@ -37,6 +41,10 @@ public class ObjectMapperFactory {
     mapper.disable(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL);
 
     SimpleModule module = new SimpleModule();
+    module.setSerializerModifier(serializerModifier);
+    mapper.registerModule(module);
+
+    module = new SimpleModule();
     module.addDeserializer(Attribute.class, new AttributeDeserializer());
     module.addSerializer(new AttributeCompactSerializer());
 
@@ -50,7 +58,6 @@ public class ObjectMapperFactory {
           (key, value) -> mapper.registerSubtypes(new NamedType(value, key))
         );
         serializationConfig.getMixIns().forEach(mapper::addMixIn);
-
       }
     } else {
       log.warn("Missing polymorphic registry while creating JSON mapper!");

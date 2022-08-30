@@ -4,11 +4,10 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
 import com.dropchop.recyclone.model.api.rest.Result;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProviderFactory;
+import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -31,7 +30,7 @@ import static javax.ws.rs.Priorities.*;
 public class CommonDynamicFeatures implements DynamicFeature {
 
   @Inject
-  ExecContextProviderFactory execContextProviderFactory;
+  ExecContextProviderProducer execContextProviderProducer;
 
   private static void checkAdd(final Set<Class<? extends Params>> paramsClasses,
                                final Set<Class<? extends Dto>> dtoClasses,
@@ -115,7 +114,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
           riClass.getSimpleName(), method.getName());
         registered = true;
         context.register( // initialize and pass new params to JAX-RS context property
-          new ExecContextInitInterceptor(execCtxClass, execContextProviderFactory),
+          new ExecContextInitInterceptor(execCtxClass, execContextProviderProducer),
           AUTHENTICATION
         );
       }
@@ -125,7 +124,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
         ExecContextInitInterceptor.class.getSimpleName(), DefaultExecContext.class.getSimpleName(),
         riClass.getSimpleName(), method.getName());
       context.register(
-        new ExecContextInitInterceptor(DefaultExecContext.class, execContextProviderFactory),
+        new ExecContextInitInterceptor(DefaultExecContext.class, execContextProviderProducer),
         AUTHENTICATION
       );
     }

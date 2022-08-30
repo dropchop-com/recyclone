@@ -146,13 +146,13 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     }
 
     if (parts.length == 2) {
-      try {
-        params.setContentDetailLevel(parts[1]);
-      } catch (NumberFormatException e) {
+      List<String> levels = params.getAvailableLevelOfContentDetails();
+      if (!levels.contains(parts[1])) {
         throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
-          "Unable parse content level tree depth parameter",
-          Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))), e);
+          "Unknown content level detail",
+          Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
       }
+      params.setContentDetailLevel(parts[1]);
     }
   }
 
@@ -239,6 +239,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
 
       log.debug("Created request local [{}].", p);
       paramsExecContextProvider.setParams(p);
+      requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
     }
   }
 }
