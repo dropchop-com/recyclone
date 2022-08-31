@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
+import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -13,8 +10,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 08. 22.
@@ -38,18 +33,15 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
     throws IOException {
     ExecContextProvider ctxProvider = providerProducer
       .getFirstInitializedExecContextProvider();
-    CommonParams params = null;
+    ResultFilter<?, ?> resultFilter = null;
+    ResultFilterDefaults filterDefaults = null;
     if (ctxProvider != null) {
       ExecContext<?> execContext = ctxProvider.produce();
-      if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
-        Params p = paramsExecContext.getParams();
-        if (p instanceof CommonParams) {
-          params = (CommonParams) p;
-        }
-      }
+      resultFilter = execContext.tryGetResultFilter();
+      filterDefaults = execContext.tryGetResultFilterDefaults();
     }
 
-    if (params != null && !(generator instanceof PropertyFilteringJsonGenerator)) {
+    if (resultFilter != null && !(generator instanceof PropertyFilteringJsonGenerator)) {
       /*log.error("Created PropertyFilteringJsonGenerator [{}] with [{}]", o, params);
       Set<String> excludesIncludes = new LinkedHashSet<>();
       excludesIncludes.addAll(params.getContentIncludes());
@@ -58,7 +50,7 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
         generator, params.getContentTreeLevel(), params.getContentDetailLevel(), new PropertyFilter(excludesIncludes)
       );*/
       generator = new FilteringJsonGenerator(
-        generator, new FilteringContext(params.getContentTreeLevel(), params.getContentDetailLevel())
+        generator, new FilteringContext(resultFilter, filterDefaults)
       );
     }
     delegate.serialize(o, generator, provider);

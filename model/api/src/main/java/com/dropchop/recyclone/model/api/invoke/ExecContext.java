@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.model.api.marker.HasId;
 
 import java.util.List;
@@ -58,5 +59,37 @@ public interface ExecContext<ECL extends ExecContext.Listener> extends Model, Ha
       this.setStartTime(startTime);
     }
     return this;
+  }
+
+
+  default Params tryGetParams() {
+    if (this instanceof ParamsExecContext<?> paramsExecContext) {
+      return paramsExecContext.getParams();
+    }
+    return null;
+  }
+
+  default ResultFilter<?, ?> tryGetResultFilter() {
+    Params params = tryGetParams();
+    if (params instanceof CommonParams<?,?,?,?> commonParams) {
+      return commonParams.getFilter();
+    }
+    return null;
+  }
+
+  default ContentFilter tryGetResultContentFilter() {
+    ResultFilter<?, ?> resultFilter = tryGetResultFilter();
+    if (resultFilter != null) {
+      return resultFilter.getContent();
+    }
+    return null;
+  }
+
+  default ResultFilterDefaults tryGetResultFilterDefaults() {
+    Params params = tryGetParams();
+    if (params instanceof CommonParams<?,?,?,?> commonParams) {
+      return commonParams.getFilterDefaults();
+    }
+    return null;
   }
 }

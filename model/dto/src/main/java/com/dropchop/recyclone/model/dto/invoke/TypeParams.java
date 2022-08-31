@@ -14,6 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class TypeParams extends IdentifierParams
-  implements com.dropchop.recyclone.model.api.invoke.TypeParams {
+  implements com.dropchop.recyclone.model.api.invoke.TypeParams<
+  ResultFilter,
+  ResultFilter.ContentFilter,
+  ResultFilter.LanguageFilter,
+  ResultFilterDefaults> {
   private List<String> types;
 }

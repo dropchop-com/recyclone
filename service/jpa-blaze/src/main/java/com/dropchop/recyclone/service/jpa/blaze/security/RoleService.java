@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.jpa.blaze.security;
 
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -73,8 +74,9 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
 
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
-    if (params.getContentTreeLevel() < 4) {
-      params.setContentTreeLevel(4);
+    ResultFilter.ContentFilter contentFilter = params.tryGetResultContentFilter();
+    if (contentFilter != null && contentFilter.getTreeLevel() < 4) {
+      contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();
@@ -91,8 +93,9 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
 
   @Transactional
   public Result<Role> removePermissions(RoleParams params) {
-    if (params.getContentTreeLevel() < 4) {
-      params.setContentTreeLevel(4);
+    ResultFilter.ContentFilter contentFilter = params.tryGetResultContentFilter();
+    if (contentFilter != null && contentFilter.getTreeLevel() < 4) {
+      contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
     Collection<ERole> roles = find();

@@ -2,7 +2,7 @@ package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class SortCriteriaDecorator extends BlazeCriteriaDecorator {
 
   @Override
   public void decorate() {
-    Params params = getContext().getParams();
-    if (!(params instanceof CommonParams parameters)) {
-      log.warn("Wrong parameters instance [{}] should be [{}]", params.getClass(), CommonParams.class);
+    CommonParams<?, ?, ?, ?> parameters = commonParamsGet();
+    if (parameters == null) {
       return;
     }
-    List<String> sortFieldList = parameters.getSort();
+    ResultFilter<?, ?> resultFilter = parameters.getFilter();
+    List<String> sortFieldList = resultFilter.getSort();
     CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     String alias = getContext().getRootAlias();
 

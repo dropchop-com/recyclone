@@ -56,6 +56,25 @@ public interface Constants {
     }
   }
 
+  interface Params {
+    interface Header {
+      String CFIELDS = "X-Content-Fields";
+      String CLEVEL = "X-Content-Level";
+      String VERSION = "X-Content-Version";
+      String LANG = "Accept-Language";
+    }
+
+    interface Query {
+      String CFIELDS = "c_fields";
+      String CLEVEL = "c_level";
+      String LANG = "lang";
+      String FROM = "from";
+      String SIZE = "size";
+      String STATE = "state";
+      String SORT = "sort";
+    }
+  }
+
   interface ContentDetail {
     String ALL_PREFIX = "all";
     String NESTED_PREFIX = "nest";

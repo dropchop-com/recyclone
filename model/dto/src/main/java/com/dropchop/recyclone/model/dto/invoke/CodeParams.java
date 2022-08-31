@@ -2,6 +2,8 @@ package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.model.dto.invoke.ResultFilter.ContentFilter;
+import com.dropchop.recyclone.model.dto.invoke.ResultFilter.LanguageFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,18 +22,28 @@ import java.util.Set;
 @RequiredArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class CodeParams extends Params
-  implements com.dropchop.recyclone.model.api.invoke.CodeParams {
+  implements com.dropchop.recyclone.model.api.invoke.CodeParams<
+  ResultFilter,
+  ContentFilter,
+  LanguageFilter,
+  ResultFilterDefaults> {
 
-  @Override
-  @JsonIgnore
-  public Collection<State.Code> getHiddenStates() {
-    return Set.of(HasDeactivated.deactivated);
+  public static class Defaults extends ResultFilterDefaults {
+    @Override
+    public Collection<State.Code> getAvailableHiddenStates() {
+      return Set.of(HasDeactivated.deactivated);
+    }
+
+    @Override
+    public String[] getAvailableSortFields() {
+      return new String[] {"+code", "code", "-code"};
+    }
   }
 
   @Override
   @JsonIgnore
-  public String[] getSortFields() {
-    return new String[] {"+code", "code", "-code"};
+  public ResultFilterDefaults getFilterDefaults() {
+    return new Defaults();
   }
 
   @ToString.Include

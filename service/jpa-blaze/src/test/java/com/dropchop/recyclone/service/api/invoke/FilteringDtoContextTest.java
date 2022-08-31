@@ -151,10 +151,11 @@ class FilteringDtoContextTest {
 
     CodeParams params = new CodeParams();
     if (treeLevel != null) {
-      params.setContentTreeLevel(treeLevel);
+      params.getFilter().getContent().treeLevel(treeLevel);
+
     }
     if (detail != null) {
-      params.setContentDetailLevel(detail);
+      params.getFilter().getContent().detailLevel(detail);
     }
     mappingContext.setParams(params);
 

@@ -20,9 +20,9 @@ public class LikeIdentifiersCriteriaDecorator extends LikeListCriteriaDecorator 
     String idColName = alias + ".uuid";
 
     if (params instanceof IdentifierParams) {
-      ids = ((IdentifierParams) params).getIdentifiers();
+      ids = ((IdentifierParams<?, ?, ?, ?>) params).getIdentifiers();
     } else if (params instanceof CodeParams) {
-      ids = ((CodeParams) params).getCodes();
+      ids = ((CodeParams<?, ?, ?, ?>) params).getCodes();
       idColName = alias + ".code";
     } else {
       return;

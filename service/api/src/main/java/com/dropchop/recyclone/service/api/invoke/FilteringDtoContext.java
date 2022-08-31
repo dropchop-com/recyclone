@@ -3,6 +3,10 @@ package com.dropchop.recyclone.service.api.invoke;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter.LanguageFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
 import com.dropchop.recyclone.model.api.localization.Translation;
 import com.dropchop.recyclone.model.api.marker.HasTranslationInlined;
@@ -37,32 +41,48 @@ public class FilteringDtoContext extends MappingContext {
   public void setParams(@NonNull Params params) {
     super.setParams(params);
     if (params instanceof CommonParams commonParams) {
-      Integer contentTreeLevel = commonParams.getContentTreeLevel();
-      if (contentTreeLevel != null) {
-        this.contentTreeLevel = contentTreeLevel;
-        this.contentDetailLevel = null;
+      ResultFilterDefaults defaults = commonParams.getFilterDefaults();
+      if (defaults != null) {
+        contentDetailLevel = defaults.getDetailLevel();
+        contentTreeLevel = defaults.getTreeLevel();
       }
-      String contentDetailLevel = commonParams.getContentDetailLevel();
-      if (contentDetailLevel != null && !contentDetailLevel.isBlank()) {
-        this.contentDetailLevel = contentDetailLevel;
+      ResultFilter<?, ?> resultFilter = commonParams.getFilter();
+      if (resultFilter == null) {
+        return;
+      }
+      ContentFilter contentFilter = resultFilter.getContent();
+      if (contentFilter != null) {
+        Integer contentTreeLevel = contentFilter.getTreeLevel();
+        if (contentTreeLevel != null) {
+          this.contentTreeLevel = contentTreeLevel;
+          this.contentDetailLevel = null;
+        }
+        String contentDetailLevel = contentFilter.getDetailLevel();
+        if (contentDetailLevel != null && !contentDetailLevel.isBlank()) {
+          this.contentDetailLevel = contentDetailLevel;
+        }
+
+        List<String> includes = contentFilter.getIncludes();
+        if (includes != null) {
+          for (String includeStr : includes) {
+            this.includes.add(new FieldFilter().parseFilterSegments(includeStr));
+          }
+        }
+        List<String> excludes = contentFilter.getExcludes();
+        if (excludes != null) {
+          for (String excludeStr : excludes) {
+            this.excludes.add(new FieldFilter().parseFilterSegments(excludeStr));
+          }
+        }
       }
 
-      String translationLang = commonParams.getTranslationLang();
+      LanguageFilter languageFilter = resultFilter.getLang();
+      if (languageFilter == null) {
+        return;
+      }
+      String translationLang = languageFilter.getTranslation();
       if (translationLang != null && !translationLang.isBlank()) {
         this.translationLang = translationLang;
-      }
-
-      List<String> includes = commonParams.getContentIncludes();
-      if (includes != null) {
-        for (String includeStr : includes) {
-          this.includes.add(new FieldFilter().parseFilterSegments(includeStr));
-        }
-      }
-      List<String> excludes = commonParams.getContentExcludes();
-      if (excludes != null) {
-        for (String excludeStr : excludes) {
-          this.excludes.add(new FieldFilter().parseFilterSegments(excludeStr));
-        }
       }
     }
   }

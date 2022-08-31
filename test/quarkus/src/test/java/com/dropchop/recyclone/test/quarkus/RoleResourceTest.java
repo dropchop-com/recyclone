@@ -3,7 +3,6 @@ package com.dropchop.recyclone.test.quarkus;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
@@ -36,7 +35,7 @@ public class RoleResourceTest {
     Role role = new Role();
     role.setCode("test_role");
 
-    String resp = given()
+    given()
       //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -65,7 +64,7 @@ public class RoleResourceTest {
     role.addTranslation(new TitleDescriptionTranslation("sl", "Test"));
 
     List<Role> result = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       //.header("Authorization", "Bearer editortoken1")
@@ -92,8 +91,8 @@ public class RoleResourceTest {
   @Order(30)
   public void addPermissions() {
     RoleParams params = new RoleParams();
-    params.setCodes(List.of("test_role"));
-    params.setContentTreeLevel(2);
+    params.code("test_role");
+    params.filter().content().treeLevel(2);
     List<UUID> permissions = List.of(
       UUID.fromString("f321134e-d383-45c7-bbbf-befc44f41d0c"),
       UUID.fromString("0edf37b1-8b7c-4d81-9f17-05f683f54570"),
@@ -104,7 +103,7 @@ public class RoleResourceTest {
     params.setPermissionUuids(permissions);
 
     List<Role> roles = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")
@@ -128,8 +127,8 @@ public class RoleResourceTest {
   @Order(40)
   public void removeSomePermissions() {
     RoleParams params = new RoleParams();
-    params.setCodes(List.of("test_role"));
-    params.setContentTreeLevel(2);
+    params.code("test_role");
+    params.filter().content().treeLevel(2);
     List<UUID> permissions = List.of(
       UUID.fromString("9629c163-de68-4c6d-8bd5-9bdb5277bcbd"),
       UUID.fromString("83ea8f0e-5261-445d-beb5-c40f35d1fe4e"),
@@ -142,7 +141,7 @@ public class RoleResourceTest {
       UUID.fromString("0edf37b1-8b7c-4d81-9f17-05f683f54570")
     );
     List<Role> roles = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")
@@ -167,8 +166,8 @@ public class RoleResourceTest {
   @Order(50)
   public void removeOtherPermissions() {
     RoleParams params = new RoleParams();
-    params.setCodes(List.of("test_role"));
-    params.setContentTreeLevel(2);
+    params.code("test_role");
+    params.filter().content().treeLevel(2);
     List<UUID> permissions = List.of(
       UUID.fromString("f321134e-d383-45c7-bbbf-befc44f41d0c"),
       UUID.fromString("0edf37b1-8b7c-4d81-9f17-05f683f54570")
@@ -176,7 +175,7 @@ public class RoleResourceTest {
     params.setPermissionUuids(permissions);
 
     List<Role> roles = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")

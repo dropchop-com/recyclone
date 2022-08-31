@@ -3,6 +3,8 @@ package com.dropchop.recyclone.rest.jaxrs.server.openapi;
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.Config;
@@ -18,7 +20,9 @@ import javax.ws.rs.core.Application;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.dropchop.recyclone.model.api.invoke.CommonParams.*;
+import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
+import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
+
 
 /**
  * OpenAPI user interface filter.
@@ -109,7 +113,7 @@ public class CommonUiFilter implements OASFilter {
     for (State.Code code : hidden) {
       itemSchema.addEnumeration(code.toString());
     }
-    return createParam(schema, in, STATE_QUERY, descr);
+    return createParam(schema, in, Query.STATE, descr);
   }
 
   private Parameter createSortParam(Parameter.In in, String descr, String[] sort) {
@@ -122,7 +126,7 @@ public class CommonUiFilter implements OASFilter {
     for (String s : sort) {
       itemSchema.addEnumeration(s);
     }
-    return createParam(schema, in, SORT_QUERY, descr);
+    return createParam(schema, in, Query.SORT, descr);
   }
 
   @Override
@@ -231,37 +235,45 @@ public class CommonUiFilter implements OASFilter {
           return operation;
         }
 
+        ResultFilterDefaults defaults = commonParams.getFilterDefaults();
+
         List<Parameter> newParameters = new ArrayList<>();
         List<Parameter> parameters = operation.getParameters();
         if (parameters != null) {
           newParameters.addAll(parameters);
         }
         newParameters.add(createIntParam(
-          Parameter.In.QUERY, FROM_QUERY,
-          "Starting offset of returned data. For example: " + FROM_QUERY_DEFAULT,
-          FROM_QUERY_MIN
+          Parameter.In.QUERY, Query.FROM,
+          "Starting offset of returned data. For example: " + defaults.getFrom(),
+          defaults.getFromMin()
         ));
         newParameters.add(createIntParam(
-          Parameter.In.QUERY, SIZE_QUERY,
-          "Size of returned data. For example: " + SIZE_QUERY_DEFAULT,
-          SIZE_QUERY_MIN
+          Parameter.In.QUERY, Query.SIZE,
+          "Size of returned data. For example: " + defaults.getSize(),
+          defaults.getSizeMin()
         ));
         newParameters.add(createStrParam(
-          Parameter.In.QUERY, LANG_QUERY,
+          Parameter.In.QUERY, Query.LANG,
           "Optional dot delimited language codes <b>[search_lang.translate_lang]</b> for search and " +
             "returned content which can be translated (i.e.: title, body...). <br />" +
             "For example: English search and Slovene translated response <b>en.sl</b> or " +
             "<b>.sl</b> for default and Slovene translated response."
         ));
         newParameters.add(createStrParam(
-          Parameter.In.HEADER, LANG_HEADER,
+          Parameter.In.HEADER, Header.LANG,
           "Optional dot delimited language codes <b>[search_lang.translate_lang]</b> for search and " +
             "returned content which can be translated (i.e.: title, body...). <br />" +
             "For example: English search and Slovene translated response <b>en.sl</b> or " +
             "<b>.sl</b> for default and Slovene translated response."
         ));
 
-        Collection<State.Code> hiddenStates = commonParams.getHiddenStates();
+        ResultFilter<?, ?> resultFilter = commonParams.getFilter();
+        if (resultFilter == null) {
+          log.warn("[{}] instance is null in [{}]!", ResultFilter.class, CommonParams.class);
+          return operation;
+        }
+
+        Collection<State.Code> hiddenStates = defaults.getAvailableHiddenStates();
         newParameters.add(createStatesParam(
           Parameter.In.QUERY,
           "Also include resources with selected state which are not normally shown in output.",
@@ -272,34 +284,34 @@ public class CommonUiFilter implements OASFilter {
           Parameter.In.QUERY,
           "Sort result by field name, prefixed with <b>[+/-]</b> for ascending / descending order. " +
             "<br /> If prefix is omitted ascending sort order is assumed",
-          commonParams.getSortFields()
+          defaults.getAvailableSortFields()
         ));
 
         newParameters.add(createStrArrayParam(
-          Parameter.In.QUERY, CFIELDS_QUERY,
+          Parameter.In.QUERY, Query.CFIELDS,
           "JSON paths, prefixed with <b>[+/-]</b> describing <b>exclusively included</b> or <b>excluded</b> fields in JSON response object." +
             "<br /> Includes always precede excludes. If prefix is omitted exclusively included JSON path is assumed."
         ));
         newParameters.add(createStrParam(
-          Parameter.In.QUERY, CLEVEL_QUERY,
+          Parameter.In.QUERY, Query.CLEVEL,
           "Level and detail of objects to output in <b>[N].[detail_level]</b> string notation, Where N is tree depth and " +
-            "<br />detail_level can be for instance one of " + commonParams.getAvailableLevelOfContentDetails() + "."
+            "<br />detail_level can be for instance one of " + defaults.getAvailableLevelOfContentDetails() + "."
         ));
         newParameters.add(createStrArrayParam(
-          Parameter.In.HEADER, CFIELDS_HEADER,
+          Parameter.In.HEADER, Query.CFIELDS,
           "JSON paths, prefixed with <b>[+/-]</b> describing <b>exclusively included</b> or <b>excluded</b> fields in JSON response object." +
             "<br /> Includes always precede excludes. If prefix is omitted exclusively included JSON path is assumed."
         ));
         newParameters.add(createStrParam(
-          Parameter.In.HEADER, CLEVEL_HEADER,
+          Parameter.In.HEADER, Query.CLEVEL,
           "Level and detail of objects to output in <b>[N].[detail_level]</b> string notation, Where N is tree depth and " +
-            "<br />detail_level can be for instance one of " + commonParams.getAvailableLevelOfContentDetails() + "."
+            "<br />detail_level can be for instance one of " + defaults.getAvailableLevelOfContentDetails() + "."
         ));
 
         newParameters.add(createStrEnumParam(
-          Parameter.In.HEADER, VERSION_HEADER,
+          Parameter.In.HEADER, Header.VERSION,
           "Requested content response version.",
-          commonParams.getAvailableVersions()
+          defaults.getAvailableVersions()
         ));
         operation.setParameters(newParameters);
       }

@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
 
 import java.util.Deque;
@@ -17,9 +20,22 @@ public class FilteringContext {
   private Object subject;
   private boolean blocked;
 
-  public FilteringContext(Integer maxLevel, String contentDetail) {
-    this.maxLevel = maxLevel == null ? 1 : maxLevel;
-    this.contentDetail = contentDetail == null ? Constants.ContentDetail.ALL_OBJS_IDCODE : contentDetail;
+  public FilteringContext(ResultFilter<?, ?> filter, ResultFilterDefaults filterDefaults) {
+    ContentFilter contentFilter = filter.getContent();
+    Integer maxLevel = null;
+    String contentDetail = null;
+    if (contentFilter != null) {
+      maxLevel = contentFilter.getTreeLevel();
+      contentDetail = contentFilter.getDetailLevel();
+    }
+    if (maxLevel == null) {
+      maxLevel = filterDefaults.getTreeLevel();
+    }
+    if (contentDetail == null) {
+      contentDetail = filterDefaults.getDetailLevel();
+    }
+    this.maxLevel = maxLevel;
+    this.contentDetail = contentDetail == null ? Constants.ContentDetail.NESTED_OBJS_IDCODE : contentDetail;
   }
 
   public int getLevel() {

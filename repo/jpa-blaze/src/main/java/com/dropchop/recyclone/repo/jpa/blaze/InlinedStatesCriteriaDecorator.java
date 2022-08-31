@@ -2,12 +2,13 @@ package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
 import com.dropchop.recyclone.model.api.base.State;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
+import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.marker.state.HasState;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlined;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCurrent;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -22,13 +23,15 @@ public class InlinedStatesCriteriaDecorator extends BlazeCriteriaDecorator {
 
   @Override
   public void decorate() {
-    Params params = getContext().getParams();
-    if (!(params instanceof CommonParams parameters)) {
-      log.warn("Wrong parameters instance [{}] should be [{}]", params.getClass(), CommonParams.class);
+    CommonParams<?, ?, ?, ?> parameters = commonParamsGet();
+    if (parameters == null) {
       return;
     }
-    List<String> showStates = parameters.getStates();
-    Collection<State.Code> hiddenStates = parameters.getHiddenStates();
+    ResultFilter<?, ?> resultFilter = parameters.getFilter();
+    ResultFilterDefaults defaults = parameters.getFilterDefaults();
+
+    List<String> showStates = resultFilter.getStates();
+    Collection<State.Code> hiddenStates = defaults.getAvailableHiddenStates();
     Class<?> tClass = getContext().getRootClass();
     CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     String alias = getContext().getRootAlias();

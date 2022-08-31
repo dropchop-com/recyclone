@@ -51,7 +51,7 @@ public class TagResourceTest {
     languageGroupSlavic.setName("slavic");
     assertEquals("c73847a8-836a-3ad3-b4f8-4a331248088d", languageGroupSlavic.getUuid().toString());
 
-    String resp = given()
+    given()
       //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)

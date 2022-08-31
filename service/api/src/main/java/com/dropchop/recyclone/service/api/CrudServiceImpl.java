@@ -3,10 +3,8 @@ package com.dropchop.recyclone.service.api;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.*;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
@@ -152,8 +150,23 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
     String cDetail = null;
     Integer cLevel = null;
     if (params instanceof CommonParams commonParams) {
-      cDetail = commonParams.getContentDetailLevel();
-      cLevel = commonParams.getContentTreeLevel();
+      ResultFilter<?, ?> resultFilter = commonParams.getFilter();
+      if (resultFilter != null) {
+        ContentFilter contentFilter = resultFilter.getContent();
+        if (contentFilter != null) {
+          cDetail = contentFilter.getDetailLevel();
+          cLevel = contentFilter.getTreeLevel();
+        }
+      }
+      ResultFilterDefaults defaults = commonParams.getFilterDefaults();
+      if (defaults != null) {
+        if (cDetail == null) {
+          cDetail = defaults.getDetailLevel();
+        }
+        if (cLevel == null) {
+          cLevel = defaults.getTreeLevel();
+        }
+      }
     }
     if (cDetail == null) {
       cDetail = ContentDetail.NESTED_OBJS_IDCODE;

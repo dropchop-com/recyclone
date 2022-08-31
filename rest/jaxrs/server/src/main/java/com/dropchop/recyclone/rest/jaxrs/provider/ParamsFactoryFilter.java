@@ -3,6 +3,7 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter.LanguageFilter;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ParamsExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
+import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
 
 /**
  * Creates correct Parameters instance initializes it with default parameters
@@ -98,35 +102,43 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     }
   }
 
-  private void parseLanguage(CommonParams params, String str) {
+  private void parseLanguage(CommonParams<?, ?, ?, ?> params, String str) {
     str = str.replaceAll(";q=\\d+.\\d+", "");
     String[] parts = str.split("\\.", -1);
     if (parts.length < 1 || parts.length > 2) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse language codes parameter",
-        Set.of(new AttributeString(CommonParams.LANG_QUERY, str))));
+        Set.of(new AttributeString(Query.LANG, str))));
+    }
+    ResultFilter<?, ?> resultFilter = params.getFilter();
+    if (resultFilter == null) {
+      return;
+    }
+    LanguageFilter filter = resultFilter.getLang();
+    if (filter == null) {
+      return;
     }
     if (parts[0] != null && !parts[0].isBlank()) {
       parts[0] = parts[0].trim();
       int idx = parts[0].indexOf(",");
       if (idx > 0) {
-        params.setLang(parts[0].substring(0, idx));
+        filter.setSearch(parts[0].substring(0, idx));
       } else {
-        params.setLang(parts[0]);
+        filter.setSearch(parts[0]);
       }
     }
     if (parts.length > 1 && parts[1] != null && !parts[1].isBlank()) {
       parts[1] = parts[1].trim();
       int idx = parts[1].indexOf(",");
       if (idx > 1) {
-        params.setTranslationLang(parts[1].substring(1, idx));
+        filter.setTranslation(parts[1].substring(1, idx));
       } else {
-        params.setTranslationLang(parts[1]);
+        filter.setTranslation(parts[1]);
       }
     }
   }
 
-  private void parseContentLevel(CommonParams params, String str) {
+  private void parseContentLevel(CommonParams<?, ?, ?, ?> params, String str) {
     if (str == null || str.isBlank()) {
       return;
     }
@@ -134,49 +146,89 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     if (parts.length <= 0 || parts.length > 2) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse content level parameter",
-        Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
+        Set.of(new AttributeString(Query.CLEVEL, str))));
     }
-
+    ResultFilter<?, ?> resultFilter = params.getFilter();
+    if (resultFilter == null) {
+      return;
+    }
+    ResultFilter.ContentFilter filter = resultFilter.getContent();
+    if (filter == null) {
+      return;
+    }
+    ResultFilterDefaults defaults = params.getFilterDefaults();
+    if (defaults == null) {
+      return;
+    }
     try {
-      params.setContentTreeLevel(Integer.parseInt(parts[0]));
+      filter.setTreeLevel(Integer.parseInt(parts[0]));
     } catch (NumberFormatException e) {
       throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
         "Unable parse content level tree depth parameter",
-        Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))), e);
+        Set.of(new AttributeString(Query.CLEVEL, str))), e);
     }
 
     if (parts.length == 2) {
-      List<String> levels = params.getAvailableLevelOfContentDetails();
+      List<String> levels = defaults.getAvailableLevelOfContentDetails();
       if (!levels.contains(parts[1])) {
         throw new ServiceException(new StatusMessage(ErrorCode.parameter_validation_error,
           "Unknown content level detail",
-          Set.of(new AttributeString(CommonParams.CLEVEL_QUERY, str))));
+          Set.of(new AttributeString(Query.CLEVEL, str))));
       }
-      params.setContentDetailLevel(parts[1]);
+      filter.setDetailLevel(parts[1]);
     }
   }
 
-  private void decorate(CommonParams params, ContainerRequestContext requestContext) {
+  private void decorate(CommonParams<?, ?, ?, ?> params, ContainerRequestContext requestContext) {
+    ResultFilter<?, ?> resultFilter = params.getFilter();
+    if (resultFilter == null) {
+      return;
+    }
+    ResultFilterDefaults defaults = params.getFilterDefaults();
+    if (defaults == null) {
+      return;
+    }
     UriInfo uriInfo = requestContext.getUriInfo();
-    int from = getInteger(CommonParams.FROM_QUERY, CommonParams.FROM_QUERY_DEFAULT, CommonParams.FROM_QUERY_MIN,
+    int from = getInteger(Query.FROM, defaults.getFrom(), defaults.getFromMin(),
       uriInfo.getQueryParameters());
-    params.setFrom(from);
 
-    int size = getInteger(CommonParams.SIZE_QUERY, CommonParams.SIZE_QUERY_DEFAULT, CommonParams.SIZE_QUERY_MIN,
+    resultFilter.setFrom(from);
+
+    int size = getInteger(Query.SIZE, defaults.getSize(), defaults.getSizeMin(),
       uriInfo.getQueryParameters());
-    params.setSize(size);
+    resultFilter.setSize(size);
 
-    String languageStr = getString(CommonParams.LANG_QUERY, CommonParams.LANG_HEADER, requestContext);
+    String languageStr = getString(Query.LANG, Header.LANG, requestContext);
     if (languageStr != null && !languageStr.isBlank()) {
       parseLanguage(params, languageStr);
     }
 
-    List<String> tmp = getStringList(CommonParams.SORT_QUERY, null, requestContext);
+    List<String> tmp = getStringList(Query.SORT, null, requestContext);
     if (tmp != null) {
-      params.setSort(tmp);
+      resultFilter.setSort(tmp);
     }
 
-    tmp = getStringList(CommonParams.CFIELDS_QUERY, CommonParams.CFIELDS_HEADER, requestContext);
+    String tmpLevel = getString(Query.CLEVEL, Header.CLEVEL, requestContext);
+    if (tmpLevel != null && !tmpLevel.isBlank()) {
+      parseContentLevel(params, tmpLevel);
+    }
+
+    tmp = getStringList(Query.STATE, "<<undefined>>", requestContext);
+    if (tmp != null && !tmp.isEmpty()) {
+      resultFilter.setStates(tmp);
+    }
+
+    String contentVersion = getString(null, Header.VERSION, requestContext);
+    if (contentVersion != null && !contentVersion.isBlank()) {
+      resultFilter.setVersion(contentVersion);
+    }
+
+    ResultFilter.ContentFilter contentFilter = resultFilter.getContent();
+    if (contentFilter == null) {
+      return;
+    }
+
+    tmp = getStringList(Query.CFIELDS, Header.CFIELDS, requestContext);
     if (tmp != null) {
       List<String> includes = new ArrayList<>();
       List<String> excludes = new ArrayList<>();
@@ -193,26 +245,11 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
         }
       }
       if (!includes.isEmpty()) {
-        params.setContentIncludes(includes);
+        contentFilter.setIncludes(includes);
       }
       if (!excludes.isEmpty()) {
-        params.setContentExcludes(excludes);
+        contentFilter.setExcludes(excludes);
       }
-    }
-
-    String tmpLevel = getString(CommonParams.CLEVEL_QUERY, CommonParams.CLEVEL_HEADER, requestContext);
-    if (tmpLevel != null && !tmpLevel.isBlank()) {
-      parseContentLevel(params, tmpLevel);
-    }
-
-    tmp = getStringList(CommonParams.STATE_QUERY, "<<undefined>>", requestContext);
-    if (tmp != null && !tmp.isEmpty()) {
-      params.setStates(tmp);
-    }
-
-    String contentVersion = getString(null, CommonParams.VERSION_HEADER, requestContext);
-    if (contentVersion != null && !contentVersion.isBlank()) {
-      params.setVersion(contentVersion);
     }
   }
 
@@ -234,7 +271,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       }
 
       if (p instanceof CommonParams) {
-        decorate((CommonParams) p, requestContext);
+        decorate((CommonParams<?, ?, ?, ?>) p, requestContext);
       }
 
       log.debug("Created request local [{}].", p);

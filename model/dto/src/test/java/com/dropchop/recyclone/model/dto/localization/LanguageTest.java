@@ -1,6 +1,10 @@
 package com.dropchop.recyclone.model.dto.localization;
 
+import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.ResultFilter;
+import com.dropchop.recyclone.model.dto.invoke.ResultFilter.ContentFilter;
+import com.dropchop.recyclone.model.dto.invoke.ResultFilter.LanguageFilter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -48,6 +52,16 @@ class LanguageTest {
 
   @Test
   void paramsBuilder() {
-    CodeParams params = CodeParams.builder().lang("sl").build();
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(1).detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE);
+    params.filter().lang().search("sl").translation("en");
+
+    CodeParams.builder().filter(
+      new ResultFilter().content(
+        new ContentFilter().treeLevel(1).detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE)
+      ).lang(
+        new LanguageFilter().search("sl").translation("en")
+      )
+    ).build();
   }
 }
