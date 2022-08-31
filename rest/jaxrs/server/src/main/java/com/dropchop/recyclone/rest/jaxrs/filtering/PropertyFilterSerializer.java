@@ -57,6 +57,9 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
       generator = new PropertyFilteringJsonGenerator(
         generator, params.getContentTreeLevel(), params.getContentDetailLevel(), new PropertyFilter(excludesIncludes)
       );*/
+      generator = new FilteringJsonGenerator(
+        generator, new FilteringContext(params.getContentTreeLevel(), params.getContentDetailLevel())
+      );
     }
     delegate.serialize(o, generator, provider);
   }
