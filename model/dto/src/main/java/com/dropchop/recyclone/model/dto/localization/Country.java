@@ -46,6 +46,7 @@ public class Country extends DtoCode
   private Set<TitleTranslation> translations;
 
   @Singular
+  @JsonInclude(NON_EMPTY)
   private List<Tag> tags;
 
   private ZonedDateTime created;

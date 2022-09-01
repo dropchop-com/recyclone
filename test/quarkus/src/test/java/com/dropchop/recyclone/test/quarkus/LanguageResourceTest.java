@@ -250,4 +250,30 @@ public class LanguageResourceTest {
     assertEquals(1, languages.size());
     assertEquals(new Language("bs"), languages.get(0));
   }
+
+  @Test
+  @Order(110)
+  public void languagesEndpointWithLevelFilter() {
+    List<Language> languages = given()
+      //.log().all()
+      .auth().preemptive().basic("user1", "password")
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .when()
+      .get("/api/public/localization/language?from=4&size=2&sort=-code&c_level=3.nest_id")
+      .then()
+      .statusCode(200)
+      .body("status.code", equalTo("success"))
+      .log().all()
+      .extract()
+      .jsonPath().getList("data", Language.class);
+    assertEquals(2, languages.size());
+    assertEquals(new Language("sl"), languages.get(0));
+    /*assertNull(languages.get(0).getLang());
+    assertNotNull(languages.get(0).getTitle());
+    assertNull(languages.get(0).getCreated());
+    assertNull(languages.get(0).getModified());
+    assertNull(languages.get(0).getDeactivated());
+    assertNull(languages.get(0).getTranslations());
+    assertEquals(new Language("hr"), languages.get(1));*/
+  }
 }

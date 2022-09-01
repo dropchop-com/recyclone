@@ -73,6 +73,11 @@ public class TagResourceTest {
   @Test
   @Order(20)
   public void create() {
+    //LanguageGroup languageGroupSlavic = new LanguageGroup();
+    //languageGroupSlavic.setName("slavic");
+    //--languageGroupSlavic.setLang("en");
+    //--languageGroupSlavic.setTitle("Slavic");
+
     LanguageGroup languageGroupSSlavic = new LanguageGroup();
     languageGroupSSlavic.setName("southern_slavic");
     languageGroupSSlavic.setLang("en");
@@ -86,6 +91,7 @@ public class TagResourceTest {
       .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
     languageGroupSSlavic.addAttribute(AttributeValueList.builder()
       .name("prop4").value(List.of("item1", "item2", "item3")).build());
+    //languageGroupSSlavic.addTag(languageGroupSlavic);
 
     LanguageGroup languageGroupItalic = new LanguageGroup();
     languageGroupItalic.setName("italic");
