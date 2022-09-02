@@ -133,8 +133,13 @@ public class SerializationTest {
     ExecContext<?> execContext = execContextProvider.create(null);
     if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
       CodeParams params = new CodeParams();
-      params.getFilter().getContent().treeLevel(1);
-      params.getFilter().getContent().detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE);
+      params
+        .filter()
+        .from(0)
+        .size(10)
+        .content()
+          .treeLevel(1)
+          .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE);
       paramsExecContext.setParams(params);
       //params.setContentIncludes(List.of("code", "lang"));
     }

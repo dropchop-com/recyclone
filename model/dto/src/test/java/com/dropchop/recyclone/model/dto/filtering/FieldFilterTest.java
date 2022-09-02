@@ -1,0 +1,363 @@
+package com.dropchop.recyclone.model.dto.filtering;
+
+import com.dropchop.recyclone.model.api.attr.AttributeBool;
+import com.dropchop.recyclone.model.api.attr.AttributeDate;
+import com.dropchop.recyclone.model.api.attr.AttributeString;
+import com.dropchop.recyclone.model.api.attr.AttributeValueList;
+import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.localization.Language;
+import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
+ */
+class FieldFilterTest {
+
+  private static final Logger log = LoggerFactory.getLogger(FieldFilterTest.class);
+
+  public interface Listener {
+    void prop(PathSegment segment);
+    default boolean dive(PathSegment segment, Model model) {
+      return true;
+    }
+  }
+
+  private LanguageGroup southSlavic, westGermanic, slavic, germanic, baltoSlav, indoEu;
+  private Language sl, en;
+
+  private Map<String, PathSegment> slPaths, enPaths;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    indoEu = new LanguageGroup("indo_european");
+    indoEu.setTitle("Indo-European");
+    indoEu.setLang("en");
+    indoEu.setTags(new ArrayList<>());
+    indoEu.setAttributes(new LinkedHashSet<>());
+    indoEu.addTranslation(new TitleDescriptionTranslation("sl", "Indoevropski"));
+    indoEu.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    indoEu.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+
+    baltoSlav = new LanguageGroup("balto_slavic");
+    baltoSlav.setTitle("Balto-Slavic");
+    baltoSlav.setLang("en");
+    baltoSlav.addTag(indoEu);
+    baltoSlav.setAttributes(new LinkedHashSet<>());
+    baltoSlav.addTranslation(new TitleDescriptionTranslation("sl", "Baltoslovanski"));
+    baltoSlav.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    baltoSlav.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+
+    slavic = new LanguageGroup("slavic");
+    slavic.setTitle("Slavic");
+    slavic.setLang("en");
+    slavic.addTag(baltoSlav);
+    slavic.setAttributes(new LinkedHashSet<>());
+    slavic.addTranslation(new TitleDescriptionTranslation("sl", "Slovanski"));
+    slavic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    slavic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+
+    germanic = new LanguageGroup("germanic");
+    germanic.setTitle("Germanic");
+    germanic.setLang("en");
+    germanic.addTag(indoEu);
+    germanic.setAttributes(new LinkedHashSet<>());
+    germanic.addTranslation(new TitleDescriptionTranslation("sl", "Germanski"));
+    germanic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    germanic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+
+    southSlavic = new LanguageGroup("south_slavic");
+    southSlavic.setTitle("South Slavic");
+    southSlavic.setLang("en");
+    southSlavic.addTag(slavic);
+    southSlavic.setAttributes(new LinkedHashSet<>());
+    southSlavic.addTranslation(new TitleDescriptionTranslation("sl", "Južno slovanski"));
+    southSlavic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    southSlavic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    southSlavic.addAttribute(AttributeString.builder()
+      .name("prop1").value("prop1 value").build());
+    southSlavic.addAttribute(AttributeBool.builder()
+      .name("prop2").value(Boolean.FALSE).build());
+    southSlavic.addAttribute(AttributeDate.builder()
+      .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
+    southSlavic.addAttribute(AttributeValueList.builder()
+      .name("prop4").value(List.of("item1", "item2", "item3")).build());
+
+    westGermanic = new LanguageGroup("west_germanic");
+    westGermanic.setTitle("West Germanic");
+    westGermanic.setLang("en");
+    westGermanic.addTag(germanic);
+    westGermanic.setAttributes(new LinkedHashSet<>());
+    westGermanic.addTranslation(new TitleDescriptionTranslation("sl", "Zahodno Germanski"));
+    westGermanic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    westGermanic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    westGermanic.addAttribute(AttributeString.builder()
+      .name("prop1").value("prop1 value").build());
+    westGermanic.addAttribute(AttributeBool.builder()
+      .name("prop2").value(Boolean.FALSE).build());
+    westGermanic.addAttribute(AttributeDate.builder()
+      .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
+    westGermanic.addAttribute(AttributeValueList.builder()
+      .name("prop4").value(List.of(
+        Iso8601.fromIso("2022-08-01"),
+        Iso8601.fromIso("2022-08-02"),
+        Iso8601.fromIso("2022-08-03"))).build());
+
+    sl = Language.builder()
+      .translation(new TitleTranslation("sl", "Slovenski"))
+      .translation(new TitleTranslation("sr", "Slovenački"))
+      .code("sl")
+      .title("Slovene")
+      .lang("en")
+      .tag(indoEu)
+      .created(Iso8601.fromIso("2022-08-27T00:00:00Z"))
+      .modified(Iso8601.fromIso("2022-08-27T00:00:00Z"))
+      .build();
+
+    en = Language.builder()
+      .translation(new TitleTranslation("sl", "Angleški"))
+      .code("en")
+      .title("English")
+      .lang("en")
+      .tag(westGermanic)
+      .created(Iso8601.fromIso("2022-08-27T00:00:00Z"))
+      .modified(Iso8601.fromIso("2022-08-27T00:00:00Z"))
+      .build();
+
+    PathSegment root = PathSegment.root(sl);
+    slPaths = new LinkedHashMap<>();
+    slPaths.put("", root);
+    buildPaths(p -> slPaths.put(String.join(".", p.indexedPath), p), root, sl);
+
+    root = PathSegment.root(en);
+    enPaths = new LinkedHashMap<>();
+    enPaths.put("", root);
+    buildPaths(p -> enPaths.put(String.join(".", p.indexedPath), p), root, en);
+  }
+
+  private void buildPaths(Listener listener, PathSegment parent, Model model) throws Exception {
+    BeanInfo beanInfo = Introspector.getBeanInfo(model.getClass());
+    PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+    for (PropertyDescriptor prop : props) {
+      String name = prop.getName();
+      Class<?> type = prop.getPropertyType();
+      Method wm = prop.getWriteMethod();
+      if (wm == null) {
+        continue;
+      }
+      Method rm = prop.getReadMethod();
+      //log.info("{}.{} -> {}", model.getClass().getSimpleName(), name, type);
+      if (Collection.class.isAssignableFrom(type)) {
+        CollectionPathSegment p = new CollectionPathSegment(parent, name, model);
+        listener.prop(p);
+        Collection<?> c = (Collection<?>) rm.invoke(model);
+        if (c != null) {
+          for (Object x : c) {
+            if (x instanceof Model m) {
+              if (listener.dive(p, m)) {
+                buildPaths(listener, p, m);
+              }
+              p.incCurrentIndex();
+            }
+          }
+        }
+      } else {
+        PathSegment p = new PathSegment(parent, name, model);
+        listener.prop(p);
+        if (Model.class.isAssignableFrom(type)) {
+          model = (Model)rm.invoke(model);
+          if (listener.dive(p, model)) {
+            buildPaths(listener, p, model);
+          }
+        }
+      }
+    }
+  }
+
+  @Test
+  void fromParamsFilterLevel1() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(1);
+
+//    log.info("****************************************************");
+//    log.info("All path elements:");
+//    slPaths.keySet().forEach(s -> log.info("{}", s));
+
+    FieldFilter fieldFilter = FieldFilter.fromParams(params);
+//    log.info("");
+//    log.info("****************************************************");
+//    log.info("Filter includes:");
+//    fieldFilter.includes.forEach(s -> log.info("{}", s));
+
+    List<String> filtered = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.test(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+//    log.info("");
+//    log.info("****************************************************");
+//    log.info("Filtered list:");
+//    filtered.forEach(s -> log.info("{}", s));
+
+    assertEquals(List.of(
+      "",
+      "code",
+      "created",
+      "deactivated",
+      "lang",
+      "modified",
+      "tags",
+      "title",
+      "translations"), filtered);
+  }
+
+  @Test
+  void fromParamsFilterLevel2() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(2);
+    FieldFilter fieldFilter = FieldFilter.fromParams(params);
+
+    List<String> filtered = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.test(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+
+    assertEquals(List.of(
+      "",
+      "code",
+      "created",
+      "deactivated",
+      "lang",
+      "modified",
+      "tags",
+      "tags[0].attributes",
+      "tags[0].created",
+      "tags[0].deactivated",
+      "tags[0].description",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].modified",
+      "tags[0].name",
+      "tags[0].tags",
+      "tags[0].title",
+      "tags[0].translations",
+      "tags[0].type",
+      "tags[0].uuid",
+      "title",
+      "translations",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"), filtered);
+  }
+
+  @Test
+  void fromParamsFilterLevel2CodeId() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(2)
+      .include("*.code")
+      .include("*.id")
+      .include("*.lang")
+      .include("*.title")
+      .exclude("*.translations");
+
+    FieldFilter fieldFilter = FieldFilter.fromParams(params);
+
+    List<String> filtered = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.test(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+
+    List<String> dive = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.dive(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+
+    assertEquals(List.of(
+      "",
+      "code",
+      "lang",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].title",
+      "title",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].lang",
+      "translations[1].title"), filtered);
+
+    assertEquals(List.of(
+      "",
+      "tags"), dive);
+  }
+
+  @Test
+  void fromParamsFilterLevel2CodeIdWalk() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(2)
+      .include("*.code")
+      .include("*.id")
+      .include("*.lang")
+      .include("*.title")
+      .exclude("*.translations");
+
+    FieldFilter fieldFilter = FieldFilter.fromParams(params);
+    Map<String, PathSegment> paths = new LinkedHashMap<>();
+    PathSegment root = PathSegment.root(sl);
+    paths.put("", root);
+    buildPaths(new Listener() {
+      @Override
+      public void prop(PathSegment p) {
+        if (fieldFilter.test(p)) {
+          paths.put(String.join(".", p.indexedPath), p);
+        }
+      }
+
+      @Override
+      public boolean dive(PathSegment segment, Model model) {
+        return fieldFilter.dive(segment);
+      }
+    }, root, sl);
+
+    List<String> filtered = paths.keySet()
+      .stream()
+      .toList();
+//    log.info("");
+//    log.info("****************************************************");
+//    log.info("Result list:");
+//    filtered.forEach(s -> log.info("{}", s));
+    assertEquals(List.of(
+      "",
+      "code",
+      "lang",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].title",
+      "title"
+    ), filtered);
+  }
+}
