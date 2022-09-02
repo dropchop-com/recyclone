@@ -5,14 +5,12 @@ import com.dropchop.recyclone.model.api.attr.AttributeDate;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.attr.AttributeValueList;
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -23,21 +21,23 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
+@SuppressWarnings({"unused", "FieldCanBeLocal", "MismatchedQueryAndUpdateOfCollection"})
 class FieldFilterTest {
 
   private static final Logger log = LoggerFactory.getLogger(FieldFilterTest.class);
 
-  public interface Listener {
-    void prop(PathSegment segment);
-    default boolean dive(PathSegment segment, Model model) {
-      return true;
-    }
+  public interface PropertyConsumer extends Consumer<PathSegment> {
+  }
+
+  public interface DivePredicate extends Predicate<PathSegment> {
   }
 
   private LanguageGroup southSlavic, westGermanic, slavic, germanic, baltoSlav, indoEu;
@@ -152,7 +152,7 @@ class FieldFilterTest {
     buildPaths(p -> enPaths.put(String.join(".", p.indexedPath), p), root, en);
   }
 
-  private void buildPaths(Listener listener, PathSegment parent, Model model) throws Exception {
+  private void buildPaths(PropertyConsumer listener, DivePredicate divePredicate, PathSegment parent, Model model) throws Exception {
     BeanInfo beanInfo = Introspector.getBeanInfo(model.getClass());
     PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
     for (PropertyDescriptor prop : props) {
@@ -166,12 +166,12 @@ class FieldFilterTest {
       //log.info("{}.{} -> {}", model.getClass().getSimpleName(), name, type);
       if (Collection.class.isAssignableFrom(type)) {
         CollectionPathSegment p = new CollectionPathSegment(parent, name, model);
-        listener.prop(p);
+        listener.accept(p);
         Collection<?> c = (Collection<?>) rm.invoke(model);
         if (c != null) {
           for (Object x : c) {
             if (x instanceof Model m) {
-              if (listener.dive(p, m)) {
+              if (divePredicate.test(p)) {
                 buildPaths(listener, p, m);
               }
               p.incCurrentIndex();
@@ -180,10 +180,10 @@ class FieldFilterTest {
         }
       } else {
         PathSegment p = new PathSegment(parent, name, model);
-        listener.prop(p);
+        listener.accept(p);
         if (Model.class.isAssignableFrom(type)) {
           model = (Model)rm.invoke(model);
-          if (listener.dive(p, model)) {
+          if (divePredicate.test(p)) {
             buildPaths(listener, p, model);
           }
         }
@@ -191,8 +191,12 @@ class FieldFilterTest {
     }
   }
 
+  private void buildPaths(PropertyConsumer listener, PathSegment parent, Model model) throws Exception {
+    buildPaths(listener, segment -> true, parent, model);
+  }
+
   @Test
-  void fromParamsFilterLevel1() throws Exception {
+  void fromParamsFilterLevel1() {
     CodeParams params = new CodeParams();
     params.filter().content().treeLevel(1);
 
@@ -229,7 +233,7 @@ class FieldFilterTest {
   }
 
   @Test
-  void fromParamsFilterLevel2() throws Exception {
+  void fromParamsFilterLevel2() {
     CodeParams params = new CodeParams();
     params.filter().content().treeLevel(2);
     FieldFilter fieldFilter = FieldFilter.fromParams(params);
@@ -272,7 +276,7 @@ class FieldFilterTest {
   }
 
   @Test
-  void fromParamsFilterLevel2CodeId() throws Exception {
+  void fromParamsFilterLevel2CodeId() {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(2)
@@ -329,19 +333,15 @@ class FieldFilterTest {
     Map<String, PathSegment> paths = new LinkedHashMap<>();
     PathSegment root = PathSegment.root(sl);
     paths.put("", root);
-    buildPaths(new Listener() {
-      @Override
-      public void prop(PathSegment p) {
+    buildPaths(
+      p -> {
         if (fieldFilter.test(p)) {
           paths.put(String.join(".", p.indexedPath), p);
         }
-      }
-
-      @Override
-      public boolean dive(PathSegment segment, Model model) {
-        return fieldFilter.dive(segment);
-      }
-    }, root, sl);
+      },
+      fieldFilter::dive,
+      root, sl
+    );
 
     List<String> filtered = paths.keySet()
       .stream()
