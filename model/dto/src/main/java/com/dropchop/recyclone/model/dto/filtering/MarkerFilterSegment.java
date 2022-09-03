@@ -28,15 +28,6 @@ public class MarkerFilterSegment extends FilterSegment {
     this.markers = markers;
   }
 
-  /*public MarkerFilterSegment(PathSegment parent, String name, Integer maxLevel, Collection<Class<?>> markers) {
-    super(parent, name, maxLevel);
-    this.markers = markers;
-  }*/
-
-  /*public MarkerFilterSegment(PathSegment parent, String name, Integer maxLevel, Class<?> ... markers) {
-    this(parent, name, maxLevel, List.of(markers));
-  }*/
-
   protected boolean testInstance(PathSegment segment) {
     if (segment.referer == null) {
       return false;

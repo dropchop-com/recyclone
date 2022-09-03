@@ -64,18 +64,6 @@ public class PathSegment {
     this.index = -1;
   }
 
-  /*public PathSegment(PathSegment parent, String name) {
-    this(parent, name, null);
-  }
-
-  public PathSegment(String name, Object referer) {
-    this(null, name, referer);
-  }
-
-  public PathSegment(String name) {
-    this(null, name, null);
-  }*/
-
   boolean isCollectionElement() {
     return this.index > -1;
   }

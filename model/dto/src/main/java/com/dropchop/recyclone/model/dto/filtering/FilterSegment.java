@@ -40,15 +40,6 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     }
   }
 
-  /*protected FilterSegment(PathSegment parent, String name, Integer maxLevel) {
-    super(parent, name, null);
-    if (maxLevel != null && maxLevel >= 0) {
-      this.maxLevel = maxLevel;
-    } else {
-      this.maxLevel = Integer.MAX_VALUE;
-    }
-  }*/
-
   public boolean willPropertyNest(PathSegment segment) {
     if (segment.referer == null) {
       return false;
