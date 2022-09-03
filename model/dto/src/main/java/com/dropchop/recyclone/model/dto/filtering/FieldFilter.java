@@ -71,22 +71,24 @@ public class FieldFilter implements Predicate<PathSegment> {
     if (detailLevel != null && availableDetails != null && availableDetails.contains(detailLevel)) {
       int tmpLevel = treeLevel == null ? 1 : treeLevel;
       if (detailLevel.startsWith(NESTED_PREFIX)) {
+        includes.add(any(tmpLevel));
         tmpLevel++;
       }
-      FilterSegment anyParent = any(tmpLevel);
 
-      includes.add(new MarkerFilterSegment(anyParent, "id", tmpLevel, HasId.class));
-      includes.add(new MarkerFilterSegment(anyParent, "id", tmpLevel, HasUuid.class));
-      includes.add(new MarkerFilterSegment(anyParent, "code", tmpLevel, HasCode.class));
-      if (detailLevel.contains("_title")) {
-        includes.add(new MarkerFilterSegment(anyParent, "title", tmpLevel, HasTitle.class));
-        includes.add(new MarkerFilterSegment(anyParent, "name", tmpLevel, HasName.class));
-        includes.add(new MarkerFilterSegment(anyParent, "lang", tmpLevel,
+      includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
+      includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasUuid.class));
+      includes.add(MarkerFilterSegment.parse("*.code", tmpLevel, HasCode.class));
+      if (detailLevel.contains("_title") || detailLevel.contains("_trans")) {
+        includes.add(MarkerFilterSegment.parse("*.title", tmpLevel, HasTitle.class));
+        includes.add(MarkerFilterSegment.parse("*.name", tmpLevel, HasName.class));
+        includes.add(MarkerFilterSegment.parse("*.lang", tmpLevel,
           HasTranslation.class, HasTranslationInlined.class));
+        includes.add(MarkerFilterSegment.parse("*.base", tmpLevel, Translation.class));
+        includes.add(MarkerFilterSegment.parse("*.lang", tmpLevel, Translation.class));
       }
       if (detailLevel.contains("_trans")) {
-        includes.add(new MarkerFilterSegment(anyParent, "translations", tmpLevel, HasTranslation.class));
-        includes.add(new MarkerFilterSegment(anyParent, "translations[*]", tmpLevel, Translation.class));
+        includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, HasTranslation.class));
+        includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 1, Translation.class));
       }
     } else if (includes.isEmpty() && excludes.isEmpty()) {
       includes.add(any(treeLevel));
@@ -106,20 +108,17 @@ public class FieldFilter implements Predicate<PathSegment> {
   }
 
   @Override
-  public boolean test(PathSegment path) {
-    if (path.parent == null) {// we always accept root
-      return true;
-    }
+  public boolean test(PathSegment segment) {
     boolean incl = false;
     for (FilterSegment filter : includes) {
-      if (filter.test(path)) {
+      if (filter.test(segment)) {
         incl = true;
         break;
       }
     }
     if (incl) {
       for (FilterSegment filter : excludes) {
-        if (filter.test(path)) {
+        if (filter.test(segment)) {
           incl = false;
           break;
         }
@@ -128,20 +127,20 @@ public class FieldFilter implements Predicate<PathSegment> {
     return incl;
   }
 
-  public boolean dive(PathSegment path) {
-    if (path.parent == null) {// we always accept root
+  public boolean dive(PathSegment segment) {
+    if (segment.parent == null) {// we always accept root
       return true;
     }
     boolean incl = false;
     for (FilterSegment filter : includes) {
-      if (filter.dive(path)) {
+      if (filter.dive(segment)) {
         incl = true;
         break;
       }
     }
     if (incl) {
       for (FilterSegment filter : excludes) {
-        if (filter.test(path)) {
+        if (filter.test(segment)) {
           incl = false;
           break;
         }

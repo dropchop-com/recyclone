@@ -5,6 +5,8 @@ import com.dropchop.recyclone.model.api.attr.AttributeDate;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.attr.AttributeValueList;
 import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
@@ -195,6 +197,23 @@ class FieldFilterTest {
     buildPaths(listener, segment -> true, parent, model);
   }
 
+  private Map<String, PathSegment> walkAndDive(Params params, Model m) throws Exception {
+    FieldFilter fieldFilter = FieldFilter.fromParams(params);
+    Map<String, PathSegment> paths = new LinkedHashMap<>();
+    PathSegment root = PathSegment.root(m);
+    paths.put("", root);
+    buildPaths(
+      p -> {
+        if (fieldFilter.test(p)) {
+          paths.put(String.join(".", p.indexedPath), p);
+        }
+      },
+      fieldFilter::dive,
+      root, m
+    );
+    return paths;
+  }
+
   @Test
   void fromParamsFilterLevel1() {
     CodeParams params = new CodeParams();
@@ -301,7 +320,6 @@ class FieldFilterTest {
       .toList();
 
     assertEquals(List.of(
-      "",
       "code",
       "lang",
       "tags[0].id",
@@ -329,27 +347,10 @@ class FieldFilterTest {
       .include("*.title")
       .exclude("*.translations");
 
-    FieldFilter fieldFilter = FieldFilter.fromParams(params);
-    Map<String, PathSegment> paths = new LinkedHashMap<>();
-    PathSegment root = PathSegment.root(sl);
-    paths.put("", root);
-    buildPaths(
-      p -> {
-        if (fieldFilter.test(p)) {
-          paths.put(String.join(".", p.indexedPath), p);
-        }
-      },
-      fieldFilter::dive,
-      root, sl
-    );
-
-    List<String> filtered = paths.keySet()
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
       .stream()
       .toList();
-//    log.info("");
-//    log.info("****************************************************");
-//    log.info("Result list:");
-//    filtered.forEach(s -> log.info("{}", s));
     assertEquals(List.of(
       "",
       "code",
@@ -358,6 +359,194 @@ class FieldFilterTest {
       "tags[0].lang",
       "tags[0].title",
       "title"
-    ), filtered);
+    ), filteredAndVisited);
+  }
+
+  @Test
+  void fromParamsFilterWalkContentDetailAllIdCode() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(2)
+      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE)
+      ;
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+    assertEquals(List.of(
+      "",
+      "code",
+      "tags[0].id"
+    ), filteredAndVisited);
+  }
+
+
+
+  @Test
+  void fromParamsFilterWalkContentDetailAllIdCodeTitle() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(2)
+      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE)
+    ;
+
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+    assertEquals(List.of(
+      "",
+      "code",
+      "lang",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].name",
+      "tags[0].title",
+      "title",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"
+      ), filteredAndVisited);
+  }
+
+  @Test
+  void fromParamsFilterWalkContentDetailAllIdCodeTitleTranslations() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(2)
+      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS)
+    ;
+
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+//    log.info("");
+//    log.info("****************************************************");
+//    log.info("Result list:");
+//    fileredAndVisited.forEach(s -> log.info("{}", s));
+    assertEquals(List.of(
+      "",
+      "code",
+      "lang",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].name",
+      "tags[0].title",
+      "tags[0].translations",
+      "tags[0].translations[0].base",
+      "tags[0].translations[0].description",
+      "tags[0].translations[0].lang",
+      "tags[0].translations[0].title",
+      "title",
+      "translations",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"
+    ), filteredAndVisited);
+  }
+
+  @Test
+  void fromParamsFilterWalkContentDetailNestedIdCode() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(1)
+      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE)
+    ;
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+    assertEquals(List.of(
+      "",
+      "code",
+      "created",
+      "deactivated",
+      "lang",
+      "modified",
+      "tags",
+      "tags[0].id",
+      "title",
+      "translations"
+    ), filteredAndVisited);
+  }
+
+  @Test
+  void fromParamsFilterWalkContentDetailNestedIdCodeTitle() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(1)
+      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE)
+    ;
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+    assertEquals(List.of(
+      "",
+      "code",
+      "created",
+      "deactivated",
+      "lang",
+      "modified",
+      "tags",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].name",
+      "tags[0].title",
+      "title",
+      "translations",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"
+    ), filteredAndVisited);
+  }
+
+  @Test
+  void fromParamsFilterWalkContentDetailNestedIdCodeTitleTranslations() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(1)
+      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS)
+    ;
+    Map<String, PathSegment> paths = walkAndDive(params, sl);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+    assertEquals(List.of(
+      "",
+      "code",
+      "created",
+      "deactivated",
+      "lang",
+      "modified",
+      "tags",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].name",
+      "tags[0].title",
+      "tags[0].translations",
+      "tags[0].translations[0].base",
+      "tags[0].translations[0].description",
+      "tags[0].translations[0].lang",
+      "tags[0].translations[0].title",
+      "title",
+      "translations",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"
+    ), filteredAndVisited);
   }
 }

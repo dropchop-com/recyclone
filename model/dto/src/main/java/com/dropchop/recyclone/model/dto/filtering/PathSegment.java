@@ -51,7 +51,20 @@ public class PathSegment {
     this.level = parent != null ? parent.level + 1 : 0;
   }
 
-  public PathSegment(PathSegment parent, String name) {
+  protected PathSegment(String[] path) {
+    if (path == null) {
+      path = new String[]{};
+    }
+    this.name = path.length > 0 ? path[path.length - 1] : ROOT_OBJECT;
+    this.referer = null;
+    this.parent = null;
+    this.path = path;
+    this.indexedPath = path;
+    this.level = path.length;
+    this.index = -1;
+  }
+
+  /*public PathSegment(PathSegment parent, String name) {
     this(parent, name, null);
   }
 
@@ -61,7 +74,7 @@ public class PathSegment {
 
   public PathSegment(String name) {
     this(null, name, null);
-  }
+  }*/
 
   boolean isCollectionElement() {
     return this.index > -1;

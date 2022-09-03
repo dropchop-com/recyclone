@@ -45,8 +45,10 @@ public interface ResultFilterDefaults extends Model {
     return List.of(
       Constants.ContentDetail.ALL_OBJS_IDCODE,
       Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE,
+      Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS,
       Constants.ContentDetail.NESTED_OBJS_IDCODE,
-      Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE
+      Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE,
+      Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS
     );
   }
 

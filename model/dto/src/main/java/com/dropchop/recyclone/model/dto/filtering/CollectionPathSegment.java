@@ -11,7 +11,7 @@ public class CollectionPathSegment extends PathSegment {
     super(parent, name, referer);
   }
 
-  public CollectionPathSegment(PathSegment parent, String name) {
+  /*public CollectionPathSegment(PathSegment parent, String name) {
     super(parent, name);
   }
 
@@ -21,7 +21,7 @@ public class CollectionPathSegment extends PathSegment {
 
   public CollectionPathSegment(String name) {
     super(name);
-  }
+  }*/
 
   public void incCurrentIndex() {
     this.currentIndex++;

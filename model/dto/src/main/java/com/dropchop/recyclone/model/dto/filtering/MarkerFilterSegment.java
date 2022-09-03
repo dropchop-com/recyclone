@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.model.dto.filtering;
 
+import com.dropchop.recyclone.model.api.utils.Strings;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -8,32 +10,69 @@ import java.util.List;
  */
 public class MarkerFilterSegment extends FilterSegment {
 
+  public static MarkerFilterSegment parse(String pattern, Integer maxLevel, Class<?> ... markers) {
+    if (pattern == null || pattern.isBlank()) {
+      return null;
+    }
+    if (pattern.startsWith(PATH_DELIM)) {
+      pattern = pattern.substring(1);
+    }
+    String[] pathStr = pattern.split("\\" + PATH_DELIM, 255);
+    return new MarkerFilterSegment(pathStr, maxLevel, List.of(markers));
+  }
+
   public final Collection<Class<?>> markers;
 
-  public MarkerFilterSegment(PathSegment parent, String name, Integer maxLevel, Collection<Class<?>> markers) {
-    super(parent, name, maxLevel);
+  public MarkerFilterSegment(String[] path, Integer maxLevel, Collection<Class<?>> markers) {
+    super(path, maxLevel);
     this.markers = markers;
   }
 
-  public MarkerFilterSegment(PathSegment parent, String name, Collection<Class<?>> markers) {
-    this(parent, name, Integer.MAX_VALUE, markers);
-  }
+  /*public MarkerFilterSegment(PathSegment parent, String name, Integer maxLevel, Collection<Class<?>> markers) {
+    super(parent, name, maxLevel);
+    this.markers = markers;
+  }*/
 
-  public MarkerFilterSegment(PathSegment parent, String name, Integer maxLevel, Class<?> ... markers) {
+  /*public MarkerFilterSegment(PathSegment parent, String name, Integer maxLevel, Class<?> ... markers) {
     this(parent, name, maxLevel, List.of(markers));
+  }*/
+
+  protected boolean testInstance(PathSegment segment) {
+    if (segment.referer == null) {
+      return false;
+    }
+    Class<?> clazz = segment.referer.getClass();
+    for (Class<?> marker : markers) {
+      if (!marker.isAssignableFrom(clazz)) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  public MarkerFilterSegment(PathSegment parent, String name, Class<?> ... markers) {
-    this(parent, name, Integer.MAX_VALUE, List.of(markers));
+  @Override
+  public boolean test(PathSegment segment) {
+    if (!testLevel(segment)) {
+      return false;
+    }
+    if (!testInstance(segment)) {
+      return false;
+    }
+    return testName(segment);
   }
 
-  public boolean filter(PathSegment path) {
-    /*if (filterLevel(path)) {
+  @Override
+  public boolean dive(PathSegment segment) {
+    if (segment.parent == null) {// we always accept root
       return true;
     }
-    if (this.referer == null) {
+    if (startsWithAny() || endsWithAny()) {
+      if (segment.level < maxLevel) {
+        return willPropertyNest(segment);
+      }
+      return false;
+    }
 
-    }*/
-    return false;
+    return Strings.matchPath(this.path, segment.level, segment.indexedPath, segment.level, true);
   }
 }
