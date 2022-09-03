@@ -402,13 +402,7 @@ class FieldFilterTest {
       "tags[0].lang",
       "tags[0].name",
       "tags[0].title",
-      "title",
-      "translations[0].base",
-      "translations[0].lang",
-      "translations[0].title",
-      "translations[1].base",
-      "translations[1].lang",
-      "translations[1].title"
+      "title"
       ), filteredAndVisited);
   }
 
@@ -500,6 +494,7 @@ class FieldFilterTest {
       "tags[0].lang",
       "tags[0].name",
       "tags[0].title",
+      "tags[0].translations",
       "title",
       "translations",
       "translations[0].base",

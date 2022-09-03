@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.dto.filtering;
 
 import com.dropchop.recyclone.model.api.utils.Strings;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
+@Slf4j
 public class MarkerFilterSegment extends FilterSegment {
 
   public static MarkerFilterSegment parse(String pattern, Integer maxLevel, Class<?> ... markers) {
@@ -49,21 +51,7 @@ public class MarkerFilterSegment extends FilterSegment {
     if (!testInstance(segment)) {
       return false;
     }
+    //log.info("Test passes in [{}][{}]", segment, result);
     return testName(segment);
-  }
-
-  @Override
-  public boolean dive(PathSegment segment) {
-    if (segment.parent == null) {// we always accept root
-      return true;
-    }
-    if (startsWithAny() || endsWithAny()) {
-      if (segment.level < maxLevel) {
-        return willPropertyNest(segment);
-      }
-      return false;
-    }
-
-    return Strings.matchPath(this.path, segment.level, segment.indexedPath, segment.level, true);
   }
 }
