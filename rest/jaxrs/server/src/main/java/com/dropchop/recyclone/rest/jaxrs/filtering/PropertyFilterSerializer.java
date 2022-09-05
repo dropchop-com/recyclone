@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
-import com.dropchop.recyclone.model.api.invoke.*;
+import com.dropchop.recyclone.model.api.invoke.ExecContext;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -33,24 +34,15 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
     throws IOException {
     ExecContextProvider ctxProvider = providerProducer
       .getFirstInitializedExecContextProvider();
-    ResultFilter<?, ?> resultFilter = null;
-    ResultFilterDefaults filterDefaults = null;
+    Params params = null;
     if (ctxProvider != null) {
       ExecContext<?> execContext = ctxProvider.produce();
-      resultFilter = execContext.tryGetResultFilter();
-      filterDefaults = execContext.tryGetResultFilterDefaults();
+      params = execContext.tryGetParams();
     }
 
-    if (resultFilter != null && !(generator instanceof PropertyFilteringJsonGenerator)) {
-      /*log.error("Created PropertyFilteringJsonGenerator [{}] with [{}]", o, params);
-      Set<String> excludesIncludes = new LinkedHashSet<>();
-      excludesIncludes.addAll(params.getContentIncludes());
-      excludesIncludes.addAll(params.getContentExcludes().stream().map(s -> s = "-" + s).toList());
-      generator = new PropertyFilteringJsonGenerator(
-        generator, params.getContentTreeLevel(), params.getContentDetailLevel(), new PropertyFilter(excludesIncludes)
-      );*/
+    if (params != null && !(generator instanceof FilteringJsonGenerator)) {
       generator = new FilteringJsonGenerator(
-        generator, new FilteringContext(resultFilter, filterDefaults)
+        generator, new FilteringContext().setParams(params)
       );
     }
     delegate.serialize(o, generator, provider);

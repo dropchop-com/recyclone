@@ -40,9 +40,12 @@ public class ObjectMapperFactory {
     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.disable(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL);
 
-    SimpleModule module = new SimpleModule();
-    module.setSerializerModifier(serializerModifier);
-    mapper.registerModule(module);
+    SimpleModule module;
+    if (this.serializerModifier != null) {
+      module = new SimpleModule();
+      module.setSerializerModifier(serializerModifier);
+      mapper.registerModule(module);
+    }
 
     module = new SimpleModule();
     module.addDeserializer(Attribute.class, new AttributeDeserializer());
