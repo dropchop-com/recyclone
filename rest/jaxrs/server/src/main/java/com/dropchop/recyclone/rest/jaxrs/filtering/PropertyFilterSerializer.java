@@ -2,6 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.filtering;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.dto.filtering.FieldFilter;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -40,11 +41,19 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
       params = execContext.tryGetParams();
     }
 
-    if (params != null && !(generator instanceof FilteringJsonGenerator)) {
-      generator = new FilteringJsonGenerator(
-        generator, new FilteringContext().setParams(params)
-      );
-    }
+//    if (params != null && !(generator instanceof FilteringJsonGenerator)) {
+//      generator = new FilteringJsonGenerator(
+//        generator, FieldFilter.fromParams(params)
+//      );
+//    }
+//
+//    if (generator instanceof FilteringJsonGenerator filteringJsonGenerator) {
+//      if (filteringJsonGenerator.continueSerialization()) {
+//        delegate.serialize(o, generator, provider);
+//      }
+//    } else {
+//      delegate.serialize(o, generator, provider);
+//    }
     delegate.serialize(o, generator, provider);
   }
 }

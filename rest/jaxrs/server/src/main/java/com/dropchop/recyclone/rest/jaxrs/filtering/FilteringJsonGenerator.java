@@ -1,49 +1,73 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
+import com.dropchop.recyclone.model.dto.filtering.CollectionPathSegment;
+import com.dropchop.recyclone.model.dto.filtering.FieldFilter;
+import com.dropchop.recyclone.model.dto.filtering.PathSegment;
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.util.JsonGeneratorDelegate;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Deque;
+import java.util.LinkedList;
+
+import static com.dropchop.recyclone.model.dto.filtering.PathSegment.ROOT_OBJECT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 08. 22.
  */
+@Slf4j
 public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   public interface Invokable {
     void invoke() throws IOException;
   }
-  private final FilteringContext context;
-  private String fieldName;
+  private final Deque<Boolean>  starts = new LinkedList<>();
+  private final Deque<String> fields = new LinkedList<>();
+  private final Deque<PathSegment> segments = new LinkedList<>();
+  private final Deque<Object> path = new LinkedList<>();
 
-  public FilteringJsonGenerator(JsonGenerator d, FilteringContext context) {
+  private final FieldFilter filter;
+
+  public FilteringJsonGenerator(JsonGenerator d, FieldFilter fieldFilter) {
     super(d, false);
-    this.context = context;
+    this.filter = fieldFilter;
   }
 
-  private void _writeFieldName() throws IOException {
-    if (this.fieldName != null) { // write and reset
-      delegate.writeFieldName(this.fieldName);
-      this.fieldName = null;
-    }
-  }
-
+  /**
+   * We are at curr object when we have to decide if we want or write
+   * {
+   *  "propName": [
+   */
   @Override
   public void writeStartArray(Object forValue, int size) throws IOException {
-    if (this.fieldName != null) {
-      context.filter(this.fieldName);
+    String curr = fields.pollLast();
+    PathSegment parent = segments.peekLast();
+    PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, path.peekLast());
+    segments.offerLast(segment);
+
+    //check filter dive
+    boolean dive = filter.dive(segment);
+    //log.info("Start array [{}] dive [{}].", segment, dive);
+    if (!dive) {
+      starts.offerLast(Boolean.FALSE);
+      return;
     }
-    context.before(forValue);
-    _writeFieldName();
+    if (curr != null) {
+      delegate.writeFieldName(curr);
+    }
+    path.offerLast(forValue);
+    starts.offerLast(Boolean.TRUE);
     if (forValue == null) {
       if (size < 0) {
         delegate.writeStartArray();
       } else {
+        //noinspection deprecation
         delegate.writeStartArray(size);
       }
     } else {
@@ -53,6 +77,17 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
         delegate.writeStartArray(forValue, size);
       }
     }
+  }
+
+  public boolean continueSerialization() {
+    PathSegment current = segments.peekLast();
+    if (current == null) {
+      return true;
+    }
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    boolean dive = filter.dive(current);
+    //log.info("continueSerialization [{}] dive [{}].", current, dive);
+    return dive;
   }
 
   @Override
@@ -72,17 +107,40 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeEndArray() throws IOException {
-    context.after();
-    delegate.writeEndArray();
+    Boolean start = starts.pollLast();
+    if (start) {
+      path.pollLast();
+      delegate.writeEndArray();
+    }
+    segments.pollLast();
+    //log.info("End array [{}]", segment);
   }
 
   @Override
   public void writeStartObject(Object forValue, int size) throws IOException {
-    if (this.fieldName != null) {
-      context.filter(this.fieldName);
+    String curr = fields.pollLast();
+    PathSegment parent = segments.peekLast();
+
+    PathSegment segment;
+    if (parent instanceof CollectionPathSegment) {
+      segment = parent; // we skip creating new PathSegment on start object when in collection
+    } else {
+      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, path.peekLast());
     }
-    context.before(forValue);
-    _writeFieldName();
+    segments.offerLast(segment);
+
+    //check filter dive
+    boolean dive = filter.dive(segment);
+    //log.info("Start Object [{}] dive [{}].", segment, dive);
+    if (!dive) {
+      starts.offerLast(Boolean.FALSE);
+      return;
+    }
+    path.offerLast(forValue);
+    starts.offerLast(Boolean.TRUE);
+    if (curr != null) {
+      delegate.writeFieldName(curr);
+    }
     if (forValue == null && size < 0) {
       delegate.writeStartObject();
     } else if (forValue != null && size < 0) {
@@ -104,19 +162,38 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeEndObject() throws IOException {
-    context.after();
-    delegate.writeEndObject();
+    Boolean start = starts.pollLast();
+    if (start) {
+      path.pollLast();
+      delegate.writeEndObject();
+    }
+    PathSegment segment = segments.pollLast();
+    if (segment != null && segment.parent instanceof CollectionPathSegment collSegment) {
+      collSegment.incCurrentIndex();
+    }
   }
 
   public void writeFieldValue(Invokable invokable) throws IOException {
-    context.filter(this.fieldName);
-    _writeFieldName();
-    invokable.invoke();
+    String field = fields.pollLast();
+    PathSegment parent = segments.peekLast();
+    PathSegment segment;
+    if (parent.parent != null &&
+      parent.parent instanceof CollectionPathSegment &&
+      parent.parent.name.equals(parent.name)) {
+      segment = new PathSegment(parent.parent, field, parent.parent.referer);
+    } else {
+      segment = new PathSegment(parent, field, path.peekLast());
+    }
+    //log.info("Property [{}]", segment);
+    if (filter.test(segment)) {
+      delegate.writeFieldName(field);
+      invokable.invoke();
+    }
   }
 
   @Override
   public void writeFieldName(String name) {
-    this.fieldName = name;
+    fields.offerLast(name);
   }
 
   @Override

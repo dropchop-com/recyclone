@@ -4,17 +4,22 @@ import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeDate;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.attr.AttributeValueList;
+import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.model.dto.security.Domain;
+import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,15 +135,176 @@ class PropertyFilterSerializerTest {
   }
 
   @Test
-  void serializeTest() throws Exception {
+  void serializeTestTreeLevel1() throws Exception {
     CodeParams params = new CodeParams();
-    params.filter().content().treeLevel(2);
+    params.filter().content().treeLevel(1);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory(new DefaultPolymorphicRegistry(),
-      new TestPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
-    log.info("{}", json);
+    String expected = """
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "created":"2022-08-27T00:00:00Z",
+            "modified":"2022-08-27T00:00:00Z"
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestTreeLevel2() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(2);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "translations":[
+               {
+                  "lang":"sl",
+                  "title":"Slovenski"
+               },
+               {
+                  "lang":"sr",
+                  "title":"Slovenački"
+               }
+            ],
+            "tags":[
+               {
+                  "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "type":"LanguageGroup",
+                  "title":"Indo-European",
+                  "lang":"en",
+                  "created":"2022-08-27T00:00:00Z",
+                  "modified":"2022-08-27T00:00:00Z",
+                  "name":"indo_european"
+               }
+            ],
+            "created":"2022-08-27T00:00:00Z",
+            "modified":"2022-08-27T00:00:00Z"
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestTreeLevel3() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(3);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "translations":[
+               {
+                  "lang":"sl",
+                  "title":"Slovenski"
+               },
+               {
+                  "lang":"sr",
+                  "title":"Slovenački"
+               }
+            ],
+            "tags":[
+               {
+                  "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "type":"LanguageGroup",
+                  "title":"Indo-European",
+                  "lang":"en",
+                  "translations":[
+                     {
+                        "lang":"sl",
+                        "title":"Indoevropski"
+                     }
+                  ],
+                  "created":"2022-08-27T00:00:00Z",
+                  "modified":"2022-08-27T00:00:00Z",
+                  "name":"indo_european"
+               }
+            ],
+            "created":"2022-08-27T00:00:00Z",
+            "modified":"2022-08-27T00:00:00Z"
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestTreeLevel3_2() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(3);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    Domain domain = new Domain();
+    domain.setCode(Constants.Domains.Localization.LANGUAGE);
+    Action action = new Action();
+    action.setCode(Constants.Actions.ALL);
+    Permission permission = new Permission();
+    permission.setUuid("28c9e87d-befe-4c70-b582-c176653d917c");
+    permission.setAction(action);
+    permission.setDomain(domain);
+    permission.setTitle("Permit all actions on Language");
+    permission.setLang("en");
+    permission.addTranslation(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih."));
+
+    String json = mapper.writeValueAsString(List.of(permission));
+    String expected = """
+     [
+        {
+           "id":"28c9e87d-befe-4c70-b582-c176653d917c",
+           "domain":{
+              "code":"localization.language"
+           },
+           "action":{
+              "code":"*"
+           },
+           "title":"Permit all actions on Language",
+           "lang":"en",
+           "translations":[
+              {
+                 "lang":"sl",
+                 "title":"Dovoli vse akcije na jezikih."
+              }
+           ]
+        }
+     ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
   }
 }

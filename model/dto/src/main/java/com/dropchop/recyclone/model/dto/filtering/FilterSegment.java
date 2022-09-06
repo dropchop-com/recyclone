@@ -102,6 +102,9 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     if (segment.parent == null) {// we always accept root
       return true;
     }
+    if (!testLevel(segment)) {
+      return false;
+    }
     if (startsWithAny() || endsWithAny()) {
       if (segment.level < maxLevel) {
         return willPropertyNest(segment);

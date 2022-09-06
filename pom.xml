@@ -96,6 +96,7 @@
     <jackson.version>2.13.3</jackson.version>
     <quarkus.version>2.9.2.Final</quarkus.version>
     <junit.version>5.8.2</junit.version>
+    <jsonassert.version>1.5.1</jsonassert.version>
     <jakarta.ws.rs.version>2.1.6</jakarta.ws.rs.version>
     <jakarta.cdi-api.version>2.0.2</jakarta.cdi-api.version>
     <jakarta.persistence-api>2.2.3</jakarta.persistence-api>
@@ -136,12 +137,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -273,9 +268,21 @@
       </dependency>
 
       <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.skyscreamer</groupId>
+        <artifactId>jsonassert</artifactId>
+        <version>${jsonassert.version}</version>
         <scope>test</scope>
       </dependency>
 

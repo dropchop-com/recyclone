@@ -12,6 +12,9 @@ import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.model.dto.security.Domain;
+import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -184,9 +187,9 @@ class FieldFilterTest {
         PathSegment p = new PathSegment(parent, name, model);
         listener.accept(p);
         if (Model.class.isAssignableFrom(type)) {
-          model = (Model)rm.invoke(model);
+          Model m = (Model)rm.invoke(model);
           if (divePredicate.test(p)) {
-            buildPaths(listener, p, model);
+            buildPaths(listener, p, m);
           }
         }
       }
@@ -542,6 +545,57 @@ class FieldFilterTest {
       "translations[1].base",
       "translations[1].lang",
       "translations[1].title"
+    ), filteredAndVisited);
+  }
+
+  @Test
+  void fromParamsFilterWalkContentDetailNestedIdCodeTitleTranslationsPermission() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(1)
+      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS)
+    ;
+    Domain domain = new Domain();
+    domain.setCode(com.dropchop.recyclone.model.api.security.Constants.Domains.Localization.LANGUAGE);
+    Action action = new Action();
+    action.setCode(com.dropchop.recyclone.model.api.security.Constants.Actions.ALL);
+    Permission permission = new Permission();
+    permission.setUuid("28c9e87d-befe-4c70-b582-c176653d917c");
+    permission.setAction(action);
+    permission.setDomain(domain);
+    permission.setTitle("Permit all actions on Language");
+    permission.setLang("en");
+    permission.addTranslation(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih."));
+    Map<String, PathSegment> paths = walkAndDive(params, permission);
+    List<String> filteredAndVisited = paths.keySet()
+      .stream()
+      .toList();
+    assertEquals(List.of(
+      "",
+      "action",
+      "action.code",
+      "action.lang",
+      "action.title",
+      "action.translations",
+      "created",
+      "deactivated",
+      "description",
+      "domain",
+      "domain.code",
+      "domain.lang",
+      "domain.title",
+      "domain.translations",
+      "id",
+      "instances",
+      "lang",
+      "modified",
+      "title",
+      "translations",
+      "translations[0].base",
+      "translations[0].description",
+      "translations[0].lang",
+      "translations[0].title",
+      "uuid"
     ), filteredAndVisited);
   }
 }

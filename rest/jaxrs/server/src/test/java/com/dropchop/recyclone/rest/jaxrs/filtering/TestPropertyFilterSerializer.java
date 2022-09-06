@@ -1,10 +1,13 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.dto.filtering.FieldFilter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -13,6 +16,7 @@ import java.io.IOException;
  */
 public class TestPropertyFilterSerializer extends StdSerializer<Object> {
 
+  private static final Logger log = LoggerFactory.getLogger(TestPropertyFilterSerializer.class);
   private final JsonSerializer<Object> delegate;
   private final Params params;
 
@@ -29,9 +33,16 @@ public class TestPropertyFilterSerializer extends StdSerializer<Object> {
     throws IOException {
     if (params != null && !(generator instanceof FilteringJsonGenerator)) {
       generator = new FilteringJsonGenerator(
-        generator, new FilteringContext().setParams(params)
+        generator, FieldFilter.fromParams(params)
       );
     }
-    delegate.serialize(o, generator, provider);
+
+    if (generator instanceof FilteringJsonGenerator filteringJsonGenerator) {
+      if (filteringJsonGenerator.continueSerialization()) {
+        delegate.serialize(o, generator, provider);
+      }
+    } else {
+      delegate.serialize(o, generator, provider);
+    }
   }
 }
