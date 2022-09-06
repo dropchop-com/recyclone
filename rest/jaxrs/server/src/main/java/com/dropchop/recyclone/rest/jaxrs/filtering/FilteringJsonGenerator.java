@@ -2,6 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.filtering;
 
 import com.dropchop.recyclone.model.dto.filtering.CollectionPathSegment;
 import com.dropchop.recyclone.model.dto.filtering.FieldFilter;
+import com.dropchop.recyclone.model.dto.filtering.FilteringState;
 import com.dropchop.recyclone.model.dto.filtering.PathSegment;
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -13,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Deque;
-import java.util.LinkedList;
 
 import static com.dropchop.recyclone.model.dto.filtering.PathSegment.ROOT_OBJECT;
 
@@ -27,16 +26,49 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   public interface Invokable {
     void invoke() throws IOException;
   }
-  private final Deque<Boolean>  starts = new LinkedList<>();
-  private final Deque<String> fields = new LinkedList<>();
-  private final Deque<PathSegment> segments = new LinkedList<>();
-  private final Deque<Object> path = new LinkedList<>();
 
   private final FieldFilter filter;
+  private final FilteringState state;
 
   public FilteringJsonGenerator(JsonGenerator d, FieldFilter fieldFilter) {
     super(d, false);
     this.filter = fieldFilter;
+    this.state = new FilteringState();
+  }
+
+  public boolean continueSerialization() {
+    PathSegment current = state.currentSegment();
+    if (current == null) {
+      return true;
+    }
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    boolean dive = filter.dive(current);
+    //log.info("continueSerialization [{}] dive [{}].", current, dive);
+    return dive;
+  }
+
+  private PathSegment writeEnd(Invokable invokable) throws IOException {
+    if (state.dived()) {
+      state.pollObject();
+      invokable.invoke();
+    }
+    return state.pollSegment();
+  }
+
+  private boolean skipDive(String curr, PathSegment segment, Object forValue) throws IOException {
+    //check filter dive
+    boolean dive = filter.dive(segment);
+    //log.info("Start [{}] dive [{}].", segment, dive);
+    if (!dive) {
+      state.diveSkipped();
+      return true;
+    }
+    if (curr != null) {
+      delegate.writeFieldName(curr);
+    }
+    state.pushObject(forValue);
+    state.divePassed();
+    return false;
   }
 
   /**
@@ -46,23 +78,15 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
    */
   @Override
   public void writeStartArray(Object forValue, int size) throws IOException {
-    String curr = fields.pollLast();
-    PathSegment parent = segments.peekLast();
-    PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, path.peekLast());
-    segments.offerLast(segment);
+    String curr = state.pollField();
+    PathSegment parent = state.currentSegment();
+    PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
+    state.pushSegment(segment);
 
-    //check filter dive
-    boolean dive = filter.dive(segment);
-    //log.info("Start array [{}] dive [{}].", segment, dive);
-    if (!dive) {
-      starts.offerLast(Boolean.FALSE);
+    if (skipDive(curr, segment, forValue)) {
       return;
     }
-    if (curr != null) {
-      delegate.writeFieldName(curr);
-    }
-    path.offerLast(forValue);
-    starts.offerLast(Boolean.TRUE);
+
     if (forValue == null) {
       if (size < 0) {
         delegate.writeStartArray();
@@ -77,17 +101,6 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
         delegate.writeStartArray(forValue, size);
       }
     }
-  }
-
-  public boolean continueSerialization() {
-    PathSegment current = segments.peekLast();
-    if (current == null) {
-      return true;
-    }
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    boolean dive = filter.dive(current);
-    //log.info("continueSerialization [{}] dive [{}].", current, dive);
-    return dive;
   }
 
   @Override
@@ -107,40 +120,32 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeEndArray() throws IOException {
-    Boolean start = starts.pollLast();
-    if (start) {
-      path.pollLast();
-      delegate.writeEndArray();
-    }
-    segments.pollLast();
+    writeEnd(() -> delegate.writeEndArray());
     //log.info("End array [{}]", segment);
   }
 
+  /**
+   * We are at curr object when we have to decide if we want or write
+   * {
+   *  "propName": {
+   */
   @Override
   public void writeStartObject(Object forValue, int size) throws IOException {
-    String curr = fields.pollLast();
-    PathSegment parent = segments.peekLast();
+    String curr = state.pollField();
+    PathSegment parent = state.currentSegment();
 
     PathSegment segment;
     if (parent instanceof CollectionPathSegment) {
       segment = parent; // we skip creating new PathSegment on start object when in collection
     } else {
-      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, path.peekLast());
+      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
     }
-    segments.offerLast(segment);
+    state.pushSegment(segment);
 
-    //check filter dive
-    boolean dive = filter.dive(segment);
-    //log.info("Start Object [{}] dive [{}].", segment, dive);
-    if (!dive) {
-      starts.offerLast(Boolean.FALSE);
+    if (skipDive(curr, segment, forValue)) {
       return;
     }
-    path.offerLast(forValue);
-    starts.offerLast(Boolean.TRUE);
-    if (curr != null) {
-      delegate.writeFieldName(curr);
-    }
+
     if (forValue == null && size < 0) {
       delegate.writeStartObject();
     } else if (forValue != null && size < 0) {
@@ -162,28 +167,25 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeEndObject() throws IOException {
-    Boolean start = starts.pollLast();
-    if (start) {
-      path.pollLast();
-      delegate.writeEndObject();
-    }
-    PathSegment segment = segments.pollLast();
+    PathSegment segment = writeEnd(() -> delegate.writeEndObject());
     if (segment != null && segment.parent instanceof CollectionPathSegment collSegment) {
       collSegment.incCurrentIndex();
     }
   }
 
   public void writeFieldValue(Invokable invokable) throws IOException {
-    String field = fields.pollLast();
-    PathSegment parent = segments.peekLast();
-    PathSegment segment;
+    //String field = fields.pollLast();
+    String field = state.pollField();
+    PathSegment parent = state.currentSegment();
+    /*PathSegment segment;
     if (parent.parent != null &&
       parent.parent instanceof CollectionPathSegment &&
       parent.parent.name.equals(parent.name)) {
       segment = new PathSegment(parent.parent, field, parent.parent.referer);
     } else {
-      segment = new PathSegment(parent, field, path.peekLast());
-    }
+      segment = new PathSegment(parent, field, state.currentObject());
+    }*/
+    PathSegment segment = new PathSegment(parent, field, state.currentObject());
     //log.info("Property [{}]", segment);
     if (filter.test(segment)) {
       delegate.writeFieldName(field);
@@ -193,7 +195,8 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeFieldName(String name) {
-    fields.offerLast(name);
+    state.pushField(name);
+    //fields.offerLast(name);
   }
 
   @Override
