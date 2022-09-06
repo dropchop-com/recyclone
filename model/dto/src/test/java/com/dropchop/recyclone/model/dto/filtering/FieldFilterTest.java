@@ -368,10 +368,10 @@ class FieldFilterTest {
   @Test
   void fromParamsFilterWalkContentDetailAllIdCode() throws Exception {
     CodeParams params = new CodeParams();
-    params.filter().content()
+    params.filter()
+      .content()
       .treeLevel(2)
-      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE)
-      ;
+      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE);
     Map<String, PathSegment> paths = walkAndDive(params, sl);
     List<String> filteredAndVisited = paths.keySet()
       .stream()

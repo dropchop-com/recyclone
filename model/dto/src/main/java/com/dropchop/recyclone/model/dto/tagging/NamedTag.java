@@ -27,6 +27,6 @@ public class NamedTag extends Tag
 
   @Override
   public String toString() {
-    return super.toString() + ",n" + ":" + getName();
+    return super.toString() + ",n:" + getName();
   }
 }

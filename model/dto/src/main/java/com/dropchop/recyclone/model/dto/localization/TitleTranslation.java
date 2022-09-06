@@ -23,4 +23,9 @@ public class TitleTranslation implements com.dropchop.recyclone.model.api.locali
 
   @EqualsAndHashCode.Exclude
   private Boolean base;
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ":" + this.getLang() + ",t:" + this.getTitle();
+  }
 }

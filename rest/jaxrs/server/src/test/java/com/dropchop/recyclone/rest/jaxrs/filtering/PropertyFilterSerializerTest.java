@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static com.dropchop.recyclone.model.api.rest.Constants.*;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
  */
@@ -38,7 +40,7 @@ class PropertyFilterSerializerTest {
   private Language sl, en;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     indoEu = new LanguageGroup("indo_european");
     indoEu.setTitle("Indo-European");
     indoEu.setLang("en");
@@ -304,6 +306,256 @@ class PropertyFilterSerializerTest {
            ]
         }
      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailAllIdCode() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(2)
+      .detailLevel(ContentDetail.ALL_OBJS_IDCODE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+        {
+           "code":"sl",
+           "tags":[
+              {
+                 "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+              }
+           ]
+        }
+     ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailAllIdCodeTitle() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(2)
+      .detailLevel(ContentDetail.ALL_OBJS_IDCODE_TITLE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "tags":[
+               {
+                  "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "title":"Indo-European",
+                  "lang":"en",
+                  "name":"indo_european"
+               }
+            ]
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailAllIdCodeTitleTranslations() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(2)
+      .detailLevel(ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "translations":[
+               {
+                  "lang":"sl",
+                  "title":"Slovenski"
+               },
+               {
+                  "lang":"sr",
+                  "title":"Slovenački"
+               }
+            ],
+            "tags":[
+               {
+                  "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "title":"Indo-European",
+                  "lang":"en",
+                  "translations":[
+                     {
+                        "lang":"sl",
+                        "title":"Indoevropski"
+                     }
+                  ],
+                  "name":"indo_european"
+               }
+            ]
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCode() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(1)
+      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+       [
+          {
+             "code":"sl",
+             "title":"Slovene",
+             "lang":"en",
+             "tags":[
+                {
+                   "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+                }
+             ],
+             "created":"2022-08-27T00:00:00Z",
+             "modified":"2022-08-27T00:00:00Z"
+          }
+       ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCodeTitle() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(1)
+      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE_TITLE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+       [
+           {
+              "code":"sl",
+              "title":"Slovene",
+              "lang":"en",
+              "translations":[
+                 {
+                    "lang":"sl",
+                    "title":"Slovenski"
+                 },
+                 {
+                    "lang":"sr",
+                    "title":"Slovenački"
+                 }
+              ],
+              "tags":[
+                 {
+                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                    "title":"Indo-European",
+                    "lang":"en",
+                    "name":"indo_european"
+                 }
+              ],
+              "created":"2022-08-27T00:00:00Z",
+              "modified":"2022-08-27T00:00:00Z"
+           }
+       ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCodeTitleTrans() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(1)
+      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+       [
+           {
+              "code":"sl",
+              "title":"Slovene",
+              "lang":"en",
+              "translations":[
+                 {
+                    "lang":"sl",
+                    "title":"Slovenski"
+                 },
+                 {
+                    "lang":"sr",
+                    "title":"Slovenački"
+                 }
+              ],
+              "tags":[
+                 {
+                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                    "title":"Indo-European",
+                    "lang":"en",
+                    "translations":[
+                       {
+                          "lang":"sl",
+                          "title":"Indoevropski"
+                       }
+                    ],
+                    "name":"indo_european"
+                 }
+              ],
+              "created":"2022-08-27T00:00:00Z",
+              "modified":"2022-08-27T00:00:00Z"
+           }
+        ]
       """;
     JSONAssert.assertEquals(expected, json, true);
   }

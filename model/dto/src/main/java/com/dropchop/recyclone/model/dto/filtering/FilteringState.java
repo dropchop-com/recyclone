@@ -12,7 +12,6 @@ public class FilteringState {
   private final Deque<String> fields = new LinkedList<>();
   private final Deque<PathSegment> segments = new LinkedList<>();
   private final Deque<Object> objects = new LinkedList<>();
-
   public void pushSegment(PathSegment segment) {
     segments.offerLast(segment);
   }

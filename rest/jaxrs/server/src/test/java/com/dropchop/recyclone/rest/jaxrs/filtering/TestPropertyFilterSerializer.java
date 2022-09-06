@@ -31,15 +31,21 @@ public class TestPropertyFilterSerializer extends StdSerializer<Object> {
   @Override
   public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
     throws IOException {
+    boolean start = false;
     if (params != null && !(generator instanceof FilteringJsonGenerator)) {
+      start = true;
       generator = new FilteringJsonGenerator(
         generator, FieldFilter.fromParams(params)
       );
     }
 
     if (generator instanceof FilteringJsonGenerator filteringJsonGenerator) {
-      if (filteringJsonGenerator.continueSerialization()) {
+      if (filteringJsonGenerator.continueSerialization(o)) {
         delegate.serialize(o, generator, provider);
+        if (start) { // end of root object serialization
+          // actually write the JSON with saved generator write state commands.
+          filteringJsonGenerator.outputDelayedWriteState();
+        }
       }
     } else {
       delegate.serialize(o, generator, provider);

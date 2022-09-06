@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedList;
 
 import static com.dropchop.recyclone.model.dto.filtering.PathSegment.ROOT_OBJECT;
 
@@ -27,8 +28,63 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     void invoke() throws IOException;
   }
 
+  public static class WriteState {
+    public final Invokable invokable;
+
+    public WriteState(Invokable invokable) {
+      this.invokable = invokable;
+    }
+
+    public Boolean matchingStart(WriteState state) {
+      return null;
+    }
+  }
+
+  public static class FieldNameState extends WriteState {
+    public final String field;
+    public FieldNameState(String field, Invokable invokable) {
+      super(invokable);
+      this.field = field;
+    }
+  }
+
+  public static class ObjectStartState extends WriteState {
+
+    public ObjectStartState(Invokable invokable) {
+      super(invokable);
+    }
+  }
+
+  public static class ObjectEndState extends WriteState {
+    public ObjectEndState(Invokable invokable) {
+      super(invokable);
+    }
+
+    public Boolean matchingStart(WriteState state) {
+      return state instanceof ObjectStartState;
+    }
+  }
+
+  public static class ArrayStartState extends WriteState {
+
+    public ArrayStartState(Invokable invokable) {
+      super(invokable);
+    }
+  }
+
+  public static class ArrayEndState extends WriteState {
+    public ArrayEndState(Invokable invokable) {
+      super(invokable);
+    }
+
+    public Boolean matchingStart(WriteState state) {
+      return state instanceof ArrayStartState;
+    }
+  }
+
   private final FieldFilter filter;
   private final FilteringState state;
+  private final LinkedList<WriteState> writeState = new LinkedList<>();
 
   public FilteringJsonGenerator(JsonGenerator d, FieldFilter fieldFilter) {
     super(d, false);
@@ -36,35 +92,53 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     this.state = new FilteringState();
   }
 
-  public boolean continueSerialization() {
+  public void outputDelayedWriteState() throws IOException {
+    for (WriteState ws : writeState) {
+      ws.invokable.invoke();
+    }
+  }
+
+  @SuppressWarnings("unused")
+  public boolean continueSerialization(Object o) {
     PathSegment current = state.currentSegment();
-    if (current == null) {
+    if (current == null) { // root
       return true;
     }
     @SuppressWarnings("UnnecessaryLocalVariable")
     boolean dive = filter.dive(current);
-    //log.info("continueSerialization [{}] dive [{}].", current, dive);
+    //log.info("Continue serialization [{}] -> [{}] dive [{}].", o, current, dive);
     return dive;
   }
 
-  private PathSegment writeEnd(Invokable invokable) throws IOException {
+  private PathSegment writeEnd(WriteState ws) {
     if (state.dived()) {
       state.pollObject();
-      invokable.invoke();
+      WriteState last = writeState.peekLast();
+      Boolean matching = ws.matchingStart(last);
+      if (matching != null && matching) {// empty object or array
+        writeState.pollLast(); //remove start and don't add end
+        last = writeState.peekLast();
+        if (last instanceof FieldNameState) { // remove field name write state
+          writeState.pollLast();
+        }
+      } else {
+        writeState.add(ws);
+      }
+
     }
     return state.pollSegment();
   }
 
-  private boolean skipDive(String curr, PathSegment segment, Object forValue) throws IOException {
+  private boolean skipDive(String curr, PathSegment segment, Object forValue) {
     //check filter dive
     boolean dive = filter.dive(segment);
-    //log.info("Start [{}] dive [{}].", segment, dive);
+    //log.info("Start [{}] -> [{}] dive [{}].", forValue, segment, dive);
     if (!dive) {
       state.diveSkipped();
       return true;
     }
     if (curr != null) {
-      delegate.writeFieldName(curr);
+      writeState.add(new FieldNameState(curr, () -> delegate.writeFieldName(curr)));
     }
     state.pushObject(forValue);
     state.divePassed();
@@ -77,7 +151,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
    *  "propName": [
    */
   @Override
-  public void writeStartArray(Object forValue, int size) throws IOException {
+  public void writeStartArray(Object forValue, int size) {
     String curr = state.pollField();
     PathSegment parent = state.currentSegment();
     PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
@@ -89,39 +163,39 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
     if (forValue == null) {
       if (size < 0) {
-        delegate.writeStartArray();
+        writeState.add(new ArrayStartState(() -> delegate.writeStartArray()));
       } else {
         //noinspection deprecation
-        delegate.writeStartArray(size);
+        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(size)));
       }
     } else {
       if (size < 0) {
-        delegate.writeStartArray(forValue);
+        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(forValue)));
       } else {
-        delegate.writeStartArray(forValue, size);
+        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(forValue, size)));
       }
     }
   }
 
   @Override
-  public void writeStartArray() throws IOException {
+  public void writeStartArray() {
     this.writeStartArray(null, -1);
   }
 
   @Override
-  public void writeStartArray(Object forValue) throws IOException {
+  public void writeStartArray(Object forValue) {
     this.writeStartArray(forValue, -1);
   }
 
   @Override
-  public void writeStartArray(int size) throws IOException {
+  public void writeStartArray(int size) {
     this.writeStartArray(null, size);
   }
 
   @Override
-  public void writeEndArray() throws IOException {
-    writeEnd(() -> delegate.writeEndArray());
-    //log.info("End array [{}]", segment);
+  public void writeEndArray() {
+    writeEnd(new ArrayEndState(() -> delegate.writeEndArray()));
+    //log.info("End array [{}] valid [{}].", segment, props);
   }
 
   /**
@@ -130,7 +204,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
    *  "propName": {
    */
   @Override
-  public void writeStartObject(Object forValue, int size) throws IOException {
+  public void writeStartObject(Object forValue, int size) {
     String curr = state.pollField();
     PathSegment parent = state.currentSegment();
 
@@ -140,63 +214,54 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     } else {
       segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
     }
-    state.pushSegment(segment);
 
+    state.pushSegment(segment);
     if (skipDive(curr, segment, forValue)) {
       return;
     }
 
     if (forValue == null && size < 0) {
-      delegate.writeStartObject();
+      writeState.add(new ObjectStartState(() -> delegate.writeStartObject()));
     } else if (forValue != null && size < 0) {
-      delegate.writeStartObject(forValue);
+      writeState.add(new ObjectStartState(() -> delegate.writeStartObject(forValue)));
     } else {
-      delegate.writeStartObject(forValue, size);
+      writeState.add(new ObjectStartState(() -> delegate.writeStartObject(forValue, size)));
     }
   }
 
   @Override
-  public void writeStartObject() throws IOException {
+  public void writeStartObject() {
     this.writeStartObject(null, -1);
   }
 
   @Override
-  public void writeStartObject(Object forValue) throws IOException {
+  public void writeStartObject(Object forValue) {
     this.writeStartObject(forValue, -1);
   }
 
   @Override
-  public void writeEndObject() throws IOException {
-    PathSegment segment = writeEnd(() -> delegate.writeEndObject());
+  public void writeEndObject() {
+    PathSegment segment = writeEnd(new ObjectEndState(() -> delegate.writeEndObject()));
+    //log.info("End object [{}] valid [{}].", segment, props);
     if (segment != null && segment.parent instanceof CollectionPathSegment collSegment) {
       collSegment.incCurrentIndex();
     }
   }
 
-  public void writeFieldValue(Invokable invokable) throws IOException {
-    //String field = fields.pollLast();
+  public void writeFieldValue(Invokable invokable) {
     String field = state.pollField();
     PathSegment parent = state.currentSegment();
-    /*PathSegment segment;
-    if (parent.parent != null &&
-      parent.parent instanceof CollectionPathSegment &&
-      parent.parent.name.equals(parent.name)) {
-      segment = new PathSegment(parent.parent, field, parent.parent.referer);
-    } else {
-      segment = new PathSegment(parent, field, state.currentObject());
-    }*/
     PathSegment segment = new PathSegment(parent, field, state.currentObject());
     //log.info("Property [{}]", segment);
     if (filter.test(segment)) {
-      delegate.writeFieldName(field);
-      invokable.invoke();
+      writeState.add(new FieldNameState(field, () -> delegate.writeFieldName(field)));
+      writeState.add(new WriteState(invokable));
     }
   }
 
   @Override
   public void writeFieldName(String name) {
     state.pushField(name);
-    //fields.offerLast(name);
   }
 
   @Override
@@ -214,77 +279,77 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
    *-------------------------------------------------------*/
 
   @Override
-  public void writeString(String value) throws IOException {
+  public void writeString(String value) {
     writeFieldValue(() -> delegate.writeString(value));
   }
 
   @Override
-  public void writeString(char[] text, int offset, int len) throws IOException {
+  public void writeString(char[] text, int offset, int len) {
     writeFieldValue(() -> delegate.writeString(text, offset, len));
   }
 
   @Override
-  public void writeString(SerializableString value) throws IOException {
+  public void writeString(SerializableString value) {
     writeFieldValue(() -> delegate.writeString(value));
   }
 
   @Override
-  public void writeRawUTF8String(byte[] text, int offset, int length) throws IOException {
+  public void writeRawUTF8String(byte[] text, int offset, int length) {
     writeFieldValue(() -> delegate.writeRawUTF8String(text, offset, length));
   }
 
   @Override
-  public void writeUTF8String(byte[] text, int offset, int length) throws IOException {
+  public void writeUTF8String(byte[] text, int offset, int length) {
     writeFieldValue(() -> delegate.writeUTF8String(text, offset, length));
   }
 
   @Override
-  public void writeRaw(String text) throws IOException {
+  public void writeRaw(String text) {
     writeFieldValue(() -> delegate.writeRaw(text));
   }
 
   @Override
-  public void writeRaw(String text, int offset, int len) throws IOException {
+  public void writeRaw(String text, int offset, int len) {
     writeFieldValue(() -> delegate.writeRaw(text, offset, len));
   }
 
   @Override
-  public void writeRaw(SerializableString text) throws IOException {
+  public void writeRaw(SerializableString text) {
     writeFieldValue(() -> delegate.writeRaw(text));
   }
 
   @Override
-  public void writeRaw(char[] text, int offset, int len) throws IOException {
+  public void writeRaw(char[] text, int offset, int len) {
     writeFieldValue(() -> delegate.writeRaw(text, offset, len));
   }
 
   @Override
-  public void writeRaw(char c) throws IOException {
+  public void writeRaw(char c) {
     writeFieldValue(() -> delegate.writeRaw(c));
   }
 
   @Override
-  public void writeRawValue(String text) throws IOException {
+  public void writeRawValue(String text) {
     writeFieldValue(() -> delegate.writeRawValue(text));
   }
 
   @Override
-  public void writeRawValue(String text, int offset, int len) throws IOException {
+  public void writeRawValue(String text, int offset, int len) {
     writeFieldValue(() -> delegate.writeRawValue(text, offset, len));
   }
 
   @Override
-  public void writeRawValue(char[] text, int offset, int len) throws IOException {
+  public void writeRawValue(char[] text, int offset, int len) {
     writeFieldValue(() -> delegate.writeRawValue(text, offset, len));
   }
 
   @Override
-  public void writeBinary(Base64Variant b64variant, byte[] data, int offset, int len) throws IOException {
+  public void writeBinary(Base64Variant b64variant, byte[] data, int offset, int len) {
     writeFieldValue(() -> delegate.writeBinary(b64variant, data, offset, len));
   }
 
   @Override
-  public int writeBinary(Base64Variant b64variant, InputStream data, int dataLength) throws IOException {
+  public int writeBinary(Base64Variant b64variant, InputStream data, int dataLength) {
     int[] ret = new int[1];
     writeFieldValue(
       () -> ret[0] = delegate.writeBinary(b64variant, data, dataLength)
@@ -293,74 +358,74 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   }
 
   @Override
-  public void writeNumber(short v) throws IOException {
+  public void writeNumber(short v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(int v) throws IOException {
+  public void writeNumber(int v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(long v) throws IOException {
+  public void writeNumber(long v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(BigInteger v) throws IOException {
+  public void writeNumber(BigInteger v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(double v) throws IOException {
+  public void writeNumber(double v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(float v) throws IOException {
+  public void writeNumber(float v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(BigDecimal v) throws IOException {
+  public void writeNumber(BigDecimal v) {
     writeFieldValue(() -> delegate.writeNumber(v));
   }
 
   @Override
-  public void writeNumber(String encodedValue) throws IOException, UnsupportedOperationException {
+  public void writeNumber(String encodedValue) throws UnsupportedOperationException {
     writeFieldValue(() -> delegate.writeNumber(encodedValue));
   }
 
   @Override
-  public void writeBoolean(boolean v) throws IOException {
+  public void writeBoolean(boolean v) {
     writeFieldValue(() -> delegate.writeBoolean(v));
   }
 
   @Override
-  public void writeNull() throws IOException {
+  public void writeNull() {
     writeFieldValue(() -> delegate.writeNull());
   }
 
   @Override
-  public void writeOmittedField(String fieldName) throws IOException {
+  public void writeOmittedField(String fieldName) {
     writeFieldValue(() -> delegate.writeOmittedField(fieldName));
   }
 
   // 25-Mar-2015, tatu: These are tricky as they sort of predate actual filtering calls.
   //   Let's try to use current state as a clue at least...
   @Override
-  public void writeObjectId(Object id) throws IOException {
+  public void writeObjectId(Object id) {
     writeFieldValue(() -> delegate.writeObjectId(id));
   }
 
   @Override
-  public void writeObjectRef(Object id) throws IOException {
+  public void writeObjectRef(Object id) {
     writeFieldValue(() -> delegate.writeObjectRef(id));
   }
 
   @Override
-  public void writeTypeId(Object id) throws IOException {
+  public void writeTypeId(Object id) {
     writeFieldValue(() -> delegate.writeTypeId(id));
   }
 }
