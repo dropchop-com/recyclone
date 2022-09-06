@@ -4,12 +4,15 @@ import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeDate;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.attr.AttributeValueList;
+import com.dropchop.recyclone.model.api.rest.ResultCode;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.model.dto.rest.ResultStatus;
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.dto.security.Permission;
@@ -26,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.rest.Constants.*;
 
@@ -443,19 +447,29 @@ class PropertyFilterSerializerTest {
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
        [
-          {
-             "code":"sl",
-             "title":"Slovene",
-             "lang":"en",
-             "tags":[
-                {
-                   "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
-                }
-             ],
-             "created":"2022-08-27T00:00:00Z",
-             "modified":"2022-08-27T00:00:00Z"
-          }
-       ]
+           {
+              "code":"sl",
+              "title":"Slovene",
+              "lang":"en",
+              "translations":[
+                 {
+                    "lang":"sl",
+                    "title":"Slovenski"
+                 },
+                 {
+                    "lang":"sr",
+                    "title":"Slovenački"
+                 }
+              ],
+              "tags":[
+                 {
+                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+                 }
+              ],
+              "created":"2022-08-27T00:00:00Z",
+              "modified":"2022-08-27T00:00:00Z"
+           }
+        ]
       """;
     JSONAssert.assertEquals(expected, json, true);
   }
@@ -556,6 +570,68 @@ class PropertyFilterSerializerTest {
               "modified":"2022-08-27T00:00:00Z"
            }
         ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCodeResult() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+      .content()
+      .treeLevel(1)
+      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(
+      new DefaultPolymorphicRegistry(),
+      new TestPropertyFilterSerializerModifier(params)
+    );
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    ResultStatus status = new ResultStatus();
+    status.setCode(ResultCode.success);
+    status.setTime(100);
+    status.setTotal(1);
+
+    Result<Language> result = new Result<>();
+    result.setId("c0991011-4b5d-4b85-9870-6d7a19356926");
+    result.setStatus(status);
+    result.setData(List.of(sl));
+
+    String json = mapper.writeValueAsString(result);
+    String expected = """
+       {
+          "id":"c0991011-4b5d-4b85-9870-6d7a19356926",
+          "status":{
+             "code":"success",
+             "time":100,
+             "total":1
+          },
+          "data":[
+             {
+                "code":"sl",
+                "title":"Slovene",
+                "lang":"en",
+                "translations":[
+                   {
+                      "lang":"sl",
+                      "title":"Slovenski"
+                   },
+                   {
+                      "lang":"sr",
+                      "title":"Slovenački"
+                   }
+                ],
+                "tags":[
+                   {
+                      "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+                   }
+                ],
+                "created":"2022-08-27T00:00:00Z",
+                "modified":"2022-08-27T00:00:00Z"
+             }
+          ]
+       }
       """;
     JSONAssert.assertEquals(expected, json, true);
   }

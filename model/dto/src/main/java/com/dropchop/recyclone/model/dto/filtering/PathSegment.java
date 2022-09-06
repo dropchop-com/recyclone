@@ -24,6 +24,8 @@ public class PathSegment {
   public final String[] path;
   public final String[] indexedPath;
 
+  private boolean dive = true;
+
   public PathSegment(PathSegment parent, String name, Object referer) {
     this.name = name;
     this.referer = referer;
@@ -67,10 +69,20 @@ public class PathSegment {
   boolean isCollectionElement() {
     return this.index > -1;
   }
+
+  public boolean dive() {
+    return dive;
+  }
+
+  public PathSegment dive(boolean dive) {
+    this.dive = dive;
+    return this;
+  }
+
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + ",l:" + level
-      + (referer != null ? ",r:" + referer.getClass().getSimpleName() : "null")
+      + (referer != null ? ",r:" + referer.getClass().getSimpleName() : ",r:null")
       + ",p:" + String.join(PATH_DELIM, indexedPath);
   }
 }

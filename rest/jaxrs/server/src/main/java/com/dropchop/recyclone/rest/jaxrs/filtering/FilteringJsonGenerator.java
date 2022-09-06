@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.dto.filtering.CollectionPathSegment;
 import com.dropchop.recyclone.model.dto.filtering.FieldFilter;
 import com.dropchop.recyclone.model.dto.filtering.FilteringState;
@@ -104,10 +105,11 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     if (current == null) { // root
       return true;
     }
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    boolean dive = filter.dive(current);
-    //log.info("Continue serialization [{}] -> [{}] dive [{}].", o, current, dive);
-    return dive;
+    //noinspection StatementWithEmptyBody
+    if (o instanceof Model) {
+      //log.info("Continue serialization [{}] -> [{}] dive [{}].", o, current, current.dive());
+    }
+    return current.dive();
   }
 
   private PathSegment writeEnd(WriteState ws) {
@@ -124,7 +126,6 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
       } else {
         writeState.add(ws);
       }
-
     }
     return state.pollSegment();
   }
@@ -132,8 +133,8 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   private boolean skipDive(String curr, PathSegment segment, Object forValue) {
     //check filter dive
     boolean dive = filter.dive(segment);
-    //log.info("Start [{}] -> [{}] dive [{}].", forValue, segment, dive);
     if (!dive) {
+      segment.dive(false);
       state.diveSkipped();
       return true;
     }
@@ -157,6 +158,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
     state.pushSegment(segment);
 
+    //log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
     if (skipDive(curr, segment, forValue)) {
       return;
     }
@@ -194,8 +196,9 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeEndArray() {
-    writeEnd(new ArrayEndState(() -> delegate.writeEndArray()));
-    //log.info("End array [{}] valid [{}].", segment, props);
+    @SuppressWarnings("unused")
+    PathSegment segment = writeEnd(new ArrayEndState(() -> delegate.writeEndArray()));
+    //log.info("End array [{}] valid.", segment);
   }
 
   /**
@@ -214,8 +217,9 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     } else {
       segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
     }
-
     state.pushSegment(segment);
+
+    //log.info("Start object [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
     if (skipDive(curr, segment, forValue)) {
       return;
     }
@@ -242,7 +246,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   @Override
   public void writeEndObject() {
     PathSegment segment = writeEnd(new ObjectEndState(() -> delegate.writeEndObject()));
-    //log.info("End object [{}] valid [{}].", segment, props);
+    //log.info("End object [{}].", segment);
     if (segment != null && segment.parent instanceof CollectionPathSegment collSegment) {
       collSegment.incCurrentIndex();
     }
@@ -261,7 +265,11 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   @Override
   public void writeFieldName(String name) {
-    state.pushField(name);
+    PathSegment current = state.currentSegment();
+    if (current == null || current.dive()) { // root or valid
+      //log.info("Field name [{}].", name);
+      state.pushField(name);
+    }
   }
 
   @Override

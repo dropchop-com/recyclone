@@ -1,6 +1,11 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.model.api.rest.Result;
+import com.dropchop.recyclone.model.api.rest.ResultStats;
+import com.dropchop.recyclone.model.api.rest.ResultStatus;
 import com.dropchop.recyclone.model.dto.filtering.FieldFilter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -28,11 +33,18 @@ public class TestPropertyFilterSerializer extends StdSerializer<Object> {
     this.params = params;
   }
 
+  private boolean wrappedResult(Object o) {
+    return o instanceof Result<?,?,?> ||
+      o instanceof ResultStatus<?> ||
+      o instanceof ResultStats ||
+      o instanceof StatusMessage;
+  }
+
   @Override
   public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
     throws IOException {
     boolean start = false;
-    if (params != null && !(generator instanceof FilteringJsonGenerator)) {
+    if (params != null && o instanceof Model && !wrappedResult(o) && !(generator instanceof FilteringJsonGenerator)) {
       start = true;
       generator = new FilteringJsonGenerator(
         generator, FieldFilter.fromParams(params)

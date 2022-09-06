@@ -469,8 +469,15 @@ class FieldFilterTest {
       "modified",
       "tags",
       "tags[0].id",
+      "tags[0].translations",
       "title",
-      "translations"
+      "translations",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"
     ), filteredAndVisited);
   }
 
