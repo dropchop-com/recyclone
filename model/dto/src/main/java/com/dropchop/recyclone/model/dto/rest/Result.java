@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.model.dto.rest;
 
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
 import com.dropchop.recyclone.model.api.rest.ResultCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -33,35 +31,23 @@ public class Result<T> implements com.dropchop.recyclone.model.api.rest.Result<T
   private List<T> data = new ArrayList<>();
 
 
-  public Result<T> toSuccess(List<T> data, int totalCount, ExecContext<?> context, ResultStats stats) {
+  public Result<T> toSuccess(List<T> data, int totalCount, ResultStats stats) {
 
-    long time = 0;
-    if (context instanceof ParamsExecContext<?> paramsExecContext) {
-      time = paramsExecContext.getExecTime();
-    }
-    ResultStatus status = new ResultStatus(ResultCode.success, time, totalCount, stats, null, null);
+    ResultStatus status = new ResultStatus(ResultCode.success, 0, totalCount, stats, null, null);
     this.setStatus(status);
 
     return this;
   }
 
-  public Result<T> toSuccess(List<T> data, int totalCount, ExecContext<?> context) {
-    return toSuccess(data, totalCount, context, null);
-  }
-
   public Result<T> toSuccess(List<T> data, int totalCount) {
-    return toSuccess(data, totalCount, null, null);
+    return toSuccess(data, totalCount, null);
   }
 
   public Result<T> toSuccess(List<T> data) {
-    return toSuccess(data, 0, null, null);
-  }
-
-  public Result<T> toSuccess(List<T> data, ExecContext<?> context, ResultStats stats) {
-    return toSuccess(data, 0, context, stats);
+    return toSuccess(data, 0, null);
   }
 
   public Result<T> toSuccess(List<T> data, ResultStats stats) {
-    return toSuccess(data, 0, null, stats);
+    return toSuccess(data, 0, stats);
   }
 }
