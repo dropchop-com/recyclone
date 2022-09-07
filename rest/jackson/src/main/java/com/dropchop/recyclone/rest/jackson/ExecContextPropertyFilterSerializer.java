@@ -18,13 +18,10 @@ import java.io.IOException;
 public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSerializer {
 
   private final ExecContextProviderProducer providerProducer;
-  private final JsonSerializer<Object> delegate;
 
   public ExecContextPropertyFilterSerializer(JsonSerializer<Object> delegate,
                                              ExecContextProviderProducer execContextProviderProducer) {
-    //noinspection unchecked
     super(delegate, null);
-    this.delegate = delegate;
     this.providerProducer = execContextProviderProducer;
   }
 
