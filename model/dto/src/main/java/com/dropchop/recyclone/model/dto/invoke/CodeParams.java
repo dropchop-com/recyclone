@@ -20,7 +20,6 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @RequiredArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class CodeParams extends Params
   implements com.dropchop.recyclone.model.api.invoke.CodeParams<
   ResultFilter,
@@ -49,4 +48,9 @@ public class CodeParams extends Params
   @ToString.Include
   @Singular
   private List<String> codes = new ArrayList<>();
+
+  @Override
+  public String toString() {
+    return super.toString() + ":" + getCodes();
+  }
 }

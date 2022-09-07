@@ -2,12 +2,12 @@ package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,7 +17,6 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class TagParams extends TypeParams {
 
   public static class Defaults extends ResultFilterDefaults {
@@ -26,7 +25,4 @@ public class TagParams extends TypeParams {
       return Set.of(HasDeactivated.deactivated);
     }
   }
-
-  @Singular
-  private List<String> types = new ArrayList<>();
 }

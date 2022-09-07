@@ -4,8 +4,9 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter.LanguageFilter;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.service.api.invoke.ParamsExecContextProvider;
+import com.dropchop.recyclone.model.api.utils.Uuid;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.ConstrainedTo;
@@ -14,10 +15,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
@@ -273,7 +271,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       if (p instanceof CommonParams) {
         decorate((CommonParams<?, ?, ?, ?>) p, requestContext);
       }
-
+      p.setRequestId(Uuid.getTimeBased().toString());
       log.debug("Created request local [{}].", p);
       paramsExecContextProvider.setParams(p);
       requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);

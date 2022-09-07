@@ -2,6 +2,8 @@ package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.ExecContextType;
@@ -9,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * Container and CDI provider for Request scoped {@link com.dropchop.recyclone.model.api.invoke.ExecContext}
@@ -30,7 +31,7 @@ public class DefaultExecContextProvider implements ExecContextProvider, ParamsEx
   }
 
   @Override
-  public <D extends Dto> DefaultExecContext<D> create(UriInfo uriInfo) {
+  public <D extends Dto> DefaultExecContext<D> create() {
     this.execContext = new DefaultExecContext<>();
     log.debug("Created [{}] [{}]", this, this.execContext);
     //noinspection unchecked

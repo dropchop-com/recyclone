@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.service.api.mapping;
 
+import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
+import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistryConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;

@@ -14,6 +14,7 @@
   </parent>
 
   <modules>
+    <module>jackson</module>
     <module>jaxrs</module>
   </modules>
 </project>

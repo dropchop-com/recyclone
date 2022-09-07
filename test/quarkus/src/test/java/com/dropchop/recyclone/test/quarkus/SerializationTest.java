@@ -14,8 +14,8 @@ import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -130,7 +130,7 @@ public class SerializationTest {
   public void testDeepSerialization() throws Exception {
     ExecContextProvider execContextProvider = execContextProviderProducer
       .getExecContextProvider(DefaultExecContextProvider.class);
-    ExecContext<?> execContext = execContextProvider.create(null);
+    ExecContext<?> execContext = execContextProvider.create();
     if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
       CodeParams params = new CodeParams();
       params

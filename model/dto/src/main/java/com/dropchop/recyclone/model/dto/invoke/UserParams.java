@@ -10,6 +10,5 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class UserParams extends IdentifierParams {
 }

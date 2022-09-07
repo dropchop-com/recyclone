@@ -1,8 +1,8 @@
 quarkus:
   log:
     category:
-      "org.apache.shiro":
-        level: DEBUG
+      #"org.apache.shiro":
+      #  level: DEBUG
       "com.dropchop":
         level: DEBUG
 
@@ -14,9 +14,9 @@ quarkus:
       port: 35432
 
   hibernate-orm:
-    log:
-      sql: true
-      bind-parameters: true
+    #log:
+    #  sql: true
+    #  bind-parameters: true
     database:
       generation: drop-and-create
     sql-load-script: dev-import.sql

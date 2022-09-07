@@ -23,4 +23,9 @@ public class IdentifierParams extends Params
   @Singular
   @ToString.Include
   private List<String> identifiers = new ArrayList<>();
+
+  @Override
+  public String toString() {
+    return super.toString() + ":" + getIdentifiers();
+  }
 }

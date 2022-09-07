@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariable
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;

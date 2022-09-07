@@ -127,4 +127,9 @@ public class ResultFilter
     this.lang = languageFilter;
     return this;
   }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName();
+  }
 }

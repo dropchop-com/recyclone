@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.dto.invoke;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,12 +13,18 @@ import java.util.List;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class TypeParams extends IdentifierParams
   implements com.dropchop.recyclone.model.api.invoke.TypeParams<
   ResultFilter,
   ResultFilter.ContentFilter,
   ResultFilter.LanguageFilter,
   ResultFilterDefaults> {
-  private List<String> types;
+
+  @Singular
+  private List<String> types = new ArrayList<>();
+
+  @Override
+  public String toString() {
+    return super.toString() + ",types:" + getTypes();
+  }
 }

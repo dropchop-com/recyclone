@@ -222,6 +222,11 @@
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-rest-jackson</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-rest-jaxrs-api</artifactId>
         <version>${project.version}</version>
       </dependency>

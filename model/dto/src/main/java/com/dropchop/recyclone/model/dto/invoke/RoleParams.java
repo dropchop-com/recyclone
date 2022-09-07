@@ -16,7 +16,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class RoleParams extends CodeParams {
   private List<UUID> permissionUuids;
 }

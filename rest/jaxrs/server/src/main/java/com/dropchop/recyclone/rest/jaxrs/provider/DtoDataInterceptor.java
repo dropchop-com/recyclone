@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.ConstrainedTo;

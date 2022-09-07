@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ECountryGroup;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
-import com.dropchop.recyclone.service.api.mapping.PolymorphicRegistry;
+import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.enterprise.context.ApplicationScoped;

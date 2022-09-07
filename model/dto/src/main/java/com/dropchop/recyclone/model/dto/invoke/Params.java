@@ -21,7 +21,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class Params implements Dto, CommonParams<ResultFilter, ResultFilter.ContentFilter, ResultFilter.LanguageFilter, ResultFilterDefaults> {
 
   private String requestId;
@@ -38,4 +37,9 @@ public class Params implements Dto, CommonParams<ResultFilter, ResultFilter.Cont
   @Singular
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes = new LinkedHashSet<>();
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ":" + getRequestId();
+  }
 }

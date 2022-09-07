@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.rest.Result;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
-import com.dropchop.recyclone.service.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;

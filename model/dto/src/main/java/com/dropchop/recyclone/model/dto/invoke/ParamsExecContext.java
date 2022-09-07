@@ -12,7 +12,6 @@ import java.util.UUID;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class ParamsExecContext<ECL extends Listener>
   implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<ECL> {
 
@@ -78,5 +77,10 @@ public class ParamsExecContext<ECL extends Listener>
   public <P extends Params> ParamsExecContext<ECL> params(P params) {
     this.setParams(params);
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ":" + getId() + ", p:" + params;
   }
 }
