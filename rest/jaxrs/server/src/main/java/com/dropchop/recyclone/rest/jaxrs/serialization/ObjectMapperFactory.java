@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.serialization;
 
 import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
-import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.dropchop.recyclone.rest.jaxrs.filtering.ExecContextPropertyFilterSerializerModifier;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,7 +17,7 @@ public class ObjectMapperFactory extends com.dropchop.recyclone.rest.jackson.Obj
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   public ObjectMapperFactory(PolymorphicRegistry polymorphicRegistry,
-                             BeanSerializerModifier serializerModifier) {
+                             ExecContextPropertyFilterSerializerModifier serializerModifier) {
     super(polymorphicRegistry, serializerModifier);
   }
 }

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api.filtering;
 
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
@@ -103,6 +104,9 @@ public class FieldFilter implements Predicate<PathSegment> {
   }
 
   public static FieldFilter fromParams(Params params) {
+    if (!(params instanceof CommonParams)) {
+      return null;
+    }
     ResultFilterDefaults filterDefaults = params.tryGetFilterDefaults();
     ContentFilter contentFilter = params.tryGetResultContentFilter();
     return fromFilter(contentFilter, filterDefaults);

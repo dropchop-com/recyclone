@@ -89,6 +89,30 @@ public interface ResultFilter<CF extends ResultFilter.ContentFilter, LF extends 
     }
   }
 
+  static int getSize(Params params, int def) {
+    ResultFilter<?,?> filter = params.tryGetResultFilter();
+    ResultFilterDefaults defaults = params.tryGetFilterDefaults();
+    Integer size = null;
+    if (filter != null) {
+      size = filter.size();
+    } else if (defaults != null) {
+      size = defaults.getSize();
+    }
+    return size == null ? def : size;
+  }
+
+  static int getFrom(Params params, int def) {
+    ResultFilter<?,?> filter = params.tryGetResultFilter();
+    ResultFilterDefaults defaults = params.tryGetFilterDefaults();
+    Integer from = null;
+    if (filter != null) {
+      from = filter.from();
+    } else if (defaults != null) {
+      from = defaults.getFrom();
+    }
+    return from == null ? def : from;
+  }
+
   CF getContent();
   void setContent(CF contentFilter);
 
