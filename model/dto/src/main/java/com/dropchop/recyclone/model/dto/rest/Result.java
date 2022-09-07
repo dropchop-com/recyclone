@@ -35,7 +35,7 @@ public class Result<T> implements com.dropchop.recyclone.model.api.rest.Result<T
 
     ResultStatus status = new ResultStatus(ResultCode.success, 0, totalCount, stats, null, null);
     this.setStatus(status);
-
+    this.setData(data);
     return this;
   }
 
