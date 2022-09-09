@@ -29,10 +29,19 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return new FilterSegment(pathStr, maxLevel);
   }
 
+  public static boolean isCollection(Object obj) {
+    return obj instanceof Collection<?> || (obj!=null && obj.getClass().isArray());
+  }
+
   public static boolean willPropertyNest(PathSegment segment) {
     if (segment.referer == null) {
       return false;
     }
+
+    if (isCollection(segment.referer)) {
+      return true;
+    }
+
     String propName = segment.name;
     try {
       Method m = segment.referer.getClass().getMethod("get" +

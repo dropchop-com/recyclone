@@ -33,24 +33,28 @@ public class PathSegment {
     if (parent != null) {
       if (parent instanceof CollectionPathSegment collSegment) {
         this.index = collSegment.currentIndex;
-        this.path = Arrays.copyOf(parent.path, parent.path.length + 1);
-        this.path[path.length - 1] = name;
-        this.indexedPath = Arrays.copyOf(parent.indexedPath, parent.indexedPath.length + 1);
-        this.indexedPath[this.indexedPath.length - 2] += "[" + this.index + "]";
-        this.indexedPath[this.indexedPath.length - 1] = name;
+        this.path = Arrays.copyOf(parent.path, parent.path.length);
+        this.indexedPath = Arrays.copyOf(parent.indexedPath, parent.indexedPath.length);
+        this.indexedPath[this.indexedPath.length - 1] += "[" + this.index + "]";
       } else {
         this.index = -1;
         this.path = Arrays.copyOf(parent.path, parent.path.length + 1);
         this.path[path.length - 1] = name;
-        this.indexedPath = path;
+        this.indexedPath = Arrays.copyOf(parent.indexedPath, parent.indexedPath.length + 1);
+        this.indexedPath[indexedPath.length - 1] = name;
+      }
+
+      if (this instanceof CollectionPathSegment) {
+        this.level = parent.level;
+      } else {
+        this.level = parent.level + 1;
       }
     } else {
       this.index = -1;
       this.path = new String[]{};
       this.indexedPath = path;
+      this.level = 0;
     }
-
-    this.level = parent != null ? parent.level + 1 : 0;
   }
 
   protected PathSegment(String[] path) {

@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.service.api.invoke;
 
-import com.dropchop.recyclone.model.api.filtering.CollectionPathSegment;
-import com.dropchop.recyclone.model.api.filtering.FieldFilter;
-import com.dropchop.recyclone.model.api.filtering.FilteringState;
-import com.dropchop.recyclone.model.api.filtering.PathSegment;
+import com.dropchop.recyclone.model.api.filtering.*;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -37,62 +34,66 @@ public class FilteringDtoContext extends MappingContext {
     return this;
   }
 
-  private boolean isCollection(Object obj) {
-    return obj instanceof Collection<?> || (obj!=null && obj.getClass().isArray());
-  }
-
   public void before(Object source, Object ignoredTarget) {
     String curr = state.pollField();
     state.pushObject(source);
     PathSegment parent = state.currentSegment();
     PathSegment segment;
-    if (isCollection(source)) {
+    boolean isCollection = FilterSegment.isCollection(source);
+    if (isCollection) {
       segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr,
         parent != null ? parent.referer : source);
     } else {
       segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, source);
     }
-    state.pushSegment(segment);
-    if (parent instanceof CollectionPathSegment cps) {
-      cps.incCurrentIndex();
+    if (segment.parent instanceof CollectionPathSegment && !isCollection) {
+      segment = segment.parent;
     }
+    state.pushSegment(segment);
 
-    log.info("Start object [{}] -> [{}] dive [{}].", source, segment, filter.dive(segment));
+    boolean dive = true;
     if (filter != null) {
-      boolean dive = filter.dive(segment);
+      dive = filter.dive(segment);
       if (!dive) {
         segment.dive(false);
       }
     }
+    log.info("Start object [{}] -> [{}] dive [{}].", source.getClass().getSimpleName(), segment, dive);
   }
 
   public boolean filter(@TargetPropertyName String propName) {
-    PathSegment parent = state.currentSegment();
-    if (!parent.dive()) {
+    PathSegment curr = state.currentSegment();
+    if (!curr.dive()) {
       return false;
     }
-    PathSegment segment;
-    if (parent instanceof CollectionPathSegment) {
-      segment = parent;
-    } else {
-      segment = new PathSegment(parent, propName, state.currentObject());
+    if (curr.parent instanceof CollectionPathSegment) {
+      curr = curr.parent;
     }
+    PathSegment segment = new PathSegment(curr, propName, state.currentObject());
 
+    boolean dive = true;
+    boolean test = true;
     if (filter != null) {
-      boolean dive = filter.dive(segment);
+      dive = filter.dive(segment);
+      test = filter.test(segment);
       if (!dive) {
         segment.dive(false);
       } else {
         state.pushField(propName);
       }
     }
-    log.info("Property [{}]", segment);
-    return filter.test(segment);
+
+
+    log.info("Property [{}] dive [{}] filter [{}]", segment, dive, test);
+    return test;
   }
 
   public void after(Object ignoredSource, Object target) {
     state.pollObject();
     PathSegment segment = state.pollSegment();
-    log.info("End object [{}] -> [{}] dive [{}].", ignoredSource, segment, filter.dive(segment));
+    if (segment.parent instanceof CollectionPathSegment cps) {
+      cps.incCurrentIndex();
+    }
+    log.info("End object [{}] -> [{}].", ignoredSource.getClass().getSimpleName(), segment);
   }
 }

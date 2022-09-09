@@ -12,9 +12,9 @@ quarkus:
     password: last_dev_test
 
   hibernate-orm:
-    log:
-      sql: true
-      bind-parameters: true
+    #log:
+    #  sql: true
+    #  bind-parameters: true
     database:
       generation: drop-and-create
     sql-load-script: dev-import.sql

@@ -158,7 +158,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
     state.pushSegment(segment);
 
-    //log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
+    log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
     if (skipDive(curr, segment, forValue)) {
       return;
     }
@@ -256,8 +256,9 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     String field = state.pollField();
     PathSegment parent = state.currentSegment();
     PathSegment segment = new PathSegment(parent, field, state.currentObject());
-    //log.info("Property [{}]", segment);
-    if (filter.test(segment)) {
+    boolean test = filter.test(segment);
+    log.info("Property [{}] test [{}]", segment, test);
+    if (test) {
       writeState.add(new FieldNameState(field, () -> delegate.writeFieldName(field)));
       writeState.add(new WriteState(invokable));
     }

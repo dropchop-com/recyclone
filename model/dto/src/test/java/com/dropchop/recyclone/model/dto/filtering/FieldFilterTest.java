@@ -174,16 +174,15 @@ class FieldFilterTest {
       Method rm = prop.getReadMethod();
       //log.info("{}.{} -> {}", model.getClass().getSimpleName(), name, type);
       if (Collection.class.isAssignableFrom(type)) {
-        CollectionPathSegment p = new CollectionPathSegment(parent, name, model);
-        listener.accept(p);
         Collection<?> c = (Collection<?>) rm.invoke(model);
-        if (c != null) {
+        CollectionPathSegment coll = new CollectionPathSegment(parent, name, c);
+        listener.accept(coll);
+        if (divePredicate.test(coll) && c != null) {
           for (Object x : c) {
             if (x instanceof Model m) {
-              if (divePredicate.test(p)) {
-                buildPaths(listener, p, m);
-              }
-              p.incCurrentIndex();
+              PathSegment p = new PathSegment(coll, null, m);
+              buildPaths(listener, p, m);
+              coll.incCurrentIndex();
             }
           }
         }
@@ -604,10 +603,12 @@ class FieldFilterTest {
       "lang",
       "modified",
       "tags",
+      "tags[0].attributes",
       "tags[0].id",
       "tags[0].lang",
       "tags[0].name",
       "tags[0].title",
+      "tags[0].tags",
       "tags[0].translations",
       "tags[0].translations[0].base",
       "tags[0].translations[0].description",
