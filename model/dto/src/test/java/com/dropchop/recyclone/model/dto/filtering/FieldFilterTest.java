@@ -29,6 +29,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -302,6 +303,11 @@ class FieldFilterTest {
 
   @Test
   void fromParamsFilterLevel2CodeId() {
+    Long err = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(12);
+    for (int i = 0; i < 20000; i++) {
+      err = System.currentTimeMillis() + err;
+    }
+
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(2)
@@ -340,6 +346,66 @@ class FieldFilterTest {
     assertEquals(List.of(
       "",
       "tags"), dive);
+  }
+
+  @Test
+  void fromParamsFilterLevel3AllExcludesAnyCreated() {
+    CodeParams params = new CodeParams();
+    params.filter().content()
+      .treeLevel(3)
+      .exclude("*.created")
+      .exclude("*.modified")
+      .exclude("*.deactivated");
+
+    FieldFilter fieldFilter = FieldFilter.fromParams(params);
+
+    List<String> filtered = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.test(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+
+    List<String> dive = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.dive(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+
+    assertEquals(List.of(
+      "",
+      "code",
+      "lang",
+      "tags",
+      "tags[0].attributes",
+      "tags[0].description",
+      "tags[0].id",
+      "tags[0].lang",
+      "tags[0].name",
+      "tags[0].tags",
+      "tags[0].title",
+      "tags[0].translations",
+      "tags[0].translations[0].base",
+      "tags[0].translations[0].description",
+      "tags[0].translations[0].lang",
+      "tags[0].translations[0].title",
+      "tags[0].type",
+      "tags[0].uuid",
+      "title",
+      "translations",
+      "translations[0].base",
+      "translations[0].lang",
+      "translations[0].title",
+      "translations[1].base",
+      "translations[1].lang",
+      "translations[1].title"), filtered);
+
+    assertEquals(List.of(
+      "",
+      "tags",
+      "tags[0].attributes",
+      "tags[0].tags",
+      "tags[0].translations",
+      "translations"), dive);
   }
 
   @Test

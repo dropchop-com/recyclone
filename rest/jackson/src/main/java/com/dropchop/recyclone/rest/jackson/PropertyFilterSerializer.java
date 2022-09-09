@@ -2,7 +2,6 @@ package com.dropchop.recyclone.rest.jackson;
 
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.filtering.FieldFilter;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.rest.Result;
 import com.dropchop.recyclone.model.api.rest.ResultStats;

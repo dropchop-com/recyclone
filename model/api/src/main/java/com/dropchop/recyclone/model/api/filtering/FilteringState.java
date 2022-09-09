@@ -44,6 +44,10 @@ public class FilteringState {
     return fields.pollLast();
   }
 
+  public String currentField() {
+    return fields.peekLast();
+  }
+
   public void divePassed() {
     starts.offerLast(Boolean.TRUE);
   }

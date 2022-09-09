@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 5. 05. 22.
  */
-class FieldFilterTest {
+class FieldFilterOldTest {
 
   @Test
   void parseFilterSegments() {
     String pattStr = ".actions.code;title;lang";
-    FieldFilter filter = new FieldFilter();
+    FieldFilterOld filter = new FieldFilterOld();
     filter.parseFilterSegments(pattStr);
     assertEquals(filter.path.get(0).name, ".");
     assertEquals(filter.path.get(1).name, "actions");
@@ -44,17 +44,17 @@ class FieldFilterTest {
   @Test
   void matchesSimple() {
     String pattStr = "actions.nested1;nested2;nested3.*";
-    Deque<FieldFilter.PathSegment> deque = new LinkedList<>();
-    deque.offerLast(new FieldFilter.PathSegment(FieldFilter.ROOT_OBJECT));
-    deque.offerLast(new FieldFilter.PathSegment("actions"));
-    deque.offerLast(new FieldFilter.PathSegment("nested1"));
-    assertTrue(new FieldFilter().parseFilterSegments(pattStr).matches(deque, "translation"));
+    Deque<FieldFilterOld.PathSegment> deque = new LinkedList<>();
+    deque.offerLast(new FieldFilterOld.PathSegment(FieldFilterOld.ROOT_OBJECT));
+    deque.offerLast(new FieldFilterOld.PathSegment("actions"));
+    deque.offerLast(new FieldFilterOld.PathSegment("nested1"));
+    assertTrue(new FieldFilterOld().parseFilterSegments(pattStr).matches(deque, "translation"));
 
     deque = new LinkedList<>();
-    deque.offerLast(new FieldFilter.PathSegment(FieldFilter.ROOT_OBJECT));
-    deque.offerLast(new FieldFilter.PathSegment("actions"));
-    deque.offerLast(new FieldFilter.PathSegment("nested1"));
-    deque.offerLast(new FieldFilter.PathSegment("anything"));
-    assertFalse(new FieldFilter().parseFilterSegments(pattStr).matches(deque, "translation"));
+    deque.offerLast(new FieldFilterOld.PathSegment(FieldFilterOld.ROOT_OBJECT));
+    deque.offerLast(new FieldFilterOld.PathSegment("actions"));
+    deque.offerLast(new FieldFilterOld.PathSegment("nested1"));
+    deque.offerLast(new FieldFilterOld.PathSegment("anything"));
+    assertFalse(new FieldFilterOld().parseFilterSegments(pattStr).matches(deque, "translation"));
   }
 }

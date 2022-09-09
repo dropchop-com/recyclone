@@ -97,7 +97,9 @@ public class FieldFilter implements Predicate<PathSegment> {
         includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, HasTranslation.class));
         includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 1, Translation.class));
       }
-    } else if (includes.isEmpty() && excludes.isEmpty()) {
+    }
+
+    if (treeLevel != null && includes.isEmpty()) {
       includes.add(any(treeLevel));
     }
     return new FieldFilter(includes, excludes);

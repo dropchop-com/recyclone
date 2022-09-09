@@ -8,12 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * FieldFilter is a container object for current graph path.
+ * FieldFilterOld is a container object for current graph path.
  * It contains path in a form of path segments list.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 5. 05. 22.
  */
-class FieldFilter {
+class FieldFilterOld {
 
   public static final String ROOT_OBJECT = ".";
   public static final String PATH_DELIM = ".";
@@ -115,7 +115,7 @@ class FieldFilter {
   }
 
 
-  FieldFilter parseFilterSegments(@NonNull String filterPatternStr) {
+  FieldFilterOld parseFilterSegments(@NonNull String filterPatternStr) {
     if (filterPatternStr.startsWith(ROOT_OBJECT)) {
       filterPatternStr = filterPatternStr.substring(1);
     }

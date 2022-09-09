@@ -29,18 +29,7 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return new FilterSegment(pathStr, maxLevel);
   }
 
-  final int maxLevel;
-
-  protected FilterSegment(String[] path, Integer maxLevel) {
-    super(path);
-    if (maxLevel != null && maxLevel >= 0) {
-      this.maxLevel = maxLevel;
-    } else {
-      this.maxLevel = Integer.MAX_VALUE;
-    }
-  }
-
-  public boolean willPropertyNest(PathSegment segment) {
+  public static boolean willPropertyNest(PathSegment segment) {
     if (segment.referer == null) {
       return false;
     }
@@ -53,6 +42,17 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     } catch (NoSuchMethodException e) {
       log.warn("Unable to find property [{}] getter!", propName, e);
       return false;
+    }
+  }
+
+  final int maxLevel;
+
+  protected FilterSegment(String[] path, Integer maxLevel) {
+    super(path);
+    if (maxLevel != null && maxLevel >= 0) {
+      this.maxLevel = maxLevel;
+    } else {
+      this.maxLevel = Integer.MAX_VALUE;
     }
   }
 

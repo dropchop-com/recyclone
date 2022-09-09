@@ -18,7 +18,7 @@ public interface FilteringDtoContextConditions {
 
   Logger log = LoggerFactory.getLogger(FilteringDtoContextConditions.class);
 
-  static boolean willPropertyNest(FieldFilter.PathSegment segment) {
+  static boolean willPropertyNest(FieldFilterOld.PathSegment segment) {
     boolean willNest = false;
     String propName = segment.name;
     try {
@@ -34,7 +34,7 @@ public interface FilteringDtoContextConditions {
     return willNest;
   }
 
-  static boolean isPropertyIdCode(FieldFilter.PathSegment segment) {
+  static boolean isPropertyIdCode(FieldFilterOld.PathSegment segment) {
     if (segment.referer instanceof HasCode && "code".equals(segment.name)) {
       return true;
     }
@@ -44,15 +44,15 @@ public interface FilteringDtoContextConditions {
     return segment.referer instanceof HasUuid && "id".equals(segment.name);
   }
 
-  static boolean isPropertyTitle(FieldFilter.PathSegment segment) {
+  static boolean isPropertyTitle(FieldFilterOld.PathSegment segment) {
     return segment.referer instanceof HasTitle && "title".equals(segment.name);
   }
 
-  static boolean isPropertyLang(FieldFilter.PathSegment segment) {
+  static boolean isPropertyLang(FieldFilterOld.PathSegment segment) {
     return segment.referer instanceof HasLanguageCode && "lang".equals(segment.name);
   }
 
-  static boolean isSpecialCollection(FieldFilter.PathSegment segment, boolean translationsOnly) {
+  static boolean isSpecialCollection(FieldFilterOld.PathSegment segment, boolean translationsOnly) {
     if (segment.referer == null) {
       return false;
     }
@@ -86,14 +86,14 @@ public interface FilteringDtoContextConditions {
     return isTranslation || isAttribute;
   }
 
-  static boolean isSpecialClass(FieldFilter.PathSegment segment, boolean translationsOnly) {
+  static boolean isSpecialClass(FieldFilterOld.PathSegment segment, boolean translationsOnly) {
     if (segment.referer == null) {
       return false;
     }
     return isSpecialClass(segment.referer.getClass(), translationsOnly);
   }
 
-  static boolean isTranslatableInstance(FieldFilter.PathSegment segment) {
+  static boolean isTranslatableInstance(FieldFilterOld.PathSegment segment) {
     return isObjectTranslatable(segment.referer);
   }
 
