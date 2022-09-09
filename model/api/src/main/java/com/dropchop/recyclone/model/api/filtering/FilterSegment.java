@@ -79,6 +79,9 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   protected boolean testLevel(PathSegment segment) {
+    if (segment instanceof CollectionPathSegment) {
+      return segment.level < maxLevel;
+    }
     return segment.level <= maxLevel;
   }
 
