@@ -269,6 +269,12 @@ class FieldFilterTest {
       .map(Map.Entry::getKey)
       .toList();
 
+    List<String> dive = slPaths.entrySet()
+      .stream()
+      .filter(e -> fieldFilter.dive(e.getValue()))
+      .map(Map.Entry::getKey)
+      .toList();
+
     assertEquals(List.of(
       "",
       "code",
@@ -298,6 +304,11 @@ class FieldFilterTest {
       "translations[1].base",
       "translations[1].lang",
       "translations[1].title"), filtered);
+
+    assertEquals(List.of(
+      "",
+      "tags",
+      "translations"), dive);
   }
 
   @Test
@@ -537,7 +548,6 @@ class FieldFilterTest {
       "modified",
       "tags",
       "tags[0].id",
-      "tags[0].translations",
       "title",
       "translations",
       "translations[0].base",
@@ -572,7 +582,6 @@ class FieldFilterTest {
       "tags[0].lang",
       "tags[0].name",
       "tags[0].title",
-      "tags[0].translations",
       "title",
       "translations",
       "translations[0].base",
@@ -603,11 +612,9 @@ class FieldFilterTest {
       "lang",
       "modified",
       "tags",
-      "tags[0].attributes",
       "tags[0].id",
       "tags[0].lang",
       "tags[0].name",
-      "tags[0].tags",
       "tags[0].title",
       "tags[0].translations",
       "tags[0].translations[0].base",

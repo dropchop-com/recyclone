@@ -27,7 +27,6 @@ public class PathSegment {
   private boolean dive = true;
 
   public PathSegment(PathSegment parent, String name, Object referer) {
-    this.name = name;
     this.referer = referer;
     this.parent = parent;
     if (parent != null) {
@@ -36,20 +35,19 @@ public class PathSegment {
         this.path = Arrays.copyOf(parent.path, parent.path.length);
         this.indexedPath = Arrays.copyOf(parent.indexedPath, parent.indexedPath.length);
         this.indexedPath[this.indexedPath.length - 1] += "[" + this.index + "]";
+        this.level = parent.level;
+        this.name = name == null ? "[" + this.index + "]" : name;
       } else {
         this.index = -1;
         this.path = Arrays.copyOf(parent.path, parent.path.length + 1);
         this.path[path.length - 1] = name;
         this.indexedPath = Arrays.copyOf(parent.indexedPath, parent.indexedPath.length + 1);
         this.indexedPath[indexedPath.length - 1] = name;
-      }
-
-      if (this instanceof CollectionPathSegment) {
-        this.level = parent.level;
-      } else {
         this.level = parent.level + 1;
+        this.name = name;
       }
     } else {
+      this.name = name == null ? ROOT_OBJECT : name;
       this.index = -1;
       this.path = new String[]{};
       this.indexedPath = path;

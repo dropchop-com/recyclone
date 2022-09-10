@@ -69,7 +69,7 @@ public class ObjectMapperFactory {
         serializationConfig.getMixIns().forEach(mapper::addMixIn);
       }
     } else {
-      log.warn("Missing polymorphic registry while creating JSON mapper!");
+      log.debug("Missing polymorphic registry while creating JSON mapper!");
     }
     return mapper;
   }

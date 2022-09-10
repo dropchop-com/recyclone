@@ -155,10 +155,10 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   public void writeStartArray(Object forValue, int size) {
     String curr = state.pollField();
     PathSegment parent = state.currentSegment();
-    PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
+    PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, forValue);
     state.pushSegment(segment);
 
-    log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
+    //log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
     if (skipDive(curr, segment, forValue)) {
       return;
     }
@@ -210,12 +210,13 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   public void writeStartObject(Object forValue, int size) {
     String curr = state.pollField();
     PathSegment parent = state.currentSegment();
+    Object currObj = state.currentObject();
 
     PathSegment segment;
     if (parent instanceof CollectionPathSegment) {
-      segment = parent; // we skip creating new PathSegment on start object when in collection
+      segment = new PathSegment(parent, null, forValue);
     } else {
-      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, state.currentObject());
+      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, currObj == null ? forValue : currObj);
     }
     state.pushSegment(segment);
 
@@ -257,7 +258,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     PathSegment parent = state.currentSegment();
     PathSegment segment = new PathSegment(parent, field, state.currentObject());
     boolean test = filter.test(segment);
-    log.info("Property [{}] test [{}]", segment, test);
+    //log.info("Property [{}] test [{}]", segment, test);
     if (test) {
       writeState.add(new FieldNameState(field, () -> delegate.writeFieldName(field)));
       writeState.add(new WriteState(invokable));

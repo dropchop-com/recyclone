@@ -42,7 +42,14 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
       return true;
     }
 
+    if (segment.parent instanceof CollectionPathSegment && segment.referer instanceof Model) {
+      return true;
+    }
+
     String propName = segment.name;
+    if (propName == null) {
+      return false;
+    }
     try {
       Method m = segment.referer.getClass().getMethod("get" +
         propName.substring(0, 1).toUpperCase() + propName.substring(1));
@@ -79,9 +86,9 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   protected boolean testLevel(PathSegment segment) {
-    if (segment instanceof CollectionPathSegment) {
+    /*if (segment instanceof CollectionPathSegment) {
       return segment.level < maxLevel;
-    }
+    }*/
     return segment.level <= maxLevel;
   }
 

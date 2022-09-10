@@ -11,7 +11,9 @@ import java.util.List;
 @Slf4j
 public class MarkerFilterSegment extends FilterSegment {
 
-  public static MarkerFilterSegment parse(String pattern, Integer maxLevel, Class<?> ... markers) {
+  public static MarkerFilterSegment parse(String pattern, Integer maxLevel,
+                                          boolean testParentInstance,
+                                          Class<?> ... markers) {
     if (pattern == null || pattern.isBlank()) {
       return null;
     }
@@ -19,21 +21,49 @@ public class MarkerFilterSegment extends FilterSegment {
       pattern = pattern.substring(1);
     }
     String[] pathStr = pattern.split("\\" + PATH_DELIM, 255);
-    return new MarkerFilterSegment(pathStr, maxLevel, List.of(markers));
+    return new MarkerFilterSegment(pathStr, maxLevel, testParentInstance, List.of(markers));
+  }
+
+  public static MarkerFilterSegment parse(String pattern, Integer maxLevel,
+                                          Class<?> ... markers) {
+    return parse(pattern, maxLevel, false, markers);
   }
 
   public final Collection<Class<?>> markers;
+  public final boolean testParentInstance;
 
-  public MarkerFilterSegment(String[] path, Integer maxLevel, Collection<Class<?>> markers) {
+  public MarkerFilterSegment(String[] path, Integer maxLevel,
+                             boolean testParentInstance,
+                             Collection<Class<?>> markers) {
     super(path, maxLevel);
     this.markers = markers;
+    this.testParentInstance = testParentInstance;
   }
 
   protected boolean testInstance(PathSegment segment) {
-    if (segment.referer == null) {
-      return false;
+    Class<?> clazz;
+    if (testParentInstance) {
+      PathSegment parent = segment.parent;
+      clazz = null;
+      while (parent != null) {
+        if (!(parent instanceof CollectionPathSegment)) {
+          if (parent.referer == null) {
+            break;
+          }
+          clazz = parent.referer.getClass();
+          break;
+        }
+        parent = parent.parent;
+      }
+      if (clazz == null) {
+        return false;
+      }
+    } else {
+      if (segment.referer == null) {
+        return false;
+      }
+      clazz = segment.referer.getClass();
     }
-    Class<?> clazz = segment.referer.getClass();
     for (Class<?> marker : markers) {
       if (!marker.isAssignableFrom(clazz)) {
         return false;

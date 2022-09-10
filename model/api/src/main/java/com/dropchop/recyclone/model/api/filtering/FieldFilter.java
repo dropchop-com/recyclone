@@ -75,7 +75,7 @@ public class FieldFilter implements Predicate<PathSegment> {
         includes.add(any(tmpLevel));
         tmpLevel++;
         // if detail is only for nested we include also special collections for current object
-        includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, HasTranslation.class));
+        //includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, HasTranslation.class));
         includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel, Translation.class));
       }
 
@@ -89,12 +89,12 @@ public class FieldFilter implements Predicate<PathSegment> {
           HasTranslation.class, HasTranslationInlined.class));
         if (detailLevel.contains("_title")) {
           if (!detailLevel.startsWith(NESTED_PREFIX)) {
-            excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, HasTranslation.class));
+            excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, true, HasTranslation.class));
           }
         }
       }
       if (detailLevel.contains("_trans")) {
-        includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, HasTranslation.class));
+        includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
         includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 1, Translation.class));
       }
     }
