@@ -76,6 +76,7 @@ public class FieldFilter implements Predicate<PathSegment> {
         tmpLevel++;
         // if detail is only for nested we include also special collections for current object
         //includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, HasTranslation.class));
+        //includes.add(MarkerFilterSegment.parse("*.translations[*]", tmpLevel, Translation.class));
         includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel, Translation.class));
       }
 
@@ -95,6 +96,7 @@ public class FieldFilter implements Predicate<PathSegment> {
       }
       if (detailLevel.contains("_trans")) {
         includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
+        //includes.add(MarkerFilterSegment.parse("*.translations[*]", tmpLevel + 1, Translation.class));
         includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 1, Translation.class));
       }
     }
@@ -121,9 +123,34 @@ public class FieldFilter implements Predicate<PathSegment> {
 
   @Override
   public boolean test(PathSegment segment) {
+    if (segment.parent == null) {// we always accept root
+      return true;
+    }
     boolean incl = false;
     for (FilterSegment filter : includes) {
       if (filter.test(segment)) {
+        incl = true;
+        break;
+      }
+    }
+    if (incl) {
+      for (FilterSegment filter : excludes) {
+        if (filter.test(segment)) {
+          incl = false;
+          break;
+        }
+      }
+    }
+    return incl;
+  }
+
+  public boolean nest(PathSegment segment) {
+    if (segment.parent == null) {// we always accept root
+      return true;
+    }
+    boolean incl = false;
+    for (FilterSegment filter : includes) {
+      if (filter.nest(segment)) {
         incl = true;
         break;
       }

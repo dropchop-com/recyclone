@@ -33,6 +33,38 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return obj instanceof Collection<?> || (obj!=null && obj.getClass().isArray());
   }
 
+
+  public static Class<?> getPropertyClass(PathSegment segment) {
+    String propName = segment.name;
+    if (propName == null) {
+      return null;
+    }
+    try {
+      Method m = segment.referer.getClass().getMethod("get" +
+        propName.substring(0, 1).toUpperCase() + propName.substring(1));
+      return m.getReturnType();
+    } catch (NoSuchMethodException e) {
+      log.warn("Unable to find property [{}] getter!", propName, e);
+      return null;
+    }
+  }
+
+  public static boolean isPropertyCollection(PathSegment segment) {
+    String propName = segment.name;
+    if (propName == null) {
+      return false;
+    }
+    try {
+      Method m = segment.referer.getClass().getMethod("get" +
+        propName.substring(0, 1).toUpperCase() + propName.substring(1));
+      Class<?> clazz = m.getReturnType();
+      return Collection.class.isAssignableFrom(clazz);
+    } catch (NoSuchMethodException e) {
+      log.warn("Unable to find property [{}] getter!", propName, e);
+      return false;
+    }
+  }
+
   public static boolean willPropertyNest(PathSegment segment) {
     if (segment.referer == null) {
       return false;
@@ -117,6 +149,20 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return testName(segment);
   }
 
+  public boolean nest(PathSegment segment) {
+    if (isCollection(segment.referer)) {
+      if (segment.level < maxLevel) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    if (segment.level <= maxLevel) {
+      return willPropertyNest(segment);
+    }
+    return false;
+  }
+
   public boolean dive(PathSegment segment) {
     if (segment.parent == null) {// we always accept root
       return true;
@@ -125,10 +171,7 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
       return false;
     }
     if (startsWithAny() || endsWithAny()) {
-      if (segment.level < maxLevel) {
-        return willPropertyNest(segment);
-      }
-      return false;
+      return nest(segment);
     }
 
     return Strings.matchPath(this.path, segment.level, segment.indexedPath, segment.level, true);

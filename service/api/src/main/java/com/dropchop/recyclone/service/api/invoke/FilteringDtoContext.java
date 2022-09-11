@@ -56,7 +56,10 @@ public class FilteringDtoContext extends MappingContext {
       }
     }
     state.pushSegment(segment);
-    if (filter != null) { // we precompute filter and dive for path segment.
+    if (filter != null) {
+      // we precompute "filter" and "dive" for path segment so that,
+      // we don't repeat exact same computation for each property
+      // (remember: we can't return true or false for continuation here due to Mapstruct API)
       segment
         .dive(filter.dive(segment))
         .test(filter.test(segment));
@@ -66,9 +69,16 @@ public class FilteringDtoContext extends MappingContext {
       source.getClass().getSimpleName(), segment, segment.dive(), segment.test());
   }
 
+  /**
+   * Test if property can be mapped
+   *
+   * @param propName property name
+   * @return true if property is ok false if not.
+   */
   public boolean filter(@TargetPropertyName String propName) {
     PathSegment curr = state.currentSegment();
-    if (!curr.dive() || !curr.test()) {
+    // property containing object passes?
+    if (!curr.dive()) {
       return false;
     }
 
@@ -80,15 +90,17 @@ public class FilteringDtoContext extends MappingContext {
     if (filter != null) {
       dive = filter.dive(segment);
       test = filter.test(segment);
-      nest = FilterSegment.willPropertyNest(segment);
-      if (nest) {
-        state.pushField(propName);
-      }
+      // we must precompute nesting so that we don't dive into ORM collection
+      nest = filter.nest(segment);
     }
 
-    log.info("Property [{}] dive [{}] filter [{}] nest [{}].", segment, dive, test, nest);
+    log.info("Property [{}] dive [{}] filter [{}:{}] nest [{}].", segment, dive, test, curr.test(), nest);
     if (nest) {
-      return dive && test;
+      if (dive) {
+        state.pushField(propName);
+        return true;
+      }
+      return false;
     }
     return test;
   }

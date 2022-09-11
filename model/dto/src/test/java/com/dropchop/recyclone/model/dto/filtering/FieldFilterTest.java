@@ -342,6 +342,7 @@ class FieldFilterTest {
       .toList();
 
     assertEquals(List.of(
+      "",
       "code",
       "lang",
       "tags[0].id",
@@ -665,6 +666,7 @@ class FieldFilterTest {
       "deactivated",
       "description",
       "domain",
+      "domain.actions",
       "domain.code",
       "domain.lang",
       "domain.title",
