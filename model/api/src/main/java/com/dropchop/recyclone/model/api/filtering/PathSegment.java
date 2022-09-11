@@ -25,6 +25,7 @@ public class PathSegment {
   public final String[] indexedPath;
 
   private boolean dive = true;
+  private boolean test = true;
 
   public PathSegment(PathSegment parent, String name, Object referer) {
     this.referer = referer;
@@ -78,6 +79,15 @@ public class PathSegment {
 
   public PathSegment dive(boolean dive) {
     this.dive = dive;
+    return this;
+  }
+
+  public boolean test() {
+    return test;
+  }
+
+  public PathSegment test(boolean test) {
+    this.test = test;
     return this;
   }
 

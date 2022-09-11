@@ -35,65 +35,76 @@ public class FilteringDtoContext extends MappingContext {
   }
 
   public void before(Object source, Object ignoredTarget) {
+    if (source == null) {
+      return;
+    }
     String curr = state.pollField();
-    state.pushObject(source);
     PathSegment parent = state.currentSegment();
-    PathSegment segment;
     boolean isCollection = FilterSegment.isCollection(source);
-    if (isCollection) {
-      segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr,
-        parent != null ? parent.referer : source);
+    PathSegment segment;
+    if (parent instanceof CollectionPathSegment) {
+      if (isCollection) {
+        segment = new CollectionPathSegment(parent, null, source);
+      } else {
+        segment = new PathSegment(parent, null, source);
+      }
     } else {
-      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, source);
-    }
-    if (segment.parent instanceof CollectionPathSegment && !isCollection) {
-      segment = segment.parent;
-    }
-    state.pushSegment(segment);
-
-    boolean dive = true;
-    if (filter != null) {
-      dive = filter.dive(segment);
-      if (!dive) {
-        segment.dive(false);
+      if (isCollection) {
+        segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, source);
+      } else {
+        segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, source);
       }
     }
-    log.info("Start object [{}] -> [{}] dive [{}].", source.getClass().getSimpleName(), segment, dive);
+    state.pushSegment(segment);
+    if (filter != null) { // we precompute filter and dive for path segment.
+      segment
+        .dive(filter.dive(segment))
+        .test(filter.test(segment));
+    }
+
+    log.info("Start object [{}] -> [{}] dive [{}] filter [{}].",
+      source.getClass().getSimpleName(), segment, segment.dive(), segment.test());
   }
 
   public boolean filter(@TargetPropertyName String propName) {
     PathSegment curr = state.currentSegment();
-    if (!curr.dive()) {
+    if (!curr.dive() || !curr.test()) {
       return false;
     }
-    if (curr.parent instanceof CollectionPathSegment) {
-      curr = curr.parent;
-    }
-    PathSegment segment = new PathSegment(curr, propName, state.currentObject());
+
+    PathSegment segment = new PathSegment(curr, propName, curr.referer);
 
     boolean dive = true;
     boolean test = true;
+    boolean nest = false;
     if (filter != null) {
       dive = filter.dive(segment);
       test = filter.test(segment);
-      if (!dive) {
-        segment.dive(false);
-      } else {
+      nest = FilterSegment.willPropertyNest(segment);
+      if (nest) {
         state.pushField(propName);
       }
     }
 
-
-    log.info("Property [{}] dive [{}] filter [{}]", segment, dive, test);
+    log.info("Property [{}] dive [{}] filter [{}] nest [{}].", segment, dive, test, nest);
+    if (nest) {
+      return dive && test;
+    }
     return test;
   }
 
   public void after(Object ignoredSource, Object target) {
-    state.pollObject();
     PathSegment segment = state.pollSegment();
     if (segment.parent instanceof CollectionPathSegment cps) {
       cps.incCurrentIndex();
     }
+
     log.info("End object [{}] -> [{}].", ignoredSource.getClass().getSimpleName(), segment);
+    /*segment = state.currentSegment();
+    if (segment != null) {
+      this.lastProp = segment.name;
+    } else {
+      this.lastProp = ROOT_OBJECT;
+    }*/
   }
 }

@@ -209,8 +209,8 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   @Override
   public void writeStartObject(Object forValue, int size) {
     String curr = state.pollField();
-    PathSegment parent = state.currentSegment();
     Object currObj = state.currentObject();
+    PathSegment parent = state.currentSegment();
 
     PathSegment segment;
     if (parent instanceof CollectionPathSegment) {
