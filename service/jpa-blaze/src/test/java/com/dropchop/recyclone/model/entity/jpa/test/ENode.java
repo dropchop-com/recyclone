@@ -85,4 +85,7 @@ public class ENode extends ECode implements Node<ETitleTranslation, ENode>, HasE
 
   @Column(name="deactivated")
   private ZonedDateTime deactivated;
+
+  @Transient
+  private EMiki miki;
 }

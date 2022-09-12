@@ -19,6 +19,7 @@ import com.dropchop.recyclone.model.dto.test.Node;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.EAction;
 import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
+import com.dropchop.recyclone.model.entity.jpa.test.EMiki;
 import com.dropchop.recyclone.model.entity.jpa.test.ENode;
 import com.dropchop.recyclone.service.jpa.blaze.security.DomainToDtoMapper;
 import com.dropchop.recyclone.service.jpa.blaze.security.DomainToDtoMapperImpl;
@@ -138,8 +139,12 @@ class FilteringDtoContextTest {
       createMockModel(new ENode(), "parent_1", 2),
       createMockModel(new ENode(), "parent_1", 3)
     );
+    EMiki miki = new EMiki();
+    miki.setCode("test");
+    miki.setTest("test");
     for (ENode node: parentNodes) {
       node.setChildren(childNodes);
+      node.setMiki(miki);
     }
     return parentNodes;
   }
@@ -298,6 +303,7 @@ class FilteringDtoContextTest {
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNull(node.getLang());
+    assertNull(node.getMiki());
     assertNull(node.getTitle());
     assertNull(node.getCreated());
     assertNull(node.getModified());
@@ -320,6 +326,9 @@ class FilteringDtoContextTest {
     Node node = result.get(0);
     assertNotNull(node);
     assertNotNull(node.getCode());
+    assertNotNull(node.getMiki());
+    assertNotNull(node.getMiki().getCode());
+    assertNull(node.getMiki().getTest());
     assertNull(node.getLang());
     assertNull(node.getTitle());
     assertNull(node.getCreated());
@@ -354,6 +363,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
     assertNotNull(node.getTitle());
+    assertNull(node.getMiki());
     assertNull(node.getCreated());
     assertNull(node.getModified());
     assertNull(node.getTranslations());

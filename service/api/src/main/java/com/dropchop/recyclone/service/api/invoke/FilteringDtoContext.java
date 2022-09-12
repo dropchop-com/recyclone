@@ -2,13 +2,17 @@ package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.filtering.*;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.marker.HasAttributes;
+import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.TargetPropertyName;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
+import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_PREFIX;
 
 /**
  * MappingContext that can filter (include/exclude) object graph paths based on REST client parameters.
@@ -61,12 +65,62 @@ public class FilteringDtoContext extends MappingContext {
       // we don't repeat exact same computation for each property
       // (remember: we can't return true or false for continuation here due to Mapstruct API)
       segment
-        .dive(filter.dive(segment))
-        .test(filter.test(segment));
+        .dive(filter.dive(segment));
+        //.test(filter.test(segment));
     }
 
     log.info("Start object [{}] -> [{}] dive [{}] filter [{}].",
       source.getClass().getSimpleName(), segment, segment.dive(), segment.test());
+  }
+
+  static boolean isSpecialCollection(PathSegment segment, boolean translationsOnly) {
+    Class<?> currentClass = segment.referer.getClass();
+    String propName = segment.name;
+    boolean isTranslations = HasTranslation.class.isAssignableFrom(currentClass) && "translations".equals(propName);
+    boolean isAttributes = HasAttributes.class.isAssignableFrom(currentClass) && "attributes".equals(propName);
+    if (translationsOnly && !isTranslations) {
+      return false;
+    } else {
+      if (!(isTranslations || isAttributes)) {
+        return false;
+      }
+    }
+    return segment.collectionLike;
+  }
+
+  private boolean specialCollectionDive(PathSegment segment) {
+    if (this.filter == null) {
+      return true;
+    }
+    Integer treeLevel = this.filter.getTreeLevel();
+    if (treeLevel == null || treeLevel == Integer.MAX_VALUE) {
+      return true;
+    }
+    if (segment == null || segment.referer == null) {
+      return true;
+    }
+    String contentDetail = this.filter.getDetailLevel();
+    if (contentDetail == null || contentDetail.isBlank()) {
+      return true;
+    }
+    boolean nested = contentDetail.startsWith(NESTED_PREFIX);
+    if (!isSpecialCollection(segment, false)) {
+      return nested ?  segment.level < treeLevel + 1: segment.level < treeLevel;
+    }
+
+    if (nested) {
+      if (contentDetail.contains("_trans")) {
+        return segment.level <= treeLevel + 1;
+      } else {
+        return true;
+      }
+    } else {
+      if (contentDetail.contains("_trans")) {
+        return segment.level <= treeLevel;
+      } else {
+        return true;
+      }
+    }
   }
 
   /**
@@ -82,31 +136,23 @@ public class FilteringDtoContext extends MappingContext {
       return false;
     }
 
-    PathSegment segment = new PathSegment(curr, propName, curr.referer);
+    PathSegment segment = new PathSegment(curr, propName, curr.referer, true);
 
     boolean dive = true;
     boolean test = true;
     boolean nest = false;
-    boolean excl = false;
-    boolean incl = false;
     if (filter != null) {
       dive = filter.dive(segment);
       test = filter.test(segment);
       // we must precompute nesting so that we don't dive into ORM collection
       nest = filter.nest(segment);
-      excl = filter.exclude(segment);
-      incl = filter.include(segment);
     }
 
-    log.info("Property [{}] dive [{}] filter [{}] nest [{}] exclude [{}] include [{}].",
-      segment, dive, test, nest, excl, incl);
+    //log.info("Property [{}] dive [{}] filter [{}] nest [{}].", segment, dive, test, nest);
     if (segment.nestable()) {
-      if (nest) {
-        if (dive && !excl) {
-          state.pushField(propName);
-          return true;
-        }
-        return false;
+      if (nest && dive && specialCollectionDive(segment)) {
+        state.pushField(propName);
+        return true;
       } else {
         return false;
       }
@@ -120,12 +166,6 @@ public class FilteringDtoContext extends MappingContext {
       cps.incCurrentIndex();
     }
 
-    log.info("End object [{}] -> [{}].", ignoredSource.getClass().getSimpleName(), segment);
-    /*segment = state.currentSegment();
-    if (segment != null) {
-      this.lastProp = segment.name;
-    } else {
-      this.lastProp = ROOT_OBJECT;
-    }*/
+    //log.info("End object [{}] -> [{}].", ignoredSource.getClass().getSimpleName(), segment);
   }
 }

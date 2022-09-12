@@ -23,15 +23,15 @@ public class FieldFilter implements Predicate<PathSegment> {
   final LinkedList<FilterSegment> includes;
   final LinkedList<FilterSegment> excludes;
 
+  private int treeLevel;
+  private String detailLevel = null;
+
   public static FieldFilter fromFilter(ContentFilter contentFilter, ResultFilterDefaults filterDefaults) {
     Integer treeLevel = null;
     String detailLevel = null;
     List<String> includesStrings = new ArrayList<>();
     List<String> excludesStrings = new ArrayList<>();
-    if (filterDefaults != null) {
-      detailLevel = filterDefaults.getDetailLevel();
-      treeLevel = filterDefaults.getTreeLevel();
-    }
+
     if (contentFilter != null) {
       Integer contentTreeLevel = contentFilter.getTreeLevel();
       if (contentTreeLevel != null) {
@@ -53,6 +53,14 @@ public class FieldFilter implements Predicate<PathSegment> {
       }
     }
 
+    if (detailLevel == null && treeLevel == null && includesStrings.isEmpty() && filterDefaults != null) {
+      detailLevel = filterDefaults.getDetailLevel();
+    }
+
+    if (treeLevel == null && filterDefaults != null) {
+      treeLevel = filterDefaults.getTreeLevel();
+    }
+
     LinkedList<FilterSegment> includes = new LinkedList<>();
     for (String includeStr : includesStrings) {
       FilterSegment include = FilterSegment.parse(includeStr, treeLevel);
@@ -70,42 +78,52 @@ public class FieldFilter implements Predicate<PathSegment> {
 
     List<String> availableDetails = filterDefaults.getAvailableLevelOfContentDetails();
     if (detailLevel != null && availableDetails != null && availableDetails.contains(detailLevel)) {
-      int tmpLevel = treeLevel == null ? 1 : treeLevel;
+      int origLevel = treeLevel == null ? 1 : treeLevel;
+      int tmpLevel = origLevel;
       if (detailLevel.startsWith(NESTED_PREFIX)) {
-        includes.add(any(tmpLevel));
+        includes.add(any(origLevel));
         tmpLevel++;
-        // if detail is only for nested we include also special collections for current object
-        includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, HasTranslation.class));
-        //includes.add(MarkerFilterSegment.parse("*.translations[*]", tmpLevel, Translation.class));
-        includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel, Translation.class));
-      }
 
-      includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
-      includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasUuid.class));
-      includes.add(MarkerFilterSegment.parse("*.code", tmpLevel, HasCode.class));
-      if (detailLevel.contains("_title") || detailLevel.contains("_trans")) {
-        includes.add(MarkerFilterSegment.parse("*.title", tmpLevel, HasTitle.class));
-        includes.add(MarkerFilterSegment.parse("*.name", tmpLevel, HasName.class));
-        includes.add(MarkerFilterSegment.parse("*.lang", tmpLevel,
-          HasTranslation.class, HasTranslationInlined.class));
-      }
-      if (detailLevel.contains("_title") || detailLevel.contains("_id")) {
-        if (!detailLevel.startsWith(NESTED_PREFIX)) {
-          excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, true, HasTranslation.class));
-          excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, false, HasTranslation.class));
+        includes.add(MarkerFilterSegment.parse("*.translations", origLevel, HasTranslation.class));
+        includes.add(MarkerFilterSegment.parse("*.translations[*].*", origLevel + 1, Translation.class));
+
+        includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
+        includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasUuid.class));
+        includes.add(MarkerFilterSegment.parse("*.code", tmpLevel, HasCode.class));
+        if (detailLevel.contains("_title") || detailLevel.contains("_trans")) {
+          includes.add(MarkerFilterSegment.parse("*.title", tmpLevel, HasTitle.class));
+          includes.add(MarkerFilterSegment.parse("*.name", tmpLevel, HasName.class));
+          includes.add(MarkerFilterSegment.parse("*.lang", tmpLevel,
+            HasTranslation.class, HasTranslationInlined.class));
         }
-      }
-      if (detailLevel.contains("_trans")) {
-        includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
-        //includes.add(MarkerFilterSegment.parse("*.translations[*]", tmpLevel + 1, Translation.class));
-        includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 1, Translation.class));
+        if (detailLevel.contains("_trans")) {
+          includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
+          includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 2, Translation.class));
+        }
+      } else {
+        includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
+        includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasUuid.class));
+        includes.add(MarkerFilterSegment.parse("*.code", tmpLevel, HasCode.class));
+        if (detailLevel.contains("_title") || detailLevel.contains("_trans")) {
+          includes.add(MarkerFilterSegment.parse("*.title", tmpLevel, HasTitle.class));
+          includes.add(MarkerFilterSegment.parse("*.name", tmpLevel, HasName.class));
+          includes.add(MarkerFilterSegment.parse("*.lang", tmpLevel,
+            HasTranslation.class, HasTranslationInlined.class));
+        }
+        if (detailLevel.contains("_trans")) {
+          includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
+          includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 2, Translation.class));
+        } else {
+          excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, true, HasTranslation.class));
+          //excludes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 2, Translation.class));
+        }
       }
     }
 
     if (treeLevel != null && includes.isEmpty()) {
       includes.add(any(treeLevel));
     }
-    return new FieldFilter(includes, excludes);
+    return new FieldFilter(treeLevel != null ? treeLevel : Integer.MAX_VALUE, detailLevel, includes, excludes);
   }
 
   public static FieldFilter fromParams(Params params) {
@@ -117,9 +135,19 @@ public class FieldFilter implements Predicate<PathSegment> {
     return fromFilter(contentFilter, filterDefaults);
   }
 
-  FieldFilter(LinkedList<FilterSegment> includes, LinkedList<FilterSegment> excludes) {
+  FieldFilter(int treeLevel, String detailLevel, LinkedList<FilterSegment> includes, LinkedList<FilterSegment> excludes) {
     this.includes = includes;
     this.excludes = excludes;
+    this.treeLevel = treeLevel;
+    this.detailLevel = detailLevel;
+  }
+
+  public int getTreeLevel() {
+    return treeLevel;
+  }
+
+  public String getDetailLevel() {
+    return detailLevel;
   }
 
   public boolean exclude(PathSegment segment) {

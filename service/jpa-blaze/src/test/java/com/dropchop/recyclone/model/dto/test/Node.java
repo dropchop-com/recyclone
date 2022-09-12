@@ -51,4 +51,6 @@ public class Node extends DtoCode
   private ZonedDateTime modified;
 
   private ZonedDateTime deactivated;
+
+  private Miki miki;
 }

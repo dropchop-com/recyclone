@@ -43,7 +43,7 @@ public class PathSegment {
   }
 
   public static PathSegment root(Object referer) {
-    return new PathSegment(null, ROOT_OBJECT, referer);
+    return new PathSegment(null, ROOT_OBJECT, referer, true);
   }
 
   public final String name;
@@ -62,7 +62,7 @@ public class PathSegment {
   private boolean dive = true;
   private boolean test = true;
 
-  public PathSegment(PathSegment parent, String name, Object referer) {
+  public PathSegment(PathSegment parent, String name, Object referer, boolean refererProp) {
     this.referer = referer;
     this.parent = parent;
     if (parent != null) {
@@ -99,7 +99,7 @@ public class PathSegment {
           this.collectionLike = true;
           this.modelLike = false;
         } else {
-          this.propertyClass = getPropertyClass(this);
+          this.propertyClass = !refererProp ? (referer != null ? referer.getClass() : null) : getPropertyClass(this);
           this.collectionLike = this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass);
           this.modelLike = this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass);
         }
@@ -119,6 +119,10 @@ public class PathSegment {
       (this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass));
     this.modelLike = (this.referer != null && Model.class.isAssignableFrom(this.referer.getClass())) ||
     (this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass));*/
+  }
+
+  public PathSegment(PathSegment parent, String name, Object referer) {
+    this(parent, name, referer, false);
   }
 
   protected PathSegment(String[] path) {

@@ -187,7 +187,7 @@ class FieldFilterTest {
           }
         }
       } else {
-        PathSegment p = new PathSegment(parent, name, model);
+        PathSegment p = new PathSegment(parent, name, model, true);
         listener.accept(p);
         if (Model.class.isAssignableFrom(type)) {
           Model m = (Model)rm.invoke(model);
