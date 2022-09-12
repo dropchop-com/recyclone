@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.rest.jackson;
 
+import com.dropchop.recyclone.model.api.attr.AttributeValueList;
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.filtering.CollectionPathSegment;
 import com.dropchop.recyclone.model.api.filtering.FieldFilter;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
@@ -132,7 +134,12 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   private boolean skipDive(String curr, PathSegment segment, Object forValue) {
     //check filter dive
-    boolean dive = filter.dive(segment);
+    boolean dive;
+    if (segment.parent != null && segment.parent.referer instanceof AttributeValueList<?>) {
+      dive = true;
+    } else {
+      dive = filter.dive(segment);
+    }
     if (!dive) {
       segment.dive(false);
       state.diveSkipped();
@@ -155,12 +162,18 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   public void writeStartArray(Object forValue, int size) {
     String curr = state.pollField();
     PathSegment parent = state.currentSegment();
-    PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, forValue);
-    state.pushSegment(segment);
+    if (forValue != null) {
+      PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, forValue);
+      state.pushSegment(segment);
 
-    log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
-    if (skipDive(curr, segment, forValue)) {
-      return;
+      log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
+      if (skipDive(curr, segment, forValue)) {
+        return;
+      }
+    } else {
+      if (curr != null) {
+        writeState.add(new FieldNameState(curr, () -> delegate.writeFieldName(curr)));
+      }
     }
 
     if (forValue == null) {
@@ -209,20 +222,25 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   @Override
   public void writeStartObject(Object forValue, int size) {
     String curr = state.pollField();
-    Object currObj = state.currentObject();
     PathSegment parent = state.currentSegment();
+    if (forValue != null) {
+      Object currObj = state.currentObject();
+      PathSegment segment;
+      if (parent instanceof CollectionPathSegment) {
+        segment = new PathSegment(parent, null, forValue);
+      } else {
+        segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, currObj == null ? forValue : currObj);
+      }
+      state.pushSegment(segment);
 
-    PathSegment segment;
-    if (parent instanceof CollectionPathSegment) {
-      segment = new PathSegment(parent, null, forValue);
+      log.info("Start object [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
+      if (skipDive(curr, segment, forValue)) {
+        return;
+      }
     } else {
-      segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, currObj == null ? forValue : currObj);
-    }
-    state.pushSegment(segment);
-
-    log.info("Start object [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
-    if (skipDive(curr, segment, forValue)) {
-      return;
+      if (curr != null) {
+        writeState.add(new FieldNameState(curr, () -> delegate.writeFieldName(curr)));
+      }
     }
 
     if (forValue == null && size < 0) {
@@ -257,10 +275,17 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     String field = state.pollField();
     PathSegment parent = state.currentSegment();
     PathSegment segment = new PathSegment(parent, field, state.currentObject());
-    boolean test = filter.test(segment);
+    boolean test;
+    if (parent != null && parent.parent != null && parent.parent.referer instanceof AttributeValueList<?>) {
+      test = true;
+    } else {
+      test = filter.test(segment);
+    }
     log.info("Property [{}] test [{}]", segment, test);
     if (test) {
-      writeState.add(new FieldNameState(field, () -> delegate.writeFieldName(field)));
+      if (!(parent instanceof CollectionPathSegment)) {
+        writeState.add(new FieldNameState(field, () -> delegate.writeFieldName(field)));
+      }
       writeState.add(new WriteState(invokable));
     }
   }

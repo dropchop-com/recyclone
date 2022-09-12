@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api.filtering;
 
+import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
@@ -86,6 +87,8 @@ public class FieldFilter implements Predicate<PathSegment> {
 
         includes.add(MarkerFilterSegment.parse("*.translations", origLevel, HasTranslation.class));
         includes.add(MarkerFilterSegment.parse("*.translations[*].*", origLevel + 1, Translation.class));
+        includes.add(MarkerFilterSegment.parse("*.attributes", origLevel, HasAttributes.class));
+        includes.add(MarkerFilterSegment.parse("*.attributes[*].*", origLevel + 1, Attribute.class));
 
         includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
         includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasUuid.class));
@@ -99,6 +102,8 @@ public class FieldFilter implements Predicate<PathSegment> {
         if (detailLevel.contains("_trans")) {
           includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
           includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 2, Translation.class));
+          includes.add(MarkerFilterSegment.parse("*.attributes", tmpLevel + 1, HasAttributes.class));
+          includes.add(MarkerFilterSegment.parse("*.attributes[*].*", tmpLevel + 2, Attribute.class));
         }
       } else {
         includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
@@ -113,6 +118,8 @@ public class FieldFilter implements Predicate<PathSegment> {
         if (detailLevel.contains("_trans")) {
           includes.add(MarkerFilterSegment.parse("*.translations", tmpLevel + 1, true, HasTranslation.class));
           includes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 2, Translation.class));
+          includes.add(MarkerFilterSegment.parse("*.attributes", tmpLevel + 1, HasAttributes.class));
+          includes.add(MarkerFilterSegment.parse("*.attributes[*].*", tmpLevel + 2, Attribute.class));
         } else {
           excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, true, HasTranslation.class));
           //excludes.add(MarkerFilterSegment.parse("*.translations[*].*", tmpLevel + 2, Translation.class));

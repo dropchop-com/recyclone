@@ -114,11 +114,6 @@ public class PathSegment {
       this.collectionLike = false;
       this.modelLike = false;
     }
-    /*this.propertyClass = !isCollection(this.referer) ? getPropertyClass(this) : null;
-    this.collectionLike = isCollection(this.referer) ||
-      (this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass));
-    this.modelLike = (this.referer != null && Model.class.isAssignableFrom(this.referer.getClass())) ||
-    (this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass));*/
   }
 
   public PathSegment(PathSegment parent, String name, Object referer) {

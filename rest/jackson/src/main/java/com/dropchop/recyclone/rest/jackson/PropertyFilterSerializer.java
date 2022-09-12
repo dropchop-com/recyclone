@@ -10,12 +10,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
  */
+@Slf4j
 public class PropertyFilterSerializer extends StdSerializer<Object> {
   private final JsonSerializer<Object> delegate;
   private final FieldFilter filter;
@@ -47,6 +49,7 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
 
     if (generator instanceof FilteringJsonGenerator filteringJsonGenerator) {
       if (filteringJsonGenerator.continueSerialization(o)) {
+        //log.info("Serialize [{}].", o);
         delegate.serialize(o, generator, provider);
         if (start) { // end of root object serialization
           // actually write the JSON with saved generator write state commands.

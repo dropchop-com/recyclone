@@ -31,16 +31,16 @@ public class AttributeClassicSerializer extends JsonSerializer<Attribute> {
     } else if (value instanceof BigDecimal) {
       gen.writeNumber((BigDecimal) value);
     } else if (value instanceof List<?>) {
-      gen.writeStartArray();
+      gen.writeStartArray(value);
       for (Object item : (List<?>)value) {
         valueWrite(gen, item);
       }
       gen.writeEndArray();
     } else if (value instanceof Set<?>) {
-      gen.writeStartObject();
+      gen.writeStartObject(value);
       for (Object item : (Set<?>)value) {
         if (item instanceof Attribute<?> attr) {
-          nameValueWrite(gen, attr.getName(), attr.getValue());
+          nameValueWrite(gen, attr, attr.getName(), attr.getValue());
         } else {
           log.warn("Item [{}] in set is not instance of [{}]. Skipping serialization!",
             item, Attribute.class.getName());
@@ -50,14 +50,14 @@ public class AttributeClassicSerializer extends JsonSerializer<Attribute> {
     }
   }
 
-  protected void nameValueWrite(JsonGenerator gen, String name, Object value) throws IOException {
+  protected void nameValueWrite(JsonGenerator gen, Attribute<?> attribute, String name, Object value) throws IOException {
     if (value == null) {
       return;
     }
     if (name == null) {
       return;
     }
-    gen.writeStartObject();
+    gen.writeStartObject(attribute);
     gen.writeFieldName("name");
     gen.writeString(name);
     gen.writeFieldName("value");
@@ -75,6 +75,6 @@ public class AttributeClassicSerializer extends JsonSerializer<Attribute> {
     if (attribute == null) {
       return;
     }
-    nameValueWrite(gen, attribute.getName(), attribute.getValue());
+    nameValueWrite(gen, attribute, attribute.getName(), attribute.getValue());
   }
 }

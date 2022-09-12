@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.rest.jackson;
 
+import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,14 +14,14 @@ import java.io.IOException;
 @Slf4j
 public class AttributeCompactSerializer extends AttributeClassicSerializer {
 
-  protected void nameValueWrite(JsonGenerator gen, String name, Object value) throws IOException {
+  protected void nameValueWrite(JsonGenerator gen, Attribute<?> attribute, String name, Object value) throws IOException {
     if (value == null) {
       return;
     }
     if (name == null) {
       return;
     }
-    gen.writeStartObject();
+    gen.writeStartObject(attribute);
     gen.writeFieldName(name);
     valueWrite(gen, value);
     gen.writeEndObject();
