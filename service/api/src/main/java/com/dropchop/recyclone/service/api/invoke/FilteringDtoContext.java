@@ -59,14 +59,12 @@ public class FilteringDtoContext extends MappingContext {
     }
     state.pushSegment(segment);
     if (filter != null) {
-      // we precompute "filter" and "dive" for path segment so that,
-      // we don't repeat exact same computation for each property
+      // we precompute "dive" for path segment so that, we don't repeat exact same
+      // computation for each property in filter(@TargetPropertyName String propName) method
       // (remember: we can't return true or false for continuation here due to Mapstruct API)
       segment
         .dive(filter.dive(segment));
-        //.test(filter.test(segment));
     }
-
     //log.info("Start object [{}] -> [{}] dive [{}] filter [{}].",
     //  source.getClass().getSimpleName(), segment, segment.dive(), segment.test());
   }
@@ -82,6 +80,12 @@ public class FilteringDtoContext extends MappingContext {
     return segment.collectionLike;
   }
 
+  /**
+   * Precompute nesting so that we don't dive into ORM collection
+   *
+   * @param segment current segment
+   * @return true if we should dive
+   */
   private boolean specialCollectionDive(PathSegment segment) {
     if (this.filter == null) {
       return true;
