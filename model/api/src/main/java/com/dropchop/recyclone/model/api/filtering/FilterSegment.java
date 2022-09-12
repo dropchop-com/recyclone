@@ -86,19 +86,11 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
 
   public boolean nest(PathSegment segment) {
     if (isCollection(segment.referer)) {
-      if (segment.level < maxLevel) {
-        return true;
-      } else {
-        return false;
-      }
+      return segment.level < maxLevel;
     }
     if (segment.propertyClass != null) {
       if (segment.collectionLike) {
-        if (segment.level < maxLevel) {
-          return true;
-        } else {
-          return false;
-        }
+        return segment.level < maxLevel;
       }
       if (segment.level <= maxLevel) {
         return segment.modelLike;

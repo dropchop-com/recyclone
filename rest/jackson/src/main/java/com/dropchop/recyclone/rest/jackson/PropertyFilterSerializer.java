@@ -49,7 +49,6 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
 
     if (generator instanceof FilteringJsonGenerator filteringJsonGenerator) {
       if (filteringJsonGenerator.continueSerialization(o)) {
-        //log.info("Serialize [{}].", o);
         delegate.serialize(o, generator, provider);
         if (start) { // end of root object serialization
           // actually write the JSON with saved generator write state commands.

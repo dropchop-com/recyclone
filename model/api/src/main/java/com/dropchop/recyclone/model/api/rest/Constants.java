@@ -78,6 +78,8 @@ public interface Constants {
   interface ContentDetail {
     String ALL_PREFIX = "all";
     String NESTED_PREFIX = "nest";
+    String TITLE_SUFIX = "_title";
+    String TRANS_SUFIX = "_trans";
     String ALL_OBJS_IDCODE = ALL_PREFIX + "_id";
     String ALL_OBJS_IDCODE_TITLE = ALL_PREFIX + "_title";
     String ALL_OBJS_IDCODE_TITLE_TRANS = ALL_PREFIX + "_trans";

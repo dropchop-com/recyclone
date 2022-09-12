@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
@@ -165,8 +164,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     if (forValue != null) {
       PathSegment segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, forValue);
       state.pushSegment(segment);
-
-      log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
+      //log.info("Start array [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
       if (skipDive(curr, segment, forValue)) {
         return;
       }
@@ -211,7 +209,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   public void writeEndArray() {
     @SuppressWarnings("unused")
     PathSegment segment = writeEnd(new ArrayEndState(() -> delegate.writeEndArray()));
-    log.info("End array [{}] valid.", segment);
+    //log.info("End array [{}] valid.", segment);
   }
 
   /**
@@ -232,8 +230,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
         segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, currObj == null ? forValue : currObj);
       }
       state.pushSegment(segment);
-
-      log.info("Start object [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
+      //log.info("Start object [{}] -> [{}] dive [{}].", forValue, segment, filter.dive(segment));
       if (skipDive(curr, segment, forValue)) {
         return;
       }
@@ -265,7 +262,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
   @Override
   public void writeEndObject() {
     PathSegment segment = writeEnd(new ObjectEndState(() -> delegate.writeEndObject()));
-    log.info("End object [{}].", segment);
+    //log.info("End object [{}].", segment);
     if (segment != null && segment.parent instanceof CollectionPathSegment collSegment) {
       collSegment.incCurrentIndex();
     }
@@ -281,7 +278,7 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     } else {
       test = filter.test(segment);
     }
-    log.info("Property [{}] test [{}]", segment, test);
+    //log.info("Property [{}] test [{}]", segment, test);
     if (test) {
       if (!(parent instanceof CollectionPathSegment)) {
         writeState.add(new FieldNameState(field, () -> delegate.writeFieldName(field)));

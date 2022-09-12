@@ -10,6 +10,7 @@ import java.util.Collection;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
+@SuppressWarnings("UnusedReturnValue")
 @Slf4j
 public class PathSegment {
   public static final String ROOT_OBJECT = ".";
@@ -60,9 +61,12 @@ public class PathSegment {
   public final boolean modelLike;
 
   private boolean dive = true;
-  private boolean test = true;
 
-  public PathSegment(PathSegment parent, String name, Object referer, boolean refererProp) {
+  public static PathSegment fromContainer(PathSegment parent, String name, Object referer) {
+    return new PathSegment(parent, name, referer, true);
+  }
+
+  protected PathSegment(PathSegment parent, String name, Object referer, boolean forwardPropertyLookUp) {
     this.referer = referer;
     this.parent = parent;
     if (parent != null) {
@@ -99,7 +103,7 @@ public class PathSegment {
           this.collectionLike = true;
           this.modelLike = false;
         } else {
-          this.propertyClass = !refererProp ? (referer != null ? referer.getClass() : null) : getPropertyClass(this);
+          this.propertyClass = !forwardPropertyLookUp ? (referer != null ? referer.getClass() : null) : getPropertyClass(this);
           this.collectionLike = this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass);
           this.modelLike = this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass);
         }
@@ -142,15 +146,6 @@ public class PathSegment {
 
   public PathSegment dive(boolean dive) {
     this.dive = dive;
-    return this;
-  }
-
-  public boolean test() {
-    return test;
-  }
-
-  public PathSegment test(boolean test) {
-    this.test = test;
     return this;
   }
 

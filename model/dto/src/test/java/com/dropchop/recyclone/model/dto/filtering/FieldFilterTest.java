@@ -187,7 +187,7 @@ class FieldFilterTest {
           }
         }
       } else {
-        PathSegment p = new PathSegment(parent, name, model, true);
+        PathSegment p = PathSegment.fromContainer(parent, name, model);
         listener.accept(p);
         if (Model.class.isAssignableFrom(type)) {
           Model m = (Model)rm.invoke(model);
@@ -313,7 +313,7 @@ class FieldFilterTest {
 
   @Test
   void fromParamsFilterLevel2CodeId() {
-    Long err = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(12);
+    long err = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(12);
     for (int i = 0; i < 20000; i++) {
       err = System.currentTimeMillis() + err;
     }
