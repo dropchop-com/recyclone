@@ -1,11 +1,8 @@
 package com.dropchop.recyclone.model.api.filtering;
 
-import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.function.Predicate;
 
 /**
@@ -29,69 +26,7 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return new FilterSegment(pathStr, maxLevel);
   }
 
-  public static boolean isCollection(Object obj) {
-    return obj instanceof Collection<?> || (obj!=null && obj.getClass().isArray());
-  }
 
-
-  public static Class<?> getPropertyClass(PathSegment segment) {
-    String propName = segment.name;
-    if (propName == null) {
-      return null;
-    }
-    try {
-      Method m = segment.referer.getClass().getMethod("get" +
-        propName.substring(0, 1).toUpperCase() + propName.substring(1));
-      return m.getReturnType();
-    } catch (NoSuchMethodException e) {
-      log.warn("Unable to find property [{}] getter!", propName, e);
-      return null;
-    }
-  }
-
-  public static boolean isPropertyCollection(PathSegment segment) {
-    String propName = segment.name;
-    if (propName == null) {
-      return false;
-    }
-    try {
-      Method m = segment.referer.getClass().getMethod("get" +
-        propName.substring(0, 1).toUpperCase() + propName.substring(1));
-      Class<?> clazz = m.getReturnType();
-      return Collection.class.isAssignableFrom(clazz);
-    } catch (NoSuchMethodException e) {
-      log.warn("Unable to find property [{}] getter!", propName, e);
-      return false;
-    }
-  }
-
-  public static boolean willPropertyNest(PathSegment segment) {
-    if (segment.referer == null) {
-      return false;
-    }
-
-    if (isCollection(segment.referer)) {
-      return true;
-    }
-
-    if (segment.parent instanceof CollectionPathSegment && segment.referer instanceof Model) {
-      return true;
-    }
-
-    String propName = segment.name;
-    if (propName == null) {
-      return false;
-    }
-    try {
-      Method m = segment.referer.getClass().getMethod("get" +
-        propName.substring(0, 1).toUpperCase() + propName.substring(1));
-      Class<?> clazz = m.getReturnType();
-      return Model.class.isAssignableFrom(clazz) || Collection.class.isAssignableFrom(clazz);
-    } catch (NoSuchMethodException e) {
-      log.warn("Unable to find property [{}] getter!", propName, e);
-      return false;
-    }
-  }
 
   final int maxLevel;
 
@@ -157,8 +92,17 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
         return false;
       }
     }
-    if (segment.level <= maxLevel) {
-      return willPropertyNest(segment);
+    if (segment.propertyClass != null) {
+      if (segment.collectionLike) {
+        if (segment.level < maxLevel) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      if (segment.level <= maxLevel) {
+        return segment.modelLike;
+      }
     }
     return false;
   }

@@ -87,20 +87,29 @@ public class FilteringDtoContext extends MappingContext {
     boolean dive = true;
     boolean test = true;
     boolean nest = false;
+    boolean excl = false;
+    boolean incl = false;
     if (filter != null) {
       dive = filter.dive(segment);
       test = filter.test(segment);
       // we must precompute nesting so that we don't dive into ORM collection
       nest = filter.nest(segment);
+      excl = filter.exclude(segment);
+      incl = filter.include(segment);
     }
 
-    log.info("Property [{}] dive [{}] filter [{}:{}] nest [{}].", segment, dive, test, curr.test(), nest);
-    if (nest) {
-      if (dive) {
-        state.pushField(propName);
-        return true;
+    log.info("Property [{}] dive [{}] filter [{}] nest [{}] exclude [{}] include [{}].",
+      segment, dive, test, nest, excl, incl);
+    if (segment.nestable()) {
+      if (nest) {
+        if (dive && !excl) {
+          state.pushField(propName);
+          return true;
+        }
+        return false;
+      } else {
+        return false;
       }
-      return false;
     }
     return test;
   }

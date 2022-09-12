@@ -1,15 +1,46 @@
 package com.dropchop.recyclone.model.api.filtering;
 
+import com.dropchop.recyclone.model.api.base.Model;
+import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
+@Slf4j
 public class PathSegment {
   public static final String ROOT_OBJECT = ".";
   public static final String PATH_DELIM = ".";
   public static final String SIBLING_DELIM = ";";
   public static final String ANY = "*";
+
+  public static boolean isCollection(Object obj) {
+    return obj instanceof Collection<?> || (obj!=null && obj.getClass().isArray());
+  }
+
+  public static Class<?> getPropertyClass(PathSegment segment) {
+    if (segment.referer == null) {
+      return null;
+    }
+    if (segment.parent instanceof CollectionPathSegment) {
+      return segment.referer.getClass();
+    }
+    String propName = segment.name;
+    if (propName == null) {
+      return null;
+    }
+    try {
+      Method m = segment.referer.getClass().getMethod("get" +
+        propName.substring(0, 1).toUpperCase() + propName.substring(1));
+      return m.getReturnType();
+    } catch (NoSuchMethodException e) {
+      log.warn("Unable to find property [{}] getter!", propName, e);
+      return null;
+    }
+  }
 
   public static PathSegment root(Object referer) {
     return new PathSegment(null, ROOT_OBJECT, referer);
@@ -23,6 +54,10 @@ public class PathSegment {
   public final int level;
   public final String[] path;
   public final String[] indexedPath;
+  public final Class<?> propertyClass;
+
+  public final boolean collectionLike;
+  public final boolean modelLike;
 
   private boolean dive = true;
   private boolean test = true;
@@ -48,11 +83,25 @@ public class PathSegment {
       }
       if (this instanceof CollectionPathSegment) {
         this.level = parent.level;
+
+        this.propertyClass = Collection.class;
+        this.collectionLike = true;
+        this.modelLike = false;
       } else {
         if (referer == parent.referer) {
           this.level = parent.level;
         } else {
           this.level = parent.level + 1;
+        }
+
+        if (isCollection(this.referer)) {
+          this.propertyClass = Collection.class;
+          this.collectionLike = true;
+          this.modelLike = false;
+        } else {
+          this.propertyClass = getPropertyClass(this);
+          this.collectionLike = this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass);
+          this.modelLike = this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass);
         }
       }
     } else {
@@ -61,7 +110,15 @@ public class PathSegment {
       this.path = new String[]{};
       this.indexedPath = path;
       this.level = 1;
+      this.propertyClass = null;
+      this.collectionLike = false;
+      this.modelLike = false;
     }
+    /*this.propertyClass = !isCollection(this.referer) ? getPropertyClass(this) : null;
+    this.collectionLike = isCollection(this.referer) ||
+      (this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass));
+    this.modelLike = (this.referer != null && Model.class.isAssignableFrom(this.referer.getClass())) ||
+    (this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass));*/
   }
 
   protected PathSegment(String[] path) {
@@ -75,10 +132,9 @@ public class PathSegment {
     this.indexedPath = path;
     this.level = path.length;
     this.index = -1;
-  }
-
-  boolean isCollectionElement() {
-    return this.index > -1;
+    this.propertyClass = null;
+    this.collectionLike = false;
+    this.modelLike = false;
   }
 
   public boolean dive() {
@@ -97,6 +153,10 @@ public class PathSegment {
   public PathSegment test(boolean test) {
     this.test = test;
     return this;
+  }
+
+  public boolean nestable() {
+    return collectionLike || modelLike;
   }
 
   @Override
