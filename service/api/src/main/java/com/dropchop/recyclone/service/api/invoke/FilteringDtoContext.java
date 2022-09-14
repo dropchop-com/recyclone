@@ -2,15 +2,12 @@ package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.filtering.*;
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.marker.HasAttributes;
-import com.dropchop.recyclone.model.api.marker.HasTranslation;
+import com.dropchop.recyclone.model.api.utils.Objects;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.TargetPropertyName;
 
 import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
-import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_PREFIX;
-import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.TRANS_SUFIX;
 
 /**
  * MappingContext that can filter (include/exclude) object graph paths based on REST client parameters.
@@ -42,7 +39,7 @@ public class FilteringDtoContext extends MappingContext {
     }
     String curr = state.pollField();
     PathSegment parent = state.currentSegment();
-    boolean isCollection = FilterSegment.isCollection(source);
+    boolean isCollection = Objects.isCollectionLike(source);
     PathSegment segment;
     if (parent instanceof CollectionPathSegment) {
       if (isCollection) {
@@ -69,58 +66,6 @@ public class FilteringDtoContext extends MappingContext {
     //  source.getClass().getSimpleName(), segment, segment.dive(), segment.test());
   }
 
-  static boolean isSpecialCollection(PathSegment segment) {
-    Class<?> currentClass = segment.referer.getClass();
-    String propName = segment.name;
-    boolean isTranslations = HasTranslation.class.isAssignableFrom(currentClass) && "translations".equals(propName);
-    boolean isAttributes = HasAttributes.class.isAssignableFrom(currentClass) && "attributes".equals(propName);
-    if (!(isTranslations || isAttributes)) {
-      return false;
-    }
-    return segment.collectionLike;
-  }
-
-  /**
-   * Precompute nesting so that we don't dive into ORM collection
-   *
-   * @param segment current segment
-   * @return true if we should dive
-   */
-  private boolean specialCollectionDive(PathSegment segment) {
-    if (this.filter == null) {
-      return true;
-    }
-    Integer treeLevel = this.filter.getTreeLevel();
-    if (treeLevel == null || treeLevel == Integer.MAX_VALUE) {
-      return true;
-    }
-    if (segment == null || segment.referer == null) {
-      return true;
-    }
-    String contentDetail = this.filter.getDetailLevel();
-    if (contentDetail == null || contentDetail.isBlank()) {
-      return true;
-    }
-    boolean nested = contentDetail.startsWith(NESTED_PREFIX);
-    if (!isSpecialCollection(segment)) {
-      return nested ?  segment.level < treeLevel + 1: segment.level < treeLevel;
-    }
-
-    if (nested) {
-      if (contentDetail.contains(TRANS_SUFIX)) {
-        return segment.level <= treeLevel + 1;
-      } else {
-        return true;
-      }
-    } else {
-      if (contentDetail.contains(TRANS_SUFIX)) {
-        return segment.level <= treeLevel;
-      } else {
-        return true;
-      }
-    }
-  }
-
   /**
    * Test if property can be mapped
    *
@@ -135,7 +80,7 @@ public class FilteringDtoContext extends MappingContext {
     }
 
     //referer contains property
-    PathSegment segment = PathSegment.fromContainer(curr, propName, curr.referer);
+    PathSegment segment = new PropertyPathSegment(curr, propName, curr.referer);
 
     boolean test = true;
     if (filter != null) {
@@ -143,15 +88,8 @@ public class FilteringDtoContext extends MappingContext {
     }
 
     if (segment.nestable()) {
-      boolean dive = true;
-      boolean nest = false;
-      if (filter != null) {
-        dive = filter.dive(segment);
-        // we must precompute nesting so that we don't dive into ORM collection
-        nest = filter.nest(segment);
-      }
-      //log.info("Property [{}] dive [{}] nest [{}].", segment, dive, nest);
-      if (nest && dive && specialCollectionDive(segment)) {
+      if (filter != null && filter.propertyDive(segment)) {
+        //log.info("Property [{}] dive.", segment);
         state.pushField(propName);
         return true;
       } else {
@@ -162,6 +100,7 @@ public class FilteringDtoContext extends MappingContext {
     return test;
   }
 
+  @SuppressWarnings("unused")
   public void after(Object ignoredSource, Object target) {
     PathSegment segment = state.pollSegment();
     if (segment.parent instanceof CollectionPathSegment cps) {

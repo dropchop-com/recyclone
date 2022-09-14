@@ -1,9 +1,14 @@
 package com.dropchop.recyclone.model.api.filtering;
 
+import com.dropchop.recyclone.model.api.marker.HasAttributes;
+import com.dropchop.recyclone.model.api.marker.HasTranslation;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
+
+import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_PREFIX;
+import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.TRANS_SUFIX;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
@@ -32,12 +37,26 @@ public class MarkerFilterSegment extends FilterSegment {
   public final Collection<Class<?>> markers;
   public final boolean testParentInstance;
 
+
+
   public MarkerFilterSegment(String[] path, Integer maxLevel,
                              boolean testParentInstance,
                              Collection<Class<?>> markers) {
     super(path, maxLevel);
     this.markers = markers;
     this.testParentInstance = testParentInstance;
+  }
+
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+  public static boolean isSpecialCollection(PathSegment segment) {
+    Class<?> currentClass = segment.referer.getClass();
+    String propName = segment.name;
+    boolean isTranslations = HasTranslation.class.isAssignableFrom(currentClass) && "translations".equals(propName);
+    boolean isAttributes = HasAttributes.class.isAssignableFrom(currentClass) && "attributes".equals(propName);
+    if (!(isTranslations || isAttributes)) {
+      return false;
+    }
+    return segment.collectionLike;
   }
 
   protected boolean testInstance(PathSegment segment) {

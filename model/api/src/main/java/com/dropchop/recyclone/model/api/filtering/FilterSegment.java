@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api.filtering;
 
+import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,8 +26,6 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     String[] pathStr = pattern.split("\\" + PATH_DELIM, 255);
     return new FilterSegment(pathStr, maxLevel);
   }
-
-
 
   final int maxLevel;
 
@@ -85,7 +84,7 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
   }
 
   public boolean nest(PathSegment segment) {
-    if (isCollection(segment.referer)) {
+    if (Objects.isCollectionLike(segment.referer)) {
       return segment.level < maxLevel;
     }
     if (segment.propertyClass != null) {
@@ -99,7 +98,7 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return false;
   }
 
-  public boolean dive(PathSegment segment) {
+  boolean dive(PathSegment segment, Boolean precomputedNest) {
     if (segment.parent == null) {// we always accept root
       return true;
     }
@@ -107,10 +106,18 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
       return false;
     }
     if (startsWithAny() || endsWithAny()) {
-      return nest(segment);
+      return precomputedNest != null ? precomputedNest : nest(segment);
     }
 
     return Strings.matchPath(this.path, segment.level, segment.indexedPath, segment.level, true);
+  }
+
+  boolean dive(PathSegment segment, boolean precomputedNest) {
+    return dive(segment, (Boolean) precomputedNest);
+  }
+
+  public boolean dive(PathSegment segment) {
+    return dive(segment, null);
   }
 
   @Override

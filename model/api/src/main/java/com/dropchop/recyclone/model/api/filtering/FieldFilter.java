@@ -17,15 +17,11 @@ import static com.dropchop.recyclone.model.api.filtering.FilterSegment.any;
 import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.*;
 
 /**
+ * FiledFilter object that can evaluate include / exclude FilterSegment rules against PathSegment.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
 public class FieldFilter implements Predicate<PathSegment> {
-
-  final LinkedList<FilterSegment> includes;
-  final LinkedList<FilterSegment> excludes;
-
-  private final int treeLevel;
-  private final String detailLevel;
 
   private static void addCommonIncludes(LinkedList<FilterSegment> includes, String detailLevel, int tmpLevel) {
     includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
@@ -44,6 +40,17 @@ public class FieldFilter implements Predicate<PathSegment> {
       includes.add(MarkerFilterSegment.parse("*.attributes[*].*", tmpLevel + 2, Attribute.class));
     }
   }
+
+  /**
+   * FileFilter is constructed from ResultFilterDefaults and ResultFilter objects contained in Parameters.
+   *
+   * Construction examines ContentDetail constant, tree depth and include / exclude fields,
+   * and then decides which include / exclude FilterSegments to construct and include.
+   *
+   * @param contentFilter content filter to collect construct parameters from.
+   * @param filterDefaults defaults to use when content filter parameter is missing.
+   * @return FieldFilter.
+   */
 
   public static FieldFilter fromFilter(ContentFilter contentFilter, ResultFilterDefaults filterDefaults) {
     Integer treeLevel = null;
@@ -126,6 +133,15 @@ public class FieldFilter implements Predicate<PathSegment> {
     return new FieldFilter(treeLevel != null ? treeLevel : Integer.MAX_VALUE, detailLevel, includes, excludes);
   }
 
+  /**
+   * If params are of type CommonParams thn include / exclude FilterSegments are
+   * constructed from ResultFilterDefaults and ResultFilter objects contained in Parameters.
+   *
+   * @see FieldFilter#fromFilter(ContentFilter, ResultFilterDefaults)
+   *
+   * @param params parameters to construct field filter from.
+   * @return field filter or null if params is not of type CommonParams
+   */
   public static FieldFilter fromParams(Params params) {
     if (!(params instanceof CommonParams)) {
       return null;
@@ -135,21 +151,54 @@ public class FieldFilter implements Predicate<PathSegment> {
     return fromFilter(contentFilter, filterDefaults);
   }
 
+
+  final LinkedList<FilterSegment> includes;
+  final LinkedList<FilterSegment> excludes;
+
+  private final int treeLevel;
+  private final boolean cdNested;
+  private final boolean cdTrans;
+
   FieldFilter(int treeLevel, String detailLevel, LinkedList<FilterSegment> includes, LinkedList<FilterSegment> excludes) {
     this.includes = includes;
     this.excludes = excludes;
     this.treeLevel = treeLevel;
-    this.detailLevel = detailLevel;
+    this.cdNested = detailLevel != null && detailLevel.startsWith(NESTED_PREFIX);
+    this.cdTrans = detailLevel != null && detailLevel.contains(TRANS_SUFIX);
   }
 
-  public int getTreeLevel() {
-    return treeLevel;
+  private boolean specialCollectionDive(PathSegment segment) {
+    if (treeLevel == Integer.MAX_VALUE) {
+      return true;
+    }
+    if (segment == null || segment.referer == null) {
+      return true;
+    }
+    if (!MarkerFilterSegment.isSpecialCollection(segment)) {
+      return cdNested ? segment.level < treeLevel + 1: segment.level < treeLevel;
+    }
+
+    if (cdNested) {
+      if (cdTrans) {
+        return segment.level <= treeLevel + 1;
+      } else {
+        return true;
+      }
+    } else {
+      if (cdTrans) {
+        return segment.level <= treeLevel;
+      } else {
+        return true;
+      }
+    }
   }
 
-  public String getDetailLevel() {
-    return detailLevel;
-  }
-
+  /**
+   * Determine if given path segment is excluded by any exclude filter segment @see: FilterSegment.
+   *
+   * @param segment current path segment to examine
+   * @return true if any exclude FilterSegment passes test false otherwise.
+   */
   public boolean exclude(PathSegment segment) {
     if (segment.parent == null) {// we always accept root
       return false;
@@ -162,6 +211,12 @@ public class FieldFilter implements Predicate<PathSegment> {
     return false;
   }
 
+  /**
+   * Determine if given path segment passes any include filter segments @see: FilterSegment.
+   *
+   * @param segment current path segment to examine
+   * @return true if any include FilterSegment passes test false otherwise.
+   */
   public boolean include(PathSegment segment) {
     if (segment.parent == null) {// we always accept root
       return true;
@@ -174,6 +229,12 @@ public class FieldFilter implements Predicate<PathSegment> {
     return false;
   }
 
+  /**
+   * Determine if given path segment passes all include / exclude filter segments @see: FilterSegment.
+   *
+   * @param segment current path segment to examine
+   * @return true if continue depth processing false otherwise.
+   */
   @Override
   public boolean test(PathSegment segment) {
     if (segment.parent == null) {// we always accept root
@@ -186,23 +247,13 @@ public class FieldFilter implements Predicate<PathSegment> {
     return incl;
   }
 
-  public boolean nest(PathSegment segment) {
-    if (segment.parent == null) {// we always accept root
-      return true;
-    }
-    boolean nest = false;
-    for (FilterSegment filter : includes) {
-      if (filter.nest(segment)) {
-        nest = true;
-        break;
-      }
-    }
-    if (nest) {
-      nest = !exclude(segment);
-    }
-    return nest;
-  }
 
+  /**
+   * Determine if we should continue processing and dive into object for given path segment
+   *
+   * @param segment current path segment to examine
+   * @return true if continue depth processing false otherwise.
+   */
   public boolean dive(PathSegment segment) {
     if (segment.parent == null) {// we always accept root
       return true;
@@ -218,5 +269,35 @@ public class FieldFilter implements Predicate<PathSegment> {
       dive = !exclude(segment);
     }
     return dive;
+  }
+
+  /**
+   * Predetermine if we should continue processing and dive into object for given property.
+   * This evaluation is more restrictive. Property must pass @see: nest() and @see dive(),
+   * be a special collection, right level and content detail must match.
+   *
+   * This method helps to block needles child collection examination,
+   * which is helpful with ORM object filtering.
+   *
+   * @param segment objects property path segment.
+   * @return true if continue depth processing false otherwise.
+   */
+  public boolean propertyDive(PathSegment segment) {
+    if (segment.parent == null) {// we always accept root
+      return true;
+    }
+    boolean nestAndDive = false;
+    for (FilterSegment filter : includes) {
+      if (filter.nest(segment)) {
+        if (filter.dive(segment, true)) {
+          nestAndDive = true;
+          break;
+        }
+      }
+    }
+    if (nestAndDive) {
+      nestAndDive = !exclude(segment);
+    }
+    return nestAndDive && specialCollectionDive(segment);
   }
 }

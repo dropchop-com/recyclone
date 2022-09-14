@@ -8,6 +8,7 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.filtering.CollectionPathSegment;
 import com.dropchop.recyclone.model.api.filtering.FieldFilter;
 import com.dropchop.recyclone.model.api.filtering.PathSegment;
+import com.dropchop.recyclone.model.api.filtering.PropertyPathSegment;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
@@ -187,7 +188,7 @@ class FieldFilterTest {
           }
         }
       } else {
-        PathSegment p = PathSegment.fromContainer(parent, name, model);
+        PathSegment p = new PropertyPathSegment(parent, name, model);
         listener.accept(p);
         if (Model.class.isAssignableFrom(type)) {
           Model m = (Model)rm.invoke(model);

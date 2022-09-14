@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.model.api.filtering;
 
 import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.model.api.utils.Objects;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -18,33 +18,16 @@ public class PathSegment {
   public static final String SIBLING_DELIM = ";";
   public static final String ANY = "*";
 
-  public static boolean isCollection(Object obj) {
-    return obj instanceof Collection<?> || (obj!=null && obj.getClass().isArray());
-  }
 
   public static Class<?> getPropertyClass(PathSegment segment) {
-    if (segment.referer == null) {
-      return null;
-    }
     if (segment.parent instanceof CollectionPathSegment) {
       return segment.referer.getClass();
     }
-    String propName = segment.name;
-    if (propName == null) {
-      return null;
-    }
-    try {
-      Method m = segment.referer.getClass().getMethod("get" +
-        propName.substring(0, 1).toUpperCase() + propName.substring(1));
-      return m.getReturnType();
-    } catch (NoSuchMethodException e) {
-      log.warn("Unable to find property [{}] getter!", propName, e);
-      return null;
-    }
+    return Objects.getPropertyClass(segment.referer, segment.name);
   }
 
   public static PathSegment root(Object referer) {
-    return new PathSegment(null, ROOT_OBJECT, referer, true);
+    return new PathSegment(null, ROOT_OBJECT, referer);
   }
 
   public final String name;
@@ -62,11 +45,7 @@ public class PathSegment {
 
   private boolean dive = true;
 
-  public static PathSegment fromContainer(PathSegment parent, String name, Object referer) {
-    return new PathSegment(parent, name, referer, true);
-  }
-
-  protected PathSegment(PathSegment parent, String name, Object referer, boolean forwardPropertyLookUp) {
+  public PathSegment(PathSegment parent, String name, Object referer) {
     this.referer = referer;
     this.parent = parent;
     if (parent != null) {
@@ -98,12 +77,13 @@ public class PathSegment {
           this.level = parent.level + 1;
         }
 
-        if (isCollection(this.referer)) {
+        if (Objects.isCollectionLike(this.referer)) {
           this.propertyClass = Collection.class;
           this.collectionLike = true;
           this.modelLike = false;
         } else {
-          this.propertyClass = !forwardPropertyLookUp ? (referer != null ? referer.getClass() : null) : getPropertyClass(this);
+          Class<?> refererClass = (referer != null ? referer.getClass() : null);
+          this.propertyClass = this instanceof PropertyPathSegment ?  getPropertyClass(this) : refererClass;
           this.collectionLike = this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass);
           this.modelLike = this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass);
         }
@@ -118,10 +98,6 @@ public class PathSegment {
       this.collectionLike = false;
       this.modelLike = false;
     }
-  }
-
-  public PathSegment(PathSegment parent, String name, Object referer) {
-    this(parent, name, referer, false);
   }
 
   protected PathSegment(String[] path) {
