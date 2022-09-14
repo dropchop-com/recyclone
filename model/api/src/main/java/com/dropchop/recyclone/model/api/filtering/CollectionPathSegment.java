@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.model.api.filtering;
 
 /**
+ * A path segment for collection like object in object graph traversal.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
 public class CollectionPathSegment extends PathSegment {

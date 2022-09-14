@@ -8,6 +8,15 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
+ * PathSegment is an object representing current path in object graph traversal.
+ * It contains:
+ *  - the current object reference
+ *  - parent segment reference
+ *  - computed level
+ *  - computed String[] path of segments
+ *  - an index if parent is a collection like object
+ *  - class of a property/segment which is usually current object's class
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */
 @SuppressWarnings("UnusedReturnValue")
@@ -83,7 +92,7 @@ public class PathSegment {
           this.modelLike = false;
         } else {
           Class<?> refererClass = (referer != null ? referer.getClass() : null);
-          this.propertyClass = this instanceof PropertyPathSegment ?  getPropertyClass(this) : refererClass;
+          this.propertyClass = this instanceof PropertyPathSegment ? getPropertyClass(this) : refererClass;
           this.collectionLike = this.propertyClass != null && Collection.class.isAssignableFrom(this.propertyClass);
           this.modelLike = this.propertyClass != null && Model.class.isAssignableFrom(this.propertyClass);
         }
