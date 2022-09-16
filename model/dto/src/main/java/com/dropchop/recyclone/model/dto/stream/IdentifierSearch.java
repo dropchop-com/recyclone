@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.stream;
 
-import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 08. 22.
  */
-public class IdentifierSearch<T extends Dto> {
+public class IdentifierSearch<T extends Model> {
 
   private final List<String> searches;
 
