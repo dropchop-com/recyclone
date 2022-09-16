@@ -23,6 +23,10 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-model-dto</artifactId>
+    </dependency>
   </dependencies>
 
 </project>
