@@ -18,7 +18,7 @@ public class EntityAllPreloadDelegate<D extends Dto, E extends Entity, ID>
 
   public EntityAllPreloadDelegate(EntityByIdService<D, E, ID> service) {
     super(service);
-    preloaded = service.findAll()
+    preloaded = service.find()
       .stream()
       .collect(Collectors.toMap(E::identifier, Function.identity()));
   }

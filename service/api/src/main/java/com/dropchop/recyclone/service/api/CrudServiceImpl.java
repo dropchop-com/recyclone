@@ -78,7 +78,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   @Override
-  public List<E> findAll() {
+  public List<E> find() {
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     return conf.getRepository().find();
   }
@@ -127,10 +127,6 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   protected List<E> find(RepositoryExecContext<E> repositoryExecContext) {
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     return conf.getRepository().find(repositoryExecContext);
-  }
-
-  protected List<E> find() {
-    return find(getRepositoryExecContext());
   }
 
   @Override

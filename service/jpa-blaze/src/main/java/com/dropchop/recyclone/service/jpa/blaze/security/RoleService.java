@@ -79,7 +79,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
-    Collection<ERole> roles = find();
+    Collection<ERole> roles = find(getRepositoryExecContext());
     JoinEntityHelper<ERole, EPermission, UUID> helper =
       new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(
@@ -98,7 +98,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(ctx);
-    Collection<ERole> roles = find();
+    Collection<ERole> roles = find(getRepositoryExecContext());
     JoinEntityHelper<ERole, EPermission, UUID> helper =
       new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(
