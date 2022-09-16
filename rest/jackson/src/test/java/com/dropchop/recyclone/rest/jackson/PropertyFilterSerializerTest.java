@@ -328,7 +328,8 @@ class PropertyFilterSerializerTest {
            "code":"sl",
            "tags":[
               {
-                 "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+                 "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                 "type": "LanguageGroup"
               }
            ]
         }
@@ -360,6 +361,7 @@ class PropertyFilterSerializerTest {
             "tags":[
                {
                   "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "type": "LanguageGroup",
                   "title":"Indo-European",
                   "lang":"en",
                   "name":"indo_european"
@@ -404,6 +406,7 @@ class PropertyFilterSerializerTest {
             "tags":[
                {
                   "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "type": "LanguageGroup",
                   "title":"Indo-European",
                   "lang":"en",
                   "translations":[
@@ -453,7 +456,8 @@ class PropertyFilterSerializerTest {
               ],
               "tags":[
                  {
-                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                    "type": "LanguageGroup"
                  }
               ],
               "created":"2022-08-27T00:00:00Z",
@@ -497,6 +501,7 @@ class PropertyFilterSerializerTest {
               "tags":[
                  {
                     "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                    "type": "LanguageGroup",
                     "title":"Indo-European",
                     "lang":"en",
                     "name":"indo_european"
@@ -543,6 +548,7 @@ class PropertyFilterSerializerTest {
               "tags":[
                  {
                     "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                    "type": "LanguageGroup",
                     "title":"Indo-European",
                     "lang":"en",
                     "translations":[
@@ -611,7 +617,8 @@ class PropertyFilterSerializerTest {
                 ],
                 "tags":[
                    {
-                      "id":"4f544a62-5156-353a-9f18-17489a29c3b2"
+                      "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                      "type": "LanguageGroup"
                    }
                 ],
                 "created":"2022-08-27T00:00:00Z",

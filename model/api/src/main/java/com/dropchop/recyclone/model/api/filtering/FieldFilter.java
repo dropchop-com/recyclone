@@ -27,6 +27,7 @@ public class FieldFilter implements Predicate<PathSegment> {
     includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasId.class));
     includes.add(MarkerFilterSegment.parse("*.id", tmpLevel, HasUuid.class));
     includes.add(MarkerFilterSegment.parse("*.code", tmpLevel, HasCode.class));
+    includes.add(MarkerFilterSegment.parse("*.type", tmpLevel, HasType.class));
     if (detailLevel.contains(TITLE_SUFIX) || detailLevel.contains(TRANS_SUFIX)) {
       includes.add(MarkerFilterSegment.parse("*.title", tmpLevel, HasTitle.class));
       includes.add(MarkerFilterSegment.parse("*.name", tmpLevel, HasName.class));

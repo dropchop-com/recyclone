@@ -460,7 +460,8 @@ class FieldFilterTest {
     assertEquals(List.of(
       "",
       "code",
-      "tags[0].id"
+      "tags[0].id",
+      "tags[0].type"
     ), filteredAndVisited);
   }
 
@@ -486,6 +487,7 @@ class FieldFilterTest {
       "tags[0].lang",
       "tags[0].name",
       "tags[0].title",
+      "tags[0].type",
       "title"
       ), filteredAndVisited);
   }
@@ -519,6 +521,7 @@ class FieldFilterTest {
       "tags[0].translations[0].description",
       "tags[0].translations[0].lang",
       "tags[0].translations[0].title",
+      "tags[0].type",
       "title",
       "translations",
       "translations[0].base",
@@ -550,6 +553,7 @@ class FieldFilterTest {
       "modified",
       "tags",
       "tags[0].id",
+      "tags[0].type",
       "title",
       "translations",
       "translations[0].base",
@@ -584,6 +588,7 @@ class FieldFilterTest {
       "tags[0].lang",
       "tags[0].name",
       "tags[0].title",
+      "tags[0].type",
       "title",
       "translations",
       "translations[0].base",
@@ -623,6 +628,7 @@ class FieldFilterTest {
       "tags[0].translations[0].description",
       "tags[0].translations[0].lang",
       "tags[0].translations[0].title",
+      "tags[0].type",
       "title",
       "translations",
       "translations[0].base",
