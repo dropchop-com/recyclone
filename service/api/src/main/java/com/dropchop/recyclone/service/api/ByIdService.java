@@ -16,5 +16,5 @@ public interface ByIdService<M extends Model, ID> extends Service {
 
   List<M> findById(Collection<ID> ids);
 
-  List<M> findAll();
+  List<M> find();
 }
