@@ -2,6 +2,7 @@ package com.dropchop.recyclone.model.api.rest;
 
 import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,4 +27,25 @@ public interface ResultStatus<RS extends ResultStats> {
 
   List<StatusMessage> getDetails();
   void setDetails(List<StatusMessage> details);
+
+  default ResultStatus<RS> setStatusWithDetail(ResultCode code, StatusMessage message) {
+    if (code != null) {
+      this.setCode(code);
+    }
+    StatusMessage statusMessage = this.getMessage();
+    if (statusMessage == null) {
+      this.setMessage(message);
+    } else {
+      List<StatusMessage> messages = this.getDetails();
+      if (messages == null) {
+        messages = new ArrayList<>();
+      }
+      messages.add(message);
+    }
+    return this;
+  }
+
+  default ResultStatus<RS> detail(StatusMessage message) {
+    return setStatusWithDetail(null, message);
+  }
 }
