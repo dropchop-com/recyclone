@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -18,6 +19,12 @@ import java.util.Set;
 public class StatusMessage implements Model {
   private ErrorCode code;
   private String text;
+
+  public StatusMessage(ErrorCode code, String text) {
+    this.code = code;
+    this.text = text;
+    this.details = Collections.emptySet();
+  }
 
   @EqualsAndHashCode.Exclude
   private Set<Attribute<?>> details;
