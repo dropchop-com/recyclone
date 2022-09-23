@@ -18,7 +18,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
+public class DtoCode implements Dto, ModelWithCode, Comparable<ModelWithCode> {
 
   @NonNull
   @JsonInclude(NON_NULL)
@@ -26,7 +26,7 @@ public class DtoCode implements Dto, ModelWithCode, Comparable<DtoCode> {
 
   @Override
   @SuppressWarnings("ConstantConditions")
-  public int compareTo(@NonNull DtoCode o) {
+  public int compareTo(@NonNull ModelWithCode o) {
     String _code = this.getCode();
     String ocode = o != null ? o.getCode() : null;
     if (_code == null && ocode != null) {
