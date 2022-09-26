@@ -24,13 +24,18 @@ public class Objects {
     if (propName == null) {
       return null;
     }
+    String postfix = propName.substring(0, 1).toUpperCase() + propName.substring(1);
     try {
-      Method m = object.getClass().getMethod("get" +
-        propName.substring(0, 1).toUpperCase() + propName.substring(1));
+      Method m = object.getClass().getMethod("get" + postfix);
       return m.getReturnType();
-    } catch (NoSuchMethodException e) {
-      log.warn("Unable to find property [{}] getter!", propName, e);
-      return null;
+    } catch (NoSuchMethodException e0) {
+      try {
+        Method m = object.getClass().getMethod("is" + postfix);
+        return m.getReturnType();
+      } catch (NoSuchMethodException e1) {
+        log.warn("Unable to find property [{}] getter!", propName, e1);
+        return null;
+      }
     }
   }
 }
