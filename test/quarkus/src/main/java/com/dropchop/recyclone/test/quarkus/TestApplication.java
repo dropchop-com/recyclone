@@ -3,6 +3,7 @@ package com.dropchop.recyclone.test.quarkus;
 import com.dropchop.recyclone.rest.jaxrs.server.RecycloneApplicationRegistry;
 import com.dropchop.shiro.RecycloneShiroExtension;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Components;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
@@ -64,6 +65,7 @@ import java.util.Set;
 )
 @SuppressWarnings("unused")
 @ApplicationPath("/api")
+@RegisterForReflection
 public class TestApplication extends Application {
 
   @Override
