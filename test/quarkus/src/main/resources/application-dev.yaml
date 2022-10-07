@@ -10,6 +10,8 @@ quarkus:
     db-kind: postgresql
     username: last_dev_test
     password: last_dev_test
+    devservices:
+      port: 35432
 
   hibernate-orm:
     #log:
