@@ -9,6 +9,7 @@ import com.dropchop.recyclone.model.api.rest.ResultStatus;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,5 +65,10 @@ public class PropertyFilterSerializer extends StdSerializer<Object> {
   public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
     throws IOException {
     this.serialize(filter, o, generator, provider);
+  }
+
+  @Override
+  public void serializeWithType(Object value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+    delegate.serializeWithType(value, gen, serializers, typeSer);
   }
 }

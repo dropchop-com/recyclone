@@ -64,7 +64,10 @@ public class ObjectMapperFactory {
     if (polymorphicRegistry != null) {
       for (PolymorphicRegistry.SerializationConfig serializationConfig : polymorphicRegistry.getSerializationConfigs()) {
         serializationConfig.getSubTypeMap().forEach(
-          (key, value) -> mapper.registerSubtypes(new NamedType(value, key))
+          (key, value) -> {
+            log.info("Registering named type value [{}] for key [{}].", value, key);
+            mapper.registerSubtypes(new NamedType(value, key));
+          }
         );
         serializationConfig.getMixIns().forEach(mapper::addMixIn);
       }

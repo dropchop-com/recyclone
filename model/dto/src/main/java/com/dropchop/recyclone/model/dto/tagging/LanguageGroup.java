@@ -3,7 +3,10 @@ package com.dropchop.recyclone.model.dto.tagging;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -19,7 +22,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
-public class LanguageGroup extends com.dropchop.recyclone.model.dto.tagging.NamedTag
+public class LanguageGroup extends NamedTag
   implements com.dropchop.recyclone.model.api.tagging.LanguageGroup<Tag, TitleDescriptionTranslation> {
 
   public LanguageGroup(@NonNull String name) {
