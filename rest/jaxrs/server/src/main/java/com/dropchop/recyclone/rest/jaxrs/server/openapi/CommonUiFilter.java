@@ -257,15 +257,16 @@ public class CommonUiFilter implements OASFilter {
           "Optional dot delimited language codes <b>[search_lang.translate_lang]</b> for search and " +
             "returned content which can be translated (i.e.: title, body...). <br />" +
             "For example: English search and Slovene translated response <b>en.sl</b> or " +
-            "<b>.sl</b> for default and Slovene translated response."
+            "<b>.sl</b> for default and Slovene translated response. " +
+            "<br /><b>Accept-Language</b> header can also be used in the same way."
         ));
-        newParameters.add(createStrParam(
+        /*newParameters.add(createStrParam(
           Parameter.In.HEADER, Header.LANG,
           "Optional dot delimited language codes <b>[search_lang.translate_lang]</b> for search and " +
             "returned content which can be translated (i.e.: title, body...). <br />" +
             "For example: English search and Slovene translated response <b>en.sl</b> or " +
             "<b>.sl</b> for default and Slovene translated response."
-        ));
+        ));*/
 
         ResultFilter<?, ?> resultFilter = commonParams.getFilter();
         if (resultFilter == null) {
@@ -274,45 +275,52 @@ public class CommonUiFilter implements OASFilter {
         }
 
         Collection<State.Code> hiddenStates = defaults.getAvailableHiddenStates();
-        newParameters.add(createStatesParam(
-          Parameter.In.QUERY,
-          "Also include resources with selected state which are not normally shown in output.",
-          hiddenStates
-        ));
+        if (hiddenStates != null && !hiddenStates.isEmpty()) {
+          newParameters.add(createStatesParam(
+            Parameter.In.QUERY,
+            "Also include resources with selected state which are not normally shown in output.",
+            hiddenStates
+          ));
+        }
 
-        newParameters.add(createSortParam(
-          Parameter.In.QUERY,
-          "Sort result by field name, prefixed with <b>[+/-]</b> for ascending / descending order. " +
-            "<br /> If prefix is omitted ascending sort order is assumed",
-          defaults.getAvailableSortFields()
-        ));
+        String[] sortFields = defaults.getAvailableSortFields();
+        if (sortFields != null && sortFields.length > 0) {
+          newParameters.add(createSortParam(
+            Parameter.In.QUERY,
+            "Sort result by field name, prefixed with <b>[+/-]</b> for ascending / descending order. " +
+              "<br /> If prefix is omitted ascending sort order is assumed",
+            sortFields
+          ));
+        }
 
         newParameters.add(createStrArrayParam(
           Parameter.In.QUERY, Query.CFIELDS,
           "JSON paths, prefixed with <b>[+/-]</b> describing <b>exclusively included</b> or <b>excluded</b> fields in JSON response object." +
-            "<br /> Includes always precede excludes. If prefix is omitted exclusively included JSON path is assumed."
+            "<br /> Includes always precede excludes. If prefix is omitted exclusively included JSON path is assumed. " +
+            "<br /> <b>X-Content-Fields</b> header can also be used in the same way."
         ));
         newParameters.add(createStrParam(
           Parameter.In.QUERY, Query.CLEVEL,
           "Level and detail of objects to output in <b>[N].[detail_level]</b> string notation, Where N is tree depth and " +
-            "<br />detail_level can be for instance one of " + defaults.getAvailableLevelOfContentDetails() + "."
+            "<br />detail_level can be for instance one of " + defaults.getAvailableLevelOfContentDetails() + ". " +
+            "<br /> <b>X-Content-Level</b> header can also be used in the same way."
         ));
-        newParameters.add(createStrArrayParam(
-          Parameter.In.HEADER, Query.CFIELDS,
+        /*newParameters.add(createStrArrayParam(
+          Parameter.In.HEADER, Header.CFIELDS,
           "JSON paths, prefixed with <b>[+/-]</b> describing <b>exclusively included</b> or <b>excluded</b> fields in JSON response object." +
             "<br /> Includes always precede excludes. If prefix is omitted exclusively included JSON path is assumed."
         ));
         newParameters.add(createStrParam(
-          Parameter.In.HEADER, Query.CLEVEL,
+          Parameter.In.HEADER, Header.CLEVEL,
           "Level and detail of objects to output in <b>[N].[detail_level]</b> string notation, Where N is tree depth and " +
             "<br />detail_level can be for instance one of " + defaults.getAvailableLevelOfContentDetails() + "."
-        ));
+        ));*/
 
-        newParameters.add(createStrEnumParam(
+        /*newParameters.add(createStrEnumParam(
           Parameter.In.HEADER, Header.VERSION,
           "Requested content response version.",
           defaults.getAvailableVersions()
-        ));
+        ));*/
         operation.setParameters(newParameters);
       }
     }
