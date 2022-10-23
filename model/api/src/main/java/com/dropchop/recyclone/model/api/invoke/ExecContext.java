@@ -10,6 +10,12 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
 public interface ExecContext<ECL extends ExecContext.Listener> extends Model, HasId {
+
+  String MDC_REQUEST_ID = "reqId";
+  String MDC_REQUEST_PATH = "reqPath";
+  String MDC_PERSON_ID = "pID";
+  String MDC_PERSON_NAME = "pName";
+
   interface Listener {
   }
 

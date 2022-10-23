@@ -15,7 +15,7 @@ import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.ReaderInterceptorContext;
 import java.io.IOException;
 
-import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;
 
 /**
  * This is to intercept methods with CommonParams to context property for further processing.

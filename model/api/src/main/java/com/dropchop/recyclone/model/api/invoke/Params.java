@@ -8,8 +8,6 @@ import com.dropchop.recyclone.model.api.marker.HasAttributes;
  */
 public interface Params extends Model, HasAttributes {
 
-  String MDC_REQUEST_ID = "requestId";
-
   String getRequestId();
   void setRequestId(String requestId);
 

@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.

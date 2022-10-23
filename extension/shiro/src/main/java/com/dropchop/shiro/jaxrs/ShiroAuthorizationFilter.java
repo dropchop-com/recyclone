@@ -1,14 +1,18 @@
 package com.dropchop.shiro.jaxrs;
 
+import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.MDC;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -17,6 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_ID;
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_NAME;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
@@ -65,6 +72,18 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
     ExecContext<?> execContext = execContextProvider.produce();
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);
+    }
+    Subject subject = this.authorizationService.subject();
+    if (subject == null) {
+      log.warn("Shiro Subject is missing!");
+    } else {
+      Object p = subject.getPrincipal();
+      if (p instanceof Dto principal) {
+        MDC.put(MDC_PERSON_ID, principal.identifier());
+      }
+      if (p instanceof User<?> principal) {
+        MDC.put(MDC_PERSON_NAME, principal.getFirstName() + " " + principal.getLastName());
+      }
     }
   }
 }

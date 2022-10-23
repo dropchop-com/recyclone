@@ -13,7 +13,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import java.io.IOException;
 
 import static com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.*;
 
 /**
  * WriterInterceptor that supports execution context's execution time and
@@ -25,12 +25,19 @@ import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
 @ConstrainedTo(RuntimeType.SERVER)
 public class ExecContextWriteInterceptor implements WriterInterceptor {
 
+  private void clearMdc() {
+    MDC.remove(MDC_REQUEST_ID);
+    MDC.remove(MDC_REQUEST_PATH);
+    MDC.remove(MDC_PERSON_ID);
+    MDC.remove(MDC_PERSON_NAME);
+  }
+
   @Override
   public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
     Object entity = context.getEntity();
     log.trace("[{}].aroundWriteTo [{}].", this.getClass().getSimpleName(), entity);
     if (entity == null) {
-      MDC.remove(MDC_REQUEST_ID);
+      clearMdc();
       context.proceed();
       return;
     }
@@ -39,12 +46,12 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
 
     if (execContextProvider == null) {
-      MDC.remove(MDC_REQUEST_ID);
+      clearMdc();
       context.proceed();
       return;
     }
     if (!(entity instanceof Result)) {
-      MDC.remove(MDC_REQUEST_ID);
+      clearMdc();
       context.proceed();
       return;
     }
@@ -52,6 +59,6 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
     ((Result<?>) entity).setId(execContextProvider.produce().getId());
     ((Result<?>) entity).getStatus().setTime(execContextProvider.produce().getExecTime());
     context.proceed();
-    MDC.remove(MDC_REQUEST_ID);
+    clearMdc();
   }
 }

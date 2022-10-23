@@ -4,11 +4,14 @@ import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariable
 import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_PATH;
 
 /**
  * ContainerRequestFilter which initializes {@link com.dropchop.recyclone.model.api.invoke.ExecContext} from
@@ -36,6 +39,7 @@ public class ExecContextInitInterceptor implements ContainerRequestFilter {
     //UriInfo info = requestContext.getUriInfo();
     execContextProvider.create();
     requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContextProvider);
+    MDC.put(MDC_REQUEST_PATH, requestContext.getUriInfo().getPath());
   }
 }
 

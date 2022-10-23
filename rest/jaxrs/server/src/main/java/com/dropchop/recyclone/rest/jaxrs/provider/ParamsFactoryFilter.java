@@ -18,7 +18,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
-import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
 
