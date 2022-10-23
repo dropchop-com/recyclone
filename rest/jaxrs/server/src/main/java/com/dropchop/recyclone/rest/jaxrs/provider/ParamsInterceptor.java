@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.utils.Uuid;
 import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
@@ -13,6 +14,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.ReaderInterceptorContext;
 import java.io.IOException;
+
+import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
 
 /**
  * This is to intercept methods with CommonParams to context property for further processing.
@@ -49,6 +52,7 @@ public class ParamsInterceptor implements ReaderInterceptor {
         if (reqId == null || reqId.isBlank()) {
           p.setRequestId(Uuid.getTimeBased().toString());
         }
+        MDC.put(MDC_REQUEST_ID, p.getRequestId());
         paramsExecContextProvider.setParams(p);
         context.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
       }

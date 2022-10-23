@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
+import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
@@ -10,6 +11,7 @@ import com.dropchop.recyclone.model.dto.rest.ResultStatus;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
@@ -17,8 +19,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
@@ -62,14 +67,33 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
     }
   }
 
+  private void injectRequestId(StatusMessage statusMessage) {
+    String requestId = MDC.get(MDC_REQUEST_ID);
+    if (requestId == null || requestId.isBlank()) {
+      return;
+    }
+    Set<Attribute<?>> attributes = statusMessage.getDetails();
+    if (attributes == null) {
+      attributes = new LinkedHashSet<>();
+      statusMessage.setDetails(attributes);
+    } else {
+      //swap cause attributes could be immutable.
+      attributes = new LinkedHashSet<>(attributes);
+    }
+    attributes.add(new AttributeString(MDC_REQUEST_ID, requestId));
+  }
+
   public Result<?> toResult(ServiceException e) {
     ResultStatus status = new ResultStatus();
     List<StatusMessage> statusMessages = e.getStatusMessages();
     if (statusMessages.size() > 1) {
       status.setDetails(statusMessages);
-    }
-    if (statusMessages.size() == 1) {
+    } else if (statusMessages.size() == 1) {
       status.setMessage(statusMessages.get(0));
+    }
+    if (!statusMessages.isEmpty()) {
+      StatusMessage statusMessage = statusMessages.get(0);
+      injectRequestId(statusMessage);
     }
     status.setCode(ResultCode.error);
     Result<?> result = new Result<>();
@@ -104,6 +128,7 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
         e.printStackTrace(pw);
         statusMessage.setDetails(Set.of(new AttributeString("trace", sw.toString())));
       }
+      injectRequestId(statusMessage);
       statusMessage.setText(e.getMessage());
       setErrorCodeResponseStatus(builder, statusMessage);
       status.setCode(ResultCode.error);

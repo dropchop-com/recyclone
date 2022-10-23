@@ -8,6 +8,7 @@ import com.dropchop.recyclone.model.api.utils.Uuid;
 import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
+import static com.dropchop.recyclone.model.api.invoke.Params.MDC_REQUEST_ID;
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
 
@@ -272,6 +274,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
         decorate((CommonParams<?, ?, ?, ?>) p, requestContext);
       }
       p.setRequestId(Uuid.getTimeBased().toString());
+      MDC.put(MDC_REQUEST_ID, p.getRequestId());
       log.debug("Created request local [{}].", p);
       paramsExecContextProvider.setParams(p);
       requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
