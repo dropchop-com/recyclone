@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
-import com.dropchop.recyclone.rest.jackson.ExecContextPropertyFilterSerializer;
+import com.dropchop.recyclone.rest.jackson.server.ExecContextPropertyFilterSerializer;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;

@@ -12,7 +12,7 @@ import javax.inject.Inject;
  */
 @Slf4j
 @ApplicationScoped
-public class ObjectMapperFactory extends com.dropchop.recyclone.rest.jackson.ObjectMapperFactory {
+public class ObjectMapperFactory extends com.dropchop.recyclone.rest.jackson.server.ObjectMapperFactory {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")

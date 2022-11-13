@@ -9,9 +9,12 @@ quarkus:
     recyclone-model-dto:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-model-dto
-    recyclone-rest-jackson:
+    recyclone-rest-jackson-client:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jackson
+      artifact-id: recyclone-rest-jackson-client
+    recyclone-rest-jackson-server:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jackson-server
     recyclone-rest-jaxrs-api:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-rest-jaxrs-api

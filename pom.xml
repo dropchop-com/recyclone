@@ -222,7 +222,12 @@
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jackson</artifactId>
+        <artifactId>recyclone-rest-jackson-server</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-rest-jackson-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
