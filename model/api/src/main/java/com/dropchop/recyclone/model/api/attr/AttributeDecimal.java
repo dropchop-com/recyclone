@@ -20,4 +20,28 @@ public class AttributeDecimal extends AttributeBase<BigDecimal> {
     super(name);
     this.value = value;
   }
+
+
+  public AttributeDecimal(@NonNull String name, @NonNull long value) {
+    super(name);
+    this.value = new BigDecimal(value);
+  }
+
+
+  public AttributeDecimal(@NonNull String name, @NonNull int value) {
+    super(name);
+    this.value = new BigDecimal(value);
+  }
+
+
+  public AttributeDecimal(@NonNull String name, @NonNull double value) {
+    super(name);
+    this.value = new BigDecimal(value);
+  }
+
+
+  public AttributeDecimal(@NonNull String name, @NonNull float value) {
+    super(name);
+    this.value = new BigDecimal(value);
+  }
 }
