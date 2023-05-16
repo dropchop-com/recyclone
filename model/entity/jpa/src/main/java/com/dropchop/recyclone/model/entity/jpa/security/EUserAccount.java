@@ -10,7 +10,7 @@ import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 
 /**

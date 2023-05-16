@@ -3,7 +3,7 @@ package com.dropchop.shiro.filter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.codec.Base64;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 /**
  * Modeled and copied from Shiro Web.

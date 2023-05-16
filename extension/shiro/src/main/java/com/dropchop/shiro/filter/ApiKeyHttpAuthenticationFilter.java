@@ -2,7 +2,7 @@ package com.dropchop.shiro.filter;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.

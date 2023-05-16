@@ -16,7 +16,7 @@ import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.tags.Tag;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.math.BigDecimal;
 import java.util.*;
 

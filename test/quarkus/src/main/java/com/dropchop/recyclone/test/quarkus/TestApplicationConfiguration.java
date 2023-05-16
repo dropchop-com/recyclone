@@ -9,9 +9,9 @@ import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
 import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.

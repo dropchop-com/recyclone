@@ -3,9 +3,9 @@ package com.dropchop.recyclone.model.entity.jpa.localization;
 import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.MappedSuperclass;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.

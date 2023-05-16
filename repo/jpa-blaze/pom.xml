@@ -18,7 +18,7 @@
     </dependency>
     <dependency>
       <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-core-api</artifactId>
+      <artifactId>blaze-persistence-core-api-jakarta</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

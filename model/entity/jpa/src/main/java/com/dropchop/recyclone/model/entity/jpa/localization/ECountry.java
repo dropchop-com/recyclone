@@ -12,7 +12,7 @@ import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;

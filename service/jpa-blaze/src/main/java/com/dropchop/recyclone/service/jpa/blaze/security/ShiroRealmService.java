@@ -2,7 +2,7 @@ package com.dropchop.recyclone.service.jpa.blaze.security;
 
 import com.dropchop.recyclone.service.api.ServiceType;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
 

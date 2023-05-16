@@ -10,9 +10,9 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Path;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Path;
 import java.util.List;
 import java.util.UUID;
 

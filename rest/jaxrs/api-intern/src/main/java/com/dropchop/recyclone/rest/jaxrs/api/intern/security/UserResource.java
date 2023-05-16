@@ -14,7 +14,7 @@ import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import java.util.List;
 import java.util.UUID;
 

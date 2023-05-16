@@ -13,12 +13,11 @@ import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTra
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;

@@ -14,8 +14,8 @@ import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.MDC;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;

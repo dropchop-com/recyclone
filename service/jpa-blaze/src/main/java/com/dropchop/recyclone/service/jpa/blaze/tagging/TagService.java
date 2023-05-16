@@ -15,8 +15,8 @@ import com.dropchop.recyclone.service.api.mapping.SetName;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;

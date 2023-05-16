@@ -4,8 +4,8 @@ import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.dropchop.recyclone.rest.jaxrs.filtering.ExecContextPropertyFilterSerializerModifier;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.

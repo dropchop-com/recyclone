@@ -4,8 +4,8 @@ import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistryConfig;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

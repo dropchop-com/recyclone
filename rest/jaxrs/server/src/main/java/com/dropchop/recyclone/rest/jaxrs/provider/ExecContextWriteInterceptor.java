@@ -5,11 +5,11 @@ import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
-import javax.ws.rs.ConstrainedTo;
-import javax.ws.rs.RuntimeType;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.ext.WriterInterceptor;
-import javax.ws.rs.ext.WriterInterceptorContext;
+import jakarta.ws.rs.ConstrainedTo;
+import jakarta.ws.rs.RuntimeType;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.ext.WriterInterceptor;
+import jakarta.ws.rs.ext.WriterInterceptorContext;
 import java.io.IOException;
 
 import static com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;

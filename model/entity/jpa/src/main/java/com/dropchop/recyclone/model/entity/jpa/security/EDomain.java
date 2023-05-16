@@ -12,7 +12,7 @@ import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.SortedSet;

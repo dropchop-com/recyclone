@@ -22,8 +22,8 @@ import com.dropchop.recyclone.service.api.mapping.SetModification;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;

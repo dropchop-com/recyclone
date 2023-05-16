@@ -8,7 +8,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 /**
  * Modeled and copied from Shiro Web.

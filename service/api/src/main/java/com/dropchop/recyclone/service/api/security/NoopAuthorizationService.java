@@ -1,11 +1,9 @@
 package com.dropchop.recyclone.service.api.security;
 
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.security.PermissionBearer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 06. 22.

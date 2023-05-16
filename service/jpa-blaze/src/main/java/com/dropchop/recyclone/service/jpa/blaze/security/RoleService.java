@@ -21,9 +21,9 @@ import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;

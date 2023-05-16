@@ -20,7 +20,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.11.1.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.0.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <recyclone.version>1.0.1-SNAPSHOT</recyclone.version>
     <lombok.version>1.18.24</lombok.version>
@@ -67,10 +67,28 @@
     <dependency>
       <groupId>com.blazebit</groupId>
       <artifactId>blaze-persistence-integration-quarkus</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.blazebit</groupId>
+          <artifactId>blaze-persistence-core-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.blazebit</groupId>
+          <artifactId>blaze-persistence-core-impl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-integration-hibernate-5.6</artifactId>
+      <artifactId>blaze-persistence-core-api-jakarta</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.blazebit</groupId>
+      <artifactId>blaze-persistence-core-impl-jakarta</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.blazebit</groupId>
+      <artifactId>blaze-persistence-integration-hibernate-5.6-jakarta</artifactId>
     </dependency>
 
     <dependency>

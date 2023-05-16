@@ -3,7 +3,7 @@ package com.dropchop.shiro.filter;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 /**
  * Modeled and copied from Shiro Web.

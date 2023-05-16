@@ -10,12 +10,12 @@ import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
-import javax.ws.rs.ConstrainedTo;
-import javax.ws.rs.RuntimeType;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.ConstrainedTo;
+import jakarta.ws.rs.RuntimeType;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.*;
 
 import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;

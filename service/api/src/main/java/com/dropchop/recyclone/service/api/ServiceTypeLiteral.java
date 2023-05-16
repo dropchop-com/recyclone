@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.api;
 
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.

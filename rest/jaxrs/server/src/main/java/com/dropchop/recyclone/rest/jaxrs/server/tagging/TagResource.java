@@ -13,9 +13,9 @@ import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.tagging.TagService;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Path;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Path;
 import java.util.List;
 import java.util.UUID;
 

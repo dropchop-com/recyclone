@@ -4,8 +4,8 @@ import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTra
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 06. 22.

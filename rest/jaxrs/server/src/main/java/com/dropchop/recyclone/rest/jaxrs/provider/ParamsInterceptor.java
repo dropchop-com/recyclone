@@ -8,11 +8,11 @@ import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
-import javax.ws.rs.ConstrainedTo;
-import javax.ws.rs.RuntimeType;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.ext.ReaderInterceptor;
-import javax.ws.rs.ext.ReaderInterceptorContext;
+import jakarta.ws.rs.ConstrainedTo;
+import jakarta.ws.rs.RuntimeType;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.ext.ReaderInterceptor;
+import jakarta.ws.rs.ext.ReaderInterceptorContext;
 import java.io.IOException;
 
 import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;

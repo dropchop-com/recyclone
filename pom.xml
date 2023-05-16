@@ -91,16 +91,18 @@
     <aspectj.version>1.9.9.1</aspectj.version>
     <lombok.version>1.18.24</lombok.version>
     <!--<mapstruct.version>1.4.2.Final</mapstruct.version>-->
-    <mapstruct.version>1.6.0-SNAPSHOT</mapstruct.version>
-    <blaze-persistence.version>1.6.6</blaze-persistence.version>
+    <!--<mapstruct.version>1.6.0-SNAPSHOT</mapstruct.version>-->
+    <mapstruct.version>1.6.1-SNAPSHOT</mapstruct.version>
+    <blaze-persistence.version>1.6.8</blaze-persistence.version>
     <jackson.version>2.13.3</jackson.version>
-    <quarkus.version>2.13.0.Final</quarkus.version>
+    <quarkus.version>3.0.3.Final</quarkus.version>
     <junit.version>5.8.2</junit.version>
     <jsonassert.version>1.5.1</jsonassert.version>
-    <jakarta.ws.rs.version>2.1.6</jakarta.ws.rs.version>
-    <jakarta.cdi-api.version>2.0.2</jakarta.cdi-api.version>
-    <jakarta.persistence-api>2.2.3</jakarta.persistence-api>
-    <jakarta.servlet-api.version>4.0.3</jakarta.servlet-api.version>
+    <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
+    <jakarta.cdi-api.version>4.0.1</jakarta.cdi-api.version>
+    <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+    <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
+    <!--<jakarta.servlet-api.version>4.0.3</jakarta.servlet-api.version>-->
     <microprofile-openapi-api.version>2.0.1-RC1</microprofile-openapi-api.version>
     <microprofile-config-api.version>2.0.1</microprofile-config-api.version>
     <org.modelmapper.version>2.4.5</org.modelmapper.version>
@@ -121,16 +123,22 @@
         <version>${jakarta.cdi-api.version}</version>
         <scope>provided</scope>
       </dependency>
-      <dependency>
+      <!--<dependency>
         <groupId>jakarta.servlet</groupId>
         <artifactId>jakarta.servlet-api</artifactId>
         <version>${jakarta.servlet-api.version}</version>
         <scope>provided</scope>
+      </dependency>-->
+      <dependency>
+        <groupId>jakarta.transaction</groupId>
+        <artifactId>jakarta.transaction-api</artifactId>
+        <version>${jakarta.transaction-api.version}</version>
+        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>jakarta.persistence</groupId>
         <artifactId>jakarta.persistence-api</artifactId>
-        <version>${jakarta.persistence-api}</version>
+        <version>${jakarta.persistence-api.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>

@@ -5,8 +5,8 @@ import com.dropchop.recyclone.model.api.marker.HasUuid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import java.util.Objects;
 import java.util.UUID;
 

@@ -5,8 +5,8 @@ import com.dropchop.recyclone.model.entity.jpa.tagging.ENamedTag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
