@@ -67,12 +67,16 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) {
     this.authorizationService.invokeFilterChain(requestContext);
+
     ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
       log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
       return;
     }
+
+    this.authorizationService.doAuthorizationChecks(requestContext, authzChecks);
+
     ExecContext<?> execContext = execContextProvider.produce();
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);

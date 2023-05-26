@@ -77,20 +77,35 @@ public class ShiroAuthorizationService implements AuthorizationService {
     }
   }
 
+
+  public void doAuthorizationChecks(ContainerRequestContext requestContext,
+                                    Map<AuthorizingAnnotationHandler, Annotation> authzChecks) {
+    for (Map.Entry<AuthorizingAnnotationHandler, Annotation> authzCheck : authzChecks.entrySet()) {
+      AuthorizingAnnotationHandler handler = authzCheck.getKey();
+      Annotation authzSpec = authzCheck.getValue();
+      try {
+        handler.assertAuthorized(authzSpec);
+      } catch (AuthorizationException e) {
+        unbindSubjectFromThreadStateInRequestContext(requestContext);
+        if (e instanceof UnauthenticatedException) {
+          throw new ServiceException(authentication_error, "User is unauthenticated.");
+        } else {
+          throw new ServiceException(authorization_error, "User is unauthorized.");
+        }
+      }
+    }
+  }
+
   public void extractRequiredPermissionsToExecContext(SecurityExecContext execContext,
                                                       Map<AuthorizingAnnotationHandler, Annotation> authzChecks) {
     String[] requiredPermissions = null;
     Logical requiredPermissionsOp = Logical.AND;
     for (Map.Entry<AuthorizingAnnotationHandler, Annotation> authzCheck : authzChecks.entrySet()) {
-      AuthorizingAnnotationHandler handler = authzCheck.getKey();
       Annotation authzSpec = authzCheck.getValue();
-      Annotation shiroSpec;
       if (authzSpec instanceof RequiresPermissions) {
         requiredPermissions = ((RequiresPermissions) authzSpec).value();
         requiredPermissionsOp = ((RequiresPermissions) authzSpec).logical();
       }
-
-      handler.assertAuthorized(authzSpec);
     }
 
     if (requiredPermissions != null && requiredPermissions.length > 0) {

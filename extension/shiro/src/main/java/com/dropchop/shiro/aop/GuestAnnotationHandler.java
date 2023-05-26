@@ -1,39 +1,17 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package com.dropchop.shiro.aop;
 
+import com.dropchop.recyclone.model.api.security.annotations.RequiresGuest;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
-import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 
 import java.lang.annotation.Annotation;
 
 
 /**
- * Checks to see if a @{@link RequiresGuest RequiresGuest} annotation
- * is declared, and if so, ensures the calling <code>Subject</code> does <em>not</em>
- * have an {@link org.apache.shiro.subject.Subject#getPrincipal() identity} before invoking the method.
- * <p>
- * This annotation essentially ensures that <code>subject.{@link org.apache.shiro.subject.Subject#getPrincipal() getPrincipal()} == null</code>.
+ * Modeled after: org.apache.shiro.authz.aop.GuestAnnotationHandler
  *
- * @since 0.9.0
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 05. 23
  */
 public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {
 

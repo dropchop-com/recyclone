@@ -110,17 +110,17 @@ public class LanguageResourceTest {
     assertEquals(new Language("hr"), languages.get(3));
   }
 
-  /*
   @Test
   @Order(70)
   public void languagesRestUnauthorized() {
     given()
-      .when().get("/api/languages")
+      .when()
+      .get("/api/public/localization/language")
       .then()
       .statusCode(401)
       .body("status.code", equalTo("error"))
-      .body("status.message.code", equalTo("authorization_error"));
-  }*/
+      .body("status.message.code", equalTo("authentication_error"));
+  }
 
   @Test
   @Order(80)
