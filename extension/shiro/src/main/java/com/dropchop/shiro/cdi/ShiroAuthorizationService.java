@@ -3,8 +3,7 @@ package com.dropchop.shiro.cdi;
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.security.annotations.Logical;
-import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.shiro.filter.AccessControlFilter;
@@ -85,10 +84,12 @@ public class ShiroAuthorizationService implements AuthorizationService {
     for (Map.Entry<AuthorizingAnnotationHandler, Annotation> authzCheck : authzChecks.entrySet()) {
       AuthorizingAnnotationHandler handler = authzCheck.getKey();
       Annotation authzSpec = authzCheck.getValue();
+      Annotation shiroSpec;
       if (authzSpec instanceof RequiresPermissions) {
         requiredPermissions = ((RequiresPermissions) authzSpec).value();
         requiredPermissionsOp = ((RequiresPermissions) authzSpec).logical();
       }
+
       handler.assertAuthorized(authzSpec);
     }
 

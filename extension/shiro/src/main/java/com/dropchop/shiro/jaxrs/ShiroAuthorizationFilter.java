@@ -4,13 +4,13 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.shiro.aop.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
-import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.MDC;
 
@@ -39,11 +39,15 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
     Class<?> t = annotation.annotationType();
     if (RequiresPermissions.class.equals(t)) {
       return new PermissionAnnotationHandler();
+    } else if (RequiresRoles.class.equals(t)) {
+      return new RoleAnnotationHandler();
+    } else if (RequiresUser.class.equals(t)) {
+      return new UserAnnotationHandler();
+    } else if (RequiresGuest.class.equals(t)) {
+      return new GuestAnnotationHandler();
+    } else if (RequiresAuthentication.class.equals(t)) {
+      return new AuthenticatedAnnotationHandler();
     }
-    /*else if (RequiresRoles.class.equals(t)) return new RoleAnnotationHandler();
-    else if (RequiresUser.class.equals(t)) return new UserAnnotationHandler();
-    else if (RequiresGuest.class.equals(t)) return new GuestAnnotationHandler();
-    else if (RequiresAuthentication.class.equals(t)) return new AuthenticatedAnnotationHandler();*/
     else throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
   }
 
