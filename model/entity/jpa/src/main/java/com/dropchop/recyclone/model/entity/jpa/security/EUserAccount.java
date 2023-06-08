@@ -32,6 +32,10 @@ public class EUserAccount extends EUuid
   @Transient
   private String type = this.getClass().getSimpleName().substring(1);
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "fk_security_user_uuid", foreignKey = @ForeignKey(name = "security_user_account_user_uuid_fk"), nullable = false)
+  private EUser user = null;
+
   @Column(name = "title")
   private String title;
 

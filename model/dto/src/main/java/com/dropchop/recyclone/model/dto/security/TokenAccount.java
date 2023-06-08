@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,7 +14,13 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@ToString(callSuper = true)
 @JsonInclude(NON_NULL)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "type"
+)
 public class TokenAccount extends UserAccount
   implements com.dropchop.recyclone.model.api.security.TokenAccount {
 

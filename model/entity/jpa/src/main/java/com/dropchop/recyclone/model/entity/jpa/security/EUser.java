@@ -20,10 +20,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
@@ -32,29 +29,12 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "security_user")
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EUser<O extends EUuid> extends EPerson
   implements User<EUserAccount, ETitleDescriptionTranslation, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage, ETag>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
-  @OneToMany
-  @JoinColumn(
-    name="fk_security_user_uuid",
-    foreignKey = @ForeignKey(name = "security_user_account_fk_security_user_uuid")
-  )
-  Set<EUserAccount> accounts;
-
-  @Transient
-  SortedSet<EPermission> permissions;
-
-  @ManyToMany(targetEntity = ERole.class)
-  @JoinTable(name = "security_user_role",
-    joinColumns = {@JoinColumn(name = "fk_user_uuid", foreignKey = @ForeignKey(name = "security_user_role_fk_user_uuid"))},
-    inverseJoinColumns = {@JoinColumn(name = "fk_role_code", foreignKey = @ForeignKey(name = "security_user_role_fk_role_code"))}
-  )
-  @OrderBy("code ASC")
-  SortedSet<ERole> roles;
 
   @Column(name="default_email")
   private String defaultEmail;
@@ -80,14 +60,39 @@ public class EUser<O extends EUuid> extends EPerson
   @Transient
   private O owner;
 
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
+  Set<EUserAccount> accounts = new LinkedHashSet<>();
+
+  public void addAccount(EUserAccount account) {
+    if (account == null) return;
+    this.accounts.add(account);
+    account.setUser(this);
+  }
+
+  public void removeAccount(EUserAccount account) {
+    account.setUser(null);
+    this.accounts.remove(account);
+  }
+
   @ManyToMany
   @JoinTable(
-    name="user_t",
+    name="security_user_t",
     uniqueConstraints = @UniqueConstraint(
-      name = "uq_user_t_fk_user_uuid_fk_tag_uuid", columnNames = {"fk_user_uuid", "fk_tag_uuid"}),
-    joinColumns = @JoinColumn( name="fk_user_uuid", foreignKey = @ForeignKey(name = "user_t_fk_user_uuid")),
-    inverseJoinColumns = @JoinColumn( name="fk_tag_uuid", foreignKey = @ForeignKey(name = "user_t_fk_tag_uuid"))
+      name = "uq_security_user_t_fk_security_user_uuid_fk_tag_uuid", columnNames = {"fk_security_user_uuid", "fk_tag_uuid"}),
+    joinColumns = @JoinColumn( name="fk_security_user_uuid", foreignKey = @ForeignKey(name = "security_user_t_fk_security_user_uuid")),
+    inverseJoinColumns = @JoinColumn( name="fk_tag_uuid", foreignKey = @ForeignKey(name = "security_user_t_fk_tag_uuid"))
   )
   @OrderColumn(name = "idx")
-  private List<ETag> tags;
+  private List<ETag> tags = new LinkedList<>();
+
+  @Transient
+  SortedSet<EPermission> permissions = new TreeSet<>();
+
+  @ManyToMany(targetEntity = ERole.class)
+  @JoinTable(name = "security_user_role",
+      joinColumns = {@JoinColumn(name = "fk_user_uuid", foreignKey = @ForeignKey(name = "security_user_role_fk_user_uuid"))},
+      inverseJoinColumns = {@JoinColumn(name = "fk_role_code", foreignKey = @ForeignKey(name = "security_user_role_fk_role_code"))}
+  )
+  @OrderBy("code ASC")
+  SortedSet<ERole> roles = new TreeSet<>();
 }
