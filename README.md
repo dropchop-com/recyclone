@@ -27,4 +27,3 @@ cd test/quarkus
 # navigate to http://localhost:8080/api/spec/ui/
 ```
 
-Test
