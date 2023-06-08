@@ -11,8 +11,13 @@ import java.util.List;
 public interface ReadRepository<E, ID> extends Repository<E, ID> {
 
   List<E> findById(Collection<ID> ids);
+
   E findById(ID id);
 
   List<E> find(RepositoryExecContext<E> context);
+
+  //List<E> find(Class<? extends E> cls, RepositoryExecContext<E> context);
+  <X extends E> List<X> find(Class<X> cls, RepositoryExecContext<X> context);
+
   List<E> find();
 }

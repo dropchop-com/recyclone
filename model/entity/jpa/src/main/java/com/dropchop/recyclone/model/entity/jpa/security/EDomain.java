@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ETitleDescriptionTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
@@ -28,7 +29,7 @@ import java.util.SortedSet;
 @Table(name = "security_domain")
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class EDomain extends ECode
-  implements Domain<ETitleDescriptionTranslation, EAction>,
+  implements Domain<ETitleDescriptionTranslation, EAction>, ETitleDescriptionTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EAction.class)

@@ -6,16 +6,16 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
-import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
-import com.dropchop.recyclone.model.entity.jpa.marker.HasEAttributes;
+import com.dropchop.recyclone.model.entity.jpa.base.ETitleDescriptionTranslationHelper;
+import com.dropchop.recyclone.model.entity.jpa.base.ETitleTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
-import com.dropchop.recyclone.model.entity.jpa.localization.ETitleTranslation;
+import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasEAttributes;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -37,7 +37,7 @@ import java.util.Set;
 @DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
 @SuppressWarnings("JpaDataSourceORMInspection")
 public class ETag extends EUuid
-  implements Tag<ETag, ETitleDescriptionTranslation>,
+  implements Tag<ETag, ETitleDescriptionTranslation>, ETitleDescriptionTranslationHelper,
   HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon, HasELanguage, HasEAttributes {
 
   @Transient
