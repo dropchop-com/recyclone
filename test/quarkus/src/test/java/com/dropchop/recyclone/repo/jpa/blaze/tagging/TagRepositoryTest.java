@@ -1,20 +1,17 @@
 package com.dropchop.recyclone.repo.jpa.blaze.tagging;
 
 import com.dropchop.recyclone.model.api.attr.*;
-import com.dropchop.recyclone.model.api.marker.HasAttributes;
-import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
 import com.dropchop.recyclone.repo.api.RepositoryType;
+import com.dropchop.recyclone.repo.api.TransactionHelper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
 import static com.dropchop.recyclone.model.api.marker.HasAttributes.getAttributeValue;
@@ -32,11 +29,8 @@ public class TagRepositoryTest {
   @RepositoryType(RCYN_DEFAULT)
   TagRepository repository;
 
-  @Transactional
-  @SuppressWarnings("UnusedReturnValue")
-  public <T, R> R transact(Function<T, R> function, T t) {
-    return function.apply(t);
-  }
+  @Inject
+  TransactionHelper th;
 
   @Test
   public void testStoreLanguageGroup1() {
@@ -102,8 +96,8 @@ public class TagRepositoryTest {
         .build()
     );
 
-    transact(lg -> repository.save(lg), languageGroup1);
-    transact(lg -> repository.save(lg), languageGroup2);
+    th.transact(lg -> repository.save(lg), languageGroup1);
+    th.transact(lg -> repository.save(lg), languageGroup2);
     ELanguageGroup group1 = (ELanguageGroup) repository.findById(languageGroup1.getUuid());
     assertNotNull(group1);
     assertEquals(Boolean.TRUE, group1.getAttributeValue("test1Bool1"));
@@ -125,7 +119,6 @@ public class TagRepositoryTest {
       assertEquals("#AFAFAF", set2.getAttributeValue("test1Color"));
       assertEquals("L'Oreal", set2.getAttributeValue("test1Keyword"));
     }
-
 
     ELanguageGroup group2 = (ELanguageGroup) repository.findById(languageGroup2.getUuid());
     assertNotNull(group2);
