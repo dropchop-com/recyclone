@@ -7,8 +7,8 @@
   <packaging>pom</packaging>
   <name>Recyclone</name>
 
-  <description>Dropchop's Recyclone Lira</description>
-  <url>https://github.com/ivlcic/recyclone</url>
+  <description>Dropchop's Recyclone Library</description>
+  <url>https://github.com/dropchop-com/recyclone.git</url>
 
   <licenses>
     <license>
@@ -27,9 +27,9 @@
   </modules>
 
   <scm>
-    <connection>scm:git:https://github.com/ivlcic/recyclone.git</connection>
-    <developerConnection>scm:git:https://github.com/ivlcic/recyclone.git</developerConnection>
-    <url>https://github.com/ivlcic/recyclone</url>
+    <connection>scm:git:https://github.com/dropchop-com/recyclone.git</connection>
+    <developerConnection>scm:git:https://github.com/dropchop-com/recyclone.git</developerConnection>
+    <url>https://github.com/dropchop-com/recyclone.git</url>
     <tag>HEAD</tag>
   </scm>
 
