@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dropchop.recyclone</groupId>
   <artifactId>recyclone</artifactId>
-  <version>1.0.3.Alpha-SNAPSHOT</version>
+  <version>1.0.3.Alpha</version>
   <packaging>pom</packaging>
   <name>Recyclone</name>
 
@@ -30,7 +30,7 @@
     <connection>scm:git:https://github.com/ivlcic/recyclone.git</connection>
     <developerConnection>scm:git:https://github.com/ivlcic/recyclone.git</developerConnection>
     <url>https://github.com/ivlcic/recyclone</url>
-    <tag>HEAD</tag>
+    <tag>recyclone-1.0.3.Alpha</tag>
   </scm>
 
   <developers>
