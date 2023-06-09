@@ -33,7 +33,7 @@ public class TagRepositoryTest {
   TransactionHelper th;
 
   @Test
-  public void testStoreLanguageGroup1() {
+  public void testStoreLanguageGroupWithAttributes() {
     ELanguageGroup languageGroup1 = new ELanguageGroup();
     languageGroup1.setName("celtic");
     languageGroup1.setTitle("Celtic");
@@ -133,5 +133,37 @@ public class TagRepositoryTest {
     assertEquals(Boolean.FALSE, getAttributeValue(values2, "test2Bool"));
     assertEquals("#ADADAD", getAttributeValue(values2, "test2Color"));
     assertEquals("H &\" M", getAttributeValue(values2, "test2Keyword"));
+
+    th.transact(() -> {
+      ELanguageGroup g = (ELanguageGroup) repository.findById(languageGroup1.getUuid());
+      repository.delete(g);
+      g = (ELanguageGroup) repository.findById(languageGroup2.getUuid());
+      repository.delete(g);
+    });
+  }
+
+
+  @Test
+  public void testStoreLanguageGroupWithAttributesHelper() {
+    ELanguageGroup lg = new ELanguageGroup();
+    lg.setName("celtic1");
+    lg.setTitle("Celtic1");
+    lg.setLang("en");
+    lg.setAttributeValue("test1Bool21", Boolean.TRUE);
+    lg.setAttributeValue("test1Bool22", Boolean.FALSE);
+    lg.setAttributeValue("test21List", List.of(
+      "test1",
+      "test2",
+      "test3"
+    ));
+    th.transact(() -> repository.save(lg));
+    ELanguageGroup resultLg = (ELanguageGroup) repository.findById(lg.getUuid());
+    assertEquals(Boolean.TRUE, resultLg.getAttributeValue("test1Bool21"));
+    assertEquals(Boolean.FALSE, resultLg.getAttributeValue("test1Bool22"));
+    assertEquals(List.of(
+      "test1",
+      "test2",
+      "test3"
+    ), resultLg.getAttributeValue("test21List"));
   }
 }
