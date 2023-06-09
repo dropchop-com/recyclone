@@ -112,6 +112,7 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     return Strings.matchPath(this.path, segment.level, segment.indexedPath, segment.level, true);
   }
 
+  @SuppressWarnings("SameParameterValue")
   boolean dive(PathSegment segment, boolean precomputedNest) {
     return dive(segment, (Boolean) precomputedNest);
   }

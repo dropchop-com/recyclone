@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public interface PermissionInstance<
   TDT extends TitleDescriptionTranslation,
   A extends Action<TDT>,

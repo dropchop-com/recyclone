@@ -9,7 +9,7 @@ import java.util.LinkedList;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 09. 22.
  */
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class FilteringState {
   private final Deque<Boolean> starts = new LinkedList<>();
   private final Deque<String> fields = new LinkedList<>();

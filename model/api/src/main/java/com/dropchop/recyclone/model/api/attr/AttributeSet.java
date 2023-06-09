@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class AttributeSet extends AttributeBase<Set<Attribute<?>>> implements HasAttributes {
   @NonNull
   private Set<Attribute<?>> value;

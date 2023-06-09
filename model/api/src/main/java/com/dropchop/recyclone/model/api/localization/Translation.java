@@ -10,7 +10,6 @@ public interface Translation extends Model, HasTranslationInlined {
 
   /**
    * Set to true if this is the default translation for the owning object.
-   *
    * Used only when translation is swapped in owning object. This can happen for instance if
    * client requests different language than the one set in owning object and the back-end swaps
    * default translation in owning object and marks this in set of translations,

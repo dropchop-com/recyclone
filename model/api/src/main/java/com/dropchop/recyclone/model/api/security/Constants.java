@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.api.security;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
  */
+@SuppressWarnings("unused")
 public interface Constants {
 
   String PERM_DELIM = ":";

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class AttributeDecimal extends AttributeBase<BigDecimal> {
   @NonNull
   private BigDecimal value;

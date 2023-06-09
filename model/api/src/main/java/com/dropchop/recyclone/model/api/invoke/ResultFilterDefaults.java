@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 08. 22.
  */
+@SuppressWarnings("unused")
 public interface ResultFilterDefaults extends Model {
 
   default int getSize() {

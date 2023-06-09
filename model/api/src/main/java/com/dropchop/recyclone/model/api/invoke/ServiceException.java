@@ -10,6 +10,7 @@ import java.util.*;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
  */
+@SuppressWarnings("unused")
 public class ServiceException extends RuntimeException {
 
   private List<StatusMessage> statusMessages = new ArrayList<>();

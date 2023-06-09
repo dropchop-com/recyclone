@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
+@SuppressWarnings("unused")
 public interface ExecContext<ECL extends ExecContext.Listener> extends Model, HasId {
 
   String MDC_REQUEST_ID = "reqId";

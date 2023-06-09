@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api.utils;
 
+@SuppressWarnings("unused")
 public class ProfileTimer {
   private long absoluteStart = 0;
   private long start = 0;

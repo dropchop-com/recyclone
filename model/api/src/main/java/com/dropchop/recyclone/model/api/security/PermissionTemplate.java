@@ -4,8 +4,12 @@ import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation
 
 import java.util.UUID;
 
-public interface PermissionTemplate<TDT extends TitleDescriptionTranslation, A extends Action<TDT>, D extends Domain<TDT, A>>
-  extends PermissionInstance<TDT, A, D>{
+@SuppressWarnings("unused")
+public interface PermissionTemplate<
+  TDT extends TitleDescriptionTranslation,
+  A extends Action<TDT>,
+  D extends Domain<TDT, A>>
+  extends PermissionInstance<TDT, A, D> {
 
   String getSubSubject();
   void setSubSubject(String subSubject);

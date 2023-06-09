@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface HasRemoved extends HasStateInlinedCommon {
 
   State.Code.Removed removed = State.Code.removed;

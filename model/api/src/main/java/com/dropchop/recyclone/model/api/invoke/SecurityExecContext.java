@@ -9,6 +9,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.Permission.*;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 06. 22.
  */
+@SuppressWarnings("unused")
 public interface SecurityExecContext {
 
   default String getFirstRequiredPermission() {

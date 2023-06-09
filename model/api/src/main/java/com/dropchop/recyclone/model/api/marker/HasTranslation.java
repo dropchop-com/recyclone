@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface HasTranslation<TR extends Translation> {
 
   Set<TR> getTranslations();

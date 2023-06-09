@@ -44,7 +44,6 @@ public class FieldFilter implements Predicate<PathSegment> {
 
   /**
    * FileFilter is constructed from ResultFilterDefaults and ResultFilter objects contained in Parameters.
-   *
    * Construction examines ContentDetail constant, tree depth and include / exclude fields,
    * and then decides which include / exclude FilterSegments to construct and include.
    *
@@ -63,7 +62,7 @@ public class FieldFilter implements Predicate<PathSegment> {
       Integer contentTreeLevel = contentFilter.getTreeLevel();
       if (contentTreeLevel != null) {
         treeLevel = contentTreeLevel;
-        detailLevel = null;
+        //detailLevel = null;
       }
       String contentDetailLevel = contentFilter.getDetailLevel();
       if (contentDetailLevel != null && !contentDetailLevel.isBlank()) {
@@ -276,7 +275,6 @@ public class FieldFilter implements Predicate<PathSegment> {
    * Predetermine if we should continue processing and dive into object for given property.
    * This evaluation is more restrictive. Property must pass @see: nest() and @see dive(),
    * be a special collection, right level and content detail must match.
-   *
    * This method helps to block needles child collection examination,
    * which is helpful with ORM object filtering.
    *

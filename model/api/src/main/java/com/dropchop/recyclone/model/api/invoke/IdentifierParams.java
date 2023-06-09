@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface IdentifierParams<
   RF extends ResultFilter<CF, LF>,
   CF extends ResultFilter.ContentFilter,
