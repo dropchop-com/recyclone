@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("LoginAccount")
 public class ELoginAccount extends EUserAccount implements LoginAccount {

@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -22,6 +23,11 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.EXISTING_PROPERTY,
+  property = "type"
+)
 public class UserAccount extends DtoId
   implements com.dropchop.recyclone.model.api.security.UserAccount,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
@@ -41,6 +47,5 @@ public class UserAccount extends DtoId
   }
 
   public void setType(String type) {
-
   }
 }

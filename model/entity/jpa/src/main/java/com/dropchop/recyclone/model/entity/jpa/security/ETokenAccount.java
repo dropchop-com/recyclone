@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.security.LoginAccount;
 import com.dropchop.recyclone.model.api.security.TokenAccount;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +16,11 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("TokenAccount")
 public class ETokenAccount extends EUserAccount implements TokenAccount {
 
   @NonNull
   private String token;
-
 }
