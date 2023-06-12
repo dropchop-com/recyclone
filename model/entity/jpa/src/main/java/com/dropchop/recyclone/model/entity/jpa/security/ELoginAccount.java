@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.security.LoginAccount;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -17,7 +18,9 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("LoginAccount")
 public class ELoginAccount extends EUserAccount implements LoginAccount {
+
   @NonNull
+  @Column(name = "login_name")
   private String loginName;
 
   private String password;
