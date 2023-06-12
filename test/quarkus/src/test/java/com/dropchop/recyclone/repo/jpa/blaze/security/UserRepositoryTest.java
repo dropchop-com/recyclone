@@ -26,6 +26,7 @@ import static com.dropchop.recyclone.repo.jpa.blaze.localization.CountryReposito
 import static com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepositoryTest.lngEnCode;
 import static com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepositoryTest.lngSlCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserRepositoryTest {
 
   private static final UUID USER_UUID = UUID.fromString("2e1d057d-527c-4128-a0aa-d203ffe8073d");
+  private static final String TOKEN = "random-token";
+  private static final String LOGIN_NAME = "random-login-name";
 
   @Inject
   @RepositoryType(Constants.Implementation.RCYN_DEFAULT)
@@ -100,7 +103,7 @@ public class UserRepositoryTest {
       loginAccount.setUuid(UUID.randomUUID());
       loginAccount.setCreated(ZonedDateTime.now());
       loginAccount.setModified(ZonedDateTime.now());
-      loginAccount.setLoginName("test");
+      loginAccount.setLoginName(LOGIN_NAME);
       loginAccount.setPassword("test");
       loginAccount.setTitle("Login account");
 
@@ -108,7 +111,7 @@ public class UserRepositoryTest {
       tokenAccount.setUuid(UUID.randomUUID());
       tokenAccount.setCreated(ZonedDateTime.now());
       tokenAccount.setModified(ZonedDateTime.now());
-      tokenAccount.setToken("token");
+      tokenAccount.setToken(TOKEN);
       loginAccount.setTitle("Token account");
       user.addAccount(loginAccount);
       user.addAccount(tokenAccount);
@@ -121,5 +124,21 @@ public class UserRepositoryTest {
       EUser<?> tmpUser = this.userRespository.findById(USER_UUID);
       assertEquals(2, tmpUser.getAccounts().size());
     });
+  }
+
+
+  @Test
+  @Order(3)
+  public void testFindByLoginName() {
+    EUser<?> tmpUser = this.userRespository.findByLoginName(LOGIN_NAME);
+    assertNotNull(tmpUser);
+  }
+
+
+  @Test
+  @Order(4)
+  public void testFindByToken() {
+    EUser<?> tmpUser = this.userRespository.findByToken(TOKEN);
+    assertNotNull(tmpUser);
   }
 }
