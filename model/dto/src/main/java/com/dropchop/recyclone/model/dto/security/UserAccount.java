@@ -26,6 +26,8 @@ public class UserAccount extends DtoId
   implements com.dropchop.recyclone.model.api.security.UserAccount,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
+  private final String type = this.getClass().getSimpleName();
+
   private String title;
 
   private ZonedDateTime created;
@@ -33,4 +35,12 @@ public class UserAccount extends DtoId
   private ZonedDateTime modified;
 
   private ZonedDateTime deactivated;
+
+  public String getType() {
+    return this.type;
+  }
+
+  public void setType(String type) {
+
+  }
 }
