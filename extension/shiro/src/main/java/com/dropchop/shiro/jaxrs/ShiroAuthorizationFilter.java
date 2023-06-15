@@ -15,7 +15,8 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.MDC;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_NAM
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
-public class ShiroAuthorizationFilter implements ContainerRequestFilter {
+public class ShiroAuthorizationFilter implements ContainerResponseFilter {
 
   private final Map<AuthorizingAnnotationHandler, Annotation> authzChecks;
 
@@ -65,8 +66,8 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
   }
 
   @Override
-  public void filter(ContainerRequestContext requestContext) {
-    this.authorizationService.invokeFilterChain(requestContext);
+  public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+    this.authorizationService.invokeFilterChain(requestContext, responseContext);
 
     ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
@@ -75,7 +76,7 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       return;
     }
 
-    this.authorizationService.doAuthorizationChecks(requestContext, authzChecks);
+    this.authorizationService.doAuthorizationChecks(requestContext, responseContext, authzChecks);
 
     ExecContext<?> execContext = execContextProvider.produce();
     if (execContext instanceof SecurityExecContext securityExecContext) {

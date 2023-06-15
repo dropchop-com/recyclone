@@ -22,6 +22,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +46,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
   @SuppressWarnings("CdiInjectionPointsInspection")
   List<AccessControlFilter> accessControlFilters;
 
+
   public void bindSubjectToThreadStateInRequestContext(ContainerRequestContext requestContext) {
     Subject subject = new Subject.Builder(shiroSecurityManager).buildSubject();
     ThreadState threadState = new SubjectThreadState(subject);
@@ -53,22 +55,24 @@ public class ShiroAuthorizationService implements AuthorizationService {
     requestContext.setSecurityContext(new ShiroSecurityContext(requestContext));
   }
 
+
   @Produces
   @RequestScoped
   public Subject subject() {
     return SecurityUtils.getSubject();
   }
 
-  public void invokeFilterChain(ContainerRequestContext requestContext) {
+
+  public void invokeFilterChain(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     try {
-      for (AccessControlFilter filter: accessControlFilters) {
-        boolean proceed = filter.isAccessAllowed(requestContext) || filter.onAccessDenied(requestContext);
+      for (AccessControlFilter filter : accessControlFilters) {
+        boolean proceed = filter.isAccessAllowed(requestContext, responseContext) || filter.onAccessDenied(requestContext, responseContext);
         if (!proceed) {
           break;
         }
       }
     } catch (AuthorizationException e) {
-      unbindSubjectFromThreadStateInRequestContext(requestContext);
+      unbindSubjectFromThreadStateInRequestContext(requestContext, responseContext);
       if (e instanceof UnauthenticatedException) {
         throw new ServiceException(authentication_error, "User is unauthenticated.");
       } else {
@@ -79,14 +83,15 @@ public class ShiroAuthorizationService implements AuthorizationService {
 
 
   public void doAuthorizationChecks(ContainerRequestContext requestContext,
-                                    Map<AuthorizingAnnotationHandler, Annotation> authzChecks) {
+                                    ContainerResponseContext responseContext,
+                                    Map<AuthorizingAnnotationHandler, Annotation>authzChecks) {
     for (Map.Entry<AuthorizingAnnotationHandler, Annotation> authzCheck : authzChecks.entrySet()) {
       AuthorizingAnnotationHandler handler = authzCheck.getKey();
       Annotation authzSpec = authzCheck.getValue();
       try {
         handler.assertAuthorized(authzSpec);
       } catch (AuthorizationException e) {
-        unbindSubjectFromThreadStateInRequestContext(requestContext);
+        unbindSubjectFromThreadStateInRequestContext(requestContext, responseContext);
         if (e instanceof UnauthenticatedException) {
           throw new ServiceException(authentication_error, "User is unauthenticated.");
         } else {
@@ -95,6 +100,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
       }
     }
   }
+
 
   public void extractRequiredPermissionsToExecContext(SecurityExecContext execContext,
                                                       Map<AuthorizingAnnotationHandler, Annotation> authzChecks) {
@@ -114,12 +120,14 @@ public class ShiroAuthorizationService implements AuthorizationService {
     }
   }
 
-  public void unbindSubjectFromThreadStateInRequestContext(ContainerRequestContext requestContext) {
+
+  public void unbindSubjectFromThreadStateInRequestContext(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     Object threadStateObj = requestContext.getProperty("shiro.req.internal.thread.state");
     if (threadStateObj instanceof ThreadState threadState) {
       threadState.clear();
     }
   }
+
 
   public boolean isPermitted(Iterable<String> permissions, Logical op) {
     if (op == null) {
@@ -144,26 +152,29 @@ public class ShiroAuthorizationService implements AuthorizationService {
     return Logical.AND.equals(op);
   }
 
+
   @Override
   public boolean isPermitted(String permission) {
     return this.isPermitted(Collections.singleton(permission), Logical.AND);
   }
+
 
   @Override
   public boolean isPermitted(String domain, String action) {
     return this.isPermitted(Constants.Permission.compose(domain, action));
   }
 
+
   @Override
   public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String domain, String action) {
     throw new UnsupportedOperationException("not yet implemented");
   }
 
+
   @Override
   public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String permission) {
     throw new UnsupportedOperationException("not yet implemented");
   }
-
 
 
 }

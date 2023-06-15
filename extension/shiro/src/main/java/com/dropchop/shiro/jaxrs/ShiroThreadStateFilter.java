@@ -28,6 +28,6 @@ public class ShiroThreadStateFilter implements ContainerRequestFilter, Container
 
   @Override
   public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-    this.authorizationService.unbindSubjectFromThreadStateInRequestContext(requestContext);
+    this.authorizationService.unbindSubjectFromThreadStateInRequestContext(requestContext, responseContext);
   }
 }

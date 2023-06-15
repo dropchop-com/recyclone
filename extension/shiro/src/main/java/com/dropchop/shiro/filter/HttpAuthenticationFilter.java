@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.Response;
 import java.util.Locale;
 
@@ -274,7 +275,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    * @return true if the request should be processed; false if the request should not continue to be processed
    */
   @Override
-  public boolean onAccessDenied(ContainerRequestContext requestContext) {
+  public boolean onAccessDenied(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     boolean loggedIn = false; //false by default or we wouldn't be in this method
     if (isLoginAttempt(requestContext)) {
       loggedIn = executeLogin(requestContext);
@@ -289,7 +290,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    * Delegates to {@link #isLoginAttempt(ContainerRequestContext) isLoginAttempt}.
    */
   @Override
-  protected final boolean isLoginRequest(ContainerRequestContext requestContext) {
+  protected final boolean isLoginRequest(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     return this.isLoginAttempt(requestContext);
   }
 }

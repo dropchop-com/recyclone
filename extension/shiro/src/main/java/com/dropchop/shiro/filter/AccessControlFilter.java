@@ -4,6 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 
 /**
  * Modeled and copied from Shiro Web.
@@ -27,24 +28,24 @@ public abstract class AccessControlFilter {
   /**
    * Returns <code>true</code> if the request is allowed to proceed through the filter normally, or <code>false</code>
    * if the request should be handled by the
-   * {@link #onAccessDenied(ContainerRequestContext) onAccessDenied(requestContext)}
+   * {@link #onAccessDenied(ContainerRequestContext,ContainerResponseContext) onAccessDenied(requestContext)}
    * method instead.
    *
    * @param requestContext     the incoming <code>ContainerRequestContext</code>
    * @return <code>true</code> if the request should proceed through the filter normally, <code>false</code> if the
    *         request should be processed by this filter's
-   *         {@link #onAccessDenied(ContainerRequestContext)} method instead.
+   *         {@link #onAccessDenied(ContainerRequestContext, ContainerResponseContext)} method instead.
    */
-  public abstract boolean isAccessAllowed(ContainerRequestContext requestContext);
+  public abstract boolean isAccessAllowed(ContainerRequestContext requestContext, ContainerResponseContext responseContext);
 
   /**
    * Processes requests where the subject was denied access as determined by the
-   * {@link #isAccessAllowed(ContainerRequestContext) isAccessAllowed}
+   * {@link #isAccessAllowed(ContainerRequestContext, ContainerResponseContext) isAccessAllowed}
    * method.
    *
    * @param requestContext  the incoming <code>ContainerRequestContext</code>
    * @return <code>true</code> if the request should continue to be processed; false if the subclass will
    *         handle/render the response directly.
    */
-  public abstract boolean onAccessDenied(ContainerRequestContext requestContext);
+  public abstract boolean onAccessDenied(ContainerRequestContext requestContext, ContainerResponseContext responseContext);
 }
