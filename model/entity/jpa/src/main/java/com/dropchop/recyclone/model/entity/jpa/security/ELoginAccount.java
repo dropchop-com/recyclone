@@ -4,8 +4,7 @@ import com.dropchop.recyclone.model.api.security.LoginAccount;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
@@ -16,8 +15,11 @@ import javax.persistence.Entity;
 @NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("LoginAccount")
+@Table(indexes = { @Index(name = "idx_user_account_login_name", columnList = "login_name")})
 public class ELoginAccount extends EUserAccount implements LoginAccount {
+
   @NonNull
+  @Column(name = "login_name")
   private String loginName;
 
   private String password;

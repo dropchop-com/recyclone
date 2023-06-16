@@ -9,6 +9,8 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
@@ -19,6 +21,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("TokenAccount")
+@Table(indexes = { @Index(name = "idx_user_account_token", columnList = "token")})
 public class ETokenAccount extends EUserAccount implements TokenAccount {
 
   @NonNull

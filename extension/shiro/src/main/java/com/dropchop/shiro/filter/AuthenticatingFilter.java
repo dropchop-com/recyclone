@@ -17,7 +17,7 @@ import javax.ws.rs.container.ContainerRequestContext;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class AuthenticatingFilter extends AccessControlFilter {
+public abstract class AuthenticatingFilter implements AccessControlFilter {
 
   public static final String DEFAULT_PATH_SEPARATOR = "/";
 

@@ -1,12 +1,16 @@
 package com.dropchop.shiro.cdi;
 
 import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.security.annotations.*;
-import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.shiro.filter.AccessControlFilter;
+import com.dropchop.shiro.filter.RequestFilter;
+import com.dropchop.shiro.filter.ResponseFilter;
+import com.dropchop.shiro.filter.ShiroFilter;
 import com.dropchop.shiro.jaxrs.ShiroSecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -22,6 +26,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +48,8 @@ public class ShiroAuthorizationService implements AuthorizationService {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  List<AccessControlFilter> accessControlFilters;
+  List<ShiroFilter> shiroFilters;
+
 
   public void bindSubjectToThreadStateInRequestContext(ContainerRequestContext requestContext) {
     Subject subject = new Subject.Builder(shiroSecurityManager).buildSubject();
@@ -53,18 +59,43 @@ public class ShiroAuthorizationService implements AuthorizationService {
     requestContext.setSecurityContext(new ShiroSecurityContext(requestContext));
   }
 
+
   @Produces
   @RequestScoped
   public Subject subject() {
     return SecurityUtils.getSubject();
   }
 
-  public void invokeFilterChain(ContainerRequestContext requestContext) {
+
+  public void invokeRequestFilterChain(ContainerRequestContext requestContext) {
     try {
-      for (AccessControlFilter filter: accessControlFilters) {
-        boolean proceed = filter.isAccessAllowed(requestContext) || filter.onAccessDenied(requestContext);
-        if (!proceed) {
-          break;
+      for (ShiroFilter filter : shiroFilters) {
+        if (filter instanceof RequestFilter requestFilter) {
+          boolean proceed = requestFilter.onFilterRequest(requestContext);
+          if (!proceed) {
+            break;
+          }
+        }
+      }
+    } catch (AuthorizationException e) {
+      unbindSubjectFromThreadStateInRequestContext(requestContext);
+      if (e instanceof UnauthenticatedException) {
+        throw new ServiceException(authentication_error, "User is unauthenticated.");
+      } else {
+        throw new ServiceException(authorization_error, "User is unauthorized.");
+      }
+    }
+  }
+
+
+  public void invokeResponseFilterChain(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+    try {
+      for (ShiroFilter filter : shiroFilters) {
+        if (filter instanceof ResponseFilter responseFilter) {
+          boolean proceed = responseFilter.onFilterResponse(requestContext, responseContext);
+          if (!proceed) {
+            break;
+          }
         }
       }
     } catch (AuthorizationException e) {
@@ -79,7 +110,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
 
 
   public void doAuthorizationChecks(ContainerRequestContext requestContext,
-                                    Map<AuthorizingAnnotationHandler, Annotation> authzChecks) {
+                                    Map<AuthorizingAnnotationHandler, Annotation>authzChecks) {
     for (Map.Entry<AuthorizingAnnotationHandler, Annotation> authzCheck : authzChecks.entrySet()) {
       AuthorizingAnnotationHandler handler = authzCheck.getKey();
       Annotation authzSpec = authzCheck.getValue();
@@ -95,6 +126,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
       }
     }
   }
+
 
   public void extractRequiredPermissionsToExecContext(SecurityExecContext execContext,
                                                       Map<AuthorizingAnnotationHandler, Annotation> authzChecks) {
@@ -114,12 +146,14 @@ public class ShiroAuthorizationService implements AuthorizationService {
     }
   }
 
+
   public void unbindSubjectFromThreadStateInRequestContext(ContainerRequestContext requestContext) {
     Object threadStateObj = requestContext.getProperty("shiro.req.internal.thread.state");
     if (threadStateObj instanceof ThreadState threadState) {
       threadState.clear();
     }
   }
+
 
   public boolean isPermitted(Iterable<String> permissions, Logical op) {
     if (op == null) {
@@ -144,26 +178,29 @@ public class ShiroAuthorizationService implements AuthorizationService {
     return Logical.AND.equals(op);
   }
 
+
   @Override
   public boolean isPermitted(String permission) {
     return this.isPermitted(Collections.singleton(permission), Logical.AND);
   }
+
 
   @Override
   public boolean isPermitted(String domain, String action) {
     return this.isPermitted(Constants.Permission.compose(domain, action));
   }
 
+
   @Override
   public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String domain, String action) {
     throw new UnsupportedOperationException("not yet implemented");
   }
 
+
   @Override
   public <M extends Model> boolean isPermitted(Class<M> subject, String identifier, String permission) {
     throw new UnsupportedOperationException("not yet implemented");
   }
-
 
 
 }
