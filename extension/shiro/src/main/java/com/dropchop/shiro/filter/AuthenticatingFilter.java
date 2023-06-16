@@ -9,7 +9,6 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
 
 /**
  * Modeled and copied from Shiro Web.
@@ -18,7 +17,7 @@ import javax.ws.rs.container.ContainerResponseContext;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class AuthenticatingFilter extends AccessControlFilter {
+public abstract class AuthenticatingFilter implements AccessControlFilter {
 
   public static final String DEFAULT_PATH_SEPARATOR = "/";
 
@@ -110,7 +109,7 @@ public abstract class AuthenticatingFilter extends AccessControlFilter {
     return new UsernamePasswordToken(username, password, rememberMe, host);
   }
 
-  protected boolean isLoginRequest(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+  protected boolean isLoginRequest(ContainerRequestContext requestContext) {
     String requestURI = requestContext.getUriInfo().getPath();
     String path = getLoginUrl();
     log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, requestURI);
@@ -141,9 +140,9 @@ public abstract class AuthenticatingFilter extends AccessControlFilter {
    * @return <code>true</code> if request should be allowed access
    */
   @Override
-  public boolean isAccessAllowed(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+  public boolean isAccessAllowed(ContainerRequestContext requestContext) {
     Subject subject = getSubject();
     return (subject.isAuthenticated() && subject.getPrincipal() != null) ||
-      (!isLoginRequest(requestContext, responseContext) && isPermissive());
+      (!isLoginRequest(requestContext) && isPermissive());
   }
 }

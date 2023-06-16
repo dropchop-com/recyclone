@@ -1,12 +1,16 @@
 package com.dropchop.shiro.cdi;
 
 import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.security.annotations.*;
-import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
+import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.shiro.filter.AccessControlFilter;
+import com.dropchop.shiro.filter.RequestFilter;
+import com.dropchop.shiro.filter.ResponseFilter;
+import com.dropchop.shiro.filter.ShiroFilter;
 import com.dropchop.shiro.jaxrs.ShiroSecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -44,7 +48,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  List<AccessControlFilter> accessControlFilters;
+  List<ShiroFilter> shiroFilters;
 
 
   public void bindSubjectToThreadStateInRequestContext(ContainerRequestContext requestContext) {
@@ -63,16 +67,39 @@ public class ShiroAuthorizationService implements AuthorizationService {
   }
 
 
-  public void invokeFilterChain(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+  public void invokeRequestFilterChain(ContainerRequestContext requestContext) {
     try {
-      for (AccessControlFilter filter : accessControlFilters) {
-        boolean proceed = filter.isAccessAllowed(requestContext, responseContext) || filter.onAccessDenied(requestContext, responseContext);
-        if (!proceed) {
-          break;
+      for (ShiroFilter filter : shiroFilters) {
+        if (filter instanceof RequestFilter requestFilter) {
+          boolean proceed = requestFilter.onFilterRequest(requestContext);
+          if (!proceed) {
+            break;
+          }
         }
       }
     } catch (AuthorizationException e) {
-      unbindSubjectFromThreadStateInRequestContext(requestContext, responseContext);
+      unbindSubjectFromThreadStateInRequestContext(requestContext);
+      if (e instanceof UnauthenticatedException) {
+        throw new ServiceException(authentication_error, "User is unauthenticated.");
+      } else {
+        throw new ServiceException(authorization_error, "User is unauthorized.");
+      }
+    }
+  }
+
+
+  public void invokeResponseFilterChain(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+    try {
+      for (ShiroFilter filter : shiroFilters) {
+        if (filter instanceof ResponseFilter responseFilter) {
+          boolean proceed = responseFilter.onFilterResponse(requestContext, responseContext);
+          if (!proceed) {
+            break;
+          }
+        }
+      }
+    } catch (AuthorizationException e) {
+      unbindSubjectFromThreadStateInRequestContext(requestContext);
       if (e instanceof UnauthenticatedException) {
         throw new ServiceException(authentication_error, "User is unauthenticated.");
       } else {
@@ -83,7 +110,6 @@ public class ShiroAuthorizationService implements AuthorizationService {
 
 
   public void doAuthorizationChecks(ContainerRequestContext requestContext,
-                                    ContainerResponseContext responseContext,
                                     Map<AuthorizingAnnotationHandler, Annotation>authzChecks) {
     for (Map.Entry<AuthorizingAnnotationHandler, Annotation> authzCheck : authzChecks.entrySet()) {
       AuthorizingAnnotationHandler handler = authzCheck.getKey();
@@ -91,7 +117,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
       try {
         handler.assertAuthorized(authzSpec);
       } catch (AuthorizationException e) {
-        unbindSubjectFromThreadStateInRequestContext(requestContext, responseContext);
+        unbindSubjectFromThreadStateInRequestContext(requestContext);
         if (e instanceof UnauthenticatedException) {
           throw new ServiceException(authentication_error, "User is unauthenticated.");
         } else {
@@ -121,7 +147,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
   }
 
 
-  public void unbindSubjectFromThreadStateInRequestContext(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+  public void unbindSubjectFromThreadStateInRequestContext(ContainerRequestContext requestContext) {
     Object threadStateObj = requestContext.getProperty("shiro.req.internal.thread.state");
     if (threadStateObj instanceof ThreadState threadState) {
       threadState.clear();

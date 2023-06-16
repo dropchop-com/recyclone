@@ -3,9 +3,9 @@ package com.dropchop.shiro.jaxrs;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
+import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.*;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.shiro.aop.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
@@ -15,8 +15,8 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.MDC;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.ContainerRequestFilter;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +30,7 @@ import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_NAM
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
-public class ShiroAuthorizationFilter implements ContainerResponseFilter {
+public class ShiroAuthorizationFilter implements ContainerRequestFilter {
 
   private final Map<AuthorizingAnnotationHandler, Annotation> authzChecks;
 
@@ -61,13 +61,11 @@ public class ShiroAuthorizationFilter implements ContainerResponseFilter {
     }
     this.authorizationService = authorizationService;
     this.authzChecks = Collections.unmodifiableMap(authChecks);
-    log.debug("Constructed {} for [{}:{}] with [{}]",
-      this.getClass().getName(), resourceClassName, resourceMethodName, authzSpecs);
   }
 
   @Override
-  public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-    this.authorizationService.invokeFilterChain(requestContext, responseContext);
+  public void filter(ContainerRequestContext requestContext) throws IOException {
+    this.authorizationService.invokeRequestFilterChain(requestContext);
 
     ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
@@ -76,7 +74,7 @@ public class ShiroAuthorizationFilter implements ContainerResponseFilter {
       return;
     }
 
-    this.authorizationService.doAuthorizationChecks(requestContext, responseContext, authzChecks);
+    this.authorizationService.doAuthorizationChecks(requestContext, authzChecks);
 
     ExecContext<?> execContext = execContextProvider.produce();
     if (execContext instanceof SecurityExecContext securityExecContext) {
