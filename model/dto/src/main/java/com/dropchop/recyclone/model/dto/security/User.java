@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.dto.security;
 
+import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.common.Person;
 import com.dropchop.recyclone.model.dto.localization.Country;
@@ -62,4 +63,8 @@ public class User<O extends DtoId> extends Person
   @Singular
   @JsonInclude(NON_EMPTY)
   private List<Tag> tags;
+
+  @Singular
+  @JsonInclude(NON_EMPTY)
+  private Set<Attribute<?>> attributes;
 }
