@@ -35,13 +35,6 @@ public class EUser<O extends EUuid> extends EPerson
   implements User<EUserAccount, ETitleDescriptionTranslation, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage, ETag>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
-
-  @Column(name="default_email")
-  private String defaultEmail;
-
-  @Column(name="default_phone")
-  private String defaultPhone;
-
   @Column(name="created")
   private ZonedDateTime created;
 

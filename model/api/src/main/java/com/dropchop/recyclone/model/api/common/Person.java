@@ -49,4 +49,9 @@ public interface Person<C extends Country<TT>, L extends Language<TT>, TT extend
   String getDefaultEmail();
 
   void setDefaultEmail(String defaultEmail);
+
+  String getDefaultPhone();
+
+  void setDefaultPhone(String defaultPhone);
+
 }
