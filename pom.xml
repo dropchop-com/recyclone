@@ -33,6 +33,13 @@
     <tag>HEAD</tag>
   </scm>
 
+  <repositories>
+    <repository>
+      <id>dropchop-maven-repo</id>
+      <url>https://www.dropchop.com/repo</url>
+    </repository>
+  </repositories>
+
   <developers>
     <developer>
       <name>Nikola Ivačič</name>

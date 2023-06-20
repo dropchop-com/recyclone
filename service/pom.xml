@@ -12,13 +12,6 @@
     <version>1.0.4.Alpha-SNAPSHOT</version>
   </parent>
 
-  <repositories>
-    <repository>
-      <id>local-maven-repo</id>
-      <url>file:///${project.basedir}/../tmp-local-repo</url>
-    </repository>
-  </repositories>
-
   <modules>
     <module>api</module>
     <module>jpa-blaze</module>
