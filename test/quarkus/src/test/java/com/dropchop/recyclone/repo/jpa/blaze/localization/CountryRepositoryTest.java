@@ -92,6 +92,7 @@ public class CountryRepositoryTest {
     th.transact(() -> {
       ECountry country = this.countryRepository.findById(coUkCode);
       Assertions.assertEquals(1, country.getTranslations().size());
+      Assertions.assertEquals(lngEnCode, country.getTranslations().iterator().next().getLang());
       Assertions.assertTrue(country.removeTranslation(Locale.ENGLISH));
       this.countryRepository.save(country);
     });

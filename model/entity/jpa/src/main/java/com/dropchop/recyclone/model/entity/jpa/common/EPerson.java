@@ -53,6 +53,9 @@ public class EPerson extends EUuid implements Person<ECountry, ELanguage, ETitle
   @Column(name="default_email")
   private String defaultEmail;
 
+  @Column(name="default_phone")
+  private String defaultPhone;
+
   @Override
   public String toString() {
     return super.toString() + ",first='" + firstName + '\'' +

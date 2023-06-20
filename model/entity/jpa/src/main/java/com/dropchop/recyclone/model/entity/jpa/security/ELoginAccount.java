@@ -15,7 +15,6 @@ import javax.persistence.*;
 @NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("LoginAccount")
-@Table(indexes = { @Index(name = "idx_user_account_login_name", columnList = "login_name")})
 public class ELoginAccount extends EUserAccount implements LoginAccount {
 
   @NonNull

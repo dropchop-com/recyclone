@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dropchop.recyclone</groupId>
   <artifactId>recyclone</artifactId>
-  <version>1.0.4.Alpha-SNAPSHOT</version>
+  <version>1.0.6.Alpha-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Recyclone</name>
 

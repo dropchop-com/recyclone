@@ -21,7 +21,6 @@ import javax.persistence.Table;
 @NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("TokenAccount")
-@Table(indexes = { @Index(name = "idx_user_account_token", columnList = "token")})
 public class ETokenAccount extends EUserAccount implements TokenAccount {
 
   @NonNull
