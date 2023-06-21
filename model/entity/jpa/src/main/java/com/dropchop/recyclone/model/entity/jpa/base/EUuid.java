@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @MappedSuperclass
 public abstract class EUuid implements Entity, HasUuid, Comparable<EUuid> {

@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface State extends Model, HasCode, HasCreated, HasCreatedBy {
 
   interface Code extends Model, CharSequence {

@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
@@ -12,21 +13,19 @@ import com.dropchop.recyclone.model.entity.jpa.security.ERole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
+import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
-import com.dropchop.recyclone.service.api.ServiceConfiguration;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Collection;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
@@ -105,7 +104,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(ctx),
       (entity, join) -> {
-        SortedSet<EPermission> permissions = entity.getPermissions();
+        Set<EPermission> permissions = entity.getPermissions();
         for (EPermission permission : join) {
           if (!permissions.remove(permission)) {
             throw new ServiceException(ErrorCode.data_validation_error, "Missing permission for role!",

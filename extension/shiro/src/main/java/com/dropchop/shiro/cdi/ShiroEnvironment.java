@@ -1,5 +1,7 @@
 package com.dropchop.shiro.cdi;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authz.Authorizer;
@@ -9,8 +11,6 @@ import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ import java.util.List;
 public class ShiroEnvironment extends ShiroAbstractEnvironment {
 
   @Produces
-  @Override
+  @SuppressWarnings("CdiInjectionPointsInspection")
   protected SessionsSecurityManager securityManager(List<Realm> realms) {
     return super.securityManager(realms);
   }

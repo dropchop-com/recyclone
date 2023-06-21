@@ -30,12 +30,12 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   @SuppressWarnings("CdiInjectionPointsInspection")
   CriteriaBuilderFactory cbf;
 
-  public String getRootAlias() {
-    return getRootClass().getSimpleName().toLowerCase();
+  public String getClassAlias(Class<?> cls) {
+    return cls.getSimpleName().toLowerCase();
   }
 
-  public CriteriaBuilder<E> getBuilder() {
-    return cbf.create(em, getRootClass());
+  public <X extends E> CriteriaBuilder<X> getBuilder(Class<X> cls) {
+    return cbf.create(em, cls);
   }
 
   @Override
@@ -46,9 +46,9 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Override
   public List<E> findById(Collection<ID> ids) {
-    String alias = getRootAlias();
     Class<E> tClass = getRootClass();
-    CriteriaBuilder<E> cb = getBuilder().from(getRootClass(), alias);
+    String alias = getClassAlias(tClass);
+    CriteriaBuilder<E> cb = getBuilder(tClass).from(getRootClass(), alias);
     if (HasCode.class.isAssignableFrom(tClass)) {
       cb.where(alias + ".code").in(ids);
     } else if (HasUuid.class.isAssignableFrom(tClass)) {
@@ -58,13 +58,13 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   }
 
   @Override
-  public List<E> find(RepositoryExecContext<E> context) {
-    String alias = getRootAlias();
-    CriteriaBuilder<E> cb = getBuilder().from(getRootClass(), alias);
+  public <X extends E> List<X> find(Class<X> cls, RepositoryExecContext<X> context) {
+    String alias = getClassAlias(cls);
+    CriteriaBuilder<X> cb = getBuilder(cls).from(cls, alias);
     TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();
     if (context != null) {
       if (context instanceof BlazeExecContext) {
-        ((BlazeExecContext<E>) context).init(getRootClass(), alias, cb);
+        ((BlazeExecContext<X>) context).init(cls, alias, cb);
       }
       for (RepositoryExecContextListener listener : context.getListeners()) {
         if (listener instanceof PageCriteriaDecorator) {
@@ -93,6 +93,11 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   }
 
   @Override
+  public List<E> find(RepositoryExecContext<E> context) {
+    return find(getRootClass(), context);
+  }
+
+  @Override
   public <S extends E> void refresh(Collection<S> entities) {
     for (S entity : entities) {
       em.flush();
@@ -112,8 +117,8 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Override
   public int deleteById(Collection<? extends ID> ids) {
-    String alias = getRootAlias();
     Class<E> tClass = getRootClass();
+    String alias = getClassAlias(tClass);
     DeleteCriteriaBuilder<E> cb = cbf.delete(em, getRootClass(), alias);
     if (HasCode.class.isAssignableFrom(tClass)) {
       cb.where(alias + ".code").in(ids);

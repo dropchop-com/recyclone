@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dropchop.recyclone</groupId>
   <artifactId>recyclone</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.7.Alpha-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Recyclone</name>
 
-  <description>Dropchop's Recyclone Lira</description>
-  <url>https://github.com/ivlcic/recyclone</url>
+  <description>Dropchop's Recyclone Library</description>
+  <url>https://github.com/dropchop-com/recyclone.git</url>
 
   <licenses>
     <license>
@@ -27,11 +29,18 @@
   </modules>
 
   <scm>
-    <connection>scm:git:https://github.com/ivlcic/recyclone.git</connection>
-    <developerConnection>scm:git:https://github.com/ivlcic/recyclone.git</developerConnection>
-    <url>https://github.com/ivlcic/recyclone</url>
+    <connection>scm:git:https://github.com/dropchop-com/recyclone.git</connection>
+    <developerConnection>scm:git:https://github.com/dropchop-com/recyclone.git</developerConnection>
+    <url>https://github.com/dropchop-com/recyclone.git</url>
     <tag>HEAD</tag>
   </scm>
+
+  <repositories>
+    <repository>
+      <id>dropchop-maven-repo</id>
+      <url>https://www.dropchop.com/repo</url>
+    </repository>
+  </repositories>
 
   <developers>
     <developer>
@@ -82,6 +91,7 @@
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -90,21 +100,18 @@
     <logback.version>1.2.10</logback.version>
     <aspectj.version>1.9.9.1</aspectj.version>
     <lombok.version>1.18.24</lombok.version>
-    <!--<mapstruct.version>1.4.2.Final</mapstruct.version>-->
-    <!--<mapstruct.version>1.6.0-SNAPSHOT</mapstruct.version>-->
     <mapstruct.version>1.6.1-SNAPSHOT</mapstruct.version>
-    <blaze-persistence.version>1.6.8</blaze-persistence.version>
-    <jackson.version>2.13.3</jackson.version>
+    <blaze-persistence.version>1.6.9</blaze-persistence.version>
+    <jackson.version>2.15.2</jackson.version>
     <quarkus.version>3.0.3.Final</quarkus.version>
-    <junit.version>5.8.2</junit.version>
+    <junit.version>5.9.3</junit.version>
     <jsonassert.version>1.5.1</jsonassert.version>
     <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
     <jakarta.cdi-api.version>4.0.1</jakarta.cdi-api.version>
     <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
     <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
-    <!--<jakarta.servlet-api.version>4.0.3</jakarta.servlet-api.version>-->
-    <microprofile-openapi-api.version>2.0.1-RC1</microprofile-openapi-api.version>
-    <microprofile-config-api.version>2.0.1</microprofile-config-api.version>
+    <microprofile-openapi-api.version>3.1</microprofile-openapi-api.version>
+    <microprofile-config-api.version>3.0.3</microprofile-config-api.version>
     <org.modelmapper.version>2.4.5</org.modelmapper.version>
     <apache.shiro.version>1.9.0</apache.shiro.version>
   </properties>
@@ -123,12 +130,6 @@
         <version>${jakarta.cdi-api.version}</version>
         <scope>provided</scope>
       </dependency>
-      <!--<dependency>
-        <groupId>jakarta.servlet</groupId>
-        <artifactId>jakarta.servlet-api</artifactId>
-        <version>${jakarta.servlet-api.version}</version>
-        <scope>provided</scope>
-      </dependency>-->
       <dependency>
         <groupId>jakarta.transaction</groupId>
         <artifactId>jakarta.transaction-api</artifactId>
@@ -203,7 +204,7 @@
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
-        <version>${mapstruct.version}</version>
+        <version>1.6.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.blazebit</groupId>
@@ -212,6 +213,12 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>com.blazebit</groupId>
+        <artifactId>blaze-persistence-integration-quarkus-3</artifactId>
+        <version>${blaze-persistence.version}</version>
+      </dependency>
+
 
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
@@ -303,14 +310,6 @@
         <version>${jsonassert.version}</version>
         <scope>test</scope>
       </dependency>
-
-      <!--<dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-repo-jpa-mock</artifactId>
-        <version>${project.version}</version>
-        <classifier>tests</classifier>
-        <scope>test</scope>
-      </dependency>-->
     </dependencies>
   </dependencyManagement>
 
@@ -385,6 +384,7 @@
                 <version>${lombok.version}</version>
               </path>
             </annotationProcessorPaths>
+            <release>${maven.compiler.release}</release>
           </configuration>
         </plugin>
         <plugin>

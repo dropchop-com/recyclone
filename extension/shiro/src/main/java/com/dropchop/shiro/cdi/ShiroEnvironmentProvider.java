@@ -1,8 +1,6 @@
 package com.dropchop.shiro.cdi;
 
-import com.dropchop.shiro.filter.AccessControlFilter;
-import com.dropchop.shiro.filter.BasicHttpAuthenticationFilter;
-import com.dropchop.shiro.filter.BearerHttpAuthenticationFilter;
+import com.dropchop.shiro.filter.*;
 import com.dropchop.shiro.realm.ShiroMapRealm;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
@@ -53,7 +51,7 @@ public class ShiroEnvironmentProvider {
   }
 
   @Produces
-  public List<AccessControlFilter> getFilters() {
+  public List<ShiroFilter> getFilters() {
     return List.of(
       new BasicHttpAuthenticationFilter(),
       new BearerHttpAuthenticationFilter()

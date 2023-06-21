@@ -7,6 +7,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ETitleTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import lombok.*;
@@ -28,9 +29,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "country")
-@SuppressWarnings("JpaDataSourceORMInspection")
 public class ECountry extends ECode
-  implements Country<ETitleTranslation>,
+  implements Country<ETitleTranslation>, ETitleTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage,
   HasTags<ETag, ETitleDescriptionTranslation> {
 

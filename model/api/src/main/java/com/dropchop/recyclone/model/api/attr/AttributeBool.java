@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class AttributeBool extends AttributeBase<Boolean> {
   @NonNull
   private Boolean value;

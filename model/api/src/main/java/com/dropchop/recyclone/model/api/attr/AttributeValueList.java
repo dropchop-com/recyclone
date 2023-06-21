@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class AttributeValueList<X> extends AttributeBase<List<X>> {
   @NonNull
   private List<X> value;

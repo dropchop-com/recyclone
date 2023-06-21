@@ -9,6 +9,7 @@ import java.util.ListIterator;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface HasStates {
   List<State> getStates();
   void setStates(List<State> states);

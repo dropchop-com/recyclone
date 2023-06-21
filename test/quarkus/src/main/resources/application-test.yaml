@@ -8,10 +8,11 @@ quarkus:
 
   datasource:
     db-kind: postgresql
-    username: last_dev_test
-    password: last_dev_test
+    username: recyclone
+    password: recyclone
     devservices:
       port: 35432
+      db-name: recyclone_test
 
   hibernate-orm:
     #log:

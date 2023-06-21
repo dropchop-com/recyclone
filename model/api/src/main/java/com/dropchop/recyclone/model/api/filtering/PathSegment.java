@@ -24,7 +24,7 @@ import java.util.Collection;
 public class PathSegment {
   public static final String ROOT_OBJECT = ".";
   public static final String PATH_DELIM = ".";
-  public static final String SIBLING_DELIM = ";";
+  //public static final String SIBLING_DELIM = ";";
   public static final String ANY = "*";
 
 

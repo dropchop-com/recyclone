@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class DefaultExecContext<D extends Dto>
   extends ParamsExecContext<Listener>

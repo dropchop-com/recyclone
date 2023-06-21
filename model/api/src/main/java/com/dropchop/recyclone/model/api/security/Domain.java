@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescription;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
@@ -16,6 +16,6 @@ public interface Domain<
   A extends Action<TDT>>
   extends Model, HasCode, HasTranslationInlinedTitleDescription, HasTitleTranslation<TDT> {
 
-  SortedSet<A> getActions();
-  void setActions(SortedSet<A> actions);
+  Set<A> getActions();
+  void setActions(Set<A> actions);
 }

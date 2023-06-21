@@ -13,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class LoginAccount extends UserAccount

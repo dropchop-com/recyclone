@@ -11,7 +11,8 @@ import java.util.UUID;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
+@SuppressWarnings("unused")
 public class ParamsExecContext<ECL extends Listener>
   implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<ECL> {
 

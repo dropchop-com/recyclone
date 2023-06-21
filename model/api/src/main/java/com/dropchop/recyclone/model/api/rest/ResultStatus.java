@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 08. 22.
  */
+@SuppressWarnings("unused")
 public interface ResultStatus<RS extends ResultStats> {
 
   ResultCode getCode();

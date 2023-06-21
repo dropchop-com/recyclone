@@ -7,12 +7,14 @@ import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
-import java.util.SortedSet;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -31,7 +33,7 @@ public class Domain extends DtoCode
 
   @Singular
   @JsonInclude(NON_EMPTY)
-  private SortedSet<Action> actions;
+  private Set<Action> actions;
 
   private String title;
 

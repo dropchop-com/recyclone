@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface HasPublished extends HasStateInlinedCommon {
 
   State.Code.Published published = State.Code.published;

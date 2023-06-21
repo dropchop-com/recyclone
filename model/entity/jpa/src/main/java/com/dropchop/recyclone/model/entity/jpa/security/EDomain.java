@@ -6,16 +6,19 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ETitleDescriptionTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
@@ -26,9 +29,8 @@ import java.util.SortedSet;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_domain")
-@SuppressWarnings("JpaDataSourceORMInspection")
 public class EDomain extends ECode
-  implements Domain<ETitleDescriptionTranslation, EAction>,
+  implements Domain<ETitleDescriptionTranslation, EAction>, ETitleDescriptionTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EAction.class)
@@ -45,7 +47,7 @@ public class EDomain extends ECode
     }
   )
   @OrderBy("code ASC")
-  SortedSet<EAction> actions;
+  Set<EAction> actions;
 
   @Column(name="title")
   private String title;

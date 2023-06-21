@@ -6,11 +6,11 @@ import com.dropchop.recyclone.model.api.localization.Country;
 import com.dropchop.recyclone.model.api.localization.Language;
 import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.localization.TitleTranslation;
+import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import com.dropchop.recyclone.model.api.marker.HasTags;
 import com.dropchop.recyclone.model.api.tagging.Tag;
 
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
@@ -29,15 +29,15 @@ public interface User<
     L extends Language<TT>,
     T extends Tag<T, TDT>
     >
-    extends Person<C, L, TT>, PermissionBearer, HasTags<T, TDT> {
+    extends Person<C, L, TT>, PermissionBearer, HasTags<T, TDT>, HasAttributes {
 
-  SortedSet<R> getRoles();
+  Set<R> getRoles();
 
-  void setRoles(SortedSet<R> roles);
+  void setRoles(Set<R> roles);
 
-  SortedSet<P> getPermissions();
+  Set<P> getPermissions();
 
-  void setPermissions(SortedSet<P> permissions);
+  void setPermissions(Set<P> permissions);
 
   Set<UA> getAccounts();
 
@@ -46,4 +46,7 @@ public interface User<
   O getOwner();
 
   void setOwner(O owner);
+
+
+
 }

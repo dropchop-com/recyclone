@@ -7,9 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collection;
 import java.util.List;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_PREFIX;
-import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.TRANS_SUFIX;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
  */

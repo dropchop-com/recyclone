@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @MappedSuperclass
 @Embeddable

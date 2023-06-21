@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
  */
 @Data
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public abstract class AttributeBase<X> implements Attribute<X> {
   @NonNull

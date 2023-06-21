@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.dto.security;
 
+import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.common.Person;
 import com.dropchop.recyclone.model.dto.localization.Country;
@@ -8,13 +9,15 @@ import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Singular;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -35,11 +38,11 @@ public class User<O extends DtoId> extends Person
 
   @Singular
   @JsonInclude(NON_EMPTY)
-  private SortedSet<Role> roles;
+  private Set<Role> roles;
 
   @Singular
   @JsonInclude(NON_EMPTY)
-  private SortedSet<Permission> permissions;
+  private Set<Permission> permissions;
 
   @Singular
   @JsonInclude(NON_EMPTY)
@@ -62,4 +65,8 @@ public class User<O extends DtoId> extends Person
   @Singular
   @JsonInclude(NON_EMPTY)
   private List<Tag> tags;
+
+  @Singular
+  @JsonInclude(NON_EMPTY)
+  private Set<Attribute<?>> attributes;
 }

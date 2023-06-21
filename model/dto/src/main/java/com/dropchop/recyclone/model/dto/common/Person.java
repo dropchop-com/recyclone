@@ -32,4 +32,5 @@ public class Person extends DtoId
   private String initials;
   private Boolean female;
   private String defaultEmail;
+  private String defaultPhone;
 }

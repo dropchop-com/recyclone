@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 08. 22.
  */
+@SuppressWarnings("unused")
 public interface ResultFilter<CF extends ResultFilter.ContentFilter, LF extends ResultFilter.LanguageFilter> extends Dto {
 
   interface ContentFilter extends Model {

@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 06. 22.
  */
+@SuppressWarnings("unused")
 public interface PolymorphicRegistry {
 
   class SerializationConfig {

@@ -1,5 +1,6 @@
 package com.dropchop.shiro.cdi;
 
+import jakarta.inject.Inject;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
@@ -19,8 +20,7 @@ import org.apache.shiro.session.mgt.SimpleSessionFactory;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 
-import jakarta.inject.Inject;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Modeled and copied from Shiro Spring.
@@ -44,7 +44,7 @@ public abstract class ShiroAbstractEnvironment {
   protected boolean sessionManagerDeleteInvalidSessions = true;
 
 
-  protected SessionsSecurityManager securityManager(List<Realm> realms) {
+  protected SessionsSecurityManager securityManager(Collection<Realm> realms) {
     SessionsSecurityManager securityManager = createSecurityManager();
     securityManager.setAuthenticator(authenticator());
     securityManager.setAuthorizer(authorizer());

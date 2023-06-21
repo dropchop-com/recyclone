@@ -17,7 +17,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class AuthenticatingFilter extends AccessControlFilter {
+public abstract class AuthenticatingFilter implements AccessControlFilter {
 
   public static final String DEFAULT_PATH_SEPARATOR = "/";
 
@@ -105,6 +105,7 @@ public abstract class AuthenticatingFilter extends AccessControlFilter {
     return createToken(username, password, rememberMe, "host");
   }
 
+  @SuppressWarnings("SameParameterValue")
   protected AuthenticationToken createToken(String username, String password, boolean rememberMe, String host) {
     return new UsernamePasswordToken(username, password, rememberMe, host);
   }

@@ -16,6 +16,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("unused")
 public class StatusMessage implements Model {
   private ErrorCode code;
   private String text;

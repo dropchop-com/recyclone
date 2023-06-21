@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>recyclone-test-quarkus</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.7.Alpha-SNAPSHOT</version>
   <name>Recyclone - Test - Quarkus</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
     <artifactId>recyclone-test</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.7.Alpha-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -20,9 +22,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.0.3.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.1.2.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-    <recyclone.version>1.0.1-SNAPSHOT</recyclone.version>
+    <recyclone.version>1.0.7.Alpha-SNAPSHOT</recyclone.version>
     <lombok.version>1.18.24</lombok.version>
     <testcontainers.version>1.16.2</testcontainers.version>
   </properties>
@@ -64,31 +66,22 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
+
+
     <dependency>
       <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-integration-quarkus</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.blazebit</groupId>
-          <artifactId>blaze-persistence-core-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.blazebit</groupId>
-          <artifactId>blaze-persistence-core-impl</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>blaze-persistence-integration-quarkus-3</artifactId>
     </dependency>
     <dependency>
       <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-core-api-jakarta</artifactId>
+      <artifactId>blaze-persistence-integration-hibernate-6.2</artifactId>
+      <scope>runtime</scope>
     </dependency>
+    <!-- forcing to 6.2.5.Final as proposed by Blazebit since default is 6.2.5.Final -->
     <dependency>
-      <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-core-impl-jakarta</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-integration-hibernate-5.6-jakarta</artifactId>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>6.2.5.Final</version>
     </dependency>
 
     <dependency>

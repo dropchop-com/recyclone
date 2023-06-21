@@ -1,6 +1,6 @@
 package com.dropchop.shiro.jaxrs;
 
-import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,11 +24,11 @@ public class ShiroDynamicFeature implements DynamicFeature {
 
   private static final List<Class<? extends Annotation>> shiroAnnotations =
     List.of(
-      RequiresPermissions.class
-      /*RequiresRoles.class,
+      RequiresPermissions.class,
+      RequiresRoles.class,
       RequiresAuthentication.class,
       RequiresUser.class,
-      RequiresGuest.class*/
+      RequiresGuest.class
     );
 
   @Inject
@@ -97,7 +97,12 @@ public class ShiroDynamicFeature implements DynamicFeature {
     );
 
     if (!authzSpecs.isEmpty()) {
-      log.trace("Registering ShiroFilter.");
+      context.register(
+        new ShiroResponseFilter(authorizationService),
+        Priorities.AUTHORIZATION
+      );
+      log.trace("Registered {} for [{}:{}] with [{}]",
+        ShiroResponseFilter.class.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod().getName(), authzSpecs);
       context.register(
         new ShiroAuthorizationFilter(
           authorizationService,
@@ -106,6 +111,8 @@ public class ShiroDynamicFeature implements DynamicFeature {
           ri.getResourceMethod().getName()),
         Priorities.AUTHORIZATION
       );
+      log.debug("Registered {} for [{}:{}] with [{}]",
+        ShiroAuthorizationFilter.class.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod().getName(), authzSpecs);
     }
   }
 }

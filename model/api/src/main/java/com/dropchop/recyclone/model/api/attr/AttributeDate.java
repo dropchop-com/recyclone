@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class AttributeDate extends AttributeBase<ZonedDateTime> {
 
   /**

@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasTitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescription;
 
+@SuppressWarnings("unused")
 public interface RoleGroup<
   TDT extends TitleDescriptionTranslation,
   A extends Action<TDT>,

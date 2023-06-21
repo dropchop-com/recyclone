@@ -3,12 +3,13 @@ package com.dropchop.recyclone.model.api.utils;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 07. 22.
  */
+@SuppressWarnings("unused")
 public interface Strings {
 
   String DEEP_TREE_MATCH = "**";
 
   static boolean isAlphaNumeric(String s) {
-    return s != null && s.matches("^[\\p{L}][\\p{L}\\d]*$");
+    return s != null && s.matches("^\\p{L}[\\p{L}\\d]*$");
   }
   static boolean isNumber(String s) {
     char[] chars = s.toCharArray();
@@ -86,7 +87,7 @@ public interface Strings {
       } else if (c == '\\') {
         sb.append("\\\\");
       } else {
-        if (c < '\u0020') {
+        if (c < ' ') {
           String hex = Integer.toHexString(c);
           sb.append("\\u00");
           if (hex.length() == 1) {
@@ -134,7 +135,6 @@ public interface Strings {
    *                Must not be <code>null</code>.
    * @param caseSensitive Whether matching should be performed
    *                        case sensitively.
-   *
    *
    * @return <code>true</code> if the string matches against the pattern,
    *         or <code>false</code> otherwise.
@@ -189,7 +189,7 @@ public interface Strings {
     }
     if (strIdxStart > strIdxEnd) {
       // All characters in the string are used. Check if only '*'s are
-      // left in the pattern. If so, we succeeded. Otherwise failure.
+      // left in the pattern. If so, we succeeded. Otherwise, failure.
       return allStars(patArr, patIdxStart, patIdxEnd);
     }
 
@@ -207,7 +207,7 @@ public interface Strings {
     }
     if (strIdxStart > strIdxEnd) {
       // All characters in the string are used. Check if only '*'s are
-      // left in the pattern. If so, we succeeded. Otherwise failure.
+      // left in the pattern. If so, we succeeded. Otherwise, failure.
       return allStars(patArr, patIdxStart, patIdxEnd);
     }
 
@@ -252,7 +252,7 @@ public interface Strings {
     }
 
     // All characters in the string are used. Check if only '*'s are left
-    // in the pattern. If so, we succeeded. Otherwise failure.
+    // in the pattern. If so, we succeeded. Otherwise, failure.
     return allStars(patArr, patIdxStart, patIdxEnd);
   }
 

@@ -29,7 +29,7 @@ public interface HasEAttributes extends HasAttributes {
   }
 
   @Override
-  default void addAttribute(Attribute<?> attribute) {
+  default HasAttributes addAttribute(Attribute<?> attribute) {
     Set<EAttribute<?>> eAttributes = getEAttributes();
     if (eAttributes == null) {
       eAttributes = new LinkedHashSet<>();
@@ -37,6 +37,7 @@ public interface HasEAttributes extends HasAttributes {
     }
     EAttribute<?> eAttribute = EAttribute.fromAttribute((Attribute<?>) attribute);
     eAttributes.add(eAttribute);
+    return this;
   }
 
   @Override

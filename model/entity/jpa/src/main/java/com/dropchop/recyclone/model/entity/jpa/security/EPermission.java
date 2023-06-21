@@ -29,7 +29,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_permission")
-@SuppressWarnings("JpaDataSourceORMInspection")
 public class EPermission extends EUuid
   implements Permission<ETitleDescriptionTranslation, EAction, EDomain>,
   HasELanguage, HasCreated, HasModified, HasDeactivated {

@@ -1,8 +1,5 @@
 package com.dropchop.shiro.filter;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
 
 /**
@@ -10,19 +7,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
-public abstract class AccessControlFilter {
-
-  /**
-   * Convenience method that acquires the Subject associated with the request.
-   * <p/>
-   * The default implementation simply returns
-   * {@link org.apache.shiro.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
-   *
-   * @return the Subject associated with the request.
-   */
-  protected Subject getSubject() {
-    return SecurityUtils.getSubject();
-  }
+public interface AccessControlFilter extends RequestFilter {
 
   /**
    * Returns <code>true</code> if the request is allowed to proceed through the filter normally, or <code>false</code>
@@ -35,7 +20,7 @@ public abstract class AccessControlFilter {
    *         request should be processed by this filter's
    *         {@link #onAccessDenied(ContainerRequestContext)} method instead.
    */
-  public abstract boolean isAccessAllowed(ContainerRequestContext requestContext);
+  boolean isAccessAllowed(ContainerRequestContext requestContext);
 
   /**
    * Processes requests where the subject was denied access as determined by the
@@ -46,5 +31,11 @@ public abstract class AccessControlFilter {
    * @return <code>true</code> if the request should continue to be processed; false if the subclass will
    *         handle/render the response directly.
    */
-  public abstract boolean onAccessDenied(ContainerRequestContext requestContext);
+  boolean onAccessDenied(ContainerRequestContext requestContext);
+
+
+  @Override
+  default boolean onFilterRequest(ContainerRequestContext requestContext) {
+    return this.isAccessAllowed(requestContext) || this.onAccessDenied(requestContext);
+  }
 }

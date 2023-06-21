@@ -73,7 +73,7 @@ public interface Uuid {
       for (int i = 0; i < 6; i++) {
         node |= (0x00000000000000ffL & (long) hash[i]) << (i * 8);
       }
-      // Since we don't use the MAC address, the spec says that the multicast bit (least significant
+      // Since we don't use the MAC address, the spec says that the multicast bit (the least significant
       // bit of the first byte of the node ID) must be 1.
       return node | 0x0000010000000000L;
     } catch (Exception e) {

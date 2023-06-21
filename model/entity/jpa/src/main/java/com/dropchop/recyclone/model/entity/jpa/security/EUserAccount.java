@@ -24,13 +24,16 @@ import java.time.ZonedDateTime;
 @Table(name = "security_user_account")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
-@SuppressWarnings("JpaDataSourceORMInspection")
 public class EUserAccount extends EUuid
   implements UserAccount,
   HasTitle, HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
   @Transient
   private String type = this.getClass().getSimpleName().substring(1);
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "fk_security_user_uuid", foreignKey = @ForeignKey(name = "security_user_account_user_uuid_fk"), nullable = false)
+  private EUser<?> user = null;
 
   @Column(name = "title")
   private String title;

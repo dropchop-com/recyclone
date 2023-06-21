@@ -25,7 +25,6 @@ import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.unmarsha
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
-@SuppressWarnings("JpaDataSourceORMInspection")
 public class EAttribute<X> implements Attribute<X> {
 
   public enum Type {

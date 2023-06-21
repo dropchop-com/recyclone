@@ -2,7 +2,6 @@ package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.dto.security.Permission;

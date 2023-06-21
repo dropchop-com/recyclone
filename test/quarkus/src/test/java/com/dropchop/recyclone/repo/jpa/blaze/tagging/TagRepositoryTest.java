@@ -1,17 +1,15 @@
 package com.dropchop.recyclone.repo.jpa.blaze.tagging;
 
 import com.dropchop.recyclone.model.api.attr.*;
-import com.dropchop.recyclone.model.api.marker.HasAttributes;
-import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;

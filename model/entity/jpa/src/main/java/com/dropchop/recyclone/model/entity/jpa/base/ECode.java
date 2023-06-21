@@ -15,7 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @MappedSuperclass
 public abstract class ECode implements Entity, HasCode, Comparable<ECode> {

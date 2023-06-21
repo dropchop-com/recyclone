@@ -9,6 +9,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
  */
+@SuppressWarnings("unused")
 public interface HasTitleTranslation<TT extends TitleTranslation>
   extends HasTranslation<TT> {
 

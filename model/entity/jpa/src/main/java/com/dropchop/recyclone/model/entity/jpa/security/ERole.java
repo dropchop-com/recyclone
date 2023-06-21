@@ -6,19 +6,19 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.base.ECode;
+import com.dropchop.recyclone.model.entity.jpa.base.ETitleDescriptionTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
@@ -29,9 +29,9 @@ import java.util.SortedSet;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_role")
-@SuppressWarnings("JpaDataSourceORMInspection")
+@SuppressWarnings("unused")
 public class ERole extends ECode
-  implements Role<ETitleDescriptionTranslation, EAction, EDomain, EPermission>,
+  implements Role<ETitleDescriptionTranslation, EAction, EDomain, EPermission>, ETitleDescriptionTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage {
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = EPermission.class)
@@ -48,7 +48,7 @@ public class ERole extends ECode
     }
   )
   @OrderBy("domain.code ASC, action.code ASC")
-  private SortedSet<EPermission> permissions;
+  private Set<EPermission> permissions;
 
   @Column(name="title")
   private String title;
