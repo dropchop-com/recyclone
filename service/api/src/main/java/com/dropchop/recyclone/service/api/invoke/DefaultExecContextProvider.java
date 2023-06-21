@@ -30,17 +30,14 @@ public class DefaultExecContextProvider implements ExecContextProvider, ParamsEx
     return DefaultExecContext.class;
   }
 
-  @Override
-  public <D extends Dto> DefaultExecContext<D> create() {
-    this.execContext = new DefaultExecContext<>();
-    log.debug("Created [{}] [{}]", this, this.execContext);
-    //noinspection unchecked
-    return (DefaultExecContext<D>) this.execContext;
-  }
-
   @Produces
-  @RequestScoped
   public <D extends Dto> DefaultExecContext<D> produce() {
+    if (this.execContext == null) {
+      this.execContext = new DefaultExecContext<>();
+      log.debug("Created [{}] [{}]", this, this.execContext);
+      //noinspection unchecked
+      return (DefaultExecContext<D>) this.execContext;
+    }
     //noinspection unchecked
     return (DefaultExecContext<D>) this.execContext;
   }

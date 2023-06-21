@@ -130,7 +130,7 @@ public class SerializationTest {
   public void testDeepSerialization() throws Exception {
     ExecContextProvider execContextProvider = execContextProviderProducer
       .getExecContextProvider(DefaultExecContextProvider.class);
-    ExecContext<?> execContext = execContextProvider.create();
+    ExecContext<?> execContext = execContextProvider.produce();
     if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
       CodeParams params = new CodeParams();
       params

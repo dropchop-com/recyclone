@@ -37,7 +37,7 @@ public class ExecContextInitInterceptor implements ContainerRequestFilter {
     ExecContextProvider execContextProvider = execContextProviderProducer.getExecContextProvider(this.execContextClass);
     log.debug("Creating execution context class [{}] with provider [{}].", this.execContextClass, execContextProvider);
     //UriInfo info = requestContext.getUriInfo();
-    execContextProvider.create();
+    execContextProvider.produce();
     requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContextProvider);
     MDC.put(MDC_REQUEST_PATH, requestContext.getUriInfo().getPath());
   }

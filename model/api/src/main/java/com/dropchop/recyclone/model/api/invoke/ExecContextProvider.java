@@ -11,8 +11,5 @@ public interface ExecContextProvider {
   Class<? extends ExecContext> getContextClass();
 
   @SuppressWarnings("unused")
-  <D extends Dto> ExecContext<?> create();
-
-  @SuppressWarnings("unused")
   <D extends Dto> ExecContext<?> produce();
 }

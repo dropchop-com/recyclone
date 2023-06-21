@@ -22,6 +22,7 @@ public class DefaultContextProviderProducer implements ExecContextProviderProduc
 
   @Inject
   @Any
+  @RequestScoped
   Instance<ExecContextProvider> execContextProviders;
 
   @Inject

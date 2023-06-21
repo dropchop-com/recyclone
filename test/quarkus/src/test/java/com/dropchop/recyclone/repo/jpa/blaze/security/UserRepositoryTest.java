@@ -79,7 +79,7 @@ public class UserRepositoryTest {
   @AfterAll
   @Transactional
   public void tearDown() {
-    EUser<?> user = this.userRespository.findById(USER_UUID);
+    EUser<EUuid> user = this.userRespository.findById(USER_UUID);
     userRespository.delete(user);
     ECountry countryUk = countryRepository.findById(coUkCode);
     countryRepository.delete(countryUk);
@@ -97,7 +97,7 @@ public class UserRepositoryTest {
   @Order(2)
   public void testStoreUserAccounts() {
     th.transact(() -> {
-      EUser<?> user = this.userRespository.findById(USER_UUID);
+      EUser<EUuid> user = this.userRespository.findById(USER_UUID);
 
       ELoginAccount loginAccount = new ELoginAccount();
       loginAccount.setUuid(UUID.randomUUID());
