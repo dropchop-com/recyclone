@@ -204,7 +204,7 @@
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>${mapstruct.version}</version>
       </dependency>
       <dependency>
         <groupId>com.blazebit</groupId>
