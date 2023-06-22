@@ -7,6 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.ExecContextType;
+import jakarta.enterprise.inject.spi.CDI;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.enterprise.context.RequestScoped;
@@ -30,11 +31,11 @@ public class DefaultExecContextProvider implements ExecContextProvider, ParamsEx
     return DefaultExecContext.class;
   }
 
-  @Produces
+  //@Produces
   public <D extends Dto> DefaultExecContext<D> produce() {
     if (this.execContext == null) {
-      this.execContext = new DefaultExecContext<>();
-      log.debug("Created [{}] [{}]", this, this.execContext);
+      this.execContext = CDI.current().select(DefaultExecContext.class).get();//new DefaultExecContext<>();
+      log.debug("ContextProvider [{}] created context [{}]", this, this.execContext);
       //noinspection unchecked
       return (DefaultExecContext<D>) this.execContext;
     }

@@ -10,6 +10,6 @@ public interface ExecContextProvider {
   @SuppressWarnings("rawtypes")
   Class<? extends ExecContext> getContextClass();
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("")
   <D extends Dto> ExecContext<?> produce();
 }

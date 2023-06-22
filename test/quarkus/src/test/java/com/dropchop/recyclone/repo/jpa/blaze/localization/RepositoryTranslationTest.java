@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.repo.jpa.blaze.localization;
 
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;

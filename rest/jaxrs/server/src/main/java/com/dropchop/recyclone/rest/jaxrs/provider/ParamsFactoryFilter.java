@@ -273,10 +273,11 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       if (p instanceof CommonParams) {
         decorate((CommonParams<?, ?, ?, ?>) p, requestContext);
       }
-      p.setRequestId(Uuid.getTimeBased().toString());
+      ExecContext<?> execContext = paramsExecContextProvider.produce();
+      p.setRequestId(execContext.getId());
       MDC.put(MDC_REQUEST_ID, p.getRequestId());
-      log.debug("Created request local [{}].", p);
       paramsExecContextProvider.setParams(p);
+      log.debug("Created and registered request local params [{}] with execution context [{}].", p, execContext);
       requestContext.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
     }
   }

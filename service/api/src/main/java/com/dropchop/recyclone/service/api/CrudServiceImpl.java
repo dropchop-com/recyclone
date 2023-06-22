@@ -20,6 +20,7 @@ import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
 import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
 import com.dropchop.recyclone.service.api.mapping.SetModification;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
+import jakarta.enterprise.context.RequestScoped;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.inject.Inject;
@@ -37,6 +38,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   implements CrudService<D>, EntityByIdService<D, E, ID> {
 
   @Inject
+  @RequestScoped
   @SuppressWarnings("CdiInjectionPointsInspection")
   DefaultExecContext<D> ctx;
 
@@ -93,13 +95,15 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   protected MappingContext getMappingContextForRead() {
-    return new FilteringDtoContext().of(ctx);
+    MappingContext context = new FilteringDtoContext().of(ctx);
+    log.debug("Created mapping context [{}] for reading from execution context [{}].", context, this.ctx);
+    return context;
   }
 
   protected MappingContext getMappingContextForModify() {
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     Class<?> rootClass = conf.getRepository().getRootClass();
-    return new FilteringDtoContext()
+    MappingContext context = new FilteringDtoContext()
       .of(ctx)
       .createWith(
         new EntityDelegateFactory<>(this)
@@ -112,6 +116,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
       .afterMapping(
         new SetDeactivated(rootClass)
       );
+    log.debug("Created mapping context [{}] for modification from execution context [{}].", context, this.ctx);
+    return context;
   }
 
   protected abstract Iterable<CriteriaDecorator> getCommonCriteriaDecorators();

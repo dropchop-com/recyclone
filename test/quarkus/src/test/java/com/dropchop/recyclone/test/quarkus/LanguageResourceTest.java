@@ -133,6 +133,7 @@ public class LanguageResourceTest {
       .get("/api/public/localization/language")
       .then()
       .statusCode(200)
+      .log().all()
       .body("status.code", equalTo("success"))
       .extract()
       .jsonPath().getList("data", Language.class);

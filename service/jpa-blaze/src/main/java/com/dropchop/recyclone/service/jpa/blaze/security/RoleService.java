@@ -20,6 +20,7 @@ import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   RoleToEntityMapper toEntityMapper;
 
   @Inject
+  @RequestScoped
   @SuppressWarnings("CdiInjectionPointsInspection")
   DefaultExecContext<Role> ctx;
 
