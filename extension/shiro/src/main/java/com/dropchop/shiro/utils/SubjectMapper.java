@@ -21,12 +21,12 @@ abstract public class SubjectMapper {
   /**
    * Model to string mapping
    */
-  private Map<Class<? extends Model>, String> map = new HashMap<>();
+  private final Map<Class<? extends Model>, String> map = new HashMap<>();
 
   /**
    * String to model mappings for reverse resolving
    */
-  private Map<String, Set<Class<? extends Model>>> valueMap = new HashMap<>();
+  private final Map<String, Set<Class<? extends Model>>> valueMap = new HashMap<>();
 
 
   /**

@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
+import jakarta.ws.rs.core.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -16,11 +17,9 @@ import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.tags.Tag;
 
-import jakarta.ws.rs.core.Application;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
 import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
 
 

@@ -102,27 +102,29 @@ public class FieldFilter implements Predicate<PathSegment> {
       }
     }
 
-    List<String> availableDetails = filterDefaults.getAvailableLevelOfContentDetails();
-    if (detailLevel != null && availableDetails != null && availableDetails.contains(detailLevel)) {
-      int origLevel = treeLevel == null ? 1 : treeLevel;
-      int tmpLevel = origLevel;
-      if (detailLevel.startsWith(NESTED_PREFIX)) {
-        includes.add(any(origLevel));
-        tmpLevel++;
+    if (filterDefaults != null) {
+      List<String> availableDetails = filterDefaults.getAvailableLevelOfContentDetails();
+      if (detailLevel != null && availableDetails != null && availableDetails.contains(detailLevel)) {
+        int origLevel = treeLevel == null ? 1 : treeLevel;
+        int tmpLevel = origLevel;
+        if (detailLevel.startsWith(NESTED_PREFIX)) {
+          includes.add(any(origLevel));
+          tmpLevel++;
 
-        //include special collections of current object by convention
-        includes.add(MarkerFilterSegment.parse("*.translations", origLevel, HasTranslation.class));
-        includes.add(MarkerFilterSegment.parse("*.translations[*].*", origLevel + 1, Translation.class));
-        includes.add(MarkerFilterSegment.parse("*.attributes", origLevel, HasAttributes.class));
-        includes.add(MarkerFilterSegment.parse("*.attributes[*].*", origLevel + 1, Attribute.class));
+          //include special collections of current object by convention
+          includes.add(MarkerFilterSegment.parse("*.translations", origLevel, HasTranslation.class));
+          includes.add(MarkerFilterSegment.parse("*.translations[*].*", origLevel + 1, Translation.class));
+          includes.add(MarkerFilterSegment.parse("*.attributes", origLevel, HasAttributes.class));
+          includes.add(MarkerFilterSegment.parse("*.attributes[*].*", origLevel + 1, Attribute.class));
 
-        //include nested objects fields
-        addCommonIncludes(includes, detailLevel, tmpLevel);
-      } else {
-        addCommonIncludes(includes, detailLevel, tmpLevel);
-        if (!detailLevel.contains(TRANS_SUFIX)) {
-          // we exclude translations
-          excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, true, HasTranslation.class));
+          //include nested objects fields
+          addCommonIncludes(includes, detailLevel, tmpLevel);
+        } else {
+          addCommonIncludes(includes, detailLevel, tmpLevel);
+          if (!detailLevel.contains(TRANS_SUFIX)) {
+            // we exclude translations
+            excludes.add(MarkerFilterSegment.parse("*.translations", tmpLevel, true, HasTranslation.class));
+          }
         }
       }
     }

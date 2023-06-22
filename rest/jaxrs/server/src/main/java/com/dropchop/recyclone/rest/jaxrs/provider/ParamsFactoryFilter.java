@@ -85,19 +85,19 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
     return null;
   }
 
-  private int getInteger(String name, int defautlValue, int minValue, MultivaluedMap<String, String> map) {
+  private int getInteger(String name, int defaulTValue, int minValue, MultivaluedMap<String, String> map) {
     String val = map.getFirst(name);
     if (val == null || val.isBlank()) {
-      return defautlValue;
+      return defaulTValue;
     }
     try {
       int i = Integer.parseInt(val);
       if (i < minValue) {
-        return defautlValue;
+        return defaulTValue;
       }
       return i;
     } catch (NumberFormatException e) {
-      return defautlValue;
+      return defaulTValue;
     }
   }
 

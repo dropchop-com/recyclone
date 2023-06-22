@@ -17,7 +17,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 public class ResultFilter
   implements com.dropchop.recyclone.model.api.invoke.ResultFilter<

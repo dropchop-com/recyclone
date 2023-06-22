@@ -3,17 +3,16 @@ package com.dropchop.recyclone.model.api.expr.parse;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.attr.AttributeMarshaller;
 import com.dropchop.recyclone.model.api.attr.AttributeSet;
+import com.dropchop.recyclone.model.api.expr.*;
 import com.dropchop.recyclone.model.api.expr.operand.Name;
 import com.dropchop.recyclone.model.api.expr.operand.Phrase;
 import com.dropchop.recyclone.model.api.expr.operand.Token;
 import com.dropchop.recyclone.model.api.expr.relational.Eq;
-import com.dropchop.recyclone.model.api.expr.*;
-import com.dropchop.recyclone.model.api.utils.RelaxedJson;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
-import static com.dropchop.recyclone.model.api.expr.ParserError.*;
+import static com.dropchop.recyclone.model.api.expr.ParserError.Code;
 import static com.dropchop.recyclone.model.api.expr.parse.ParserHelper.makeError;
 import static com.dropchop.recyclone.model.api.expr.parse.ParserState.WINDOW_OFFSET;
 

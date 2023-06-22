@@ -2,8 +2,9 @@ package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.rest.jaxrs.server.RecycloneApplicationRegistry;
 import com.dropchop.shiro.RecycloneShiroExtension;
-import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Components;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
@@ -15,8 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.info.License;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
