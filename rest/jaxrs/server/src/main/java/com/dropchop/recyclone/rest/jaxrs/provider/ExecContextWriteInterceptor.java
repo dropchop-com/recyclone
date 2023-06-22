@@ -1,7 +1,8 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
+import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -42,7 +43,7 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       return;
     }
 
-    ExecContextProvider execContextProvider = (ExecContextProvider)context
+    ExecContextContainer execContextProvider = (ExecContextContainer)context
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
 
     if (execContextProvider == null) {
@@ -56,8 +57,9 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       return;
     }
     log.debug("[{}].aroundWriteTo done.", this.getClass().getSimpleName());
-    ((Result<?>) entity).setId(execContextProvider.produce().getId());
-    ((Result<?>) entity).getStatus().setTime(execContextProvider.produce().getExecTime());
+    ExecContext<?> execContext = execContextProvider.get();
+    ((Result<?>) entity).setId(execContext.getId());
+    ((Result<?>) entity).getStatus().setTime(execContext.getExecTime());
     context.proceed();
     clearMdc();
   }

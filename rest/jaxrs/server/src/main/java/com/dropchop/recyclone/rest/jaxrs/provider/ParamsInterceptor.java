@@ -3,8 +3,8 @@ package com.dropchop.recyclone.rest.jaxrs.provider;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.utils.Uuid;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -38,15 +38,15 @@ public class ParamsInterceptor implements ReaderInterceptor {
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
     Object o = context.proceed();
-    ExecContextProvider execContextProvider = (ExecContextProvider)context
+    ExecContextContainer execContextProvider = (ExecContextContainer)context
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", ExecContextContainer.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
       return o;
     }
     if (o != null && this.parametersClass.isAssignableFrom(o.getClass())) {
       log.debug("Intercept [{}].", o);
-      if (execContextProvider instanceof ParamsExecContextProvider paramsExecContextProvider) {
+      if (execContextProvider instanceof ParamsExecContextContainer paramsExecContextProvider) {
         Params p = (Params)o;
         String reqId = p.getRequestId();
         if (reqId == null || reqId.isBlank()) {

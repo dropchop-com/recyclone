@@ -2,17 +2,18 @@ package com.dropchop.recyclone.service.jpa.blaze;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.*;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
+import com.dropchop.recyclone.service.api.ExecContextType;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,9 +28,8 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
   extends CrudServiceImpl<D, E, ID> {
 
   @Inject
-  @RequestScoped
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  DefaultExecContext<D> ctx;
+  @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
+  ExecContextContainer ctxContainer;
 
   @Inject
   ServiceSelector serviceSelector;
@@ -44,7 +44,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
   }
 
   protected RepositoryExecContext<E> getRepositoryExecContext() {
-    BlazeExecContext<E> context = new BlazeExecContext<E>().of(ctx);
+    BlazeExecContext<E> context = new BlazeExecContext<E>().of(ctxContainer.get());
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
       context.decorateWith(decorator);
     }
@@ -58,13 +58,6 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
     context.afterMapping(
       new SetLanguage(serviceSelector.select(LanguageService.class), rootClass)
     );
-    return context;
-  }
-
-  @Override
-  protected MappingContext getMappingContextForRead() {
-    MappingContext context = super.getMappingContextForRead();
-    log.debug("Created mapping context [{}] for reading from execution context [{}].", context, this.ctx);
     return context;
   }
 }

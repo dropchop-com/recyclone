@@ -1,38 +1,33 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainerProvider;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 08. 22.
  */
 @Slf4j
 @ApplicationScoped
-public class DefaultContextProviderProducer implements ExecContextProviderProducer {
+public class DefaultExecContextContainerProvider implements ExecContextContainerProvider {
+
+  @Inject @Any
+  Instance<ExecContextContainer> execContextProviders;
 
   @Inject
-  @Any
-  @RequestScoped
-  Instance<ExecContextProvider> execContextProviders;
-
-  @Inject
-  @RequestScoped
   @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
-  DefaultExecContextProvider defaultExecContextProvider;
+  DefaultExecContextContainer defaultExecContextProvider;
 
   @Override
-  public ExecContextProvider getExecContextProvider(Class<?> execContextClass) {
-    for (ExecContextProvider execContextProvider : execContextProviders) {
+  public ExecContextContainer getExecContextProvider(Class<?> execContextClass) {
+    for (ExecContextContainer execContextProvider : execContextProviders) {
       Class<?> clazz = execContextProvider.getContextClass();
       if (clazz.equals(execContextClass)) {
         log.trace("Returning provider [{}] for context [{}].", execContextProvider, execContextClass);
@@ -44,16 +39,16 @@ public class DefaultContextProviderProducer implements ExecContextProviderProduc
   }
 
   @Override
-  public ExecContextProvider getFirstInitializedExecContextProvider() {
-    for (ExecContextProvider execContextProvider : execContextProviders) {
-      ExecContext<?> context = execContextProvider.produce();
+  public ExecContextContainer getFirstInitializedExecContextProvider() {
+    for (ExecContextContainer execContextProvider : execContextProviders) {
+      ExecContext<?> context = execContextProvider.get();
       if (context != null) {
         log.trace("Returning initialized provider [{}].", execContextProvider);
         return execContextProvider;
       }
     }
     log.trace("Returning initialized provider [{}].", defaultExecContextProvider);
-    ExecContext<?> context = defaultExecContextProvider.produce();
+    ExecContext<?> context = defaultExecContextProvider.get();
     if (context == null) {
       return null;
     }

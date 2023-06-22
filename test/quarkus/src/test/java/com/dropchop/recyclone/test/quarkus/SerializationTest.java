@@ -13,9 +13,9 @@ import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.service.api.invoke.DefaultExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.service.api.invoke.DefaultExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainerProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class SerializationTest {
   ObjectMapper mapper;
 
   @Inject
-  ExecContextProviderProducer execContextProviderProducer;
+  ExecContextContainerProvider execContextProviderProducer;
 
   @BeforeAll
   public static void initModels() {
@@ -128,9 +128,9 @@ public class SerializationTest {
 
   @Test
   public void testDeepSerialization() throws Exception {
-    ExecContextProvider execContextProvider = execContextProviderProducer
-      .getExecContextProvider(DefaultExecContextProvider.class);
-    ExecContext<?> execContext = execContextProvider.produce();
+    ExecContextContainer execContextProvider = execContextProviderProducer
+      .getExecContextProvider(DefaultExecContextContainer.class);
+    ExecContext<?> execContext = execContextProvider.createContext();
     if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
       CodeParams params = new CodeParams();
       params

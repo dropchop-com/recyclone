@@ -13,22 +13,22 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
 import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
 import com.dropchop.recyclone.service.api.mapping.SetModification;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
-import jakarta.enterprise.context.RequestScoped;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
@@ -38,9 +38,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   implements CrudService<D>, EntityByIdService<D, E, ID> {
 
   @Inject
-  @RequestScoped
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  DefaultExecContext<D> ctx;
+  @ExecContextType(Implementation.RCYN_DEFAULT)
+  CommonExecContextContainer ctxContainer;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -87,7 +86,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   protected void checkDtoPermissions(List<D> dtos) {
     for (D dto : dtos) {
-      if (!authorizationService.isPermitted(ctx.getSecurityDomainAction(dto.identifier()))) {
+      if (!authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(dto.identifier()))) {
         throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
           Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
       }
@@ -95,8 +94,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   protected MappingContext getMappingContextForRead() {
-    MappingContext context = new FilteringDtoContext().of(ctx);
-    log.debug("Created mapping context [{}] for reading from execution context [{}].", context, this.ctx);
+    MappingContext context = new FilteringDtoContext().of(ctxContainer.get());
+    log.debug("Created mapping context [{}] for reading from execution context [{}].", context, ctxContainer.get());
     return context;
   }
 
@@ -104,7 +103,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     Class<?> rootClass = conf.getRepository().getRootClass();
     MappingContext context = new FilteringDtoContext()
-      .of(ctx)
+      .of(ctxContainer.get())
       .createWith(
         new EntityDelegateFactory<>(this)
           .forActionOnly(Constants.Actions.UPDATE)
@@ -116,7 +115,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
       .afterMapping(
         new SetDeactivated(rootClass)
       );
-    log.debug("Created mapping context [{}] for modification from execution context [{}].", context, this.ctx);
+    log.debug("Created mapping context [{}] for modification from execution context [{}].", context, ctxContainer.get());
     return context;
   }
 
@@ -141,17 +140,17 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
     ServiceConfiguration<D, E, ID> conf = getConfiguration();
     List<E> entities = find(getRepositoryExecContextWithTotalCount(mapContext));
     entities = entities.stream().filter(
-      e -> authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
+      e -> authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     return conf.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
   protected boolean shouldRefreshAfterSave() {
-    Params params = ctx.getParams();
+    Params params = ctxContainer.get().getParams();
     String cDetail = null;
     Integer cLevel = null;
-    if (params instanceof CommonParams commonParams) {
+    if (params instanceof CommonParams<?, ?, ?, ?> commonParams) {
       ResultFilter<?, ?> resultFilter = commonParams.getFilter();
       if (resultFilter != null) {
         ContentFilter contentFilter = resultFilter.getContent();

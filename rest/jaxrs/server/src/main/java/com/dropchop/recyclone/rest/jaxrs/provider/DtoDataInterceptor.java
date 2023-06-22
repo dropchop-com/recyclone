@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.ws.rs.ConstrainedTo;
@@ -34,10 +34,10 @@ public class DtoDataInterceptor implements ReaderInterceptor {
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
     Object o = context.proceed();
-    ExecContextProvider execContextProvider = (ExecContextProvider)context
+    ExecContextContainer execContextProvider = (ExecContextContainer)context
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", ExecContextContainer.class.getSimpleName(), ReaderInterceptorContext.class.getSimpleName());
       return o;
     }
 
@@ -45,7 +45,7 @@ public class DtoDataInterceptor implements ReaderInterceptor {
       log.debug("Intercept [{}].", o);
       context.setProperty(InternalContextVariables.RECYCLONE_DATA, List.of((Dto)o));
     }
-    ExecContext<?> execContext = execContextProvider.produce();
+    ExecContext<?> execContext = execContextProvider.get();
     if (execContext instanceof DataExecContext<?, ?> dataExecContext) {
       if (o != null && List.class.isAssignableFrom(o.getClass())) {
         if (((List<?>) o).iterator().hasNext()) {

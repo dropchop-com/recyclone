@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.rest.Result;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainerProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.inject.Inject;
@@ -30,7 +30,7 @@ import static jakarta.ws.rs.Priorities.*;
 public class CommonDynamicFeatures implements DynamicFeature {
 
   @Inject
-  ExecContextProviderProducer execContextProviderProducer;
+  ExecContextContainerProvider execContextProviderProducer;
 
   private static void checkAdd(final Set<Class<? extends Params>> paramsClasses,
                                final Set<Class<? extends Dto>> dtoClasses,
@@ -136,7 +136,7 @@ public class CommonDynamicFeatures implements DynamicFeature {
           riClass.getSimpleName(), method.getName());
         //noinspection unchecked
         context.register( // pass incoming params to JAX-RS context property
-          new ParamsInterceptor((Class<? extends CommonParams>) paramType),
+          new ParamsInterceptor((Class<? extends CommonParams<?, ?, ?, ?>>) paramType),
           HEADER_DECORATOR
         );
         return;

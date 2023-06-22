@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.rest.jackson.server;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainerProvider;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -17,10 +17,10 @@ import java.io.IOException;
 @Slf4j
 public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSerializer {
 
-  private final ExecContextProviderProducer providerProducer;
+  private final ExecContextContainerProvider providerProducer;
 
   public ExecContextPropertyFilterSerializer(JsonSerializer<Object> delegate,
-                                             ExecContextProviderProducer execContextProviderProducer) {
+                                             ExecContextContainerProvider execContextProviderProducer) {
     super(delegate, null);
     this.providerProducer = execContextProviderProducer;
   }
@@ -28,11 +28,11 @@ public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSer
   @Override
   public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
     throws IOException {
-    ExecContextProvider ctxProvider = providerProducer
+    ExecContextContainer ctxProvider = providerProducer
       .getFirstInitializedExecContextProvider();
     Params params = null;
     if (ctxProvider != null) {
-      ExecContext<?> execContext = ctxProvider.produce();
+      ExecContext<?> execContext = ctxProvider.get();
       params = execContext.tryGetParams();
     }
 

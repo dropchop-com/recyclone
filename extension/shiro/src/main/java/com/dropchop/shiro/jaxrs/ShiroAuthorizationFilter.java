@@ -3,13 +3,12 @@ package com.dropchop.shiro.jaxrs;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.shiro.aop.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.subject.Subject;
@@ -69,16 +68,16 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext requestContext) throws IOException {
     this.authorizationService.invokeRequestFilterChain(requestContext);
 
-    ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
+    ExecContextContainer execContextProvider = (ExecContextContainer)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", ExecContextContainer.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
       return;
     }
 
     this.authorizationService.doAuthorizationChecks(requestContext, authzChecks);
 
-    ExecContext<?> execContext = execContextProvider.produce();
+    ExecContext<?> execContext = execContextProvider.get();
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);
     }

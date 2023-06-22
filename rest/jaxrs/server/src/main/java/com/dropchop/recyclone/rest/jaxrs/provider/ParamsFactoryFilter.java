@@ -4,9 +4,8 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter.LanguageFilter;
-import com.dropchop.recyclone.model.api.utils.Uuid;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -255,13 +254,13 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    ExecContextProvider execContextProvider = (ExecContextProvider)requestContext
+    ExecContextContainer execContextProvider = (ExecContextContainer)requestContext
       .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
     if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextProvider.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+      log.warn("Missing {} in {}!", ExecContextContainer.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
       return;
     }
-    if (execContextProvider instanceof ParamsExecContextProvider paramsExecContextProvider) {
+    if (execContextProvider instanceof ParamsExecContextContainer paramsExecContextProvider) {
       Params p;
       try {
         p = parametersClass.getDeclaredConstructor().newInstance();
@@ -273,7 +272,7 @@ public class ParamsFactoryFilter implements ContainerRequestFilter {
       if (p instanceof CommonParams) {
         decorate((CommonParams<?, ?, ?, ?>) p, requestContext);
       }
-      ExecContext<?> execContext = paramsExecContextProvider.produce();
+      ExecContext<?> execContext = paramsExecContextProvider.get();
       p.setRequestId(execContext.getId());
       MDC.put(MDC_REQUEST_ID, p.getRequestId());
       paramsExecContextProvider.setParams(p);

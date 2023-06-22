@@ -1,8 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.provider;
 
+import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -23,22 +22,21 @@ import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_PA
 @ConstrainedTo(RuntimeType.SERVER)
 public class ExecContextInitInterceptor implements ContainerRequestFilter {
 
-  private final ExecContextProviderProducer execContextProviderProducer;
+  private final ExecContextContainerProvider contextContainerProvider;
   private final Class<?> execContextClass;
 
-  public ExecContextInitInterceptor(Class<?> execContextClass, ExecContextProviderProducer execContextProviderProducer) {
+  public ExecContextInitInterceptor(Class<?> execContextClass, ExecContextContainerProvider execContextProviderProducer) {
     log.trace("ExecContextInitInterceptor2 constructor");
-    this.execContextProviderProducer = execContextProviderProducer;
+    this.contextContainerProvider = execContextProviderProducer;
     this.execContextClass = execContextClass;
   }
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    ExecContextProvider execContextProvider = execContextProviderProducer.getExecContextProvider(this.execContextClass);
-    log.debug("Creating execution context class [{}] with provider [{}].", this.execContextClass, execContextProvider);
-    //UriInfo info = requestContext.getUriInfo();
-    execContextProvider.produce();
-    requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContextProvider);
+    ExecContextContainer contextContainer = contextContainerProvider.getExecContextProvider(this.execContextClass);
+    log.debug("Creating execution context class [{}] with provider [{}].", this.execContextClass, contextContainer);
+    contextContainer.createContext();
+    requestContext.setProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, contextContainer);
     MDC.put(MDC_REQUEST_PATH, requestContext.getUriInfo().getPath());
   }
 }

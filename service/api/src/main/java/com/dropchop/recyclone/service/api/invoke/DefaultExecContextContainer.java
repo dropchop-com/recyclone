@@ -1,17 +1,13 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextProvider;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContextProvider;
 import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import jakarta.enterprise.inject.spi.CDI;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Produces;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Container and CDI provider for Request scoped {@link com.dropchop.recyclone.model.api.invoke.ExecContext}
@@ -21,24 +17,28 @@ import jakarta.enterprise.inject.Produces;
 @Slf4j
 @RequestScoped
 @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
-public class DefaultExecContextProvider implements ExecContextProvider, ParamsExecContextProvider {
+public class DefaultExecContextContainer implements CommonExecContextContainer {
 
   DefaultExecContext<?> execContext;
 
   @Override
   @SuppressWarnings("rawtypes")
   public Class<? extends ExecContext> getContextClass() {
-    return DefaultExecContext.class;
+    return this.execContext == null ? DefaultExecContext.class : this.execContext.getClass();
   }
 
-  //@Produces
-  public <D extends Dto> DefaultExecContext<D> produce() {
-    if (this.execContext == null) {
-      this.execContext = CDI.current().select(DefaultExecContext.class).get();//new DefaultExecContext<>();
-      log.debug("ContextProvider [{}] created context [{}]", this, this.execContext);
-      //noinspection unchecked
-      return (DefaultExecContext<D>) this.execContext;
-    }
+  public <D extends Dto> void set(DefaultExecContext<D> execContext) {
+    this.execContext = execContext;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <D extends Dto> DefaultExecContext<D> createContext() {
+    this.execContext = new DefaultExecContext<>();
+    log.debug("ContextProvider [{}] created context [{}]", this, this.execContext);
+    return (DefaultExecContext<D>) this.execContext;
+  }
+
+  public <D extends Dto> DefaultExecContext<D> get() {
     //noinspection unchecked
     return (DefaultExecContext<D>) this.execContext;
   }

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jaxrs.filtering;
 
-import com.dropchop.recyclone.model.api.invoke.ExecContextProviderProducer;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainerProvider;
 import com.dropchop.recyclone.rest.jackson.server.ExecContextPropertyFilterSerializer;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -19,7 +19,7 @@ import jakarta.inject.Inject;
 public class ExecContextPropertyFilterSerializerModifier extends BeanSerializerModifier {
 
   @Inject
-  ExecContextProviderProducer execContextProviderProducer;
+  ExecContextContainerProvider execContextProviderProducer;
 
   @Override
   public JsonSerializer<?> modifySerializer(SerializationConfig config,

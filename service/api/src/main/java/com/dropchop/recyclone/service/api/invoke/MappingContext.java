@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.DataExecContext;
-import com.dropchop.recyclone.model.api.security.annotations.Logical;
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
-import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
+import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
 import com.dropchop.recyclone.service.api.mapping.AfterMappingListener;
 import com.dropchop.recyclone.service.api.mapping.BeforeMappingListener;
@@ -25,6 +25,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
+@SuppressWarnings("unused")
 public class MappingContext
   extends ParamsExecContext<MappingListener>
   implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener>, SecurityExecContext {
@@ -35,7 +36,7 @@ public class MappingContext
   private List<Dto> data;
 
 
-  public MappingContext of(DefaultExecContext<?> sourceContext) {
+  public MappingContext of(CommonExecContext<?, ?> sourceContext) {
     super.of(sourceContext);
     //noinspection unchecked
     this.setData((List<Dto>) sourceContext.getData());

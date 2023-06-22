@@ -2,19 +2,21 @@ package com.dropchop.recyclone.rest.jaxrs.server.localization;
 
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
+import com.dropchop.recyclone.service.api.ExecContextType;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.localization.CountryService;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
 /**
@@ -30,8 +32,8 @@ public class CountryResource implements
   ServiceSelector selector;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  DefaultExecContext<Country> ctx;
+  @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
+  ParamsExecContextContainer ctxContainer;
 
   @Override
   public Result<Country> get() {
@@ -40,7 +42,7 @@ public class CountryResource implements
 
   @Override
   public Result<Country> getByCode(String code) {
-    Params params = ctx.getParams();
+    Params params = ctxContainer.get().getParams();
     if (!(params instanceof CodeParams codeParams)) {
       throw new ServiceException(ErrorCode.parameter_validation_error,
         String.format("Invalid parameter type: should be [%s]", CodeParams.class));

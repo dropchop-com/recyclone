@@ -1,13 +1,11 @@
 package com.dropchop.recyclone.service.jpa.blaze.localization;
 
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,10 +32,6 @@ public class LanguageService extends RecycloneCrudServiceImpl<Language, ELanguag
   @Inject
   LanguageToEntityMapper toEntityMapper;
 
-  @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  DefaultExecContext<Language> ctx;
-
   @Override
   public ServiceConfiguration<Language, ELanguage, String> getConfiguration() {
     return new ServiceConfiguration<>(
@@ -45,12 +39,5 @@ public class LanguageService extends RecycloneCrudServiceImpl<Language, ELanguag
       toDtoMapper,
       toEntityMapper
     );
-  }
-
-  @Override
-  protected MappingContext getMappingContextForRead() {
-    MappingContext context = super.getMappingContextForRead();
-    log.debug("Created mapping context [{}] for reading from execution context [{}].", context, this.ctx);
-    return context;
   }
 }
