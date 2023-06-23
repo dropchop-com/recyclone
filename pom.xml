@@ -97,21 +97,21 @@
     <slf4j.version>1.7.36</slf4j.version>
     <logback.version>1.2.10</logback.version>
     <aspectj.version>1.9.9.1</aspectj.version>
-    <lombok.version>1.18.24</lombok.version>
+    <lombok.version>1.18.28</lombok.version>
+    <jackson.version>2.15.2</jackson.version>
+    <apache.shiro.version>1.11.0</apache.shiro.version>
     <mapstruct.version>1.6.1-SNAPSHOT</mapstruct.version>
     <blaze-persistence.version>1.6.9</blaze-persistence.version>
-    <jackson.version>2.15.2</jackson.version>
-    <quarkus.version>3.0.3.Final</quarkus.version>
+
     <junit.version>5.9.3</junit.version>
     <jsonassert.version>1.5.1</jsonassert.version>
+
     <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
     <jakarta.cdi-api.version>4.0.1</jakarta.cdi-api.version>
     <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
     <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
     <microprofile-openapi-api.version>3.1</microprofile-openapi-api.version>
     <microprofile-config-api.version>3.0.3</microprofile-config-api.version>
-    <org.modelmapper.version>2.4.5</org.modelmapper.version>
-    <apache.shiro.version>1.9.0</apache.shiro.version>
   </properties>
 
   <dependencyManagement>
@@ -284,12 +284,7 @@
         <version>${project.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>com.dropchop.textonic</groupId>
-        <artifactId>textonic-model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
+      <!-- test dependencies -->
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
