@@ -118,7 +118,7 @@ public class PermissionResourceTest {
         .extract()
         .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
-
+    assertEquals(permUuid, permissions.iterator().next().getUuid().toString());
   }
 
   @Test
