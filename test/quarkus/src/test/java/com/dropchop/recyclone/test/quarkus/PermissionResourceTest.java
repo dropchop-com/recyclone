@@ -72,7 +72,7 @@ public class PermissionResourceTest {
   //TODO: FIX THE PROBLEM WITH GETTING ENTITY BY UUID
   @Test
   @Order(20)
-  @Disabled
+  //@Disabled
   public void get() {
     String permUuid = UUID.randomUUID().toString();
     Domain domain = new Domain();
