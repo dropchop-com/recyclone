@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import com.dropchop.recyclone.model.entity.jpa.attr.EAttribute;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -34,6 +35,8 @@ public interface HasEAttributes extends HasAttributes {
     if (eAttributes == null) {
       eAttributes = new LinkedHashSet<>();
       setEAttributes(eAttributes);
+    } else {
+      removeAttribute(attribute.getName());
     }
     EAttribute<?> eAttribute = EAttribute.fromAttribute((Attribute<?>) attribute);
     eAttributes.add(eAttribute);
@@ -90,6 +93,22 @@ public interface HasEAttributes extends HasAttributes {
     }
     return null;
   }
+
+  default boolean removeAttribute(String name) {
+    Set<EAttribute<?>> eAttributes = getEAttributes();
+    if (eAttributes == null) {
+      return false;
+    }
+    for (Iterator<EAttribute<?>> eAttributeIterator = eAttributes.iterator(); eAttributeIterator.hasNext();) {
+      EAttribute<?> eAttribute = eAttributeIterator.next();
+      if (name.equals(eAttribute.getName())) {
+        eAttributeIterator.remove();
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   Set<EAttribute<?>> getEAttributes();
   void setEAttributes(Set<EAttribute<?>> attributes);
