@@ -16,8 +16,8 @@ import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
-import com.dropchop.recyclone.service.api.mapping.SetDeactivated;
-import com.dropchop.recyclone.service.api.mapping.SetModification;
+import com.dropchop.recyclone.service.api.mapping.SetEntityDeactivated;
+import com.dropchop.recyclone.service.api.mapping.SetEntityModification;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -110,10 +110,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
           .forActionOnly(Constants.Actions.DELETE)
       )
       .afterMapping(
-        new SetModification(rootClass)
+        new SetEntityModification(rootClass)
       )
       .afterMapping(
-        new SetDeactivated(rootClass)
+        new SetEntityDeactivated(rootClass)
       );
     log.debug("Created mapping context [{}] for modification from execution context [{}].", context, ctxContainer.get());
     return context;
@@ -143,7 +143,9 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
       e -> authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
-    return conf.getToDtoMapper().toDtosResult(entities, mapContext);
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    Result<D> result = conf.getToDtoMapper().toDtosResult(entities, mapContext);
+    return result;
   }
 
   protected boolean shouldRefreshAfterSave() {

@@ -21,6 +21,9 @@ insert into tag_l (fk_tag_uuid, title, lang, created, modified)
 values ('c73847a8-836a-3ad3-b4f8-4a331248088d', 'Slovanski Jezik', 'hr', now(), now());
 
 
+insert into language_t (fk_language_code, fk_tag_uuid, idx) values ('sl', 'c73847a8-836a-3ad3-b4f8-4a331248088d', '0');
+
+
 insert into security_action(code, title, lang, created, modified) values ('*', 'All', 'en', now(), now());
 insert into security_action(code, title, lang, created, modified) values ('view', 'View', 'en', now(), now());
 insert into security_action(code, title, lang, created, modified) values ('create', 'Create', 'en', now(), now());

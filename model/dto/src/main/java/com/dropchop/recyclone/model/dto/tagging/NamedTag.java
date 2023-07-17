@@ -11,7 +11,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(

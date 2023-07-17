@@ -2,17 +2,23 @@ package com.dropchop.recyclone.test.quarkus;
 
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
+import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import com.dropchop.recyclone.model.dto.tagging.NamedTag;
+import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LanguageResourceTest {
+
+  @Inject
+  ObjectMapper mapper;
+
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+    );
+  }
 
   @Test
   @Order(10)
@@ -108,6 +124,29 @@ public class LanguageResourceTest {
     assertEquals(new Language("sl"), languages.get(1));
     assertEquals(new Language("sl-nonstandard"), languages.get(2));
     assertEquals(new Language("hr"), languages.get(3));
+  }
+
+  @Test
+  @Order(65)
+  public void languagesRestEndpointWithTags() {
+    List<Language> languages = given()
+        //.log().all()
+        .auth().preemptive().basic("user1", "password")
+        .accept(MediaType.APPLICATION_JSON)
+        .when()
+        .get("/api/public/localization/language?c_level=10")
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList(".", Language.class);
+    assertEquals(new Language("sl"), languages.get(1));
+    Language language = languages.get(1);
+    List<Tag> tags = language.getTags();
+    assertEquals(1, tags.size());
+    LanguageGroup group = (LanguageGroup)tags.get(0);
+    assertEquals("slavic", group.getName());
+    assertEquals(UUID.fromString("c73847a8-836a-3ad3-b4f8-4a331248088d"), group.getUuid());
+    assertEquals("c73847a8-836a-3ad3-b4f8-4a331248088d", group.getId());
   }
 
   @Test
@@ -213,6 +252,7 @@ public class LanguageResourceTest {
     Language language = new Language("bs");
     language.setTitle("en", "Bosnian");
     language.addTranslation(new TitleTranslation("sl", "Bosanski"));
+
     List<Language> languages = given()
       //.log().all()
       .contentType(ContentType.JSON)

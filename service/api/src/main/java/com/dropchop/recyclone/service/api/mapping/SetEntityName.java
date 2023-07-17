@@ -9,15 +9,15 @@ import com.dropchop.recyclone.service.api.invoke.MappingContext;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
-public class SetName implements AfterToEntityListener {
+public class SetEntityName implements AfterToEntityListener {
 
   final Class<?> onlyForEntity;
 
-  public SetName() {
+  public SetEntityName() {
     this.onlyForEntity = null;
   }
 
-  public SetName( Class<?> onlyForEntity) {
+  public SetEntityName(Class<?> onlyForEntity) {
     this.onlyForEntity = onlyForEntity;
   }
 

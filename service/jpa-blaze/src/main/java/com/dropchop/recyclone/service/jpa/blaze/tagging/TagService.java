@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
+import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.repo.api.RepositoryType;
@@ -10,13 +11,11 @@ import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
-import com.dropchop.recyclone.service.api.mapping.SetName;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -72,8 +71,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
     context
       .createWith(
         new EntityPolymorphicCreateFactory<>(this, polymorphicRegistry)
-      )
-      .afterMapping(new SetName());
+      );
     return context;
   }
 }

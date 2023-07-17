@@ -15,13 +15,13 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
  */
-public class SetModification
+public class SetEntityModification
   extends RestrictedAfterToEntityListener {
 
-  public SetModification() {
+  public SetEntityModification() {
   }
 
-  public SetModification(Class<?> onlyForEntity) {
+  public SetEntityModification(Class<?> onlyForEntity) {
     super(onlyForEntity);
   }
 

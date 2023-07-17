@@ -7,10 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
-import com.dropchop.recyclone.service.api.mapping.AfterMappingListener;
-import com.dropchop.recyclone.service.api.mapping.BeforeMappingListener;
-import com.dropchop.recyclone.service.api.mapping.FactoryMappingListener;
-import com.dropchop.recyclone.service.api.mapping.MappingListener;
+import com.dropchop.recyclone.service.api.mapping.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +20,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("unused")
 public class MappingContext
@@ -35,7 +31,6 @@ public class MappingContext
   Logical requiredPermissionsOp = Logical.AND;
   private List<Dto> data;
 
-
   public MappingContext of(CommonExecContext<?, ?> sourceContext) {
     super.of(sourceContext);
     //noinspection unchecked
@@ -43,6 +38,12 @@ public class MappingContext
     this.setRequiredPermissions(sourceContext.getRequiredPermissions());
     this.setRequiredPermissionsOp(sourceContext.getRequiredPermissionsOp());
     return this;
+  }
+
+  public MappingContext() {
+    //this is to ensure mapping works for polymorphic tags.
+    this.afterMapping(new SetDtoName());
+    this.afterMapping(new SetEntityName());
   }
 
   @Override

@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.jpa.blaze.localization;
 
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
+import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
@@ -12,6 +13,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
  */
 @Mapper(
   componentModel = "cdi",
+  uses = {DtoPolymorphicFactory.class}, //Country.HasTags
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   builder = @Builder(disableBuilder = true)
 )
