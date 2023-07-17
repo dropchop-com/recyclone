@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
 
-import com.dropchop.recyclone.model.dto.security.params.SearchPrincipalParameters;
+import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.security.EUser;
 import com.dropchop.recyclone.repo.api.RepositoryType;
@@ -9,7 +9,6 @@ import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.decorators.SearchByLoginNameDecorator;
 import com.dropchop.recyclone.repo.jpa.blaze.security.decorators.SearchByTokenDecorator;
-
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class UserRepository extends BlazeRepository<EUser<EUuid>, UUID> {
 
 
   public EUser<EUuid> findByLoginName(String loginName) {
-    SearchPrincipalParameters parameters = new SearchPrincipalParameters();
+    UserParams parameters = new UserParams();
     parameters.setLoginName(loginName);
     BlazeExecContext<EUser<EUuid>> blazeExecContext = new BlazeExecContext<>();
     blazeExecContext.setParams(parameters);
@@ -42,7 +41,7 @@ public class UserRepository extends BlazeRepository<EUser<EUuid>, UUID> {
 
 
   public EUser<EUuid> findByToken(String token) {
-    SearchPrincipalParameters parameters = new SearchPrincipalParameters();
+    UserParams parameters = new UserParams();
     parameters.setToken(token);
     BlazeExecContext<EUser<EUuid>> blazeExecContext = new BlazeExecContext<>();
     blazeExecContext.setParams(parameters);
