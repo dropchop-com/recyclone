@@ -17,6 +17,7 @@ import java.util.Set;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@SuppressWarnings("unused")
 public class TagParams extends TypeParams {
 
   public static class Defaults extends ResultFilterDefaults {

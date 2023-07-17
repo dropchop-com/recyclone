@@ -17,5 +17,4 @@ public class SearchPrincipalParameters extends IdentifierParams {
 
   private String loginName;
   private String token;
-
 }

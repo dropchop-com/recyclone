@@ -13,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.
  */
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
 public class Result<T> implements com.dropchop.recyclone.model.api.rest.Result<T, ResultStatus, ResultStats> {

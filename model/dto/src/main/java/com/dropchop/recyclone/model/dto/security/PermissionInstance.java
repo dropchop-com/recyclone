@@ -23,6 +23,4 @@ public class PermissionInstance extends Permission
   private String subject;
   private UUID subjectId;
   private Boolean allowed;
-
-
 }

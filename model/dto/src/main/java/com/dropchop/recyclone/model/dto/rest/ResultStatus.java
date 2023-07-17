@@ -14,8 +14,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
+@SuppressWarnings("unused")
 public class ResultStatus implements com.dropchop.recyclone.model.api.rest.ResultStatus<ResultStats> {
 
   @NonNull

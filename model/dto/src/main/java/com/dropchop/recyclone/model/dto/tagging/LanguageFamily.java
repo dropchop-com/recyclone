@@ -22,6 +22,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
+@SuppressWarnings("unused")
 public class LanguageFamily extends NamedTag
   implements com.dropchop.recyclone.model.api.tagging.LanguageFamily<Tag, TitleDescriptionTranslation> {
 

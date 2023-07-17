@@ -21,5 +21,4 @@ public class PermissionTemplate extends PermissionInstance
 
   private String subSubject;
   private UUID subSubjectId;
-
 }
