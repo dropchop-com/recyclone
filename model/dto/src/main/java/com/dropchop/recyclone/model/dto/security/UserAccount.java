@@ -7,8 +7,10 @@ import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.ZonedDateTime;
 
@@ -19,7 +21,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)

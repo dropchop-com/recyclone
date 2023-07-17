@@ -8,12 +8,11 @@ import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
-import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,7 +24,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @Entity
 @Table(name = "security_permission")

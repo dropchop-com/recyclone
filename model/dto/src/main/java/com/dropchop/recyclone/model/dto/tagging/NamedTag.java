@@ -4,13 +4,11 @@ import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)

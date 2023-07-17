@@ -10,10 +10,12 @@ import com.dropchop.recyclone.model.entity.jpa.base.ECode;
 import com.dropchop.recyclone.model.entity.jpa.base.ETitleTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +27,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @Entity
 @Table(name = "country")

@@ -2,19 +2,16 @@ package com.dropchop.recyclone.model.entity.jpa.tagging;
 
 import com.dropchop.recyclone.model.api.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 06. 22.
  */
 @Getter
 @Setter
-@SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @Entity
 @SuppressWarnings("JpaDataSourceORMInspection")

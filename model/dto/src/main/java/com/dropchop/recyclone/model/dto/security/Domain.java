@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
-import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -24,14 +22,12 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 public class Domain extends DtoCode
   implements com.dropchop.recyclone.model.api.security.Domain<TitleDescriptionTranslation, Action>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<Action> actions;
 
@@ -41,7 +37,6 @@ public class Domain extends DtoCode
 
   private String lang;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleDescriptionTranslation> translations;
 

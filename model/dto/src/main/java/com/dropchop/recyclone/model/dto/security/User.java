@@ -36,15 +36,12 @@ public class User<O extends DtoId> extends Person
   com.dropchop.recyclone.model.api.common.Person<
     Country, Language, TitleTranslation>{
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<Role> roles;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<Permission> permissions;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<UserAccount> accounts = new LinkedHashSet<>();
 
@@ -62,11 +59,9 @@ public class User<O extends DtoId> extends Person
 
   O owner;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private List<Tag> tags;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes;
 }

@@ -7,10 +7,11 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.api.security.UserAccount;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -18,7 +19,6 @@ import java.time.ZonedDateTime;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @Entity
 @Table(name = "security_user_account")

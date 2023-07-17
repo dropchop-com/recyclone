@@ -130,26 +130,20 @@ class FieldFilterTest {
         Iso8601.fromIso("2022-08-02"),
         Iso8601.fromIso("2022-08-03"))).build());
 
-    sl = Language.builder()
-      .translation(new TitleTranslation("sl", "Slovenski"))
-      .translation(new TitleTranslation("sr", "Slovenački"))
-      .code("sl")
-      .title("Slovene")
-      .lang("en")
-      .tag(indoEu)
-      .created(Iso8601.fromIso("2022-08-27T00:00:00Z"))
-      .modified(Iso8601.fromIso("2022-08-27T00:00:00Z"))
-      .build();
+    sl = new Language("sl");
+    sl.addTranslation(new TitleTranslation("sl", "Slovenski"));
+    sl.addTranslation(new TitleTranslation("sr", "Slovenački"));
+    sl.setTitle("en", "Slovene");
+    sl.addTag(indoEu);
+    sl.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    sl.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
 
-    en = Language.builder()
-      .translation(new TitleTranslation("sl", "Angleški"))
-      .code("en")
-      .title("English")
-      .lang("en")
-      .tag(westGermanic)
-      .created(Iso8601.fromIso("2022-08-27T00:00:00Z"))
-      .modified(Iso8601.fromIso("2022-08-27T00:00:00Z"))
-      .build();
+    en = new Language("en");
+    en.addTranslation(new TitleTranslation("sl", "Angleški"));
+    en.setTitle("en", "English");
+    en.addTag(westGermanic);
+    en.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
+    en.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
 
     PathSegment root = PathSegment.root(sl);
     slPaths = new LinkedHashMap<>();

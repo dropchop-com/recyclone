@@ -2,11 +2,10 @@ package com.dropchop.recyclone.model.entity.jpa.base;
 
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import lombok.*;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -15,7 +14,6 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @MappedSuperclass

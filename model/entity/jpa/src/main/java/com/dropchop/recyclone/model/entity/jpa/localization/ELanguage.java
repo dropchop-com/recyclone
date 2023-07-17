@@ -24,7 +24,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @Entity
 @Table(name = "language")

@@ -5,8 +5,10 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Singular;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -20,7 +22,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 @JsonTypeInfo(
@@ -39,15 +40,12 @@ public class Tag
 
   private String lang;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleDescriptionTranslation> translations;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private List<Tag> tags;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes;
 

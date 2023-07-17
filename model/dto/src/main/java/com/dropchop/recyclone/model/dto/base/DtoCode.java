@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -15,8 +14,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
  */
 @Data
-@SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class DtoCode implements Dto, ModelWithCode, Comparable<ModelWithCode> {
 

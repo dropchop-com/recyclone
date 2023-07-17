@@ -5,8 +5,10 @@ import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -15,7 +17,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)

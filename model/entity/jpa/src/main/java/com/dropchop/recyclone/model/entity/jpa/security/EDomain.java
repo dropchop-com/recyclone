@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -25,7 +24,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @Entity
 @Table(name = "security_domain")

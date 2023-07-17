@@ -23,7 +23,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 public class Permission extends DtoId
@@ -34,7 +33,6 @@ public class Permission extends DtoId
 
   private Action action;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private List<String> instances;
 
@@ -44,7 +42,6 @@ public class Permission extends DtoId
 
   private String lang;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleDescriptionTranslation> translations;
 

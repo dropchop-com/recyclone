@@ -3,7 +3,6 @@ package com.dropchop.recyclone.model.dto.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -12,7 +11,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor(force = true)
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)

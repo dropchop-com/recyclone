@@ -7,14 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("TokenAccount")

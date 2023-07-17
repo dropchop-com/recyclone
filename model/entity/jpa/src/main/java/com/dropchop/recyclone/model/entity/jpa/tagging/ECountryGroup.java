@@ -1,18 +1,18 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
 import com.dropchop.recyclone.model.entity.jpa.localization.ETitleDescriptionTranslation;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 06. 22.
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("CountryGroup")

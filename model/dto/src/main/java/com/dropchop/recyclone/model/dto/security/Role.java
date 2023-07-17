@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
-import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -25,14 +23,12 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 public class Role extends DtoCode
   implements com.dropchop.recyclone.model.api.security.Role<TitleDescriptionTranslation, Action, Domain, Permission>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   Set<Permission> permissions = new LinkedHashSet<>();
 
@@ -42,7 +38,6 @@ public class Role extends DtoCode
 
   private String lang;
 
-  @Singular
   @JsonInclude(NON_EMPTY)
   private Set<TitleDescriptionTranslation> translations;
 
