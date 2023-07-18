@@ -11,4 +11,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class UserParams extends IdentifierParams {
+  private String loginName;
+  private String token;
 }
