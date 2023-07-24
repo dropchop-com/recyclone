@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.api.attr.AttributeDate;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.attr.AttributeValueList;
+import com.dropchop.recyclone.model.api.attr.*;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
@@ -132,5 +129,40 @@ public class TagResourceTest {
     assertEquals(role.getLang(), respRole.getLang());
     assertEquals(role.getTranslations(), respRole.getTranslations());*/
 
+  }
+
+
+  @Test
+  @Order(30)
+  public void removeAttribute() {
+    LanguageGroup languageGroupSSlavic = new LanguageGroup();
+    languageGroupSSlavic.setName("southern_slavic");
+    assertEquals("0fe038f8-6f6f-3b71-97db-4d00b7a0ca9f", languageGroupSSlavic.getUuid().toString());
+    languageGroupSSlavic.addAttribute(new AttributeToRemove("prop1"));
+    languageGroupSSlavic.addAttribute(AttributeBool.builder()
+        .name("prop2").value(Boolean.FALSE).build());
+    languageGroupSSlavic.addAttribute(AttributeDate.builder()
+        .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
+    languageGroupSSlavic.addAttribute(AttributeValueList.builder()
+        .name("prop4").value(List.of("item1", "item2", "item3")).build());
+    //languageGroupSSlavic.addTag(languageGroupSlavic);
+
+    List<LanguageGroup> result = given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        //.header("Authorization", "Bearer editortoken1")
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(List.of(languageGroupSSlavic))
+        .when()
+        .put("/api/internal/tagging/tag")
+        .then()
+        .statusCode(200)
+        .log().all()
+        .extract()
+        .body().jsonPath().getList("data", LanguageGroup.class);
+    assertEquals(1, result.size());
+    assertEquals(3, result.get(0).getAttributes().size());
   }
 }

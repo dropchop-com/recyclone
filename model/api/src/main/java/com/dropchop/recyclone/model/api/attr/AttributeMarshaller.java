@@ -128,7 +128,8 @@ public class AttributeMarshaller {
    */
   public static <X> Attribute<X> unmarshall(String name, String strValue, Class<X> tClass) {
     if (strValue == null) {
-      return null;
+      //noinspection unchecked
+      return (Attribute<X>) new AttributeToRemove(name);
     }
     if (String.class.isAssignableFrom(tClass)) {
       //noinspection unchecked
@@ -190,7 +191,12 @@ public class AttributeMarshaller {
   }
 
   private static String marshall(Attribute<?> attribute, boolean nested) {
-    if (attribute instanceof AttributeString) {
+    if (attribute instanceof AttributeToRemove) {
+      if (nested) {
+        return null;
+      }
+      return null;
+    } else if (attribute instanceof AttributeString) {
       if (nested) {
         return Strings.jsonEscape(((AttributeString) attribute).getValue());
       }

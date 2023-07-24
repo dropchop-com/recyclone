@@ -72,6 +72,10 @@ public class AttributeDeserializer extends JsonDeserializer<Attribute<?>> {
       return attr;
     }
 
+    if (valueNode.isNull()) {
+      return new AttributeToRemove(name);
+    }
+
     String value = valueNode.asText();
     if (value == null || value.isBlank()) {
       throw new IOException("Attribute node has empty value property!");

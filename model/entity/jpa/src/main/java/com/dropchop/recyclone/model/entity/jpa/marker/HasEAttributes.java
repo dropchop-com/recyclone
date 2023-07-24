@@ -39,6 +39,9 @@ public interface HasEAttributes extends HasAttributes {
       removeAttribute(attribute.getName());
     }
     EAttribute<?> eAttribute = EAttribute.fromAttribute((Attribute<?>) attribute);
+    if (eAttribute == null) {
+      return this;
+    }
     eAttributes.add(eAttribute);
     return this;
   }
@@ -48,6 +51,9 @@ public interface HasEAttributes extends HasAttributes {
     Set<EAttribute<?>> eAttributes = new HashSet<>();
     for (Attribute<?> attribute : attributes) {
       EAttribute<?> eAttribute = EAttribute.fromAttribute((Attribute<?>) attribute);
+      if (eAttribute == null) {
+        continue;
+      }
       eAttributes.add(eAttribute);
     }
     setEAttributes(eAttributes);

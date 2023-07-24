@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.api.attr.AttributeToRemove;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +16,7 @@ import java.io.IOException;
 public class AttributeCompactSerializer extends AttributeClassicSerializer {
 
   protected void nameValueWrite(JsonGenerator gen, Attribute<?> attribute, String name, Object value) throws IOException {
-    if (value == null) {
+    if (value == null && !(attribute instanceof AttributeToRemove)) {
       return;
     }
     if (name == null) {

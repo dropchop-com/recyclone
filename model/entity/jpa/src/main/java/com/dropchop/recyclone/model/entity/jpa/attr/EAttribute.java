@@ -90,6 +90,9 @@ public class EAttribute<X> implements Attribute<X> {
   }
 
   public static <X> EAttribute<X> fromAttribute(Attribute<X> attribute) {
+    if (attribute instanceof AttributeToRemove) {
+      return null;
+    }
     EAttribute<X> eAttribute = new EAttribute<>();
     eAttribute.setName(attribute.getName());
     eAttribute.setValue(attribute.getValue());
