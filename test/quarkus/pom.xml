@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>recyclone-test-quarkus</artifactId>
-  <version>1.2.1.Alpha-SNAPSHOT</version>
+  <version>1.2.3.Alpha-SNAPSHOT</version>
   <name>Recyclone - Test - Quarkus</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
     <artifactId>recyclone-test</artifactId>
-    <version>1.2.1.Alpha-SNAPSHOT</version>
+    <version>1.2.3.Alpha-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -20,9 +20,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.1.2.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.2.0.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-    <recyclone.version>1.2.1.Alpha-SNAPSHOT</recyclone.version>
+    <recyclone.version>1.2.3.Alpha-SNAPSHOT</recyclone.version>
     <lombok.version>1.18.24</lombok.version>
     <testcontainers.version>1.16.2</testcontainers.version>
   </properties>
@@ -75,12 +75,6 @@
       <artifactId>blaze-persistence-integration-hibernate-6.2</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <!-- forcing to 6.2.5.Final as proposed by Blazebit since default is 6.2.4.Final -->
-    <dependency>
-      <groupId>org.hibernate.orm</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>6.2.5.Final</version>
-    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -109,6 +103,7 @@
       <artifactId>recyclone-service-jpa-blaze</artifactId>
       <version>${recyclone.version}</version>
     </dependency>
+    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-extension-shiro</artifactId>
@@ -181,6 +176,7 @@
         <configuration>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+            <!--suppress MavenModelInspection -->
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
         </configuration>
@@ -199,6 +195,7 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <version>${surefire-plugin.version}</version>
             <executions>
@@ -211,6 +208,7 @@
                   <systemPropertyVariables>
                     <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
                     <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    <!--suppress MavenModelInspection -->
                     <maven.home>${maven.home}</maven.home>
                   </systemPropertyVariables>
                 </configuration>

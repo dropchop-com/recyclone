@@ -9,7 +9,6 @@ import com.dropchop.recyclone.repo.jpa.blaze.BlazeCriteriaDecorator;
 
 public class SearchByLoginNameDecorator extends BlazeCriteriaDecorator {
 
-
   @Override
   public void decorate() {
     UserParams params = (UserParams) getContext().getParams();
