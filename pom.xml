@@ -101,7 +101,7 @@
     <jackson.version>2.15.2</jackson.version>
     <apache.shiro.version>1.11.0</apache.shiro.version>
     <mapstruct.version>1.6.1-SNAPSHOT</mapstruct.version>
-    <blaze-persistence.version>1.6.9</blaze-persistence.version>
+    <blaze-persistence.version>1.6.10</blaze-persistence.version>
 
     <junit.version>5.9.3</junit.version>
     <jsonassert.version>1.5.1</jsonassert.version>
