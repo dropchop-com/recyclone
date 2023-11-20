@@ -80,6 +80,7 @@
     <gpg-plugin.version>3.1.0</gpg-plugin.version>
     <install-plugin.version>3.1.1</install-plugin.version>
     <deploy-plugin.version>3.1.1</deploy-plugin.version>
+    <release-plugin.version>3.0.1</release-plugin.version>
     <site-plugin.version>3.12.1</site-plugin.version>
     <project-info-reports-plugin.version>3.4.5</project-info-reports-plugin.version>
     <javadoc-plugin.version>3.6.2</javadoc-plugin.version>
@@ -514,6 +515,14 @@
           <configuration>
             <doclint>none</doclint>
           </configuration>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
