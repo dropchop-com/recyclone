@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dropchop.recyclone</groupId>
   <artifactId>recyclone</artifactId>
-  <version>1.35.2-SNAPSHOT</version>
+  <version>1.35.2</version>
   <packaging>pom</packaging>
   <name>Recyclone</name>
 
@@ -30,7 +30,7 @@
     <connection>scm:git:https://github.com/dropchop-com/recyclone.git</connection>
     <developerConnection>scm:git:https://github.com/dropchop-com/recyclone.git</developerConnection>
     <url>https://github.com/dropchop-com/recyclone.git</url>
-    <tag>HEAD</tag>
+    <tag>recyclone-1.35.2</tag>
   </scm>
 
   <repositories>
@@ -70,21 +70,21 @@
   <inceptionYear>2021</inceptionYear>
 
   <properties>
-    <clean-plugin.version>3.1.0</clean-plugin.version>
-    <resources-plugin.version>3.2.0</resources-plugin.version>
-    <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <clean-plugin.version>3.3.2</clean-plugin.version>
+    <resources-plugin.version>3.3.1</resources-plugin.version>
+    <compiler-plugin.version>3.11.0</compiler-plugin.version>
+    <surefire-plugin.version>3.2.2</surefire-plugin.version>
     <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
-    <jar-plugin.version>3.2.0</jar-plugin.version>
-    <gpg-plugin.version>3.0.1</gpg-plugin.version>
-    <install-plugin.version>2.5.2</install-plugin.version>
-    <deploy-plugin.version>2.8.2</deploy-plugin.version>
-    <site-plugin.version>3.9.1</site-plugin.version>
-    <project-info-reports-plugin.version>3.1.2</project-info-reports-plugin.version>
-    <javadoc-plugin.version>3.3.1</javadoc-plugin.version>
+    <jar-plugin.version>3.3.0</jar-plugin.version>
+    <gpg-plugin.version>3.1.0</gpg-plugin.version>
+    <install-plugin.version>3.1.1</install-plugin.version>
+    <deploy-plugin.version>3.1.1</deploy-plugin.version>
+    <site-plugin.version>3.12.1</site-plugin.version>
+    <project-info-reports-plugin.version>3.4.5</project-info-reports-plugin.version>
+    <javadoc-plugin.version>3.6.2</javadoc-plugin.version>
     <aspectj-plugin.version>1.14.0</aspectj-plugin.version>
     <lombok-plugin.version>1.18.20.0</lombok-plugin.version>
-    <antrun-plugin.version>3.0.0</antrun-plugin.version>
+    <antrun-plugin.version>3.1.0</antrun-plugin.version>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>17</maven.compiler.source>
@@ -97,7 +97,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <logback.version>1.2.10</logback.version>
     <aspectj.version>1.9.9.1</aspectj.version>
-    <lombok.version>1.18.28</lombok.version>
+    <lombok.version>1.18.30</lombok.version>
     <jackson.version>2.15.2</jackson.version>
     <apache.shiro.version>1.11.0</apache.shiro.version>
     <mapstruct.version>1.6.1-SNAPSHOT</mapstruct.version>
