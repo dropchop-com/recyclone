@@ -72,6 +72,7 @@
   <properties>
     <clean-plugin.version>3.3.2</clean-plugin.version>
     <resources-plugin.version>3.3.1</resources-plugin.version>
+    <source-plugin.version>3.3.0</source-plugin.version>
     <compiler-plugin.version>3.11.0</compiler-plugin.version>
     <surefire-plugin.version>3.2.2</surefire-plugin.version>
     <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
