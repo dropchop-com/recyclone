@@ -10,6 +10,12 @@
     <version>1.35.5-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+    <maven.javadoc.skip>false</maven.javadoc.skip>
+    <maven.source.skip>false</maven.source.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
