@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>recyclone-test-quarkus</artifactId>
-  <version>1.35.6-SNAPSHOT</version>
+  <version>1.35.6</version>
   <name>Recyclone - Test - Quarkus</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
     <artifactId>recyclone-test</artifactId>
-    <version>1.35.6-SNAPSHOT</version>
+    <version>1.35.6</version>
   </parent>
 
   <properties>
