@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 public class PermissionTemplate extends PermissionInstance
-  implements com.dropchop.recyclone.model.api.security.PermissionTemplate<TitleDescriptionTranslation, Action, Domain> {
+  implements com.dropchop.recyclone.model.api.security.PermissionTemplate<Permission, TitleDescriptionTranslation, Action, Domain> {
 
   private String subSubject;
   private UUID subSubjectId;

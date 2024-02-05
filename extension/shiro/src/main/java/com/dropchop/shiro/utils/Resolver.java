@@ -25,7 +25,7 @@ public interface Resolver {
     Map<UUID, Boolean> resolvedPermissions = new LinkedHashMap<>();
     for (List<? extends PermissionInstance> levelPermissions : permissionsList) {
       for(PermissionInstance pi : levelPermissions) {
-        resolvedPermissions.put(pi.getPermissionId(), pi.getAllowed());
+        resolvedPermissions.put(pi.getPermission().getUuid(), pi.getAllowed());
       }
     }
     if (allowedOnly) {
