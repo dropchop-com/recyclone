@@ -18,9 +18,6 @@ import java.util.UUID;
 public class EPermissionTemplate extends EPermissionInstance implements PermissionTemplate<EPermission,
   ETitleDescriptionTranslation, EAction, EDomain> {
 
-  @Column(name = "allowed")
-  private Boolean allowed;
-
   @Column(name = "sub_subject")
   private String subSubject;
 

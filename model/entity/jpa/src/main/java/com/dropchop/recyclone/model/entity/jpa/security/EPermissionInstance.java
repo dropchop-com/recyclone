@@ -23,7 +23,7 @@ public class EPermissionInstance extends EUuid implements PermissionInstance<EPe
   ETitleDescriptionTranslation, EAction, EDomain> {
 
   @ManyToOne
-  @JoinColumn(name = "fk_permission_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "permission_fk"))
+  @JoinColumn(name = "fk_permission_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "security_permission_detail_permission_fk"))
   private EPermission permission;
 
 
@@ -38,8 +38,10 @@ public class EPermissionInstance extends EUuid implements PermissionInstance<EPe
   @Column(name = "allowed")
   private Boolean allowed;
 
+
   @Column(name = "created")
   private ZonedDateTime created;
+
 
   @Column(name = "modified")
   private ZonedDateTime modified;
