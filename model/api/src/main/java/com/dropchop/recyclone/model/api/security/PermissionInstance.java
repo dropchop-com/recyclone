@@ -3,6 +3,8 @@ package com.dropchop.recyclone.model.api.security;
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
+import com.dropchop.recyclone.model.api.marker.state.HasModified;
 
 import java.util.UUID;
 
@@ -12,7 +14,7 @@ public interface PermissionInstance<
   TDT extends TitleDescriptionTranslation,
   A extends Action<TDT>,
   D extends Domain<TDT, A>
-  > extends Model, HasUuid {
+  > extends Model, HasUuid, HasCreated, HasModified {
 
   P getPermission();
   void setPermission(P permission);

@@ -8,13 +8,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "security_permission_instance")
+@Table(name = "security_permission_details")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue(value = "Instance")
 public class EPermissionInstance extends EUuid implements PermissionInstance<EPermission,
   ETitleDescriptionTranslation, EAction, EDomain> {
 
@@ -33,4 +37,10 @@ public class EPermissionInstance extends EUuid implements PermissionInstance<EPe
 
   @Column(name = "allowed")
   private Boolean allowed;
+
+  @Column(name = "created")
+  private ZonedDateTime created;
+
+  @Column(name = "modified")
+  private ZonedDateTime modified;
 }

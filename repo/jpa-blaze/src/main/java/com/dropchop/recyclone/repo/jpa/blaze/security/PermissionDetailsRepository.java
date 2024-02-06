@@ -15,10 +15,10 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RepositoryType(RCYN_DEFAULT)
-public class PermissionTemplateRepository extends BlazeRepository<EPermissionTemplate, UUID> {
+public class PermissionDetailsRepository extends BlazeRepository<EPermissionInstance, UUID> {
 
   @Override
-  public Class<EPermissionTemplate> getRootClass() {
-    return EPermissionTemplate.class;
+  public Class<EPermissionInstance> getRootClass() {
+    return EPermissionInstance.class;
   }
 }

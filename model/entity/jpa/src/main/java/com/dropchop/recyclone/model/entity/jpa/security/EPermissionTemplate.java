@@ -14,22 +14,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "security_permission_template")
-public class EPermissionTemplate extends EUuid implements PermissionTemplate<EPermission,
+@DiscriminatorValue(value = "Template")
+public class EPermissionTemplate extends EPermissionInstance implements PermissionTemplate<EPermission,
   ETitleDescriptionTranslation, EAction, EDomain> {
-
-  @ManyToOne
-  @JoinColumn(name = "fk_permission_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "permission_fk"))
-  private EPermission permission;
-
-
-  @Column(name = "subject")
-  private String subject;
-
-
-  @Column(name = "subject_uuid")
-  private UUID subjectId;
-
 
   @Column(name = "allowed")
   private Boolean allowed;
