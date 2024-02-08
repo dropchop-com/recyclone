@@ -24,11 +24,15 @@ public class LikeIdentifiersCriteriaDecorator extends LikeListCriteriaDecorator 
     CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
     if (params instanceof IdentifierParams) {
       ids = ((IdentifierParams<?, ?, ?, ?>) params).getIdentifiers();
-      cb.where(idColName).in(ids.stream().map(UUID::fromString).collect(Collectors.toList()));
+      if (!ids.isEmpty()) {
+        cb.where(idColName).in(ids.stream().map(UUID::fromString).collect(Collectors.toList()));
+      }
     } else if (params instanceof CodeParams) {
       ids = ((CodeParams<?, ?, ?, ?>) params).getCodes();
       idColName = alias + ".code";
-      decorateWithListOfStringsAsLike(ids, idColName);
+      if (!ids.isEmpty()) {
+        decorateWithListOfStringsAsLike(ids, idColName);
+      }
     }
   }
 }
