@@ -104,7 +104,7 @@ public class RoleResourceTest {
       .and()
       .body(List.of(role))
       .when()
-      .post("/api/internal/security/role")
+      .put("/api/internal/security/role")
       .then()
       .statusCode(200)
       .extract()

@@ -54,7 +54,7 @@ public class EUser<O extends EUuid> extends EPerson
   @Transient
   private O owner;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
   Set<EUserAccount> accounts = new LinkedHashSet<>();
 
   public void addAccount(EUserAccount account) {

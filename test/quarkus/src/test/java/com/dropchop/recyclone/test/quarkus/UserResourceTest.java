@@ -6,16 +6,15 @@ import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -29,12 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 25. 05. 22.
  */
+//@Disabled
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserResourceTest {
 
 
   private static final String userId = UUID.randomUUID().toString();
+  private static final String accountId = UUID.randomUUID().toString();
 
 
   @Test
@@ -45,6 +46,8 @@ public class UserResourceTest {
     user.setLanguage(new Language("en"));
     user.setFirstName("test");
     user.setLastName("test");
+    user.setCreated(ZonedDateTime.now());
+    user.setModified(ZonedDateTime.now());
 
     List<User> result = given()
       .log().all()
@@ -77,8 +80,9 @@ public class UserResourceTest {
     User<DtoId> user = new User<>();
     user.setId(userId);
     user.setLanguage(new Language("en"));
-    user.setFirstName("test");
-    user.setLastName("test");
+    user.setFirstName("test update");
+    user.setLastName("test update");
+    user.setModified(ZonedDateTime.now());
 
     List<User> result = given()
       .log().all()
@@ -89,7 +93,7 @@ public class UserResourceTest {
       .and()
       .body(List.of(user))
       .when()
-      .post("/api/internal/security/user")
+      .put("/api/internal/security/user")
       .then()
       .statusCode(200)
       .extract()
@@ -102,6 +106,5 @@ public class UserResourceTest {
     assertEquals(user.getFirstName(), respUser.getFirstName());
     assertEquals(user.getLastName(), respUser.getLastName());
   }
-
 
 }

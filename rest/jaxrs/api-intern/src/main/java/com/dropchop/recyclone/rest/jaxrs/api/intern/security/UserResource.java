@@ -7,6 +7,7 @@ import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
+import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
@@ -114,6 +115,5 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   default List<User<DtoId>> updateRest(List<User<DtoId>> users) {
     return unwrap(update(users));
   }
-
 
 }
