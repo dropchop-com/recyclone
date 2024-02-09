@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @RepositoryType(RCYN_DEFAULT)
 public class UserRepository extends BlazeRepository<EUser<EUuid>, UUID> {
 
-  private static final EUser<EUuid> E_UUID_E_USER = new EUser<>();
+  private static final EUser<?> E_UUID_E_USER = new EUser<>();
 
   @Override
   @SuppressWarnings("unchecked")

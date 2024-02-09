@@ -83,8 +83,40 @@ public class RoleResourceTest {
     assertEquals(role.getTitle(), respRole.getTitle());
     assertEquals(role.getLang(), respRole.getLang());
     assertEquals(role.getTranslations(), respRole.getTranslations());
-
   }
+
+
+  @Test
+  @Order(25)
+  public void update() {
+    Role role = new Role();
+    role.setCode("test_role");
+    role.setLang("en");
+    role.setTitle("Test update ");
+    role.addTranslation(new TitleDescriptionTranslation("sl", "Test update "));
+
+    List<Role> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      //.header("Authorization", "Bearer editortoken1")
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(role))
+      .when()
+      .post("/api/internal/security/role")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", Role.class);
+    assertEquals(1, result.size());
+    Role respRole = result.get(0);
+    assertEquals(role, respRole);
+    assertEquals(role.getTitle(), respRole.getTitle());
+    assertEquals(role.getLang(), respRole.getLang());
+    assertEquals(role.getTranslations(), respRole.getTranslations());
+  }
+
 
 
   @Test
