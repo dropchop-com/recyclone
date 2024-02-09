@@ -1,13 +1,7 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.model.api.utils.Uuid;
 import com.dropchop.recyclone.model.dto.base.DtoId;
-import com.dropchop.recyclone.model.dto.invoke.RoleParams;
-import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
-import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.dto.security.LoginAccount;
-import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,13 +10,9 @@ import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -35,8 +25,6 @@ public class UserResourceTest {
 
 
   private static final String userId = UUID.randomUUID().toString();
-  private static final String accountId = UUID.randomUUID().toString();
-
 
   @Test
   @Order(10)
@@ -53,7 +41,6 @@ public class UserResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      //.header("Authorization", "Bearer editortoken1")
       .auth().preemptive().basic("admin1", "password")
       .and()
       .body(List.of(user))
@@ -88,7 +75,6 @@ public class UserResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      //.header("Authorization", "Bearer editortoken1")
       .auth().preemptive().basic("admin1", "password")
       .and()
       .body(List.of(user))
