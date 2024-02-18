@@ -36,7 +36,7 @@ public class ETag extends EUuid
   implements Tag<ETag, ETitleDescriptionTranslation>,
   HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon, HasELanguage, HasEAttributes {
 
-  @Transient
+  @Column(name="type", insertable = false, updatable = false)
   private String type = this.getClass().getSimpleName().substring(1);
 
   @Column(name="title")
