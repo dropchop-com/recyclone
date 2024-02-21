@@ -1,7 +1,7 @@
-package com.dropchop.recyclone.service.jpa.blaze.security;
+package com.dropchop.recyclone.service.jpa.blaze.test;
 
-import com.dropchop.recyclone.model.dto.security.Action;
-import com.dropchop.recyclone.model.entity.jpa.security.EAction;
+import com.dropchop.recyclone.model.dto.test.Node;
+import com.dropchop.recyclone.model.entity.jpa.test.ENode;
 import com.dropchop.recyclone.service.api.mapping.FilterDtoMapping;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import org.mapstruct.Builder;
@@ -17,5 +17,4 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     builder = @Builder(disableBuilder = true),
     uses = FilterDtoMapping.class
 )
-public interface ActionToDtoMapper extends ToDtoMapper<Action, EAction> {
-}
+public interface NodeToDtoMapper extends ToDtoMapper<Node, ENode> {}

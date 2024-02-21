@@ -22,9 +22,9 @@ import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
 import com.dropchop.recyclone.model.entity.jpa.test.EMiki;
 import com.dropchop.recyclone.model.entity.jpa.test.ENode;
 import com.dropchop.recyclone.service.jpa.blaze.security.DomainToDtoMapper;
-import com.dropchop.recyclone.service.jpa.blaze.security.DomainToDtoMapperImpl;
 import com.dropchop.recyclone.service.jpa.blaze.test.NodeToDtoMapper;
-import com.dropchop.recyclone.service.jpa.blaze.test.NodeToDtoMapperImpl;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
@@ -39,7 +39,15 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 05. 22.
  */
+@QuarkusTest
 class FilteringDtoContextTest {
+
+  @Inject
+  NodeToDtoMapper mapper;
+
+  @Inject
+  DomainToDtoMapper domainMapper;
+
   List<String> availableLangs = List.of("sl", "hr", "sr", "fi", "it", "de", "fr");
 
   private <M extends Model> M createMockModel(M model, String code, int numTranslations) {
@@ -116,8 +124,7 @@ class FilteringDtoContextTest {
     mappingContext.setTotalCount(eDomains.size());
     mappingContext.setRequiredPermissions(List.of(Permission.compose(Security.DOMAIN, VIEW)));
 
-    DomainToDtoMapper mapper = new DomainToDtoMapperImpl();
-    Result<Domain> result = mapper.toDtosResult(eDomains, mappingContext);
+    Result<Domain> result = domainMapper.toDtosResult(eDomains, mappingContext);
     assertNotNull(result);
   }
 
@@ -174,7 +181,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, null, null);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -210,7 +216,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, null);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -246,7 +251,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 3, null);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -294,7 +298,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -318,7 +321,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -353,7 +355,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -376,7 +377,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -410,7 +410,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -436,7 +435,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -477,7 +475,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -513,7 +510,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -564,7 +560,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -601,7 +596,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -651,7 +645,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 1, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -691,7 +684,6 @@ class FilteringDtoContextTest {
     MappingContext mappingContext = createMappingContext(roots, 2, Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
     //ignore missing class ... compile with maven first then debug works in intellij
-    NodeToDtoMapper mapper = new NodeToDtoMapperImpl();
     List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
     assertNotNull(result);
     assertEquals(2, result.size());

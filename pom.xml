@@ -101,8 +101,8 @@
     <lombok.version>1.18.30</lombok.version>
     <jackson.version>2.15.2</jackson.version>
     <apache.shiro.version>1.11.0</apache.shiro.version>
-    <mapstruct.version>1.6.1-SNAPSHOT</mapstruct.version>
-    <blaze-persistence.version>1.6.10</blaze-persistence.version>
+    <mapstruct.version>1.6.0.Beta1</mapstruct.version>
+    <blaze-persistence.version>1.6.11</blaze-persistence.version>
 
     <junit.version>5.9.3</junit.version>
     <jsonassert.version>1.5.1</jsonassert.version>
@@ -203,7 +203,7 @@
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>${mapstruct.version}</version>
       </dependency>
       <dependency>
         <groupId>com.blazebit</groupId>

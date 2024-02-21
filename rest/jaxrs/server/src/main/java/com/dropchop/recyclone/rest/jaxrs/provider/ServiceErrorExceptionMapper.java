@@ -102,7 +102,7 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
   }
 
   public Response toResponse(Exception e) {
-    log.error("", e);
+    log.error(e.getMessage(), e);
     Response.ResponseBuilder builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
     Result<?> result;
     if (e instanceof ServiceException) {

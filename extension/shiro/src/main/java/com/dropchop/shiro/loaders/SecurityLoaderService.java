@@ -20,6 +20,7 @@ import java.util.UUID;
  *   But user has user accounts (sub subject) so each account can have different permissions set.
  *
  */
+@SuppressWarnings("unused")
 public interface SecurityLoaderService {
 
   SubjectMapper getSubjectMapper();
@@ -37,7 +38,7 @@ public interface SecurityLoaderService {
    * @param subSubject - sub subject
    * @param subSubjectIdentifier - sub subject identifier
    * @return list of allowed permissions for subject or sub subject.
-   * @param <M>
+   * @param <M> subject's model class
    */
   <M extends Model> List<Permission> loadPermissions(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier);
 
@@ -51,14 +52,11 @@ public interface SecurityLoaderService {
    * @param subSubjectIdentifier - sub subject identifier
    * @param onlyAllowed - filter permissions by allowed flag
    * @return list of permissions for subject or sub subject
-   * @param <M>
+   * @param <M> subject's model class
    */
   <M extends Model> List<Permission> loadPermissions(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier, boolean onlyAllowed);
   List<Permission> loadPermissionsById(Collection<UUID> ids);
 
   <M extends Model> List<PermissionTemplate> loadTemplates(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier);
   <M extends Model> List<PermissionInstance> loadInstances(Class<M> subject, UUID identifier);
-
-
-
 }

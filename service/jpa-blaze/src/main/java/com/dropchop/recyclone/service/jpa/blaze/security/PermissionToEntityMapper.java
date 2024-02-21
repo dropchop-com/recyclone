@@ -10,7 +10,7 @@ import org.mapstruct.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
  */
 @Mapper(
-  componentModel = "cdi",
+  componentModel = "jakarta-cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
   uses = {EntityFactoryInvoker.class},
