@@ -14,6 +14,7 @@ import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.service.api.ExecContextType;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.security.UserService;
+import com.dropchop.recyclone.service.api.tagging.TagService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
@@ -43,7 +44,7 @@ public class UserResource implements
 
   @Override
   public Result<User<DtoId>> search(UserParams params) {
-    return null;
+    return selector.select(UserService.class).search();
   }
 
   @Override
