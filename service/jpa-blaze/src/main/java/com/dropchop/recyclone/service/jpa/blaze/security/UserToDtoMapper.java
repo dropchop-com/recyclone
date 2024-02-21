@@ -15,9 +15,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(
   componentModel = "cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  builder = @Builder(disableBuilder = true),
-  uses = {UserAccountToDtoMapper.class}
+  builder = @Builder(disableBuilder = true)
 )
-public interface UserToDtoMapper extends ToDtoMapper<User<DtoId>, EUser<EUuid>> {
+public interface UserToDtoMapper extends ToDtoMapper<User<DtoId>, EUser<EUuid>>, UserAccountToDtoMapper {
 
 }
