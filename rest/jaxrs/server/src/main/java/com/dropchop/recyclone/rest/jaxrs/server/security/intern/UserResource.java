@@ -55,7 +55,7 @@ public class UserResource implements
         String.format("Invalid parameter type: should be [%s]", IdentifierParams.class));
     }
     identifierParams.setIdentifiers(List.of(id.toString()));
-    return null;
+    return selector.select(UserService.class).search();
   }
 
 

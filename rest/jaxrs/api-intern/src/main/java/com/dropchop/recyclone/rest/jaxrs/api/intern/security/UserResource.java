@@ -35,7 +35,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Path("")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<User<DtoId>> get();
 
@@ -43,25 +43,25 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Path("")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON)
   default List<User<DtoId>> getRest() {
     return unwrap(get());
   }
 
   @GET
-  @Path("{id}")
+  @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<User<DtoId>> getByUuid(@PathParam("id") UUID id);
 
   @GET
-  @Path("{id}")
+  @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON)
   default User<DtoId> getByUuidRest(@PathParam("id") UUID id) {
     return unwrapFirst(getByUuid(id));
@@ -71,6 +71,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<User<DtoId>> search(UserParams params);
 
@@ -78,6 +79,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Path(Paths.SEARCH_SEGMENT)
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
+  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
   @Produces(MediaType.APPLICATION_JSON)
   default List<User<DtoId>> searchRest(UserParams params) {
     return unwrap(search(params));
