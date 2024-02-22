@@ -29,10 +29,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
-public class User<O extends DtoId> extends Person
+public class User extends Person
   implements com.dropchop.recyclone.model.api.security.User<
   UserAccount, TitleDescriptionTranslation, TitleTranslation,
-  Action, Domain, Permission, Role, O, Country, Language, Tag>,
+  Action, Domain, Permission, Role, Country, Language, Tag>,
   com.dropchop.recyclone.model.api.common.Person<
     Country, Language, TitleTranslation>{
 
@@ -57,7 +57,6 @@ public class User<O extends DtoId> extends Person
   private ZonedDateTime deactivated;
   private String deactivatedBy;
 
-  O owner;
 
   @JsonInclude(NON_EMPTY)
   private List<Tag> tags;

@@ -25,9 +25,9 @@ public interface SecurityLoaderService {
 
   SubjectMapper getSubjectMapper();
 
-  <O extends DtoId> User<O> loadByLoginName(String loginName);
-  <O extends DtoId> User<O> loadByToken(String token);
-  <O extends DtoId> User<O> loadById(UUID id);
+   User loadByLoginName(String loginName);
+   User loadByToken(String token);
+   User loadById(UUID id);
 
   /**
    * Will load allowed only permissions for subject or subject of subject (sub subject).

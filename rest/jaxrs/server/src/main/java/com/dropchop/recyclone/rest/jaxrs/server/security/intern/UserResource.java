@@ -38,17 +38,17 @@ public class UserResource implements
   ParamsExecContextContainer ctxContainer;
 
   @Override
-  public Result<User<DtoId>> get() {
+  public Result<User> get() {
     return null;
   }
 
   @Override
-  public Result<User<DtoId>> search(UserParams params) {
+  public Result<User> search(UserParams params) {
     return selector.select(UserService.class).search();
   }
 
   @Override
-  public Result<User<DtoId>> getByUuid(UUID id) {
+  public Result<User> getByUuid(UUID id) {
     Params params = ctxContainer.get().getParams();
     if (!(params instanceof IdentifierParams identifierParams)) {
       throw new ServiceException(ErrorCode.parameter_validation_error,
@@ -60,13 +60,13 @@ public class UserResource implements
 
 
   @Override
-  public Result<User<DtoId>> create(List<User<DtoId>> users) {
+  public Result<User> create(List<User> users) {
     return selector.select(UserService.class).create(users);
   }
 
 
   @Override
-  public Result<User<DtoId>> update(List<User<DtoId>> users) {
+  public Result<User> update(List<User> users) {
     return selector.select(UserService.class).update(users);
   }
 }

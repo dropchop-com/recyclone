@@ -29,7 +29,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Security.USER)
 @DynamicExecContext(value = IdentifierParams.class, dataClass = User.class)
 @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.VIEW)
-public interface UserResource extends ClassicRestResource<User<DtoId>> {
+public interface UserResource extends ClassicRestResource<User> {
 
   @GET
   @Path("")
@@ -37,7 +37,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<User<DtoId>> get();
+  Result<User> get();
 
   @GET
   @Path("")
@@ -45,7 +45,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<User<DtoId>> getRest() {
+  default List<User> getRest() {
     return unwrap(get());
   }
 
@@ -55,7 +55,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<User<DtoId>> getByUuid(@PathParam("id") UUID id);
+  Result<User> getByUuid(@PathParam("id") UUID id);
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
@@ -63,7 +63,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.IdentifierParams")
   @Produces(MediaType.APPLICATION_JSON)
-  default User<DtoId> getByUuidRest(@PathParam("id") UUID id) {
+  default User getByUuidRest(@PathParam("id") UUID id) {
     return unwrapFirst(getByUuid(id));
   }
 
@@ -73,7 +73,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<User<DtoId>> search(UserParams params);
+  Result<User> search(UserParams params);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -81,7 +81,7 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.UserParams")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<User<DtoId>> searchRest(UserParams params) {
+  default List<User> searchRest(UserParams params) {
     return unwrap(search(params));
   }
 
@@ -91,14 +91,14 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.CREATE)
-  Result<User<DtoId>> create(List<User<DtoId>> users);
+  Result<User> create(List<User> users);
 
   @POST
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.CREATE)
-  default List<User<DtoId>> createRest(List<User<DtoId>> users) {
+  default List<User> createRest(List<User> users) {
     return unwrap(create(users));
   }
 
@@ -107,14 +107,14 @@ public interface UserResource extends ClassicRestResource<User<DtoId>> {
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.UPDATE)
-  Result<User<DtoId>> update(List<User<DtoId>> users);
+  Result<User> update(List<User> users);
 
   @PUT
   @Tag(name = Tags.SECURITY)
   @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.UPDATE)
-  default List<User<DtoId>> updateRest(List<User<DtoId>> users) {
+  default List<User> updateRest(List<User> users) {
     return unwrap(update(users));
   }
 

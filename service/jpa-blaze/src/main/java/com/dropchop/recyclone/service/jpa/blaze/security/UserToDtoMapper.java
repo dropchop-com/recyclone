@@ -19,6 +19,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   builder = @Builder(disableBuilder = true)
     , uses = {ToDtoManipulator.class, UserAccountToDtoMapper.class}
 )
-public interface UserToDtoMapper extends ToDtoMapper<User<DtoId>, EUser<EUuid>> {
+public interface UserToDtoMapper extends ToDtoMapper<User, EUser> {
 
 }

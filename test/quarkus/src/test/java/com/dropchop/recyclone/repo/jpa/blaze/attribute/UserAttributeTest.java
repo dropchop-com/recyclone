@@ -65,7 +65,7 @@ public class UserAttributeTest {
         countryUk.setModified(ZonedDateTime.now());
         countryRepository.save(countryUk);
 
-        EUser<EUuid> user = new EUser<>();
+        EUser user = new EUser();
         user.setUuid(USER_UUID);
         user.setCreated(ZonedDateTime.now());
         user.setModified(ZonedDateTime.now());
@@ -83,7 +83,7 @@ public class UserAttributeTest {
     @AfterAll
     @Transactional
     public void tearDown() {
-        EUser<EUuid> user = this.userRespository.findById(USER_UUID);
+        EUser user = this.userRespository.findById(USER_UUID);
         userRespository.delete(user);
         ECountry countryUk = countryRepository.findById(coUkCode);
         countryRepository.delete(countryUk);
@@ -92,7 +92,7 @@ public class UserAttributeTest {
     @Test
     @Order(1)
     public void testStoredUser() {
-        EUser<?> user = this.userRespository.findById(USER_UUID);
+        EUser user = this.userRespository.findById(USER_UUID);
         assertEquals("Testko", user.getFirstName());
         assertEquals("Testic", user.getLastName());
         assertEquals(Boolean.FALSE, user.getAttributeValue("ChangeMeWithAdd"));
@@ -103,11 +103,11 @@ public class UserAttributeTest {
     @Order(2)
     @Transactional
     public void testUpdateUserAttributeWithAdd() {
-        EUser<EUuid> user = this.userRespository.findById(USER_UUID);
+        EUser user = this.userRespository.findById(USER_UUID);
         assertEquals(Boolean.FALSE, user.getAttributeValue("ChangeMeWithAdd"));
         user.addAttribute(new AttributeBool("ChangeMeWithAdd", Boolean.TRUE));
         this.userRespository.save(user);
-        EUser<EUuid> changedUser = this.userRespository.findById(USER_UUID);
+        EUser changedUser = this.userRespository.findById(USER_UUID);
         assertEquals(Boolean.TRUE, changedUser.getAttributeValue("ChangeMeWithAdd"));
     }
 
@@ -115,11 +115,11 @@ public class UserAttributeTest {
     @Order(3)
     @Transactional
     public void testUpdateUserAttributeWithSetValue() {
-        EUser<EUuid> user = this.userRespository.findById(USER_UUID);
+        EUser user = this.userRespository.findById(USER_UUID);
         assertEquals(Boolean.FALSE, user.getAttributeValue("ChangeMeWithSet"));
         user.setAttributeValue("ChangeMeWithSet", Boolean.TRUE);
         this.userRespository.save(user);
-        EUser<EUuid> changedUser = this.userRespository.findById(USER_UUID);
+        EUser changedUser = this.userRespository.findById(USER_UUID);
         assertEquals(Boolean.TRUE, changedUser.getAttributeValue("ChangeMeWithSet"));
     }
 

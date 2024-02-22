@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class UserService extends RecycloneCrudServiceImpl<User<DtoId>, EUser<EUuid>, UUID>  implements com.dropchop.recyclone.service.api.security.UserService {
+public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>  implements com.dropchop.recyclone.service.api.security.UserService {
 
 
   @Inject
@@ -34,7 +34,7 @@ public class UserService extends RecycloneCrudServiceImpl<User<DtoId>, EUser<EUu
   UserToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<User<DtoId>, EUser<EUuid>, UUID> getConfiguration() {
+  public ServiceConfiguration<User, EUser, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       userRepository,
       toDtoMapper,

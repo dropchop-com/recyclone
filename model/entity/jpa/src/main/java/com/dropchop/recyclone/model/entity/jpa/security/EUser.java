@@ -25,6 +25,7 @@ import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Armando Ota <armando.ota@dropchop.org>
  */
 @Getter
 @Setter
@@ -32,8 +33,8 @@ import java.util.*;
 @Entity
 @Table(name = "security_user")
 @SuppressWarnings("unused")
-public class EUser<O extends EUuid> extends EPerson
-    implements User<EUserAccount, ETitleDescriptionTranslation, ETitleTranslation, EAction, EDomain, EPermission, ERole, O, ECountry, ELanguage, ETag>,
+public class EUser extends EPerson
+    implements User<EUserAccount, ETitleDescriptionTranslation, ETitleTranslation, EAction, EDomain, EPermission, ERole, ECountry, ELanguage, ETag>,
     HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasELanguage, HasEAttributes {
 
   @Column(name = "created")
@@ -44,15 +45,6 @@ public class EUser<O extends EUuid> extends EPerson
 
   @Column(name = "deactivated")
   private ZonedDateTime deactivated;
-
-  @Column(name = "owner_uuid")
-  private UUID ownerUuid;
-
-  @Column(name = "owner_type")
-  private String ownerType;
-
-  @Transient
-  private O owner;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
   Set<EUserAccount> accounts = new LinkedHashSet<>();
