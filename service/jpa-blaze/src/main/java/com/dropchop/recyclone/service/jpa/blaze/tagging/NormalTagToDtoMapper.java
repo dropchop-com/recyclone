@@ -3,7 +3,7 @@ package com.dropchop.recyclone.service.jpa.blaze.tagging;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
-import com.dropchop.recyclone.service.api.mapping.FilterDtoMapping;
+import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import org.mapstruct.Builder;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -14,7 +14,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
  */
 @Mapper(
   componentModel = "jakarta-cdi",
-  uses = {DtoPolymorphicFactory.class, FilterDtoMapping.class},
+  uses = {DtoPolymorphicFactory.class, ToDtoManipulator.class},
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)

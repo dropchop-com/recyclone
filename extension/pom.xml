@@ -14,5 +14,6 @@
 
   <modules>
     <module>shiro</module>
+    <module>quarkus-recyclone</module>
   </modules>
 </project>

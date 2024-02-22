@@ -2,7 +2,7 @@ package com.dropchop.recyclone.service.jpa.blaze.security;
 
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.security.EAction;
-import com.dropchop.recyclone.service.api.mapping.FilterDtoMapping;
+import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
@@ -15,7 +15,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     componentModel = "jakarta-cdi",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true),
-    uses = FilterDtoMapping.class
+    uses = ToDtoManipulator.class
 )
 public interface ActionToDtoMapper extends ToDtoMapper<Action, EAction> {
 }

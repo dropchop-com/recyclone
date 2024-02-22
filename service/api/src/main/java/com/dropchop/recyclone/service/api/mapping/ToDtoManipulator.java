@@ -10,7 +10,7 @@ import org.mapstruct.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 02. 24.
  */
 @Mapper
-public interface FilterDtoMapping {
+public interface ToDtoManipulator {
 
   @BeforeMapping
   default void before(Object source, @MappingTarget Object target, @Context MappingContext context) {

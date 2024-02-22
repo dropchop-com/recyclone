@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -29,6 +28,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
+@SuppressWarnings("LombokGetterMayBeUsed")
 public class Tag
   extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<Tag, TitleDescriptionTranslation> {
 

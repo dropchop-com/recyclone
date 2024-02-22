@@ -12,11 +12,7 @@
   </parent>
 
   <properties>
-    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.7.3</quarkus.platform.version>
 
-    <testcontainers.version>1.16.2</testcontainers.version>
   </properties>
 
   <dependencyManagement>
@@ -77,6 +73,11 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>quarkus-recyclone</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-rest-jaxrs-server</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -101,6 +102,7 @@
       <artifactId>recyclone-extension-shiro</artifactId>
       <version>${project.version}</version>
     </dependency>
+
 
     <!-- testcontainers are currently not used -->
     <dependency>

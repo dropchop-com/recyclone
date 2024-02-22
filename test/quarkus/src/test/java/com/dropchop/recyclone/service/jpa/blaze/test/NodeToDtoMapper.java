@@ -2,7 +2,7 @@ package com.dropchop.recyclone.service.jpa.blaze.test;
 
 import com.dropchop.recyclone.model.dto.test.Node;
 import com.dropchop.recyclone.model.entity.jpa.test.ENode;
-import com.dropchop.recyclone.service.api.mapping.FilterDtoMapping;
+import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
@@ -15,6 +15,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     componentModel = "jakarta-cdi",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true),
-    uses = FilterDtoMapping.class
+    uses = ToDtoManipulator.class
 )
 public interface NodeToDtoMapper extends ToDtoMapper<Node, ENode> {}

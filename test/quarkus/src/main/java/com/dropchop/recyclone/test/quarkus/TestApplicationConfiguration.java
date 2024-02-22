@@ -8,6 +8,7 @@ import com.dropchop.recyclone.model.entity.jpa.security.ELoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.ETokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ECountryGroup;
+import com.dropchop.recyclone.quarkus.runtime.RecylconeRegistryService;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.dropchop.recyclone.service.api.mapping.DefaultPolymorphicRegistry;
 import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
@@ -17,9 +18,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
+import java.util.Map;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.
  */
+@SuppressWarnings("unused")
 @ApplicationScoped
 public class TestApplicationConfiguration {
 
@@ -31,8 +35,13 @@ public class TestApplicationConfiguration {
     return objectMapperFactory.createObjectMapper();
   }
 
+  @Inject
+  RecylconeRegistryService service;
+
   @Produces
   PolymorphicRegistry getPolymorphicRegistry() {
+
+    Map<String, String> data = service.getMappingClassNames();
     return new DefaultPolymorphicRegistry()
       .registerDtoEntityMapping(LanguageGroup.class, ELanguageGroup.class)
       .registerDtoEntityMapping(CountryGroup.class, ECountryGroup.class)

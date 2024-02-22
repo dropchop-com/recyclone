@@ -58,6 +58,4 @@ public interface ToDtoMapper<D extends Dto, X extends Model> {
   default Result<D> toDtosResult(Collection<X> models, MappingContext context) {
     return toDtosResult(models, context, null);
   }
-
-
 }

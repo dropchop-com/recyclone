@@ -1,0 +1,9 @@
+name: Quarkus Recyclonism
+#description: Scans and exposes classes nedded to enable Recyclone hooks in Quarkus.
+metadata:
+#  keywords:
+#    - quarkus-recyclone
+#  guide: ... # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
+#  categories:
+#    - "miscellaneous"
+#  status: "preview"
