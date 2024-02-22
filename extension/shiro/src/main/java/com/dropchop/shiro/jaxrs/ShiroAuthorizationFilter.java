@@ -89,7 +89,7 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       if (p instanceof Dto principal) {
         MDC.put(MDC_PERSON_ID, principal.identifier());
       }
-      if (p instanceof User<?> principal) {
+      if (p instanceof User principal) {
         MDC.put(MDC_PERSON_NAME, principal.getFirstName() + " " + principal.getLastName());
       }
     }

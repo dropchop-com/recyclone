@@ -19,6 +19,6 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface UserToEntityMapper extends ToEntityMapper<User<DtoId>, EUser<EUuid>> {
+public interface UserToEntityMapper extends ToEntityMapper<User, EUser> {
 
 }

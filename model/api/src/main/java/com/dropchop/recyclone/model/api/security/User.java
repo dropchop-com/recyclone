@@ -24,7 +24,6 @@ public interface User<
     D extends Domain<TDT, A>,
     P extends Permission<TDT, A, D>,
     R extends Role<TDT, A, D, P>,
-    O extends Model,
     C extends Country<TT>,
     L extends Language<TT>,
     T extends Tag<T, TDT>
@@ -42,11 +41,5 @@ public interface User<
   Set<UA> getAccounts();
 
   void setAccounts(Set<UA> accounts);
-
-  O getOwner();
-
-  void setOwner(O owner);
-
-
 
 }

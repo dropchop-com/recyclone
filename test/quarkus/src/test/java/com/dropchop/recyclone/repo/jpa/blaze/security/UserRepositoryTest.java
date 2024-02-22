@@ -65,7 +65,7 @@ public class UserRepositoryTest {
     countryUk.setModified(ZonedDateTime.now());
     countryRepository.save(countryUk);
 
-    EUser<EUuid> user = new EUser<>();
+    EUser user = new EUser();
     user.setUuid(USER_UUID);
     user.setCreated(ZonedDateTime.now());
     user.setModified(ZonedDateTime.now());
@@ -79,7 +79,7 @@ public class UserRepositoryTest {
   @AfterAll
   @Transactional
   public void tearDown() {
-    EUser<EUuid> user = this.userRespository.findById(USER_UUID);
+    EUser user = this.userRespository.findById(USER_UUID);
     userRespository.delete(user);
     ECountry countryUk = countryRepository.findById(coUkCode);
     countryRepository.delete(countryUk);
@@ -88,7 +88,7 @@ public class UserRepositoryTest {
   @Test
   @Order(1)
   public void testStoredUser() {
-    EUser<?> user = this.userRespository.findById(USER_UUID);
+    EUser user = this.userRespository.findById(USER_UUID);
     assertEquals("Testko", user.getFirstName());
     assertEquals("Testic", user.getLastName());
   }
@@ -97,7 +97,7 @@ public class UserRepositoryTest {
   @Order(2)
   public void testStoreUserAccounts() {
     th.transact(() -> {
-      EUser<EUuid> user = this.userRespository.findById(USER_UUID);
+      EUser user = this.userRespository.findById(USER_UUID);
 
       ELoginAccount loginAccount = new ELoginAccount();
       loginAccount.setUuid(UUID.randomUUID());
@@ -121,7 +121,7 @@ public class UserRepositoryTest {
     });
 
     th.transact(() -> {
-      EUser<?> tmpUser = this.userRespository.findById(USER_UUID);
+      EUser tmpUser = this.userRespository.findById(USER_UUID);
       assertEquals(2, tmpUser.getAccounts().size());
     });
   }
@@ -130,7 +130,7 @@ public class UserRepositoryTest {
   @Test
   @Order(3)
   public void testFindByLoginName() {
-    EUser<?> tmpUser = this.userRespository.findByLoginName(LOGIN_NAME);
+    EUser tmpUser = this.userRespository.findByLoginName(LOGIN_NAME);
     assertNotNull(tmpUser);
   }
 
@@ -138,7 +138,7 @@ public class UserRepositoryTest {
   @Test
   @Order(4)
   public void testFindByToken() {
-    EUser<?> tmpUser = this.userRespository.findByToken(TOKEN);
+    EUser tmpUser = this.userRespository.findByToken(TOKEN);
     assertNotNull(tmpUser);
   }
 }

@@ -29,7 +29,7 @@ public class UserResourceTest {
   @Test
   @Order(10)
   public void create() {
-    User<DtoId> user = new User<>();
+    User user = new User();
     user.setId(userId);
     user.setLanguage(new Language("en"));
     user.setFirstName("test");
@@ -64,7 +64,7 @@ public class UserResourceTest {
   @Test
   @Order(20)
   public void update() {
-    User<DtoId> user = new User<>();
+    User user = new User();
     user.setId(userId);
     user.setLanguage(new Language("en"));
     user.setFirstName("test update");

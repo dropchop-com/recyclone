@@ -18,35 +18,35 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 
 @ApplicationScoped
 @RepositoryType(RCYN_DEFAULT)
-public class UserRepository extends BlazeRepository<EUser<EUuid>, UUID> {
+public class UserRepository extends BlazeRepository<EUser, UUID> {
 
-  private static final EUser<?> E_UUID_E_USER = new EUser<>();
+  private static final EUser E_UUID_E_USER = new EUser();
 
   @Override
   @SuppressWarnings("unchecked")
-  public Class<EUser<EUuid>> getRootClass() {
-    return (Class<EUser<EUuid>>) E_UUID_E_USER.getClass();
+  public Class<EUser> getRootClass() {
+    return (Class<EUser>) E_UUID_E_USER.getClass();
   }
 
 
-  public EUser<EUuid> findByLoginName(String loginName) {
+  public EUser findByLoginName(String loginName) {
     UserParams parameters = new UserParams();
     parameters.setLoginName(loginName);
-    BlazeExecContext<EUser<EUuid>> blazeExecContext = new BlazeExecContext<>();
+    BlazeExecContext<EUser> blazeExecContext = new BlazeExecContext<>();
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByLoginNameDecorator());
-    List<EUser<EUuid>> userList = this.find(blazeExecContext);
+    List<EUser> userList = this.find(blazeExecContext);
     return userList.isEmpty() ? null : userList.get(0);
   }
 
 
-  public EUser<EUuid> findByToken(String token) {
+  public EUser findByToken(String token) {
     UserParams parameters = new UserParams();
     parameters.setToken(token);
-    BlazeExecContext<EUser<EUuid>> blazeExecContext = new BlazeExecContext<>();
+    BlazeExecContext<EUser> blazeExecContext = new BlazeExecContext<>();
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByTokenDecorator());
-    List<EUser<EUuid>> userList = this.find(blazeExecContext);
+    List<EUser> userList = this.find(blazeExecContext);
     return userList.isEmpty() ? null : userList.get(0);
   }
 }
