@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
+import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
@@ -8,7 +9,13 @@ import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
+import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
+import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
+import com.dropchop.recyclone.service.jpa.blaze.mapping.SetAccountUser;
+import com.dropchop.recyclone.service.jpa.blaze.mapping.SetAccountUuid;
+import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +40,11 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>  im
   @Inject
   UserToEntityMapper toEntityMapper;
 
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  PolymorphicRegistry polymorphicRegistry;
+
+
   @Override
   public ServiceConfiguration<User, EUser, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
@@ -42,5 +54,16 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>  im
     );
   }
 
+
+  protected MappingContext getMappingContextForModify() {
+    MappingContext context = super.getMappingContextForModify();
+    context
+      .createWith(
+        new EntityPolymorphicCreateFactory<>(this, polymorphicRegistry)
+      );
+    context.beforeMapping(new SetAccountUuid());
+    context.afterMapping(new SetAccountUser());
+    return context;
+  }
 
 }
