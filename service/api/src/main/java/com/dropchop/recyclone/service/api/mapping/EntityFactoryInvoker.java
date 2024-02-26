@@ -40,6 +40,7 @@ public class EntityFactoryInvoker {
       }
       return type.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
+      log.error("[{}] Unable to instantiate [{}]", ErrorCode.internal_error, type, e);
       throw new ServiceException(ErrorCode.internal_error,
         String.format("Unable to instantiate [%s]!", type),
           Set.of(new AttributeString("class", type.getName())), e);
