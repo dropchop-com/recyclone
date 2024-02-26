@@ -12,6 +12,7 @@ import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -102,8 +103,8 @@ public class UserResourceTest {
     User user = new User();
     user.setId(userId2);
     user.setLanguage(new Language("en"));
-    user.setFirstName("test update");
-    user.setLastName("test update");
+    user.setFirstName("test with accounts");
+    user.setLastName("test with accounts");
     user.setModified(ZonedDateTime.now());
 
     String loginAccountId = UUID.randomUUID().toString();
@@ -122,8 +123,8 @@ public class UserResourceTest {
     tokenAccount.setModified(ZonedDateTime.now());
     tokenAccount.setCreated(ZonedDateTime.now());
     tokenAccount.setToken(token);
-    user.getAccounts().add(loginAccount);
-    user.getAccounts().add(tokenAccount);
+
+    user.setAccounts(Set.of(loginAccount, tokenAccount));
 
     List<User> result = given()
       .log().all()
@@ -133,7 +134,7 @@ public class UserResourceTest {
       .and()
       .body(List.of(user))
       .when()
-      .put("/api/internal/security/user")
+      .post("/api/internal/security/user")
       .then()
       .statusCode(200)
       .extract()
