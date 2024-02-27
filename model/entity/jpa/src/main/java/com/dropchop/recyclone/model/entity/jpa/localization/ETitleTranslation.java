@@ -31,7 +31,7 @@ public class ETitleTranslation
   private ELanguage language;
 
   @NonNull
-  @Column(name = "title")
+  @Column(name = "title", length = 1024)
   @EqualsAndHashCode.Exclude
   private String title;
 

@@ -22,7 +22,7 @@ public class ETitleDescriptionTranslation extends ETitleTranslation
     super(lang, title);
   }
 
-  @Column(name = "description")
+  @Column(name = "description", length = 8096)
   @EqualsAndHashCode.Exclude
   private String description;
 }
