@@ -1,9 +1,0 @@
-name: Quarkus Recyclone
-#description: Scans and exposes classes needed to enable Recyclone hooks in Quarkus.
-metadata:
-#  keywords:
-#    - quarkus-recyclone
-#  guide: ... # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
-#  categories:
-#    - "miscellaneous"
-#  status: "preview"

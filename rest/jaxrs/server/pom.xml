@@ -68,10 +68,6 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>quarkus-recyclone</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>

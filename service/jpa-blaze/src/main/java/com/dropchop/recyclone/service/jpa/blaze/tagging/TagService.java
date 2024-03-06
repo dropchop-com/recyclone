@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
+import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
@@ -45,8 +46,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
   TagToEntityMapper toEntityMapper;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  PolymorphicRegistry polymorphicRegistry;
+  MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override
   public ServiceConfiguration<Tag, ETag, UUID> getConfiguration() {
@@ -70,7 +70,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
     MappingContext context = super.getMappingContextForModify();
     context
       .createWith(
-        new EntityPolymorphicCreateFactory<>(this, polymorphicRegistry)
+        new EntityPolymorphicCreateFactory<>(this, mapperSubTypeConfig)
       );
     return context;
   }

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.server;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
+import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.rest.jackson.client.AttributeCompactSerializer;
 import com.dropchop.recyclone.rest.jackson.client.AttributeDeserializer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -21,15 +21,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ObjectMapperFactory {
 
-  private PolymorphicRegistry polymorphicRegistry;
-  private BeanSerializerModifier serializerModifier;
+  private final JsonSerializationTypeConfig serializationTypeConfig;
+  private final BeanSerializerModifier serializerModifier;
 
-  public void setPolymorphicRegistry(PolymorphicRegistry polymorphicRegistry) {
-    this.polymorphicRegistry = polymorphicRegistry;
+  public ObjectMapperFactory(JsonSerializationTypeConfig polymorphicRegistry,
+                             BeanSerializerModifier serializerModifier) {
+    this.serializationTypeConfig = polymorphicRegistry;
+    this.serializerModifier = serializerModifier;
   }
 
-  public void setSerializerModifier(BeanSerializerModifier serializerModifier) {
-    this.serializerModifier = serializerModifier;
+  public ObjectMapperFactory(BeanSerializerModifier serializerModifier) {
+    this(null, serializerModifier);
+  }
+
+  public ObjectMapperFactory() {
+    this(null, null);
   }
 
   public ObjectMapper createObjectMapper() {
@@ -53,16 +59,14 @@ public class ObjectMapperFactory {
     mapper.registerModule(new Jdk8Module());
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new ParameterNamesModule());
-    if (polymorphicRegistry != null) {
-      for (PolymorphicRegistry.SerializationConfig serializationConfig : polymorphicRegistry.getSerializationConfigs()) {
-        serializationConfig.getSubTypeMap().forEach(
-          (key, value) -> {
-            log.info("Registering named type value [{}] for key [{}].", value, key);
-            mapper.registerSubtypes(new NamedType(value, key));
-          }
-        );
-        serializationConfig.getMixIns().forEach(mapper::addMixIn);
-      }
+    if (serializationTypeConfig != null) {
+      serializationTypeConfig.getSubTypeMap().forEach(
+        (key, value) -> {
+          log.info("Registering named type value [{}] for key [{}].", value, key);
+          mapper.registerSubtypes(new NamedType(value, key));
+        }
+      );
+      serializationTypeConfig.getMixIns().forEach(mapper::addMixIn);
     } else {
       log.debug("Missing polymorphic registry while creating JSON mapper!");
     }

@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.rest.jaxrs.serialization;
 
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
-import com.dropchop.recyclone.rest.jaxrs.filtering.ExecContextPropertyFilterSerializerModifier;
+import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -14,16 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class ObjectMapperFactory extends com.dropchop.recyclone.rest.jackson.server.ObjectMapperFactory {
 
-  @Inject
-  PolymorphicRegistry polymorphicRegistry;
-
-  @Inject
-  ExecContextPropertyFilterSerializerModifier serializerModifier;
-
   @Override
   public ObjectMapper createObjectMapper() {
-    this.setPolymorphicRegistry(polymorphicRegistry);
-    this.setSerializerModifier(serializerModifier);
     return super.createObjectMapper();
+  }
+
+  @Inject
+  public ObjectMapperFactory(JsonSerializationTypeConfig serializationTypeConfig,
+                             BeanSerializerModifier serializerModifier) {
+    super(serializationTypeConfig, serializerModifier);
   }
 }

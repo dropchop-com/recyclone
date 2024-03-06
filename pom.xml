@@ -291,7 +291,7 @@
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>quarkus-recyclone</artifactId>
+        <artifactId>recyclone-extension-quarkus</artifactId>
         <version>${project.version}</version>
       </dependency>
 

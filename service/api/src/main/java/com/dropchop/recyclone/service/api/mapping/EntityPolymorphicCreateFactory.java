@@ -3,7 +3,7 @@ package com.dropchop.recyclone.service.api.mapping;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
+import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
@@ -17,20 +17,23 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 06. 22.
  */
 @Slf4j
-public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID> extends EntityDelegateFactory<D, E, ID> {
+public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>
+    extends EntityDelegateFactory<D, E, ID> {
 
-  private final PolymorphicRegistry polymorphicRegistry;
 
-  public EntityPolymorphicCreateFactory(EntityByIdService<D, E, ID> service, PolymorphicRegistry polymorphicRegistry) {
+  private final MapperSubTypeConfig mapperSubTypeConfig;
+
+  public EntityPolymorphicCreateFactory(EntityByIdService<D, E, ID> service,
+                                        MapperSubTypeConfig mapperSubTypeConfig) {
     super(service);
-    this.polymorphicRegistry = polymorphicRegistry;
+    this.mapperSubTypeConfig = mapperSubTypeConfig;
     super.forActionOnly(Constants.Actions.CREATE);
   }
 
   @Override
   public E create(D dto, MappingContext context) {
-    if (polymorphicRegistry != null) {
-      Class<?> type = polymorphicRegistry.mapsTo(dto.getClass());
+    if (mapperSubTypeConfig != null) {
+      Class<?> type = mapperSubTypeConfig.mapsTo(dto.getClass());
       if (type != null) {
         log.debug("Will instantiate entity [{}] for dto class [{}] from polymorphic registry.",
           type, dto.getClass());

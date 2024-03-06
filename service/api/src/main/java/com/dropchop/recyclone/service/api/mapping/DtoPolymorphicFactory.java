@@ -3,17 +3,17 @@ package com.dropchop.recyclone.service.api.mapping;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
+import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Context;
 import org.mapstruct.ObjectFactory;
 import org.mapstruct.TargetType;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.util.Set;
 
 /**
@@ -24,16 +24,15 @@ import java.util.Set;
 public class DtoPolymorphicFactory {
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  PolymorphicRegistry polymorphicRegistry;
+  MapperSubTypeConfig mapperSubTypeConfig;
 
   @ObjectFactory
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public <M extends Model, D extends Dto> D create(M model,
                                                    @Context MappingContext context,
                                                    @TargetType Class<D> type) {
-    if (polymorphicRegistry != null) {
-      Class<?> tmp = polymorphicRegistry.mapsTo(model.getClass());
+    if (mapperSubTypeConfig != null) {
+      Class<?> tmp = mapperSubTypeConfig.mapsTo(model.getClass());
       if (tmp != null) {
         log.debug("Will instantiate dto [{}] instead of [{}] for model class [{}] from polymorphic registry.",
           tmp, type, model.getClass());

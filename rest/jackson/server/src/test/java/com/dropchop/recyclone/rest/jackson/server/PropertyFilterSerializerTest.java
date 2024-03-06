@@ -137,8 +137,7 @@ class PropertyFilterSerializerTest {
     CodeParams params = new CodeParams();
     params.filter().content().treeLevel(1);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -161,8 +160,7 @@ class PropertyFilterSerializerTest {
     CodeParams params = new CodeParams();
     params.filter().content().treeLevel(2);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -206,8 +204,7 @@ class PropertyFilterSerializerTest {
     CodeParams params = new CodeParams();
     params.filter().content().treeLevel(3);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -257,8 +254,7 @@ class PropertyFilterSerializerTest {
     CodeParams params = new CodeParams();
     params.filter().content().treeLevel(3);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     Domain domain = new Domain();
@@ -306,8 +302,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(2)
       .detailLevel(ContentDetail.ALL_OBJS_IDCODE);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -335,8 +330,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(2)
       .detailLevel(ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -369,8 +363,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(2)
       .detailLevel(ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -419,8 +412,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(1)
       .detailLevel(ContentDetail.NESTED_OBJS_IDCODE);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -462,8 +454,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(1)
       .detailLevel(ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -508,8 +499,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(1)
       .detailLevel(ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -560,8 +550,7 @@ class PropertyFilterSerializerTest {
       .treeLevel(1)
       .detailLevel(ContentDetail.NESTED_OBJS_IDCODE);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory();
-    producer.setSerializerModifier(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     ResultStatus status = new ResultStatus();

@@ -1,9 +1,8 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
-import com.dropchop.recyclone.model.dto.base.DtoId;
+import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.model.api.filtering.RecycloneClassRegistryService;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.security.EUser;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;
@@ -12,10 +11,8 @@ import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
-import com.dropchop.recyclone.service.jpa.blaze.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.blaze.mapping.SetAccountUser;
 import com.dropchop.recyclone.service.jpa.blaze.mapping.SetAccountUuid;
-import com.dropchop.recyclone.service.jpa.blaze.mapping.SetLanguage;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +24,8 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RCYN_DEFAULT)
-public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>  implements com.dropchop.recyclone.service.api.security.UserService {
-
+public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
+    implements com.dropchop.recyclone.service.api.security.UserService {
 
   @Inject
   @RepositoryType(RCYN_DEFAULT)
@@ -41,9 +38,7 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>  im
   UserToEntityMapper toEntityMapper;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  PolymorphicRegistry polymorphicRegistry;
-
+  RecycloneClassRegistryService registryService;
 
   @Override
   public ServiceConfiguration<User, EUser, UUID> getConfiguration() {
@@ -59,11 +54,10 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>  im
     MappingContext context = super.getMappingContextForModify();
     context
       .createWith(
-        new EntityPolymorphicCreateFactory<>(this, polymorphicRegistry)
+        new EntityPolymorphicCreateFactory<>(this, registryService.getMapperTypeConfig())
       );
     context.beforeMapping(new SetAccountUuid());
     context.afterMapping(new SetAccountUser());
     return context;
   }
-
 }

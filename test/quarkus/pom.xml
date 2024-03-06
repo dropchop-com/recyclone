@@ -48,11 +48,15 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
     </dependency>
+    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-extension-quarkus</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.blazebit</groupId>
@@ -73,37 +77,29 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>quarkus-recyclone</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-rest-jaxrs-server</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-repo-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-repo-jpa-blaze</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-jpa-blaze</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-extension-shiro</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
 
     <!-- testcontainers are currently not used -->
+    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
