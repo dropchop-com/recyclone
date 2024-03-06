@@ -1,21 +1,26 @@
-package com.dropchop.recyclone.quarkus;
+package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.quarkus.RecycloneClassRegistryRecorder;
+import com.dropchop.recyclone.quarkus.RecycloneClassRegistryService;
+import com.dropchop.recyclone.quarkus.deployment.JsonSerializationTypeItem;
+import com.dropchop.recyclone.quarkus.deployment.MapperSubTypeItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Singleton;
 import org.jboss.jandex.*;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
-class RecycloneRegistryProcessor {
+class RecycloneClassRegistryProcessor {
 
   private static final String FEATURE = "quarkus-recyclone";
 
@@ -48,7 +53,7 @@ class RecycloneRegistryProcessor {
 
   @BuildStep
   void collectSubclassMappingAnnotatedClasses(CombinedIndexBuildItem combinedIndexBuildItem,
-                                              BuildProducer<PolymorphicMappingBuildItem> classProducer) {
+                                              BuildProducer<MapperSubTypeItem> classProducer) {
     IndexView index = combinedIndexBuildItem.getIndex();
     Map<String, String> mappingClasses = new LinkedHashMap<>();
     for (AnnotationInstance annotation : index.getAnnotations("org.mapstruct.SubclassMapping")) {
@@ -63,19 +68,14 @@ class RecycloneRegistryProcessor {
       }
     }
 
-    classProducer.produce(
-        new PolymorphicMappingBuildItem(
-            mappingClasses
-        )
-    );
+    classProducer.produce(new MapperSubTypeItem(mappingClasses));
   }
-
 
   @BuildStep
   void collectSerializationAnnotatedClasses(CombinedIndexBuildItem combinedIndexBuildItem,
-                                            BuildProducer<PolymorphicSerializationBuildItem> classProducer) {
+                                            BuildProducer<JsonSerializationTypeItem> classProducer) {
     IndexView index = combinedIndexBuildItem.getIndex();
-    Map<String, String> propertyMappedClasses = new LinkedHashMap<>();
+    Collection<String> propertyMappedClasses = new LinkedHashSet<>();
     for (AnnotationInstance annotation : index.getAnnotations("com.fasterxml.jackson.annotation.JsonTypeInfo")) {
       if (annotation.target().kind() == AnnotationTarget.Kind.CLASS
           && annotation.value("property") != null
@@ -89,33 +89,27 @@ class RecycloneRegistryProcessor {
         }
         if (propertyValue != null && propertyValue.equals("type") && classInfo != null) {
           for (ClassInfo subClassInfo : index.getAllKnownSubclasses(classInfo.name())) {
-              propertyMappedClasses.put(subClassInfo.simpleName(), subClassInfo.name().toString());
+            propertyMappedClasses.add(subClassInfo.name().toString());
           }
         }
       }
     }
     classProducer.produce(
-        new PolymorphicSerializationBuildItem(
-            propertyMappedClasses
-        )
+        new JsonSerializationTypeItem(propertyMappedClasses)
     );
   }
 
-  @Record(STATIC_INIT)
   @BuildStep
-  SyntheticBeanBuildItem setupRuntimeBeans(RecylconeRegistryRecorder recorder,
-                                           PolymorphicSerializationBuildItem serializationBuildItem,
-                                           PolymorphicMappingBuildItem mappingBuildItems) {
-    RecylconeRegistryService registryService = new RecylconeRegistryService();
-    for (Map.Entry<String, String> item : mappingBuildItems.getClassNames().entrySet()) {
-      registryService.addMappingClassMap(item.getKey(), item.getValue());
-    }
-    for (Map.Entry<String, String> item : serializationBuildItem.getClassNames().entrySet()) {
-      registryService.addSerializationTypeMap(item.getKey(), item.getValue());
-    }
-    return SyntheticBeanBuildItem.configure(RecylconeRegistryService.class)
+  @Record(STATIC_INIT)
+  SyntheticBeanBuildItem setupRuntimeBeans(RecycloneClassRegistryRecorder recorder,
+                                           JsonSerializationTypeItem serializationBuildItem,
+                                           MapperSubTypeItem mappingBuildItems) {
+
+    return SyntheticBeanBuildItem.configure(RecycloneClassRegistryService.class)
         .scope(Singleton.class)
-        .runtimeValue(recorder.createRegistry(registryService))
+        .runtimeValue(recorder.createClassRegistry(
+            serializationBuildItem.getClassNames(), mappingBuildItems.getClassNames())
+        )
         .done();
   }
 

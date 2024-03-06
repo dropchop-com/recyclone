@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus;
+package com.dropchop.recyclone.quarkus.deployment;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
