@@ -39,7 +39,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
   TagRepository repository;
 
   @Inject
-  TagToDtoMapperSelector toDtoMapper;
+  TagToDtoMapper toDtoMapper;
 
   @Inject
   TagToEntityMapper toEntityMapper;

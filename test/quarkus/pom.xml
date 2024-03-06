@@ -74,7 +74,6 @@
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>quarkus-recyclone</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>

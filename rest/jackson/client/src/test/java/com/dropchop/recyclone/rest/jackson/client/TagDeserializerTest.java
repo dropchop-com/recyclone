@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,7 +53,7 @@ class TagDeserializerTest {
       }
 
       @Override
-      public Iterable<SerializationConfig> getSerializationConfigs() {
+      public Collection<SerializationConfig> getSerializationConfigs() {
         return List.of(new SerializationConfig()
           .addSubType("LanguageGroup", LanguageGroup.class));
       }

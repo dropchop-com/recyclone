@@ -289,6 +289,11 @@
         <artifactId>recyclone-extension-shiro</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>quarkus-recyclone</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- test dependencies -->
       <dependency>

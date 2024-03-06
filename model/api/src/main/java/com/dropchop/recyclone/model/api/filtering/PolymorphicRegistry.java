@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api.filtering;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public interface PolymorphicRegistry {
 
+  @SuppressWarnings("LombokGetterMayBeUsed")
   class SerializationConfig {
 
     final Map<Class<?>, Class<?>> mixIns = new LinkedHashMap<>();
@@ -35,5 +37,5 @@ public interface PolymorphicRegistry {
 
   Class<?> mapsTo(Class<?> source);
 
-  Iterable<SerializationConfig> getSerializationConfigs();
+  Collection<SerializationConfig> getSerializationConfigs();
 }

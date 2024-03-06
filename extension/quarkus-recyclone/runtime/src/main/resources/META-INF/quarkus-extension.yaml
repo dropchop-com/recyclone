@@ -1,5 +1,5 @@
-name: Quarkus Recyclonism
-#description: Scans and exposes classes nedded to enable Recyclone hooks in Quarkus.
+name: Quarkus Recyclone
+#description: Scans and exposes classes needed to enable Recyclone hooks in Quarkus.
 metadata:
 #  keywords:
 #    - quarkus-recyclone

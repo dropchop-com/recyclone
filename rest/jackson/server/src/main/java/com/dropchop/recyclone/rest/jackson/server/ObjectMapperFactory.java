@@ -21,25 +21,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ObjectMapperFactory {
 
-  private final PolymorphicRegistry polymorphicRegistry;
-  private final BeanSerializerModifier serializerModifier;
+  private PolymorphicRegistry polymorphicRegistry;
+  private BeanSerializerModifier serializerModifier;
 
-  public ObjectMapperFactory(PolymorphicRegistry polymorphicRegistry,
-                             BeanSerializerModifier serializerModifier) {
+  public void setPolymorphicRegistry(PolymorphicRegistry polymorphicRegistry) {
     this.polymorphicRegistry = polymorphicRegistry;
+  }
+
+  public void setSerializerModifier(BeanSerializerModifier serializerModifier) {
     this.serializerModifier = serializerModifier;
-  }
-
-  public ObjectMapperFactory(PolymorphicRegistry polymorphicRegistry) {
-    this(polymorphicRegistry, null);
-  }
-
-  public ObjectMapperFactory(BeanSerializerModifier serializerModifier) {
-    this(null, serializerModifier);
-  }
-
-  public ObjectMapperFactory() {
-    this(null, null);
   }
 
   public ObjectMapper createObjectMapper() {

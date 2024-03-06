@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.deployment;
+package com.dropchop.recyclone.quarkus;
 
 import io.quarkus.builder.item.SimpleBuildItem;
 

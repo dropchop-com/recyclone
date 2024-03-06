@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime;
+package com.dropchop.recyclone.quarkus;
 
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;

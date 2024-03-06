@@ -1,20 +1,17 @@
-package com.dropchop.recyclone.quarkus.deployment;
+package com.dropchop.recyclone.quarkus;
 
-import com.dropchop.recyclone.quarkus.runtime.RecylconeRegistryRecorder;
-import com.dropchop.recyclone.quarkus.runtime.RecylconeRegistryService;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Singleton;
 import org.jboss.jandex.*;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
@@ -78,18 +75,28 @@ class RecycloneRegistryProcessor {
   void collectSerializationAnnotatedClasses(CombinedIndexBuildItem combinedIndexBuildItem,
                                             BuildProducer<PolymorphicSerializationBuildItem> classProducer) {
     IndexView index = combinedIndexBuildItem.getIndex();
-    Set<String> polymorphicClasses = new LinkedHashSet<>();
+    Map<String, String> propertyMappedClasses = new LinkedHashMap<>();
     for (AnnotationInstance annotation : index.getAnnotations("com.fasterxml.jackson.annotation.JsonTypeInfo")) {
       if (annotation.target().kind() == AnnotationTarget.Kind.CLASS
           && annotation.value("property") != null
           && "type".equals(annotation.value("property").asString())) {
         ClassInfo classInfo = annotation.target().asClass();
-        polymorphicClasses.add(classInfo.name().toString());
+
+        AnnotationValue property = annotation.value("property");
+        String propertyValue = null;
+        if (property != null && property.kind() == AnnotationValue.Kind.STRING) {
+          propertyValue = property.asString();
+        }
+        if (propertyValue != null && propertyValue.equals("type") && classInfo != null) {
+          for (ClassInfo subClassInfo : index.getAllKnownSubclasses(classInfo.name())) {
+              propertyMappedClasses.put(subClassInfo.simpleName(), subClassInfo.name().toString());
+          }
+        }
       }
     }
     classProducer.produce(
         new PolymorphicSerializationBuildItem(
-            polymorphicClasses
+            propertyMappedClasses
         )
     );
   }
@@ -101,10 +108,10 @@ class RecycloneRegistryProcessor {
                                            PolymorphicMappingBuildItem mappingBuildItems) {
     RecylconeRegistryService registryService = new RecylconeRegistryService();
     for (Map.Entry<String, String> item : mappingBuildItems.getClassNames().entrySet()) {
-      registryService.addMappingClassNames(item.getKey(), item.getValue());
+      registryService.addMappingClassMap(item.getKey(), item.getValue());
     }
-    for (String item : serializationBuildItem.getClassNames()) {
-      registryService.addSerializationClassName(item);
+    for (Map.Entry<String, String> item : serializationBuildItem.getClassNames().entrySet()) {
+      registryService.addSerializationTypeMap(item.getKey(), item.getValue());
     }
     return SyntheticBeanBuildItem.configure(RecylconeRegistryService.class)
         .scope(Singleton.class)

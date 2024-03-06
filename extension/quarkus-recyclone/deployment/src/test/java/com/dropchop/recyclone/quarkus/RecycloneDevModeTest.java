@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.test;
+package com.dropchop.recyclone.quarkus;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -13,7 +13,9 @@ public class RecycloneDevModeTest {
     // Start hot reload (DevMode) test with your extension loaded
     @RegisterExtension
     static final QuarkusDevModeTest devModeTest = new QuarkusDevModeTest()
-        .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class));
+        .setArchiveProducer(
+            () -> ShrinkWrap.create(JavaArchive.class)
+        );
 
     @Test
     public void writeYourOwnDevModeTest() {
