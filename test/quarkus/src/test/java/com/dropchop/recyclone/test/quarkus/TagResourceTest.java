@@ -32,8 +32,8 @@ public class TagResourceTest {
 
   @BeforeEach
   public void setUp() {
-    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(objectMapperConfig().jackson2ObjectMapperFactory(
-      (type, s) -> mapper
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper
     ));
   }
 

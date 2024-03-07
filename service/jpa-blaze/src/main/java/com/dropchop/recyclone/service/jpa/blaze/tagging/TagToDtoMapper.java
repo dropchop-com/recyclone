@@ -1,29 +1,31 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
-import com.dropchop.recyclone.model.dto.tagging.NamedTag;
+import com.dropchop.recyclone.model.dto.tagging.CountryGroup;
+import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import com.dropchop.recyclone.model.dto.tagging.Owner;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ENamedTag;
+import com.dropchop.recyclone.model.entity.jpa.tagging.ECountryGroup;
+import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
+import com.dropchop.recyclone.model.entity.jpa.tagging.EOwner;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
 import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
-import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapper;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.SubclassMapping;
+import org.mapstruct.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
  */
 @Mapper(
     componentModel = "jakarta-cdi",
+    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true)
-    , uses = {ToDtoManipulator.class, UserAccountToDtoMapper.class}
 )
 public interface TagToDtoMapper extends ToDtoMapper<Tag, ETag> {
-  @Override
-  @SubclassMapping( source = ENamedTag.class, target = NamedTag.class)
-  Tag toDto(ETag model, MappingContext context);
+  @SubclassMapping( source = EOwner.class, target = Owner.class)
+  @SubclassMapping( source = ECountryGroup.class, target = CountryGroup.class)
+  @SubclassMapping( source = ELanguageGroup.class, target = LanguageGroup.class)
+  Tag toDto(ETag tags, @Context MappingContext context);
 }

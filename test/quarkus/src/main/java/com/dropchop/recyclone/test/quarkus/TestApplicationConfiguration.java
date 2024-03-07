@@ -1,13 +1,8 @@
 package com.dropchop.recyclone.test.quarkus;
 
-import com.dropchop.recyclone.model.api.filtering.RecycloneClassRegistryService;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.dto.tagging.CountryGroup;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.model.dto.tagging.Owner;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ECountryGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
-import com.dropchop.recyclone.model.entity.jpa.tagging.EOwner;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,13 +22,17 @@ public class TestApplicationConfiguration {
   @Inject
   MapperSubTypeConfig mapperConfig;
 
+  /**
+   * ObjectMapper customization/extension point. Add own polymorphic mappings here.
+   * This is needed because of polymorphism if you want to use existing To[XY]TagMapper.
+   * If provide your own To[XY]MyCustomTagMapper then you (probably) don't need this.
+   */
   @Produces
   @ApplicationScoped
   ObjectMapper getObjectMapper() {
-    mapperConfig
-        .addBidiMapping(Owner.class, EOwner.class)
-        .addBidiMapping(LanguageGroup.class, ELanguageGroup.class)
-        .addBidiMapping(CountryGroup.class, ECountryGroup.class);
+    //mapping is already there collected from the @SubclassMapping annotation of the TagToDtoMapper,
+    //but we add it again here just for demonstration
+    mapperConfig.addBidiMapping(LanguageGroup.class, ELanguageGroup.class);
     return objectMapperFactory.createObjectMapper();
   }
 }

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @DefaultBean
 @ApplicationScoped
-@SuppressWarnings({"unused", "LombokGetterMayBeUsed"})
+@SuppressWarnings({"unused"})
 public class JsonSerializationTypeConfigImpl implements JsonSerializationTypeConfig {
   final Map<Class<?>, Class<?>> mixIns = new ConcurrentHashMap<>();
   final Map<String, Class<?>> subTypeMap = new ConcurrentHashMap<>();

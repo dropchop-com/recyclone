@@ -12,11 +12,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 2. 02. 22.
  */
 @Mapper(
-  componentModel = "jakarta-cdi",
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  builder = @Builder(disableBuilder = true)
-    , uses = {ToDtoManipulator.class, UserAccountToDtoMapper.class}
+    componentModel = "jakarta-cdi",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    builder = @Builder(disableBuilder = true),
+    uses = {ToDtoManipulator.class, UserAccountToDtoMapper.class}
 )
 public interface UserToDtoMapper extends ToDtoMapper<User, EUser> {
-
 }

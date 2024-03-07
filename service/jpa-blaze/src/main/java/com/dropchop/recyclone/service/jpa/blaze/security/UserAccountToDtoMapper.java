@@ -18,7 +18,7 @@ import org.mapstruct.*;
     builder = @Builder(disableBuilder = true)
 )
 public interface UserAccountToDtoMapper extends ToDtoMapper<UserAccount, EUserAccount> {
-  //TODO: try to generalize this
+
   @SubclassMapping( source = ELoginAccount.class, target = LoginAccount.class)
   @SubclassMapping( source = ETokenAccount.class, target = TokenAccount.class)
   UserAccount toDto(EUserAccount tags, @Context MappingContext context);

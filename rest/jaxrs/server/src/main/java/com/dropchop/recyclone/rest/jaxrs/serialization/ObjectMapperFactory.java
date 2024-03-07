@@ -8,6 +8,9 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * CDI Capable ObjectMapperFactory extension.
+ * Usage: Inject it and wrap createObjectMapper() in Producer method to customize ObjectMapper.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
  */
 @Slf4j
@@ -20,6 +23,7 @@ public class ObjectMapperFactory extends com.dropchop.recyclone.rest.jackson.ser
   }
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
   public ObjectMapperFactory(JsonSerializationTypeConfig serializationTypeConfig,
                              BeanSerializerModifier serializerModifier) {
     super(serializationTypeConfig, serializerModifier);
