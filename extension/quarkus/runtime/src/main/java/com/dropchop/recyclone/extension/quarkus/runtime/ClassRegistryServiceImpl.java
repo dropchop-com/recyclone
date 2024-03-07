@@ -2,10 +2,9 @@ package com.dropchop.recyclone.extension.quarkus.runtime;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.RecycloneClassRegistryService;
+import com.dropchop.recyclone.service.api.ClassRegistryService;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
 /**
@@ -13,7 +12,7 @@ import jakarta.inject.Inject;
  */
 @DefaultBean
 @ApplicationScoped
-public class RecycloneClassRegistryServiceImpl implements RecycloneClassRegistryService {
+public class ClassRegistryServiceImpl implements ClassRegistryService {
 
   @Inject
   JsonSerializationTypeConfig jsonSerializationTypeConfig;

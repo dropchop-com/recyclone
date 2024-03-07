@@ -27,6 +27,10 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-service-api</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

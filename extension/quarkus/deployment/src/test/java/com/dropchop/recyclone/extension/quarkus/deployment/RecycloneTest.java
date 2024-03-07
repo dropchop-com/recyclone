@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.extension.quarkus.deployment;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.RecycloneClassRegistryService;
+import com.dropchop.recyclone.service.api.ClassRegistryService;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
@@ -40,7 +40,7 @@ public class RecycloneTest {
         );
 
     @Inject
-    RecycloneClassRegistryService service;
+    ClassRegistryService service;
 
     @Inject
     MapperSubTypeConfig mapperSubTypeConfig;

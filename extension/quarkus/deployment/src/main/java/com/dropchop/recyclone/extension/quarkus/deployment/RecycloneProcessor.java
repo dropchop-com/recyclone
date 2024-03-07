@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
-class RecycloneClassRegistryProcessor {
+class RecycloneProcessor {
 
   private static final String FEATURE = "quarkus-recyclone";
 
@@ -101,7 +101,7 @@ class RecycloneClassRegistryProcessor {
 
   @BuildStep
   void registerRecycloneClassRegistryService(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(RecycloneClassRegistryServiceImpl.class));
+    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(ClassRegistryServiceImpl.class));
   }
 
 
@@ -127,67 +127,67 @@ class RecycloneClassRegistryProcessor {
         .done();
   }
 
-    /*@BuildStep
-    void configureRuntimeBean(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInit,
-                              BuildProducer<SyntheticBeanBuildItem> syntheticBean,
-                              PolymorphicSerializationBuildItem serializationBuildItem,
-                              PolymorphicMappingBuildItem mappingBuildItems) {
+  /*@BuildStep
+  void configureRuntimeBean(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInit,
+                            BuildProducer<SyntheticBeanBuildItem> syntheticBean,
+                            PolymorphicSerializationBuildItem serializationBuildItem,
+                            PolymorphicMappingBuildItem mappingBuildItems) {
 
-        syntheticBean.produce(
-            SyntheticBeanBuildItem.configure(RecylconeRegistryService.class)
-            .scope(ApplicationScoped.class)
-            .setRuntimeInit()
-            .supplier(() -> {
-                RecylconeRegistryService service = new RecylconeRegistryService();
-                for (Map.Entry<String, String> item : mappingBuildItems.getClassNames().entrySet()) {
-                    service.addMappingClassNames(item.getKey(), item.getValue());
-                }
-                for (String item : serializationBuildItem.getClassNames()) {
-                    service.addSerializationClassName(item);
-                }
-                return service;
-            }).done());
-    }*/
+      syntheticBean.produce(
+          SyntheticBeanBuildItem.configure(RecylconeRegistryService.class)
+          .scope(ApplicationScoped.class)
+          .setRuntimeInit()
+          .supplier(() -> {
+              RecylconeRegistryService service = new RecylconeRegistryService();
+              for (Map.Entry<String, String> item : mappingBuildItems.getClassNames().entrySet()) {
+                  service.addMappingClassNames(item.getKey(), item.getValue());
+              }
+              for (String item : serializationBuildItem.getClassNames()) {
+                  service.addSerializationClassName(item);
+              }
+              return service;
+          }).done());
+  }*/
 
 
-    /*@BuildStep
-    GeneratedBeanBuildItem createCollectableClassService(IndexView index,
-                                                         BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
-        Set<String> classnames = new HashSet<>();
-        index.getAnnotations(COLLECTABLE).forEach(annotationInstance -> {
-            classnames.add(annotationInstance.target().asClass().name().toString());
-            reflectiveClasses.produce(new ReflectiveClassBuildItem(true, true, annotationInstance.target().asClass().name().toString()));
-        });
+  /*@BuildStep
+  GeneratedBeanBuildItem createCollectableClassService(IndexView index,
+                                                       BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
+      Set<String> classnames = new HashSet<>();
+      index.getAnnotations(COLLECTABLE).forEach(annotationInstance -> {
+          classnames.add(annotationInstance.target().asClass().name().toString());
+          reflectiveClasses.produce(new ReflectiveClassBuildItem(true, true, annotationInstance.target().asClass().name().toString()));
+      });
 
-        ClassOutput classOutput = new GeneratedBeanGizmoAdaptor();
-        try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
-            .className("com.example.runtime.CollectableClassService")
-            .superClass(Object.class)
-            .interfaces(java.io.Serializable.class)
-            .build()) {
+      ClassOutput classOutput = new GeneratedBeanGizmoAdaptor();
+      try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
+          .className("com.example.runtime.CollectableClassService")
+          .superClass(Object.class)
+          .interfaces(java.io.Serializable.class)
+          .build()) {
 
-            classCreator.addAnnotation(ApplicationScoped.class.getName());
+          classCreator.addAnnotation(ApplicationScoped.class.getName());
 
-            // Field holding class names
-            FieldCreator fieldCreator = classCreator.getFieldCreator("classnames", Set.class.getName())
-                .setModifiers(Modifier.PRIVATE);
+          // Field holding class names
+          FieldCreator fieldCreator = classCreator.getFieldCreator("classnames", Set.class.getName())
+              .setModifiers(Modifier.PRIVATE);
 
-            // Constructor
-            try (MethodCreator constructor = classCreator.getMethodCreator("<init>", void.class)) {
-                constructor.setModifiers(Modifier.PUBLIC);
-                constructor.invokeSpecialMethod(MethodDescriptor.ofMethod(Object.class, "<init>", void.class), constructor.getThis());
-                constructor.writeInstanceField(fieldCreator.getFieldDescriptor(), constructor.getThis(),
-                    constructor.load(classnames));
-                constructor.returnValue(null);
-            }
+          // Constructor
+          try (MethodCreator constructor = classCreator.getMethodCreator("<init>", void.class)) {
+              constructor.setModifiers(Modifier.PUBLIC);
+              constructor.invokeSpecialMethod(MethodDescriptor.ofMethod(Object.class, "<init>", void.class), constructor.getThis());
+              constructor.writeInstanceField(fieldCreator.getFieldDescriptor(), constructor.getThis(),
+                  constructor.load(classnames));
+              constructor.returnValue(null);
+          }
 
-            // Getter for classnames
-            try (MethodCreator getter = classCreator.getMethodCreator("getClassnames", Set.class)) {
-                getter.setModifiers(Modifier.PUBLIC);
-                getter.returnValue(getter.readInstanceField(fieldCreator.getFieldDescriptor(), getter.getThis()));
-            }
-        }
+          // Getter for classnames
+          try (MethodCreator getter = classCreator.getMethodCreator("getClassnames", Set.class)) {
+              getter.setModifiers(Modifier.PUBLIC);
+              getter.returnValue(getter.readInstanceField(fieldCreator.getFieldDescriptor(), getter.getThis()));
+          }
+      }
 
-        return new GeneratedBeanBuildItem(classOutput.getGeneratedClass("com.example.runtime.CollectableClassService"), true);
-    }*/
+      return new GeneratedBeanBuildItem(classOutput.getGeneratedClass("com.example.runtime.CollectableClassService"), true);
+  }*/
 }
