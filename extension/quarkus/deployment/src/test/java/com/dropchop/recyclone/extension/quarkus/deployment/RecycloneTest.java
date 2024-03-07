@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.extension.quarkus.deployment;
 
+import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.RecycloneClassRegistryService;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
@@ -42,10 +43,13 @@ public class RecycloneTest {
     RecycloneClassRegistryService service;
 
     @Inject
-    MapperSubTypeConfig config;
+    MapperSubTypeConfig mapperSubTypeConfig;
+
+    @Inject
+    JsonSerializationTypeConfig jsonSerializationTypeConfig;
 
     @Test
-    public void getJsonSerializationTypeConfig() {
+    public void getJsonSerializationTypeConfigService() {
 
         Map<String, Class<?>> expected = Map.of(
             LoginAccount.class.getSimpleName(), LoginAccount.class,
@@ -56,11 +60,30 @@ public class RecycloneTest {
     }
 
     @Test
-    public void getMapperTypeConfig() {
+    public void getJsonSerializationTypeConfig() {
+
+        Map<String, Class<?>> expected = Map.of(
+            LoginAccount.class.getSimpleName(), LoginAccount.class,
+            TokenAccount.class.getSimpleName(), TokenAccount.class
+        );
+        Map<String, Class<?>> got = jsonSerializationTypeConfig.getSubTypeMap();
+        Assertions.assertEquals(expected, got);
+    }
+
+    @Test
+    public void getMapperSubTypeConfigService() {
         MapperSubTypeConfig config = service.getMapperTypeConfig();
         Assertions.assertEquals(ELoginAccount.class, config.mapsTo(LoginAccount.class));
         Assertions.assertEquals(LoginAccount.class, config.mapsTo(ELoginAccount.class));
         Assertions.assertEquals(ETokenAccount.class, config.mapsTo(TokenAccount.class));
         Assertions.assertEquals(TokenAccount.class, config.mapsTo(ETokenAccount.class));
+    }
+
+    @Test
+    public void getMapperSubTypeConfig() {
+        Assertions.assertEquals(ELoginAccount.class, mapperSubTypeConfig.mapsTo(LoginAccount.class));
+        Assertions.assertEquals(LoginAccount.class, mapperSubTypeConfig.mapsTo(ELoginAccount.class));
+        Assertions.assertEquals(ETokenAccount.class, mapperSubTypeConfig.mapsTo(TokenAccount.class));
+        Assertions.assertEquals(TokenAccount.class, mapperSubTypeConfig.mapsTo(ETokenAccount.class));
     }
 }

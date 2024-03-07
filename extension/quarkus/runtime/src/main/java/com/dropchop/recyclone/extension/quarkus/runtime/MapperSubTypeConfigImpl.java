@@ -1,11 +1,13 @@
 package com.dropchop.recyclone.extension.quarkus.runtime;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@DefaultBean
 @ApplicationScoped
 public class MapperSubTypeConfigImpl implements MapperSubTypeConfig {
   private final Map<Class<?>, Class<?>> forwardMapping = new ConcurrentHashMap<>();

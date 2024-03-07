@@ -1,12 +1,8 @@
 package com.dropchop.recyclone.extension.quarkus.deployment;
 
-import com.dropchop.recyclone.extension.quarkus.runtime.JsonSerializationTypeConfigImpl;
-import com.dropchop.recyclone.extension.quarkus.runtime.MapperSubTypeConfigImpl;
-import com.dropchop.recyclone.extension.quarkus.runtime.RecycloneClassRegistryRecorder;
-import com.dropchop.recyclone.extension.quarkus.runtime.RecycloneClassRegistryServiceImpl;
+import com.dropchop.recyclone.extension.quarkus.runtime.*;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.RecycloneClassRegistryService;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -104,29 +100,30 @@ class RecycloneClassRegistryProcessor {
   }
 
   @BuildStep
-  void registerJsonSerializationTypeConfig(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(JsonSerializationTypeConfigImpl.class));
-  }
-
-
-  @BuildStep
-  void registerMapperSubTypeConfig(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(MapperSubTypeConfigImpl.class));
+  void registerRecycloneClassRegistryService(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(RecycloneClassRegistryServiceImpl.class));
   }
 
 
   @BuildStep
   @Record(STATIC_INIT)
-  SyntheticBeanBuildItem setupRuntimeBeans(RecycloneClassRegistryRecorder recorder,
-                                           JsonSerializationTypeItem serializationBuildItem,
-                                           MapperSubTypeItem mappingBuildItems) {
-
-    return SyntheticBeanBuildItem.configure(RecycloneClassRegistryService.class)
+  SyntheticBeanBuildItem setupJsonSerializationTypeConfig(JsonSerializationTypeConfigRecorder recorder,
+                                                          JsonSerializationTypeItem serializationBuildItem) {
+    return SyntheticBeanBuildItem.configure(JsonSerializationTypeConfig.class)
         .scope(ApplicationScoped.class)
         .unremovable()
-        .runtimeValue(recorder.createClassRegistry(
-            serializationBuildItem.getClassNames(), mappingBuildItems.getClassNames())
-        )
+        .runtimeValue(recorder.createConfig(serializationBuildItem.getClassNames()))
+        .done();
+  }
+
+  @BuildStep
+  @Record(STATIC_INIT)
+  SyntheticBeanBuildItem setupMapperSubTypeConfig(MapperSubTypeConfigRecorder recorder,
+                                                  MapperSubTypeItem mappingBuildItems) {
+    return SyntheticBeanBuildItem.configure(MapperSubTypeConfig.class)
+        .scope(ApplicationScoped.class)
+        .unremovable()
+        .runtimeValue(recorder.createConfig(mappingBuildItems.getClassNames()))
         .done();
   }
 

@@ -1,11 +1,13 @@
 package com.dropchop.recyclone.extension.quarkus.runtime;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@DefaultBean
 @ApplicationScoped
 @SuppressWarnings({"unused", "LombokGetterMayBeUsed"})
 public class JsonSerializationTypeConfigImpl implements JsonSerializationTypeConfig {
