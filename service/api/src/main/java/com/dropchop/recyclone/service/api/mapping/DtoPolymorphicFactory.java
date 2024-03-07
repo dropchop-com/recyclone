@@ -24,6 +24,7 @@ import java.util.Set;
 public class DtoPolymorphicFactory {
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @ObjectFactory
