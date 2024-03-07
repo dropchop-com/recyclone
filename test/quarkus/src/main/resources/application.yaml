@@ -66,6 +66,7 @@ quarkus:
       - com.dropchop.recyclone.model.entity.jpa
       - com.dropchop.recyclone.model.entity.jpa.localization
       - com.dropchop.recyclone.model.entity.jpa.security
+      - com.dropchop.recyclone.test.model.entity.jpa
 
 mp:
   openapi:
@@ -75,6 +76,6 @@ mp:
 
 dropchop:
   application:
-    class: com.dropchop.recyclone.test.quarkus.TestApplication
+    class: com.dropchop.recyclone.test.app.TestApplication
 #  service-type:
 #    default: rcyn_default

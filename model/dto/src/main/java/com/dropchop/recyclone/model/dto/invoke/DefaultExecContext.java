@@ -28,4 +28,12 @@ public class DefaultExecContext<D extends Dto>
   List<String> requiredPermissions;
 
   Logical requiredPermissionsOp = Logical.AND;
+
+  List<String> requiredRoles;
+
+  Logical requiredRolesOp = Logical.AND;
+
+  Boolean requiredGuest;
+
+  Boolean requiredAuthenticated;
 }

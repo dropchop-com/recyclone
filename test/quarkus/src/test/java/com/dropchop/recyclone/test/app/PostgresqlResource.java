@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.test.app;
 
 import io.quarkus.test.common.DevServicesContext;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
@@ -13,6 +13,7 @@ import java.util.Optional;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 01. 22.
  */
 @Slf4j
+@SuppressWarnings({"OptionalGetWithoutIsPresent", "RedundantSuppression", "unused", "resource", "OptionalUsedAsFieldOrParameterType", "OptionalIsPresent"})
 public class PostgresqlResource implements QuarkusTestResourceLifecycleManager, DevServicesContext.ContextAware {
 
   PostgreSQLContainer<?> postgresqlContainer = new PostgreSQLContainer<>("postgres:11.3")
@@ -32,7 +33,6 @@ public class PostgresqlResource implements QuarkusTestResourceLifecycleManager, 
   }
 
   @Override
-  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public Map<String, String> start() {
     log.error("Wil start postgres container with network id [{}]", containerNetworkId.isPresent() ? containerNetworkId.get() : null);
     if (containerNetworkId.isPresent()) {

@@ -1,9 +1,8 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.rest.jaxrs.api.localization;
 
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.model.dto.tagging.NamedTag;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;

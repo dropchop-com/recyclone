@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.test.app;
 
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -15,5 +15,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
   @JsonSubTypes.Type(value = LanguageGroup.class, name = "LanguageGroup")
 })
+@SuppressWarnings("unused")
 public abstract class TagMixIn {
 }

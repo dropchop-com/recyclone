@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.test.app;
 
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeDate;

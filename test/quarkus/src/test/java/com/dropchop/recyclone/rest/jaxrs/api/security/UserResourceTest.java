@@ -1,6 +1,5 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.rest.jaxrs.api.security;
 
-import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
@@ -99,6 +98,7 @@ public class UserResourceTest {
 
   //@Test
   @Order(30)
+  @SuppressWarnings("unused")
   public void createUserWithAccounts() {
     User user = new User();
     user.setId(userId2);

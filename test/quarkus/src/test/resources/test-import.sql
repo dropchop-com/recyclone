@@ -28,7 +28,7 @@ insert into security_domain(code, title, lang, created, modified) values ('*', '
 insert into security_domain(code, title, lang, created, modified) values ('localization.language', 'Localization/Languages', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('localization.country', 'Localization/Countries', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('security.action', 'Security/Actions', 'en', now(), now());
-insert into security_domain(code, title, lang, created, modified) values ('security.domain', 'Security/Domains', 'en', now(), now());
+insert into security_domain(code, title, lang, created, modified) values ('security.domain', 'Security/SecurityDomains', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('security.permission', 'Security/Permissions', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('security.role', 'Security/Roles', 'en', now(), now());
 insert into security_domain(code, title, lang, created, modified) values ('tagging.tag', 'Tagging/Tags', 'en', now(), now());

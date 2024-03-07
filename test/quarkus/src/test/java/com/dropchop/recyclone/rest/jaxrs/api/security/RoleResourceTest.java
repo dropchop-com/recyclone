@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.rest.jaxrs.api.security;
 
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;

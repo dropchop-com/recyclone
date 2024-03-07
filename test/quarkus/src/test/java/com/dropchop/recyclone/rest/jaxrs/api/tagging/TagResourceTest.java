@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.rest.jaxrs.api.tagging;
 
 import com.dropchop.recyclone.model.api.attr.*;
 import com.dropchop.recyclone.model.api.utils.Iso8601;

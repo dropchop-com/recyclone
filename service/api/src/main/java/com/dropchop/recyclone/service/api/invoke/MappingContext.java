@@ -9,7 +9,6 @@ import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
 import com.dropchop.recyclone.service.api.mapping.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -27,9 +26,20 @@ public class MappingContext
   implements TotalCountExecContextListener, DataExecContext<Dto, MappingListener>, SecurityExecContext {
 
   private long totalCount;
-  List<String> requiredPermissions;
-  Logical requiredPermissionsOp = Logical.AND;
+
   private List<Dto> data;
+
+  List<String> requiredPermissions;
+
+  Logical requiredPermissionsOp = Logical.AND;
+
+  List<String> requiredRoles;
+
+  Logical requiredRolesOp = Logical.AND;
+
+  Boolean requiredGuest;
+
+  Boolean requiredAuthenticated;
 
   public MappingContext of(CommonExecContext<?, ?> sourceContext) {
     super.of(sourceContext);

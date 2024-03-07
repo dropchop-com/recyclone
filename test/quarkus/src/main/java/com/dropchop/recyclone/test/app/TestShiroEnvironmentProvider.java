@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.test.app;
 
 import com.dropchop.shiro.cdi.ShiroEnvironmentProvider;
 import com.dropchop.shiro.filter.*;
@@ -58,13 +58,17 @@ public class TestShiroEnvironmentProvider extends ShiroEnvironmentProvider {
           "admintoken1", "admintoken1,admin"
         ),
         Map.of(
-          "admin", "*",
-          "staff", "localization.language:*," +
+          "admin",
+            "*",
+          "staff",
+            "localization.language:*," +
             "security.action:*," +
             "security.domain:*," +
             "security.permission:*," +
             "security.role:*",
-          "user", "localization.language:view"
+          "user",
+            "localization.language:view," +
+            "test.dummy:view"
         )
       )
     );

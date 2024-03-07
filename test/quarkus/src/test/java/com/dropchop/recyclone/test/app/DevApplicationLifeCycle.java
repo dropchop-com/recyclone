@@ -1,19 +1,12 @@
-package com.dropchop.recyclone.test.quarkus;
+package com.dropchop.recyclone.test.app;
 
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
-import io.quarkus.runtime.configuration.ProfileManager;
 import lombok.extern.slf4j.Slf4j;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.ext.ScriptUtils;
-import org.testcontainers.jdbc.JdbcDatabaseDelegate;
-import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 01. 22.

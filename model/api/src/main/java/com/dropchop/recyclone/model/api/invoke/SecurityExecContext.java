@@ -37,9 +37,20 @@ public interface SecurityExecContext {
   }
 
   List<String> getRequiredPermissions();
-  void setRequiredPermissions(List<String> permissions);
+  void setRequiredPermissions(List<String> requiredPermissions);
   Logical getRequiredPermissionsOp();
   void setRequiredPermissionsOp(Logical op);
+
+  List<String> getRequiredRoles();
+  void setRequiredRoles(List<String> requiredRoles);
+  Logical getRequiredRolesOp();
+  void setRequiredRolesOp(Logical op);
+
+  Boolean getRequiredGuest();
+  void setRequiredGuest(Boolean requiredGuest);
+
+  Boolean getRequiredAuthenticated();
+  void setRequiredAuthenticated(Boolean requiredAuthenticated);
 
   default String getSecurityDomainAction() {
     return compose(getSecurityDomain(), getSecurityAction());
