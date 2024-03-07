@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.tagging;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
 import com.dropchop.recyclone.repo.api.RepositoryType;
