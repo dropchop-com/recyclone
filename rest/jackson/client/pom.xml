@@ -58,9 +58,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-extension-quarkus</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
     </dependency>
+    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>

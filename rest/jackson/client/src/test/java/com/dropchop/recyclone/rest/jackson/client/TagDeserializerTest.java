@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.filtering.PolymorphicRegistry;
+import com.dropchop.recyclone.extension.quarkus.runtime.JsonSerializationTypeConfigImpl;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,18 +45,9 @@ class TagDeserializerTest {
           }
       ]""";
 
-    com.dropchop.recyclone.rest.jackson.client.ObjectMapperFactory mapperFactory = new ObjectMapperFactory(new PolymorphicRegistry() {
-      @Override
-      public Class<?> mapsTo(Class<?> source) {
-        return null;
-      }
-
-      @Override
-      public Collection<SerializationConfig> getSerializationConfigs() {
-        return List.of(new SerializationConfig()
-          .addSubType("LanguageGroup", LanguageGroup.class));
-      }
-    });
+    com.dropchop.recyclone.rest.jackson.client.ObjectMapperFactory mapperFactory = new ObjectMapperFactory(
+        new JsonSerializationTypeConfigImpl().addSubType("LanguageGroup", LanguageGroup.class)
+    );
 
     ObjectMapper mapper = mapperFactory.createObjectMapper();
     List<LanguageGroup> groups = mapper.readValue(json, CollectionsTypeFactory.listOf(LanguageGroup.class));
