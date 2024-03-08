@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.extension.quarkus.runtime;
+package com.dropchop.recyclone.extension.quarkus.registry;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import io.quarkus.runtime.RuntimeValue;

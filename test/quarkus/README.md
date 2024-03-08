@@ -54,3 +54,8 @@ If you want to learn more about building native executables, please consult http
 Easily start your RESTful Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+
+- Move all the tags and openapi stuff to extension
+- Autowire Path with internal/external segment
+- Rename conf prop root from dc to recyclone
+- Make service jpa-blaze independent of repository impl.

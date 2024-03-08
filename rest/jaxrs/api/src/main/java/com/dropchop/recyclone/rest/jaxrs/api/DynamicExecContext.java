@@ -19,4 +19,5 @@ public @interface DynamicExecContext {
   Class<? extends Params> value() default CommonParams.class;
   Class<? extends Dto> dataClass() default Dto.class;
   Class<? extends ExecContext> execContextClass() default ExecContext.class;
+  boolean internal() default false;
 }
