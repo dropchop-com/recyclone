@@ -138,7 +138,7 @@ public class RegistryProcessor {
       classCreator.addAnnotation(ApplicationScoped.class.getName());
 
       // Field holding class names
-      FieldCreator fieldCreator = classCreator.getFieldCreator("classnames", Set.class.getName())
+      <FieldCreator fieldCreator = classCreator.getFieldCreator("classnames", Set.class.getName())
           .setModifiers(Modifier.PRIVATE);
 
       // Constructor

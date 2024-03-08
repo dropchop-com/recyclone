@@ -28,9 +28,6 @@ public interface DummyResource extends ClassicRestResource<Dummy> {
 
   @GET
   @Path("")
-  @Tag(name = Constants.Tags.TEST)
-  @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Dummy> get();
 
@@ -54,9 +51,6 @@ public interface DummyResource extends ClassicRestResource<Dummy> {
 
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
-  @Tag(name = Constants.Tags.TEST)
-  @Tag(name = Tags.DynamicContext.INTERNAL)
-  @Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
   @Produces(MediaType.APPLICATION_JSON)
   default List<Dummy> getByCodeRest(@PathParam("code") String code) {
     return unwrap(getByCode(code));
@@ -64,8 +58,6 @@ public interface DummyResource extends ClassicRestResource<Dummy> {
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
-  @Tag(name = Constants.Tags.TEST)
-  @Tag(name = Tags.DynamicContext.INTERNAL)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Dummy> search(CodeParams params);
 

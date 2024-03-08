@@ -11,7 +11,4 @@ class RecycloneProcessor {
   FeatureBuildItem feature() {
     return new FeatureBuildItem(FEATURE);
   }
-
-
-
 }
