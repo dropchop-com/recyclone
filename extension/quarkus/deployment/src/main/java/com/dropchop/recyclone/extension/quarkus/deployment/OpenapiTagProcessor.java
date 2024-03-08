@@ -1,26 +1,25 @@
 package com.dropchop.recyclone.extension.quarkus.deployment;
 
+import com.dropchop.recyclone.model.api.invoke.CodeParams;
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.BytecodeTransformerBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.gizmo.Gizmo;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.asm.AsmVisitorWrapper;
-import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.dynamic.ClassFileLocator;
-import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.matcher.ElementMatchers;
-import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.jandex.*;
-import org.jboss.logging.Logger;
 import org.objectweb.asm.*;
 
-import java.util.Set;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
 
-import static jdk.nio.zipfs.ZipFileAttributeView.AttrID.method;
+import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
+import static org.objectweb.asm.Opcodes.*;
 
 public class OpenapiTagProcessor {
 
@@ -47,21 +46,25 @@ public class OpenapiTagProcessor {
       "org.eclipse.microprofile.openapi.annotations.tags.Tags"
   );
 
-  private static final DotName COMMON_PARAMS = DotName.createSimple(
+  private static final DotName ANNO_VALUE = DotName.createSimple(
       "com.dropchop.recyclone.model.api.invoke.CommonParams"
   );
-  private static final DotName DTO = DotName.createSimple(
+  private static final DotName ANNO_DATA_CLASS = DotName.createSimple(
       "com.dropchop.recyclone.model.api.base.Dto"
   );
-  private static final DotName EXEC_CONTEXT = DotName.createSimple(
+  private static final DotName ANNO_EXEC_CTX_CLASS = DotName.createSimple(
       "com.dropchop.recyclone.model.api.invoke.ExecContext"
   );
+  private static final boolean ANNO_INTERNAL = false;
 
 
   private static final String TAG_ANNOTATION_DESCRIPTOR = "Lorg/eclipse/microprofile/openapi/annotations/tags/Tag;";
   private static final String PRODUCES_ANNOTATION_DESCRIPTOR = "Ljakarta/ws/rs/Produces;";
 
-  private String extractSecondFromLastPathSegment(String pathValue) {
+
+
+  private String extractSecondFromLastPathSegment(AnnotationInstance pathAnnotation) {
+    String pathValue = pathAnnotation.value().asString();
     // Assuming path starts with "/", remove it for splitting
     String normalizedPath = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
     String[] segments = normalizedPath.split("/");
@@ -70,9 +73,23 @@ public class OpenapiTagProcessor {
     return segments.length >= 2 ? segments[segments.length - 2] : null;
   }
 
+  @SuppressWarnings("SameParameterValue")
   private DotName getClassAnnotationValue(AnnotationInstance annotation, String property, DotName defaultType) {
-    DotName type = annotation.value(property).asClass().name();
+    AnnotationValue value = annotation.value(property);
+    if (value == null) {
+      return null;
+    }
+    DotName type = value.asClass().name();
     return !type.equals(defaultType) ? type : null;
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private boolean getBooleanAnnotationValue(AnnotationInstance annotation, String property, boolean defaultType) {
+    AnnotationValue value = annotation.value(property);
+    if (value == null) {
+      return defaultType;
+    }
+    return value.asBoolean();
   }
 
   private boolean isMethodADynamicParamsCandidate(MethodInfo method) {
@@ -97,32 +114,124 @@ public class OpenapiTagProcessor {
   }
 
 
-  private static class AddTagsClassVisitor extends ClassVisitor {
+  @BuildStep
+  public void fakeStep(CombinedIndexBuildItem combinedIndexBuildItem,
+                       BuildProducer<BytecodeTransformerBuildItem> transformers) {
 
-    private static final Logger LOG = Logger.getLogger(AddTagsClassVisitor.class);
+    /*BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem(
+        true,
+        "com.dropchop.recyclone.test.rest.jaxrs.api.DummyResource",
+        (ignored, classVisitor) -> new ClassVisitor(Gizmo.ASM_API_VERSION, classVisitor) {
+          @Override
+          public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+            MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+            if (!name.equals("get")) {
+              return mv;
+            }
+            AnnotationVisitor avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+            avTag.visit("name", "internal");
+            avTag.visitEnd();
+            avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+            avTag.visit("name", "test");
+            avTag.visitEnd();
+            avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+            avTag.visit("name", "dyn-params:com.dropchop.recyclone.model.api.invoke.CodeParams");
+            avTag.visitEnd();
+            mv.visitEnd();
+            return mv;
+          }
+        }
+    );
+    transformers.produce(item);*/
+    BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem.Builder()
+        .setCacheable(false)
+        .setPriority(1)
+        .setEager(true)
+        .setClassToTransform("com.dropchop.recyclone.test.rest.jaxrs.api.DummyResource")
+        .setInputTransformer(
+            new BiFunction<>() {
+              @Override
+              public byte[] apply(String className, byte[] bytes) {
+                ClassReader cr = new ClassReader(bytes);
+                ClassWriter cw = new ClassWriter(cr, 0);
 
-    private final String className;
-    private final Set<String> methodsWithBridges;
+                // ClassVisitor that adds an annotation to a specific method
+                ClassVisitor cv = new ClassVisitor(Gizmo.ASM_API_VERSION, cw) {
+                  @Override
+                  public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+                    MethodVisitor mv;
+                    // Check if this is the method to annotate
+                    if ("get".equals(name) || "getRest".equals(name)) {
+                      mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+                      // Add an annotation to the method
+                      AnnotationVisitor avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+                      avTag.visit("name", "internal");
+                      avTag.visitEnd();
+                      //mv.visitEnd();
+                      /*avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+                      avTag.visit("name", "test");
+                      avTag.visitEnd();
+                      mv.visitEnd();
+                      avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+                      avTag.visit("name", "dyn-params:com.dropchop.recyclone.model.api.invoke.CodeParams");
+                      avTag.visitEnd();
+                      mv.visitEnd();*/
+                    } else {
+                      mv = super.visitMethod(access, name, descriptor, signature, null);
+                    }
 
-    public RemoveBridgeMethodsClassVisitor(ClassVisitor visitor, String className, Set<String> methodsWithBridges) {
-      super(Gizmo.ASM_API_VERSION, visitor);
+                    return mv;
+                  }
+                };
+                AnnotationVisitor avTag = cv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+                avTag.visit("name", "internal");
+                avTag.visitEnd();
 
-      this.className = className;
-      this.methodsWithBridges = methodsWithBridges;
-    }
+                //MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_ABSTRACT, "get", "()Lcom/dropchop/recyclone/model/dto/rest/Result;", "()Lcom/dropchop/recyclone/model/dto/rest/Result<Lcom/dropchop/recyclone/test/model/dto/Dummy;>;", null);
+                //avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+                //avTag.visit("name", "internal1");
+                //avTag.visitEnd();
+                // Read the class and apply the transformation
+                cr.accept(cv, ClassReader.SKIP_DEBUG);
+                FileOutputStream fos;
+                try {
+                  fos = new FileOutputStream("/home/nikola/DummyResource.class");
+                  fos.write(cw.toByteArray());
+                  fos.close();
+                } catch (IOException e) {
+                  throw new RuntimeException(e);
+                }
+                return cw.toByteArray();
+              }
+            }
+        ).build();
 
-    @Override
-    public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-      if (methodsWithBridges.contains(name) && ((access & Opcodes.ACC_BRIDGE) != 0)
-          && ((access & Opcodes.ACC_SYNTHETIC) != 0)) {
-
-
-
-        return null;
-      }
-
-      return super.visitMethod(access, name, descriptor, signature, exceptions);
-    }
+    /*BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem(
+        true,
+        "com.dropchop.recyclone.test.rest.jaxrs.server.DummyResource",
+        (ignored, classVisitor) -> new ClassVisitor(Gizmo.ASM_API_VERSION, classVisitor) {
+          @Override
+          public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+            MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+            if (!name.equals("get")) {
+              return mv;
+            }
+            AnnotationVisitor avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+            avTag.visit("name", "internal");
+            avTag.visitEnd();
+            avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+            avTag.visit("name", "test");
+            avTag.visitEnd();
+            avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
+            avTag.visit("name", "dyn-params:com.dropchop.recyclone.model.api.invoke.CodeParams");
+            avTag.visitEnd();
+            mv.visitEnd();
+            return mv;
+          }
+        },
+        true
+    );*/
+    transformers.produce(item);
   }
 
   /**
@@ -132,7 +241,7 @@ public class OpenapiTagProcessor {
    * \@Tag(name = Tags.DynamicContext.INTERNAL)
    * \@Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
    */
-  @BuildStep
+  //@BuildStep
   public void addTagsToMethods(CombinedIndexBuildItem combinedIndexBuildItem,
                                BuildProducer<BytecodeTransformerBuildItem> transformers) {
     IndexView index = combinedIndexBuildItem.getIndex();
@@ -144,18 +253,18 @@ public class OpenapiTagProcessor {
       }
 
       ClassInfo classInfo = dynamicExecAnnotation.target().asClass();
+
       // Check for @Path annotation
       AnnotationInstance pathAnnotation = classInfo.declaredAnnotation(PATH_ANNOTATION);
       if (pathAnnotation == null) {
         continue;
       }
-      String pathValue = pathAnnotation.value().asString();
-      String pathSegment = extractSecondFromLastPathSegment(pathValue);
-      String className = classInfo.name().toString().replace('.', '/');
+      String pathSegment = extractSecondFromLastPathSegment(pathAnnotation);
+      String className = "L" + classInfo.name().toString().replace('.', '/') + ";";
 
       // Extract and check values from @DynamicExecContext
       DotName valueClassName = getClassAnnotationValue(
-          dynamicExecAnnotation, "value", COMMON_PARAMS
+          dynamicExecAnnotation, "value", ANNO_VALUE
       );
       /*DotName dataClassName = getClassAnnotationValue(
           dynamicExecAnnotation, "dataClass", DTO
@@ -163,48 +272,33 @@ public class OpenapiTagProcessor {
       DotName execContextClassName = getClassAnnotationValue(
           dynamicExecAnnotation, "execContextClass", EXEC_CONTEXT
       );*/
-      System.out.println("" + classInfo.name());
-      boolean tmp = false;
-      try {
-        tmp = dynamicExecAnnotation.value("internal").asBoolean();
-      } catch (Exception e) {
-        System.out.println("" + classInfo.name());
+      boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
+      Map<String, MethodInfo> augmentation = new HashMap<>();
+      for (MethodInfo methodInfo : classInfo.methods()) {
+        augmentation.put(methodInfo.genericSignature(), methodInfo);
       }
-      boolean internal = tmp;
 
-      transformers.produce(new BytecodeTransformerBuildItem(className, (className1, classVisitor) -> {
-        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        // Process each method of the class
-        for (MethodInfo methodInfo : classInfo.methods()) {
-          // Check if the method already has @Tag annotation
-          if (methodInfo.hasAnnotation(TAG_ANNOTATION)) {
-            continue;
-          }
-          if (methodInfo.hasAnnotation(TAGS_ANNOTATION)) {
-            continue;
-          }
-          boolean missingProduces = !methodInfo.hasAnnotation(PRODUCES_ANNOTATION);
-          boolean dynParamsCandidate = methodInfo.hasAnnotation(GET_ANNOTATION);
+      if (!classInfo.name().toString().endsWith("DummyResource")) {
+        continue;
+      }
 
-          builder = builder.visit(new AsmVisitorWrapper.ForDeclaredMethods()
-              .method(ElementMatchers.named(methodInfo.name()),
-                  MethodVisitorWrapper.ForAnnotation.of(AnnotationDescription.Builder.ofType(Tag.class).define("value", "yourTagValueHere").build())));
-          classVisitor.visitMethod()
-          MethodVisitor mv = classVisitor.visitMethod(access, name, descriptor, signature, exceptions);
-        }
-        byte[] modifiedClass = builder.make().getBytes();
-        return modifiedClass;
-      }));
-      /*transformers.produce(new BytecodeTransformerBuildItem(className, (className1, classVisitor) -> {
-        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        return new ClassVisitor(Opcodes.ASM9, cw) {
-          @Override
-          public MethodVisitor visitMethod(
-              int access, String name, String descriptor, String signature, String[] exceptions
-          ) {
-            MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
-            if (methodInfo.name().equals(name) && methodInfo.descriptor().equals(descriptor)) {
-              // Add multiple @Tag annotations
+      transformers.produce(new BytecodeTransformerBuildItem.Builder()
+          .setClassToTransform(classInfo.name().toString())
+          .setVisitorFunction((ignored, classVisitor) ->
+          new ClassVisitor(Gizmo.ASM_API_VERSION, classVisitor) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+              MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+              MethodInfo methodInfo = augmentation.get(signature);
+              if (methodInfo == null) {
+                return mv;
+              }
+              if (methodInfo.hasAnnotation(TAG_ANNOTATION)) {
+                return mv;
+              }
+              if (methodInfo.hasAnnotation(TAGS_ANNOTATION)) {
+                return mv;
+              }
               if (internal) {
                 addTagAnnotation(mv, Constants.Tags.DynamicContext.INTERNAL);
               } else {
@@ -213,28 +307,16 @@ public class OpenapiTagProcessor {
               if (pathSegment != null && !pathSegment.isBlank()) {
                 addTagAnnotation(mv, pathSegment);
               }
-              if (dynParamsCandidate) {
-                addTagAnnotation(
-                    mv, Constants.Tags.DYNAMIC_PARAMS + Constants.Tags.DYNAMIC_DELIM + valueClassName
-                );
+              if (!methodInfo.hasAnnotation(GET_ANNOTATION)) {
+                return mv;
               }
-              if (missingProduces) {
-                AnnotationVisitor avTag = mv.visitAnnotation(PRODUCES_ANNOTATION_DESCRIPTOR, true);
-                if (avTag != null) {
-                  if (methodInfo.name().endsWith("Rest")) {
-                    avTag.visit("value", MediaType.APPLICATION_JSON);
-                  } else {
-                    avTag.visit("value", MediaType.APPLICATION_JSON_DROPCHOP_RESULT);
-                  }
-                  avTag.visitEnd();
-                }
-              }
+              addTagAnnotation(mv, "dyn-params:" + valueClassName);
+              mv.visitEnd();
+              classVisitor.visitEnd();
+              return mv;
             }
-            return mv;
-          }
-        };
-      }));*/
-
+          }).build()
+      );
     }
   }
 }

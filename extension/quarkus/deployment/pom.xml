@@ -34,8 +34,12 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-rest-jaxrs-api</artifactId>
+      <artifactId>recyclone-model-api</artifactId>
     </dependency>
+    <!--<dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-rest-jaxrs-api</artifactId>
+    </dependency>-->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-extension-quarkus</artifactId>

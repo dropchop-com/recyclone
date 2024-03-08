@@ -17,6 +17,8 @@ import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.tags.Tag;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -176,6 +178,16 @@ public class CommonUiFilter implements OASFilter {
     }
     if (!opId.contains(".server.") && !opId.contains(".impl.")) {
       return null;
+    }
+
+    try {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      Class<?> c = cl.loadClass("com.dropchop.recyclone.test.rest.jaxrs.api.DummyResource");
+      Method m = c.getMethod("get");
+      Annotation[] annotations = m.getDeclaredAnnotations();
+      int brek = 100;
+    } catch (Exception e) {
+
     }
 
     try {
