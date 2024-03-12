@@ -23,6 +23,13 @@ import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 public class RegistryProcessor {
 
+  private final DotName MAPPING_ANNO = DotName.createSimple(
+      "org.mapstruct.SubclassMapping"
+  );
+  private final DotName TYPE_INFO_ANNO = DotName.createSimple(
+      "com.fasterxml.jackson.annotation.JsonTypeInfo"
+  );
+
   private void processMappingAnnotation(AnnotationInstance annotation, Map<String, String> mappingClasses) {
     AnnotationValue targetValue = annotation.value("target");
 
@@ -49,10 +56,10 @@ public class RegistryProcessor {
                                               BuildProducer<MapperSubTypeItem> classProducer) {
     IndexView index = combinedIndexBuildItem.getIndex();
     Map<String, String> mappingClasses = new LinkedHashMap<>();
-    for (AnnotationInstance annotation : index.getAnnotations("org.mapstruct.SubclassMapping")) {
+    for (AnnotationInstance annotation : index.getAnnotations(MAPPING_ANNO)) {
       processMappingAnnotation(annotation, mappingClasses);
     }
-    for (AnnotationInstance annotation : index.getAnnotations("org.mapstruct.SubclassMappings")) {
+    for (AnnotationInstance annotation : index.getAnnotations(MAPPING_ANNO)) {
       AnnotationInstance[] subclassMappingAnnotations = annotation.value().asNestedArray();
       if (subclassMappingAnnotations != null) {
         for (AnnotationInstance subclassMappingAnnotation : subclassMappingAnnotations) {
@@ -69,7 +76,7 @@ public class RegistryProcessor {
                                             BuildProducer<JsonSerializationTypeItem> classProducer) {
     IndexView index = combinedIndexBuildItem.getIndex();
     Collection<String> propertyMappedClasses = new LinkedHashSet<>();
-    for (AnnotationInstance annotation : index.getAnnotations("com.fasterxml.jackson.annotation.JsonTypeInfo")) {
+    for (AnnotationInstance annotation : index.getAnnotations(TYPE_INFO_ANNO)) {
       if (annotation.target().kind() == AnnotationTarget.Kind.CLASS
           && annotation.value("property") != null
           && "type".equals(annotation.value("property").asString())) {
