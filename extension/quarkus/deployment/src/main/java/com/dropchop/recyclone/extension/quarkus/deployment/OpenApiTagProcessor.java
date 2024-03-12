@@ -2,7 +2,6 @@ package com.dropchop.recyclone.extension.quarkus.deployment;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Tags;
 import io.quarkus.deployment.annotations.BuildProducer;
-import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.BytecodeTransformerBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.gizmo.Gizmo;
@@ -12,7 +11,10 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.*;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 import org.jboss.jandex.*;
 import org.objectweb.asm.*;
 
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class OpenapiTagProcessor {
+public class OpenApiTagProcessor {
 
   private static final DotName DYNAMIC_EXEC_CONTEXT = DotName.createSimple(
       "com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext"
@@ -120,6 +122,30 @@ public class OpenapiTagProcessor {
     methodInfo.addAttribute(attribute);
   }
 
+  /*@BuildStep
+  AnnotationsTransformerBuildItem transform() {
+
+    return new AnnotationsTransformerBuildItem(new AnnotationsTransformer() {
+      @Override
+      public boolean appliesTo(AnnotationTarget.Kind kind) {
+        return kind == AnnotationTarget.Kind.METHOD;
+      }
+      @Override
+      public void transform(TransformationContext context) {
+        MethodInfo methodInfo = context.getTarget().asMethod();
+        if (methodInfo.hasAnnotation("jakarta.ws.rs.GET")) {
+          // Remove the existing @GET annotation
+          context.transform()
+              .remove(annotationInstance -> annotationInstance.name()
+                  .equals(DotName.createSimple("jakarta.ws.rs.GET"))).done();
+          // Add the @POST annotation
+          context.transform().add(DotName.createSimple("jakarta.ws.rs.POST")).done();
+          System.out.println("method "+methodInfo.name()+" is change from get to post");
+        }
+      }
+    });
+  }*/
+
 
   /**
    * This method produces OpenAPI org.eclipse.microprofile.openapi.annotations.tags.Tag annotations
@@ -129,7 +155,7 @@ public class OpenapiTagProcessor {
    * \@Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
    * This doesn't work, although it is correctly done...
    */
-  @BuildStep
+  //@BuildStep
   @SuppressWarnings("DuplicatedCode")
   public void addTagsToMethodsJavassistQuarkus(CombinedIndexBuildItem combinedIndexBuildItem,
                                                BuildProducer<BytecodeTransformerBuildItem> transformers) {
@@ -217,7 +243,12 @@ public class OpenapiTagProcessor {
                   byte[] classBytes = ctClass.toBytecode();
                   FileOutputStream fos;
                   try {
-                    fos = new FileOutputStream("/Users/nikola/Projects/recyclone/" + className + ".class");
+                    fos = new FileOutputStream(
+                        "%s/projects/recyclone/%s.class".formatted(
+                            System.getProperty("user.home"),
+                            className
+                        )
+                    );
                     fos.write(classBytes);
                     fos.close();
                   } catch (IOException e) {

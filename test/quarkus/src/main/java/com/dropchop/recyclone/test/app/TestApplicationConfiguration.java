@@ -9,6 +9,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.
  */

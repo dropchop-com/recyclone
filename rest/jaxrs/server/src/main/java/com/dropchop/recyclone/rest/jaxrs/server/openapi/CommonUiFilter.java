@@ -17,8 +17,6 @@ import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.tags.Tag;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -27,7 +25,6 @@ import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
 
 /**
  * OpenAPI user interface filter.
- *
  * - removes all dyn- tags.
  * - removes all REST ops which are not from implementation classes
  * - adds common parameters to all methods annotated with tag: dyn-params:fqn.dto.Params
@@ -180,15 +177,14 @@ public class CommonUiFilter implements OASFilter {
       return null;
     }
 
-    try {
+    /*try {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
       Class<?> c = cl.loadClass("com.dropchop.recyclone.test.rest.jaxrs.api.DummyResource");
       Method m = c.getMethod("get");
       Annotation[] annotations = m.getDeclaredAnnotations();
       int brek = 100;
     } catch (Exception e) {
-
-    }
+    }*/
 
     try {
       int idx = opId.lastIndexOf('_');
@@ -242,7 +238,7 @@ public class CommonUiFilter implements OASFilter {
         }
 
         Params dtoParameters = paramsInstanceCache.computeIfAbsent(descr[1], this::createInstance);
-        if (!(dtoParameters instanceof CommonParams commonParams)) {
+        if (!(dtoParameters instanceof CommonParams<?, ?, ?, ?> commonParams)) {
           return operation;
         }
 
