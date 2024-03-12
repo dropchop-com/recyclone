@@ -68,10 +68,10 @@ quarkus:
       - com.dropchop.recyclone.model.entity.jpa.security
       - com.dropchop.recyclone.test.model.entity.jpa
 
-mp:
-  openapi:
-    filter:
-      - com.dropchop.recyclone.rest.jaxrs.server.openapi.ExternalOpsOnlyUiFilter
+#mp:
+#  openapi:
+#    filter:
+#      - com.dropchop.recyclone.rest.jaxrs.server.openapi.ExternalOpsOnlyUiFilter
 
 
 dropchop:
