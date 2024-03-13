@@ -23,9 +23,14 @@ import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 public class RegistryProcessor {
 
+  private final DotName MAPPINGS_ANNO = DotName.createSimple(
+      "org.mapstruct.SubclassMappings"
+  );
+
   private final DotName MAPPING_ANNO = DotName.createSimple(
       "org.mapstruct.SubclassMapping"
   );
+
   private final DotName TYPE_INFO_ANNO = DotName.createSimple(
       "com.fasterxml.jackson.annotation.JsonTypeInfo"
   );
@@ -59,7 +64,7 @@ public class RegistryProcessor {
     for (AnnotationInstance annotation : index.getAnnotations(MAPPING_ANNO)) {
       processMappingAnnotation(annotation, mappingClasses);
     }
-    for (AnnotationInstance annotation : index.getAnnotations(MAPPING_ANNO)) {
+    for (AnnotationInstance annotation : index.getAnnotations(MAPPINGS_ANNO)) {
       AnnotationInstance[] subclassMappingAnnotations = annotation.value().asNestedArray();
       if (subclassMappingAnnotations != null) {
         for (AnnotationInstance subclassMappingAnnotation : subclassMappingAnnotations) {
