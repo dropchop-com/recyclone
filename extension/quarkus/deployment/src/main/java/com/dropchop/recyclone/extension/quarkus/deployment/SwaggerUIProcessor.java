@@ -1,9 +1,10 @@
 package com.dropchop.recyclone.extension.quarkus.deployment;
 
 import com.dropchop.recyclone.extension.quarkus.swagger.MappingConfig;
-import com.dropchop.recyclone.extension.quarkus.swagger.SwaggerUiFilter;
+import com.dropchop.recyclone.extension.quarkus.swagger.SwaggerUIFilter;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.smallrye.openapi.deployment.OpenApiFilteredIndexViewBuildItem;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
@@ -27,7 +28,6 @@ import java.util.*;
 public class SwaggerUIProcessor {
 
   private static final Logger log = Logger.getLogger("com.dropchop.recyclone.extension.quarkus");
-
 
   private static final DotName PATH_ANNOTATION = DotName.createSimple(
       "jakarta.ws.rs.Path"
@@ -90,7 +90,8 @@ public class SwaggerUIProcessor {
     return value.asBoolean();
   }
 
-  private Map<String, MappingConfig> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView) {
+  private Map<String, MappingConfig> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView,
+                                                       boolean hideInternal) {
     FilteredIndexView filteredIndex = filteredIndexView.getIndex();
     List<AnnotationInstance> openapiAnnotations = new ArrayList<>();
     Set<DotName> allOpenAPIEndpoints = getAllOpenAPIEndpoints();
@@ -109,6 +110,7 @@ public class SwaggerUIProcessor {
           continue;
         }
 
+        //in recyclone all meta-data is annotated on an interface except the actual @Path
         if (!(Modifier.isInterface(declaringClass.flags()) || Modifier.isAbstract(declaringClass.flags()))) {
           log.warn("Contract violation: The [{}] annotation should be declared on an interface or an abstract class!");
           continue;
@@ -142,44 +144,65 @@ public class SwaggerUIProcessor {
         //DotName execContextClassName = getClassAnnotationValue(
         //    dynamicExecAnnotation, "execContextClass", EXEC_CONTEXT
         //);
-        if (getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL)) {
-          tags.add("internal");
-        } else {
-          tags.add("public");
+        //if (getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL)) {
+        //  tags.add("internal");
+        //} else {
+        //  tags.add("public");
+        //}
+        if (getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL) && hideInternal) {
+          continue;
         }
         Collection<ClassInfo> classes = filteredIndex.getAllKnownImplementors(declaringClass.name());
         for (ClassInfo impl : classes) {
           MethodInfo implMethod = impl.method(method.name(), params);
 
-          if (implMethod != null) {
-            //pass through
+          if (implMethod != null) {// we register implementations so we get correct path
             MappingConfig config = new MappingConfig(
                 JandexUtil.createUniqueMethodReference(impl, implMethod),
-                impl.name().toString() + "#" + implMethod.name(),
+                impl.name().toString(),
+                implMethod.name(),
                 valueClassName != null ? valueClassName.toString() : null,
                 tags
             );
             operationFilter.put(config.getMethodRef(), config);
           }
-          //filter out interface methods to avoid duplication
+
           MappingConfig config = new MappingConfig(
               JandexUtil.createUniqueMethodReference(impl, method),
-              declaringClass.name().toString() + "#" + method.name()
+              impl.name().toString(),
+              method.name(),
+              valueClassName != null ? valueClassName.toString() : null,
+              tags
           );
           operationFilter.put(config.getMethodRef(), config);
         }
-        //in recyclone all is annotated on an interface
+
+        //filter out interface methods to avoid duplication
+        MappingConfig config = new MappingConfig(
+            JandexUtil.createUniqueMethodReference(declaringClass, method),
+            declaringClass.name().toString(),
+            method.name()
+            //valueClassName != null ? valueClassName.toString() : null,
+            //tags
+        );
+        operationFilter.put(config.getMethodRef(), config);
       }
+
     }
     return operationFilter;
   }
 
   @BuildStep
-  void myBuildStep(OpenApiFilteredIndexViewBuildItem combinedIndexBuildItem,
+  void filterOpenAPI(OpenApiFilteredIndexViewBuildItem combinedIndexBuildItem,
                    BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
-    Map<String, MappingConfig> operationMapping = constructMappings(combinedIndexBuildItem);
+    Map<String, MappingConfig> operationMapping;
+    if (ConfigUtils.isProfileActive("dev") || ConfigUtils.isProfileActive("test")) {
+      operationMapping = constructMappings(combinedIndexBuildItem, false);
+    } else {
+      operationMapping = constructMappings(combinedIndexBuildItem, true);
+    }
     addToOpenAPIDefinitionBuildItemBuildProducer.produce(new AddToOpenAPIDefinitionBuildItem(
-        new SwaggerUiFilter(operationMapping)
+        new SwaggerUIFilter(operationMapping)
     ));
   }
 }

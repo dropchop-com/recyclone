@@ -34,7 +34,7 @@ public class DummyResourceTest {
         .log().all()
         .auth().preemptive().basic("user1", "password")
         .when()
-        .get("/api/internal/test/dummy")
+        .get("/api/public/test/dummy")
         .then()
         .statusCode(200)
         .log().all();

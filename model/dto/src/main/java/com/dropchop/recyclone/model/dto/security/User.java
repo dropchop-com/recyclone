@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.model.dto.security;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.common.Person;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.localization.Language;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -31,10 +29,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class User extends Person
   implements com.dropchop.recyclone.model.api.security.User<
-  UserAccount, TitleDescriptionTranslation, TitleTranslation,
-  Action, Domain, Permission, Role, Country, Language, Tag>,
-  com.dropchop.recyclone.model.api.common.Person<
-    Country, Language, TitleTranslation>{
+    UserAccount, TitleDescriptionTranslation, TitleTranslation,
+    Action, Domain, Permission, Role, Country, Language, Tag>,
+    com.dropchop.recyclone.model.api.common.Person<Country, Language, TitleTranslation>{
 
   @JsonInclude(NON_EMPTY)
   private Set<Role> roles;

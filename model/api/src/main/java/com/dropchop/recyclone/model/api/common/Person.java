@@ -10,7 +10,8 @@ import com.dropchop.recyclone.model.api.marker.HasUuid;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
  */
 @SuppressWarnings("unused")
-public interface Person<C extends Country<TT>, L extends Language<TT>, TT extends TitleTranslation> extends Model, HasUuid {
+public interface Person<C extends Country<TT>, L extends Language<TT>, TT extends TitleTranslation>
+    extends Model, HasUuid {
 
   C getCountry();
 

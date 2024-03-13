@@ -22,11 +22,6 @@ quarkus:
       generation: drop-and-create
     sql-load-script: dev-import.sql
 
-#mp:
-#  openapi:
-#    filter:
-#      - com.dropchop.recyclone.rest.jaxrs.server.openapi.CommonUiFilter
-
 dropchop:
 #  service-type:
 #    LanguageService: "rcyn_default"

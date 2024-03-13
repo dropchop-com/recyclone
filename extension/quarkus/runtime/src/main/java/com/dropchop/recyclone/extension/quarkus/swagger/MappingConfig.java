@@ -7,40 +7,49 @@ import java.util.Set;
  */
 public class MappingConfig {
   final String methodRef;
-
-  final String methodInfo;
-
-  final String paramName;
+  final String methodName;
+  final String className;
+  final String paramClassName;
   final Set<String> tags;
 
   final boolean skip;
 
-  public MappingConfig(String methodRef, String methodInfo, String paramName, Set<String> tags, boolean skip) {
+  public MappingConfig(String methodRef, String className, String methodName, String paramClassName,
+                       Set<String> tags, boolean skip) {
     this.methodRef = methodRef;
-    this.methodInfo = methodInfo;
-    this.paramName = paramName;
+    this.methodName = methodName;
+    this.className = className;
+    this.paramClassName = paramClassName;
     this.tags = tags;
     this.skip = skip;
   }
 
-  public MappingConfig(String methodRef, String methodInfo, String paramName, Set<String> tags) {
-    this(methodRef, methodInfo, paramName, tags, false);
+  public MappingConfig(String methodRef, String className, String methodName,  String paramClassName, Set<String> tags) {
+    this(methodRef, className, methodName, paramClassName, tags, false);
   }
 
-  public MappingConfig(String methodRef, String methodInfo) {
-    this(methodRef, methodInfo, null, null, true);
+  public MappingConfig(String methodRef, String className, String methodName) {
+    this(methodRef, className, methodName, null, null, true);
+  }
+
+  public String getOpId() {
+    return this.className + "_" + this.methodName;
   }
 
   public String getMethodRef() {
     return methodRef;
   }
 
-  public String getMethodInfo() {
-    return methodInfo;
+  public String getMethodName() {
+    return methodName;
   }
 
-  public String getParamName() {
-    return paramName;
+  public String getClassName() {
+    return className;
+  }
+
+  public String getParamClassName() {
+    return paramClassName;
   }
 
   public Set<String> getTags() {

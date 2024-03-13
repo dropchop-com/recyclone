@@ -23,7 +23,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-@Path(Paths.INTERNAL_SEGMENT + Constants.Paths.Test.DUMMY)
+@Path(Paths.PUBLIC_SEGMENT + Constants.Paths.Test.DUMMY)
 public class DummyResource implements
     com.dropchop.recyclone.test.rest.jaxrs.api.DummyResource {
 
@@ -53,20 +53,5 @@ public class DummyResource implements
   @Override
   public Result<Dummy> search(CodeParams params) {
     return selector.select(DummyService.class).search();
-  }
-
-  @Override
-  public Result<Dummy> create(List<Dummy> dummies) {
-    return selector.select(DummyService.class).create(dummies);
-  }
-
-  @Override
-  public Result<Dummy> delete(List<Dummy> dummies) {
-    return selector.select(DummyService.class).delete(dummies);
-  }
-
-  @Override
-  public Result<Dummy> update(List<Dummy> dummies) {
-    return selector.select(DummyService.class).update(dummies);
   }
 }
