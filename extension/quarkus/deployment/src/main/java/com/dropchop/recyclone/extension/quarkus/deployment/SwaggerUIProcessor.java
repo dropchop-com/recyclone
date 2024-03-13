@@ -67,7 +67,12 @@ public class SwaggerUIProcessor {
     String[] segments = normalizedPath.split("/");
 
     // Return the second segment or null if not available
-    return segments.length >= 2 ? segments[segments.length - 2] : null;
+    if (segments.length >= 2) {
+      return segments[segments.length - 2];
+    } else if (segments.length == 1) {
+      return segments[segments.length - 1];
+    }
+    return null;
   }
 
 
