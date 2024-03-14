@@ -1,7 +1,7 @@
-package com.dropchop.recyclone.test.app;
+package com.dropchop.recyclone.quarkus.it.app;
 
+import com.dropchop.recyclone.quarkus.it.rest.server.DummyResource;
 import com.dropchop.recyclone.rest.jaxrs.server.RecycloneApplicationRegistry;
-import com.dropchop.recyclone.test.rest.jaxrs.server.DummyResource;
 import com.dropchop.shiro.RecycloneShiroExtension;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.ws.rs.ApplicationPath;
@@ -76,7 +76,7 @@ public class TestApplication extends Application {
     //container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
     //container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
     //container.addAll(RecycloneApplicationRegistry.getRestTaggingResourceClasses());
-    //container.add(DummyResource.class);
+    container.add(DummyResource.class);
     return container;
   }
 }

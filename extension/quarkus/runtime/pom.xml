@@ -35,9 +35,18 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-api</artifactId>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-core</artifactId>
+      <version>6.2.7.Final</version>
+    </dependency>-->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-server-common</artifactId>
     </dependency>
   </dependencies>
 

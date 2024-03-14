@@ -16,6 +16,7 @@
   <modules>
     <module>deployment</module>
     <module>runtime</module>
+    <module>integration-tests</module>
   </modules>
 
   <properties>
@@ -43,7 +44,7 @@
         <plugin>
           <groupId>io.quarkus</groupId>
           <artifactId>quarkus-maven-plugin</artifactId>
-          <version>${quarkus.version}</version>
+          <version>${quarkus.platform.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>

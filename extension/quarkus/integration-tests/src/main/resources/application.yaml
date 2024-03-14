@@ -1,0 +1,83 @@
+quarkus:
+  log:
+    category:
+      "org.apache.shiro":
+        level: WARN
+      "com.dropchop":
+        level: DEBUG
+  index-dependency:
+    recyclone-model-dto:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-model-dto
+    recyclone-rest-jackson-client:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jackson-client
+    recyclone-rest-jackson-server:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jackson-server
+    recyclone-rest-jaxrs-api:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jaxrs-api
+    recyclone-rest-jaxrs-api-intern:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jaxrs-api-intern
+    recyclone-rest-jaxrs-server:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-rest-jaxrs-server
+    recyclone-repo-api:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-repo-api
+    recyclone-repo-jpa-blaze:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-repo-jpa-blaze
+    recyclone-service-api:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-service-api
+    recyclone-service-jpa-blaze:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-service-jpa-blaze
+    recyclone-extension-shiro:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-extension-shiro
+
+  swagger-ui:
+    path: /api/spec/ui
+    always-include: true
+  smallrye-openapi:
+    path: /api/spec/openapi
+    operation-id-strategy: package-class-method
+  datasource:
+    db-kind: postgresql
+    username: recyclone_test
+    password: recyclone_test
+
+    # uncomment for native image build
+    #jdbc:
+    #  url: jdbc:postgresql://localhost:5432/recyclone_test
+    #  max-size: 16
+
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    sql-load-script: dev-import.sql
+    packages:
+      - com.blazebit.persistence.impl.function.entity
+      - com.dropchop.recyclone.model.api
+      - com.dropchop.recyclone.model.api.marker
+      - com.dropchop.recyclone.model.api.localization
+      - com.dropchop.recyclone.model.api.security
+      - com.dropchop.recyclone.model.entity.jpa
+      - com.dropchop.recyclone.model.entity.jpa.localization
+      - com.dropchop.recyclone.model.entity.jpa.security
+      - com.dropchop.recyclone.quarkus.it.model.entity.jpa
+
+  recyclone:
+    rest:
+      includes:
+        - com.dropchop.recyclone.quarkus.it.rest.server.DummyResource
+
+#dropchop:
+#  application:
+#    class: com.dropchop.recyclone.test.app.TestApplication
+#  service-type:
+#    default: rcyn_default

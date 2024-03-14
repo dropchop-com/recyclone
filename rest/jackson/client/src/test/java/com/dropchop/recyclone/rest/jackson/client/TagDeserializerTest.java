@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.extension.quarkus.registry.JsonSerializationTypeConfigImpl;
+import com.dropchop.recyclone.quarkus.runtime.registry.JsonSerializationTypeConfigImpl;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
