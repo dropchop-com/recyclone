@@ -18,16 +18,14 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
-@Slf4j
+/*@Slf4j
 @OpenAPIDefinition(
-  /*tags = {
-    @Tag(name = "core", description = "Core functionality."),
-  },*/
   info = @Info(
     title="Recyclone API",
     version = "1.0.1",
@@ -63,10 +61,15 @@ import java.util.Set;
       }
   )
 )
-@SuppressWarnings("unused")
-@ApplicationPath("/api")
-@RegisterForReflection
+@SuppressWarnings("unused")*/
+//@ApplicationPath("/api")
+//@RegisterForReflection
 public class TestApplication extends Application {
+
+  @Override
+  public Map<String, Object> getProperties() {
+    return super.getProperties();
+  }
 
   @Override
   public Set<Class<?>> getClasses() {
@@ -76,7 +79,7 @@ public class TestApplication extends Application {
     //container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
     //container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
     //container.addAll(RecycloneApplicationRegistry.getRestTaggingResourceClasses());
-    container.add(DummyResource.class);
+    //container.add(DummyResource.class);
     return container;
   }
 }

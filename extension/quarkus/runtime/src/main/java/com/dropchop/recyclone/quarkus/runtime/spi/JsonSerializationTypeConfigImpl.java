@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.registry;
+package com.dropchop.recyclone.quarkus.runtime.spi;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import io.quarkus.arc.DefaultBean;

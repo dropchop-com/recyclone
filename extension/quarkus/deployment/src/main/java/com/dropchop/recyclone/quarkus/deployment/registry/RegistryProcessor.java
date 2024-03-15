@@ -1,8 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
-import com.dropchop.recyclone.quarkus.runtime.registry.ClassRegistryServiceImpl;
-import com.dropchop.recyclone.quarkus.runtime.registry.JsonSerializationTypeConfigRecorder;
-import com.dropchop.recyclone.quarkus.runtime.registry.MapperSubTypeConfigRecorder;
+import com.dropchop.recyclone.quarkus.runtime.spi.ClassRegistryServiceImpl;
+import com.dropchop.recyclone.quarkus.runtime.registry.RegistryRecorder;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
@@ -111,23 +110,23 @@ public class RegistryProcessor {
 
   @BuildStep
   @Record(STATIC_INIT)
-  SyntheticBeanBuildItem setupJsonSerializationTypeConfig(JsonSerializationTypeConfigRecorder recorder,
+  SyntheticBeanBuildItem setupJsonSerializationTypeConfig(RegistryRecorder recorder,
                                                           JsonSerializationTypeItem serializationBuildItem) {
     return SyntheticBeanBuildItem.configure(JsonSerializationTypeConfig.class)
         .scope(ApplicationScoped.class)
         .unremovable()
-        .runtimeValue(recorder.createConfig(serializationBuildItem.getClassNames()))
+        .runtimeValue(recorder.createJsonSerializationTypeConfig(serializationBuildItem.getClassNames()))
         .done();
   }
 
   @BuildStep
   @Record(STATIC_INIT)
-  SyntheticBeanBuildItem setupMapperSubTypeConfig(MapperSubTypeConfigRecorder recorder,
+  SyntheticBeanBuildItem setupMapperSubTypeConfig(RegistryRecorder recorder,
                                                   MapperSubTypeItem mappingBuildItems) {
     return SyntheticBeanBuildItem.configure(MapperSubTypeConfig.class)
         .scope(ApplicationScoped.class)
         .unremovable()
-        .runtimeValue(recorder.createConfig(mappingBuildItems.getClassNames()))
+        .runtimeValue(recorder.createMapperSubTypeConfig(mappingBuildItems.getClassNames()))
         .done();
   }
 

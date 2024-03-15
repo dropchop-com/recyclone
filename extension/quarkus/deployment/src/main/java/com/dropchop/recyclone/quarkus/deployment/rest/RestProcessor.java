@@ -1,24 +1,16 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.quarkus.deployment.registry.JsonSerializationTypeItem;
-import com.dropchop.recyclone.quarkus.runtime.RecycloneAppConfig;
-import com.dropchop.recyclone.quarkus.runtime.registry.JsonSerializationTypeConfigRecorder;
-import com.dropchop.recyclone.quarkus.runtime.rest.ResourceClassesConfig;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestClassesRecorder;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplication;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
-import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
-import io.quarkus.resteasy.server.common.deployment.ResteasyDeploymentBuildItem;
-import io.quarkus.runtime.annotations.Recorder;
 import io.quarkus.smallrye.openapi.deployment.OpenApiFilteredIndexViewBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.runtime.scanner.FilteredIndexView;
 import io.smallrye.openapi.spring.SpringConstants;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Singleton;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
@@ -27,7 +19,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
-import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
@@ -132,8 +123,8 @@ public class RestProcessor {
   }
 
   @BuildStep
-  public void buildRestMapping(OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                               RecycloneAppConfig config,
+  public void buildRestMapping(
+                               OpenApiFilteredIndexViewBuildItem filteredIndexView,
                                BuildProducer<RestMappingItem> restMappingItemBuildProducer) {
     FilteredIndexView filteredIndex = filteredIndexView.getIndex();
     List<AnnotationInstance> openapiAnnotations = new ArrayList<>();
@@ -151,27 +142,6 @@ public class RestProcessor {
       ClassInfo declaringClass = method.declaringClass();
       if (!declaringClass.hasAnnotation(DYN_CTX_ANNO)) {
         continue;
-      }
-
-      boolean doExclude = true;
-      if (config.rest.isPresent()) {
-        RecycloneAppConfig.RestConfig restConfig = config.rest.get();
-        if (restConfig.includes.isPresent()) {
-          for (String include : restConfig.includes.get()) {
-            if (include.equals(declaringClass.name().toString())) {
-              doExclude = false;
-              break;
-            }
-          }
-        }
-        if (restConfig.excludes.isPresent()) {
-          for (String exclude : restConfig.excludes.get()) {
-            if (exclude.equals(declaringClass.name().toString())) {
-              doExclude = true;
-              break;
-            }
-          }
-        }
       }
 
       //in recyclone all meta-data is annotated on an interface except the actual @Path
@@ -231,7 +201,7 @@ public class RestProcessor {
           internal,
           path,
           segment,
-          doExclude
+          false
       ));
 
     }
@@ -239,33 +209,31 @@ public class RestProcessor {
   }
 
   @BuildStep
-  void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(ResourceClassesConfig.class));
+  void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(RecycloneApplication.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.SINGLETON).build()
+    );
   }
 
   @BuildStep
   @Record(RUNTIME_INIT)
-  public SyntheticBeanBuildItem registerResourceClasses(RestMappingItem restMappingItem,
-                                                        OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                                                        ResteasyDeploymentBuildItem resteasyDeploymentBuildItem,
-                                                        RestClassesRecorder recorder) {
+  public void registerResourceClasses(RestMappingItem restMappingItem,
+                                      OpenApiFilteredIndexViewBuildItem filteredIndexView,
+                                      RestRecorder recorder) {
     FilteredIndexView filteredIndex = filteredIndexView.getIndex();
-    Collection<String> resultClasses = new HashSet<>();
+    Collection<String> resultClasses = new LinkedHashSet<>();
     for (Map.Entry<MethodInfo, RestMapping> entry : restMappingItem.getMapping().entrySet()) {
       RestMapping mapping = entry.getValue();
-      if (mapping.excluded) {
-        continue;
-      }
       Collection<ClassInfo> classes = filteredIndex.getAllKnownImplementors(mapping.apiClass.name());
       for (ClassInfo impl : classes) {
         resultClasses.add(impl.name().toString());
       }
     }
 
-    return SyntheticBeanBuildItem.configure(ResourceClassesConfig.class)
-        .scope(ApplicationScoped.class)
-        .unremovable()
-        .runtimeValue(recorder.restClasses(resteasyDeploymentBuildItem.getDeployment(), resultClasses))
-        .done();
+    recorder.createRestApplication(resultClasses);
   }
 }

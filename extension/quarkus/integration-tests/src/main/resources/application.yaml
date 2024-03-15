@@ -6,33 +6,34 @@ quarkus:
       "com.dropchop":
         level: DEBUG
   index-dependency:
-    recyclone-model-dto:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-model-dto
-    recyclone-rest-jackson-client:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jackson-client
-    recyclone-rest-jackson-server:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jackson-server
-    recyclone-rest-jaxrs-api:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jaxrs-api
-    recyclone-rest-jaxrs-api-intern:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jaxrs-api-intern
-    recyclone-rest-jaxrs-server:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-rest-jaxrs-server
-    recyclone-repo-api:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-repo-api
+    #recyclone-model-dto:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-model-dto
+    #recyclone-rest-jackson-client:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-rest-jackson-client
+
+    #recyclone-rest-jackson-server:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-rest-jackson-server
+    #recyclone-rest-jaxrs-api:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-rest-jaxrs-api
+    #recyclone-rest-jaxrs-api-intern:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-rest-jaxrs-api-intern
+    #recyclone-rest-jaxrs-server:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-rest-jaxrs-server
+    #recyclone-repo-api:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-repo-api
     recyclone-repo-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-repo-jpa-blaze
-    recyclone-service-api:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-api
+    #recyclone-service-api:
+    #  group-id: com.dropchop.recyclone
+    #  artifact-id: recyclone-service-api
     recyclone-service-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-jpa-blaze
@@ -73,6 +74,17 @@ quarkus:
 
   recyclone:
     rest:
+      path: /api
+      info:
+        title: "Recyclone API"
+        version: "1.0.1"
+        contact:
+          name: "Recyclone API Support"
+          url: "https://exampleurl.com/contact"
+          email: "techsupport@example.com"
+        license:
+          name: "Apache 2.0"
+          url: "https://www.apache.org/licenses/LICENSE-2.0.html"
       includes:
         - com.dropchop.recyclone.quarkus.it.rest.server.DummyResource
 

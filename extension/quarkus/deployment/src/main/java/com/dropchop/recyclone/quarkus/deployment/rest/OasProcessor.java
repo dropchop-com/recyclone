@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.quarkus.runtime.rest.MappingConfig;
-import com.dropchop.recyclone.quarkus.runtime.rest.SwaggerUIFilter;
+import com.dropchop.recyclone.quarkus.runtime.rest.OasMappingConfig;
+import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.runtime.configuration.ConfigUtils;
@@ -25,7 +25,7 @@ import java.util.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 24.
  */
 @SuppressWarnings("unused")
-public class SwaggerUIProcessor {
+public class OasProcessor {
 
   private static final Logger log = Logger.getLogger("com.dropchop.recyclone.quarkus");
 
@@ -33,11 +33,11 @@ public class SwaggerUIProcessor {
       "jakarta.ws.rs.GET"
   );
 
-  private Map<String, MappingConfig> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                                                       RestMappingItem restMappingItem,
-                                                       boolean hideInternal) {
+  private Map<String, OasMappingConfig> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView,
+                                                          RestMappingItem restMappingItem,
+                                                          boolean hideInternal) {
     FilteredIndexView filteredIndex = filteredIndexView.getIndex();
-    Map<String, MappingConfig> operationFilter = new HashMap<>();
+    Map<String, OasMappingConfig> operationFilter = new HashMap<>();
 
     for (Map.Entry<MethodInfo, RestMapping> entry : restMappingItem.getMapping().entrySet()) {
       RestMapping mapping = entry.getValue();
@@ -68,7 +68,7 @@ public class SwaggerUIProcessor {
         MethodInfo implMethod = impl.method(method.name(), params);
 
         if (implMethod != null) {// we register implementations so we get correct path
-          MappingConfig config = new MappingConfig(
+          OasMappingConfig config = new OasMappingConfig(
               JandexUtil.createUniqueMethodReference(impl, implMethod),
               impl.name().toString(),
               implMethod.name(),
@@ -78,7 +78,7 @@ public class SwaggerUIProcessor {
           operationFilter.put(config.getMethodRef(), config);
         }
 
-        MappingConfig config = new MappingConfig(
+        OasMappingConfig config = new OasMappingConfig(
             JandexUtil.createUniqueMethodReference(impl, method),
             impl.name().toString(),
             method.name(),
@@ -89,7 +89,7 @@ public class SwaggerUIProcessor {
       }
 
       //filter out interface methods to avoid duplication
-      MappingConfig config = new MappingConfig(
+      OasMappingConfig config = new OasMappingConfig(
           JandexUtil.createUniqueMethodReference(declaringClass, method),
           declaringClass.name().toString(),
           method.name()
@@ -105,14 +105,14 @@ public class SwaggerUIProcessor {
   void filterOpenAPI(OpenApiFilteredIndexViewBuildItem filteredIndexView,
                      RestMappingItem restMappingItem,
                      BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
-    Map<String, MappingConfig> operationMapping;
+    Map<String, OasMappingConfig> operationMapping;
     if (ConfigUtils.isProfileActive("dev") || ConfigUtils.isProfileActive("test")) {
       operationMapping = constructMappings(filteredIndexView, restMappingItem, false);
     } else {
       operationMapping = constructMappings(filteredIndexView, restMappingItem, true);
     }
     addToOpenAPIDefinitionBuildItemBuildProducer.produce(new AddToOpenAPIDefinitionBuildItem(
-        new SwaggerUIFilter(operationMapping)
+        new OasFilter(operationMapping)
     ));
   }
 }

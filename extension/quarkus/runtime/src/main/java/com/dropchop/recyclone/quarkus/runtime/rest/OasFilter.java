@@ -24,14 +24,14 @@ import java.util.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 24.
  */
 @SuppressWarnings("SameParameterValue")
-public class SwaggerUIFilter implements OASFilter {
+public class OasFilter implements OASFilter {
 
-  private static final Logger log = Logger.getLogger(SwaggerUIFilter.class);
+  private static final Logger log = Logger.getLogger(OasFilter.class);
 
-  private final Map<String, MappingConfig> operationMapping;
+  private final Map<String, OasMappingConfig> operationMapping;
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
-  public SwaggerUIFilter(Map<String, MappingConfig> operationMapping) {
+  public OasFilter(Map<String, OasMappingConfig> operationMapping) {
     this.operationMapping = operationMapping;
   }
 
@@ -179,7 +179,7 @@ public class SwaggerUIFilter implements OASFilter {
     if (!(operation instanceof OperationImpl op)) {
       return operation;
     }
-    MappingConfig config = this.operationMapping.get(op.getMethodRef());
+    OasMappingConfig config = this.operationMapping.get(op.getMethodRef());
     if (config == null) {
       return operation;
     }

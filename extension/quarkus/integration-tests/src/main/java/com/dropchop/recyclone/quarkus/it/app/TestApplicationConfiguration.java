@@ -1,16 +1,16 @@
 package com.dropchop.recyclone.quarkus.it.app;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.quarkus.runtime.spi.RestResourceConfig;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
+import com.dropchop.recyclone.quarkus.it.rest.server.DummyResource;
+import com.dropchop.recyclone.quarkus.it.rest.server.DummyResourceInternal;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.
@@ -24,6 +24,15 @@ public class TestApplicationConfiguration {
 
   @Inject
   MapperSubTypeConfig mapperConfig;
+
+  @Produces
+  @ApplicationScoped
+  RestResourceConfig getResourceConfig() {
+    return new RestResourceConfig().addClasses(
+        DummyResourceInternal.class,
+        DummyResource.class
+    );
+  }
 
   /**
    * ObjectMapper customization/extension point. Add own polymorphic mappings here.

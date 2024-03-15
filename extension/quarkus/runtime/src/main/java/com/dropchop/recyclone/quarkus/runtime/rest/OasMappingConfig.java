@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 03. 24.
  */
-public class MappingConfig {
+public class OasMappingConfig {
   final String methodRef;
   final String methodName;
   final String className;
@@ -14,8 +14,8 @@ public class MappingConfig {
 
   final boolean skip;
 
-  public MappingConfig(String methodRef, String className, String methodName, String paramClassName,
-                       Set<String> tags, boolean skip) {
+  public OasMappingConfig(String methodRef, String className, String methodName, String paramClassName,
+                          Set<String> tags, boolean skip) {
     this.methodRef = methodRef;
     this.methodName = methodName;
     this.className = className;
@@ -24,11 +24,11 @@ public class MappingConfig {
     this.skip = skip;
   }
 
-  public MappingConfig(String methodRef, String className, String methodName,  String paramClassName, Set<String> tags) {
+  public OasMappingConfig(String methodRef, String className, String methodName, String paramClassName, Set<String> tags) {
     this(methodRef, className, methodName, paramClassName, tags, false);
   }
 
-  public MappingConfig(String methodRef, String className, String methodName) {
+  public OasMappingConfig(String methodRef, String className, String methodName) {
     this(methodRef, className, methodName, null, null, true);
   }
 
