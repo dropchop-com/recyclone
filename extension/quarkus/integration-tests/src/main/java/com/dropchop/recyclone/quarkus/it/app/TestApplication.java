@@ -64,14 +64,8 @@ import java.util.Set;
 @SuppressWarnings("unused")*/
 //@ApplicationPath("/api")
 //@RegisterForReflection
-public class TestApplication extends Application {
+public class TestApplication {
 
-  @Override
-  public Map<String, Object> getProperties() {
-    return super.getProperties();
-  }
-
-  @Override
   public Set<Class<?>> getClasses() {
     Set<Class<?>> container = new LinkedHashSet<>();
     container.addAll(RecycloneShiroExtension.getRestLayerRegistrationClasses());

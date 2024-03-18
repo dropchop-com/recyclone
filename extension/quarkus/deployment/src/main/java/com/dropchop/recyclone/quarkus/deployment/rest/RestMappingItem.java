@@ -18,5 +18,4 @@ public final class RestMappingItem extends SimpleBuildItem {
   public Map<MethodInfo, RestMapping> getMapping() {
     return mapping;
   }
-
 }

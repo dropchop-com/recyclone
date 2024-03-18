@@ -6,12 +6,19 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
 import io.smallrye.openapi.api.models.OperationImpl;
+import io.smallrye.openapi.api.models.info.ContactImpl;
+import io.smallrye.openapi.api.models.info.InfoImpl;
+import io.smallrye.openapi.api.models.info.LicenseImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.Components;
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.eclipse.microprofile.openapi.models.Operation;
+import org.eclipse.microprofile.openapi.models.info.Contact;
+import org.eclipse.microprofile.openapi.models.info.Info;
+import org.eclipse.microprofile.openapi.models.info.License;
 import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.responses.APIResponse;
@@ -28,16 +35,59 @@ public class OasFilter implements OASFilter {
 
   private static final Logger log = Logger.getLogger(OasFilter.class);
 
+  private final RecycloneBuildConfig buildConfig;
   private final Map<String, OasMappingConfig> operationMapping;
+
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
-  public OasFilter(Map<String, OasMappingConfig> operationMapping) {
+  public OasFilter(RecycloneBuildConfig buildConfig, Map<String, OasMappingConfig> operationMapping) {
+    this.buildConfig = buildConfig;
     this.operationMapping = operationMapping;
+  }
+
+  private License getOrCreateLicense(Info info) {
+    License license = info.getLicense();
+    if (license == null) {
+      license = new LicenseImpl();
+      info.setLicense(license);
+    }
+    return license;
+  }
+
+  private Contact getOrCreateContact(Info info) {
+    Contact contact = info.getContact();
+    if (contact == null) {
+      contact = new ContactImpl();
+      info.setContact(contact);
+    }
+    return contact;
+  }
+
+  private Info getOrCreateInfo(OpenAPI openAPI) {
+    Info info = openAPI.getInfo();
+    if (info == null) {
+      info = new InfoImpl();
+      openAPI.setInfo(info);
+      getOrCreateContact(info);
+      getOrCreateLicense(info);
+    }
+    return info;
   }
 
   @Override
   public void filterOpenAPI(OpenAPI openAPI) {
     //openAPI.getInfo().setTitle(openAPI.getInfo().getTitle() + " %s".formatted("NIKOLA"));
+    Info info = getOrCreateInfo(openAPI);
+    this.buildConfig.rest.info.title.ifPresent(info::setTitle);
+    this.buildConfig.rest.info.version.ifPresent(info::setVersion);
+    Contact contact = getOrCreateContact(info);
+    this.buildConfig.rest.info.contact.name.ifPresent(contact::setName);
+    this.buildConfig.rest.info.contact.email.ifPresent(contact::setEmail);
+    this.buildConfig.rest.info.contact.url.ifPresent(contact::setUrl);
+    License license = getOrCreateLicense(info);
+    this.buildConfig.rest.info.license.name.ifPresent(license::setName);
+    this.buildConfig.rest.info.license.url.ifPresent(license::setUrl);
+
     Components components = openAPI.getComponents();
     if (components != null) {
       Set<String> remove = new HashSet<>();

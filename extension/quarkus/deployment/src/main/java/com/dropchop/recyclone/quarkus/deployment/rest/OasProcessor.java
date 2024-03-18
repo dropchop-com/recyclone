@@ -2,6 +2,7 @@ package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.rest.OasMappingConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.runtime.configuration.ConfigUtils;
@@ -44,12 +45,19 @@ public class OasProcessor {
       if (mapping.internal && hideInternal) {
         continue;
       }
-      if (mapping.excluded) {
-        continue;
-      }
+
       MethodInfo method = mapping.apiMethod;
       ClassInfo declaringClass = mapping.apiClass;
       Type[] params = method.parameterTypes().toArray(new Type[] {});
+
+      if (mapping.excluded) {
+        //filter out excluded
+        OasMappingConfig config = new OasMappingConfig(
+            JandexUtil.createUniqueMethodReference(declaringClass, method),
+            declaringClass.name().toString(),
+            method.name()
+        );
+      }
 
       Set<String> tags = new HashSet<>();
       if (mapping.segment != null) {
@@ -104,6 +112,7 @@ public class OasProcessor {
   @BuildStep
   void filterOpenAPI(OpenApiFilteredIndexViewBuildItem filteredIndexView,
                      RestMappingItem restMappingItem,
+                     RecycloneBuildConfig recycloneBuildConfig,
                      BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
     Map<String, OasMappingConfig> operationMapping;
     if (ConfigUtils.isProfileActive("dev") || ConfigUtils.isProfileActive("test")) {
@@ -112,7 +121,7 @@ public class OasProcessor {
       operationMapping = constructMappings(filteredIndexView, restMappingItem, true);
     }
     addToOpenAPIDefinitionBuildItemBuildProducer.produce(new AddToOpenAPIDefinitionBuildItem(
-        new OasFilter(operationMapping)
+        new OasFilter(recycloneBuildConfig, operationMapping)
     ));
   }
 }

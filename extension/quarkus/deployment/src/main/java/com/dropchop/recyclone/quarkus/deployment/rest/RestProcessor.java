@@ -1,16 +1,24 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplication;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationImpl;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneResource;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.AnnotationsTransformerBuildItem;
+import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
+import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.resteasy.server.common.deployment.ResteasyDeploymentCustomizerBuildItem;
+import io.quarkus.resteasy.server.common.spi.AdditionalJaxRsResourceDefiningAnnotationBuildItem;
 import io.quarkus.smallrye.openapi.deployment.OpenApiFilteredIndexViewBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.runtime.scanner.FilteredIndexView;
 import io.smallrye.openapi.spring.SpringConstants;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Singleton;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
@@ -123,16 +131,21 @@ public class RestProcessor {
   }
 
   @BuildStep
-  public void buildRestMapping(
+  public void buildRestMapping(CombinedIndexBuildItem cibi,
+                               RecycloneBuildConfig config,
+                               BuildProducer<ResteasyDeploymentCustomizerBuildItem> customizerBuildItemProducer,
                                OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                               BuildProducer<RestMappingItem> restMappingItemBuildProducer) {
+                               BuildProducer<RestMappingItem> restMappingItemBuildProducer,
+                               BuildProducer<AnnotationsTransformerBuildItem> transformerBuildItemBuildProducer,
+                               BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem>
+                                     annotationBuildItemBuildProducer) {
     FilteredIndexView filteredIndex = filteredIndexView.getIndex();
     List<AnnotationInstance> openapiAnnotations = new ArrayList<>();
     Set<DotName> allOpenAPIEndpoints = getAllOpenAPIEndpoints();
     for (DotName dotName : allOpenAPIEndpoints) {
       openapiAnnotations.addAll(filteredIndex.getAnnotations(dotName));
     }
-
+    Set<DotName> register = new LinkedHashSet<>();
     Map<MethodInfo, RestMapping> mapping = new HashMap<>();
     for (AnnotationInstance ai : openapiAnnotations) {
       if (!ai.target().kind().equals(AnnotationTarget.Kind.METHOD)) {
@@ -183,6 +196,34 @@ public class RestProcessor {
         }
       }
 
+      Collection<ClassInfo> classes = cibi.getIndex().getAllKnownImplementors(declaringClass.name());
+      RecycloneBuildConfig.Rest restConfig = config.rest;
+
+      boolean doExclude = restConfig.includes.isPresent();
+      for (ClassInfo impl : classes) {
+        if (restConfig.includes.isPresent()) {
+          for (String include : restConfig.includes.get()) {
+            if (include.equals(impl.name().toString())) {
+              doExclude = false;
+              break;
+            }
+          }
+        }
+        if (restConfig.excludes.isPresent()) {
+          for (String exclude : restConfig.excludes.get()) {
+            if (exclude.equals(impl.name().toString())) {
+              doExclude = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!doExclude) {
+        for (ClassInfo impl : classes) {
+          register.add(impl.name());
+        }
+      }
+
       String path = pathAnnotation.value().asString();
       String segment = extractSecondFromLastPathSegment(path);
 
@@ -201,19 +242,39 @@ public class RestProcessor {
           internal,
           path,
           segment,
-          false
+          doExclude
       ));
-
     }
     restMappingItemBuildProducer.produce(new RestMappingItem(mapping));
+    transformerBuildItemBuildProducer.produce(
+        new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(register))
+    );
+    annotationBuildItemBuildProducer.produce(
+        new AdditionalJaxRsResourceDefiningAnnotationBuildItem(
+            DotName.createSimple(RecycloneResource.class)
+        )
+    );
+
+    customizerBuildItemProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
+      List<String> classes = resteasyDeployment.getProviderClasses();
+      int brejk = 0;
+    }));
   }
 
+  /*@BuildStep
+  public void configRestRoot(RecycloneBuildConfig config,
+                             BuildProducer<ResteasyJaxrsConfigBuildItem> buildItemBuildProducer) {
+    if (config.rest.path.isPresent() && !config.rest.path.get().isBlank()) {
+      buildItemBuildProducer.produce(new ResteasyJaxrsConfigBuildItem(config.rest.path.get(), ""));
+    }
+  }*/
+
   @BuildStep
-  void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
+  public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
-            .addBeanClasses(RecycloneApplication.class)
+            .addBeanClasses(RecycloneApplicationImpl.class)
             .setUnremovable()
             .setDefaultScope(DotNames.SINGLETON).build()
     );
@@ -221,19 +282,15 @@ public class RestProcessor {
 
   @BuildStep
   @Record(RUNTIME_INIT)
-  public void registerResourceClasses(RestMappingItem restMappingItem,
-                                      OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                                      RestRecorder recorder) {
-    FilteredIndexView filteredIndex = filteredIndexView.getIndex();
-    Collection<String> resultClasses = new LinkedHashSet<>();
-    for (Map.Entry<MethodInfo, RestMapping> entry : restMappingItem.getMapping().entrySet()) {
-      RestMapping mapping = entry.getValue();
-      Collection<ClassInfo> classes = filteredIndex.getAllKnownImplementors(mapping.apiClass.name());
-      for (ClassInfo impl : classes) {
-        resultClasses.add(impl.name().toString());
-      }
-    }
-
-    recorder.createRestApplication(resultClasses);
+  public void createApplication(BuildProducer<SyntheticBeanBuildItem> syntheticBeans,
+                                RestRecorder restRecorder) {
+    SyntheticBeanBuildItem.ExtendedBeanConfigurator configurator = SyntheticBeanBuildItem
+        .configure(RecycloneApplicationImpl.class)
+        .scope(Singleton.class)
+        .setRuntimeInit()
+        .unremovable()
+        .addQualifier(Default.class)
+        .supplier(restRecorder.createApp());
+    syntheticBeans.produce(configurator.done());
   }
 }

@@ -1,11 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.app;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.quarkus.runtime.spi.RestResourceConfig;
+import com.dropchop.recyclone.quarkus.runtime.spi.*;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
-import com.dropchop.recyclone.quarkus.it.rest.server.DummyResource;
-import com.dropchop.recyclone.quarkus.it.rest.server.DummyResourceInternal;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,14 +23,8 @@ public class TestApplicationConfiguration {
   @Inject
   MapperSubTypeConfig mapperConfig;
 
-  @Produces
-  @ApplicationScoped
-  RestResourceConfig getResourceConfig() {
-    return new RestResourceConfig().addClasses(
-        DummyResourceInternal.class,
-        DummyResource.class
-    );
-  }
+  @Inject
+  RecycloneApplication application;
 
   /**
    * ObjectMapper customization/extension point. Add own polymorphic mappings here.
@@ -42,6 +34,8 @@ public class TestApplicationConfiguration {
   @Produces
   @ApplicationScoped
   ObjectMapper getObjectMapper() {
+    RecycloneBuildConfig buildConfig = application.getBuildConfig();
+    RecycloneRuntimeConfig runtimeConfig = application.getRuntimeConfig();
     //mapping is already there collected from the @SubclassMapping annotation of the TagToDtoMapper,
     //but we add it again here just for demonstration
     mapperConfig.addBidiMapping(LanguageGroup.class, ELanguageGroup.class);

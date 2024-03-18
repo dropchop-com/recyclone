@@ -71,13 +71,13 @@ quarkus:
       - com.dropchop.recyclone.model.entity.jpa.localization
       - com.dropchop.recyclone.model.entity.jpa.security
       - com.dropchop.recyclone.quarkus.it.model.entity.jpa
-
+  resteasy:
+    path: /api
   recyclone:
     rest:
-      path: /api
       info:
         title: "Recyclone API"
-        version: "1.0.1"
+        version: ${project.version}
         contact:
           name: "Recyclone API Support"
           url: "https://exampleurl.com/contact"
@@ -85,8 +85,25 @@ quarkus:
         license:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+      security:
+        ApiKey:
+          type: http
+          scheme: bearer
+        BasicAuth:
+          type: http
+          scheme: basic
+        ApiKeyAuth:
+          type: apiKey
+          in: header
+          apiKeyName: apiKeyName
+        JWT:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+
       includes:
         - com.dropchop.recyclone.quarkus.it.rest.server.DummyResource
+        - com.dropchop.recyclone.quarkus.it.rest.server.DummyResourceInternal
 
 #dropchop:
 #  application:
