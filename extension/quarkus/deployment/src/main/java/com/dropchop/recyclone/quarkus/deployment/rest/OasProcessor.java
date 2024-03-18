@@ -1,15 +1,21 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.quarkus.runtime.rest.OasMappingConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
+import com.dropchop.recyclone.quarkus.runtime.rest.OasMappingConfig;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.smallrye.openapi.deployment.OpenApiFilteredIndexViewBuildItem;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
+import io.smallrye.openapi.api.models.security.SecurityRequirementImpl;
+import io.smallrye.openapi.api.models.security.SecuritySchemeImpl;
 import io.smallrye.openapi.runtime.scanner.FilteredIndexView;
 import io.smallrye.openapi.runtime.util.JandexUtil;
+import org.eclipse.microprofile.openapi.models.Components;
+import org.eclipse.microprofile.openapi.models.OpenAPI;
+import org.eclipse.microprofile.openapi.models.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.models.security.SecurityScheme;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.MethodInfo;
@@ -50,15 +56,6 @@ public class OasProcessor {
       ClassInfo declaringClass = mapping.apiClass;
       Type[] params = method.parameterTypes().toArray(new Type[] {});
 
-      if (mapping.excluded) {
-        //filter out excluded
-        OasMappingConfig config = new OasMappingConfig(
-            JandexUtil.createUniqueMethodReference(declaringClass, method),
-            declaringClass.name().toString(),
-            method.name()
-        );
-      }
-
       Set<String> tags = new HashSet<>();
       if (mapping.segment != null) {
         tags.add(mapping.segment);
@@ -81,7 +78,8 @@ public class OasProcessor {
               impl.name().toString(),
               implMethod.name(),
               valueClassName != null ? valueClassName.toString() : null,
-              tags
+              tags,
+              mapping.excluded
           );
           operationFilter.put(config.getMethodRef(), config);
         }
@@ -91,7 +89,8 @@ public class OasProcessor {
             impl.name().toString(),
             method.name(),
             valueClassName != null ? valueClassName.toString() : null,
-            tags
+            tags,
+            mapping.excluded
         );
         operationFilter.put(config.getMethodRef(), config);
       }

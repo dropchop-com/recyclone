@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationFactory;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationImpl;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneResource;
@@ -130,6 +131,31 @@ public class RestProcessor {
     return null;
   }
 
+  private boolean shouldExclude(Collection<ClassInfo> classes, RecycloneBuildConfig config) {
+    RecycloneBuildConfig.Rest restConfig = config.rest;
+    boolean doExclude = restConfig.includes.isPresent();
+    for (ClassInfo impl : classes) {
+      if (restConfig.includes.isPresent()) {
+        for (String include : restConfig.includes.get()) {
+          if (include.equals(impl.name().toString())) {
+            doExclude = false;
+            break;
+          }
+        }
+      }
+      if (restConfig.excludes.isPresent()) {
+        for (String exclude : restConfig.excludes.get()) {
+          if (exclude.equals(impl.name().toString())) {
+            doExclude = true;
+            break;
+          }
+        }
+      }
+    }
+
+    return doExclude;
+  }
+
   @BuildStep
   public void buildRestMapping(CombinedIndexBuildItem cibi,
                                RecycloneBuildConfig config,
@@ -146,6 +172,7 @@ public class RestProcessor {
       openapiAnnotations.addAll(filteredIndex.getAnnotations(dotName));
     }
     Set<DotName> register = new LinkedHashSet<>();
+    Set<DotName> exclude = new LinkedHashSet<>();
     Map<MethodInfo, RestMapping> mapping = new HashMap<>();
     for (AnnotationInstance ai : openapiAnnotations) {
       if (!ai.target().kind().equals(AnnotationTarget.Kind.METHOD)) {
@@ -196,34 +223,6 @@ public class RestProcessor {
         }
       }
 
-      Collection<ClassInfo> classes = cibi.getIndex().getAllKnownImplementors(declaringClass.name());
-      RecycloneBuildConfig.Rest restConfig = config.rest;
-
-      boolean doExclude = restConfig.includes.isPresent();
-      for (ClassInfo impl : classes) {
-        if (restConfig.includes.isPresent()) {
-          for (String include : restConfig.includes.get()) {
-            if (include.equals(impl.name().toString())) {
-              doExclude = false;
-              break;
-            }
-          }
-        }
-        if (restConfig.excludes.isPresent()) {
-          for (String exclude : restConfig.excludes.get()) {
-            if (exclude.equals(impl.name().toString())) {
-              doExclude = true;
-              break;
-            }
-          }
-        }
-      }
-      if (!doExclude) {
-        for (ClassInfo impl : classes) {
-          register.add(impl.name());
-        }
-      }
-
       String path = pathAnnotation.value().asString();
       String segment = extractSecondFromLastPathSegment(path);
 
@@ -232,6 +231,19 @@ public class RestProcessor {
       );
       boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
 
+      Collection<ClassInfo> classes = cibi.getIndex().getAllKnownImplementors(declaringClass.name());
+
+      boolean doExclude = this.shouldExclude(classes, config);
+      if (!doExclude) {
+        for (ClassInfo impl : classes) {
+          register.add(impl.name());
+        }
+      } else {
+        exclude.add(declaringClass.name());
+        for (ClassInfo impl : classes) {
+          exclude.add(impl.name());
+        }
+      }
       mapping.put(method, new RestMapping(
           declaringClass,
           method,
@@ -246,18 +258,26 @@ public class RestProcessor {
       ));
     }
     restMappingItemBuildProducer.produce(new RestMappingItem(mapping));
-    transformerBuildItemBuildProducer.produce(
-        new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(register))
+    /*transformerBuildItemBuildProducer.produce(
+        new AnnotationsTransformerBuildItem(
+            transformer -> {
+              if (transformer.getTarget().kind() == AnnotationTarget.Kind.CLASS &&
+                  register.contains(transformer.getTarget().asClass().name())) {
+                transformer.transform().add(DotName.createSimple(RecycloneResource.class.getName())).done();
+              }
+            }
+        )
     );
     annotationBuildItemBuildProducer.produce(
         new AdditionalJaxRsResourceDefiningAnnotationBuildItem(
             DotName.createSimple(RecycloneResource.class)
         )
-    );
+    );*/
 
     customizerBuildItemProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
-      List<String> classes = resteasyDeployment.getProviderClasses();
-      int brejk = 0;
+      List<String> exclusion = exclude.stream().map(DotName::toString).toList();
+      resteasyDeployment.getResourceClasses().removeAll(exclusion);
+      resteasyDeployment.getScannedResourceClasses().removeAll(exclusion);
     }));
   }
 
@@ -275,6 +295,13 @@ public class RestProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(RecycloneApplicationImpl.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(RecycloneApplicationFactory.class)
             .setUnremovable()
             .setDefaultScope(DotNames.SINGLETON).build()
     );

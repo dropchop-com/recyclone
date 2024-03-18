@@ -109,7 +109,7 @@ public class RecycloneBuildConfig {
      */
     @ConfigDocSection
     @ConfigDocMapKey("security-name")
-    @ConfigItem(name = ConfigItem.PARENT)
+    //@ConfigItem(name = ConfigItem.PARENT)
     public Map<String, Security> security = new LinkedHashMap<>();
     /**
      * REST OpenAPI security item configuration.

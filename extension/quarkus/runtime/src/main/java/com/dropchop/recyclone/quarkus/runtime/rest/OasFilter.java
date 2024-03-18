@@ -7,10 +7,13 @@ import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig.Rest;
 import io.smallrye.openapi.api.models.OperationImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
 import io.smallrye.openapi.api.models.info.LicenseImpl;
+import io.smallrye.openapi.api.models.security.SecurityRequirementImpl;
+import io.smallrye.openapi.api.models.security.SecuritySchemeImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.Components;
@@ -22,6 +25,8 @@ import org.eclipse.microprofile.openapi.models.info.License;
 import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.eclipse.microprofile.openapi.models.responses.APIResponse;
+import org.eclipse.microprofile.openapi.models.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.models.security.SecurityScheme;
 import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
@@ -74,6 +79,58 @@ public class OasFilter implements OASFilter {
     return info;
   }
 
+  private List<SecurityRequirement> createSecurityRequirements(Map<String, Rest.Security> security) {
+    List<SecurityRequirement> securityRequirements = new ArrayList<>(security.size());
+    for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
+      String name = entry.getKey();
+      SecurityRequirement securityRequirement = new SecurityRequirementImpl();
+      securityRequirement.addScheme(name);
+      securityRequirements.add(securityRequirement);
+    }
+    return securityRequirements;
+  }
+
+  private void createSecurity(OpenAPI openAPI, Map<String, Rest.Security> security) {
+    List<SecurityRequirement> securityRequirements = openAPI.getSecurity();
+    if (securityRequirements == null) {
+      securityRequirements = new ArrayList<>(security.size());
+      openAPI.setSecurity(securityRequirements);
+    }
+    for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
+      String name = entry.getKey();
+      SecurityRequirement securityRequirement = new SecurityRequirementImpl();
+      securityRequirement.addScheme(name);
+      securityRequirements.add(securityRequirement);
+      Rest.Security restSecurity = entry.getValue();
+
+      Components components = openAPI.getComponents();
+      if (components != null && restSecurity != null) {
+        SecurityScheme securityScheme = new SecuritySchemeImpl();
+        if (restSecurity.type.isPresent()) {
+          if (restSecurity.type.get().equalsIgnoreCase("http")) {
+            securityScheme.setType(SecurityScheme.Type.HTTP);
+          } else if (restSecurity.type.get().equalsIgnoreCase("apikey")) {
+            securityScheme.setType(SecurityScheme.Type.APIKEY);
+            restSecurity.apiKeyName.ifPresent(securityScheme::setName);
+          }
+        }
+        if (restSecurity.in.isPresent()) {
+          if (restSecurity.type.get().equalsIgnoreCase("query")) {
+            securityScheme.setIn(SecurityScheme.In.QUERY);
+          } else if (restSecurity.type.get().equalsIgnoreCase("cookie")) {
+            securityScheme.setIn(SecurityScheme.In.COOKIE);
+          } else if (restSecurity.type.get().equalsIgnoreCase("header")) {
+            securityScheme.setIn(SecurityScheme.In.HEADER);
+          }
+        }
+
+        restSecurity.scheme.ifPresent(securityScheme::setScheme);
+        restSecurity.bearerFormat.ifPresent(securityScheme::setBearerFormat);
+        components.addSecurityScheme(name, securityScheme);
+      }
+    }
+  }
+
   @Override
   public void filterOpenAPI(OpenAPI openAPI) {
     //openAPI.getInfo().setTitle(openAPI.getInfo().getTitle() + " %s".formatted("NIKOLA"));
@@ -99,6 +156,11 @@ public class OasFilter implements OASFilter {
       for (String toRemove : remove) {
         components.removeSchema(toRemove);
       }
+    }
+
+    Map<String, Rest.Security> security = this.buildConfig.rest.security;
+    if (!security.isEmpty()) {
+      this.createSecurity(openAPI, security);
     }
   }
 
@@ -228,6 +290,11 @@ public class OasFilter implements OASFilter {
   public Operation filterOperation(Operation operation) {
     if (!(operation instanceof OperationImpl op)) {
       return operation;
+    }
+    Map<String, Rest.Security> security = this.buildConfig.rest.security;
+    if (!security.isEmpty()) {
+      List<SecurityRequirement> securityRequirements = createSecurityRequirements(security);
+      op.setSecurity(securityRequirements);
     }
     OasMappingConfig config = this.operationMapping.get(op.getMethodRef());
     if (config == null) {
