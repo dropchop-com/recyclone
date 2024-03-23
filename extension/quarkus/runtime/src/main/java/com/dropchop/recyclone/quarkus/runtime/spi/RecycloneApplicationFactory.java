@@ -2,6 +2,9 @@ package com.dropchop.recyclone.quarkus.runtime.spi;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.runtime.LaunchMode;
 import jakarta.inject.Singleton;
 

@@ -1,7 +1,9 @@
-package com.dropchop.recyclone.quarkus.runtime.spi;
+package com.dropchop.recyclone.quarkus.runtime.spi.bean;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 

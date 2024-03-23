@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.runtime.rest;
 
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationImpl;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationFactory;
 import io.quarkus.arc.Arc;
 import io.quarkus.runtime.annotations.Recorder;

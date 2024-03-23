@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.quarkus.runtime.rest.OasMappingConfig;
+import com.dropchop.recyclone.quarkus.runtime.rest.OasMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.runtime.configuration.ConfigUtils;
@@ -34,11 +34,11 @@ public class OasProcessor {
       "jakarta.ws.rs.GET"
   );
 
-  private Map<String, OasMappingConfig> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                                                          RestMappingItem restMappingItem,
-                                                          boolean hideInternal) {
+  private Map<String, OasMapping> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView,
+                                                    RestMappingItem restMappingItem,
+                                                    boolean hideInternal) {
     FilteredIndexView filteredIndex = filteredIndexView.getIndex();
-    Map<String, OasMappingConfig> operationFilter = new HashMap<>();
+    Map<String, OasMapping> operationFilter = new HashMap<>();
 
     for (Map.Entry<MethodInfo, RestMapping> entry : restMappingItem.getMapping().entrySet()) {
       RestMapping mapping = entry.getValue();
@@ -52,7 +52,7 @@ public class OasProcessor {
 
       if (mapping.excluded) {
         //filter out excluded
-        OasMappingConfig config = new OasMappingConfig(
+        OasMapping config = new OasMapping(
             JandexUtil.createUniqueMethodReference(declaringClass, method),
             declaringClass.name().toString(),
             method.name()
@@ -76,7 +76,7 @@ public class OasProcessor {
         MethodInfo implMethod = impl.method(method.name(), params);
 
         if (implMethod != null) {// we register implementations so we get correct path
-          OasMappingConfig config = new OasMappingConfig(
+          OasMapping config = new OasMapping(
               JandexUtil.createUniqueMethodReference(impl, implMethod),
               impl.name().toString(),
               implMethod.name(),
@@ -86,7 +86,7 @@ public class OasProcessor {
           operationFilter.put(config.getMethodRef(), config);
         }
 
-        OasMappingConfig config = new OasMappingConfig(
+        OasMapping config = new OasMapping(
             JandexUtil.createUniqueMethodReference(impl, method),
             impl.name().toString(),
             method.name(),
@@ -97,7 +97,7 @@ public class OasProcessor {
       }
 
       //filter out interface methods to avoid duplication
-      OasMappingConfig config = new OasMappingConfig(
+      OasMapping config = new OasMapping(
           JandexUtil.createUniqueMethodReference(declaringClass, method),
           declaringClass.name().toString(),
           method.name()
@@ -114,7 +114,7 @@ public class OasProcessor {
                      RestMappingItem restMappingItem,
                      RecycloneBuildConfig recycloneBuildConfig,
                      BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
-    Map<String, OasMappingConfig> operationMapping;
+    Map<String, OasMapping> operationMapping;
     if (ConfigUtils.isProfileActive("dev") || ConfigUtils.isProfileActive("test")) {
       operationMapping = constructMappings(filteredIndexView, restMappingItem, false);
     } else {

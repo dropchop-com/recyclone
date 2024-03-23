@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.spi;
+package com.dropchop.recyclone.quarkus.runtime.config;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;

@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import io.smallrye.openapi.api.models.OperationImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
@@ -36,11 +36,11 @@ public class OasFilter implements OASFilter {
   private static final Logger log = Logger.getLogger(OasFilter.class);
 
   private final RecycloneBuildConfig buildConfig;
-  private final Map<String, OasMappingConfig> operationMapping;
+  private final Map<String, OasMapping> operationMapping;
 
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
-  public OasFilter(RecycloneBuildConfig buildConfig, Map<String, OasMappingConfig> operationMapping) {
+  public OasFilter(RecycloneBuildConfig buildConfig, Map<String, OasMapping> operationMapping) {
     this.buildConfig = buildConfig;
     this.operationMapping = operationMapping;
   }
@@ -229,7 +229,7 @@ public class OasFilter implements OASFilter {
     if (!(operation instanceof OperationImpl op)) {
       return operation;
     }
-    OasMappingConfig config = this.operationMapping.get(op.getMethodRef());
+    OasMapping config = this.operationMapping.get(op.getMethodRef());
     if (config == null) {
       return operation;
     }

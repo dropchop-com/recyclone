@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.service.api.ClassRegistryService;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
@@ -40,7 +40,7 @@ public class RegistryTest {
         );
 
     @Inject
-    ClassRegistryService service;
+    RecycloneApplication service;
 
     @Inject
     MapperSubTypeConfig mapperSubTypeConfig;
@@ -72,7 +72,7 @@ public class RegistryTest {
 
     @Test
     public void getMapperSubTypeConfigService() {
-        MapperSubTypeConfig config = service.getMapperTypeConfig();
+        MapperSubTypeConfig config = service.getMapperSubTypeConfig();
         Assertions.assertEquals(ELoginAccount.class, config.mapsTo(LoginAccount.class));
         Assertions.assertEquals(LoginAccount.class, config.mapsTo(ELoginAccount.class));
         Assertions.assertEquals(ETokenAccount.class, config.mapsTo(TokenAccount.class));

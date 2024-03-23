@@ -1,10 +1,8 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
-import com.dropchop.recyclone.quarkus.runtime.spi.ClassRegistryServiceImpl;
-import com.dropchop.recyclone.quarkus.runtime.registry.RegistryRecorder;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import com.dropchop.recyclone.quarkus.runtime.registry.RegistryRecorder;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -101,11 +99,6 @@ public class RegistryProcessor {
     classProducer.produce(
         new JsonSerializationTypeItem(propertyMappedClasses)
     );
-  }
-
-  @BuildStep
-  void registerRecycloneClassRegistryService(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(ClassRegistryServiceImpl.class));
   }
 
   @BuildStep

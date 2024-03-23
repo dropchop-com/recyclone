@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationImpl;
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneResource;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.AnnotationsTransformerBuildItem;

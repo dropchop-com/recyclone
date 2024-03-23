@@ -2,8 +2,8 @@ package com.dropchop.recyclone.quarkus.runtime.registry;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.quarkus.runtime.spi.JsonSerializationTypeConfigImpl;
-import com.dropchop.recyclone.quarkus.runtime.spi.MapperSubTypeConfigImpl;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.JsonSerializationTypeConfigImpl;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.MapperSubTypeConfigImpl;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 

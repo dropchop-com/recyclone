@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.spi;
+package com.dropchop.recyclone.quarkus.runtime.spi.bean;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import io.quarkus.arc.DefaultBean;
