@@ -39,7 +39,7 @@ import java.util.Set;
   security = {
     @SecurityRequirement(name = "apiKey"),
     @SecurityRequirement(name = "BasicAuth"),
-    @SecurityRequirement(name = "ApiKeyAuth"),
+    @SecurityRequ irement(name = "ApiKeyAuth"),
     @SecurityRequirement(name = "OpenID"),
     @SecurityRequirement(name = "JWT")
   },
