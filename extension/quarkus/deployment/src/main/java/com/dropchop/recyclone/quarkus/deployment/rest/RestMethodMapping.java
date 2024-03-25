@@ -7,7 +7,7 @@ import org.jboss.jandex.MethodInfo;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
  */
-public class RestMapping {
+public class RestMethodMapping {
   final ClassInfo apiClass;
   final MethodInfo apiMethod;
   final DotName classParamClass;
@@ -19,9 +19,9 @@ public class RestMapping {
   final String segment;
   final boolean excluded;
 
-  public RestMapping(ClassInfo apiClass, MethodInfo apiMethod, DotName classParamClass, DotName methodParamClass,
-                     DotName dataClass, DotName execContextClass, boolean internal, String path, String segment,
-                     boolean excluded) {
+  public RestMethodMapping(ClassInfo apiClass, MethodInfo apiMethod, DotName classParamClass, DotName methodParamClass,
+                           DotName dataClass, DotName execContextClass, boolean internal, String path, String segment,
+                           boolean excluded) {
     this.apiClass = apiClass;
     this.apiMethod = apiMethod;
     this.classParamClass = classParamClass;

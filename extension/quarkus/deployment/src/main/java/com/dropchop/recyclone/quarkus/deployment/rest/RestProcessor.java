@@ -1,11 +1,13 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
+import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationFactory;
 import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneResource;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.AnnotationsTransformerBuildItem;
+import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -14,12 +16,12 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.resteasy.server.common.deployment.ResteasyDeploymentCustomizerBuildItem;
 import io.quarkus.resteasy.server.common.spi.AdditionalJaxRsResourceDefiningAnnotationBuildItem;
-import io.quarkus.smallrye.openapi.deployment.OpenApiFilteredIndexViewBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
-import io.smallrye.openapi.runtime.scanner.FilteredIndexView;
 import io.smallrye.openapi.spring.SpringConstants;
 import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.spi.Producer;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Path;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
 
@@ -61,35 +63,6 @@ public class RestProcessor {
 
   private static final boolean ANNO_INTERNAL = false;
 
-  /*@BuildStep
-  OpenApiFilteredIndexViewBuildItem smallryeOpenApiIndex(CombinedIndexBuildItem combinedIndexBuildItem,
-                                                         BeanArchiveIndexBuildItem beanArchiveIndexBuildItem,
-                                                         BuildExclusionsBuildItem buildExclusionsBuildItem) {
-
-    CompositeIndex compositeIndex = CompositeIndex.create(
-        combinedIndexBuildItem.getIndex(),
-        beanArchiveIndexBuildItem.getIndex());
-
-    OpenApiConfig config = OpenApiConfig.fromConfig(ConfigProvider.getConfig());
-    Set<DotName> buildTimeClassExclusions = buildExclusionsBuildItem.getExcludedDeclaringClasses()
-        .stream()
-        .map(DotName::createSimple)
-        .collect(Collectors.toSet());
-
-    FilteredIndexView indexView = new FilteredIndexView(compositeIndex, config) {
-      @Override
-      public boolean accepts(DotName className) {
-        if (super.accepts(className)) {
-          return !buildTimeClassExclusions.contains(className);
-        }
-
-        return false;
-      }
-    };
-
-    return new OpenApiFilteredIndexViewBuildItem(indexView);
-  }*/
-
   @SuppressWarnings("SameParameterValue")
   private DotName getClassAnnotationValue(AnnotationInstance annotation, String property, DotName defaultType) {
     AnnotationValue value = annotation.value(property);
@@ -130,23 +103,43 @@ public class RestProcessor {
     return null;
   }
 
+  private boolean shouldExclude(Collection<ClassInfo> classes, RecycloneBuildConfig config) {
+    RecycloneBuildConfig.Rest restConfig = config.rest;
+    boolean doExclude = restConfig.includes.isPresent();
+    for (ClassInfo impl : classes) {
+      if (restConfig.includes.isPresent()) {
+        for (String include : restConfig.includes.get()) {
+          if (include.equals(impl.name().toString())) {
+            doExclude = false;
+            break;
+          }
+        }
+      }
+      if (restConfig.excludes.isPresent()) {
+        for (String exclude : restConfig.excludes.get()) {
+          if (exclude.equals(impl.name().toString())) {
+            doExclude = true;
+            break;
+          }
+        }
+      }
+    }
+
+    return doExclude;
+  }
+
   @BuildStep
   public void buildRestMapping(CombinedIndexBuildItem cibi,
                                RecycloneBuildConfig config,
-                               BuildProducer<ResteasyDeploymentCustomizerBuildItem> customizerBuildItemProducer,
-                               OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                               BuildProducer<RestMappingItem> restMappingItemBuildProducer,
-                               BuildProducer<AnnotationsTransformerBuildItem> transformerBuildItemBuildProducer,
-                               BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem>
-                                     annotationBuildItemBuildProducer) {
-    FilteredIndexView filteredIndex = filteredIndexView.getIndex();
+                               BuildProducer<RestMappingBuildItem> restMappingItemBuildProducer) {
     List<AnnotationInstance> openapiAnnotations = new ArrayList<>();
     Set<DotName> allOpenAPIEndpoints = getAllOpenAPIEndpoints();
     for (DotName dotName : allOpenAPIEndpoints) {
-      openapiAnnotations.addAll(filteredIndex.getAnnotations(dotName));
+      openapiAnnotations.addAll(cibi.getIndex().getAnnotations(dotName));
     }
-    Set<DotName> register = new LinkedHashSet<>();
-    Map<MethodInfo, RestMapping> mapping = new HashMap<>();
+
+    Map<MethodInfo, RestMethodMapping> methodMapping = new HashMap<>();
+    Map<ClassInfo, RestClassMapping> classMapping = new HashMap<>();
     for (AnnotationInstance ai : openapiAnnotations) {
       if (!ai.target().kind().equals(AnnotationTarget.Kind.METHOD)) {
         continue;
@@ -174,7 +167,7 @@ public class RestProcessor {
       DotName classParamClass = getClassAnnotationValue(
           dynamicExecAnnotation, "value", ANNO_VALUE
       );
-      DotName dataClass = getClassAnnotationValue(
+      DotName tmpDataClass = getClassAnnotationValue(
           dynamicExecAnnotation, "dataClass", ANNO_DATA_CLASS
       );
       DotName methodParamClass = null;
@@ -190,40 +183,13 @@ public class RestProcessor {
             if (!methodParameterType.asParameterizedType().arguments().isEmpty()) {
               // Get the first type argument
               Type typeArgument = methodParameterType.asParameterizedType().arguments().get(0);
-              dataClass = typeArgument.name();
+              tmpDataClass = typeArgument.name();
             }
           }
         }
       }
-
-      Collection<ClassInfo> classes = cibi.getIndex().getAllKnownImplementors(declaringClass.name());
-      RecycloneBuildConfig.Rest restConfig = config.rest;
-
-      boolean doExclude = restConfig.includes.isPresent();
-      for (ClassInfo impl : classes) {
-        if (restConfig.includes.isPresent()) {
-          for (String include : restConfig.includes.get()) {
-            if (include.equals(impl.name().toString())) {
-              doExclude = false;
-              break;
-            }
-          }
-        }
-        if (restConfig.excludes.isPresent()) {
-          for (String exclude : restConfig.excludes.get()) {
-            if (exclude.equals(impl.name().toString())) {
-              doExclude = true;
-              break;
-            }
-          }
-        }
-      }
-      if (!doExclude) {
-        for (ClassInfo impl : classes) {
-          register.add(impl.name());
-        }
-      }
-
+      DotName paramClass = classParamClass;
+      DotName dataClass = tmpDataClass;
       String path = pathAnnotation.value().asString();
       String segment = extractSecondFromLastPathSegment(path);
 
@@ -232,7 +198,23 @@ public class RestProcessor {
       );
       boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
 
-      mapping.put(method, new RestMapping(
+      Collection<ClassInfo> classes = cibi.getIndex().getAllKnownImplementors(declaringClass.name());
+      boolean doExclude = this.shouldExclude(classes, config);
+      for (ClassInfo impl : classes) {
+        classMapping.computeIfAbsent(impl, k -> new RestClassMapping(
+            declaringClass,
+            impl,
+            paramClass,
+            dataClass,
+            execContextClass,
+            internal,
+            path,
+            segment,
+            doExclude
+        ));
+      }
+
+      methodMapping.put(method, new RestMethodMapping(
           declaringClass,
           method,
           classParamClass,
@@ -245,29 +227,104 @@ public class RestProcessor {
           doExclude
       ));
     }
-    restMappingItemBuildProducer.produce(new RestMappingItem(mapping));
-    transformerBuildItemBuildProducer.produce(
-        new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(register))
+    restMappingItemBuildProducer.produce(
+        new RestMappingBuildItem(methodMapping, classMapping)
     );
-    annotationBuildItemBuildProducer.produce(
+  }
+
+  @BuildStep
+  public void processPathAnnotation(
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<BuildTimeConditionBuildItem> conditionBuildItemsProducer,
+      BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem> annotationProducer,
+      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
+
+    annotationProducer.produce(
         new AdditionalJaxRsResourceDefiningAnnotationBuildItem(
             DotName.createSimple(RecycloneResource.class)
         )
     );
 
-    customizerBuildItemProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
-      List<String> classes = resteasyDeployment.getProviderClasses();
-      int brejk = 0;
-    }));
+    List<BuildTimeConditionBuildItem> buildTimeConditionBuildItems = new ArrayList<>();
+    Map<DotName, String> addAnnotation = new LinkedHashMap<>();
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      ClassInfo impl = entry.getKey();
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.apiClass.hasAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        if (mapping.excluded) {
+          conditionBuildItemsProducer.produce(
+              new BuildTimeConditionBuildItem(mapping.apiClass.annotation(PATH_ANNOTATION).target(), false)
+          );
+        }
+        continue;
+      }
+      if (mapping.implClass.hasAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        if (mapping.excluded) {
+          conditionBuildItemsProducer.produce(
+              new BuildTimeConditionBuildItem(mapping.implClass.annotation(PATH_ANNOTATION).target(), false)
+          );
+        }
+        continue;
+      }
+      if (mapping.excluded) {
+        continue;
+      }
+      AnnotationInstance implPathAnnotation = impl.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation == null) {
+        String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+        addAnnotation.put(impl.name(), newPath);
+      }
+    }
+
+    transformerProducer.produce(
+        new AnnotationsTransformerBuildItem(
+            transformer -> {
+              if (transformer.getTarget().kind() == AnnotationTarget.Kind.CLASS) {
+                String newPath = addAnnotation.get(transformer.getTarget().asClass().name());
+                if (newPath != null) {
+                  transformer.transform().add(
+                      DotName.createSimple(Path.class.getName()),
+                      AnnotationValue.createStringValue("value", newPath)
+                  ).done();
+                  transformer.transform().add(
+                      DotName.createSimple(RecycloneResource.class.getName()),
+                      AnnotationValue.createStringValue("value", newPath)
+                  ).done();
+                }
+              }
+            }
+        )
+    );
   }
 
-  /*@BuildStep
-  public void configRestRoot(RecycloneBuildConfig config,
-                             BuildProducer<ResteasyJaxrsConfigBuildItem> buildItemBuildProducer) {
-    if (config.rest.path.isPresent() && !config.rest.path.get().isBlank()) {
-      buildItemBuildProducer.produce(new ResteasyJaxrsConfigBuildItem(config.rest.path.get(), ""));
+  @BuildStep
+  public void customizeResteasyDeployment(RestMappingBuildItem restMappingBuildItem,
+                                          BuildProducer<ResteasyDeploymentCustomizerBuildItem> customizerProducer) {
+    Set<String> excluded = new LinkedHashSet<>();
+    Set<String> included = new LinkedHashSet<>();
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        excluded.add(mapping.implClass.name().toString());
+      } else {
+        included.add(mapping.implClass.name().toString());
+      }
     }
-  }*/
+    customizerProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
+      resteasyDeployment.getResourceClasses().removeAll(excluded);
+      resteasyDeployment.getScannedResourceClasses().removeAll(excluded);
+      /*List<String> existingResources = resteasyDeployment.getResourceClasses();
+      included.stream()
+          .filter(element -> !existingResources.contains(element))
+          .forEach(existingResources::add);
+      List<String> existingScannedResources = resteasyDeployment.getScannedResourceClasses();
+      included.stream()
+          .filter(element -> !existingScannedResources.contains(element))
+          .forEach(existingScannedResources::add);
+      List<String> tmp = resteasyDeployment.getScannedResourceClasses();
+      tmp = resteasyDeployment.getResourceClasses();*/
+    }));
+  }
 
   @BuildStep
   public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
@@ -275,6 +332,13 @@ public class RestProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(RecycloneApplicationImpl.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(RecycloneApplicationFactory.class)
             .setUnremovable()
             .setDefaultScope(DotNames.SINGLETON).build()
     );

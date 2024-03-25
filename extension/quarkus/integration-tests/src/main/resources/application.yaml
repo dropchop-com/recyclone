@@ -95,11 +95,11 @@ quarkus:
         ApiKeyAuth:
           type: apiKey
           in: header
-          apiKeyName: apiKeyName
+          api-key-name: apiKeyName
         JWT:
           type: http
           scheme: bearer
-          bearerFormat: JWT
+          bearer-format: JWT
 
       includes:
         - com.dropchop.recyclone.quarkus.it.rest.server.DummyResource

@@ -1,19 +1,15 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.quarkus.runtime.rest.OasMapping;
-import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
+import com.dropchop.recyclone.quarkus.runtime.rest.OasMapping;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.runtime.configuration.ConfigUtils;
-import io.quarkus.smallrye.openapi.deployment.OpenApiFilteredIndexViewBuildItem;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
-import io.smallrye.openapi.runtime.scanner.FilteredIndexView;
 import io.smallrye.openapi.runtime.util.JandexUtil;
-import org.jboss.jandex.ClassInfo;
-import org.jboss.jandex.DotName;
-import org.jboss.jandex.MethodInfo;
-import org.jboss.jandex.Type;
+import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
 
 import java.util.*;
@@ -34,14 +30,14 @@ public class OasProcessor {
       "jakarta.ws.rs.GET"
   );
 
-  private Map<String, OasMapping> constructMappings(OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                                                    RestMappingItem restMappingItem,
+  private Map<String, OasMapping> constructMappings(CombinedIndexBuildItem indexBuildItem,
+                                                    RestMappingBuildItem restMappingBuildItem,
                                                     boolean hideInternal) {
-    FilteredIndexView filteredIndex = filteredIndexView.getIndex();
+    IndexView indexView = indexBuildItem.getIndex();
     Map<String, OasMapping> operationFilter = new HashMap<>();
 
-    for (Map.Entry<MethodInfo, RestMapping> entry : restMappingItem.getMapping().entrySet()) {
-      RestMapping mapping = entry.getValue();
+    for (Map.Entry<MethodInfo, RestMethodMapping> entry : restMappingBuildItem.getMethodMapping().entrySet()) {
+      RestMethodMapping mapping = entry.getValue();
       if (mapping.internal && hideInternal) {
         continue;
       }
@@ -49,15 +45,6 @@ public class OasProcessor {
       MethodInfo method = mapping.apiMethod;
       ClassInfo declaringClass = mapping.apiClass;
       Type[] params = method.parameterTypes().toArray(new Type[] {});
-
-      if (mapping.excluded) {
-        //filter out excluded
-        OasMapping config = new OasMapping(
-            JandexUtil.createUniqueMethodReference(declaringClass, method),
-            declaringClass.name().toString(),
-            method.name()
-        );
-      }
 
       Set<String> tags = new HashSet<>();
       if (mapping.segment != null) {
@@ -71,7 +58,7 @@ public class OasProcessor {
         valueClassName = null;
       }
 
-      Collection<ClassInfo> classes = filteredIndex.getAllKnownImplementors(declaringClass.name());
+      Collection<ClassInfo> classes = indexView.getAllKnownImplementors(declaringClass.name());
       for (ClassInfo impl : classes) {
         MethodInfo implMethod = impl.method(method.name(), params);
 
@@ -81,7 +68,8 @@ public class OasProcessor {
               impl.name().toString(),
               implMethod.name(),
               valueClassName != null ? valueClassName.toString() : null,
-              tags
+              tags,
+              mapping.excluded
           );
           operationFilter.put(config.getMethodRef(), config);
         }
@@ -91,7 +79,8 @@ public class OasProcessor {
             impl.name().toString(),
             method.name(),
             valueClassName != null ? valueClassName.toString() : null,
-            tags
+            tags,
+            mapping.excluded
         );
         operationFilter.put(config.getMethodRef(), config);
       }
@@ -110,15 +99,15 @@ public class OasProcessor {
   }
 
   @BuildStep
-  void filterOpenAPI(OpenApiFilteredIndexViewBuildItem filteredIndexView,
-                     RestMappingItem restMappingItem,
+  void filterOpenAPI(CombinedIndexBuildItem indexBuildItem,
+                     RestMappingBuildItem restMappingBuildItem,
                      RecycloneBuildConfig recycloneBuildConfig,
                      BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
     Map<String, OasMapping> operationMapping;
     if (ConfigUtils.isProfileActive("dev") || ConfigUtils.isProfileActive("test")) {
-      operationMapping = constructMappings(filteredIndexView, restMappingItem, false);
+      operationMapping = constructMappings(indexBuildItem, restMappingBuildItem, false);
     } else {
-      operationMapping = constructMappings(filteredIndexView, restMappingItem, true);
+      operationMapping = constructMappings(indexBuildItem, restMappingBuildItem, true);
     }
     addToOpenAPIDefinitionBuildItemBuildProducer.produce(new AddToOpenAPIDefinitionBuildItem(
         new OasFilter(recycloneBuildConfig, operationMapping)

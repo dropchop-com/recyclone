@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.blaze.security;
 
-import com.dropchop.recyclone.service.api.ClassRegistryService;
+import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.EUser;
 import com.dropchop.recyclone.repo.api.RepositoryType;
@@ -37,7 +37,7 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
   UserToEntityMapper toEntityMapper;
 
   @Inject
-  ClassRegistryService registryService;
+  MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override
   public ServiceConfiguration<User, EUser, UUID> getConfiguration() {
@@ -53,7 +53,7 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
     MappingContext context = super.getMappingContextForModify();
     context
       .createWith(
-        new EntityPolymorphicCreateFactory<>(this, registryService.getMapperTypeConfig())
+        new EntityPolymorphicCreateFactory<>(this, mapperSubTypeConfig)
       );
     context.beforeMapping(new SetAccountUuid());
     context.afterMapping(new SetAccountUser());
