@@ -14,6 +14,7 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.resteasy.server.common.deployment.ResteasyDeploymentCustomizerBuildItem;
 import io.quarkus.resteasy.server.common.spi.AdditionalJaxRsResourceDefiningAnnotationBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
@@ -233,68 +234,69 @@ public class RestProcessor {
   }
 
   @BuildStep
-  public void processPathAnnotation(
-      RestMappingBuildItem restMappingBuildItem,
-      BuildProducer<BuildTimeConditionBuildItem> conditionBuildItemsProducer,
-      BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem> annotationProducer,
-      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
-
+  public void registerPathAnnotation(
+      BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem> annotationProducer) {
     annotationProducer.produce(
         new AdditionalJaxRsResourceDefiningAnnotationBuildItem(
             DotName.createSimple(RecycloneResource.class)
         )
     );
+  }
 
-    List<BuildTimeConditionBuildItem> buildTimeConditionBuildItems = new ArrayList<>();
+  @BuildStep
+  public void processPathAnnotation(
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
+
     Map<DotName, String> addAnnotation = new LinkedHashMap<>();
     for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
-      ClassInfo impl = entry.getKey();
       RestClassMapping mapping = entry.getValue();
-      if (mapping.apiClass.hasAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
-        if (mapping.excluded) {
-          conditionBuildItemsProducer.produce(
-              new BuildTimeConditionBuildItem(mapping.apiClass.annotation(PATH_ANNOTATION).target(), false)
-          );
-        }
-        continue;
-      }
-      if (mapping.implClass.hasAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
-        if (mapping.excluded) {
-          conditionBuildItemsProducer.produce(
-              new BuildTimeConditionBuildItem(mapping.implClass.annotation(PATH_ANNOTATION).target(), false)
-          );
-        }
-        continue;
-      }
       if (mapping.excluded) {
         continue;
       }
-      AnnotationInstance implPathAnnotation = impl.declaredAnnotation(PATH_ANNOTATION);
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
       if (implPathAnnotation == null) {
         String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
-        addAnnotation.put(impl.name(), newPath);
+        addAnnotation.put(mapping.implClass.name(), newPath);
       }
     }
 
     transformerProducer.produce(
-        new AnnotationsTransformerBuildItem(
-            transformer -> {
-              if (transformer.getTarget().kind() == AnnotationTarget.Kind.CLASS) {
-                String newPath = addAnnotation.get(transformer.getTarget().asClass().name());
-                if (newPath != null) {
-                  transformer.transform().add(
-                      DotName.createSimple(Path.class.getName()),
-                      AnnotationValue.createStringValue("value", newPath)
-                  ).done();
-                  transformer.transform().add(
-                      DotName.createSimple(RecycloneResource.class.getName()),
-                      AnnotationValue.createStringValue("value", newPath)
-                  ).done();
-                }
-              }
-            }
-        )
+        new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(addAnnotation))
     );
+  }
+
+  @BuildStep
+  public void processExclusions(
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<BuildTimeConditionBuildItem> conditionBuildItemsProducer) {
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        if (mapping.apiClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
+          AnnotationTarget t = mapping.apiClass.declaredAnnotation(PATH_ANNOTATION).target();
+          conditionBuildItemsProducer.produce(
+              new BuildTimeConditionBuildItem(t, false)
+          );
+        }
+        if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
+          AnnotationTarget t = mapping.implClass.declaredAnnotation(PATH_ANNOTATION).target();
+          conditionBuildItemsProducer.produce(
+              new BuildTimeConditionBuildItem(t, false)
+          );
+        }
+      }
+    }
   }
 
   @BuildStep
@@ -311,8 +313,8 @@ public class RestProcessor {
       }
     }
     customizerProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
-      resteasyDeployment.getResourceClasses().removeAll(excluded);
-      resteasyDeployment.getScannedResourceClasses().removeAll(excluded);
+      //resteasyDeployment.getResourceClasses().removeAll(excluded);
+      //resteasyDeployment.getScannedResourceClasses().removeAll(excluded);
       /*List<String> existingResources = resteasyDeployment.getResourceClasses();
       included.stream()
           .filter(element -> !existingResources.contains(element))
