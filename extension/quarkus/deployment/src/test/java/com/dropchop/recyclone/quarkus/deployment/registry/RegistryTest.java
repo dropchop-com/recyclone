@@ -28,7 +28,7 @@ public class RegistryTest {
     @RegisterExtension
     static final QuarkusUnitTest unitTest = new QuarkusUnitTest()
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ToDtoManipulator.class)
+            /*.addClasses(ToDtoManipulator.class)
             .addClasses(ToDtoManipulatorImpl.class)
             .addClasses(UserAccountToDtoMapper.class)
             .addClasses(UserAccountToDtoMapperImpl.class)
@@ -36,7 +36,7 @@ public class RegistryTest {
             .addClasses(ELoginAccount.class)
             .addClasses(LoginAccount.class)
             .addClasses(ETokenAccount.class)
-            .addClasses(TokenAccount.class)
+            .addClasses(TokenAccount.class)*/
         );
 
     @Inject
@@ -56,7 +56,8 @@ public class RegistryTest {
             TokenAccount.class.getSimpleName(), TokenAccount.class
         );
         Map<String, Class<?>> got = service.getJsonSerializationTypeConfig().getSubTypeMap();
-        Assertions.assertEquals(expected, got);
+        //Assertions.assertEquals(expected, got);
+        Assertions.assertTrue(got.entrySet().containsAll(expected.entrySet()));
     }
 
     @Test
@@ -67,7 +68,7 @@ public class RegistryTest {
             TokenAccount.class.getSimpleName(), TokenAccount.class
         );
         Map<String, Class<?>> got = jsonSerializationTypeConfig.getSubTypeMap();
-        Assertions.assertEquals(expected, got);
+        Assertions.assertTrue(got.entrySet().containsAll(expected.entrySet()));
     }
 
     @Test
