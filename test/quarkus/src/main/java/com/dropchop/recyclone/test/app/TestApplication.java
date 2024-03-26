@@ -73,10 +73,10 @@ public class TestApplication extends Application {
     Set<Class<?>> container = new LinkedHashSet<>();
     container.addAll(RecycloneShiroExtension.getRestLayerRegistrationClasses());
     container.addAll(RecycloneApplicationRegistry.getRestLayerRegistrationClasses());
-    //container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
-    //container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
-    //container.addAll(RecycloneApplicationRegistry.getRestTaggingResourceClasses());
-    //container.add(DummyResource.class);
+    container.addAll(RecycloneApplicationRegistry.getRestLocalizationResourceClasses());
+    container.addAll(RecycloneApplicationRegistry.getRestSecurityResourceClasses());
+    container.addAll(RecycloneApplicationRegistry.getRestTaggingResourceClasses());
+    container.add(DummyResource.class);
     return container;
   }
 }
