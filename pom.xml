@@ -18,7 +18,7 @@
   </licenses>
 
   <modules>
-    <module>frontend/java/model</module>
+    <module>frontend/java</module>
     <!--<module>rest</module>
     <module>repo</module>
     <module>service</module>
@@ -232,6 +232,16 @@
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-model-dto</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-rest-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-rest-api-internal</artifactId>
         <version>${project.version}</version>
       </dependency>
       <!--<dependency>

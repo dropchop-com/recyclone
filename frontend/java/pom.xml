@@ -15,6 +15,6 @@
 
   <modules>
     <module>model</module>
-    <!--<module>rest</module>-->
+    <module>rest</module>
   </modules>
 </project>
