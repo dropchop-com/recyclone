@@ -2,10 +2,10 @@ package com.dropchop.recyclone.quarkus.it.rest.server;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
+import com.dropchop.recyclone.service.api.ServiceSelector;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;

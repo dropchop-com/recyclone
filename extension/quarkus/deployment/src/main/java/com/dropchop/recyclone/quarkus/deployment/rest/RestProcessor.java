@@ -9,18 +9,19 @@ import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.AnnotationsTransformerBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.processor.AnnotationsTransformer;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
 import io.quarkus.resteasy.server.common.deployment.ResteasyDeploymentCustomizerBuildItem;
 import io.quarkus.resteasy.server.common.spi.AdditionalJaxRsResourceDefiningAnnotationBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.spring.SpringConstants;
 import jakarta.enterprise.inject.Default;
-import jakarta.enterprise.inject.spi.Producer;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Path;
 import org.jboss.jandex.*;
@@ -233,7 +234,7 @@ public class RestProcessor {
     );
   }
 
-  @BuildStep
+  /*@BuildStep
   public void registerPathAnnotation(
       BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem> annotationProducer) {
     annotationProducer.produce(
@@ -241,10 +242,50 @@ public class RestProcessor {
             DotName.createSimple(RecycloneResource.class)
         )
     );
-  }
+  }*/
 
-  @BuildStep
+  /*@BuildStep
   public void processPathAnnotation(
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
+
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        continue;
+      }
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation != null) {
+        continue;
+      }
+      String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+      transformerProducer.produce(
+          new AnnotationsTransformerBuildItem(
+              new AnnotationsTransformer.ClassTransformerBuilder()
+                  .whenClass(o -> o.name().equals(mapping.implClass.name()))
+                  .thenTransform(
+                      transformation -> transformation.add(
+                          DotName.createSimple(Path.class.getName()),
+                          AnnotationValue.createStringValue("value", newPath)
+                      )
+                  )
+          )
+      );
+    }
+  }*/
+
+  /*@BuildStep
+  public void processPathAnnotation( // transformation called
       RestMappingBuildItem restMappingBuildItem,
       BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
       BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
@@ -274,7 +315,80 @@ public class RestProcessor {
     transformerProducer.produce(
         new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(addAnnotation))
     );
-  }
+  }*/
+
+  /*@BuildStep
+  void addPathAnnotation( // javassist HardCore
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+      BuildProducer<BytecodeTransformerBuildItem> transformers) {
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        continue;
+      }
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation != null) {
+        continue;
+      }
+      String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+      BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem.Builder()
+          .setClassToTransform(mapping.implClass.name().toString())
+          .setInputTransformer(
+              (className, bytes) -> {
+                  ClassPool classPool = ClassPool.getDefault();
+                  try {
+                    CtClass ctClass = classPool.get(className.replace('/', '.'));
+                    AnnotationsAttribute attr = new AnnotationsAttribute(
+                        ctClass.getClassFile().getConstPool(), AnnotationsAttribute.visibleTag
+                    );
+                    Annotation ann = new Annotation(
+                        jakarta.ws.rs.Path.class.getName(), ctClass.getClassFile().getConstPool()
+                    );
+                    ann.addMemberValue(
+                        "value",
+                        new StringMemberValue(newPath, ctClass.getClassFile().getConstPool())
+                    );
+                    attr.addAnnotation(ann);
+                    ctClass.getClassFile().addAttribute(attr);
+                    ctClass.detach(); // Detach the CtClass object from the ClassPool
+
+                    //if (ctClass.isFrozen()) {
+                    //  ctClass.defrost();
+                    //}
+                    byte[] classBytes = ctClass.toBytecode();
+                    FileOutputStream fos;
+                    try {
+                      fos = new FileOutputStream(
+                          "%s/projects/recyclone/%s.class".formatted(
+                              System.getProperty("user.home"),
+                              className
+                          )
+                      );
+                      fos.write(classBytes);
+                      fos.close();
+                    } catch (IOException e) {
+                      throw new RuntimeException(e);
+                    }
+                    ctClass.detach();
+                    return classBytes;
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+              }
+              ).build();
+      transformers.produce(item);
+    }
+  }*/
 
   @BuildStep
   public void processExclusions(
@@ -299,7 +413,7 @@ public class RestProcessor {
     }
   }
 
-  @BuildStep
+  /*@BuildStep
   public void customizeResteasyDeployment(RestMappingBuildItem restMappingBuildItem,
                                           BuildProducer<ResteasyDeploymentCustomizerBuildItem> customizerProducer) {
     Set<String> excluded = new LinkedHashSet<>();
@@ -315,18 +429,16 @@ public class RestProcessor {
     customizerProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
       //resteasyDeployment.getResourceClasses().removeAll(excluded);
       //resteasyDeployment.getScannedResourceClasses().removeAll(excluded);
-      /*List<String> existingResources = resteasyDeployment.getResourceClasses();
-      included.stream()
-          .filter(element -> !existingResources.contains(element))
-          .forEach(existingResources::add);
-      List<String> existingScannedResources = resteasyDeployment.getScannedResourceClasses();
-      included.stream()
-          .filter(element -> !existingScannedResources.contains(element))
-          .forEach(existingScannedResources::add);
-      List<String> tmp = resteasyDeployment.getScannedResourceClasses();
-      tmp = resteasyDeployment.getResourceClasses();*/
+//      List<String> existingResources = resteasyDeployment.getResourceClasses();
+//      included.stream()
+//          .filter(element -> !existingResources.contains(element))
+//          .forEach(existingResources::add);
+//      List<String> existingScannedResources = resteasyDeployment.getScannedResourceClasses();
+//      included.stream()
+//          .filter(element -> !existingScannedResources.contains(element))
+//          .forEach(existingScannedResources::add);
     }));
-  }
+  }*/
 
   @BuildStep
   public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {

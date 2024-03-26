@@ -23,7 +23,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-//@Path(Paths.PUBLIC_SEGMENT + Constants.Paths.Test.DUMMY)
+@Path(Paths.PUBLIC_SEGMENT + Constants.Paths.Test.DUMMY)
 public class DummyResource implements
     com.dropchop.recyclone.quarkus.it.rest.api.DummyResource {
 
@@ -48,6 +48,11 @@ public class DummyResource implements
   @Override
   public Result<Dummy> get() {
     return selector.select(DummyService.class).search();
+  }
+
+  @Override
+  public List<Dummy> getRest() {
+    return unwrap(get());
   }
 
   @Override
