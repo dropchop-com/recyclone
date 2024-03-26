@@ -71,8 +71,10 @@ quarkus:
       - com.dropchop.recyclone.model.entity.jpa.localization
       - com.dropchop.recyclone.model.entity.jpa.security
       - com.dropchop.recyclone.quarkus.it.model.entity.jpa
+
   resteasy:
     path: /api
+
   recyclone:
     rest:
       info:

@@ -44,6 +44,16 @@
       <artifactId>recyclone-model-api</artifactId>
     </dependency>
     <!--<dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.30.2-GA</version>
+    </dependency>-->
+    <!--<dependency>
+      <groupId>io.quarkus.gizmo</groupId>
+      <artifactId>gizmo</artifactId>
+    </dependency>-->
+
+    <!--<dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-api</artifactId>
     </dependency>-->
@@ -51,10 +61,15 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-extension-quarkus</artifactId>
     </dependency>
+    <!--<dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-deployment</artifactId>
+    </dependency>-->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy-server-common-deployment</artifactId>
     </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5-internal</artifactId>
