@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>recyclone-model-api</artifactId>
-  <version>1.35.8-SNAPSHOT</version>
-  <name>Recyclone - Model - API</name>
+  <artifactId>recyclone-model-dto</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <name>Recyclone - Frontend - Model - DTO</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
-    <artifactId>recyclone-model</artifactId>
-    <version>1.35.8-SNAPSHOT</version>
+    <artifactId>recyclone-frontend-model</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -28,6 +28,20 @@
       <artifactId>lombok</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-model-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
     </dependency>
@@ -36,4 +50,20 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
