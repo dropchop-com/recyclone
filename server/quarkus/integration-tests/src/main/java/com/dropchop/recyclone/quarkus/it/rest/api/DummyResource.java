@@ -5,11 +5,10 @@ import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
-import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
-import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
+import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Constants.Paths.Test.DUMMY)
 @DynamicExecContext(value = CodeParams.class, dataClass = Dummy.class)
 @RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.VIEW)
-public interface DummyResource extends ClassicRestResource<Dummy> {
+public interface DummyResource {
 
   @GET
   @Path("")
@@ -32,9 +31,7 @@ public interface DummyResource extends ClassicRestResource<Dummy> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Dummy> getRest() {
-    return unwrap(get());
-  }
+  List<Dummy> getRest();
 
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
@@ -44,9 +41,7 @@ public interface DummyResource extends ClassicRestResource<Dummy> {
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Dummy> getByCodeRest(@PathParam("code") String code) {
-    return unwrap(getByCode(code));
-  }
+  List<Dummy> getByCodeRest(@PathParam("code") String code);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -56,7 +51,5 @@ public interface DummyResource extends ClassicRestResource<Dummy> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Dummy> searchRest(CodeParams params) {
-    return unwrap(search(params));
-  }
+  List<Dummy> searchRest(CodeParams params);
 }

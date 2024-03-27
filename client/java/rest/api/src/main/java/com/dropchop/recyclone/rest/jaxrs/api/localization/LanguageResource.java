@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Localization.LANGUAGE)
 @DynamicExecContext(CodeParams.class)
 @RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.VIEW)
-public interface LanguageResource extends ClassicRestResource<Language> {
+public interface LanguageResource {
 
   @GET
   @Path("")
@@ -32,9 +32,7 @@ public interface LanguageResource extends ClassicRestResource<Language> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Language> getRest() {
-    return unwrap(get());
-  }
+  List<Language> getRest();
 
   @GET
   @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
@@ -44,9 +42,7 @@ public interface LanguageResource extends ClassicRestResource<Language> {
   @GET
   @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Language> getByCodeRest(@PathParam("code") String code) {
-    return unwrap(getByCode(code));
-  }
+  List<Language> getByCodeRest(@PathParam("code") String code);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -56,7 +52,5 @@ public interface LanguageResource extends ClassicRestResource<Language> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Language> searchRest(CodeParams parameters) {
-    return unwrap(search(parameters));
-  }
+  List<Language> searchRest(CodeParams parameters);
 }

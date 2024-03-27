@@ -9,37 +9,33 @@ quarkus:
     #recyclone-model-dto:
     #  group-id: com.dropchop.recyclone
     #  artifact-id: recyclone-model-dto
-    #recyclone-rest-jackson-client:
+    #recyclone-rest-runtime:
     #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-jackson-client
-
-    #recyclone-rest-jackson-server:
+    #  artifact-id: recyclone-rest-runtime
+    #recyclone-rest-api:
     #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-jackson-server
-    #recyclone-rest-jaxrs-api:
+    #  artifact-id: recyclone-rest-api
+    #recyclone-rest-api-internal:
     #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-jaxrs-api
-    #recyclone-rest-jaxrs-api-intern:
+    #  artifact-id: recyclone-rest-api-internal
+    #recyclone-server-rest-jaxrs:
     #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-jaxrs-api-intern
-    #recyclone-rest-jaxrs-server:
+    #  artifact-id: recyclone-server-rest-jaxrs
+    #recyclone-server-rest-jackson:
     #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-jaxrs-server
+    #  artifact-id: recyclone-server-rest-jackson
     #recyclone-repo-api:
     #  group-id: com.dropchop.recyclone
     #  artifact-id: recyclone-repo-api
-    recyclone-repo-jpa-blaze:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-repo-jpa-blaze
     #recyclone-service-api:
     #  group-id: com.dropchop.recyclone
     #  artifact-id: recyclone-service-api
+    recyclone-repo-jpa-blaze:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-repo-jpa-blaze
     recyclone-service-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-jpa-blaze
-    recyclone-extension-shiro:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-extension-shiro
 
   swagger-ui:
     path: /api/spec/ui

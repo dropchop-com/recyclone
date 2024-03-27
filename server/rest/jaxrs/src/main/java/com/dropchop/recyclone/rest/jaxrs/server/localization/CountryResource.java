@@ -5,7 +5,6 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.Constants;
-import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -14,7 +13,6 @@ import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -24,7 +22,6 @@ import java.util.List;
  */
 @Slf4j
 @RequestScoped
-@Path(Paths.PUBLIC_SEGMENT + Paths.Localization.COUNTRY)
 public class CountryResource implements
   com.dropchop.recyclone.rest.jaxrs.api.localization.CountryResource {
 

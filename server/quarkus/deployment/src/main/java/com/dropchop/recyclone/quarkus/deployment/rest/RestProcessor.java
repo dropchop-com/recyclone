@@ -12,6 +12,8 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.spring.SpringConstants;
 import jakarta.enterprise.inject.Default;
@@ -224,6 +226,47 @@ public class RestProcessor {
     restMappingItemBuildProducer.produce(
         new RestMappingBuildItem(methodMapping, classMapping)
     );
+  }
+
+  @BuildStep
+  public void processPathAnnotation(RestMappingBuildItem restMappingBuildItem,
+                                    BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+                                    BuildProducer<AdditionalResourceClassBuildItem> additionalProducer) {
+
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        continue;
+      }
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation == null) {
+        String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+        additionalProducer.produce(
+            new AdditionalResourceClassBuildItem(mapping.implClass, newPath)
+        );
+        /*transformerProducer.produce(
+            new AnnotationsTransformerBuildItem(
+                new AnnotationsTransformer.ClassTransformerBuilder()
+                    .whenClass(o -> o.name().equals(mapping.implClass.name()))
+                    .thenTransform(
+                        transformation -> transformation.add(
+                            PATH_ANNOTATION,
+                            AnnotationValue.createStringValue("value", newPath)
+                        )
+                    )
+            )
+        );*/
+      }
+    }
   }
 
   /*@BuildStep

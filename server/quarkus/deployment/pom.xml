@@ -64,6 +64,10 @@
     </dependency>-->
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-reactive-server-spi-deployment</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy-server-common-deployment</artifactId>
     </dependency>
 
