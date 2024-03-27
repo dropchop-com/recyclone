@@ -19,6 +19,7 @@
 
   <modules>
     <module>frontend/java</module>
+    <module>backend</module>
     <!--<module>rest</module>
     <module>repo</module>
     <module>service</module>
@@ -223,7 +224,7 @@
         <version>${blaze-persistence.version}</version>
       </dependency>
 
-
+      <!-- frontend common/client API -->
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-model-api</artifactId>
@@ -244,6 +245,29 @@
         <artifactId>recyclone-rest-api-internal</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-rest-runtime</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- backend API -->
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-model-jpa</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-repo-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-repo-jpa-blaze</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!--<dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-model-entity-jpa</artifactId>

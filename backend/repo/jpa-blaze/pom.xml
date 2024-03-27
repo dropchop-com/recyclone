@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>recyclone-repo-api</artifactId>
-  <version>1.35.8-SNAPSHOT</version>
-  <name>Recyclone - Repository - API</name>
+  <artifactId>recyclone-repo-jpa-blaze</artifactId>
+  <name>Recyclone - Backend - Repository - JPA Blazebit</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
     <artifactId>recyclone-repo</artifactId>
-    <version>1.35.8-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -24,18 +23,35 @@
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.transaction</groupId>
-      <artifactId>jakarta.transaction-api</artifactId>
+      <groupId>com.blazebit</groupId>
+      <artifactId>blaze-persistence-core-api-jakarta</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-api</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-dto</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-model-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-repo-api</artifactId>
+    </dependency>
   </dependencies>
 
+  <!--
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+  -->
 </project>
