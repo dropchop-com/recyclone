@@ -268,6 +268,17 @@
         <version>${project.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-service-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-service-jpa</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!--<dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-model-entity-jpa</artifactId>
