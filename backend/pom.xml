@@ -15,5 +15,6 @@
     <module>model</module>
     <module>repo</module>
     <module>service</module>
+    <module>rest</module>
   </modules>
 </project>
