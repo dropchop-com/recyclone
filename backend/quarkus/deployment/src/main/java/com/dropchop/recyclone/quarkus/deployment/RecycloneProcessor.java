@@ -1,8 +1,5 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
-import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
-import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -19,13 +16,13 @@ class RecycloneProcessor {
 
   @BuildStep
   void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
+    indexDependency.produce(new IndexDependencyBuildItem("org.apache.shiro", "shiro-core"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-model-api"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-model-dto"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-api"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-jackson-server"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-jaxrs-api"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-jaxrs-api-intern"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-jaxrs-server"));
+    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-api-internal"));
+    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-backend-rest-jackson"));
+    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-backend-rest-jaxrs"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-repo-api"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-service-api"));
   }

@@ -2,14 +2,15 @@ package com.dropchop.shiro.jaxrs;
 
 import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
 import jakarta.ws.rs.ext.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,9 +19,10 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
-@Slf4j
 @Provider
 public class ShiroDynamicFeature implements DynamicFeature {
+
+  private static final Logger log = LoggerFactory.getLogger(ShiroDynamicFeature.class);
 
   private static final List<Class<? extends Annotation>> shiroAnnotations =
     List.of(
@@ -101,8 +103,13 @@ public class ShiroDynamicFeature implements DynamicFeature {
         new ShiroResponseFilter(authorizationService),
         Priorities.AUTHORIZATION
       );
-      log.trace("Registered {} for [{}:{}] with [{}]",
-        ShiroResponseFilter.class.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod().getName(), authzSpecs);
+      log.trace(
+          "Registered {} for [{}:{}] with [{}]",
+          ShiroResponseFilter.class.getSimpleName(),
+          ri.getResourceClass().getSimpleName(),
+          ri.getResourceMethod().getName(),
+          authzSpecs
+      );
       context.register(
         new ShiroAuthorizationFilter(
           authorizationService,
@@ -111,8 +118,13 @@ public class ShiroDynamicFeature implements DynamicFeature {
           ri.getResourceMethod().getName()),
         Priorities.AUTHORIZATION
       );
-      log.debug("Registered {} for [{}:{}] with [{}]",
-        ShiroAuthorizationFilter.class.getSimpleName(), ri.getResourceClass().getSimpleName(), ri.getResourceMethod().getName(), authzSpecs);
+      log.debug(
+          "Registered {} for [{}:{}] with [{}]",
+          ShiroAuthorizationFilter.class.getSimpleName(),
+          ri.getResourceClass().getSimpleName(),
+          ri.getResourceMethod().getName(),
+          authzSpecs
+      );
     }
   }
 }

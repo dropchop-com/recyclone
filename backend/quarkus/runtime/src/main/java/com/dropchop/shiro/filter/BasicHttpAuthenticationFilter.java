@@ -1,16 +1,13 @@
 package com.dropchop.shiro.filter;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.codec.Base64;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
+import org.apache.shiro.codec.Base64;
 
 /**
  * Modeled and copied from Shiro Web.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
-@Slf4j
 public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
   public BasicHttpAuthenticationFilter() {

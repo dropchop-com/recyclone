@@ -1,10 +1,11 @@
 package com.dropchop.shiro.filter;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.AuthenticationToken;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Locale;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Locale;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
-@Slf4j
+@SuppressWarnings("unused")
 public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
 
   /**
@@ -25,8 +26,10 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    */
   protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
 
+  private static final Logger log = LoggerFactory.getLogger(HttpAuthenticationFilter.class);
+
   /**
-   * The name that is displayed during the challenge process of authentication, defauls to <code>application</code>
+   * The name that is displayed during the challenge process of authentication, defaults to <code>application</code>
    * and can be overridden by the {@link #setApplicationName(String) setApplicationName} method.
    */
   private String applicationName = "application";
@@ -148,7 +151,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    * return authzHeader.toLowerCase().startsWith(authzScheme);</code>
    *
    * @param authzHeader the 'Authorization' header value (guaranteed to be non-null if the
-   *                    {@link #isLoginAttempt(ContainerRequestContext)} method is not overriden).
+   *                    {@link #isLoginAttempt(ContainerRequestContext)} method is not overridden).
    * @return <code>true</code> if the authzHeader value matches that configured as defined by
    *         the {@link #getAuthzScheme() authzScheme}.
    */
@@ -244,7 +247,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    */
   protected AuthenticationToken createToken(ContainerRequestContext requestContext) {
     String authorizationHeader = getAuthzHeader(requestContext);
-    if (authorizationHeader == null || authorizationHeader.length() == 0) {
+    if (authorizationHeader == null || authorizationHeader.isEmpty()) {
       // Create an empty authentication token since there is no
       // Authorization header.
       return createToken("", "", requestContext);

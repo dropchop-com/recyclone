@@ -3,9 +3,6 @@ package com.dropchop.shiro.realm.authz;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.shiro.loaders.SecurityLoaderService;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -16,9 +13,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
-@Slf4j
+@SuppressWarnings("unused")
 public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
 
   private SecurityLoaderService securityLoaderService;
@@ -46,4 +41,11 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
     return info;
   }
 
+  public SecurityLoaderService getSecurityLoaderService() {
+    return securityLoaderService;
+  }
+
+  public void setSecurityLoaderService(SecurityLoaderService securityLoaderService) {
+    this.securityLoaderService = securityLoaderService;
+  }
 }

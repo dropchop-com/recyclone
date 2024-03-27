@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
+import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapper;
+import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapperImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +17,11 @@ public class RecycloneDevModeTest {
     static final QuarkusDevModeTest devModeTest = new QuarkusDevModeTest()
         .setArchiveProducer(
             () -> ShrinkWrap.create(JavaArchive.class)
+                .addClasses(
+                    UserAccountToDtoMapper.class,
+                    UserAccountToDtoMapperImpl.class,
+                    TestShiroEnvironmentProvider.class
+                )
         );
 
     @Test

@@ -25,8 +25,11 @@ public class RegistryTest {
     @RegisterExtension
     static final QuarkusUnitTest unitTest = new QuarkusUnitTest()
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
-            .addClasses(UserAccountToDtoMapper.class)
-            .addClasses(UserAccountToDtoMapperImpl.class)
+            .addClasses(
+                UserAccountToDtoMapper.class,
+                UserAccountToDtoMapperImpl.class,
+                TestShiroEnvironmentProvider.class
+            )
         );
 
     @Inject
@@ -37,6 +40,7 @@ public class RegistryTest {
 
     @Inject
     JsonSerializationTypeConfig jsonSerializationTypeConfig;
+
 
     @Test
     public void getJsonSerializationTypeConfigService() {

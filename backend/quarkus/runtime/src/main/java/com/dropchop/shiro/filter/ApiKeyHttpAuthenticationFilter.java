@@ -1,16 +1,18 @@
 package com.dropchop.shiro.filter;
 
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
-@Slf4j
+@SuppressWarnings("unused")
 public class ApiKeyHttpAuthenticationFilter extends BearerHttpAuthenticationFilter {
 
   public static final String DEFAULT_API_KEY_HEADER = "X-API-Key";
+
+  private static final Logger log = LoggerFactory.getLogger(ApiKeyHttpAuthenticationFilter.class);
 
   private final String headerKey;
   private final String queryParamKey;

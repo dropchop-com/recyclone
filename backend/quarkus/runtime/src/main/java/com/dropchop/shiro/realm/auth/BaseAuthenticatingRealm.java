@@ -1,19 +1,18 @@
 package com.dropchop.shiro.realm.auth;
 
 import com.dropchop.shiro.loaders.SecurityLoaderService;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthenticatingRealm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Getter
-@Setter
-@Slf4j
+@SuppressWarnings("unused")
 abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
+
+  private static final Logger log = LoggerFactory.getLogger(BaseAuthenticatingRealm.class);
 
   private SecurityLoaderService securityLoaderService;
 
@@ -46,4 +45,12 @@ abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
 
   abstract protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token);
 
+
+  public SecurityLoaderService getSecurityLoaderService() {
+    return securityLoaderService;
+  }
+
+  public void setSecurityLoaderService(SecurityLoaderService securityLoaderService) {
+    this.securityLoaderService = securityLoaderService;
+  }
 }

@@ -1,25 +1,26 @@
 package com.dropchop.shiro.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
-
-import jakarta.ws.rs.container.ContainerRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Modeled and copied from Shiro Web.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
-@Slf4j
 @SuppressWarnings("unused")
 public abstract class AuthenticatingFilter implements AccessControlFilter {
 
   public static final String DEFAULT_PATH_SEPARATOR = "/";
+
+  private static final Logger log = LoggerFactory.getLogger(AuthenticatingFilter.class);
 
   private final PatternMatcher pathMatcher = new AntPathMatcher();
 

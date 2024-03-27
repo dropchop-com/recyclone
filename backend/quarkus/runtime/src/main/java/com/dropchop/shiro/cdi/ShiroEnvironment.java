@@ -1,5 +1,6 @@
 package com.dropchop.shiro.cdi;
 
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import org.apache.shiro.authc.Authenticator;
@@ -18,6 +19,7 @@ import java.util.List;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
+@DefaultBean
 @ApplicationScoped
 public class ShiroEnvironment extends ShiroAbstractEnvironment {
 

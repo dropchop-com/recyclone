@@ -1,19 +1,19 @@
 package com.dropchop.shiro.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.BearerToken;
-
-import jakarta.ws.rs.container.ContainerRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Modeled and copied from Shiro Web.
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
  */
-@Slf4j
 public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
+  private static final Logger log = LoggerFactory.getLogger(BearerHttpAuthenticationFilter.class);
   private static final String BEARER = "Bearer";
 
   public BearerHttpAuthenticationFilter() {

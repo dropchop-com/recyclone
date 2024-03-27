@@ -65,6 +65,7 @@ public class ShiroSecurityContext implements SecurityContext {
   /**
    * Java Principal wrapper around any Shiro Principal object.s
    */
+  @SuppressWarnings("ClassCanBeRecord")
   private static class ObjectPrincipal implements Principal {
     private final Object object;
 

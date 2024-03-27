@@ -2,18 +2,20 @@ package com.dropchop.shiro.cdi;
 
 import com.dropchop.recyclone.model.api.security.PermissionBearer;
 import com.dropchop.recyclone.service.api.security.AuthenticationService;
-import lombok.extern.slf4j.Slf4j;
+import io.quarkus.arc.DefaultBean;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import jakarta.enterprise.context.ApplicationScoped;
 
-
-@Slf4j
+@DefaultBean
 @ApplicationScoped
 public class ShiroAuthenticationService implements AuthenticationService {
 
+  private static final Logger log = LoggerFactory.getLogger(ShiroAuthenticationService.class);
   @Override
   public PermissionBearer getSubject() {
     try {

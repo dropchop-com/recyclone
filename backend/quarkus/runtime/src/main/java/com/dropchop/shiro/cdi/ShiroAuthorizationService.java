@@ -11,13 +11,13 @@ import com.dropchop.shiro.filter.RequestFilter;
 import com.dropchop.shiro.filter.ResponseFilter;
 import com.dropchop.shiro.filter.ShiroFilter;
 import com.dropchop.shiro.jaxrs.ShiroSecurityContext;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -25,6 +25,8 @@ import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -38,9 +40,11 @@ import static com.dropchop.recyclone.model.api.invoke.ErrorCode.authorization_er
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 06. 22.
  */
-@Slf4j
+@DefaultBean
 @ApplicationScoped
 public class ShiroAuthorizationService implements AuthorizationService {
+
+  private static final Logger log = LoggerFactory.getLogger(ShiroAuthorizationService.class);
 
   @Inject
   org.apache.shiro.mgt.SecurityManager shiroSecurityManager;

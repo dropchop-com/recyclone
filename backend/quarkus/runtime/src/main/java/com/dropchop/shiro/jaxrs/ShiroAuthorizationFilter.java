@@ -9,13 +9,14 @@ import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.shiro.aop.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
-import org.apache.shiro.subject.Subject;
-import org.slf4j.MDC;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -29,8 +30,9 @@ import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_NAM
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
-@Slf4j
 public class ShiroAuthorizationFilter implements ContainerRequestFilter {
+
+  private static final Logger log = LoggerFactory.getLogger(ShiroAuthorizationFilter.class);
 
   private final Map<AuthorizingAnnotationHandler, Annotation> authzChecks;
 
