@@ -18,8 +18,8 @@
   </licenses>
 
   <modules>
-    <module>frontend/java</module>
-    <module>backend</module>
+    <module>client/java</module>
+    <module>server</module>
     <!--<module>test</module>-->
   </modules>
 
@@ -93,7 +93,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <slf4j.version>2.0.6</slf4j.version>
-    <logback.version>1.4.6</logback.version>
+    <logback.version>1.5.3</logback.version>
     <aspectj.version>1.9.9.1</aspectj.version>
     <lombok.version>1.18.30</lombok.version>
     <jackson.version>2.16.1</jackson.version>
@@ -277,12 +277,12 @@
 
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-backend-rest-jackson</artifactId>
+        <artifactId>recyclone-server-rest-jackson</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-backend-rest-jaxrs</artifactId>
+        <artifactId>recyclone-server-rest-jaxrs</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -291,67 +291,6 @@
         <artifactId>recyclone-quarkus-extension</artifactId>
         <version>${project.version}</version>
       </dependency>
-
-      <!--<dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-model-entity-jpa</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jackson-server</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jackson-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jaxrs-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jaxrs-api-intern</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-jaxrs-server</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-repo-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-repo-jpa-blaze</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-service-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-service-jpa-blaze</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-extension-shiro</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-extension-quarkus</artifactId>
-        <version>${project.version}</version>
-      </dependency>-->
 
       <!-- test dependencies -->
       <dependency>
