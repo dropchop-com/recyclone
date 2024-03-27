@@ -2,13 +2,13 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>recyclone-extension-quarkus-integration-test</artifactId>
+  <artifactId>recyclone-quarkus-extension-integration-test</artifactId>
   <name>Recyclone - Extension - Quarkus - Integration Test</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
-    <artifactId>recyclone-extension-quarkus-parent</artifactId>
-    <version>1.35.8-SNAPSHOT</version>
+    <artifactId>recyclone-quarkus-extension-parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -47,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-extension-quarkus</artifactId>
+      <artifactId>recyclone-quarkus-extension</artifactId>
     </dependency>
 
     <dependency>
@@ -69,7 +69,7 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-rest-jaxrs-server</artifactId>
+      <artifactId>recyclone-backend-rest-jaxrs</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
@@ -81,14 +81,8 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-jpa-blaze</artifactId>
+      <artifactId>recyclone-service-jpa</artifactId>
     </dependency>
-    <!--suppress VulnerableLibrariesLocal -->
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-extension-shiro</artifactId>
-    </dependency>
-
 
     <!-- testcontainers are currently not used -->
     <!--suppress VulnerableLibrariesLocal -->

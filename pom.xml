@@ -20,11 +20,7 @@
   <modules>
     <module>frontend/java</module>
     <module>backend</module>
-    <!--<module>rest</module>
-    <module>repo</module>
-    <module>service</module>
-    <module>extension</module>
-    <module>test</module>-->
+    <!--<module>test</module>-->
   </modules>
 
   <scm>
@@ -287,6 +283,12 @@
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-backend-rest-jaxrs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-quarkus-extension</artifactId>
         <version>${project.version}</version>
       </dependency>
 
