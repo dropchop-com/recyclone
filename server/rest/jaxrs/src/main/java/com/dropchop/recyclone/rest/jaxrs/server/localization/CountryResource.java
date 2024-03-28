@@ -13,15 +13,19 @@ import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Path;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+
+import static com.dropchop.recyclone.model.api.rest.Constants.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
  */
 @Slf4j
 @RequestScoped
+@Path(Paths.INTERNAL_SEGMENT + Paths.Localization.COUNTRY)
 public class CountryResource implements
   com.dropchop.recyclone.rest.jaxrs.api.localization.CountryResource {
 
