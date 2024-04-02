@@ -35,10 +35,6 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi-deployment</artifactId>
     </dependency>
-    <dependency>
-      <groupId>jakarta.ws.rs</groupId>
-      <artifactId>jakarta.ws.rs-api</artifactId>
-    </dependency>
 
     <!--<dependency>
       <groupId>org.javassist</groupId>
@@ -50,25 +46,13 @@
       <artifactId>gizmo</artifactId>
     </dependency>-->
 
-    <!--<dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-api</artifactId>
-    </dependency>-->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-quarkus-extension</artifactId>
     </dependency>
-    <!--<dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-deployment</artifactId>
-    </dependency>-->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-reactive-server-spi-deployment</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-server-common-deployment</artifactId>
+      <artifactId>quarkus-rest-spi-deployment</artifactId>
     </dependency>
 
     <dependency>

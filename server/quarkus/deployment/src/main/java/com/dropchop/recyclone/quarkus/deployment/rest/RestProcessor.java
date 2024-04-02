@@ -1,22 +1,24 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
-import com.dropchop.recyclone.quarkus.runtime.spi.RecycloneApplicationFactory;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.deployment.SyntheticBeansRuntimeInitBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.annotations.Consume;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.spring.SpringConstants;
-import jakarta.enterprise.inject.Default;
 import jakarta.inject.Singleton;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
@@ -449,33 +451,6 @@ public class RestProcessor {
   }
 
   /*@BuildStep
-  public void customizeResteasyDeployment(RestMappingBuildItem restMappingBuildItem,
-                                          BuildProducer<ResteasyDeploymentCustomizerBuildItem> customizerProducer) {
-    Set<String> excluded = new LinkedHashSet<>();
-    Set<String> included = new LinkedHashSet<>();
-    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
-      RestClassMapping mapping = entry.getValue();
-      if (mapping.excluded) {
-        excluded.add(mapping.implClass.name().toString());
-      } else {
-        included.add(mapping.implClass.name().toString());
-      }
-    }
-    customizerProducer.produce(new ResteasyDeploymentCustomizerBuildItem(resteasyDeployment -> {
-      //resteasyDeployment.getResourceClasses().removeAll(excluded);
-      //resteasyDeployment.getScannedResourceClasses().removeAll(excluded);
-//      List<String> existingResources = resteasyDeployment.getResourceClasses();
-//      included.stream()
-//          .filter(element -> !existingResources.contains(element))
-//          .forEach(existingResources::add);
-//      List<String> existingScannedResources = resteasyDeployment.getScannedResourceClasses();
-//      included.stream()
-//          .filter(element -> !existingScannedResources.contains(element))
-//          .forEach(existingScannedResources::add);
-    }));
-  }*/
-
-  @BuildStep
   public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
@@ -484,26 +459,19 @@ public class RestProcessor {
             .setUnremovable()
             .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
     );
-    additionalBeanBuildItemProducer.produce(
-        AdditionalBeanBuildItem
-            .builder()
-            .addBeanClasses(RecycloneApplicationFactory.class)
-            .setUnremovable()
-            .setDefaultScope(DotNames.SINGLETON).build()
-    );
-  }
+  }*/
 
   @BuildStep
   @Record(RUNTIME_INIT)
-  public void createApplication(BuildProducer<SyntheticBeanBuildItem> syntheticBeans,
-                                RestRecorder restRecorder) {
-    SyntheticBeanBuildItem.ExtendedBeanConfigurator configurator = SyntheticBeanBuildItem
-        .configure(RecycloneApplicationImpl.class)
-        .scope(Singleton.class)
-        .setRuntimeInit()
-        .unremovable()
-        .addQualifier(Default.class)
-        .supplier(restRecorder.createApp());
-    syntheticBeans.produce(configurator.done());
+  public SyntheticBeanBuildItem createApplication(RestRecorder restRecorder,
+                                RecycloneBuildConfig buildConfig,
+                                RecycloneRuntimeConfig runtimeConfig) {
+      return SyntheticBeanBuildItem.configure(RecycloneApplication.class)
+          .scope(Singleton.class)
+          .unremovable()
+          .setRuntimeInit()
+          //.addQualifier(Default.class)
+          .runtimeValue(restRecorder.createApp(null, buildConfig,   runtimeConfig))
+          .done();
   }
 }
