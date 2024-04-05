@@ -36,7 +36,8 @@ quarkus:
     recyclone-service-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-jpa-blaze
-
+  rest:
+    path: /api
   swagger-ui:
     path: /api/spec/ui
     always-include: true
@@ -68,10 +69,8 @@ quarkus:
       - com.dropchop.recyclone.model.entity.jpa.security
       - com.dropchop.recyclone.quarkus.it.model.entity.jpa
 
-  resteasy:
-    path: /api
-
   recyclone:
+    test: neki
     rest:
       info:
         title: "Recyclone API"

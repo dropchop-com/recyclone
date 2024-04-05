@@ -3,15 +3,17 @@ package com.dropchop.recyclone.quarkus.runtime.spi.bean;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 24.
  */
-@SuppressWarnings("unused")
+@Singleton
 @RegisterForReflection
+@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
 public class RecycloneApplicationImpl implements RecycloneApplication {
 
   private final JsonSerializationTypeConfig jsonSerializationTypeConfig;
@@ -22,15 +24,11 @@ public class RecycloneApplicationImpl implements RecycloneApplication {
 
   private final RecycloneBuildConfig buildConfig;
 
-  private final RecycloneRuntimeConfig runtimeConfig;
-
-
-  public RecycloneApplicationImpl(RecycloneRuntimeConfig runtimeConfig,
-                                  RecycloneBuildConfig buildConfig,
+  @Inject
+  public RecycloneApplicationImpl(RecycloneBuildConfig buildConfig,
                                   LaunchMode launchMode,
                                   JsonSerializationTypeConfig jsonSerializationTypeConfig,
                                   MapperSubTypeConfig mapperSubTypeConfig) {
-    this.runtimeConfig = runtimeConfig;
     this.buildConfig = buildConfig;
     this.jsonSerializationTypeConfig = jsonSerializationTypeConfig;
     this.mapperSubTypeConfig = mapperSubTypeConfig;
@@ -43,11 +41,6 @@ public class RecycloneApplicationImpl implements RecycloneApplication {
   }
 
   @Override
-  public RecycloneRuntimeConfig getRuntimeConfig() {
-    return runtimeConfig;
-  }
-
-  @Override
   public JsonSerializationTypeConfig getJsonSerializationTypeConfig() {
     return jsonSerializationTypeConfig;
   }
@@ -57,6 +50,7 @@ public class RecycloneApplicationImpl implements RecycloneApplication {
     return mapperSubTypeConfig;
   }
 
+  @Override
   public LaunchMode getLaunchMode() {
     return launchMode;
   }

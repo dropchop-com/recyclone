@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.ELoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.ETokenAccount;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapper;
 import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapperImpl;
 import io.quarkus.test.QuarkusUnitTest;
@@ -33,7 +33,7 @@ public class RegistryTest {
         );
 
     @Inject
-    RecycloneApplication service;
+    RecycloneApplicationImpl service;
 
     @Inject
     MapperSubTypeConfig mapperSubTypeConfig;

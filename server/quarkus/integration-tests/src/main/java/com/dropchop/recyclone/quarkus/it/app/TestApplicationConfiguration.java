@@ -1,10 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.app;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
 import com.dropchop.recyclone.rest.jaxrs.serialization.ObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +36,7 @@ public class TestApplicationConfiguration {
   @ApplicationScoped
   ObjectMapper getObjectMapper() {
     RecycloneBuildConfig buildConfig = application.getBuildConfig();
-    RecycloneRuntimeConfig runtimeConfig = application.getRuntimeConfig();
+    //RecycloneRuntimeConfig runtimeConfig = application.getRuntimeConfig();
     //mapping is already there collected from the @SubclassMapping annotation of the TagToDtoMapper,
     //but we add it again here just for demonstration
     mapperConfig.addBidiMapping(LanguageGroup.class, ELanguageGroup.class);

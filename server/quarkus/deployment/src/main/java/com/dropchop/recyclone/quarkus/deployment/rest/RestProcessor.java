@@ -1,32 +1,22 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
-import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
-import io.quarkus.arc.deployment.SyntheticBeansRuntimeInitBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.annotations.Consume;
-import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.spring.SpringConstants;
-import jakarta.inject.Singleton;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
-
-import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
@@ -450,28 +440,14 @@ public class RestProcessor {
     }
   }
 
-  /*@BuildStep
+  @BuildStep
   public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(RecycloneApplicationImpl.class)
             .setUnremovable()
-            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+            .setDefaultScope(DotNames.SINGLETON).build()
     );
-  }*/
-
-  @BuildStep
-  @Record(RUNTIME_INIT)
-  public SyntheticBeanBuildItem createApplication(RestRecorder restRecorder,
-                                RecycloneBuildConfig buildConfig,
-                                RecycloneRuntimeConfig runtimeConfig) {
-      return SyntheticBeanBuildItem.configure(RecycloneApplication.class)
-          .scope(Singleton.class)
-          .unremovable()
-          .setRuntimeInit()
-          //.addQualifier(Default.class)
-          .runtimeValue(restRecorder.createApp(null, buildConfig,   runtimeConfig))
-          .done();
   }
 }
