@@ -323,4 +323,160 @@ public class IgnoreMeProcessor {
 //        ).build();
 //    transformers.produce(item);
 //  }
+
+  /*@BuildStep
+  public void registerPathAnnotation(
+      BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem> annotationProducer) {
+    annotationProducer.produce(
+        new AdditionalJaxRsResourceDefiningAnnotationBuildItem(
+            DotName.createSimple(RecycloneResource.class)
+        )
+    );
+  }*/
+
+  /*@BuildStep
+  public void processPathAnnotation(
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
+
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        continue;
+      }
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation != null) {
+        continue;
+      }
+      String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+      transformerProducer.produce(
+          new AnnotationsTransformerBuildItem(
+              new AnnotationsTransformer.ClassTransformerBuilder()
+                  .whenClass(o -> o.name().equals(mapping.implClass.name()))
+                  .thenTransform(
+                      transformation -> transformation.add(
+                          DotName.createSimple(Path.class.getName()),
+                          AnnotationValue.createStringValue("value", newPath)
+                      )
+                  )
+          )
+      );
+    }
+  }*/
+
+  /*@BuildStep
+  public void processPathAnnotation( // transformation called
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
+
+    Map<DotName, String> addAnnotation = new LinkedHashMap<>();
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        continue;
+      }
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation == null) {
+        String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+        addAnnotation.put(mapping.implClass.name(), newPath);
+      }
+    }
+
+    transformerProducer.produce(
+        new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(addAnnotation))
+    );
+  }*/
+
+  /*@BuildStep
+  void addPathAnnotation( // javassist HardCore
+      RestMappingBuildItem restMappingBuildItem,
+      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
+      BuildProducer<BytecodeTransformerBuildItem> transformers) {
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      if (mapping.excluded) {
+        continue;
+      }
+      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+        continue;
+      }
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.implClass.name().toString()
+      ).build());
+      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+          mapping.apiClass.name().toString()
+      ).build());
+      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
+      if (implPathAnnotation != null) {
+        continue;
+      }
+      String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+      BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem.Builder()
+          .setClassToTransform(mapping.implClass.name().toString())
+          .setInputTransformer(
+              (className, bytes) -> {
+                  ClassPool classPool = ClassPool.getDefault();
+                  try {
+                    CtClass ctClass = classPool.get(className.replace('/', '.'));
+                    AnnotationsAttribute attr = new AnnotationsAttribute(
+                        ctClass.getClassFile().getConstPool(), AnnotationsAttribute.visibleTag
+                    );
+                    Annotation ann = new Annotation(
+                        jakarta.ws.rs.Path.class.getName(), ctClass.getClassFile().getConstPool()
+                    );
+                    ann.addMemberValue(
+                        "value",
+                        new StringMemberValue(newPath, ctClass.getClassFile().getConstPool())
+                    );
+                    attr.addAnnotation(ann);
+                    ctClass.getClassFile().addAttribute(attr);
+                    ctClass.detach(); // Detach the CtClass object from the ClassPool
+
+                    //if (ctClass.isFrozen()) {
+                    //  ctClass.defrost();
+                    //}
+                    byte[] classBytes = ctClass.toBytecode();
+                    FileOutputStream fos;
+                    try {
+                      fos = new FileOutputStream(
+                          "%s/projects/recyclone/%s.class".formatted(
+                              System.getProperty("user.home"),
+                              className
+                          )
+                      );
+                      fos.write(classBytes);
+                      fos.close();
+                    } catch (IOException e) {
+                      throw new RuntimeException(e);
+                    }
+                    ctClass.detach();
+                    return classBytes;
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+              }
+              ).build();
+      transformers.produce(item);
+    }
+  }*/
 }

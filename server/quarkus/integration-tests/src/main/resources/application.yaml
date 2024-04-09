@@ -99,8 +99,8 @@ quarkus:
           bearer-format: JWT
 
       includes:
-        - com.dropchop.recyclone.quarkus.it.rest.server.DummyResource
-        - com.dropchop.recyclone.quarkus.it.rest.server.DummyResourceInternal
+        - com.dropchop.recyclone.quarkus.it.rest.api.DummyResource
+        - com.dropchop.recyclone.quarkus.it.rest.api.DummyResourceInternal
 
 #dropchop:
 #  application:

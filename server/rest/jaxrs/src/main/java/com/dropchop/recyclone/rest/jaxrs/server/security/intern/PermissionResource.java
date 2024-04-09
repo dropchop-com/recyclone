@@ -23,7 +23,7 @@ import java.util.UUID;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-@Path(Paths.INTERNAL_SEGMENT + Paths.Security.PERMISSION)
+//@Path(Paths.INTERNAL_SEGMENT + Paths.Security.PERMISSION)
 public class PermissionResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.PermissionResource {
 

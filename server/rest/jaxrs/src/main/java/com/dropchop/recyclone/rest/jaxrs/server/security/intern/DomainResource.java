@@ -19,7 +19,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-@Path(Paths.INTERNAL_SEGMENT + Paths.Security.DOMAIN)
+//@Path(Paths.INTERNAL_SEGMENT + Paths.Security.DOMAIN)
 public class DomainResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.DomainResource {
 

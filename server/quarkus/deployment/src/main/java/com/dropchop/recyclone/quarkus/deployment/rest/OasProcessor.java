@@ -30,16 +30,24 @@ public class OasProcessor {
       "jakarta.ws.rs.GET"
   );
 
-  private Map<String, OasMapping> constructMappings(CombinedIndexBuildItem indexBuildItem,
-                                                    RestMappingBuildItem restMappingBuildItem,
-                                                    boolean hideInternal) {
-    IndexView indexView = indexBuildItem.getIndex();
-    Map<String, OasMapping> operationFilter = new HashMap<>();
+  private static final DotName PATH_ANNOTATION = DotName.createSimple(
+      "jakarta.ws.rs.Path"
+  );
 
+  private void constructMappings(CombinedIndexBuildItem indexBuildItem, RestMappingBuildItem restMappingBuildItem,
+                                 Map<String, OasMapping> operationMapping, Map<String, String> pathMapping,
+                                 boolean hideInternal) {
+    IndexView indexView = indexBuildItem.getIndex();
     for (Map.Entry<MethodInfo, RestMethodMapping> entry : restMappingBuildItem.getMethodMapping().entrySet()) {
       RestMethodMapping mapping = entry.getValue();
-      if (mapping.internal && hideInternal) {
-        continue;
+
+      if (mapping.internal) {
+        pathMapping.put(mapping.path, "/internal" + mapping.path);
+        if (hideInternal) {
+          continue;
+        }
+      } else {
+        pathMapping.put(mapping.path, "/public" + mapping.path);
       }
 
       MethodInfo method = mapping.apiMethod;
@@ -59,10 +67,11 @@ public class OasProcessor {
       }
 
       Collection<ClassInfo> classes = indexView.getAllKnownImplementors(declaringClass.name());
+      boolean implMissingPathAnnotation = false;
       for (ClassInfo impl : classes) {
         MethodInfo implMethod = impl.method(method.name(), params);
 
-        if (implMethod != null) {// we register implementations so we get correct path
+        if (implMethod != null) {// we keep implementations so we get correct path
           OasMapping config = new OasMapping(
               JandexUtil.createUniqueMethodReference(impl, implMethod),
               impl.name().toString(),
@@ -71,7 +80,7 @@ public class OasProcessor {
               tags,
               mapping.excluded
           );
-          operationFilter.put(config.getMethodRef(), config);
+          operationMapping.put(config.getMethodRef(), config);
         }
 
         OasMapping config = new OasMapping(
@@ -82,20 +91,24 @@ public class OasProcessor {
             tags,
             mapping.excluded
         );
-        operationFilter.put(config.getMethodRef(), config);
+        operationMapping.put(config.getMethodRef(), config);
+
+        if (!impl.hasDeclaredAnnotation(PATH_ANNOTATION)) {
+          implMissingPathAnnotation = true;
+        }
       }
 
-      //filter out interface methods to avoid duplication
+      //filter out interface methods to avoid duplication but only exclude if impl has path anno
       OasMapping config = new OasMapping(
           JandexUtil.createUniqueMethodReference(declaringClass, method),
           declaringClass.name().toString(),
-          method.name()
-          //valueClassName != null ? valueClassName.toString() : null,
-          //tags
+          method.name(),
+          valueClassName != null ? valueClassName.toString() : null,
+          tags,
+          !implMissingPathAnnotation
       );
-      operationFilter.put(config.getMethodRef(), config);
+      operationMapping.put(config.getMethodRef(), config);
     }
-    return  operationFilter;
   }
 
   @BuildStep
@@ -103,14 +116,16 @@ public class OasProcessor {
                      RestMappingBuildItem restMappingBuildItem,
                      RecycloneBuildConfig recycloneBuildConfig,
                      BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
-    Map<String, OasMapping> operationMapping;
+    Map<String, OasMapping> operationMapping = new HashMap<>();
+    Map<String, String> pathMapping = new HashMap<>();
     if (ConfigUtils.isProfileActive("dev") || ConfigUtils.isProfileActive("test")) {
-      operationMapping = constructMappings(indexBuildItem, restMappingBuildItem, false);
+      constructMappings(indexBuildItem, restMappingBuildItem, operationMapping, pathMapping,false);
     } else {
-      operationMapping = constructMappings(indexBuildItem, restMappingBuildItem, true);
+      constructMappings(indexBuildItem, restMappingBuildItem, operationMapping, pathMapping,true);
     }
+
     addToOpenAPIDefinitionBuildItemBuildProducer.produce(new AddToOpenAPIDefinitionBuildItem(
-        new OasFilter(recycloneBuildConfig, operationMapping)
+        new OasFilter(recycloneBuildConfig, operationMapping, pathMapping)
     ));
   }
 }

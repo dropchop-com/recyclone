@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @RequestScoped
-@Path(Paths.INTERNAL_SEGMENT + Paths.Localization.LANGUAGE)
+//@Path(Paths.INTERNAL_SEGMENT + Paths.Localization.LANGUAGE)
 public class LanguageResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.localization.LanguageResource {
 

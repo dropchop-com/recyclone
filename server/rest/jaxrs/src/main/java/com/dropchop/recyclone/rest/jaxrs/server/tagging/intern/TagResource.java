@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @RequestScoped
-@Path(Constants.Paths.INTERNAL_SEGMENT + Constants.Paths.Tagging.TAG)
+//@Path(Constants.Paths.INTERNAL_SEGMENT + Constants.Paths.Tagging.TAG)
 public class TagResource
   implements com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource<Tag> {
 

@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 @Slf4j
 @RequestScoped
-@Path(Constants.Paths.PUBLIC_SEGMENT + Constants.Paths.Tagging.TAG)
+//@Path(Constants.Paths.PUBLIC_SEGMENT + Constants.Paths.Tagging.TAG)
 public class TagResource implements com.dropchop.recyclone.rest.jaxrs.api.tagging.TagResource<Tag> {
 
   @Inject

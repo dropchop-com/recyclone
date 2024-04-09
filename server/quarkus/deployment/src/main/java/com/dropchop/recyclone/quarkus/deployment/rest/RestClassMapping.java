@@ -3,27 +3,48 @@ package com.dropchop.recyclone.quarkus.deployment.rest;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class RestClassMapping {
   final ClassInfo apiClass;
-  final ClassInfo implClass;
-  final DotName classParamClass;
-  final DotName dataClass;
-  final DotName execContextClass;
-  final boolean internal;
-  final String path;
-  final String segment;
-  final boolean excluded;
+  final Set<RestMethodMapping> methodMappings = new LinkedHashSet<>();
+  final Set<ClassInfo> implementors = new LinkedHashSet<>();
+  private String path;
+  private boolean internal = false;
+  private boolean excluded = false;
 
-  public RestClassMapping(ClassInfo apiClass, ClassInfo implClass, DotName classParamClass, DotName dataClass,
-                          DotName execContextClass, boolean internal, String path, String segment, boolean excluded) {
+  public RestClassMapping(ClassInfo apiClass) {
     this.apiClass = apiClass;
-    this.implClass = implClass;
-    this.classParamClass = classParamClass;
-    this.dataClass = dataClass;
-    this.execContextClass = execContextClass;
-    this.internal = internal;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
     this.path = path;
-    this.segment = segment;
+  }
+
+  public boolean isInternal() {
+    return internal;
+  }
+
+  public void setInternal(boolean internal) {
+    this.internal = internal;
+  }
+
+  public boolean isExcluded() {
+    return excluded;
+  }
+
+  public void setExcluded(boolean excluded) {
     this.excluded = excluded;
+  }
+
+  public void addImplementors(Collection<ClassInfo> implementors) {
+    this.implementors.addAll(implementors);
   }
 }

@@ -3,7 +3,9 @@ package com.dropchop.recyclone.quarkus.deployment.rest;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.AnnotationsTransformerBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
+import io.quarkus.arc.processor.AnnotationsTransformer;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -47,6 +49,14 @@ public class RestProcessor {
 
   private static final DotName ANNO_EXEC_CTX_CLASS = DotName.createSimple(
       "com.dropchop.recyclone.model.api.invoke.ExecContext"
+  );
+
+  private static final DotName REQ_SCOPED_ANNOTATION = DotName.createSimple(
+  "jakarta.enterprise.context.RequestScoped"
+  );
+
+  private static final DotName APP_SCOPED_ANNOTATION = DotName.createSimple(
+      "jakarta.enterprise.context.ApplicationScoped"
   );
 
   private static final boolean ANNO_INTERNAL = false;
@@ -116,6 +126,29 @@ public class RestProcessor {
     return doExclude;
   }
 
+  private boolean shouldExclude2(ClassInfo apiClass, RecycloneBuildConfig config) {
+    RecycloneBuildConfig.Rest restConfig = config.rest;
+    boolean doExclude = restConfig.includes.isPresent();
+    if (restConfig.includes.isPresent()) {
+      for (String include : restConfig.includes.get()) {
+        if (include.equals(apiClass.name().toString())) {
+          doExclude = false;
+          break;
+        }
+      }
+    }
+    if (restConfig.excludes.isPresent()) {
+      for (String exclude : restConfig.excludes.get()) {
+        if (exclude.equals(apiClass.name().toString())) {
+          doExclude = true;
+          break;
+        }
+      }
+    }
+
+    return doExclude;
+  }
+
   @BuildStep
   public void buildRestMapping(CombinedIndexBuildItem cibi,
                                RecycloneBuildConfig config,
@@ -176,7 +209,6 @@ public class RestProcessor {
           }
         }
       }
-      DotName paramClass = classParamClass;
       DotName dataClass = tmpDataClass;
       String path = pathAnnotation.value().asString();
       String segment = extractSecondFromLastPathSegment(path);
@@ -187,23 +219,10 @@ public class RestProcessor {
       boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
 
       Collection<ClassInfo> classes = cibi.getIndex().getAllKnownImplementors(declaringClass.name());
-      boolean doExclude = this.shouldExclude(classes, config);
-      for (ClassInfo impl : classes) {
-        classMapping.computeIfAbsent(impl, k -> new RestClassMapping(
-            declaringClass,
-            impl,
-            paramClass,
-            dataClass,
-            execContextClass,
-            internal,
-            path,
-            segment,
-            doExclude
-        ));
-      }
-
-      methodMapping.put(method, new RestMethodMapping(
+      boolean doExclude = this.shouldExclude2(declaringClass, config);
+      RestMethodMapping restMethodMapping = new RestMethodMapping(
           declaringClass,
+          classes,
           method,
           classParamClass,
           methodParamClass,
@@ -213,8 +232,24 @@ public class RestProcessor {
           path,
           segment,
           doExclude
-      ));
+      );
+      methodMapping.put(method, restMethodMapping);
+
+      RestClassMapping restClassMapping = classMapping.computeIfAbsent(declaringClass, RestClassMapping::new);
+      restClassMapping.methodMappings.add(restMethodMapping);
+      restClassMapping.addImplementors(classes);
+      restClassMapping.setPath(path);
+      restClassMapping.setExcluded(doExclude);
+      restClassMapping.setInternal(internal);
     }
+
+    for (Map.Entry<ClassInfo, RestClassMapping> entry : classMapping.entrySet()) {
+      RestClassMapping mapping = entry.getValue();
+      mapping.setExcluded(
+          mapping.methodMappings.stream().allMatch(RestMethodMapping::isExcluded)
+      );
+    }
+
     restMappingItemBuildProducer.produce(
         new RestMappingBuildItem(methodMapping, classMapping)
     );
@@ -224,198 +259,37 @@ public class RestProcessor {
   public void processPathAnnotation(RestMappingBuildItem restMappingBuildItem,
                                     BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
                                     BuildProducer<AdditionalResourceClassBuildItem> additionalProducer) {
-
     for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
       RestClassMapping mapping = entry.getValue();
-      if (mapping.excluded) {
+      if (mapping.isExcluded()) {
         continue;
       }
-      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
-        continue;
-      }
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.implClass.name().toString()
-      ).build());
       reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
           mapping.apiClass.name().toString()
       ).build());
-      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
-      if (implPathAnnotation == null) {
-        String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
+      for (ClassInfo implClass : mapping.implementors) {
+        if (implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
+          continue;
+        }
+        reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
+            implClass.name().toString()
+        ).build());
+        String newPath = mapping.isInternal() ? "/internal" + mapping.getPath() : "/public" + mapping.getPath();
         additionalProducer.produce(
-            new AdditionalResourceClassBuildItem(mapping.implClass, newPath)
+            new AdditionalResourceClassBuildItem(implClass, newPath)
         );
-        /*transformerProducer.produce(
-            new AnnotationsTransformerBuildItem(
-                new AnnotationsTransformer.ClassTransformerBuilder()
-                    .whenClass(o -> o.name().equals(mapping.implClass.name()))
-                    .thenTransform(
-                        transformation -> transformation.add(
-                            PATH_ANNOTATION,
-                            AnnotationValue.createStringValue("value", newPath)
-                        )
-                    )
-            )
-        );*/
       }
     }
   }
 
-  /*@BuildStep
-  public void registerPathAnnotation(
-      BuildProducer<AdditionalJaxRsResourceDefiningAnnotationBuildItem> annotationProducer) {
-    annotationProducer.produce(
-        new AdditionalJaxRsResourceDefiningAnnotationBuildItem(
-            DotName.createSimple(RecycloneResource.class)
-        )
+  private void addExclude(BuildProducer<BuildTimeConditionBuildItem> conditionBuildItemsProducer,
+                          DotName anno, ClassInfo classInfo) {
+    AnnotationTarget t = classInfo.declaredAnnotation(anno).target();
+    conditionBuildItemsProducer.produce(
+        new BuildTimeConditionBuildItem(t, false)
     );
-  }*/
-
-  /*@BuildStep
-  public void processPathAnnotation(
-      RestMappingBuildItem restMappingBuildItem,
-      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
-      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
-
-    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
-      RestClassMapping mapping = entry.getValue();
-      if (mapping.excluded) {
-        continue;
-      }
-      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
-        continue;
-      }
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.implClass.name().toString()
-      ).build());
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.apiClass.name().toString()
-      ).build());
-      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
-      if (implPathAnnotation != null) {
-        continue;
-      }
-      String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
-      transformerProducer.produce(
-          new AnnotationsTransformerBuildItem(
-              new AnnotationsTransformer.ClassTransformerBuilder()
-                  .whenClass(o -> o.name().equals(mapping.implClass.name()))
-                  .thenTransform(
-                      transformation -> transformation.add(
-                          DotName.createSimple(Path.class.getName()),
-                          AnnotationValue.createStringValue("value", newPath)
-                      )
-                  )
-          )
-      );
-    }
-  }*/
-
-  /*@BuildStep
-  public void processPathAnnotation( // transformation called
-      RestMappingBuildItem restMappingBuildItem,
-      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
-      BuildProducer<AnnotationsTransformerBuildItem> transformerProducer) {
-
-    Map<DotName, String> addAnnotation = new LinkedHashMap<>();
-    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
-      RestClassMapping mapping = entry.getValue();
-      if (mapping.excluded) {
-        continue;
-      }
-      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
-        continue;
-      }
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.implClass.name().toString()
-      ).build());
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.apiClass.name().toString()
-      ).build());
-      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
-      if (implPathAnnotation == null) {
-        String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
-        addAnnotation.put(mapping.implClass.name(), newPath);
-      }
-    }
-
-    transformerProducer.produce(
-        new AnnotationsTransformerBuildItem(new RestResourceAnnotationProcessor(addAnnotation))
-    );
-  }*/
-
-  /*@BuildStep
-  void addPathAnnotation( // javassist HardCore
-      RestMappingBuildItem restMappingBuildItem,
-      BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
-      BuildProducer<BytecodeTransformerBuildItem> transformers) {
-    for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
-      RestClassMapping mapping = entry.getValue();
-      if (mapping.excluded) {
-        continue;
-      }
-      if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) { // keep defined/desired path annotation
-        continue;
-      }
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.implClass.name().toString()
-      ).build());
-      reflectiveBuildProducer.produce(ReflectiveClassBuildItem.builder(
-          mapping.apiClass.name().toString()
-      ).build());
-      AnnotationInstance implPathAnnotation = mapping.implClass.declaredAnnotation(PATH_ANNOTATION);
-      if (implPathAnnotation != null) {
-        continue;
-      }
-      String newPath = mapping.internal ? "/internal" + mapping.path : "/public" + mapping.path;
-      BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem.Builder()
-          .setClassToTransform(mapping.implClass.name().toString())
-          .setInputTransformer(
-              (className, bytes) -> {
-                  ClassPool classPool = ClassPool.getDefault();
-                  try {
-                    CtClass ctClass = classPool.get(className.replace('/', '.'));
-                    AnnotationsAttribute attr = new AnnotationsAttribute(
-                        ctClass.getClassFile().getConstPool(), AnnotationsAttribute.visibleTag
-                    );
-                    Annotation ann = new Annotation(
-                        jakarta.ws.rs.Path.class.getName(), ctClass.getClassFile().getConstPool()
-                    );
-                    ann.addMemberValue(
-                        "value",
-                        new StringMemberValue(newPath, ctClass.getClassFile().getConstPool())
-                    );
-                    attr.addAnnotation(ann);
-                    ctClass.getClassFile().addAttribute(attr);
-                    ctClass.detach(); // Detach the CtClass object from the ClassPool
-
-                    //if (ctClass.isFrozen()) {
-                    //  ctClass.defrost();
-                    //}
-                    byte[] classBytes = ctClass.toBytecode();
-                    FileOutputStream fos;
-                    try {
-                      fos = new FileOutputStream(
-                          "%s/projects/recyclone/%s.class".formatted(
-                              System.getProperty("user.home"),
-                              className
-                          )
-                      );
-                      fos.write(classBytes);
-                      fos.close();
-                    } catch (IOException e) {
-                      throw new RuntimeException(e);
-                    }
-                    ctClass.detach();
-                    return classBytes;
-                  } catch (Exception e) {
-                    throw new RuntimeException(e);
-                  }
-              }
-              ).build();
-      transformers.produce(item);
-    }
-  }*/
+    log.debugv("Found REST resource excluded [{}]!", classInfo);
+  }
 
   @BuildStep
   public void processExclusions(
@@ -423,18 +297,18 @@ public class RestProcessor {
       BuildProducer<BuildTimeConditionBuildItem> conditionBuildItemsProducer) {
     for (Map.Entry<ClassInfo, RestClassMapping> entry : restMappingBuildItem.getClassMapping().entrySet()) {
       RestClassMapping mapping = entry.getValue();
-      if (mapping.excluded) {
+      if (mapping.isExcluded()) {
         if (mapping.apiClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
-          AnnotationTarget t = mapping.apiClass.declaredAnnotation(PATH_ANNOTATION).target();
-          conditionBuildItemsProducer.produce(
-              new BuildTimeConditionBuildItem(t, false)
-          );
+          addExclude(conditionBuildItemsProducer, PATH_ANNOTATION, mapping.apiClass);
         }
-        if (mapping.implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
-          AnnotationTarget t = mapping.implClass.declaredAnnotation(PATH_ANNOTATION).target();
-          conditionBuildItemsProducer.produce(
-              new BuildTimeConditionBuildItem(t, false)
-          );
+        for (ClassInfo implClass : mapping.implementors) {
+          if (implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
+            addExclude(conditionBuildItemsProducer, PATH_ANNOTATION, implClass);
+          } else if (implClass.hasDeclaredAnnotation(REQ_SCOPED_ANNOTATION)) {
+            addExclude(conditionBuildItemsProducer, REQ_SCOPED_ANNOTATION, implClass);
+          } else if (implClass.hasDeclaredAnnotation(APP_SCOPED_ANNOTATION)) {
+            addExclude(conditionBuildItemsProducer, APP_SCOPED_ANNOTATION, implClass);
+          }
         }
       }
     }

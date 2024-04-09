@@ -23,7 +23,8 @@ import java.util.List;
 @RequestScoped
 //@Path(Constants.Paths.PUBLIC_SEGMENT + DUMMY)
 public class DummyResource implements
-    com.dropchop.recyclone.quarkus.it.rest.api.DummyResource, ClassicRestResource<Dummy> {
+    com.dropchop.recyclone.quarkus.it.rest.api.DummyResource,
+    ClassicRestResource<Dummy> {
 
   @Inject
   ServiceSelector selector;

@@ -16,14 +16,14 @@ import io.smallrye.openapi.api.models.security.SecurityRequirementImpl;
 import io.smallrye.openapi.api.models.security.SecuritySchemeImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
-import org.eclipse.microprofile.openapi.models.Components;
-import org.eclipse.microprofile.openapi.models.OpenAPI;
-import org.eclipse.microprofile.openapi.models.Operation;
+import org.eclipse.microprofile.openapi.models.*;
 import org.eclipse.microprofile.openapi.models.info.Contact;
 import org.eclipse.microprofile.openapi.models.info.Info;
 import org.eclipse.microprofile.openapi.models.info.License;
+import org.eclipse.microprofile.openapi.models.links.Link;
 import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
+import org.eclipse.microprofile.openapi.models.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.models.responses.APIResponse;
 import org.eclipse.microprofile.openapi.models.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.models.security.SecurityScheme;
@@ -42,12 +42,15 @@ public class OasFilter implements OASFilter {
 
   private final RecycloneBuildConfig buildConfig;
   private final Map<String, OasMapping> operationMapping;
+  private final Map<String, String> pathMapping;
 
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
-  public OasFilter(RecycloneBuildConfig buildConfig, Map<String, OasMapping> operationMapping) {
+  public OasFilter(RecycloneBuildConfig buildConfig, Map<String, OasMapping> operationMapping,
+                   Map<String, String> pathMapping) {
     this.buildConfig = buildConfig;
     this.operationMapping = operationMapping;
+    this.pathMapping = pathMapping;
   }
 
   private License getOrCreateLicense(Info info) {
@@ -157,6 +160,29 @@ public class OasFilter implements OASFilter {
         components.removeSchema(toRemove);
       }
     }
+    //rewrite paths if set
+    Paths paths = openAPI.getPaths();
+    if (paths != null) {
+      Map<String, String> rewrittenPaths = new HashMap<>();
+      for (Map.Entry<String, String> entry : this.pathMapping.entrySet()) {
+        String path = entry.getKey();
+        String rewritten = entry.getValue();
+        for (Map.Entry<String, PathItem> items : paths.getPathItems().entrySet()) {
+          String original = items.getKey();
+          if (original.contains(path)) {
+            rewrittenPaths.put(original, original.replace(path, rewritten));
+          }
+        }
+      }
+      for (Map.Entry<String, String> entry : rewrittenPaths.entrySet()) {
+        PathItem item = paths.getPathItem(entry.getKey());
+        if (item != null) {
+          paths.removePathItem(entry.getKey());
+          paths.addPathItem(entry.getValue(), item);
+        }
+      }
+    }
+
 
     Map<String, Rest.Security> security = this.buildConfig.rest.security;
     if (!security.isEmpty()) {
@@ -284,6 +310,21 @@ public class OasFilter implements OASFilter {
             "(?<=[^A-Z])(?=[A-Z])",
             "(?<=[A-Za-z])(?=[^A-Za-z])"),
         " ");
+  }
+
+  @Override
+  public PathItem filterPathItem(PathItem pathItem) {
+    return OASFilter.super.filterPathItem(pathItem);
+  }
+
+  @Override
+  public RequestBody filterRequestBody(RequestBody requestBody) {
+    return OASFilter.super.filterRequestBody(requestBody);
+  }
+
+  @Override
+  public Link filterLink(Link link) {
+      return OASFilter.super.filterLink(link);
   }
 
   @Override

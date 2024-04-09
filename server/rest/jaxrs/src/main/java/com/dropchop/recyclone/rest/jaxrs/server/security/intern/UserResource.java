@@ -26,7 +26,7 @@ import java.util.UUID;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-@Path(Paths.INTERNAL_SEGMENT + Paths.Security.USER)
+//@Path(Paths.INTERNAL_SEGMENT + Paths.Security.USER)
 public class UserResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.UserResource {
 

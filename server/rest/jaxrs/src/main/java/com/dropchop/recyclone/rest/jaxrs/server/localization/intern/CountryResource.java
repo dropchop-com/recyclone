@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @RequestScoped
-@Path(Paths.INTERNAL_SEGMENT + Paths.Localization.COUNTRY)
+//@Path(Paths.INTERNAL_SEGMENT + Paths.Localization.COUNTRY)
 public class CountryResource implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.localization.CountryResource {
 
