@@ -23,8 +23,8 @@ import java.util.List;
 @RequestScoped
 //@Path(Constants.Paths.PUBLIC_SEGMENT + DUMMY)
 public class DummyResource implements
-    com.dropchop.recyclone.quarkus.it.rest.api.DummyResource,
-    ClassicRestResource<Dummy> {
+    ClassicRestResource<Dummy>,
+    com.dropchop.recyclone.quarkus.it.rest.api.DummyResource {
 
   @Inject
   ServiceSelector selector;
@@ -66,6 +66,6 @@ public class DummyResource implements
 
   @Override
   public List<Dummy> searchRest(CodeParams params) {
-    return unwrap(search(params));
+    return List.of();
   }
 }

@@ -1,29 +1,19 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import io.quarkus.builder.item.SimpleBuildItem;
-import org.jboss.jandex.ClassInfo;
-import org.jboss.jandex.MethodInfo;
-
-import java.util.Map;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
  */
 public final class RestMappingBuildItem extends SimpleBuildItem {
-  private final Map<MethodInfo, RestMethodMapping> methodMapping;
-  private final Map<ClassInfo, RestClassMapping> classMapping;
+  private final RestMapping mapping;
 
-  public RestMappingBuildItem(Map<MethodInfo, RestMethodMapping> methodMapping,
-                              Map<ClassInfo, RestClassMapping> classMapping) {
-    this.methodMapping = methodMapping;
-    this.classMapping = classMapping;
+  public RestMappingBuildItem(RestMapping mapping) {
+    this.mapping = mapping;
   }
 
-  public Map<MethodInfo, RestMethodMapping> getMethodMapping() {
-    return methodMapping;
-  }
-
-  public Map<ClassInfo, RestClassMapping> getClassMapping() {
-    return classMapping;
+  public RestMapping getMapping() {
+    return mapping;
   }
 }

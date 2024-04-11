@@ -19,7 +19,7 @@ public interface ClassicRestResource<T> {
 
   default T unwrapFirst(Result<T> result) {
     Collection<T> collection = unwrap(result);
-    if (collection.size() <= 0) {
+    if (collection.isEmpty()) {
       return null;
     }
     return collection.iterator().next();

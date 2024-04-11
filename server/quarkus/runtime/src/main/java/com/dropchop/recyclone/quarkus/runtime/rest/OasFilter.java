@@ -9,6 +9,7 @@ import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
 import io.smallrye.openapi.api.models.OperationImpl;
+import io.smallrye.openapi.api.models.PathItemImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
 import io.smallrye.openapi.api.models.info.LicenseImpl;
@@ -41,16 +42,13 @@ public class OasFilter implements OASFilter {
   private static final Logger log = Logger.getLogger(OasFilter.class);
 
   private final RecycloneBuildConfig buildConfig;
-  private final Map<String, OasMapping> operationMapping;
-  private final Map<String, String> pathMapping;
+  private final RestMapping restMapping;
 
   private final Map<String, Params> paramsInstanceCache = new HashMap<>();
 
-  public OasFilter(RecycloneBuildConfig buildConfig, Map<String, OasMapping> operationMapping,
-                   Map<String, String> pathMapping) {
+  public OasFilter(RecycloneBuildConfig buildConfig, RestMapping restMapping) {
     this.buildConfig = buildConfig;
-    this.operationMapping = operationMapping;
-    this.pathMapping = pathMapping;
+    this.restMapping = restMapping;
   }
 
   private License getOrCreateLicense(Info info) {
@@ -160,29 +158,48 @@ public class OasFilter implements OASFilter {
         components.removeSchema(toRemove);
       }
     }
+
     //rewrite paths if set
     Paths paths = openAPI.getPaths();
     if (paths != null) {
-      Map<String, String> rewrittenPaths = new HashMap<>();
-      for (Map.Entry<String, String> entry : this.pathMapping.entrySet()) {
-        String path = entry.getKey();
-        String rewritten = entry.getValue();
-        for (Map.Entry<String, PathItem> items : paths.getPathItems().entrySet()) {
-          String original = items.getKey();
-          if (original.contains(path)) {
-            rewrittenPaths.put(original, original.replace(path, rewritten));
+      Map<String, PathItem> rewrittenItems = new HashMap<>();
+      Map<String, PathItem> removeItems = new HashMap<>();
+      for (Map.Entry<String, PathItem> item : paths.getPathItems().entrySet()) {
+        String original = item.getKey();
+        PathItem originalItem = item.getValue();
+        Map<PathItem.HttpMethod, Operation> removeOps = new LinkedHashMap<>();
+        for (Map.Entry<PathItem.HttpMethod, Operation> op : originalItem.getOperations().entrySet()) {
+          if (op.getValue() instanceof OperationImpl opImpl) {
+            RestMethod restMethod = this.restMapping.getApiMethod(opImpl.getMethodRef());
+            if (restMethod == null) {
+              continue;
+            }
+            if (!original.endsWith(restMethod.path)) {
+              continue;
+            }
+            String tmp = original.replace(restMethod.path, restMethod.rewrittenPath);
+            if (original.equals(tmp)) {
+              continue;
+            }
+            PathItem newPathItem = rewrittenItems.computeIfAbsent(tmp, x -> new PathItemImpl());
+            removeOps.put(op.getKey(), opImpl);
+            newPathItem.setOperation(op.getKey(), opImpl);
           }
         }
-      }
-      for (Map.Entry<String, String> entry : rewrittenPaths.entrySet()) {
-        PathItem item = paths.getPathItem(entry.getKey());
-        if (item != null) {
-          paths.removePathItem(entry.getKey());
-          paths.addPathItem(entry.getValue(), item);
+        for (Map.Entry<PathItem.HttpMethod, Operation> op : removeOps.entrySet()) {
+          originalItem.setOperation(op.getKey(), null);
+        }
+        if (originalItem.getOperations().isEmpty()) {
+          removeItems.put(original, item.getValue());
         }
       }
+      for (Map.Entry<String, PathItem> item : removeItems.entrySet()) {
+        paths.removePathItem(item.getKey());
+      }
+      for (Map.Entry<String, PathItem> item : rewrittenItems.entrySet()) {
+        paths.addPathItem(item.getKey(), item.getValue());
+      }
     }
-
 
     Map<String, Rest.Security> security = this.buildConfig.rest.security;
     if (!security.isEmpty()) {
@@ -327,6 +344,17 @@ public class OasFilter implements OASFilter {
       return OASFilter.super.filterLink(link);
   }
 
+  private boolean shouldSkip(RestMethod method, String methodRef) {
+    if (method.isExcluded()) {
+      return true;
+    }
+    if (method.isInternal() && !this.restMapping.isDevTest()) {
+      return true;
+    }
+    RestClass restClass = method.getClassMapping();
+    return !restClass.isImplMissingPath() && this.restMapping.isApiMethod(methodRef);
+  }
+
   @Override
   public Operation filterOperation(Operation operation) {
     if (!(operation instanceof OperationImpl op)) {
@@ -337,28 +365,30 @@ public class OasFilter implements OASFilter {
       List<SecurityRequirement> securityRequirements = createSecurityRequirements(security);
       op.setSecurity(securityRequirements);
     }
-    OasMapping config = this.operationMapping.get(op.getMethodRef());
-    if (config == null) {
+    RestMethod method = this.restMapping.getApiMethod(op.getMethodRef());
+    if (method == null) {
       return operation;
     }
 
-    if (config.isSkip()) {
+    if (shouldSkip(method, op.getMethodRef())) {
       return null;
     }
 
-    String defaultName = splitCamelCase(config.getClassName());
+    RestClass restClass = method.getClassMapping();
+    String defaultName = splitCamelCase(restClass.getApiClass());
     List<String> tags = operation.getTags();
     if (tags == null || tags.isEmpty()) {
-      operation.setTags(new ArrayList<>(config.getTags()));
+      operation.setTags(List.of(method.getSegment()));
     } else if (tags.size() == 1 && tags.contains(defaultName)) {
-      operation.setTags(new ArrayList<>(config.getTags()));
+      operation.setTags(List.of(method.getSegment()));
     }
 
-    if (config.getParamClassName() == null) {
+    String paramClass = method.getParamClass();
+    if (paramClass == null || (!"GET".equalsIgnoreCase(method.getVerb()))) {
       return operation;
     }
 
-    Params dtoParameters = paramsInstanceCache.computeIfAbsent(config.getParamClassName(), this::createInstance);
+    Params dtoParameters = paramsInstanceCache.computeIfAbsent(paramClass, this::createInstance);
     if (!(dtoParameters instanceof CommonParams<?, ?, ?, ?> commonParams)) {
       return operation;
     }
