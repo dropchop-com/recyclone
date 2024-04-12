@@ -32,6 +32,7 @@ import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 24.
@@ -40,6 +41,8 @@ import java.util.*;
 public class OasFilter implements OASFilter {
 
   private static final Logger log = Logger.getLogger(OasFilter.class);
+
+  private static final Pattern URL_PATTERN = Pattern.compile("\\{([^:\\s}]+).*}");
 
   private final RecycloneBuildConfig buildConfig;
   private final RestMapping restMapping;
@@ -134,7 +137,6 @@ public class OasFilter implements OASFilter {
 
   @Override
   public void filterOpenAPI(OpenAPI openAPI) {
-    //openAPI.getInfo().setTitle(openAPI.getInfo().getTitle() + " %s".formatted("NIKOLA"));
     Info info = getOrCreateInfo(openAPI);
     this.buildConfig.rest.info.title.ifPresent(info::setTitle);
     this.buildConfig.rest.info.version.ifPresent(info::setVersion);
@@ -162,22 +164,33 @@ public class OasFilter implements OASFilter {
     //rewrite paths if set
     Paths paths = openAPI.getPaths();
     if (paths != null) {
-      Map<String, PathItem> rewrittenItems = new HashMap<>();
+      // the code seems complex but here's what it does:
+      // - list every path item
+      // - identify the correct method from rest mapping which has the correct path built-in
+      // - normalize @Path("/foo/bar/{identifier: pattern}") to "/foo/bar/{identifier}"
+      // - replace the part w/o the prefixes /rest/prefix/foo/bar/baz =̣> /rest/prefix/internal/foo/bar/baz
+      //   given that we have /foo/bar/baz          in the restMethod.path property and
+      //                      /internal/foo/bar/baz in the restMethod.rewrittenPath property.
+      // - replacement is done with copying to a new structures and cleaning old ones hence the complexity.
+      //   (we must keep every other REST resource intact)
+      Map<String, PathItem> rewrittenItems = new LinkedHashMap<>();
       Map<String, PathItem> removeItems = new HashMap<>();
       for (Map.Entry<String, PathItem> item : paths.getPathItems().entrySet()) {
         String original = item.getKey();
         PathItem originalItem = item.getValue();
-        Map<PathItem.HttpMethod, Operation> removeOps = new LinkedHashMap<>();
+        Map<PathItem.HttpMethod, Operation> removeOps = new HashMap<>();
         for (Map.Entry<PathItem.HttpMethod, Operation> op : originalItem.getOperations().entrySet()) {
           if (op.getValue() instanceof OperationImpl opImpl) {
             RestMethod restMethod = this.restMapping.getApiMethod(opImpl.getMethodRef());
             if (restMethod == null) {
               continue;
             }
-            if (!original.endsWith(restMethod.path)) {
+            String normalized = URL_PATTERN.matcher(restMethod.path).replaceAll("{$1}");
+            if (!original.endsWith(normalized)) {
               continue;
             }
-            String tmp = original.replace(restMethod.path, restMethod.rewrittenPath);
+            String normalizedRewritten = URL_PATTERN.matcher(restMethod.rewrittenPath).replaceAll("{$1}");
+            String tmp = original.replace(normalized, normalizedRewritten);
             if (original.equals(tmp)) {
               continue;
             }
