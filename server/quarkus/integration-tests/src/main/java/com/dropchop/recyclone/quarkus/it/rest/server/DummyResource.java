@@ -11,7 +11,6 @@ import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
@@ -21,13 +20,13 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-//@Path(Constants.Paths.PUBLIC_SEGMENT + DUMMY)
 public class DummyResource implements
     ClassicRestResource<Dummy>,
     com.dropchop.recyclone.quarkus.it.rest.api.DummyResource {
 
   @Inject
-  ServiceSelector selector;
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  DummyService service;
 
   @Inject
   @ExecContextType(Implementation.RCYN_DEFAULT)
@@ -41,7 +40,7 @@ public class DummyResource implements
         String.format("Invalid parameter type: should be [%s]", CodeParams.class));
     }
     codeParams.setCodes(List.of(code));
-    return selector.select(DummyService.class).search();
+    return service.search();
   }
 
   @Override
@@ -51,7 +50,7 @@ public class DummyResource implements
 
   @Override
   public Result<Dummy> get() {
-    return selector.select(DummyService.class).search();
+    return service.search();
   }
 
   @Override
@@ -61,11 +60,11 @@ public class DummyResource implements
 
   @Override
   public Result<Dummy> search(CodeParams params) {
-    return selector.select(DummyService.class).search();
+    return service.search();
   }
 
   @Override
   public List<Dummy> searchRest(CodeParams params) {
-    return List.of();
+    return unwrap(search(params));
   }
 }

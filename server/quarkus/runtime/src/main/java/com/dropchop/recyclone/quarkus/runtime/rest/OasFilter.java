@@ -364,7 +364,7 @@ public class OasFilter implements OASFilter {
     if (method.isInternal() && !this.restMapping.isDevTest()) {
       return true;
     }
-    RestClass restClass = method.getClassMapping();
+    RestClass restClass = this.restMapping.getApiClass(method.apiClass);
     return !restClass.isImplMissingPath() && this.restMapping.isApiMethod(methodRef);
   }
 
@@ -387,7 +387,7 @@ public class OasFilter implements OASFilter {
       return null;
     }
 
-    RestClass restClass = method.getClassMapping();
+    RestClass restClass = this.restMapping.getApiClass(method.apiClass);
     String defaultName = splitCamelCase(restClass.getApiClass());
     List<String> tags = operation.getTags();
     if (tags == null || tags.isEmpty()) {
@@ -396,7 +396,10 @@ public class OasFilter implements OASFilter {
       operation.setTags(List.of(method.getSegment()));
     }
 
-    String paramClass = method.getParamClass();
+    String paramClass = restClass.paramClass;
+    if (paramClass == null) {
+      paramClass = method.getParamClass();
+    }
     if (paramClass == null || (!"GET".equalsIgnoreCase(method.getVerb()))) {
       return operation;
     }

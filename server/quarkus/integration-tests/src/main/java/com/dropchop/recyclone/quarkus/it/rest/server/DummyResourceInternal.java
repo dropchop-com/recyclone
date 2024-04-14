@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
@@ -14,17 +13,17 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-//@Path(Constants.Paths.INTERNAL_SEGMENT + DUMMY)
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class DummyResourceInternal implements
     ClassicRestResource<Dummy>,
     com.dropchop.recyclone.quarkus.it.rest.api.DummyResourceInternal {
 
   @Inject
-  ServiceSelector selector;
+  DummyService service;
 
   @Override
   public Result<Dummy> create(List<Dummy> dummies) {
-    return selector.select(DummyService.class).create(dummies);
+    return service.create(dummies);
   }
 
   @Override
@@ -34,7 +33,7 @@ public class DummyResourceInternal implements
 
   @Override
   public Result<Dummy> delete(List<Dummy> dummies) {
-    return selector.select(DummyService.class).delete(dummies);
+    return service.delete(dummies);
   }
 
   @Override
@@ -44,7 +43,7 @@ public class DummyResourceInternal implements
 
   @Override
   public Result<Dummy> update(List<Dummy> dummies) {
-    return selector.select(DummyService.class).update(dummies);
+    return service.update(dummies);
   }
 
   @Override

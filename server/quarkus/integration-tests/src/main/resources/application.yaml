@@ -101,6 +101,12 @@ quarkus:
       includes:
         - com.dropchop.recyclone.quarkus.it.rest.api.DummyResource
         - com.dropchop.recyclone.quarkus.it.rest.api.DummyResourceInternal
+    service:
+      qualifier: recyclone_jpa_default
+      LanguageService:
+        qualifier: recyclone_jpa_default
+      DummyService:
+        qualifier: alter
 
 #dropchop:
 #  application:

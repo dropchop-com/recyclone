@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.ELoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.ETokenAccount;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapper;
 import com.dropchop.recyclone.service.jpa.blaze.security.UserAccountToDtoMapperImpl;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class RegistryTest {
 
     // Start unit test with your extension loaded
@@ -41,6 +43,9 @@ public class RegistryTest {
     @Inject
     JsonSerializationTypeConfig jsonSerializationTypeConfig;
 
+    @Inject
+    @SuppressWarnings("CdiInjectionPointsInspection")
+    RestMapping restMapping;
 
     @Test
     public void getJsonSerializationTypeConfigService() {

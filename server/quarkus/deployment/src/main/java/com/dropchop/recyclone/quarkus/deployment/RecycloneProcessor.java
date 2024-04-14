@@ -1,5 +1,9 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.quarkus.runtime.service.ServiceInjectResolver;
+import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -25,5 +29,23 @@ class RecycloneProcessor {
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-server-rest-jaxrs"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-repo-api"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-service-api"));
+  }
+
+  @BuildStep
+  public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(RecycloneApplicationImpl.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.SINGLETON).build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ServiceInjectResolver.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.SINGLETON).build()
+    );
   }
 }

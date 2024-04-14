@@ -1,8 +1,10 @@
-package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
+package com.dropchop.recyclone.quarkus.it.service.alt;
 
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.EDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
+import com.dropchop.recyclone.quarkus.it.service.jpa.blaze.DummyToDtoMapper;
+import com.dropchop.recyclone.quarkus.it.service.jpa.blaze.DummyToEntityMapper;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -11,7 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
 
 
 /**
@@ -19,13 +21,12 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Slf4j
 @ApplicationScoped
-@ServiceType(RECYCLONE_JPA_DEFAULT)
+@ServiceType("alter")
 public class DummyService extends RecycloneCrudServiceImpl<Dummy, EDummy, String>
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
-  @SuppressWarnings("CdiInjectionPointsInspection")
+  @RepositoryType(RCYN_DEFAULT)
   DummyRepository repository;
 
   @Inject

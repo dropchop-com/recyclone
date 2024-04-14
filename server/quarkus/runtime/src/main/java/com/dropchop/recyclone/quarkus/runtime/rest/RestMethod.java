@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.rest;
 
+import io.quarkus.runtime.annotations.RecordableConstructor;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
  */
@@ -13,7 +15,7 @@ public class RestMethod {
     OTHER
   }
 
-  final RestClass classMapping;
+  final String apiClass;
   final String methodParamClass;
   final String methodDataClass;
   final boolean internal;
@@ -27,11 +29,12 @@ public class RestMethod {
   final boolean excluded;
   final Action action;
 
-  public RestMethod(RestClass classMapping, String methodRef, String implMethodRef,
+  @RecordableConstructor
+  public RestMethod(String apiClass, String methodRef, String implMethodRef,
                     String methodParamClass, String methodDataClass, Action action,
                     String name, String verb, boolean internal, String path, String rewrittenPath,
                     String segment, boolean excluded) {
-    this.classMapping = classMapping;
+    this.apiClass = apiClass;
     this.methodParamClass = methodParamClass;
     this.methodDataClass = methodDataClass;
     this.action = action;
@@ -50,8 +53,8 @@ public class RestMethod {
     return excluded;
   }
 
-  public RestClass getClassMapping() {
-    return classMapping;
+  public String getApiClass() {
+    return apiClass;
   }
 
   public String getMethodParamClass() {
@@ -59,9 +62,9 @@ public class RestMethod {
   }
 
   public String getParamClass() {
-    if (this.classMapping.paramClass != null) {
+    /*if (this.classMapping.paramClass != null) {
       return this.classMapping.paramClass;
-    }
+    }*/
     return methodParamClass;
   }
 
@@ -91,5 +94,17 @@ public class RestMethod {
 
   public String getSegment() {
     return segment;
+  }
+
+  public String getRewrittenPath() {
+    return rewrittenPath;
+  }
+
+  public String getMethodRef() {
+    return methodRef;
+  }
+
+  public String getImplMethodRef() {
+    return implMethodRef;
   }
 }

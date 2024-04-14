@@ -1,16 +1,12 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.rest.OasFilter;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
-import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import com.dropchop.recyclone.quarkus.runtime.rest.*;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
-import io.quarkus.arc.processor.DotNames;
+import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
@@ -19,12 +15,17 @@ import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildIte
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.runtime.util.JandexUtil;
 import io.smallrye.openapi.spring.SpringConstants;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.model.api.rest.Constants.Paths.PUBLIC_SEGMENT;
+import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
@@ -286,7 +287,7 @@ public class RestProcessor {
       boolean implMissingPath;
       if (implClass != null) {
         if (!implClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
-          rewrittenPath = internal ? "/internal" + path : "/public" + path;
+          rewrittenPath = internal ? INTERNAL_SEGMENT + path : PUBLIC_SEGMENT + path;
           implMissingPath = true;
         } else {
           rewrittenPath = apiClass.declaredAnnotation(PATH_ANNOTATION).value().asString();
@@ -364,7 +365,7 @@ public class RestProcessor {
       }
 
       RestMethod restMethodMapping = new RestMethod(
-          restClass,
+          restClass.getApiClass(),
           methodRef,
           implMethodRef,
           methodParamClass != null ? methodParamClass.toString() : null,
@@ -399,7 +400,8 @@ public class RestProcessor {
       BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
       BuildProducer<AdditionalResourceClassBuildItem> additionalProducer) {
     IndexView indexView = cibi.getIndex();
-    for (RestClass mapping : restMappingBuildItem.getMapping().getApiClasses()) {
+    for (Map.Entry<String, RestClass> entry : restMappingBuildItem.getMapping().getApiClasses().entrySet()) {
+      RestClass mapping = entry.getValue();
       if (mapping.isExcluded()) {
         continue;
       }
@@ -433,7 +435,8 @@ public class RestProcessor {
       RestMappingBuildItem restMappingBuildItem,
       BuildProducer<BuildTimeConditionBuildItem> conditionBuildItemsProducer) {
     IndexView indexView = cibi.getIndex();
-    for (RestClass mapping : restMappingBuildItem.getMapping().getApiClasses()) {
+    for (Map.Entry<String, RestClass> entry : restMappingBuildItem.getMapping().getApiClasses().entrySet()) {
+      RestClass mapping = entry.getValue();
       if (mapping.isExcluded()) {
         ClassInfo apiClass = indexView.getClassByName(mapping.getApiClass());
         if (apiClass.hasDeclaredAnnotation(PATH_ANNOTATION)) {
@@ -462,14 +465,21 @@ public class RestProcessor {
     ));
   }
 
+
+
   @BuildStep
-  public void registerBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
-    additionalBeanBuildItemProducer.produce(
-        AdditionalBeanBuildItem
-            .builder()
-            .addBeanClasses(RecycloneApplicationImpl.class)
-            .setUnremovable()
-            .setDefaultScope(DotNames.SINGLETON).build()
-    );
+  @Record(STATIC_INIT)
+  SyntheticBeanBuildItem setupRestMapping(RestRecorder recorder,
+                                          RestMappingBuildItem restMappingBuildItem) {
+    RestMapping mapping = restMappingBuildItem.getMapping();
+    return SyntheticBeanBuildItem.configure(RestMapping.class)
+        .scope(ApplicationScoped.class)
+        .unremovable()
+        .runtimeValue(
+            recorder.createRestMapping(
+                mapping.getApiMethods(), mapping.getImplMethods(), mapping.getApiClasses(), mapping.isDevTest()
+            )
+        )
+        .done();
   }
 }

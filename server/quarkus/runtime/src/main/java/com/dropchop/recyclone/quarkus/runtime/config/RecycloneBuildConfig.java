@@ -154,4 +154,30 @@ public class RecycloneBuildConfig {
     @ConfigItem
     public Optional<List<String>> excludes;
   }
+
+  /**
+   * The default Service config.
+   */
+  @ConfigItem(name = ConfigItem.PARENT)
+  public Service defaultService;
+
+  /**
+   * Additional specific Services.
+   */
+  @ConfigDocSection
+  @ConfigDocMapKey("service-name")
+  @ConfigItem
+  public Map<String, Service> service;
+
+  /**
+   * Service configuration.
+   */
+  @ConfigGroup
+  public static class Service {
+    /**
+     * Service qualifier name.
+     */
+    @ConfigItem(defaultValue = "rcyn_default")
+    public Optional<String> qualifier;
+  }
 }

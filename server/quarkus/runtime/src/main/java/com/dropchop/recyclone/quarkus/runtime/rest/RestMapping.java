@@ -14,10 +14,6 @@ public class RestMapping {
   final Map<String, RestMethod> implMethods = new LinkedHashMap<>();
   final Map<String, RestClass> apiClasses = new LinkedHashMap<>();
 
-  final Map<String, Set<RestClass>> originalPathClasses = new LinkedHashMap<>();
-  final Map<String, Map<String, RestMethod>> originalPathMethods = new LinkedHashMap<>();
-  final Map<String, Set<RestClass>> rewrittenPathMappings = new LinkedHashMap<>();
-
   final boolean isDevTest;
 
   public RestMapping(boolean isDevTest) {
@@ -25,8 +21,6 @@ public class RestMapping {
   }
 
   private void addMethod(String methodRef, RestMethod restMethod) {
-    originalPathMethods.computeIfAbsent(
-        restMethod.path, s -> new LinkedHashMap<>()).put(restMethod.methodRef, restMethod);
     methods.put(methodRef, restMethod);
   }
 
@@ -43,14 +37,15 @@ public class RestMapping {
   }
 
   public RestClass addApiClass(String apiClass, Supplier<RestClass> restClassProvider) {
-    RestClass restClass = apiClasses.computeIfAbsent(apiClass, x -> restClassProvider.get());
-    originalPathClasses.computeIfAbsent(
-        restClass.path, s -> new LinkedHashSet<>()).add(restClass);
-    return restClass;
+    return apiClasses.computeIfAbsent(apiClass, x -> restClassProvider.get());
   }
 
-  public Collection<RestClass> getApiClasses() {
-    return Collections.unmodifiableCollection(apiClasses.values());
+  public Map<String, RestClass> getApiClasses() {
+    return apiClasses;
+  }
+
+  public RestClass getApiClass(String apiClass) {
+    return apiClasses.get(apiClass);
   }
 
   public RestMethod getApiMethod(String methodRef) {
@@ -67,5 +62,17 @@ public class RestMapping {
 
   public boolean isDevTest() {
     return isDevTest;
+  }
+
+  public Map<String, RestMethod> getMethods() {
+    return Collections.unmodifiableMap(methods);
+  }
+
+  public Map<String, RestMethod> getApiMethods() {
+    return apiMethods;
+  }
+
+  public Map<String, RestMethod> getImplMethods() {
+    return implMethods;
   }
 }
