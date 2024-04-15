@@ -8,7 +8,7 @@ import com.dropchop.recyclone.quarkus.it.service.jpa.blaze.DummyToEntityMapper;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.service.jpa.blaze.RecycloneCrudServiceImpl;
+import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
