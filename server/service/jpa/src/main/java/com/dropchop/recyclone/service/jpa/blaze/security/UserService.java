@@ -18,16 +18,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 @Slf4j
 @ApplicationScoped
-@ServiceType(RCYN_DEFAULT)
+@ServiceType(RECYCLONE_JPA_DEFAULT)
 public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
     implements com.dropchop.recyclone.service.api.security.UserService {
 
   @Inject
-  @RepositoryType(RCYN_DEFAULT)
+  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   UserRepository userRepository;
 
   @Inject
@@ -37,6 +37,7 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
   UserToEntityMapper toEntityMapper;
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override

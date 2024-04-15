@@ -13,7 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
 /**
@@ -26,7 +26,7 @@ public class DummyService extends RecycloneCrudServiceImpl<Dummy, EDummy, String
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
   @Inject
-  @RepositoryType(RCYN_DEFAULT)
+  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   DummyRepository repository;
 
   @Inject

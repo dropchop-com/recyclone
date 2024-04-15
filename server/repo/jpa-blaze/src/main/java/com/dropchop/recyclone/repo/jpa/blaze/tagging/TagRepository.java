@@ -7,13 +7,13 @@ import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 06. 22.
  */
 @ApplicationScoped
-@RepositoryType(RCYN_DEFAULT)
+@RepositoryType(RECYCLONE_JPA_DEFAULT)
 public class TagRepository extends BlazeRepository<ETag, UUID> {
 
   @Override

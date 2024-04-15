@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
 /**
@@ -30,12 +30,12 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Slf4j
 @ApplicationScoped
-@ServiceType(RCYN_DEFAULT)
+@ServiceType(RECYCLONE_JPA_DEFAULT)
 public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 
   @Inject
-  @RepositoryType(RCYN_DEFAULT)
+  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   TagRepository repository;
 
   @Inject
@@ -45,6 +45,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
   TagToEntityMapper toEntityMapper;
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override

@@ -2,7 +2,6 @@ package com.dropchop.recyclone.repo.jpa.blaze.security;
 
 
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
-import com.dropchop.recyclone.model.entity.jpa.base.EUuid;
 import com.dropchop.recyclone.model.entity.jpa.security.EUser;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
@@ -14,10 +13,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 @ApplicationScoped
-@RepositoryType(RCYN_DEFAULT)
+@RepositoryType(RECYCLONE_JPA_DEFAULT)
+@SuppressWarnings("unused")
 public class UserRepository extends BlazeRepository<EUser, UUID> {
 
   private static final EUser E_UUID_E_USER = new EUser();

@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
 /**
@@ -38,12 +38,12 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Slf4j
 @ApplicationScoped
-@ServiceType(RCYN_DEFAULT)
+@ServiceType(RECYCLONE_JPA_DEFAULT)
 public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
 
   @Inject
-  @RepositoryType(RCYN_DEFAULT)
+  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   RoleRepository repository;
 
   @Inject
@@ -62,7 +62,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   AuthorizationService authorizationService;
 
   @Inject
-  @ServiceType(RCYN_DEFAULT)
+  @ServiceType(RECYCLONE_JPA_DEFAULT)
   PermissionService permissionService;
 
   @Override

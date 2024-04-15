@@ -12,19 +12,19 @@ import lombok.extern.slf4j.Slf4j;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
 @Slf4j
 @ApplicationScoped
-@ServiceType(RCYN_DEFAULT)
+@ServiceType(RECYCLONE_JPA_DEFAULT)
 public class DomainService extends RecycloneCrudServiceImpl<Domain, EDomain, String>
   implements com.dropchop.recyclone.service.api.security.DomainService {
 
   @Inject
-  @RepositoryType(RCYN_DEFAULT)
+  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   DomainRepository repository;
 
   @Inject

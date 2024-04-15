@@ -6,13 +6,13 @@ import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
  */
 @ApplicationScoped
-@RepositoryType(RCYN_DEFAULT)
+@RepositoryType(RECYCLONE_JPA_DEFAULT)
 public class RoleRepository extends BlazeRepository<ERole, String> {
 
   @Override

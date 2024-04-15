@@ -3,7 +3,6 @@ package com.dropchop.recyclone.service.jpa.blaze;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
-import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.*;
@@ -20,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collection;
 import java.util.List;
 
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RCYN_DEFAULT;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
  */
@@ -28,7 +29,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
   extends CrudServiceImpl<D, E, ID> {
 
   @Inject
-  @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
+  @ExecContextType(RCYN_DEFAULT)
   ExecContextContainer ctxContainer;
 
   @Inject
