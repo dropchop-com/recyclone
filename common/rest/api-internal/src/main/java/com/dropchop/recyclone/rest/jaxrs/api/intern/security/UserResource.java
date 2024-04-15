@@ -8,7 +8,6 @@ import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
@@ -24,7 +23,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Security.USER)
 @DynamicExecContext(value = IdentifierParams.class, dataClass = User.class, internal = true)
 @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.VIEW)
-public interface UserResource extends ClassicRestResource<User> {
+public interface UserResource {
 
   @GET
   @Path("")
@@ -34,9 +33,7 @@ public interface UserResource extends ClassicRestResource<User> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<User> getRest() {
-    return unwrap(get());
-  }
+  List<User> getRest();
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
@@ -46,9 +43,7 @@ public interface UserResource extends ClassicRestResource<User> {
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON)
-  default User getByUuidRest(@PathParam("id") UUID id) {
-    return unwrapFirst(getByUuid(id));
-  }
+  User getByUuidRest(@PathParam("id") UUID id);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -58,10 +53,7 @@ public interface UserResource extends ClassicRestResource<User> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<User> searchRest(UserParams params) {
-    return unwrap(search(params));
-  }
-
+  List<User> searchRest(UserParams params);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -71,9 +63,7 @@ public interface UserResource extends ClassicRestResource<User> {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.CREATE)
-  default List<User> createRest(List<User> users) {
-    return unwrap(create(users));
-  }
+  List<User> createRest(List<User> users);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -83,7 +73,5 @@ public interface UserResource extends ClassicRestResource<User> {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.UPDATE)
-  default List<User> updateRest(List<User> users) {
-    return unwrap(update(users));
-  }
+  List<User> updateRest(List<User> users);
 }

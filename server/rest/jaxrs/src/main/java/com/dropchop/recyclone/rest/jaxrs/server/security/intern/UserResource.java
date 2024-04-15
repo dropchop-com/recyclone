@@ -5,19 +5,15 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.Constants;
-import com.dropchop.recyclone.model.api.rest.Constants.Paths;
-import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.rest.jaxrs.ClassicRestByIdResource;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.security.UserService;
-import com.dropchop.recyclone.service.api.tagging.TagService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,12 +22,12 @@ import java.util.UUID;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-//@Path(Paths.INTERNAL_SEGMENT + Paths.Security.USER)
-public class UserResource implements
+@SuppressWarnings("CdiInjectionPointsInspection")
+public class UserResource extends ClassicRestByIdResource<User, UserParams> implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.UserResource {
 
   @Inject
-  ServiceSelector selector;
+  UserService service;
 
   @Inject
   @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
@@ -44,7 +40,7 @@ public class UserResource implements
 
   @Override
   public Result<User> search(UserParams params) {
-    return selector.select(UserService.class).search();
+    return service.search();
   }
 
   @Override
@@ -55,18 +51,35 @@ public class UserResource implements
         String.format("Invalid parameter type: should be [%s]", IdentifierParams.class));
     }
     identifierParams.setIdentifiers(List.of(id.toString()));
-    return selector.select(UserService.class).search();
+    return service.search();
   }
 
+  @Override
+  public User getByUuidRest(UUID id) {
+    List<User> users = unwrap(getByUuid(id));
+    if (users.isEmpty()) {
+      return null;
+    }
+    return users.iterator().next();
+  }
+
+  @Override
+  public Result<User> getById(UUID id) {
+    return service.search();
+  }
 
   @Override
   public Result<User> create(List<User> users) {
-    return selector.select(UserService.class).create(users);
+    return service.create(users);
   }
 
+  @Override
+  public Result<User> delete(List<User> data) {
+    throw new ServiceException(ErrorCode.process_error, "Users can not be deleted!");
+  }
 
   @Override
   public Result<User> update(List<User> users) {
-    return selector.select(UserService.class).update(users);
+    return service.update(users);
   }
 }

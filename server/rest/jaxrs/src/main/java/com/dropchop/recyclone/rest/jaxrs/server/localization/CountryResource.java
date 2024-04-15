@@ -8,17 +8,14 @@ import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.rest.jaxrs.ClassicReadByCodeResource;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-
-import static com.dropchop.recyclone.model.api.rest.Constants.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
@@ -26,7 +23,7 @@ import static com.dropchop.recyclone.model.api.rest.Constants.*;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class CountryResource implements
+public class CountryResource extends ClassicReadByCodeResource<Country, CodeParams> implements
   com.dropchop.recyclone.rest.jaxrs.api.localization.CountryResource {
 
   @Inject
@@ -42,11 +39,6 @@ public class CountryResource implements
   }
 
   @Override
-  public List<Country> getRest() {
-    return unwrap(get());
-  }
-
-  @Override
   public Result<Country> getByCode(String code) {
     Params params = ctxContainer.get().getParams();
     if (!(params instanceof CodeParams codeParams)) {
@@ -58,17 +50,7 @@ public class CountryResource implements
   }
 
   @Override
-  public List<Country> getByCodeRest(String code) {
-    return unwrap(getByCode(code));
-  }
-
-  @Override
   public Result<Country> search(CodeParams parameters) {
     return service.search();
-  }
-
-  @Override
-  public List<Country> searchRest(CodeParams parameters) {
-    return unwrap(search(parameters));
   }
 }

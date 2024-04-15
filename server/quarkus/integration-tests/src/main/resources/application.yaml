@@ -74,11 +74,13 @@ quarkus:
           scheme: bearer
           bearer-format: JWT
       includes:
-        # we support glob patterns with * and ? and reg ex if expr starts with ^
-        - com.dropchop.recyclone.quarkus.it.rest.api.*
-        - \*.localization.*
+        # we support API interface class name matching with:
+        # - glob pattern with * and ?
+        # - regex pattern if expr starts with ^ character
+        - "com.dropchop.recyclone.quarkus.it.rest.api.*"
+        - "*.localization.*"
     service:
-      qualifier: recyclone_jpa_default1
+      qualifier: recyclone_jpa_default
       LanguageService:
         qualifier: recyclone_jpa_default
       DummyService:

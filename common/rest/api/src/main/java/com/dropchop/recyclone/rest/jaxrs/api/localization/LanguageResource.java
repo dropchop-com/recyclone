@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;

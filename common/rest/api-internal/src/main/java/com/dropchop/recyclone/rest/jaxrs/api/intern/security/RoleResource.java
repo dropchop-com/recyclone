@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
@@ -22,7 +21,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Security.ROLE)
 @DynamicExecContext(value = RoleParams.class, dataClass = Role.class, internal = true)
 @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.VIEW)
-public interface RoleResource extends ClassicRestResource<Role> {
+public interface RoleResource {
 
   @GET
   @Path("")
@@ -32,9 +31,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Role> getRest() {
-    return unwrap(get());
-  }
+  List<Role> getRest();
 
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
@@ -44,9 +41,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Role> getByCodeRest(@PathParam("code") String code) {
-    return unwrap(getByCode(code));
-  }
+  List<Role> getByCodeRest(@PathParam("code") String code);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -56,9 +51,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Role> searchRest(RoleParams params) {
-    return unwrap(search(params));
-  }
+  List<Role> searchRest(RoleParams params);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -68,9 +61,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.CREATE)
-  default List<Role> createRest(List<Role> roles) {
-    return unwrap(create(roles));
-  }
+  List<Role> createRest(List<Role> roles);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -80,9 +71,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
-  default List<Role> updateRest(List<Role> roles) {
-    return unwrap(update(roles));
-  }
+  List<Role> updateRest(List<Role> roles);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -92,9 +81,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.DELETE)
-  default List<Role> deleteRest(List<Role> roles) {
-    return unwrap(delete(roles));
-  }
+  List<Role> deleteRest(List<Role> roles);
 
   @PUT
   @Path(Paths.Security.PERMISSION_SEGMENT)
@@ -106,9 +93,7 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Path(Paths.Security.PERMISSION_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
-  default List<Role> addPermissionsRest(RoleParams params) {
-    return unwrap(addPermissions(params));
-  }
+  List<Role> addPermissionsRest(RoleParams params);
 
   @DELETE
   @Path(Paths.Security.PERMISSION_SEGMENT)
@@ -120,7 +105,5 @@ public interface RoleResource extends ClassicRestResource<Role> {
   @Path(Paths.Security.PERMISSION_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE + PERM_DELIM + Actions.UPDATE)
-  default List<Role> removePermissionsRest(RoleParams params) {
-    return unwrap(removePermissions(params));
-  }
+  List<Role> removePermissionsRest(RoleParams params);
 }

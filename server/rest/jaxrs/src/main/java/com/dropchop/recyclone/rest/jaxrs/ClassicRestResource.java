@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jaxrs.api;
+package com.dropchop.recyclone.rest.jaxrs;
 
 import com.dropchop.recyclone.model.dto.rest.Result;
 
@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 12. 21.
  */
+@SuppressWarnings("unused")
 public interface ClassicRestResource<T> {
   default List<T> unwrap(Result<T> result) {
     if (result == null) {

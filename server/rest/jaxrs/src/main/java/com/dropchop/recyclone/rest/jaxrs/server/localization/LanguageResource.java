@@ -7,9 +7,8 @@ import com.dropchop.recyclone.model.api.marker.Constants;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
+import com.dropchop.recyclone.rest.jaxrs.ClassicReadByCodeResource;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.invoke.DefaultExecContextContainer;
 import com.dropchop.recyclone.service.api.localization.LanguageService;
 import jakarta.enterprise.context.RequestScoped;
@@ -24,8 +23,8 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class LanguageResource implements
-  com.dropchop.recyclone.rest.jaxrs.api.localization.LanguageResource, ClassicRestResource<Language> {
+public class LanguageResource extends ClassicReadByCodeResource<Language, CodeParams> implements
+  com.dropchop.recyclone.rest.jaxrs.api.localization.LanguageResource {
 
   @Inject
   LanguageService service;
@@ -40,11 +39,6 @@ public class LanguageResource implements
   }
 
   @Override
-  public List<Language> getRest() {
-    return unwrap(get());
-  }
-
-  @Override
   public Result<Language> getByCode(String code) {
     Params params = ctxContainer.get().getParams();
     if (!(params instanceof CodeParams codeParams)) {
@@ -56,17 +50,7 @@ public class LanguageResource implements
   }
 
   @Override
-  public List<Language> getByCodeRest(String code) {
-    return unwrap(getByCode(code));
-  }
-
-  @Override
   public Result<Language> search(CodeParams parameters) {
     return service.search();
-  }
-
-  @Override
-  public List<Language> searchRest(CodeParams params) {
-    return unwrap(search(params));
   }
 }

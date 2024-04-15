@@ -5,16 +5,15 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.Constants;
-import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.rest.jaxrs.ClassicRestByCodeResource;
 import com.dropchop.recyclone.service.api.ExecContextType;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.security.ActionService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
 
 import java.util.List;
 
@@ -22,8 +21,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-//@Path(Paths.INTERNAL_SEGMENT + Paths.Security.ACTION)
-public class ActionResource implements
+public class ActionResource extends ClassicRestByCodeResource<Action, CodeParams> implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.ActionResource {
 
   @Inject

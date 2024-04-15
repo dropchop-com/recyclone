@@ -2,7 +2,7 @@ package com.dropchop.recyclone.rest.jaxrs.server.localization.intern;
 
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
+import com.dropchop.recyclone.rest.jaxrs.ClassicModifyResource;
 import com.dropchop.recyclone.service.api.localization.LanguageService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -16,8 +16,7 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class LanguageResource implements
-    ClassicRestResource<Language>,
+public class LanguageResource extends ClassicModifyResource<Language> implements
     com.dropchop.recyclone.rest.jaxrs.api.intern.localization.LanguageResource {
 
   @Inject
@@ -29,27 +28,12 @@ public class LanguageResource implements
   }
 
   @Override
-  public List<Language> createRest(List<Language> languages) {
-    return unwrap(create(languages));
-  }
-
-  @Override
   public Result<Language> delete(List<Language> languages) {
     return service.delete(languages);
   }
 
   @Override
-  public List<Language> deleteRest(List<Language> languages) {
-    return unwrap(delete(languages));
-  }
-
-  @Override
   public Result<Language> update(List<Language> languages) {
     return service.update(languages);
-  }
-
-  @Override
-  public List<Language> updateRest(List<Language> languages) {
-    return unwrap(update(languages));
   }
 }

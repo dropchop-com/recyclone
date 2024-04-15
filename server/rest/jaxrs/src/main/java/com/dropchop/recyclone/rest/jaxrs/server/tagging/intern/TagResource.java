@@ -1,15 +1,13 @@
 package com.dropchop.recyclone.rest.jaxrs.server.tagging.intern;
 
-import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.service.api.ServiceSelector;
+import com.dropchop.recyclone.rest.jaxrs.ClassicModifyResource;
 import com.dropchop.recyclone.service.api.tagging.TagService;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
 /**
@@ -17,25 +15,25 @@ import java.util.List;
  */
 @Slf4j
 @RequestScoped
-//@Path(Constants.Paths.INTERNAL_SEGMENT + Constants.Paths.Tagging.TAG)
-public class TagResource
-  implements com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource<Tag> {
+@SuppressWarnings("CdiInjectionPointsInspection")
+public class TagResource extends ClassicModifyResource<Tag> implements
+    com.dropchop.recyclone.rest.jaxrs.api.intern.tagging.TagResource<Tag> {
 
   @Inject
-  ServiceSelector selector;
+  TagService service;
 
   @Override
   public Result<Tag> create(List<Tag> tags) {
-    return selector.select(TagService.class).create(tags);
+    return service.create(tags);
   }
 
   @Override
   public Result<Tag> delete(List<Tag> tags) {
-    return selector.select(TagService.class).delete(tags);
+    return service.delete(tags);
   }
 
   @Override
   public Result<Tag> update(List<Tag> tags) {
-    return selector.select(TagService.class).update(tags);
+    return service.update(tags);
   }
 }

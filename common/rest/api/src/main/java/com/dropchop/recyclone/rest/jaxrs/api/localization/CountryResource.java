@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
@@ -22,7 +21,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Localization.COUNTRY)
 @DynamicExecContext(CodeParams.class)
 @RequiresPermissions(Domains.Localization.COUNTRY + PERM_DELIM + Actions.VIEW)
-public interface CountryResource extends ClassicRestResource<Country> {
+public interface CountryResource {
 
   @GET
   @Path("")

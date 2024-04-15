@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.TagParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
+import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Tagging.TAG)
 @DynamicExecContext(TagParams.class)
 @RequiresPermissions(Domains.Tagging.TAG + PERM_DELIM + Actions.VIEW)
-public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.Tag> extends ClassicRestResource<T> {
+public interface TagResource<T extends Tag> {
 
   @GET
   @Path("")
@@ -32,9 +32,7 @@ public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<T> getRest() {
-    return unwrap(get());
-  }
+  List<T> getRest();
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
@@ -44,9 +42,7 @@ public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<T> getByIdRest(@PathParam("id") UUID id) {
-    return unwrap(getById(id));
-  }
+  List<T> getByIdRest(@PathParam("id") UUID id);
 
   @GET
   @Path("{type: [A-Z][a-zA-Z\\d]{2,}(%2A)*}")
@@ -56,9 +52,7 @@ public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.
   @GET
   @Path("{type: [A-Z][a-zA-Z\\d*]{2,}(%2A)*}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<T> getByTypeRest(@PathParam("type") String type) {
-    return unwrap(getByType(type));
-  }
+  List<T> getByTypeRest(@PathParam("type") String type);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -68,7 +62,5 @@ public interface TagResource<T extends com.dropchop.recyclone.model.dto.tagging.
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<T> searchRest(TagParams params) {
-    return unwrap(search(params));
-  }
+  List<T> searchRest(TagParams params);
 }

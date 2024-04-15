@@ -5,17 +5,15 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.Constants;
-import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
+import com.dropchop.recyclone.rest.jaxrs.ClassicRestByCodeResource;
 import com.dropchop.recyclone.service.api.ExecContextType;
-import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.api.security.RoleService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
 
 import java.util.List;
 
@@ -23,12 +21,12 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
-//@Path(Paths.INTERNAL_SEGMENT + Paths.Security.ROLE)
-public class RoleResource implements
+@SuppressWarnings("CdiInjectionPointsInspection")
+public class RoleResource extends ClassicRestByCodeResource<Role, RoleParams> implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.RoleResource {
 
   @Inject
-  ServiceSelector selector;
+  RoleService service;
 
   @Inject
   @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
@@ -36,7 +34,7 @@ public class RoleResource implements
 
   @Override
   public Result<Role> get() {
-    return selector.select(RoleService.class).search();
+    return service.search();
   }
 
   @Override
@@ -47,36 +45,46 @@ public class RoleResource implements
         String.format("Invalid parameter type: should be [%s]", CodeParams.class));
     }
     codeParams.setCodes(List.of(code));
-    return selector.select(RoleService.class).search();
+    return service.search();
   }
 
   @Override
   public Result<Role> search(RoleParams params) {
-    return selector.select(RoleService.class).search();
+    return service.search();
   }
 
   @Override
   public Result<Role> create(List<Role> roles) {
-    return selector.select(RoleService.class).create(roles);
+    return service.create(roles);
   }
 
   @Override
   public Result<Role> delete(List<Role> roles) {
-    return selector.select(RoleService.class).delete(roles);
+    return service.delete(roles);
   }
 
   @Override
   public Result<Role> update(List<Role> roles) {
-    return selector.select(RoleService.class).update(roles);
+    return service.update(roles);
   }
 
   @Override
   public Result<Role> addPermissions(RoleParams params) {
-    return selector.select(RoleService.class).addPermissions(params);
+    return service.addPermissions(params);
+  }
+
+  @Override
+  public List<Role> addPermissionsRest(RoleParams params) {
+    return unwrap(addPermissions(params));
   }
 
   @Override
   public Result<Role> removePermissions(RoleParams params) {
-    return selector.select(RoleService.class).removePermissions(params);
+    return service.removePermissions(params);
+  }
+
+  @Override
+  public List<Role> removePermissionsRest(RoleParams params) {
+    return unwrap(removePermissions(params));
   }
 }

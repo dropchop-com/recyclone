@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
@@ -23,7 +22,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Security.PERMISSION)
 @DynamicExecContext(value = IdentifierParams.class, dataClass = Permission.class, internal = true)
 @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.VIEW)
-public interface PermissionResource extends ClassicRestResource<Permission> {
+public interface PermissionResource {
 
   @GET
   @Path("")
@@ -33,9 +32,7 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Permission> getRest() {
-    return unwrap(get());
-  }
+  List<Permission> getRest();
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
@@ -45,9 +42,7 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Permission> getByIdRest(@PathParam("id") UUID id) {
-    return unwrap(getById(id));
-  }
+  List<Permission> getByIdRest(@PathParam("id") UUID id);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -57,9 +52,7 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Permission> searchRest(IdentifierParams params) {
-    return unwrap(search(params));
-  }
+  List<Permission> searchRest(IdentifierParams params);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -69,9 +62,7 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.CREATE)
-  default List<Permission> createRest(List<Permission> permissions) {
-    return unwrap(create(permissions));
-  }
+  List<Permission> createRest(List<Permission> permissions);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -81,9 +72,7 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.UPDATE)
-  default List<Permission> updateRest(List<Permission> permissions) {
-    return unwrap(update(permissions));
-  }
+  List<Permission> updateRest(List<Permission> permissions);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -93,7 +82,5 @@ public interface PermissionResource extends ClassicRestResource<Permission> {
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.DELETE)
-  default List<Permission> deleteRest(List<Permission> permissions) {
-    return unwrap(delete(permissions));
-  }
+  List<Permission> deleteRest(List<Permission> permissions);
 }

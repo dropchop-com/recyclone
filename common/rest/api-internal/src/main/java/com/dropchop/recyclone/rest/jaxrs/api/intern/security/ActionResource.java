@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Action;
-import com.dropchop.recyclone.rest.jaxrs.api.ClassicRestResource;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
 import jakarta.ws.rs.*;
@@ -22,7 +21,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Security.ACTION)
 @DynamicExecContext(value = CodeParams.class, dataClass = Action.class, internal = true)
 @RequiresPermissions(Domains.Security.ACTION + PERM_DELIM + Actions.VIEW)
-public interface ActionResource extends ClassicRestResource<Action> {
+public interface ActionResource {
 
   @GET
   @Path("")
@@ -32,9 +31,7 @@ public interface ActionResource extends ClassicRestResource<Action> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Action> getRest() {
-    return unwrap(get());
-  }
+  List<Action> getRest();
 
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
@@ -44,9 +41,7 @@ public interface ActionResource extends ClassicRestResource<Action> {
   @GET
   @Path("{code : [a-z_\\-.]{3,255}}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Action> getByCodeRest(@PathParam("code") String code) {
-    return unwrap(getByCode(code));
-  }
+  List<Action> getByCodeRest(@PathParam("code") String code);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -56,9 +51,7 @@ public interface ActionResource extends ClassicRestResource<Action> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Action> searchRest(CodeParams params) {
-    return unwrap(search(params));
-  }
+  List<Action> searchRest(CodeParams params);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -68,9 +61,7 @@ public interface ActionResource extends ClassicRestResource<Action> {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ACTION + PERM_DELIM + Actions.CREATE)
-  default List<Action> createRest(List<Action> actions) {
-    return unwrap(create(actions));
-  }
+  List<Action> createRest(List<Action> actions);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -80,9 +71,7 @@ public interface ActionResource extends ClassicRestResource<Action> {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ACTION + PERM_DELIM + Actions.UPDATE)
-  default List<Action> updateRest(List<Action> actions) {
-    return unwrap(update(actions));
-  }
+  List<Action> updateRest(List<Action> actions);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -92,7 +81,5 @@ public interface ActionResource extends ClassicRestResource<Action> {
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ACTION + PERM_DELIM + Actions.DELETE)
-  default List<Action> deleteRest(List<Action> actions) {
-    return unwrap(delete(actions));
-  }
+  List<Action> deleteRest(List<Action> actions);
 }
