@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
+import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.*;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
@@ -128,12 +129,28 @@ public class RestProcessor {
     return null;
   }
 
+  /**
+   * We support glob patterns with * and ? and reg ex if expr starts with ^
+   */
+  private static boolean matches(String expr, String target) {
+    if (expr == null || expr.isBlank()) {
+      return false;
+    }
+    if (expr.startsWith("^")) {
+      return target.matches(expr);
+    }
+    if (expr.contains("*")) {
+      return Strings.match(expr, target);
+    }
+    return expr.equals(target);
+  }
+
   private static boolean shouldExclude(ClassInfo apiClass, RecycloneBuildConfig config) {
     RecycloneBuildConfig.Rest restConfig = config.rest;
     boolean doExclude = restConfig.includes.isPresent();
     if (restConfig.includes.isPresent()) {
       for (String include : restConfig.includes.get()) {
-        if (include.equals(apiClass.name().toString())) {
+        if (matches(include, apiClass.name().toString())) {
           doExclude = false;
           break;
         }
@@ -141,7 +158,7 @@ public class RestProcessor {
     }
     if (restConfig.excludes.isPresent()) {
       for (String exclude : restConfig.excludes.get()) {
-        if (exclude.equals(apiClass.name().toString())) {
+        if (matches(exclude, apiClass.name().toString())) {
           doExclude = true;
           break;
         }

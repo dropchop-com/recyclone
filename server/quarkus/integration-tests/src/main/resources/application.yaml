@@ -99,8 +99,8 @@ quarkus:
           bearer-format: JWT
 
       includes:
-        - com.dropchop.recyclone.quarkus.it.rest.api.DummyResource
-        - com.dropchop.recyclone.quarkus.it.rest.api.DummyResourceInternal
+        # we support glob patterns with * and ? and reg ex if expr starts with ^
+        - com.dropchop.recyclone.quarkus.it.rest.api.*
     service:
       qualifier: recyclone_jpa_default
       LanguageService:
