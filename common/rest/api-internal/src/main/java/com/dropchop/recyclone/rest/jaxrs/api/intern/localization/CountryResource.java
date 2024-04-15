@@ -32,9 +32,7 @@ public interface CountryResource extends ClassicRestResource<Country> {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Localization.COUNTRY + PERM_DELIM + Actions.CREATE)
-  default List<Country> createRest(List<Country> languages) {
-    return unwrap(create(languages));
-  }
+  List<Country> createRest(List<Country> languages);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -44,9 +42,7 @@ public interface CountryResource extends ClassicRestResource<Country> {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Localization.COUNTRY + PERM_DELIM + Actions.UPDATE)
-  default List<Country> updateRest(List<Country> languages) {
-    return unwrap(update(languages));
-  }
+  List<Country> updateRest(List<Country> languages);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -56,7 +52,5 @@ public interface CountryResource extends ClassicRestResource<Country> {
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Localization.COUNTRY + PERM_DELIM + Actions.DELETE)
-  default List<Country> deleteRest(List<Country> languages) {
-    return unwrap(delete(languages));
-  }
+  List<Country> deleteRest(List<Country> languages);
 }

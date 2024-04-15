@@ -1,183 +1,165 @@
 package com.dropchop.recyclone.quarkus.runtime.config;
 
 import io.quarkus.runtime.annotations.*;
+import io.smallrye.config.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Service.DEFAULT_SERVICE;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
  */
-@ConfigRoot(name = "recyclone", phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
-@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
-public class RecycloneBuildConfig {
+@ConfigMapping(prefix = "quarkus.recyclone")
+@ConfigRoot(phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
+@SuppressWarnings({"unused"})
+public interface RecycloneBuildConfig {
 
   /**
    * Configuration for REST resources.
    */
-  @ConfigItem
-  public Rest rest;
+  Rest rest();
 
   /**
    * Configuration for REST implementation.
    */
   @ConfigGroup
-  public static class Rest {
+  interface Rest {
 
     /**
      * REST base path.
      */
-    @ConfigItem
-    public Optional<String> path;
+    Optional<String> path();
+
     /**
      * REST OpenAPI information.
      */
-    @ConfigItem
-    public Info info;
+    Info info();
 
     /**
      * REST OpenAPI information
      */
-    @ConfigGroup
-    public static class Info {
+    interface Info {
       /**
        * REST OpenAPI information title.
        */
-      @ConfigItem
-      public Optional<String> title;
+      Optional<String> title();
       /**
        * REST OpenAPI information version.
        */
-      @ConfigItem
-      public Optional<String> version;
+      Optional<String> version();
       /**
        * REST OpenAPI information contact.
        */
-      @ConfigItem
-      public Contact contact;
+      Contact contact();
       /**
        * REST OpenAPI information license.
        */
-      @ConfigItem
-      public License license;
+      License license();
 
       /**
        * REST OpenAPI information contact.
        */
-      @ConfigGroup
-      public static class Contact {
+      interface Contact {
         /**
          * REST OpenAPI information contact name.
          */
-        @ConfigItem
-        public Optional<String> name;
+        Optional<String> name();
 
         /**
          * REST OpenAPI information contact url.
          */
-        @ConfigItem
-        public Optional<String> url;
+        Optional<String> url();
 
         /**
          * REST OpenAPI information contact url.
          */
-        @ConfigItem
-        public Optional<String> email;
+        Optional<String> email();
       }
 
       /**
        * REST OpenAPI information license.
        */
       @ConfigGroup
-      public static class License {
+      interface License {
         /**
          * REST OpenAPI information license name.
          */
-        @ConfigItem
-        public Optional<String> name;
+        Optional<String> name();
         /**
          * REST OpenAPI information license url.
          */
-        @ConfigItem
-        public Optional<String> url;
+        Optional<String> url();
       }
     }
+
     /**
      * Additional security configuration.
      */
     @ConfigDocSection
     @ConfigDocMapKey("security-name")
-    public Map<String, Security> security = new LinkedHashMap<>();
+    Map<String, Security> security();
+
     /**
      * REST OpenAPI security item configuration.
      */
     @ConfigGroup
-    public static class Security {
+    interface Security {
       /**
        * REST OpenAPI security item type (apiKey, http, oauth2).
        */
-      @ConfigItem
-      public Optional<String> type;
+      Optional<String> type();
       /**
        * REST OpenAPI security item scheme (bearer, basic).
        */
-      @ConfigItem
-      public Optional<String> scheme;
+      Optional<String> scheme();
       /**
        * REST OpenAPI security item location (header, query, cookie).
        */
-      @ConfigItem
-      public Optional<String> in;
+      Optional<String> in();
       /**
        * REST OpenAPI security item apiKeyName if type is apiKey.
        */
-      @ConfigItem
-      public Optional<String> apiKeyName;
+      Optional<String> apiKeyName();
       /**
        * REST OpenAPI security item bearerFormat if scheme is bearer.
        */
-      @ConfigItem
-      public Optional<String> bearerFormat;
+      Optional<String> bearerFormat();
     }
 
     /**
      * REST resource implementation classes inclusion.
      */
-    @ConfigItem
-    public Optional<List<String>> includes;
+    Optional<List<String>> includes();
 
     /**
      * REST resource implementation classes exclusion.
      */
-    @ConfigItem
-    public Optional<List<String>> excludes;
+    Optional<List<String>> excludes();
   }
 
   /**
-   * The default Service config.
+   * Single service configuration.
    */
-  @ConfigItem(name = ConfigItem.PARENT)
-  public Service defaultService;
+  interface Service {
 
-  /**
-   * Additional specific Services.
-   */
-  @ConfigDocSection
-  @ConfigDocMapKey("service-name")
-  @ConfigItem
-  public Map<String, Service> service;
+    String DEFAULT_SERVICE = "<default>";
 
-  /**
-   * Service configuration.
-   */
-  @ConfigGroup
-  public static class Service {
     /**
      * Service qualifier name.
      */
-    @ConfigItem(defaultValue = "rcyn_default")
-    public Optional<String> qualifier;
+    @WithDefault("recyclone_jpa_default")
+    String qualifier();
   }
+
+  /**
+   * Services configuration.
+   */
+  @ConfigDocMapKey("service-name")
+  @WithDefaults
+  //@WithParentName
+  @WithUnnamedKey(DEFAULT_SERVICE)
+  Map<String, Service> service();
 }

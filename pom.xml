@@ -104,7 +104,7 @@
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.9.1</quarkus.platform.version>
+    <quarkus.platform.version>3.9.3</quarkus.platform.version>
 
     <junit.version>5.9.3</junit.version>
     <jsonassert.version>1.5.1</jsonassert.version>

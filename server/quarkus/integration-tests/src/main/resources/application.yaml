@@ -6,36 +6,12 @@ quarkus:
       "com.dropchop":
         level: DEBUG
   index-dependency:
-    #recyclone-model-dto:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-model-dto
-    #recyclone-rest-runtime:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-runtime
-    #recyclone-rest-api:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-api
-    #recyclone-rest-api-internal:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-rest-api-internal
-    #recyclone-server-rest-jaxrs:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-server-rest-jaxrs
-    #recyclone-server-rest-jackson:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-server-rest-jackson
-    #recyclone-repo-api:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-repo-api
-    #recyclone-service-api:
-    #  group-id: com.dropchop.recyclone
-    #  artifact-id: recyclone-service-api
     recyclone-repo-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-repo-jpa-blaze
-    recyclone-service-jpa-blaze:
+    recyclone-service-jpa:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-jpa-blaze
+      artifact-id: recyclone-service-jpa
   rest:
     path: /api
   swagger-ui:
@@ -97,12 +73,12 @@ quarkus:
           type: http
           scheme: bearer
           bearer-format: JWT
-
       includes:
         # we support glob patterns with * and ? and reg ex if expr starts with ^
         - com.dropchop.recyclone.quarkus.it.rest.api.*
+        - \*.localization.*
     service:
-      qualifier: recyclone_jpa_default
+      qualifier: recyclone_jpa_default1
       LanguageService:
         qualifier: recyclone_jpa_default
       DummyService:

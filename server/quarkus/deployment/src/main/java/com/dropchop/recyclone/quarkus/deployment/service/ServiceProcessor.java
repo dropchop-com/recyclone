@@ -15,6 +15,7 @@ import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.MethodCreator;
 import io.quarkus.gizmo.MethodDescriptor;
 import io.quarkus.gizmo.ResultHandle;
+import io.smallrye.config.WithUnnamedKey;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import org.jboss.jandex.AnnotationInstance;
@@ -42,39 +43,38 @@ public class ServiceProcessor {
       "com.dropchop.recyclone.service.api.ServiceType"
   );
 
+  RecycloneBuildConfig config;
+
   @BuildStep
   void findServicesForProducerGeneration(CombinedIndexBuildItem combinedIndex,
-                                         RecycloneBuildConfig config,
                                          BuildProducer<ServiceBuildItem> serviceItemProducer) {
     IndexView index = combinedIndex.getIndex();
+    Map<String, RecycloneBuildConfig.Service> serviceMap = config.service();
+    String defaultQualifier = serviceMap.get(RecycloneBuildConfig.Service.DEFAULT_SERVICE).qualifier();
+
     Set<ClassInfo> handled = new HashSet<>();
     Collection<ClassInfo> serviceInterfaces = index.getAllKnownSubinterfaces(SERVICE);
     Set<DotName> serviceNames = serviceInterfaces.stream().map(ClassInfo::name).collect(Collectors.toSet());
     Map<String, String> services = new HashMap<>();
-    for(ClassInfo serviceIntrf : serviceInterfaces) {
-      Collection<ClassInfo> candidates = index.getAllKnownImplementors(serviceIntrf.name());
-      if (candidates.size() <= 1) {
+    for(ClassInfo serviceIface : serviceInterfaces) {
+      Collection<ClassInfo> candidates = index.getAllKnownImplementors(serviceIface.name());
+      if (candidates.isEmpty()) {
         continue;
       }
-      String defaultQualifier = RECYCLONE_JPA_DEFAULT;
-      if (config.defaultService.qualifier.isPresent()) {
-        defaultQualifier = config.defaultService.qualifier.get();
-      }
-      RecycloneBuildConfig.Service serviceConfig = config.service.get(
-          serviceIntrf.name().withoutPackagePrefix()
+      RecycloneBuildConfig.Service serviceConfig = config.service().get(
+          serviceIface.name().withoutPackagePrefix()
       );
       String requestedQualifier = defaultQualifier;
-      if (serviceConfig != null && serviceConfig.qualifier.isPresent()) {
-        requestedQualifier = serviceConfig.qualifier.get();
+      if (serviceConfig != null) {
+        requestedQualifier = serviceConfig.qualifier();
       }
       ClassInfo serviceImpl = null;
-
-      for (ClassInfo serviceImplCanidate : candidates) {
-        if (serviceImplCanidate.hasAnnotation(ANNO_SERVICE_TYPE)) {
-          AnnotationInstance annotationInstance = serviceImplCanidate.annotation(ANNO_SERVICE_TYPE);
+      for (ClassInfo serviceImplCandidate : candidates) {
+        if (serviceImplCandidate.hasAnnotation(ANNO_SERVICE_TYPE)) {
+          AnnotationInstance annotationInstance = serviceImplCandidate.annotation(ANNO_SERVICE_TYPE);
           String type = annotationInstance.value().asString();
           if (type.equals(requestedQualifier)) {
-            serviceImpl = serviceImplCanidate;
+            serviceImpl = serviceImplCandidate;
             break;
           }
         }

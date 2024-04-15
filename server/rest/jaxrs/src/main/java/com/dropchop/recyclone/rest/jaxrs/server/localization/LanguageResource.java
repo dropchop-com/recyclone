@@ -23,11 +23,12 @@ import java.util.List;
  */
 @Slf4j
 @RequestScoped
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class LanguageResource implements
   com.dropchop.recyclone.rest.jaxrs.api.localization.LanguageResource, ClassicRestResource<Language> {
 
   @Inject
-  ServiceSelector selector;
+  LanguageService service;
 
   @Inject
   @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
@@ -35,7 +36,7 @@ public class LanguageResource implements
 
   @Override
   public Result<Language> get() {
-    return selector.select(LanguageService.class).search();
+    return service.search();
   }
 
   @Override
@@ -51,7 +52,7 @@ public class LanguageResource implements
         String.format("Invalid parameter type: should be [%s]", CodeParams.class));
     }
     codeParams.setCodes(List.of(code));
-    return selector.select(LanguageService.class).search();
+    return service.search();
   }
 
   @Override
@@ -61,7 +62,7 @@ public class LanguageResource implements
 
   @Override
   public Result<Language> search(CodeParams parameters) {
-    return selector.select(LanguageService.class).search();
+    return service.search();
   }
 
   @Override

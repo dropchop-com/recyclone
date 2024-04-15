@@ -140,24 +140,27 @@ public class RestProcessor {
       return target.matches(expr);
     }
     if (expr.contains("*")) {
+      if (expr.startsWith("\\")) {
+        expr = expr.substring(1);
+      }
       return Strings.match(expr, target);
     }
     return expr.equals(target);
   }
 
   private static boolean shouldExclude(ClassInfo apiClass, RecycloneBuildConfig config) {
-    RecycloneBuildConfig.Rest restConfig = config.rest;
-    boolean doExclude = restConfig.includes.isPresent();
-    if (restConfig.includes.isPresent()) {
-      for (String include : restConfig.includes.get()) {
+    RecycloneBuildConfig.Rest restConfig = config.rest();
+    boolean doExclude = restConfig.includes().isPresent() && !restConfig.includes().get().isEmpty();
+    if (restConfig.includes().isPresent()) {
+      for (String include : restConfig.includes().get()) {
         if (matches(include, apiClass.name().toString())) {
           doExclude = false;
           break;
         }
       }
     }
-    if (restConfig.excludes.isPresent()) {
-      for (String exclude : restConfig.excludes.get()) {
+    if (restConfig.excludes().isPresent()) {
+      for (String exclude : restConfig.excludes().get()) {
         if (matches(exclude, apiClass.name().toString())) {
           doExclude = true;
           break;

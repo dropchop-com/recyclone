@@ -32,9 +32,7 @@ public interface CountryResource extends ClassicRestResource<Country> {
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Country> getRest() {
-    return unwrap(get());
-  }
+  List<Country> getRest();
 
   @GET
   @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
@@ -44,9 +42,7 @@ public interface CountryResource extends ClassicRestResource<Country> {
   @GET
   @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Country> getByCodeRest(@PathParam("code") String code) {
-    return unwrap(getByCode(code));
-  }
+  List<Country> getByCodeRest(@PathParam("code") String code);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
@@ -56,7 +52,5 @@ public interface CountryResource extends ClassicRestResource<Country> {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  default List<Country> searchRest(CodeParams parameters) {
-    return unwrap(search(parameters));
-  }
+  List<Country> searchRest(CodeParams parameters);
 }

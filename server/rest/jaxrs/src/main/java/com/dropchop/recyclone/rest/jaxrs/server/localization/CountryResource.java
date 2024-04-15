@@ -25,12 +25,12 @@ import static com.dropchop.recyclone.model.api.rest.Constants.*;
  */
 @Slf4j
 @RequestScoped
-//@Path(Paths.INTERNAL_SEGMENT + Paths.Localization.COUNTRY)
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class CountryResource implements
   com.dropchop.recyclone.rest.jaxrs.api.localization.CountryResource {
 
   @Inject
-  ServiceSelector selector;
+  CountryService service;
 
   @Inject
   @ExecContextType(Constants.Implementation.RCYN_DEFAULT)
@@ -38,7 +38,12 @@ public class CountryResource implements
 
   @Override
   public Result<Country> get() {
-    return selector.select(CountryService.class).search();
+    return service.search();
+  }
+
+  @Override
+  public List<Country> getRest() {
+    return unwrap(get());
   }
 
   @Override
@@ -49,11 +54,21 @@ public class CountryResource implements
         String.format("Invalid parameter type: should be [%s]", CodeParams.class));
     }
     codeParams.setCodes(List.of(code));
-    return selector.select(CountryService.class).search();
+    return service.search();
+  }
+
+  @Override
+  public List<Country> getByCodeRest(String code) {
+    return unwrap(getByCode(code));
   }
 
   @Override
   public Result<Country> search(CodeParams parameters) {
-    return selector.select(CountryService.class).search();
+    return service.search();
+  }
+
+  @Override
+  public List<Country> searchRest(CodeParams parameters) {
+    return unwrap(search(parameters));
   }
 }

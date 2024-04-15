@@ -110,26 +110,26 @@ public class OasFilter implements OASFilter {
       Components components = openAPI.getComponents();
       if (components != null && restSecurity != null) {
         SecurityScheme securityScheme = new SecuritySchemeImpl();
-        if (restSecurity.type.isPresent()) {
-          if (restSecurity.type.get().equalsIgnoreCase("http")) {
+        if (restSecurity.type().isPresent()) {
+          if (restSecurity.type().get().equalsIgnoreCase("http")) {
             securityScheme.setType(SecurityScheme.Type.HTTP);
-          } else if (restSecurity.type.get().equalsIgnoreCase("apikey")) {
+          } else if (restSecurity.type().get().equalsIgnoreCase("apikey")) {
             securityScheme.setType(SecurityScheme.Type.APIKEY);
-            restSecurity.apiKeyName.ifPresent(securityScheme::setName);
+            restSecurity.apiKeyName().ifPresent(securityScheme::setName);
           }
         }
-        if (restSecurity.in.isPresent()) {
-          if (restSecurity.type.get().equalsIgnoreCase("query")) {
+        if (restSecurity.in().isPresent()) {
+          if (restSecurity.type().get().equalsIgnoreCase("query")) {
             securityScheme.setIn(SecurityScheme.In.QUERY);
-          } else if (restSecurity.type.get().equalsIgnoreCase("cookie")) {
+          } else if (restSecurity.type().get().equalsIgnoreCase("cookie")) {
             securityScheme.setIn(SecurityScheme.In.COOKIE);
-          } else if (restSecurity.type.get().equalsIgnoreCase("header")) {
+          } else if (restSecurity.type().get().equalsIgnoreCase("header")) {
             securityScheme.setIn(SecurityScheme.In.HEADER);
           }
         }
 
-        restSecurity.scheme.ifPresent(securityScheme::setScheme);
-        restSecurity.bearerFormat.ifPresent(securityScheme::setBearerFormat);
+        restSecurity.scheme().ifPresent(securityScheme::setScheme);
+        restSecurity.bearerFormat().ifPresent(securityScheme::setBearerFormat);
         components.addSecurityScheme(name, securityScheme);
       }
     }
@@ -138,15 +138,15 @@ public class OasFilter implements OASFilter {
   @Override
   public void filterOpenAPI(OpenAPI openAPI) {
     Info info = getOrCreateInfo(openAPI);
-    this.buildConfig.rest.info.title.ifPresent(info::setTitle);
-    this.buildConfig.rest.info.version.ifPresent(info::setVersion);
+    this.buildConfig.rest().info().title().ifPresent(info::setTitle);
+    this.buildConfig.rest().info().version().ifPresent(info::setVersion);
     Contact contact = getOrCreateContact(info);
-    this.buildConfig.rest.info.contact.name.ifPresent(contact::setName);
-    this.buildConfig.rest.info.contact.email.ifPresent(contact::setEmail);
-    this.buildConfig.rest.info.contact.url.ifPresent(contact::setUrl);
+    this.buildConfig.rest().info().contact().name().ifPresent(contact::setName);
+    this.buildConfig.rest().info().contact().email().ifPresent(contact::setEmail);
+    this.buildConfig.rest().info().contact().url().ifPresent(contact::setUrl);
     License license = getOrCreateLicense(info);
-    this.buildConfig.rest.info.license.name.ifPresent(license::setName);
-    this.buildConfig.rest.info.license.url.ifPresent(license::setUrl);
+    this.buildConfig.rest().info().license().name().ifPresent(license::setName);
+    this.buildConfig.rest().info().license().url().ifPresent(license::setUrl);
 
     Components components = openAPI.getComponents();
     if (components != null) {
@@ -214,7 +214,7 @@ public class OasFilter implements OASFilter {
       }
     }
 
-    Map<String, Rest.Security> security = this.buildConfig.rest.security;
+    Map<String, Rest.Security> security = this.buildConfig.rest().security();
     if (!security.isEmpty()) {
       this.createSecurity(openAPI, security);
     }
@@ -373,7 +373,7 @@ public class OasFilter implements OASFilter {
     if (!(operation instanceof OperationImpl op)) {
       return operation;
     }
-    Map<String, Rest.Security> security = this.buildConfig.rest.security;
+    Map<String, Rest.Security> security = this.buildConfig.rest().security();
     if (!security.isEmpty()) {
       List<SecurityRequirement> securityRequirements = createSecurityRequirements(security);
       op.setSecurity(securityRequirements);

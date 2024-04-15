@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Localization.LANGUAGE)
 @DynamicExecContext(value = CodeParams.class, dataClass = Language.class, internal = true)
 @RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.VIEW)
-public interface LanguageResource extends ClassicRestResource<Language> {
+public interface LanguageResource {
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -32,9 +32,7 @@ public interface LanguageResource extends ClassicRestResource<Language> {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.CREATE)
-  default List<Language> createRest(List<Language> languages) {
-    return unwrap(create(languages));
-  }
+  List<Language> createRest(List<Language> languages);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -44,9 +42,7 @@ public interface LanguageResource extends ClassicRestResource<Language> {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.UPDATE)
-  default List<Language> updateRest(List<Language> languages) {
-    return unwrap(update(languages));
-  }
+  List<Language> updateRest(List<Language> languages);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
@@ -56,7 +52,5 @@ public interface LanguageResource extends ClassicRestResource<Language> {
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.DELETE)
-  default List<Language> deleteRest(List<Language> languages) {
-    return unwrap(delete(languages));
-  }
+  List<Language> deleteRest(List<Language> languages);
 }
