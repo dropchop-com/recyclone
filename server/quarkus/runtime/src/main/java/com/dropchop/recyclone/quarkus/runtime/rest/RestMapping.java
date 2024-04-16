@@ -41,7 +41,7 @@ public class RestMapping {
   }
 
   public Map<String, RestClass> getApiClasses() {
-    return apiClasses;
+    return Collections.unmodifiableMap(apiClasses);
   }
 
   public RestClass getApiClass(String apiClass) {
@@ -69,10 +69,10 @@ public class RestMapping {
   }
 
   public Map<String, RestMethod> getApiMethods() {
-    return apiMethods;
+    return Collections.unmodifiableMap(apiMethods);
   }
 
   public Map<String, RestMethod> getImplMethods() {
-    return implMethods;
+    return Collections.unmodifiableMap(implMethods);
   }
 }

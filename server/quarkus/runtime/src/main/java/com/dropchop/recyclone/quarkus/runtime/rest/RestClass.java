@@ -80,7 +80,7 @@ public class RestClass {
   }
 
   public Set<String> getImplementors() {
-    return implementors;
+    return Collections.unmodifiableSet(implementors);
   }
 
   public Map<String, RestMethod> getApiMethodMappings() {

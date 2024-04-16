@@ -5,13 +5,14 @@ import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 24.
  */
-@Singleton
+@ApplicationScoped
 @RegisterForReflection
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
 public class RecycloneApplicationImpl implements RecycloneApplication {

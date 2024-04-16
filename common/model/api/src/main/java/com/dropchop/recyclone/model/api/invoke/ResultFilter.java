@@ -199,23 +199,22 @@ public interface ResultFilter<CF extends ResultFilter.ContentFilter, LF extends 
   List<String> getSort();
   void setSort(List<String> sort);
 
-
   default List<String> sort() {
     return getStates();
   }
 
   default ResultFilter<CF, LF> sort(List<String> sort) {
-    setStates(sort);
+    setSort(sort);
     return this;
   }
 
   default ResultFilter<CF, LF> sort(String sort) {
-    List<String> states = getStates();
-    if (states == null) {
-      states = new ArrayList<>();
-      setStates(states);
+    List<String> sorts = getSort();
+    if (sorts == null) {
+      sorts = new ArrayList<>();
+      setSort(sorts);
     }
-    states.add(sort);
+    sorts.add(sort);
     return this;
   }
 }

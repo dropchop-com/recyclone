@@ -15,29 +15,13 @@ public class RestRecorder {
       boolean isDevTest) {
     RestMapping mapping = new RestMapping(isDevTest);
     for (Map.Entry<String, RestMethod> entry : apiMethods.entrySet()) {
-      RestMethod m = entry.getValue();
-      String ref = entry.getKey();
-      RestMethod copy = new RestMethod(
-          m.apiClass, m.methodRef, m.implMethodRef, m.methodParamClass, m.methodDataClass, m.action, m.name,
-          m.verb, m.internal, m.path, m.rewrittenPath, m.segment, m.excluded
-      );
-      mapping.addApiMethod(ref, copy);
+      mapping.addApiMethod(entry.getKey(), entry.getValue());
     }
     for (Map.Entry<String, RestMethod> entry : implMethods.entrySet()) {
-      RestMethod m = entry.getValue();
-      String ref = entry.getKey();
-      RestMethod copy = new RestMethod(
-          m.apiClass, m.methodRef, m.implMethodRef, m.methodParamClass, m.methodDataClass, m.action, m.name,
-          m.verb, m.internal, m.path, m.rewrittenPath, m.segment, m.excluded
-      );
-      mapping.addImplMethod(ref, copy);
+      mapping.addImplMethod(entry.getKey(), entry.getValue());
     }
     for (Map.Entry<String, RestClass> entry : apiClasses.entrySet()) {
-      RestClass c  = entry.getValue();
-      mapping.addApiClass(c.apiClass, () -> new RestClass(
-          c.apiClass, c.implClass, c.implementors, c.ctxClass, c.paramClass,
-          c.path, c.rewrittenPath, c.internal, c.implMissingPath
-      ));
+      mapping.addApiClass(entry.getValue().apiClass, entry::getValue);
     }
     return new RuntimeValue<>(mapping);
   }

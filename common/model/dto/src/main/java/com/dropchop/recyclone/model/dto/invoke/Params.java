@@ -21,7 +21,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Params implements Dto, CommonParams<ResultFilter, ResultFilter.ContentFilter, ResultFilter.LanguageFilter, ResultFilterDefaults> {
+public class Params implements
+    Dto,
+    CommonParams<ResultFilter, ResultFilter.ContentFilter, ResultFilter.LanguageFilter, ResultFilterDefaults> {
 
   private String requestId;
 
