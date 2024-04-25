@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
+ * Just ignore this for now.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 06. 22.
  */
 @JsonTypeInfo(
