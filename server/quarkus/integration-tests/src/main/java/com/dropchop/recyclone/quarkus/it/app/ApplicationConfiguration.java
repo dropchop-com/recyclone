@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 @ApplicationScoped
-public class TestApplicationConfiguration {
+public class ApplicationConfiguration {
 
   @Inject
   ObjectMapperFactory objectMapperFactory;

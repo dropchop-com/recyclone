@@ -11,7 +11,6 @@ import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.realm.Realm;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
 @ApplicationScoped
-public class ShiroEnvironmentProvider {
+public class DefaultShiroEnvironmentProvider {
 
   @Produces
   public CacheManager getCacheManager() {
