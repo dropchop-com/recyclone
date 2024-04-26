@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.rest.server;
 
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
@@ -24,6 +26,9 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   @Inject
   CodeParams codeParams;
 
+  @Inject
+  DefaultExecContext<Dummy> execContext;
+
   @Override
   public Result<Dummy> getByCode(String code) {
     codeParams.setCodes(List.of(code));
@@ -32,6 +37,8 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
 
   @Override
   public Result<Dummy> get() {
+    Params params = execContext.getParams();
+    List<String> codes = codeParams.getCodes();
     return service.search();
   }
 

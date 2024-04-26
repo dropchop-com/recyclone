@@ -76,7 +76,7 @@ public class RestProcessor {
   );
 
   private static final DotName ANNO_EXEC_CTX_CLASS = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.ExecContext"
+      "com.dropchop.recyclone.model.api.invoke.CommonExecContext"
   );
 
   private static final DotName REQ_SCOPED_ANNOTATION = DotName.createSimple(
@@ -89,8 +89,12 @@ public class RestProcessor {
 
   private static final boolean ANNO_INTERNAL = false;
 
+  /**
+   * Returns value but only if different from default
+   */
   @SuppressWarnings("SameParameterValue")
-  private DotName getClassAnnotationValue(AnnotationInstance annotation, String property, DotName defaultType) {
+  private DotName getClassAnnotationValueIfDifferent(AnnotationInstance annotation, String property,
+                                                     DotName defaultType) {
     AnnotationValue value = annotation.value(property);
     if (value == null) {
       return null;
@@ -264,10 +268,10 @@ public class RestProcessor {
 
       AnnotationInstance dynamicExecAnnotation = apiClass.annotation(DYN_CTX_ANNO);
       // Extract and check values from @DynamicExecContext
-      DotName classParamClass = getClassAnnotationValue(
+      DotName classParamClass = getClassAnnotationValueIfDifferent(
           dynamicExecAnnotation, "value", ANNO_VALUE
       );
-      DotName tmpDataClass = getClassAnnotationValue(
+      DotName tmpDataClass = getClassAnnotationValueIfDifferent(
           dynamicExecAnnotation, "dataClass", ANNO_DATA_CLASS
       );
       DotName methodParamClass = null;
@@ -290,7 +294,7 @@ public class RestProcessor {
       DotName dataClass = tmpDataClass;
       String segment = extractSecondFromLastPathSegment(path);
 
-      DotName execContextClass = getClassAnnotationValue(
+      DotName execContextClass = getClassAnnotationValueIfDifferent(
           dynamicExecAnnotation, "execContextClass", ANNO_EXEC_CTX_CLASS
       );
       boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
@@ -326,6 +330,7 @@ public class RestProcessor {
               implementors,
               execContextClass != null ? execContextClass.toString() : null,
               classParamClass != null ? classParamClass.toString() : null,
+              dataClass != null ? dataClass.toString() : null,
               path,
               rewrittenPath,
               internal,
@@ -390,6 +395,7 @@ public class RestProcessor {
           implMethodRef,
           methodParamClass != null ? methodParamClass.toString() : null,
           dataClass != null ? dataClass.toString() : null,
+          execContextClass != null ? execContextClass.toString() : null,
           action,
           method.name(),
           verb,

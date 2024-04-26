@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.rest.jaxrs.api;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
@@ -18,6 +19,6 @@ import java.lang.annotation.Target;
 public @interface DynamicExecContext {
   Class<? extends Params> value() default CommonParams.class;
   Class<? extends Dto> dataClass() default Dto.class;
-  Class<? extends ExecContext> execContextClass() default ExecContext.class;
+  Class<? extends ExecContext> execContextClass() default CommonExecContext.class;
   boolean internal() default false;
 }

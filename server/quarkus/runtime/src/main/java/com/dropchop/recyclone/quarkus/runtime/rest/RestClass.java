@@ -12,6 +12,7 @@ public class RestClass {
   final String implClass;
   final String paramClass;
   final String ctxClass;
+  final String dataClass;
   final String path;
   final String rewrittenPath;
   final boolean internal;
@@ -20,12 +21,14 @@ public class RestClass {
   private boolean excluded;
 
   public RestClass(String apiClass, String implClass, Collection<String> implementors, String ctxClass,
-                   String paramClass, String path, String rewrittenPath, boolean internal, boolean implMissingPath) {
+                   String paramClass, String dataClass, String path, String rewrittenPath,
+                   boolean internal, boolean implMissingPath) {
     this.apiClass = apiClass;
     this.implClass = implClass;
     this.implementors.addAll(implementors);
     this.paramClass = paramClass;
     this.ctxClass = ctxClass;
+    this.dataClass = dataClass;
     this.path = path;
     this.rewrittenPath = rewrittenPath;
     this.internal = internal;
@@ -54,6 +57,10 @@ public class RestClass {
 
   public String getCtxClass() {
     return ctxClass;
+  }
+
+  public String getDataClass() {
+    return dataClass;
   }
 
   public String getPath() {

@@ -1,8 +1,10 @@
 package com.dropchop.recyclone.quarkus.deployment.invoke;
 
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.quarkus.deployment.rest.RestMappingBuildItem;
+import com.dropchop.recyclone.quarkus.runtime.common.Factory;
+import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextProvider;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsProvider;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import io.quarkus.arc.Arc;
@@ -13,13 +15,11 @@ import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
-import io.quarkus.gizmo.ClassCreator;
-import io.quarkus.gizmo.MethodCreator;
-import io.quarkus.gizmo.MethodDescriptor;
-import io.quarkus.gizmo.ResultHandle;
+import io.quarkus.gizmo.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import org.jboss.jandex.*;
+import org.jboss.jandex.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +35,10 @@ public class ContextProcessor {
 
   private static final DotName EXEC_CTX_IFACE = DotName.createSimple(
       "com.dropchop.recyclone.model.api.invoke.ExecContext"
+  );
+
+  private static final DotName DEFAULT_EXEC_CTX = DotName.createSimple(
+      "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext"
   );
 
   private static final DotName CTX_PARAMS_IFACE = DotName.createSimple(
@@ -78,118 +82,156 @@ public class ContextProcessor {
     return level;
   }
 
+  private static void fillClassPriorities(IndexView indexView, String className, DotName ifaceName,
+                                          Map<String, Integer> clsPrio) {
+    if (className == null) {
+      return;
+    }
+    ClassInfo classInfo = indexView.getClassByName(className);
+    if (classInfo == null || classInfo.isInterface()){
+      return;
+    }
+    Set<DotName> visited = new LinkedHashSet<>();
+    if (checkInterface(classInfo, ifaceName, indexView, visited)) {
+      if (!clsPrio.containsKey(classInfo.name().toString())) {
+        int level = checkComputeLevel(classInfo, indexView);
+        clsPrio.put(classInfo.name().toString(), level);
+      }
+    }
+  }
+
   @BuildStep
-  void findParamsForProducerGeneration(CombinedIndexBuildItem combinedIndex,
-                                       RestMappingBuildItem restMappingBuildItem,
-                                       BuildProducer<ContextParamsBuildItem> contextBuildItemBuildProducer) {
+  void findClassesForProducerGeneration(CombinedIndexBuildItem combinedIndex,
+                                        RestMappingBuildItem restMappingBuildItem,
+                                        BuildProducer<ContextsBuildItem> contextBuildProducer,
+                                        BuildProducer<ParamsBuildItem> paramsBuildProducer) {
     IndexView indexView = combinedIndex.getIndex();
     RestMapping restMapping = restMappingBuildItem.getMapping();
-    Map<String, Integer> contextParams = new LinkedHashMap<>();
+    Map<String, Integer> paramsPriority = new LinkedHashMap<>();
+    Map<String, Integer> contextPriority = new LinkedHashMap<>();
+    Set<ContextMapping> contextMappings = new LinkedHashSet<>();
     for (Map.Entry<String, RestMethod> restMethodEntry : restMapping.getApiMethods().entrySet()) {
       String paramsClass = restMethodEntry.getValue().getParamClass();
-      if (paramsClass == null) {
-        continue;
+      fillClassPriorities(indexView, paramsClass, CTX_PARAMS_IFACE, paramsPriority);
+
+      RestClass restClass = restMapping.getApiClass(restMethodEntry.getValue().getApiClass());
+      String contextClass = restMethodEntry.getValue().getContextClass();
+      if (contextClass == null) {
+        contextClass = restClass.getCtxClass();
       }
-      ClassInfo paramsClassInfo = indexView.getClassByName(paramsClass);
-      if (paramsClassInfo == null || paramsClassInfo.isInterface()) {
-        continue;
+      if (contextClass == null) {
+        contextClass = DEFAULT_EXEC_CTX.toString();
       }
-      Set<DotName> visited = new LinkedHashSet<>();
-      if (checkInterface(paramsClassInfo, CTX_PARAMS_IFACE, indexView, visited)) {
-        if (!contextParams.containsKey(paramsClassInfo.name().toString())) {
-          int level = checkComputeLevel(paramsClassInfo, indexView);
-          contextParams.put(paramsClassInfo.name().toString(), level);
-        }
+      String dataClass = restMethodEntry.getValue().getMethodDataClass();
+      if (dataClass == null) {
+        dataClass = restClass.getDataClass();
       }
+
+      fillClassPriorities(indexView, contextClass, EXEC_CTX_IFACE, contextPriority);
+      Integer prio = contextPriority.get(contextClass);
+      if (prio == null) {
+        prio = 1000;
+      }
+      contextMappings.add(new ContextMapping(contextClass, dataClass, prio));
     }
-    contextBuildItemBuildProducer.produce(new ContextParamsBuildItem(contextParams));
+    paramsBuildProducer.produce(new ParamsBuildItem(paramsPriority));
+    contextBuildProducer.produce(new ContextsBuildItem(contextMappings));
   }
 
-  @BuildStep
-  void generateParamsProducers(CombinedIndexBuildItem combinedIndex,
-                               ContextParamsBuildItem contextParamsBuildItem,
-                               BuildProducer<GeneratedBeanBuildItem> generatedBeans) {
-    IndexView index = combinedIndex.getIndex();
-    for(Map.Entry<String, Integer> paramEntry : contextParamsBuildItem.getContextParamClasses().entrySet()) {
-      ClassInfo paramsImpl = index.getClassByName(paramEntry.getKey());
-
-      String producerClassName = paramsImpl.name().toString() + "Producer";
-      GeneratedBeanGizmoAdaptor classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
-      log.info(
-          "Generating producer for injection point {} implementation.", producerClassName
+  private void generateProducerWithDelegateFactory(BuildProducer<GeneratedBeanBuildItem> generatedBeans,
+                                                   ClassInfo impl, String prodRetParamType, Integer priority,
+                                                   Class<? extends Factory<?>> delegate, String returnType) {
+    String producerClassName = impl.name() + "Producer" + impl.name().hashCode();
+    if (prodRetParamType != null) {
+      producerClassName = impl.name() + "Producer" +
+          DotName.createSimple(prodRetParamType).withoutPackagePrefix() + "_" + impl.name().hashCode() +
+          "_" + prodRetParamType.hashCode();
+    }
+    GeneratedBeanGizmoAdaptor classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
+    log.info(
+        "Generating producer for injection point {} implementation.", producerClassName
+    );
+    try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
+        .className(producerClassName)
+        .build()) {
+      String retValueType = impl.name().toString();
+      String methodName = "produce" + impl.simpleName();
+      MethodCreator methodCreator = classCreator.getMethodCreator(
+          methodName, retValueType
       );
-      try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
-          .className(producerClassName)
-          .build()) {
-
-        MethodCreator methodCreator = classCreator.getMethodCreator(
-            "produce" + paramsImpl.simpleName(),
-            paramsImpl.name().toString()
+      if (prodRetParamType != null) {
+        methodCreator.setSignature(SignatureBuilder.forMethod()
+            .setReturnType(
+                io.quarkus.gizmo.Type.parameterizedType(
+                    io.quarkus.gizmo.Type.classType(retValueType),
+                    io.quarkus.gizmo.Type.classType(prodRetParamType)
+                )
+            ).build()
         );
-        int prio = 1000 - paramEntry.getValue() * 10;
-        methodCreator.addAnnotation(Produces.class);
-        methodCreator.addAnnotation(RequestScoped.class);
-        methodCreator.addAnnotation(io.quarkus.arc.DefaultBean.class);
-        methodCreator.addAnnotation(AnnotationInstance.create(
-            DotName.createSimple(jakarta.annotation.Priority.class.getName()),
-            null,
-            new AnnotationValue[]{ AnnotationValue.createIntegerValue("value", prio) })
-        );
-        /*methodCreator.addAnnotation(AnnotationInstance.create(
-            DotName.createSimple(Named.class.getName()),
-            null,
-            new AnnotationValue[]{ AnnotationValue.createStringValue("value", paramsImpl.simpleName()) })
-        );*/
-
-        // Get the Arc container and fetch an instance handle of the ParamsProvider
-        ResultHandle arcContainerHandle = methodCreator.invokeStaticMethod(
-            MethodDescriptor.ofMethod(Arc.class, "container", ArcContainer.class)
-        );
-        ResultHandle paramProducerHandle = methodCreator.invokeInterfaceMethod(
-            MethodDescriptor.ofMethod(
-                ArcContainer.class, "instance", InstanceHandle.class, Class.class, Annotation[].class
-            ),
-            arcContainerHandle,
-            methodCreator.loadClass(ParamsProvider.class),
-            methodCreator.newArray(Annotation.class, 0)  // No qualifiers used
-        );
-        ResultHandle paramsProducerInstance = methodCreator.invokeInterfaceMethod(
-            MethodDescriptor.ofMethod(InstanceHandle.class, "get", Object.class),
-            paramProducerHandle
-        );
-
-        // Call params on the ParamInjectResolver instance
-        ResultHandle paramsClassHandle = methodCreator.loadClass(paramsImpl.name().toString());
-        ResultHandle instance = methodCreator.invokeVirtualMethod(
-            MethodDescriptor.ofMethod(ParamsProvider.class, "create", Params.class, Class.class),
-            paramsProducerInstance,
-            paramsClassHandle
-        );
-        methodCreator.returnValue(instance);
       }
+
+      int prio = 1000 - priority * 10;
+      methodCreator.addAnnotation(Produces.class);
+      methodCreator.addAnnotation(RequestScoped.class);
+      methodCreator.addAnnotation(io.quarkus.arc.DefaultBean.class);
+      methodCreator.addAnnotation(AnnotationInstance.create(
+          DotName.createSimple(jakarta.annotation.Priority.class.getName()),
+          null,
+          new AnnotationValue[]{ AnnotationValue.createIntegerValue("value", prio) })
+      );
+      /*methodCreator.addAnnotation(AnnotationInstance.create(
+          DotName.createSimple(Named.class.getName()),
+          null,
+          new AnnotationValue[]{ AnnotationValue.createStringValue("value", paramsImpl.simpleName()) })
+      );*/
+
+      // Get the Arc container and fetch an instance handle of the ParamsProvider
+      ResultHandle arcContainerHandle = methodCreator.invokeStaticMethod(
+          MethodDescriptor.ofMethod(Arc.class, "container", ArcContainer.class)
+      );
+      ResultHandle paramProducerHandle = methodCreator.invokeInterfaceMethod(
+          MethodDescriptor.ofMethod(
+              ArcContainer.class, "instance", InstanceHandle.class, Class.class, Annotation[].class
+          ),
+          arcContainerHandle,
+          methodCreator.loadClass(delegate),
+          methodCreator.newArray(Annotation.class, 0)  // No qualifiers used
+      );
+      ResultHandle paramsProducerInstance = methodCreator.invokeInterfaceMethod(
+          MethodDescriptor.ofMethod(InstanceHandle.class, "get", Object.class),
+          paramProducerHandle
+      );
+
+      // Call params on the ParamsProvider instance
+      ResultHandle paramsClassHandle = methodCreator.loadClassFromTCCL(impl.name().toString());
+      ResultHandle instance = methodCreator.invokeVirtualMethod(
+          MethodDescriptor.ofMethod(delegate.getName(), "create", returnType, Class.class.getName()),
+          paramsProducerInstance,
+          paramsClassHandle
+      );
+      methodCreator.returnValue(instance);
     }
   }
 
   @BuildStep
-  void findExecContextsForProducerGeneration(CombinedIndexBuildItem combinedIndex,
-                                             BuildProducer<ExecContextBuildItem> contextBuildItemBuildProducer) {
-    IndexView indexView = combinedIndex.getIndex();
-    for (ClassInfo execCtxImpl : indexView.getAllKnownImplementors(EXEC_CTX_IFACE)) {
-      List<TypeVariable> typeParameters = execCtxImpl.typeParameters();
-      // Check if the class type is a parameterized type
-      for (TypeVariable typeParam : typeParameters) {
-        List<Type> typeArguments = typeParam.bounds();
-        for (Type typeArgument : typeArguments) {
-          System.out.println("Type Argument: " + typeArgument);
-        }
-      }
+  void generateProducers(CombinedIndexBuildItem combinedIndex,
+                         ParamsBuildItem paramsBuildItem,
+                         ContextsBuildItem contextsBuildItem,
+                         BuildProducer<GeneratedBeanBuildItem> generatedBeans) {
+    IndexView index = combinedIndex.getIndex();
+    for(Map.Entry<String, Integer> paramEntry : paramsBuildItem.getClassPriorityMap().entrySet()) {
+      ClassInfo paramsImpl = index.getClassByName(paramEntry.getKey());
+      this.generateProducerWithDelegateFactory(
+          generatedBeans, paramsImpl, null, paramEntry.getValue(),
+          ParamsProvider.class, CTX_PARAMS_IFACE.toString()
+      );
     }
-  }
-
-  @BuildStep
-  void generateExecContextProducers(CombinedIndexBuildItem combinedIndex,
-                                    ExecContextBuildItem execContextBuildItem,
-                                    BuildProducer<GeneratedBeanBuildItem> generatedBeans) {
-
+    for(ContextMapping mapping : contextsBuildItem.getContextMappings()) {
+      ClassInfo ctxImpl = index.getClassByName(mapping.contextClass);
+      this.generateProducerWithDelegateFactory(
+          generatedBeans, ctxImpl, mapping.dataClass, mapping.priority,
+          ExecContextProvider.class, EXEC_CTX_IFACE.toString()
+      );
+    }
   }
 }

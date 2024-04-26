@@ -27,4 +27,44 @@ public class ExecContextProvider implements Factory<ExecContext<?>>, Selector<Ex
   public Class<ExecContext<?>> getBase() {
     return this.getClassFromName(ExecContext.class.getName());
   }
+
+  /**
+   * Keep for CDI to work
+   */
+  @Override
+  public <P extends ExecContext<?>> P create(Class<P> clazz) {
+    return Factory.super.create(clazz);
+  }
+
+  /**
+   * Keep for CDI to work
+   */
+  @Override
+  public <P extends ExecContext<?>> P create(String paramsClassName) {
+    return Factory.super.create(paramsClassName);
+  }
+
+  /**
+   * Keep for CDI to work
+   */
+  @Override
+  public <P extends ExecContext<?>> P select(Class<P> clazz) {
+    return Selector.super.select(clazz);
+  }
+
+  /**
+   * Keep for CDI to work
+   */
+  @Override
+  public <P extends ExecContext<?>> P select(String className) {
+    return Selector.super.select(className);
+  }
+
+  /**
+   * Keep for CDI to work
+   */
+  @Override
+  public <P extends ExecContext<?>> Class<P> getClassFromName(String clazzName) {
+    return Factory.super.getClassFromName(clazzName);
+  }
 }

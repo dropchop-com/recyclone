@@ -18,6 +18,7 @@ public class RestMethod {
   final String apiClass;
   final String methodParamClass;
   final String methodDataClass;
+  final String contextClass;
   final boolean internal;
   final String path;
   final String rewrittenPath;
@@ -31,12 +32,13 @@ public class RestMethod {
 
   @RecordableConstructor
   public RestMethod(String apiClass, String methodRef, String implMethodRef,
-                    String methodParamClass, String methodDataClass, Action action,
+                    String methodParamClass, String methodDataClass, String contextClass, Action action,
                     String name, String verb, boolean internal, String path, String rewrittenPath,
                     String segment, boolean excluded) {
     this.apiClass = apiClass;
     this.methodParamClass = methodParamClass;
     this.methodDataClass = methodDataClass;
+    this.contextClass = contextClass;
     this.action = action;
     this.internal = internal;
     this.path = path;
@@ -78,6 +80,10 @@ public class RestMethod {
 
   public String getMethodDataClass() {
     return methodDataClass;
+  }
+
+  public String getContextClass() {
+    return contextClass;
   }
 
   public String getName() {
