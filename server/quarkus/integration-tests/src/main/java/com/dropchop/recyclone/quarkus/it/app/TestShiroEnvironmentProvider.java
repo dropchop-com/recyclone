@@ -3,6 +3,8 @@ package com.dropchop.recyclone.quarkus.it.app;
 import com.dropchop.shiro.cdi.ShiroEnvironmentProvider;
 import com.dropchop.shiro.filter.*;
 import com.dropchop.shiro.realm.ShiroMapRealm;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.inject.Alternative;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
@@ -13,6 +15,8 @@ import org.apache.shiro.realm.Realm;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,29 +25,10 @@ import static com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter.DEFAULT_A
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
+@Alternative
+@Priority(1)
 @ApplicationScoped
-@SuppressWarnings("RedundantMethodOverride")
 public class TestShiroEnvironmentProvider extends ShiroEnvironmentProvider {
-
-  @Produces
-  public CacheManager getCacheManager() {
-    return null;
-  }
-
-  @Produces
-  public RolePermissionResolver getRolePermissionResolver() {
-    return null;
-  }
-
-  @Produces
-  public PermissionResolver getPermissionResolver() {
-    return new WildcardPermissionResolver();
-  }
-
-  @Produces
-  public EventBus getEventBus() {
-    return new DefaultEventBus();
-  }
 
   @Produces
   public List<Realm> getRealms() {
@@ -76,10 +61,8 @@ public class TestShiroEnvironmentProvider extends ShiroEnvironmentProvider {
 
   @Produces
   public List<ShiroFilter> getFilters() {
-    return List.of(
-      new BasicHttpAuthenticationFilter(),
-      new BearerHttpAuthenticationFilter(),
-      new ApiKeyHttpAuthenticationFilter(DEFAULT_API_KEY_HEADER, "api_key")
-    );
+    List<ShiroFilter> filters = new ArrayList<>(super.getFilters());
+    filters.add(new ApiKeyHttpAuthenticationFilter(DEFAULT_API_KEY_HEADER, "api_key"));
+    return filters;
   }
 }

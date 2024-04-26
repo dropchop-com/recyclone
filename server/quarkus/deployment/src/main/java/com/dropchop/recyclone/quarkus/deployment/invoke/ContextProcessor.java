@@ -2,7 +2,7 @@ package com.dropchop.recyclone.quarkus.deployment.invoke;
 
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.quarkus.deployment.rest.RestMappingBuildItem;
-import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsInjectResolver;
+import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsProvider;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import io.quarkus.arc.Arc;
@@ -141,7 +141,7 @@ public class ContextProcessor {
             new AnnotationValue[]{ AnnotationValue.createStringValue("value", paramsImpl.simpleName()) })
         );*/
 
-        // Get the Arc container and fetch an instance handle of the ParamInjectResolver
+        // Get the Arc container and fetch an instance handle of the ParamsProvider
         ResultHandle arcContainerHandle = methodCreator.invokeStaticMethod(
             MethodDescriptor.ofMethod(Arc.class, "container", ArcContainer.class)
         );
@@ -150,7 +150,7 @@ public class ContextProcessor {
                 ArcContainer.class, "instance", InstanceHandle.class, Class.class, Annotation[].class
             ),
             arcContainerHandle,
-            methodCreator.loadClass(ParamsInjectResolver.class),
+            methodCreator.loadClass(ParamsProvider.class),
             methodCreator.newArray(Annotation.class, 0)  // No qualifiers used
         );
         ResultHandle paramsProducerInstance = methodCreator.invokeInterfaceMethod(
@@ -161,7 +161,7 @@ public class ContextProcessor {
         // Call params on the ParamInjectResolver instance
         ResultHandle paramsClassHandle = methodCreator.loadClass(paramsImpl.name().toString());
         ResultHandle instance = methodCreator.invokeVirtualMethod(
-            MethodDescriptor.ofMethod(ParamsInjectResolver.class, "createParams", Params.class, Class.class),
+            MethodDescriptor.ofMethod(ParamsProvider.class, "create", Params.class, Class.class),
             paramsProducerInstance,
             paramsClassHandle
         );

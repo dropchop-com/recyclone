@@ -21,7 +21,6 @@ import java.util.List;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
  */
-@Alternative
 @ApplicationScoped
 public class ShiroEnvironmentProvider {
 

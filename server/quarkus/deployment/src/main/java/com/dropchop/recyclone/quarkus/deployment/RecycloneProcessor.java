@@ -1,7 +1,8 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
-import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsInjectResolver;
-import com.dropchop.recyclone.quarkus.runtime.service.ServiceInjectResolver;
+import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextProvider;
+import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsProvider;
+import com.dropchop.recyclone.quarkus.runtime.service.ServiceSelector;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
@@ -39,21 +40,28 @@ class RecycloneProcessor {
             .builder()
             .addBeanClasses(RecycloneApplicationImpl.class)
             .setUnremovable()
-            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+            .build()
     );
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
-            .addBeanClasses(ServiceInjectResolver.class)
+            .addBeanClasses(ServiceSelector.class)
             .setUnremovable()
-            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+            .build()
     );
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
-            .addBeanClasses(ParamsInjectResolver.class)
+            .addBeanClasses(ParamsProvider.class)
             .setUnremovable()
-            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ExecContextProvider.class)
+            .setUnremovable()
+            .build()
     );
   }
 }

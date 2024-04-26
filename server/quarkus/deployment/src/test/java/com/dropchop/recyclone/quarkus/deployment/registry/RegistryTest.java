@@ -61,7 +61,6 @@ public class RegistryTest {
 
     @Test
     public void getJsonSerializationTypeConfig() {
-
         Map<String, Class<?>> expected = Map.of(
             LoginAccount.class.getSimpleName(), LoginAccount.class,
             TokenAccount.class.getSimpleName(), TokenAccount.class

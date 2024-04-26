@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.service;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.service.ServiceInjectResolver;
+import com.dropchop.recyclone.quarkus.runtime.service.ServiceSelector;
 import com.dropchop.recyclone.service.api.Service;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
@@ -125,7 +125,7 @@ public class ServiceProcessor {
                 ArcContainer.class, "instance", InstanceHandle.class, Class.class, Annotation[].class
             ),
             arcContainerHandle,
-            methodCreator.loadClass(ServiceInjectResolver.class),
+            methodCreator.loadClass(ServiceSelector.class),
             methodCreator.newArray(Annotation.class, 0)  // No qualifiers used
         );
         ResultHandle serviceProducerInstance = methodCreator.invokeInterfaceMethod(
@@ -136,7 +136,7 @@ public class ServiceProcessor {
         // Call produceService on the ServiceProducer instance
         ResultHandle serviceClassHandle = methodCreator.loadClass(serviceImpl.name().toString());
         ResultHandle instance = methodCreator.invokeVirtualMethod(
-            MethodDescriptor.ofMethod(ServiceInjectResolver.class, "service", Service.class, Class.class  ),
+            MethodDescriptor.ofMethod(ServiceSelector.class, "service", Service.class, Class.class  ),
             serviceProducerInstance,
             serviceClassHandle
         );
