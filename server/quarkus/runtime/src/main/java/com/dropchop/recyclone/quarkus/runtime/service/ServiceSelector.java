@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.quarkus.runtime.service;
 
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.quarkus.runtime.common.Selector;
 import com.dropchop.recyclone.service.api.Service;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,21 +14,18 @@ public class ServiceSelector implements Selector<Service> {
   @Any
   Instance<Service> instances;
 
-  public <S extends Service> S service(Class<S> sClass) {
+  /**
+   * Here we can select service by an interface also, not only by concrete class.
+   */
+  public <S extends Service> S select(Class<S> sClass) {
+    S service = Selector.super.select(sClass);
+    if (service != null) {
+      return service;
+    }
     Instance<S> candidates = instances.select(sClass);
     if (candidates.stream().findAny().isEmpty()) {
       throw new RuntimeException("Missing service class [" + sClass + "] implementation!");
     }
     return candidates.iterator().next();
-  }
-
-  @Override
-  public Instance<Service> getInstances() {
-    return instances;
-  }
-
-  @Override
-  public Class<Service> getBase() {
-    return this.getClassFromName(ExecContext.class.getName());
   }
 }

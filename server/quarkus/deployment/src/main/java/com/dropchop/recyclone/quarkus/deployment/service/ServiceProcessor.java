@@ -136,7 +136,7 @@ public class ServiceProcessor {
         // Call produceService on the ServiceProducer instance
         ResultHandle serviceClassHandle = methodCreator.loadClass(serviceImpl.name().toString());
         ResultHandle instance = methodCreator.invokeVirtualMethod(
-            MethodDescriptor.ofMethod(ServiceSelector.class, "service", Service.class, Class.class  ),
+            MethodDescriptor.ofMethod(ServiceSelector.class, "select", Service.class, Class.class  ),
             serviceProducerInstance,
             serviceClassHandle
         );

@@ -1,15 +1,9 @@
 package com.dropchop.recyclone.quarkus.deployment.invoke;
 
 import com.dropchop.recyclone.quarkus.deployment.rest.RestMappingBuildItem;
-import com.dropchop.recyclone.quarkus.runtime.common.Factory;
-import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextProvider;
-import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsProvider;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.ArcContainer;
-import io.quarkus.arc.InstanceHandle;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -19,11 +13,10 @@ import io.quarkus.gizmo.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import org.jboss.jandex.*;
-import org.jboss.jandex.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -138,9 +131,8 @@ public class ContextProcessor {
     contextBuildProducer.produce(new ContextsBuildItem(contextMappings));
   }
 
-  private void generateProducerWithDelegateFactory(BuildProducer<GeneratedBeanBuildItem> generatedBeans,
-                                                   ClassInfo impl, String prodRetParamType, Integer priority,
-                                                   Class<? extends Factory<?>> delegate, String returnType) {
+  private void generateProducer(BuildProducer<GeneratedBeanBuildItem> generatedBeans, ClassInfo impl,
+                                String prodRetParamType, Integer priority) {
     String producerClassName = impl.name() + "Producer" + impl.name().hashCode();
     if (prodRetParamType != null) {
       producerClassName = impl.name() + "Producer" +
@@ -174,6 +166,7 @@ public class ContextProcessor {
       methodCreator.addAnnotation(Produces.class);
       methodCreator.addAnnotation(RequestScoped.class);
       methodCreator.addAnnotation(io.quarkus.arc.DefaultBean.class);
+      methodCreator.addAnnotation(io.quarkus.arc.Unremovable.class);
       methodCreator.addAnnotation(AnnotationInstance.create(
           DotName.createSimple(jakarta.annotation.Priority.class.getName()),
           null,
@@ -185,30 +178,24 @@ public class ContextProcessor {
           new AnnotationValue[]{ AnnotationValue.createStringValue("value", paramsImpl.simpleName()) })
       );*/
 
-      // Get the Arc container and fetch an instance handle of the ParamsProvider
-      ResultHandle arcContainerHandle = methodCreator.invokeStaticMethod(
-          MethodDescriptor.ofMethod(Arc.class, "container", ArcContainer.class)
-      );
-      ResultHandle paramProducerHandle = methodCreator.invokeInterfaceMethod(
-          MethodDescriptor.ofMethod(
-              ArcContainer.class, "instance", InstanceHandle.class, Class.class, Annotation[].class
-          ),
-          arcContainerHandle,
-          methodCreator.loadClass(delegate),
-          methodCreator.newArray(Annotation.class, 0)  // No qualifiers used
-      );
-      ResultHandle paramsProducerInstance = methodCreator.invokeInterfaceMethod(
-          MethodDescriptor.ofMethod(InstanceHandle.class, "get", Object.class),
-          paramProducerHandle
+      // Load the class of the implementation
+      ResultHandle classHandle = methodCreator.loadClass(impl.name().toString());
+
+      // Get the default declared constructor of the class
+      ResultHandle constructorHandle = methodCreator.invokeVirtualMethod(
+          MethodDescriptor.ofMethod(Class.class, "getDeclaredConstructor", Constructor.class, Class[].class),
+          classHandle,
+          methodCreator.newArray(Class.class, 0)  // No parameter types for default constructor
       );
 
-      // Call params on the ParamsProvider instance
-      ResultHandle paramsClassHandle = methodCreator.loadClassFromTCCL(impl.name().toString());
+      // Create a new instance using the default constructor
       ResultHandle instance = methodCreator.invokeVirtualMethod(
-          MethodDescriptor.ofMethod(delegate.getName(), "create", returnType, Class.class.getName()),
-          paramsProducerInstance,
-          paramsClassHandle
+          MethodDescriptor.ofMethod(Constructor.class, "newInstance", Object.class, Object[].class),
+          constructorHandle,
+          methodCreator.newArray(Object.class, 0)  // No arguments for default constructor
       );
+
+      // Return the created instance
       methodCreator.returnValue(instance);
     }
   }
@@ -221,16 +208,14 @@ public class ContextProcessor {
     IndexView index = combinedIndex.getIndex();
     for(Map.Entry<String, Integer> paramEntry : paramsBuildItem.getClassPriorityMap().entrySet()) {
       ClassInfo paramsImpl = index.getClassByName(paramEntry.getKey());
-      this.generateProducerWithDelegateFactory(
-          generatedBeans, paramsImpl, null, paramEntry.getValue(),
-          ParamsProvider.class, CTX_PARAMS_IFACE.toString()
+      this.generateProducer(
+          generatedBeans, paramsImpl, null, paramEntry.getValue()
       );
     }
     for(ContextMapping mapping : contextsBuildItem.getContextMappings()) {
       ClassInfo ctxImpl = index.getClassByName(mapping.contextClass);
-      this.generateProducerWithDelegateFactory(
-          generatedBeans, ctxImpl, mapping.dataClass, mapping.priority,
-          ExecContextProvider.class, EXEC_CTX_IFACE.toString()
+      this.generateProducer(
+          generatedBeans, ctxImpl, mapping.dataClass, mapping.priority
       );
     }
   }

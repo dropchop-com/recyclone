@@ -1,30 +1,40 @@
 package com.dropchop.recyclone.quarkus.runtime.common;
 
-import jakarta.enterprise.inject.Instance;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.ArcContainer;
+import io.quarkus.arc.InstanceHandle;
+import io.quarkus.arc.impl.ParameterizedTypeImpl;
+
+import java.lang.reflect.Type;
 
 /**
+ * Base interface for CDI bean selection.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 04. 24.
  */
-public interface Selector<X> extends Provider<X> {
+public interface Selector<X> {
 
-  default <P extends X> P select(Class<P> clazz) {
-    Class<X> base = getBase();
-    if (!base.isAssignableFrom(clazz)) {
-      throw new RuntimeException(
-          "Class [" + clazz + "] does not implement [" + base + "]!"
-      );
+  default <P extends X> P select(Class<P> rawClass) {
+    ArcContainer container = Arc.container();
+
+    // Create an instance of ParameterizedTypeImpl for rawType<parameterType>
+    Type type = new ParameterizedTypeImpl(rawClass);
+
+    // Getting the Instance
+    InstanceHandle<P> instanceHandle = container.instance(type);
+    if (!instanceHandle.isAvailable()) {
+      return null;
     }
 
-    Instance<P> candidates =  getInstances().select(clazz);
-    if (candidates.stream().findAny().isEmpty()) {
-      throw new RuntimeException("Missing class [" + clazz + "] implementation!");
-    }
-
-    return candidates.iterator().next();
+    // If instance exists, return; else return null
+    return instanceHandle.get();
   }
 
-  default <P extends X> P select(String className) {
-    Class<P> clazz = this.getClassFromName(className);
-    return this.select(clazz);
+  default <P extends X> P selectOrThrow(Class<P> rawClass) {
+    P instance = select(rawClass);
+    if (instance == null) {
+      throw new RuntimeException("Missing class [" + rawClass + "] implementation!");
+    }
+    return instance;
   }
 }

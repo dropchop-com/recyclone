@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import com.dropchop.recyclone.rest.jaxrs.ClassicModifyResource;
-import com.dropchop.recyclone.rest.jaxrs.ClassicRestResource;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 

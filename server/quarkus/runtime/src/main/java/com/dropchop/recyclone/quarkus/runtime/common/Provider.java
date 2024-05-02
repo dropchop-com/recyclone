@@ -1,13 +1,12 @@
 package com.dropchop.recyclone.quarkus.runtime.common;
 
-import jakarta.enterprise.inject.Instance;
-
 /**
+ * Base class for Factory or Selector.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 04. 24.
  */
 public interface Provider<X> {
 
-  Instance<X> getInstances();
   Class<X> getBase();
 
   default <P extends X> Class<P> getClassFromName(String clazzName) {
