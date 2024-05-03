@@ -46,14 +46,14 @@ public class ParamsInterceptor implements ReaderInterceptor {
     }
     if (o != null && this.parametersClass.isAssignableFrom(o.getClass())) {
       log.debug("Intercept [{}].", o);
-      if (execContextProvider instanceof ParamsExecContextContainer paramsExecContextProvider) {
+      if (execContextProvider instanceof ParamsExecContextContainer) {
         Params p = (Params)o;
         String reqId = p.getRequestId();
         if (reqId == null || reqId.isBlank()) {
           p.setRequestId(Uuid.getTimeBased().toString());
         }
         MDC.put(MDC_REQUEST_ID, p.getRequestId());
-        paramsExecContextProvider.setParams(p);
+        //paramsExecContextProvider.setParams(p);
         context.setProperty(InternalContextVariables.RECYCLONE_PARAMS, p);
       }
     }

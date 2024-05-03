@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.invoke;
 
+import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
@@ -12,6 +14,7 @@ import org.slf4j.MDC;
 import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;
 
 @ApplicationScoped
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class ExecContextBinder {
 
   private final Logger log = LoggerFactory.getLogger(ExecContextBinder.class);
@@ -19,8 +22,20 @@ public class ExecContextBinder {
   @Inject
   ExecContextContainer execContextContainer;
 
+  @Inject
+  CommonExecContextContainer commonExecContextContainer;
+
+  @Inject
+  ParamsExecContextContainer paramsExecContextContainer;
+
+  @Inject
+  ExecContextSelector execContextSelector;
+
+  @Inject
+  ParamsSelector paramsSelector;
+
   public void bind(ExecContext<?> execContext, Params params) {
-    if (params != null) {
+    if (params != null && execContext != null) {
       if (params.getRequestId() != null) {
         execContext.setId(params.getRequestId());
       } else {
@@ -31,7 +46,28 @@ public class ExecContextBinder {
       }
     }
     execContextContainer.set(execContext);
-    MDC.put(MDC_REQUEST_ID, execContext.getId());
-    log.debug("Created and bound params [{}] with execution context [{}].", params, execContext);
+    if (execContext instanceof CommonExecContext<?,?> commonExecContext) {
+      commonExecContextContainer.set(commonExecContext);
+    }
+    if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
+      paramsExecContextContainer.set(paramsExecContext);
+    }
+    if (execContext != null) {
+      MDC.put(MDC_REQUEST_ID, execContext.getId());
+      log.debug("Created and bound params [{}] with execution context [{}].", params, execContext);
+    } else {
+      log.warn("Null execution context binding attempt.");
+    }
+  }
+
+  public ExecContext<?> bind(Class<? extends ExecContext<?>> execContextClass,
+                             Class<? extends Dto> dataClass,
+                             Class<? extends Params> paramsClass) {
+    ExecContext<?> execContext = execContextSelector.select(execContextClass, dataClass);
+    if (paramsClass != null) {
+      Params params = paramsSelector.select(paramsClass);
+      bind(execContext, params);
+    }
+    return execContext;
   }
 }

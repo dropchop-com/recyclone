@@ -7,12 +7,6 @@ import com.dropchop.recyclone.model.api.base.Dto;
  */
 public interface ExecContextContainer {
 
-  @SuppressWarnings("rawtypes")
-  Class<? extends ExecContext> getContextClass();
-
-  @SuppressWarnings("unused")
-  <D extends Dto> ExecContext<?> createContext();
-
   @SuppressWarnings("unused")
   <D extends Dto> ExecContext<?> get();
 }

@@ -11,8 +11,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
-import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
-import io.quarkus.resteasy.reactive.spi.DynamicFeatureBuildItem;
+import io.quarkus.resteasy.reactive.spi.*;
 import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
@@ -630,6 +629,24 @@ public class RestProcessor {
     dynamicFeatureBuildProducer.produce(
         new DynamicFeatureBuildItem(
             "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeatures", true
+        )
+    );
+  }
+
+  @BuildStep
+  void addContentTypeFilter(BuildProducer<CustomContainerRequestFilterBuildItem> buildItemBuildProducer) {
+    buildItemBuildProducer.produce(
+        new CustomContainerRequestFilterBuildItem(
+            "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ContentTypeFilter"
+        )
+    );
+  }
+
+  @BuildStep
+  void addExeptionMapper(BuildProducer<CustomExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
+    exceptionMapperBuildItemBuildProducer.produce(
+        new CustomExceptionMapperBuildItem(
+            "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper"
         )
     );
   }

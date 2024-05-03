@@ -8,8 +8,5 @@ import com.dropchop.recyclone.model.api.base.Dto;
 public interface CommonExecContextContainer extends ParamsExecContextContainer {
 
   @SuppressWarnings("unused")
-  <D extends Dto> CommonExecContext<D, ?> createContext();
-
-  @SuppressWarnings("unused")
   <D extends Dto> CommonExecContext<D, ?> get();
 }

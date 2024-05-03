@@ -4,33 +4,27 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.rest.Result;
-import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainerProvider;
-import lombok.extern.slf4j.Slf4j;
-
-import jakarta.inject.Inject;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
-import jakarta.ws.rs.ext.Provider;
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static jakarta.ws.rs.Priorities.*;
+import static jakarta.ws.rs.Priorities.HEADER_DECORATOR;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
 @Slf4j
-@Provider
+//@Provider
 public class CommonDynamicFeatures implements DynamicFeature {
 
-  @Inject
-  ExecContextContainerProvider execContextProviderProducer;
+  //ExecContextContainerProvider execContextProviderProducer;
 
   private static void checkAdd(final Set<Class<? extends Params>> paramsClasses,
                                final Set<Class<? extends Dto>> dtoClasses,
@@ -90,13 +84,13 @@ public class CommonDynamicFeatures implements DynamicFeature {
     Class<?> riClass = ri.getResourceClass();
     Method method = ri.getResourceMethod();
 
-    Class<?> ret = method.getReturnType();
-    if (Result.class.isAssignableFrom(ret)) {
-      context.register( // initialize and pass new params to JAX-RS context property
-        new ExecContextWriteInterceptor(),
-        USER
-      );
-    }
+    //Class<?> ret = method.getReturnType();
+    //if (Result.class.isAssignableFrom(ret)) {
+      //context.register( // initialize and pass new params to JAX-RS context property
+      //  new ExecContextWriteInterceptor(),
+      //  USER
+      //);
+    //}
 
     Set<Class<? extends Params>> paramsClasses = new HashSet<>();
     Set<Class<? extends Dto>> dtoClasses = new HashSet<>();
@@ -104,30 +98,30 @@ public class CommonDynamicFeatures implements DynamicFeature {
 
     findDynamicExecContextAnnotation(paramsClasses, dtoClasses, execCtxClasses, method);
 
-    boolean registered = false;
-    for (Class<? extends ExecContext<?>> execCtxClass : execCtxClasses) {
-      if (ExecContext.class.isAssignableFrom(execCtxClass)
-        && !ExecContext.class.equals(execCtxClass)
-        && !DefaultExecContext.class.equals(execCtxClass)) {
-        log.info("Registering [{}] with [{}] for [{}.{}].",
-          ExecContextInitInterceptor.class.getSimpleName(), execCtxClass,
-          riClass.getSimpleName(), method.getName());
-        registered = true;
-        context.register( // initialize and pass new params to JAX-RS context property
-          new ExecContextInitInterceptor(execCtxClass, execContextProviderProducer),
-          AUTHENTICATION
-        );
-      }
-    }
-    if (!registered) {
-      log.info("Registering default [{}] with [{}] for [{}.{}].",
-        ExecContextInitInterceptor.class.getSimpleName(), DefaultExecContext.class.getSimpleName(),
-        riClass.getSimpleName(), method.getName());
-      context.register(
-        new ExecContextInitInterceptor(DefaultExecContext.class, execContextProviderProducer),
-        AUTHENTICATION
-      );
-    }
+    //boolean registered = false;
+    //for (Class<? extends ExecContext<?>> execCtxClass : execCtxClasses) {
+      //if (ExecContext.class.isAssignableFrom(execCtxClass)
+        //&& !ExecContext.class.equals(execCtxClass)
+        //&& !DefaultExecContext.class.equals(execCtxClass)) {
+        //log.info("Registering [{}] with [{}] for [{}.{}].",
+        //  ExecContextInitInterceptor.class.getSimpleName(), execCtxClass,
+        //  riClass.getSimpleName(), method.getName());
+        //registered = true;
+        //context.register( // initialize and pass new params to JAX-RS context property
+        //  new ExecContextInitInterceptor(execCtxClass, execContextProviderProducer),
+        //  AUTHENTICATION
+        //);
+      //}
+    //}
+    //if (!registered) {
+      //log.info("Registering default [{}] with [{}] for [{}.{}].",
+      //  ExecContextInitInterceptor.class.getSimpleName(), DefaultExecContext.class.getSimpleName(),
+      //  riClass.getSimpleName(), method.getName());
+      //context.register(
+      //  new ExecContextInitInterceptor(DefaultExecContext.class, execContextProviderProducer),
+      //  AUTHENTICATION
+      //);
+    //}
 
     Class<?>[] paramTypes = method.getParameterTypes();
     for (Class<?> paramType : paramTypes) {

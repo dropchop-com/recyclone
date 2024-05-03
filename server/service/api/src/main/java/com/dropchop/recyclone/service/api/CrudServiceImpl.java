@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
  */
@@ -38,7 +36,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   implements CrudService<D>, EntityByIdService<D, E, ID> {
 
   @Inject
-  @ExecContextType(Implementation.RCYN_DEFAULT)
+  @SuppressWarnings("CdiInjectionPointsInspection")
   CommonExecContextContainer ctxContainer;
 
   @Inject

@@ -1,7 +1,6 @@
-package com.dropchop.recyclone.rest.jaxrs.provider;
+package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
-import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
-
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.ConstrainedTo;
 import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -15,7 +14,8 @@ import jakarta.ws.rs.container.PreMatching;
  */
 @PreMatching
 @ConstrainedTo(RuntimeType.SERVER)
-public class DefaultContentTypeFilter implements ContainerRequestFilter {
+@SuppressWarnings("unused")
+public class ContentTypeFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext ctx) {

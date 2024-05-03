@@ -1,22 +1,23 @@
-package com.dropchop.recyclone.rest.jaxrs.provider;
+package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.api.rest.ResultCode;
+import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
-
 import jakarta.ws.rs.ConstrainedTo;
 import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedHashSet;
@@ -28,9 +29,11 @@ import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 12. 21.
  */
-@Slf4j
+@SuppressWarnings("unused")
 @ConstrainedTo(RuntimeType.SERVER)
 public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
+
+  private static final Logger log = LoggerFactory.getLogger(ServiceErrorExceptionMapper.class);
 
   private void setErrorCodeResponseStatus(Response.ResponseBuilder builder, StatusMessage statusMessage) {
     if (statusMessage != null && statusMessage.getCode() != null) {

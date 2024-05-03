@@ -1,19 +1,21 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
 import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.model.api.invoke.Constants;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextBinder;
-import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextSelector;
-import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsSelector;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.io.IOException;
+
+import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_PATH;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 05. 24.
@@ -21,10 +23,6 @@ import java.io.IOException;
 public class ExecContextInitializer implements ContainerRequestFilter {
 
   private static final Logger log = LoggerFactory.getLogger(ExecContextInitializer.class);
-
-  private final ExecContextSelector execContextSelector;
-
-  private final ParamsSelector paramsSelector;
 
   private final ExecContextBinder execContextBinder;
 
@@ -50,11 +48,7 @@ public class ExecContextInitializer implements ContainerRequestFilter {
                                 RestMethod restMethod,
                                 String defaultParamsClassName,
                                 String defaultExecContextClassName,
-                                ExecContextSelector execContextSelector,
-                                ParamsSelector paramsSelector,
                                 ExecContextBinder execContextBinder) {
-    this.execContextSelector = execContextSelector;
-    this.paramsSelector = paramsSelector;
     this.execContextBinder = execContextBinder;
 
     Class<? extends ExecContext<?>> defaultExecContextClass =
@@ -90,10 +84,13 @@ public class ExecContextInitializer implements ContainerRequestFilter {
         );
   }
 
+  /**
+   * This is the starting request initialization entry point
+   */
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
-    ExecContext<?> execContext = execContextSelector.select(execContextClass, dataClass);
-    Params params = paramsSelector.select(paramsClass);
-    execContextBinder.bind(execContext, params);
+    MDC.put(MDC_REQUEST_PATH, requestContext.getUriInfo().getPath());
+    ExecContext<?> execContext = execContextBinder.bind(execContextClass, dataClass, paramsClass);
+    requestContext.setProperty(Constants.InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContext);
   }
 }

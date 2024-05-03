@@ -3,7 +3,6 @@ package com.dropchop.shiro.jaxrs;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.dto.security.User;
@@ -67,19 +66,19 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
   }
 
   @Override
-  public void filter(ContainerRequestContext requestContext) throws IOException {
-    this.authorizationService.invokeRequestFilterChain(requestContext);
+  public void filter(ContainerRequestContext context) throws IOException {
+    this.authorizationService.invokeRequestFilterChain(context);
 
-    ExecContextContainer execContextProvider = (ExecContextContainer)requestContext
-      .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
-    if (execContextProvider == null) {
-      log.warn("Missing {} in {}!", ExecContextContainer.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
+    ExecContext<?> execContext = (ExecContext<?>)context
+        .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    if (execContext == null) {
+      log.warn(
+          "Missing {} in {}!", ExecContext.class.getSimpleName(), ContainerRequestContext.class.getSimpleName()
+      );
       return;
     }
 
-    this.authorizationService.doAuthorizationChecks(requestContext, authzChecks);
-
-    ExecContext<?> execContext = execContextProvider.get();
+    this.authorizationService.doAuthorizationChecks(context, authzChecks);
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);
     }

@@ -1,30 +1,25 @@
-package com.dropchop.recyclone.rest.jaxrs.provider;
+package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
+import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
-
-import jakarta.ws.rs.ConstrainedTo;
-import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.ext.WriterInterceptor;
 import jakarta.ws.rs.ext.WriterInterceptorContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.io.IOException;
 
-import static com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import static com.dropchop.recyclone.model.api.invoke.ExecContext.*;
 
 /**
- * WriterInterceptor that supports execution context's execution time and
- * request id {@link Result} response injection.
- *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 05. 24.
  */
-@Slf4j
-@ConstrainedTo(RuntimeType.SERVER)
-public class ExecContextWriteInterceptor implements WriterInterceptor {
+public class ExecContextTerminator implements WriterInterceptor {
+
+  private static final Logger log = LoggerFactory.getLogger(ExecContextTerminator.class);
 
   private void clearMdc() {
     MDC.remove(MDC_REQUEST_ID);
@@ -43,10 +38,10 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       return;
     }
 
-    ExecContextContainer execContextProvider = (ExecContextContainer)context
-      .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    ExecContext<?> execContext = (ExecContext<?>)context
+        .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
 
-    if (execContextProvider == null) {
+    if (execContext == null) {
       clearMdc();
       context.proceed();
       return;
@@ -57,7 +52,6 @@ public class ExecContextWriteInterceptor implements WriterInterceptor {
       return;
     }
     log.debug("[{}].aroundWriteTo done.", this.getClass().getSimpleName());
-    ExecContext<?> execContext = execContextProvider.get();
     ((Result<?>) entity).setId(execContext.getId());
     ((Result<?>) entity).getStatus().setTime(execContext.getExecTime());
     context.proceed();
