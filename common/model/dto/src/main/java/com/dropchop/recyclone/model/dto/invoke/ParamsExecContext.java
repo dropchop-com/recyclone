@@ -2,17 +2,17 @@ package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.utils.Uuid;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
  */
 @NoArgsConstructor(force = true)
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "LombokSetterMayBeUsed"})
 public class ParamsExecContext<ECL extends Listener>
   implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<ECL> {
 
@@ -20,7 +20,7 @@ public class ParamsExecContext<ECL extends Listener>
   @Getter
   @Setter
   @EqualsAndHashCode.Include
-  private String id = UUID.randomUUID().toString();
+  private String id = Uuid.getTimeBased().toString();
 
   @NonNull
   @Getter

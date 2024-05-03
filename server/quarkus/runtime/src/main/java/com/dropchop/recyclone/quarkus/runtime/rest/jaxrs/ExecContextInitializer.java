@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextBinder;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
@@ -92,5 +93,9 @@ public class ExecContextInitializer implements ContainerRequestFilter {
     MDC.put(MDC_REQUEST_PATH, requestContext.getUriInfo().getPath());
     ExecContext<?> execContext = execContextBinder.bind(execContextClass, dataClass, paramsClass);
     requestContext.setProperty(Constants.InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContext);
+    if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
+      Params p = paramsExecContext.tryGetParams();
+      requestContext.setProperty(Constants.InternalContextVariables.RECYCLONE_PARAMS, p);
+    }
   }
 }

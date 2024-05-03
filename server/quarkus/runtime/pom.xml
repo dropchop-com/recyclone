@@ -54,6 +54,10 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-server-rest-jackson</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

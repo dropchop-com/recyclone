@@ -1,6 +1,9 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
 import com.dropchop.recyclone.quarkus.runtime.invoke.*;
+import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFilterSerializerModifier;
+import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
+import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.service.ServiceSelector;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
@@ -86,6 +89,27 @@ class RecycloneProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ParamsExecContextContainer.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ParamsFactoryDeserializerModifier.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ExecContextPropertyFilterSerializerModifier.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ObjectMapperFactory.class)
             .setUnremovable()
             .build()
     );

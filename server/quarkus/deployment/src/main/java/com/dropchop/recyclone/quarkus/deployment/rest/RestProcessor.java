@@ -631,6 +631,11 @@ public class RestProcessor {
             "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeatures", true
         )
     );
+    dynamicFeatureBuildProducer.produce(
+        new DynamicFeatureBuildItem(
+            "com.dropchop.shiro.jaxrs.ShiroDynamicFeature", true
+        )
+    );
   }
 
   @BuildStep
@@ -643,7 +648,7 @@ public class RestProcessor {
   }
 
   @BuildStep
-  void addExeptionMapper(BuildProducer<CustomExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
+  void addExceptionMapper(BuildProducer<CustomExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
     exceptionMapperBuildItemBuildProducer.produce(
         new CustomExceptionMapperBuildItem(
             "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper"

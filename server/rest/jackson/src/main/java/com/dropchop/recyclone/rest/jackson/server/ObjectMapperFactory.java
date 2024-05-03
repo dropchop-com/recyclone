@@ -7,6 +7,7 @@ import com.dropchop.recyclone.rest.jackson.client.AttributeDeserializer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
@@ -19,23 +20,36 @@ import lombok.extern.slf4j.Slf4j;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class ObjectMapperFactory {
 
   private final JsonSerializationTypeConfig serializationTypeConfig;
   private final BeanSerializerModifier serializerModifier;
+  private final BeanDeserializerModifier deserializerModifier;
 
   public ObjectMapperFactory(JsonSerializationTypeConfig polymorphicRegistry,
-                             BeanSerializerModifier serializerModifier) {
+                             BeanSerializerModifier serializerModifier,
+                             BeanDeserializerModifier deserializerModifier) {
     this.serializationTypeConfig = polymorphicRegistry;
     this.serializerModifier = serializerModifier;
+    this.deserializerModifier = deserializerModifier;
+  }
+
+  public ObjectMapperFactory(BeanSerializerModifier serializerModifier,
+                             BeanDeserializerModifier deserializerModifier) {
+    this(null, serializerModifier, deserializerModifier);
   }
 
   public ObjectMapperFactory(BeanSerializerModifier serializerModifier) {
-    this(null, serializerModifier);
+    this(null, serializerModifier, null);
+  }
+
+  public ObjectMapperFactory(BeanDeserializerModifier deserializerModifier) {
+    this(null, null, deserializerModifier);
   }
 
   public ObjectMapperFactory() {
-    this(null, null);
+    this(null, null, null);
   }
 
   public ObjectMapper createObjectMapper() {
@@ -47,7 +61,13 @@ public class ObjectMapperFactory {
     SimpleModule module;
     if (this.serializerModifier != null) {
       module = new SimpleModule();
-      module.setSerializerModifier(serializerModifier);
+      module.setSerializerModifier(this.serializerModifier);
+      mapper.registerModule(module);
+    }
+
+    if (this.deserializerModifier != null) {
+      module = new SimpleModule();
+      module.setDeserializerModifier(this.deserializerModifier);
       mapper.registerModule(module);
     }
 

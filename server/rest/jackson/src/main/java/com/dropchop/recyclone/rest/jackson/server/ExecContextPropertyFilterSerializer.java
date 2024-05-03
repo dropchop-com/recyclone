@@ -30,7 +30,9 @@ public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSer
     Params params = null;
     if (execContextContainer != null) {
       ExecContext<?> execContext = execContextContainer.get();
-      params = execContext.tryGetParams();
+      if (execContext != null) {
+        params = execContext.tryGetParams();
+      }
     }
 
     super.serialize(params, o, generator, provider);

@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
-import static jakarta.ws.rs.Priorities.AUTHENTICATION;
-import static jakarta.ws.rs.Priorities.USER;
+import static jakarta.ws.rs.Priorities.*;
 
 @SuppressWarnings({"CdiInjectionPointsInspection", "unused"})
 public class RestDynamicFeatures implements DynamicFeature {
@@ -49,8 +48,14 @@ public class RestDynamicFeatures implements DynamicFeature {
             "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext",
             execContextBinder
         ),
-        AUTHENTICATION
+        0
     );
+
+    if (restMethod.getAction().equals(RestMethod.Action.READ)) {
+      featureContext.register( // initialize and pass new params to JAX-RS context property
+          new ParamsDecoratorFilter(restClass, restMethod), HEADER_DECORATOR
+      );
+    }
 
     // Output chain
     featureContext.register( // terminate and fill result vars from exec context and clear MDC

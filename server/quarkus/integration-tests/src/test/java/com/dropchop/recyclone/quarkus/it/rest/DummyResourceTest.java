@@ -1,10 +1,13 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
+import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
@@ -39,5 +42,24 @@ public class DummyResourceTest {
         .statusCode(200)
         .log().all();
         //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+
+  @Test
+  @Order(20)
+  public void dummySearch() {
+    CodeParams params = CodeParams.builder().code("neki").build();
+    given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .auth().preemptive().basic("user1", "password")
+        .body(params)
+        .when()
+        .post("/api/public/test/dummy/search")
+        .then()
+        .statusCode(200)
+        .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 }

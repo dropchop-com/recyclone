@@ -7,7 +7,6 @@ import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
-import jakarta.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
  */
-@Provider
+//@Provider
 public class ShiroDynamicFeature implements DynamicFeature {
 
   private static final Logger log = LoggerFactory.getLogger(ShiroDynamicFeature.class);
