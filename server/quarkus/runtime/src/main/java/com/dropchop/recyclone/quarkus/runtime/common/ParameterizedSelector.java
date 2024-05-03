@@ -13,7 +13,12 @@ public interface ParameterizedSelector<X, Y> {
     ArcContainer container = Arc.container();
 
     // Create an instance of ParameterizedTypeImpl for rawType<parameterType>
-    Type type = new ParameterizedTypeImpl(rawClass, parameterClass);
+    Type type;
+    if (parameterClass != null) {
+      type = new ParameterizedTypeImpl(rawClass, parameterClass);
+    } else {
+      type = new ParameterizedTypeImpl(rawClass);
+    }
 
     // Getting the Instance
     InstanceHandle<R> instanceHandle = container.instance(type);

@@ -131,7 +131,12 @@ public class ContextProcessor {
       }
       contextMappings.add(new ContextMapping(contextClass, dataClass, prio));
     }
+    //,
+    paramsPriority.put("com.dropchop.recyclone.model.dto.invoke.Params", 1);
+    //"com.dropchop.recyclone.model.dto.invoke.DefaultExecContext",
     paramsBuildProducer.produce(new ParamsBuildItem(paramsPriority));
+    contextMappings.add(new ContextMapping(
+        "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext", null, 2));
     contextBuildProducer.produce(new ContextsBuildItem(contextMappings));
   }
 

@@ -181,7 +181,7 @@ public class OasFilter implements OASFilter {
         Map<PathItem.HttpMethod, Operation> removeOps = new HashMap<>();
         for (Map.Entry<PathItem.HttpMethod, Operation> op : originalItem.getOperations().entrySet()) {
           if (op.getValue() instanceof OperationImpl opImpl) {
-            RestMethod restMethod = this.restMapping.getApiMethod(opImpl.getMethodRef());
+            RestMethod restMethod = this.restMapping.getMethod(opImpl.getMethodRef());
             if (restMethod == null) {
               continue;
             }
@@ -378,7 +378,7 @@ public class OasFilter implements OASFilter {
       List<SecurityRequirement> securityRequirements = createSecurityRequirements(security);
       op.setSecurity(securityRequirements);
     }
-    RestMethod method = this.restMapping.getApiMethod(op.getMethodRef());
+    RestMethod method = this.restMapping.getMethod(op.getMethodRef());
     if (method == null) {
       return operation;
     }

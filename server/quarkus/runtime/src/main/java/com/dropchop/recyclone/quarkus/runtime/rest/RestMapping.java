@@ -50,7 +50,7 @@ public class RestMapping {
     return apiClasses.get(apiClass);
   }
 
-  public RestMethod getApiMethod(String methodRef) {
+  public RestMethod getMethod(String methodRef) {
     return this.methods.get(methodRef);
   }
 

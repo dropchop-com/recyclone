@@ -36,7 +36,7 @@ public class RestProcessor {
 
   private static final Logger log = Logger.getLogger("com.dropchop.recyclone.quarkus");
 
-  private final DotName DYN_CTX_ANNO = DotName.createSimple(
+  private static final DotName DYN_CTX_ANNO = DotName.createSimple(
       "com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext"
   );
 
@@ -58,10 +58,6 @@ public class RestProcessor {
 
   private static final DotName DELETE_ANNOTATION = DotName.createSimple(
       "jakarta.ws.rs.DELETE"
-  );
-
-  private static final DotName JUTIL_LIST = DotName.createSimple(
-      "java.util.List"
   );
 
   private static final DotName JUTIL_COLLECTION = DotName.createSimple(
@@ -88,14 +84,18 @@ public class RestProcessor {
       "jakarta.enterprise.context.ApplicationScoped"
   );
 
+  private static final DotName CTX_PARAMS_IFACE = DotName.createSimple(
+      "com.dropchop.recyclone.model.api.invoke.Params"
+  );
+
   private static final boolean ANNO_INTERNAL = false;
 
   /**
    * Returns value but only if different from default
    */
   @SuppressWarnings("SameParameterValue")
-  private DotName getClassAnnotationValueIfDifferent(AnnotationInstance annotation, String property,
-                                                     DotName defaultType) {
+  private static DotName getClassAnnotationValueIfDifferent(AnnotationInstance annotation, String property,
+                                                            DotName defaultType) {
     AnnotationValue value = annotation.value(property);
     if (value == null) {
       return null;
@@ -105,7 +105,8 @@ public class RestProcessor {
   }
 
   @SuppressWarnings("SameParameterValue")
-  private boolean getBooleanAnnotationValue(AnnotationInstance annotation, String property, boolean defaultType) {
+  private static boolean getBooleanAnnotationValue(AnnotationInstance annotation, String property,
+                                                   boolean defaultType) {
     AnnotationValue value = annotation.value(property);
     if (value == null) {
       return defaultType;
@@ -118,6 +119,28 @@ public class RestProcessor {
     httpAnnotations.addAll(JaxRsConstants.HTTP_METHODS);
     httpAnnotations.addAll(SpringConstants.HTTP_METHODS);
     return httpAnnotations;
+  }
+
+  private static String computeMethodPathSegment(ClassInfo apiClass, MethodInfo methodInfo) {
+    AnnotationInstance pathAnnotation = apiClass.declaredAnnotation(PATH_ANNOTATION);
+    if (pathAnnotation == null) {
+      return null;
+    }
+    String path = pathAnnotation.value().asString();
+    pathAnnotation = methodInfo.declaredAnnotation(PATH_ANNOTATION);
+    String tmp;
+    if (pathAnnotation == null) {
+      tmp = "";
+    } else {
+      tmp = pathAnnotation.value().asString();
+      if (tmp == null) {
+        tmp = "";
+      }
+      if (!tmp.isBlank() && !tmp.startsWith("/") && !path.endsWith("/")) {
+        tmp = "/" + tmp;
+      }
+    }
+    return tmp;
   }
 
   private static String extractSecondFromLastPathSegment(String pathValue) {
@@ -153,6 +176,9 @@ public class RestProcessor {
     return expr.equals(target);
   }
 
+  /**
+   * Compute config based inclusion / exclusion of rest interfaces.
+   */
   private static boolean shouldExclude(ClassInfo apiClass, RecycloneBuildConfig config) {
     RecycloneBuildConfig.Rest restConfig = config.rest();
     boolean doExclude = restConfig.includes().isPresent() && !restConfig.includes().get().isEmpty();
@@ -176,7 +202,13 @@ public class RestProcessor {
     return doExclude;
   }
 
+  /**
+   * Check if a class is a type of or a subtype of a DotName
+   */
   private static boolean isOrSubtype(DotName is, ClassInfo classInfo, IndexView index) {
+    if (classInfo == null) {
+      return false;
+    }
     // Check if the current class is java.util.Collection
     if (classInfo.name().equals(is)) {
       return true;
@@ -185,7 +217,7 @@ public class RestProcessor {
     // Check implemented interfaces
     for (DotName interfaceName : classInfo.interfaceNames()) {
       ClassInfo interfaceInfo = index.getClassByName(interfaceName);
-      if (interfaceInfo != null && isOrSubtype(is, interfaceInfo, index)) {
+      if (isOrSubtype(is, interfaceInfo, index)) {
         return true;
       }
     }
@@ -194,12 +226,76 @@ public class RestProcessor {
     DotName superClassName = classInfo.superName();
     if (superClassName != null && !superClassName.equals(DotName.createSimple("java.lang.Object"))) {
       ClassInfo superClassInfo = index.getClassByName(superClassName);
-      return superClassInfo != null && isOrSubtype(is, superClassInfo, index);
+      return isOrSubtype(is, superClassInfo, index);
     }
 
     return false;
   }
 
+  private static DotName[] computeParamDataClass(ClassInfo apiClass, MethodInfo method, IndexView indexView) {
+    AnnotationInstance dynamicExecAnnotation = apiClass.annotation(DYN_CTX_ANNO);
+
+    DotName tmpDataClass = getClassAnnotationValueIfDifferent(
+        dynamicExecAnnotation, "dataClass", ANNO_DATA_CLASS
+    );
+    DotName methodParamClass = null;
+    if (!method.hasAnnotation(GET_ANNOTATION)) {
+      List<Type> types = method.parameterTypes();
+      if (types.size() != 1) {
+        log.warn("Contract violation: The rest method should have only one parameter class [{}] ");
+      } else {
+        Type methodParameterType = types.iterator().next();
+        methodParamClass = methodParameterType.name();
+        if (methodParameterType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
+          if (!methodParameterType.asParameterizedType().arguments().isEmpty()) {
+            // Get the first type argument
+            Type typeArgument = methodParameterType.asParameterizedType().arguments().get(0);
+            if (typeArgument.kind() == Type.Kind.CLASS &&
+                isOrSubtype(ANNO_DATA_CLASS,
+                    indexView.getClassByName(typeArgument.asClassType().name()), indexView)) {
+              tmpDataClass = typeArgument.name();
+            }
+          }
+        }
+      }
+    }
+    // if not set in annotation and not set by non-GET arguments look at return type
+    if (tmpDataClass == null) {
+      Type returnType = method.returnType();
+
+      if (returnType.kind() == Type.Kind.CLASS) {
+        if (isOrSubtype(ANNO_DATA_CLASS, indexView.getClassByName(returnType.asClassType().name()), indexView)) {
+          tmpDataClass = returnType.asClassType().name();
+        }
+      } else if (returnType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
+        if (!returnType.asParameterizedType().arguments().isEmpty()) {
+          // Get the first type argument
+          Type typeArgument = returnType.asParameterizedType().arguments().get(0);
+          if (typeArgument.kind() == Type.Kind.CLASS &&
+              isOrSubtype(ANNO_DATA_CLASS,
+                  indexView.getClassByName(typeArgument.asClassType().name()), indexView)) {
+            tmpDataClass = typeArgument.name();
+          } else if (typeArgument.kind() == Type.Kind.TYPE_VARIABLE) {
+            List<Type> bounds = typeArgument.asTypeVariable().bounds();
+            for (Type bound : bounds) {
+              if (bound.kind() == Type.Kind.CLASS &&
+                  isOrSubtype(ANNO_DATA_CLASS,
+                      indexView.getClassByName(bound.asClassType().name()), indexView)) {
+                tmpDataClass = typeArgument.name();
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return new DotName[]{methodParamClass, tmpDataClass};
+  }
+
+  /**
+   * Find a leaf in a class hierarchy that implements certain interface.
+   */
   private static ClassInfo findLastImplementor(IndexView indexView, ClassInfo apiClass) {
     Collection<ClassInfo> classes = indexView.getAllKnownImplementors(apiClass.name());
     // Identify leaf classes
@@ -213,21 +309,105 @@ public class RestProcessor {
     return implClass;
   }
 
+  /**
+   * Create java.lang.reflect.Method.toString() compatible descriptor
+   */
   public static String createMethodDescriptor(MethodInfo methodInfo) {
+    String access = "public";
+    int flags = methodInfo.flags();
+    if ((flags & java.lang.reflect.Modifier.PRIVATE) != 0) {
+      access = "private";
+    } else if ((flags & Modifier.PROTECTED) != 0) {
+      access = "protected";
+    }
+
     StringBuilder builder = new StringBuilder();
-    builder.append(methodInfo.declaringClass().name().toString());
+    builder.append(access);
+    builder.append(" ");
+    builder.append(methodInfo.returnType().name());
+    builder.append(" ");
+    builder.append(methodInfo.declaringClass().name());
     builder.append(".");
     builder.append(methodInfo.name());
     builder.append("(");
     List<MethodParameterInfo> parameters = methodInfo.parameters();
     for (int i = 0; i < parameters.size(); i++) {
-      builder.append(parameters.get(i).name());
+      MethodParameterInfo parameterInfo = parameters.get(i);
+      builder.append(parameterInfo.type().name());
       if (i < parameters.size() - 1) {
         builder.append(",");
       }
     }
     builder.append(")");
     return builder.toString();
+  }
+
+  private static String[] computeMethodImplRefDescriptor(ClassInfo implClass, MethodInfo method) {
+    String implMethodRef;
+    String implMethodDescriptor;
+    if (implClass != null) { // Add implementation method
+      Type[] params = method.parameterTypes().toArray(new Type[] {});
+      MethodInfo implMethod = implClass.method(method.name(), params);
+      if (implMethod != null) { // some interfaces can have default methods
+        implMethodRef = JandexUtil.createUniqueMethodReference(implClass, implMethod);
+        implMethodDescriptor = createMethodDescriptor(implMethod);
+      } else {
+        implMethodRef = null;
+        implMethodDescriptor = null;
+      }
+    } else {
+      implMethodRef = null;
+      implMethodDescriptor = null;
+    }
+    return new String[] {implMethodRef, implMethodDescriptor};
+  }
+
+  private static String computeVerb(MethodInfo method) {
+    if (method.hasAnnotation(GET_ANNOTATION)) {
+      return GET_ANNOTATION.withoutPackagePrefix();
+    } else if (method.hasAnnotation(PUT_ANNOTATION)) {
+      return PUT_ANNOTATION.withoutPackagePrefix();
+    } else if (method.hasAnnotation(POST_ANNOTATION)) {
+      return POST_ANNOTATION.withoutPackagePrefix();
+    } else if (method.hasAnnotation(DELETE_ANNOTATION)) {
+      return DELETE_ANNOTATION.withoutPackagePrefix();
+    } else {
+      return "UNKNOWN";
+    }
+  }
+
+  private static RestMethod.Action computeAction(MethodInfo method, DotName methodParamClass, DotName dataClass,
+                                                 IndexView indexView) {
+    ClassInfo methodParamClassInfo = null;
+    if (methodParamClass != null) {
+      methodParamClassInfo = indexView.getClassByName(methodParamClass);
+    }
+    if (method.hasAnnotation(GET_ANNOTATION)) {
+      return RestMethod.Action.READ;
+    } else if (method.hasAnnotation(PUT_ANNOTATION)) {
+      return RestMethod.Action.UPDATE;
+    } else if (method.hasAnnotation(POST_ANNOTATION)) {
+      if (methodParamClass == null) {
+        return RestMethod.Action.READ;
+      } else if (dataClass == null) {
+        return RestMethod.Action.READ;
+      } else {
+        ClassInfo dataClassInfo = indexView.getClassByName(dataClass);
+        if (List.class.getName().equals(methodParamClass.toString())
+            && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
+          return RestMethod.Action.CREATE;
+        } else if (isOrSubtype(JUTIL_COLLECTION, methodParamClassInfo, indexView)
+            && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
+          return RestMethod.Action.CREATE;
+        } else {
+          return RestMethod.Action.READ;
+        }
+      }
+    } else if (method.hasAnnotation(DELETE_ANNOTATION)) {
+      return RestMethod.Action.DELETE;
+    } else {
+      return RestMethod.Action.OTHER;
+    }
   }
 
   @BuildStep
@@ -268,20 +448,7 @@ public class RestProcessor {
         continue;
       }
       String path = pathAnnotation.value().asString();
-      pathAnnotation = method.declaredAnnotation(PATH_ANNOTATION);
-      String tmp;
-      if (pathAnnotation == null) {
-        tmp = "";
-      } else {
-        tmp = pathAnnotation.value().asString();
-        if (tmp == null) {
-          tmp = "";
-        }
-        if (!tmp.isBlank() && !tmp.startsWith("/") && !path.endsWith("/")) {
-          tmp = "/" + tmp;
-        }
-      }
-      String methodSegment = tmp;
+      String methodSegment = computeMethodPathSegment(apiClass, method);
       String methodPath = path + methodSegment;
 
       AnnotationInstance dynamicExecAnnotation = apiClass.annotation(DYN_CTX_ANNO);
@@ -289,27 +456,10 @@ public class RestProcessor {
       DotName classParamClass = getClassAnnotationValueIfDifferent(
           dynamicExecAnnotation, "value", ANNO_VALUE
       );
-      DotName tmpDataClass = getClassAnnotationValueIfDifferent(
-          dynamicExecAnnotation, "dataClass", ANNO_DATA_CLASS
-      );
-      DotName methodParamClass = null;
-      if (!method.hasAnnotation(GET_ANNOTATION)) {
-        List<Type> types = method.parameterTypes();
-        if (types.size() != 1) {
-          log.warn("Contract violation: The rest method should have only one parameter class [{}] ");
-        } else {
-          Type methodParameterType = types.iterator().next();
-          methodParamClass = methodParameterType.name();
-          if (methodParameterType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
-            if (!methodParameterType.asParameterizedType().arguments().isEmpty()) {
-              // Get the first type argument
-              Type typeArgument = methodParameterType.asParameterizedType().arguments().get(0);
-              tmpDataClass = typeArgument.name();
-            }
-          }
-        }
-      }
-      DotName dataClass = tmpDataClass;
+
+      DotName[] computed = computeParamDataClass(apiClass, method, indexView);
+      DotName methodParamClass = computed[0];
+      DotName dataClass = computed[1];
       String segment = extractSecondFromLastPathSegment(path);
 
       DotName execContextClass = getClassAnnotationValueIfDifferent(
@@ -356,67 +506,26 @@ public class RestProcessor {
           )
       );
 
-      RestMethod.Action action;
-      String verb;
-      if (method.hasAnnotation(GET_ANNOTATION)) {
-        action = RestMethod.Action.READ;
-        verb = GET_ANNOTATION.withoutPackagePrefix();
-      } else if (method.hasAnnotation(PUT_ANNOTATION)) {
-        action = RestMethod.Action.UPDATE;
-        verb = PUT_ANNOTATION.withoutPackagePrefix();
-      } else if (method.hasAnnotation(POST_ANNOTATION)) {
-        verb = POST_ANNOTATION.withoutPackagePrefix();
-        if (methodParamClass == null) {
-          action = RestMethod.Action.READ;
-        } else if (dataClass == null) {
-          action = RestMethod.Action.READ;
-        } else {
-          ClassInfo methodParamClassInfo = indexView.getClassByName(methodParamClass);
-          ClassInfo dataClassInfo = indexView.getClassByName(dataClass);
-          if (methodParamClassInfo == null
-              && methodParamClass.equals(JUTIL_LIST)
-              && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
-            action = RestMethod.Action.CREATE;
-          } else if (methodParamClassInfo != null
-              && isOrSubtype(JUTIL_COLLECTION, methodParamClassInfo, indexView)
-              && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
-            action = RestMethod.Action.CREATE;
-          } else {
-            action = RestMethod.Action.READ;
-          }
-        }
-      } else if (method.hasAnnotation(DELETE_ANNOTATION)) {
-        action = RestMethod.Action.DELETE;
-        verb = DELETE_ANNOTATION.withoutPackagePrefix();
-      } else {
-        action = RestMethod.Action.OTHER;
-        verb = "UNKNOWN";
+      RestMethod.Action action = computeAction(method, methodParamClass, dataClass, indexView);
+      String verb = computeVerb(method);
+
+      ClassInfo methodParamClassInfo = null;
+      if (methodParamClass != null) {
+        methodParamClassInfo = indexView.getClassByName(methodParamClass);
+      }
+      if (!isOrSubtype(CTX_PARAMS_IFACE, methodParamClassInfo, indexView)) {
+        methodParamClass = null;
       }
 
       String methodRef = JandexUtil.createUniqueMethodReference(apiClass, method);
-      String implMethodRef;
-      String implMethodDescriptor;
-      if (implClass != null) { // Add implementation method
-        Type[] params = method.parameterTypes().toArray(new Type[] {});
-        MethodInfo implMethod = implClass.method(method.name(), params);
-        if (implMethod != null) { // some interfaces can have default methods
-          implMethodRef = JandexUtil.createUniqueMethodReference(implClass, implMethod);
-          implMethodDescriptor = createMethodDescriptor(implMethod);
-        } else {
-          implMethodRef = null;
-          implMethodDescriptor = null;
-        }
-      } else {
-        implMethodRef = null;
-        implMethodDescriptor = null;
-      }
+      String[] implMethodRefDescr = computeMethodImplRefDescriptor(implClass, method);
 
       RestMethod restMethodMapping = new RestMethod(
           restClass.getApiClass(),
           methodRef,
           createMethodDescriptor(method),
-          implMethodRef,
-          implMethodDescriptor,
+          implMethodRefDescr[0],
+          implMethodRefDescr[1],
           methodParamClass != null ? methodParamClass.toString() : null,
           dataClass != null ? dataClass.toString() : null,
           execContextClass != null ? execContextClass.toString() : null,
@@ -431,9 +540,9 @@ public class RestProcessor {
       );
 
       restClass.apiMethodRef(methodRef, restMethodMapping);
-      if (implMethodRef != null) {
-        restClass.implMethodRef(implMethodRef, restMethodMapping);
-        mapping.addImplMethod(implMethodRef, restMethodMapping);
+      if (implMethodRefDescr[0] != null) {
+        restClass.implMethodRef(implMethodRefDescr[0], restMethodMapping);
+        mapping.addImplMethod(implMethodRefDescr[0], restMethodMapping);
       }
       mapping.addApiMethod(methodRef, restMethodMapping);
     }
@@ -519,7 +628,7 @@ public class RestProcessor {
   void addDynamicFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer) {
     dynamicFeatureBuildProducer.produce(
         new DynamicFeatureBuildItem(
-            "com.dropchop.recyclone.quarkus.runtime.rest.RestDynamicFeatures", true
+            "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeatures", true
         )
     );
   }
