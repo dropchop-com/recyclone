@@ -11,6 +11,7 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
+import io.quarkus.resteasy.reactive.spi.DynamicFeatureBuildItem;
 import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
@@ -212,6 +213,23 @@ public class RestProcessor {
     return implClass;
   }
 
+  public static String createMethodDescriptor(MethodInfo methodInfo) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(methodInfo.declaringClass().name().toString());
+    builder.append(".");
+    builder.append(methodInfo.name());
+    builder.append("(");
+    List<MethodParameterInfo> parameters = methodInfo.parameters();
+    for (int i = 0; i < parameters.size(); i++) {
+      builder.append(parameters.get(i).name());
+      if (i < parameters.size() - 1) {
+        builder.append(",");
+      }
+    }
+    builder.append(")");
+    return builder.toString();
+  }
+
   @BuildStep
   public void buildRestMapping(CombinedIndexBuildItem cibi,
                                RecycloneBuildConfig config,
@@ -377,22 +395,28 @@ public class RestProcessor {
 
       String methodRef = JandexUtil.createUniqueMethodReference(apiClass, method);
       String implMethodRef;
+      String implMethodDescriptor;
       if (implClass != null) { // Add implementation method
         Type[] params = method.parameterTypes().toArray(new Type[] {});
         MethodInfo implMethod = implClass.method(method.name(), params);
         if (implMethod != null) { // some interfaces can have default methods
           implMethodRef = JandexUtil.createUniqueMethodReference(implClass, implMethod);
+          implMethodDescriptor = createMethodDescriptor(implMethod);
         } else {
           implMethodRef = null;
+          implMethodDescriptor = null;
         }
       } else {
         implMethodRef = null;
+        implMethodDescriptor = null;
       }
 
       RestMethod restMethodMapping = new RestMethod(
           restClass.getApiClass(),
           methodRef,
+          createMethodDescriptor(method),
           implMethodRef,
+          implMethodDescriptor,
           methodParamClass != null ? methodParamClass.toString() : null,
           dataClass != null ? dataClass.toString() : null,
           execContextClass != null ? execContextClass.toString() : null,
@@ -491,7 +515,14 @@ public class RestProcessor {
     ));
   }
 
-
+  @BuildStep
+  void addDynamicFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer) {
+    dynamicFeatureBuildProducer.produce(
+        new DynamicFeatureBuildItem(
+            "com.dropchop.recyclone.quarkus.runtime.rest.RestDynamicFeatures", true
+        )
+    );
+  }
 
   @BuildStep
   @Record(STATIC_INIT)

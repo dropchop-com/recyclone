@@ -24,16 +24,18 @@ public class RestMapping {
     methods.put(methodRef, restMethod);
   }
 
-  public RestMethod addApiMethod(String methodRef, RestMethod restMethod) {
+  public void addApiMethod(String methodRef, RestMethod restMethod) {
     addMethod(methodRef, restMethod);
     apiMethods.put(methodRef, restMethod);
-    return restMethod;
+    apiMethods.put(restMethod.methodDescriptor, restMethod);
   }
 
-  public RestMethod addImplMethod(String methodRef, RestMethod restMethod) {
+  public void addImplMethod(String methodRef, RestMethod restMethod) {
     addMethod(methodRef, restMethod);
     implMethods.put(methodRef, restMethod);
-    return restMethod;
+    if (restMethod.implMethodDescriptor != null) {
+      implMethods.put(restMethod.implMethodDescriptor, restMethod);
+    }
   }
 
   public RestClass addApiClass(String apiClass, Supplier<RestClass> restClassProvider) {

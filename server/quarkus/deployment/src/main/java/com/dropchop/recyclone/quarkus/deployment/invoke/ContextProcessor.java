@@ -104,18 +104,22 @@ public class ContextProcessor {
     Map<String, Integer> contextPriority = new LinkedHashMap<>();
     Set<ContextMapping> contextMappings = new LinkedHashSet<>();
     for (Map.Entry<String, RestMethod> restMethodEntry : restMapping.getApiMethods().entrySet()) {
-      String paramsClass = restMethodEntry.getValue().getParamClass();
+      RestMethod restMethod = restMethodEntry.getValue();
+      if (restMethod.isExcluded()) {
+        continue;
+      }
+      String paramsClass = restMethod.getParamClass();
       fillClassPriorities(indexView, paramsClass, CTX_PARAMS_IFACE, paramsPriority);
 
-      RestClass restClass = restMapping.getApiClass(restMethodEntry.getValue().getApiClass());
-      String contextClass = restMethodEntry.getValue().getContextClass();
+      RestClass restClass = restMapping.getApiClass(restMethod.getApiClass());
+      String contextClass = restMethod.getContextClass();
       if (contextClass == null) {
         contextClass = restClass.getCtxClass();
       }
       if (contextClass == null) {
         contextClass = DEFAULT_EXEC_CTX.toString();
       }
-      String dataClass = restMethodEntry.getValue().getMethodDataClass();
+      String dataClass = restMethod.getMethodDataClass();
       if (dataClass == null) {
         dataClass = restClass.getDataClass();
       }

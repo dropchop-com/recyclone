@@ -23,7 +23,9 @@ public class RestMethod {
   final String path;
   final String rewrittenPath;
   final String methodRef;
+  final String methodDescriptor;
   final String implMethodRef;
+  final String implMethodDescriptor;
   final String name;
   final String verb;
   final String segment;
@@ -31,10 +33,10 @@ public class RestMethod {
   final Action action;
 
   @RecordableConstructor
-  public RestMethod(String apiClass, String methodRef, String implMethodRef,
-                    String methodParamClass, String methodDataClass, String contextClass, Action action,
-                    String name, String verb, boolean internal, String path, String rewrittenPath,
-                    String segment, boolean excluded) {
+  public RestMethod(String apiClass, String methodRef, String methodDescriptor, String implMethodRef,
+                    String implMethodDescriptor, String methodParamClass, String methodDataClass,
+                    String contextClass, Action action, String name, String verb, boolean internal,
+                    String path, String rewrittenPath, String segment, boolean excluded) {
     this.apiClass = apiClass;
     this.methodParamClass = methodParamClass;
     this.methodDataClass = methodDataClass;
@@ -44,7 +46,9 @@ public class RestMethod {
     this.path = path;
     this.rewrittenPath = rewrittenPath;
     this.methodRef = methodRef;
+    this.methodDescriptor = methodDescriptor;
     this.implMethodRef = implMethodRef;
+    this.implMethodDescriptor = implMethodDescriptor;
     this.name = name;
     this.verb = verb;
     this.segment = segment;
@@ -110,7 +114,15 @@ public class RestMethod {
     return methodRef;
   }
 
+  public String getMethodDescriptor() {
+    return methodDescriptor;
+  }
+
   public String getImplMethodRef() {
     return implMethodRef;
+  }
+
+  public String getImplMethodDescriptor() {
+    return implMethodDescriptor;
   }
 }

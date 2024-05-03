@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextParamsBinder;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextSelector;
 import com.dropchop.recyclone.quarkus.runtime.service.ServiceSelector;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
@@ -51,6 +52,13 @@ class RecycloneProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ExecContextSelector.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ExecContextParamsBinder.class)
             .setUnremovable()
             .build()
     );
