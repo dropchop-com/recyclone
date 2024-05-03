@@ -1,10 +1,11 @@
-package com.dropchop.recyclone.quarkus.runtime.rest;
+package com.dropchop.recyclone.quarkus.runtime.rest.openapi;
 
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 03. 24.
  */
+@SuppressWarnings("unused")
 public class OasMapping {
   final String methodRef;
   final String methodName;

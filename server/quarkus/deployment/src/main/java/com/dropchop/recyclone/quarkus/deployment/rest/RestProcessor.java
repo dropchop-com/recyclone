@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.deployment.rest;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.*;
+import com.dropchop.recyclone.quarkus.runtime.rest.openapi.OasFilter;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;

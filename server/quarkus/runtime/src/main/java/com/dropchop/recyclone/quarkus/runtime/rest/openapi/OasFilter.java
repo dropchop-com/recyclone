@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.rest;
+package com.dropchop.recyclone.quarkus.runtime.rest.openapi;
 
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
@@ -8,6 +8,9 @@ import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import io.smallrye.openapi.api.models.OperationImpl;
 import io.smallrye.openapi.api.models.PathItemImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
@@ -185,11 +188,13 @@ public class OasFilter implements OASFilter {
             if (restMethod == null) {
               continue;
             }
-            String normalized = URL_PATTERN.matcher(restMethod.path).replaceAll("{$1}");
+            String normalized = URL_PATTERN.matcher(restMethod.getPath()).replaceAll("{$1}");
             if (!original.endsWith(normalized)) {
               continue;
             }
-            String normalizedRewritten = URL_PATTERN.matcher(restMethod.rewrittenPath).replaceAll("{$1}");
+            String normalizedRewritten = URL_PATTERN.matcher(
+                restMethod.getRewrittenPath()).replaceAll("{$1}"
+            );
             String tmp = original.replace(normalized, normalizedRewritten);
             if (original.equals(tmp)) {
               continue;
@@ -364,7 +369,7 @@ public class OasFilter implements OASFilter {
     if (method.isInternal() && !this.restMapping.isDevTest()) {
       return true;
     }
-    RestClass restClass = this.restMapping.getApiClass(method.apiClass);
+    RestClass restClass = this.restMapping.getApiClass(method.getApiClass());
     return !restClass.isImplMissingPath() && this.restMapping.isApiMethod(methodRef);
   }
 
@@ -387,7 +392,7 @@ public class OasFilter implements OASFilter {
       return null;
     }
 
-    RestClass restClass = this.restMapping.getApiClass(method.apiClass);
+    RestClass restClass = this.restMapping.getApiClass(method.getApiClass());
     String defaultName = splitCamelCase(restClass.getApiClass());
     List<String> tags = operation.getTags();
     if (tags == null || tags.isEmpty()) {
@@ -396,7 +401,7 @@ public class OasFilter implements OASFilter {
       operation.setTags(List.of(method.getSegment()));
     }
 
-    String paramClass = restClass.paramClass;
+    String paramClass = restClass.getParamClass();
     if (paramClass == null) {
       paramClass = method.getParamClass();
     }
