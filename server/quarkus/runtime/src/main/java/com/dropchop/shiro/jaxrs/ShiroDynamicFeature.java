@@ -1,6 +1,8 @@
 package com.dropchop.shiro.jaxrs;
 
 import com.dropchop.recyclone.model.api.security.annotations.*;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
@@ -22,6 +24,14 @@ import java.util.List;
 public class ShiroDynamicFeature implements DynamicFeature {
 
   private static final Logger log = LoggerFactory.getLogger(ShiroDynamicFeature.class);
+
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  RestMapping restMapping; // TODO: read sec spec in the processor.
+
+  public ShiroDynamicFeature() {
+    log.info("Creating ShiroDynamicFeature");
+  }
 
   private static final List<Class<? extends Annotation>> shiroAnnotations =
     List.of(
@@ -48,13 +58,14 @@ public class ShiroDynamicFeature implements DynamicFeature {
 
   public static <T extends Annotation> boolean findAnnotation(final Class<T> annotationType,
                                                               final List<Annotation> authzSpecs,
+                                                              final Class<?> myClass,
                                                               final Method myMethod) {
     T[] annoArray = myMethod.getAnnotationsByType(annotationType);
     if (checkAdd(authzSpecs, annoArray)) {
       return true;
     }
-    Class<?> declaringClass = myMethod.getDeclaringClass();
-    if (declaringClass.equals(Object.class)) {
+    Class<?> declaringClass = myClass;
+    if (myClass.equals(Object.class)) {
       return false;
     }
     annoArray = declaringClass.getAnnotationsByType(annotationType);
@@ -64,7 +75,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
     for (Class<?> iface : declaringClass.getInterfaces()) {
       try {
         Method m = iface.getMethod(myMethod.getName(), myMethod.getParameterTypes());
-        if (findAnnotation(annotationType, authzSpecs, m)) {
+        if (findAnnotation(annotationType, authzSpecs, iface, m)) {
           return true;
         }
       } catch (NoSuchMethodException ignored) {
@@ -76,7 +87,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
     }
     try {
       Method m = declaringClass.getMethod(myMethod.getName(), myMethod.getParameterTypes());
-      if (findAnnotation(annotationType, authzSpecs, m)) {
+      if (findAnnotation(annotationType, authzSpecs, declaringClass, m)) {
         return true;
       }
     } catch (NoSuchMethodException ignored) {
@@ -86,11 +97,27 @@ public class ShiroDynamicFeature implements DynamicFeature {
   }
 
   @Override
-  public void configure(ResourceInfo ri, FeatureContext context) {
+  public void configure(ResourceInfo resourceInfo, FeatureContext context) {
     List<Annotation> authzSpecs = new ArrayList<>();
-    Method rMethod = ri.getResourceMethod();
+    Method method = resourceInfo.getResourceMethod();
+    Class<?> clazz = resourceInfo.getResourceClass();
+    String methodDescriptor = method.toString();
+    if (!method.getDeclaringClass().equals(resourceInfo.getResourceClass())) {
+      methodDescriptor = methodDescriptor.replace(
+          method.getDeclaringClass().getName(), resourceInfo.getResourceClass().getName()
+      );
+    }
+    RestMethod restMethod = restMapping.getMethod(methodDescriptor);
+    if (restMethod == null) {
+      return;
+    }
+    if (restMethod.isExcluded()) {
+      // TODO add blocking deny-all filter
+      return;
+    }
+
     for (Class<? extends Annotation> annotationClass : shiroAnnotations) {
-      findAnnotation(annotationClass, authzSpecs, rMethod);
+      findAnnotation(annotationClass, authzSpecs, clazz, method);
     }
 
     context.register(
@@ -105,23 +132,23 @@ public class ShiroDynamicFeature implements DynamicFeature {
       log.trace(
           "Registered {} for [{}:{}] with [{}]",
           ShiroResponseFilter.class.getSimpleName(),
-          ri.getResourceClass().getSimpleName(),
-          ri.getResourceMethod().getName(),
+          resourceInfo.getResourceClass().getSimpleName(),
+          resourceInfo.getResourceMethod().getName(),
           authzSpecs
       );
       context.register(
         new ShiroAuthorizationFilter(
-          authorizationService,
-          authzSpecs,
-          ri.getResourceClass().getSimpleName(),
-          ri.getResourceMethod().getName()),
+            authorizationService,
+            authzSpecs,
+            resourceInfo.getResourceClass().getSimpleName(),
+            resourceInfo.getResourceMethod().getName()),
         Priorities.AUTHORIZATION
       );
       log.debug(
           "Registered {} for [{}:{}] with [{}]",
           ShiroAuthorizationFilter.class.getSimpleName(),
-          ri.getResourceClass().getSimpleName(),
-          ri.getResourceMethod().getName(),
+          resourceInfo.getResourceClass().getSimpleName(),
+          resourceInfo.getResourceMethod().getName(),
           authzSpecs
       );
     }

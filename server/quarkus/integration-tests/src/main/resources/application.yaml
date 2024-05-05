@@ -58,6 +58,7 @@ quarkus:
         license:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+      # noinspection QsYaml
       security:
         ApiKey:
           type: http
@@ -78,7 +79,7 @@ quarkus:
         # - glob pattern with * and ?
         # - regex pattern if expr starts with ^ character
         - "com.dropchop.recyclone.quarkus.it.rest.api.*"
-        - "*.localization.*"
+        #- "*.localization.*"
     service:
       qualifier: recyclone_jpa_default
       LanguageService:

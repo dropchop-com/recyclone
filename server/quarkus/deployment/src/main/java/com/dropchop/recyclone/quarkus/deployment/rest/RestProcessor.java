@@ -3,7 +3,11 @@ package com.dropchop.recyclone.quarkus.deployment.rest;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.*;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ContentTypeFilter;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeature;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.dropchop.recyclone.quarkus.runtime.rest.openapi.OasFilter;
+import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -312,7 +316,7 @@ public class RestProcessor {
   /**
    * Create java.lang.reflect.Method.toString() compatible descriptor
    */
-  public static String createMethodDescriptor(MethodInfo methodInfo) {
+  public static String createMethodDescriptor(ClassInfo classInfo, MethodInfo methodInfo) {
     String access = "public";
     int flags = methodInfo.flags();
     if ((flags & java.lang.reflect.Modifier.PRIVATE) != 0) {
@@ -326,7 +330,7 @@ public class RestProcessor {
     builder.append(" ");
     builder.append(methodInfo.returnType().name());
     builder.append(" ");
-    builder.append(methodInfo.declaringClass().name());
+    builder.append(classInfo.name());
     builder.append(".");
     builder.append(methodInfo.name());
     builder.append("(");
@@ -350,10 +354,10 @@ public class RestProcessor {
       MethodInfo implMethod = implClass.method(method.name(), params);
       if (implMethod != null) { // some interfaces can have default methods
         implMethodRef = JandexUtil.createUniqueMethodReference(implClass, implMethod);
-        implMethodDescriptor = createMethodDescriptor(implMethod);
-      } else {
-        implMethodRef = null;
-        implMethodDescriptor = null;
+        implMethodDescriptor = createMethodDescriptor(implClass, implMethod);
+      } else { // it was defined in upper class, here we cheat
+        implMethodRef = JandexUtil.createUniqueMethodReference(implClass, method);
+        implMethodDescriptor = createMethodDescriptor(implClass, method);
       }
     } else {
       implMethodRef = null;
@@ -523,7 +527,7 @@ public class RestProcessor {
       RestMethod restMethodMapping = new RestMethod(
           restClass.getApiClass(),
           methodRef,
-          createMethodDescriptor(method),
+          createMethodDescriptor(apiClass, method),
           implMethodRefDescr[0],
           implMethodRefDescr[1],
           methodParamClass != null ? methodParamClass.toString() : null,
@@ -625,33 +629,27 @@ public class RestProcessor {
   }
 
   @BuildStep
-  void addDynamicFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer) {
+  void addJaxRsFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer,
+                        BuildProducer<CustomContainerRequestFilterBuildItem> requestFilterBuildItemBuildProducer,
+                        BuildProducer<CustomExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
     dynamicFeatureBuildProducer.produce(
         new DynamicFeatureBuildItem(
-            "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeatures", true
+            RestDynamicFeature.class.getName(), true
         )
     );
     dynamicFeatureBuildProducer.produce(
         new DynamicFeatureBuildItem(
-            "com.dropchop.shiro.jaxrs.ShiroDynamicFeature", true
+            ShiroDynamicFeature.class.getName(), true
         )
     );
-  }
-
-  @BuildStep
-  void addContentTypeFilter(BuildProducer<CustomContainerRequestFilterBuildItem> buildItemBuildProducer) {
-    buildItemBuildProducer.produce(
+    requestFilterBuildItemBuildProducer.produce(
         new CustomContainerRequestFilterBuildItem(
-            "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ContentTypeFilter"
+            ContentTypeFilter.class.getName()
         )
     );
-  }
-
-  @BuildStep
-  void addExceptionMapper(BuildProducer<CustomExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
     exceptionMapperBuildItemBuildProducer.produce(
         new CustomExceptionMapperBuildItem(
-            "com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper"
+            ServiceErrorExceptionMapper.class.getName()
         )
     );
   }

@@ -16,9 +16,9 @@ import java.lang.reflect.Method;
 import static jakarta.ws.rs.Priorities.*;
 
 @SuppressWarnings({"CdiInjectionPointsInspection", "unused"})
-public class RestDynamicFeatures implements DynamicFeature {
+public class RestDynamicFeature implements DynamicFeature {
 
-  private static final Logger log = LoggerFactory.getLogger(RestDynamicFeatures.class);
+  private static final Logger log = LoggerFactory.getLogger(RestDynamicFeature.class);
 
   @Inject
   RestMapping restMapping;
@@ -26,17 +26,29 @@ public class RestDynamicFeatures implements DynamicFeature {
   @Inject
   ExecContextBinder execContextBinder;
 
+  public RestDynamicFeature() {
+    log.info("Creating RestDynamicFeature");
+  }
+
   @Override
   public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
     Method method = resourceInfo.getResourceMethod();
-    RestMethod restMethod = restMapping.getMethod(method.toString());
+    String methodDescriptor = method.toString();
+    if (!method.getDeclaringClass().equals(resourceInfo.getResourceClass())) {
+      methodDescriptor = methodDescriptor.replace(
+          method.getDeclaringClass().getName(), resourceInfo.getResourceClass().getName()
+      );
+    }
+    RestMethod restMethod = restMapping.getMethod(methodDescriptor);
     if (restMethod == null) {
       return;
     }
     if (restMethod.isExcluded()) {
-      //TODO add blocking deny-all filter
+      // TODO add blocking deny-all filter
       return;
     }
+
+    log.trace("Looking at [{}#{}]", resourceInfo.getResourceClass().getName(), method.getName());
     RestClass restClass = restMapping.getApiClass(restMethod.getApiClass());
 
     // Input chain
@@ -48,7 +60,7 @@ public class RestDynamicFeatures implements DynamicFeature {
             "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext",
             execContextBinder
         ),
-        0
+        AUTHENTICATION - 100
     );
 
     if (restMethod.getAction().equals(RestMethod.Action.READ)) {
