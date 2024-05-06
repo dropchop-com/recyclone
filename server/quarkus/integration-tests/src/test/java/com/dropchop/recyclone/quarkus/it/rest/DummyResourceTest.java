@@ -35,6 +35,7 @@ public class DummyResourceTest {
   public void dummyRestGet() {
     given()
         .log().all()
+        //.accept(MediaType.APPLICATION_JSON)
         .auth().preemptive().basic("user1", "password")
         .when()
         .get("/api/public/test/dummy")
