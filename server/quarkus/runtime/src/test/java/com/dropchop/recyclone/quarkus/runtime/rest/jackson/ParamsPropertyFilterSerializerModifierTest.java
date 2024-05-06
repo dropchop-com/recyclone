@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.server;
+package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeDate;
@@ -21,24 +21,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
+class ParamsPropertyFilterSerializerModifierTest {
 
-/**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
- */
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
-class PropertyFilterSerializerTest {
+  //private static final Logger log = LoggerFactory.getLogger(ParamsPropertyFilterSerializerModifierTest.class);
 
-  private static final Logger log = LoggerFactory.getLogger(PropertyFilterSerializerTest.class);
-
+  @SuppressWarnings("FieldCanBeLocal")
   private LanguageGroup southSlavic, westGermanic, slavic, germanic, baltoSlav, indoEu;
+  @SuppressWarnings("FieldCanBeLocal")
   private Language sl, en;
 
   @BeforeEach
@@ -88,13 +82,13 @@ class PropertyFilterSerializerTest {
     southSlavic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
     southSlavic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
     southSlavic.addAttribute(AttributeString.builder()
-      .name("prop1").value("prop1 value").build());
+        .name("prop1").value("prop1 value").build());
     southSlavic.addAttribute(AttributeBool.builder()
-      .name("prop2").value(Boolean.FALSE).build());
+        .name("prop2").value(Boolean.FALSE).build());
     southSlavic.addAttribute(AttributeDate.builder()
-      .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
+        .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
     southSlavic.addAttribute(AttributeValueList.builder()
-      .name("prop4").value(List.of("item1", "item2", "item3")).build());
+        .name("prop4").value(List.of("item1", "item2", "item3")).build());
 
     westGermanic = new LanguageGroup("west_germanic");
     westGermanic.setTitle("West Germanic");
@@ -105,16 +99,16 @@ class PropertyFilterSerializerTest {
     westGermanic.setCreated(Iso8601.fromIso("2022-08-27T00:00:00Z"));
     westGermanic.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
     westGermanic.addAttribute(AttributeString.builder()
-      .name("prop1").value("prop1 value").build());
+        .name("prop1").value("prop1 value").build());
     westGermanic.addAttribute(AttributeBool.builder()
-      .name("prop2").value(Boolean.FALSE).build());
+        .name("prop2").value(Boolean.FALSE).build());
     westGermanic.addAttribute(AttributeDate.builder()
-      .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
+        .name("prop3").value(Iso8601.fromIso("2022-08-01")).build());
     westGermanic.addAttribute(AttributeValueList.builder()
-      .name("prop4").value(List.of(
-        Iso8601.fromIso("2022-08-01"),
-        Iso8601.fromIso("2022-08-02"),
-        Iso8601.fromIso("2022-08-03"))).build());
+        .name("prop4").value(List.of(
+            Iso8601.fromIso("2022-08-01"),
+            Iso8601.fromIso("2022-08-02"),
+            Iso8601.fromIso("2022-08-03"))).build());
 
     sl = new Language("sl");
     sl.addTranslation(new TitleTranslation("sl", "Slovenski"));
@@ -290,7 +284,7 @@ class PropertyFilterSerializerTest {
            ]
         }
      ]
-      """;
+     """;
     JSONAssert.assertEquals(expected, json, true);
   }
 
@@ -298,16 +292,16 @@ class PropertyFilterSerializerTest {
   void serializeTestContentDetailAllIdCode() throws Exception {
     CodeParams params = new CodeParams();
     params.filter()
-      .content()
-      .treeLevel(2)
-      .detailLevel(ContentDetail.ALL_OBJS_IDCODE);
+        .content()
+        .treeLevel(2)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
-      [
+     [
         {
            "code":"sl",
            "tags":[
@@ -318,7 +312,7 @@ class PropertyFilterSerializerTest {
            ]
         }
      ]
-      """;
+     """;
     JSONAssert.assertEquals(expected, json, true);
   }
 
@@ -326,11 +320,11 @@ class PropertyFilterSerializerTest {
   void serializeTestContentDetailAllIdCodeTitle() throws Exception {
     CodeParams params = new CodeParams();
     params.filter()
-      .content()
-      .treeLevel(2)
-      .detailLevel(ContentDetail.ALL_OBJS_IDCODE_TITLE);
+        .content()
+        .treeLevel(2)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
-    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
+  ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
@@ -359,9 +353,9 @@ class PropertyFilterSerializerTest {
   void serializeTestContentDetailAllIdCodeTitleTranslations() throws Exception {
     CodeParams params = new CodeParams();
     params.filter()
-      .content()
-      .treeLevel(2)
-      .detailLevel(ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
+        .content()
+        .treeLevel(2)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -408,16 +402,171 @@ class PropertyFilterSerializerTest {
   void serializeTestContentDetailNestedIdCode() throws Exception {
     CodeParams params = new CodeParams();
     params.filter()
-      .content()
-      .treeLevel(1)
-      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE);
+        .content()
+        .treeLevel(1)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
-       [
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "translations":[
+               {
+                  "lang":"sl",
+                  "title":"Slovenski"
+               },
+               {
+                  "lang":"sr",
+                  "title":"Slovenački"
+               }
+            ],
+            "tags":[
+               {
+                  "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "type": "LanguageGroup"
+               }
+            ],
+            "created":"2022-08-27T00:00:00Z",
+            "modified":"2022-08-27T00:00:00Z"
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCodeTitle() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+        .content()
+        .treeLevel(1)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+         {
+            "code":"sl",
+            "title":"Slovene",
+            "lang":"en",
+            "translations":[
+               {
+                  "lang":"sl",
+                  "title":"Slovenski"
+               },
+               {
+                  "lang":"sr",
+                  "title":"Slovenački"
+               }
+            ],
+            "tags":[
+               {
+                  "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                  "type": "LanguageGroup",
+                  "title":"Indo-European",
+                  "lang":"en",
+                  "name":"indo_european"
+               }
+            ],
+            "created":"2022-08-27T00:00:00Z",
+            "modified":"2022-08-27T00:00:00Z"
+         }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCodeTitleTrans() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+        .content()
+        .treeLevel(1)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    String json = mapper.writeValueAsString(List.of(sl));
+    String expected = """
+      [
+        {
+          "code":"sl",
+          "title":"Slovene",
+          "lang":"en",
+          "translations":[
+             {
+                "lang":"sl",
+                "title":"Slovenski"
+             },
+             {
+                "lang":"sr",
+                "title":"Slovenački"
+             }
+          ],
+          "tags":[
+             {
+                "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
+                "type": "LanguageGroup",
+                "title":"Indo-European",
+                "lang":"en",
+                "translations":[
+                   {
+                      "lang":"sl",
+                      "title":"Indoevropski"
+                   }
+                ],
+                "name":"indo_european"
+             }
+          ],
+          "created":"2022-08-27T00:00:00Z",
+          "modified":"2022-08-27T00:00:00Z"
+        }
+      ]
+      """;
+    JSONAssert.assertEquals(expected, json, true);
+  }
+
+  @Test
+  void serializeTestContentDetailNestedIdCodeResult() throws Exception {
+    CodeParams params = new CodeParams();
+    params.filter()
+        .content()
+        .treeLevel(1)
+        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapper mapper = producer.createObjectMapper();
+
+    ResultStatus status = new ResultStatus();
+    status.setCode(ResultCode.success);
+    status.setTime(100);
+    status.setTotal(1);
+
+    Result<Language> result = new Result<>();
+    result.setId("c0991011-4b5d-4b85-9870-6d7a19356926");
+    result.setStatus(status);
+    result.setData(List.of(sl));
+
+    String json = mapper.writeValueAsString(result);
+    String expected = """
+     {
+        "id":"c0991011-4b5d-4b85-9870-6d7a19356926",
+        "status":{
+           "code":"success",
+           "time":100,
+           "total":1
+        },
+        "data":[
            {
               "code":"sl",
               "title":"Slovene",
@@ -442,163 +591,8 @@ class PropertyFilterSerializerTest {
               "modified":"2022-08-27T00:00:00Z"
            }
         ]
-      """;
-    JSONAssert.assertEquals(expected, json, true);
-  }
-
-  @Test
-  void serializeTestContentDetailNestedIdCodeTitle() throws Exception {
-    CodeParams params = new CodeParams();
-    params.filter()
-      .content()
-      .treeLevel(1)
-      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE_TITLE);
-
-    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
-
-    String json = mapper.writeValueAsString(List.of(sl));
-    String expected = """
-       [
-           {
-              "code":"sl",
-              "title":"Slovene",
-              "lang":"en",
-              "translations":[
-                 {
-                    "lang":"sl",
-                    "title":"Slovenski"
-                 },
-                 {
-                    "lang":"sr",
-                    "title":"Slovenački"
-                 }
-              ],
-              "tags":[
-                 {
-                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
-                    "type": "LanguageGroup",
-                    "title":"Indo-European",
-                    "lang":"en",
-                    "name":"indo_european"
-                 }
-              ],
-              "created":"2022-08-27T00:00:00Z",
-              "modified":"2022-08-27T00:00:00Z"
-           }
-       ]
-      """;
-    JSONAssert.assertEquals(expected, json, true);
-  }
-
-  @Test
-  void serializeTestContentDetailNestedIdCodeTitleTrans() throws Exception {
-    CodeParams params = new CodeParams();
-    params.filter()
-      .content()
-      .treeLevel(1)
-      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
-
-    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
-
-    String json = mapper.writeValueAsString(List.of(sl));
-    String expected = """
-       [
-           {
-              "code":"sl",
-              "title":"Slovene",
-              "lang":"en",
-              "translations":[
-                 {
-                    "lang":"sl",
-                    "title":"Slovenski"
-                 },
-                 {
-                    "lang":"sr",
-                    "title":"Slovenački"
-                 }
-              ],
-              "tags":[
-                 {
-                    "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
-                    "type": "LanguageGroup",
-                    "title":"Indo-European",
-                    "lang":"en",
-                    "translations":[
-                       {
-                          "lang":"sl",
-                          "title":"Indoevropski"
-                       }
-                    ],
-                    "name":"indo_european"
-                 }
-              ],
-              "created":"2022-08-27T00:00:00Z",
-              "modified":"2022-08-27T00:00:00Z"
-           }
-        ]
-      """;
-    JSONAssert.assertEquals(expected, json, true);
-  }
-
-  @Test
-  void serializeTestContentDetailNestedIdCodeResult() throws Exception {
-    CodeParams params = new CodeParams();
-    params.filter()
-      .content()
-      .treeLevel(1)
-      .detailLevel(ContentDetail.NESTED_OBJS_IDCODE);
-
-    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
-
-    ResultStatus status = new ResultStatus();
-    status.setCode(ResultCode.success);
-    status.setTime(100);
-    status.setTotal(1);
-
-    Result<Language> result = new Result<>();
-    result.setId("c0991011-4b5d-4b85-9870-6d7a19356926");
-    result.setStatus(status);
-    result.setData(List.of(sl));
-
-    String json = mapper.writeValueAsString(result);
-    String expected = """
-       {
-          "id":"c0991011-4b5d-4b85-9870-6d7a19356926",
-          "status":{
-             "code":"success",
-             "time":100,
-             "total":1
-          },
-          "data":[
-             {
-                "code":"sl",
-                "title":"Slovene",
-                "lang":"en",
-                "translations":[
-                   {
-                      "lang":"sl",
-                      "title":"Slovenski"
-                   },
-                   {
-                      "lang":"sr",
-                      "title":"Slovenački"
-                   }
-                ],
-                "tags":[
-                   {
-                      "id":"4f544a62-5156-353a-9f18-17489a29c3b2",
-                      "type": "LanguageGroup"
-                   }
-                ],
-                "created":"2022-08-27T00:00:00Z",
-                "modified":"2022-08-27T00:00:00Z"
-             }
-          ]
-       }
-      """;
+     }
+     """;
     JSONAssert.assertEquals(expected, json, true);
   }
 }

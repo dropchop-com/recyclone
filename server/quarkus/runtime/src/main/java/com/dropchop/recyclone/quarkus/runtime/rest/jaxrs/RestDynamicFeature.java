@@ -69,6 +69,10 @@ public class RestDynamicFeature implements DynamicFeature {
       );
     }
 
+    featureContext.register( // initialize and pass new params to JAX-RS context property
+        new DtoDataInterceptor(restClass, restMethod), HEADER_DECORATOR
+    );
+
     // Output chain
     featureContext.register( // terminate and fill result vars from exec context and clear MDC
         new ExecContextTerminator(),

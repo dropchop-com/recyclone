@@ -5,11 +5,9 @@ import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsSelector;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
+import com.fasterxml.jackson.databind.deser.ResolvableDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -29,6 +27,30 @@ public class ParamsFactoryDeserializerModifier extends BeanDeserializerModifier 
 
   private final Set<Class<? extends Params>> paramsClasses = new LinkedHashSet<>();
   private final ParamsSelector paramsSelector;
+
+  public static class CustomStdDeserializer<P extends Params> extends StdDeserializer<P> implements ResolvableDeserializer {
+
+    private final P instance;
+    private final JsonDeserializer<?> delegate;
+
+    public CustomStdDeserializer(P instance, JsonDeserializer<?> deserializer) {
+      super(instance.getClass());
+      this.instance = instance;
+      this.delegate = deserializer;
+    }
+
+    @Override
+    public P deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+      // Deserialize using the default deserializer
+      //noinspection unchecked
+      return  ((JsonDeserializer<P>) delegate).deserialize(p, ctxt, instance);
+    }
+
+    @Override
+    public void resolve(DeserializationContext deserializationContext) throws JsonMappingException {
+      ((ResolvableDeserializer) delegate).resolve(deserializationContext);
+    }
+  }
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -58,19 +80,13 @@ public class ParamsFactoryDeserializerModifier extends BeanDeserializerModifier 
                                                 BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
     for (Class<? extends Params> clazz : paramsClasses) {
       if (clazz.equals(beanDesc.getBeanClass())) {
-        return new StdDeserializer<>(clazz) {
-          @Override
-          public Params deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            // Load instance using CDI
-            Params instance = paramsSelector.select(clazz);
-
-            // Deserialize using the default deserializer
-            //noinspection unchecked
-            return ((JsonDeserializer<Params>) deserializer).deserialize(p, ctxt, instance);
-          }
-        };
+        // Load instance using CDI
+        Params instance = paramsSelector.select(clazz);
+        return new CustomStdDeserializer<>(instance, deserializer);
       }
     }
     return deserializer; // return the original deserializer for other classes
   }
+
+
 }

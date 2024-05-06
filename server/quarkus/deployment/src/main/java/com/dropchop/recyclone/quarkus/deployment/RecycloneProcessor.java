@@ -28,7 +28,6 @@ class RecycloneProcessor {
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-model-dto"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-api"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-api-internal"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-server-rest-jackson"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-server-rest-jaxrs"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-repo-api"));
     indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-service-api"));

@@ -1,6 +1,6 @@
-package com.dropchop.recyclone.rest.jackson.server;
+package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.filtering.FieldFilter;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -8,19 +8,18 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
+ * @noinspection unused
  */
-@SuppressWarnings("unused")
-public class
-PropertyFilterSerializerModifier extends BeanSerializerModifier {
+public class ParamsPropertyFilterSerializerModifier extends BeanSerializerModifier {
 
-  private final FieldFilter filter;
+  private final Params params;
 
-  public PropertyFilterSerializerModifier() {
-    this.filter = null;
+  public ParamsPropertyFilterSerializerModifier() {
+    this.params = null;
   }
 
-  public PropertyFilterSerializerModifier(FieldFilter filter) {
-    this.filter = filter;
+  public ParamsPropertyFilterSerializerModifier(Params params) {
+    this.params = params;
   }
 
   @Override
@@ -29,6 +28,6 @@ PropertyFilterSerializerModifier extends BeanSerializerModifier {
                                             JsonSerializer<?> serializer) {
     @SuppressWarnings("unchecked")
     JsonSerializer<Object> jsonSerializer = (JsonSerializer<Object>) serializer;
-    return new PropertyFilterSerializer(jsonSerializer, filter);
+    return new ParamsPropertyFilterSerializer(jsonSerializer, params);
   }
 }

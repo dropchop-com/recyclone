@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.server;
+package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.filtering.FieldFilter;
@@ -11,21 +11,18 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
  */
-@Slf4j
 public class PropertyFilterSerializer extends StdSerializer<Object> {
   private final JsonSerializer<Object> delegate;
   private final FieldFilter filter;
 
   public PropertyFilterSerializer(JsonSerializer<Object> delegate,
                                   FieldFilter filter) {
-    //noinspection unchecked
     super(delegate.handledType());
     this.delegate = delegate;
     this.filter = filter;

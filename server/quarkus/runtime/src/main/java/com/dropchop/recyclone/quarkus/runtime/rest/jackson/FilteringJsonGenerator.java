@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.server;
+package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
 import com.dropchop.recyclone.model.api.attr.AttributeValueList;
 import com.dropchop.recyclone.model.api.base.Model;
@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.util.JsonGeneratorDelegate;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,6 @@ import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 08. 22.
  */
-@Slf4j
 public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 
   public interface Invokable {

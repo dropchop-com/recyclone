@@ -27,10 +27,31 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
+
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>
     </dependency>
+    <!--<dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>-->
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-parameter-names</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!--<dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-server-common</artifactId>
@@ -48,15 +69,32 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-model-dto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-rest-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-api</artifactId>
     </dependency>
+
     <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-server-rest-jackson</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.skyscreamer</groupId>
+      <artifactId>jsonassert</artifactId>
     </dependency>
   </dependencies>
 

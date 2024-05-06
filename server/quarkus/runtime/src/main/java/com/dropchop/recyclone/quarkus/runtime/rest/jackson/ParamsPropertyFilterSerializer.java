@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.server;
+package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
 import com.dropchop.recyclone.model.api.filtering.FieldFilter;
 import com.dropchop.recyclone.model.api.invoke.Params;
