@@ -277,7 +277,7 @@
 
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-server-rest-jaxrs</artifactId>
+        <artifactId>recyclone-rest-server</artifactId>
         <version>${project.version}</version>
       </dependency>
 

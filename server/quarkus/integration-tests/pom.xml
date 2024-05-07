@@ -70,7 +70,7 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-server-rest-jaxrs</artifactId>
+      <artifactId>recyclone-rest-server</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
