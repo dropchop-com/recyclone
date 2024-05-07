@@ -14,6 +14,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @RequestScoped
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class ActionResource extends ClassicRestByCodeResource<Action, CodeParams> implements
   com.dropchop.recyclone.rest.jaxrs.api.intern.security.ActionResource {
 
