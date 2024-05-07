@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.tagging;
 
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
+import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.*;
@@ -17,5 +17,5 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface TagToEntityMapper extends ToEntityMapper<Tag, ETag> {
+public interface TagToEntityMapper extends ToEntityMapper<Tag, JpaTag> {
 }

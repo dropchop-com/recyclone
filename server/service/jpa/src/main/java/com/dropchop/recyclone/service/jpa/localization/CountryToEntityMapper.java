@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
 import com.dropchop.recyclone.model.dto.localization.Country;
-import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
+import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.*;
@@ -17,5 +17,5 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface CountryToEntityMapper extends ToEntityMapper<Country, ECountry> {
+public interface CountryToEntityMapper extends ToEntityMapper<Country, JpaCountry> {
 }

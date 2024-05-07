@@ -6,7 +6,5 @@ package com.dropchop.recyclone.model.api.marker;
 public interface Constants {
   interface Implementation {
     String RECYCLONE_JPA_DEFAULT = "recyclone_jpa_default";
-    String RCYN_DEFAULT = "rcyn_default";
-    String RCYN_TEST = "rcyn_test";
   }
 }

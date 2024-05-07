@@ -19,8 +19,8 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
     HasUuidV3 model = (HasUuidV3)oModel;
     String newName = oModel.getClass().getSimpleName() + "." + name;
     UUID newUuid;
-    if (newName.startsWith("E") && Character.isUpperCase(newName.charAt(1))) {
-      newUuid = Uuid.getNameBasedV3(newName.substring(1));
+    if (newName.startsWith("Jpa") && Character.isUpperCase(newName.charAt(3))) {
+      newUuid = Uuid.getNameBasedV3(newName.substring(3));
     } else {
       newUuid = Uuid.getNameBasedV3(newName);
     }

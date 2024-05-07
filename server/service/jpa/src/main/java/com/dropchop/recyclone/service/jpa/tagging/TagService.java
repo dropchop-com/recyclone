@@ -2,7 +2,7 @@ package com.dropchop.recyclone.service.jpa.tagging;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
+import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.jpa.blaze.LikeTypeCriteriaDecorator;
@@ -31,7 +31,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
+public class TagService extends RecycloneCrudServiceImpl<Tag, JpaTag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 
   @Inject
@@ -49,7 +49,7 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, ETag, UUID>
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override
-  public ServiceConfiguration<Tag, ETag, UUID> getConfiguration() {
+  public ServiceConfiguration<Tag, JpaTag, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

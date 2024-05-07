@@ -2,7 +2,7 @@ package com.dropchop.recyclone.repo.jpa.blaze.security;
 
 
 import com.dropchop.recyclone.model.dto.invoke.UserParams;
-import com.dropchop.recyclone.model.entity.jpa.security.EUser;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
@@ -18,35 +18,35 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @ApplicationScoped
 @RepositoryType(RECYCLONE_JPA_DEFAULT)
 @SuppressWarnings("unused")
-public class UserRepository extends BlazeRepository<EUser, UUID> {
+public class UserRepository extends BlazeRepository<JpaUser, UUID> {
 
-  private static final EUser E_UUID_E_USER = new EUser();
+  private static final JpaUser E_UUID_E_USER = new JpaUser();
 
   @Override
   @SuppressWarnings("unchecked")
-  public Class<EUser> getRootClass() {
-    return (Class<EUser>) E_UUID_E_USER.getClass();
+  public Class<JpaUser> getRootClass() {
+    return (Class<JpaUser>) E_UUID_E_USER.getClass();
   }
 
 
-  public EUser findByLoginName(String loginName) {
+  public JpaUser findByLoginName(String loginName) {
     UserParams parameters = new UserParams();
     parameters.setLoginName(loginName);
-    BlazeExecContext<EUser> blazeExecContext = new BlazeExecContext<>();
+    BlazeExecContext<JpaUser> blazeExecContext = new BlazeExecContext<>();
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByLoginNameDecorator());
-    List<EUser> userList = this.find(blazeExecContext);
+    List<JpaUser> userList = this.find(blazeExecContext);
     return userList.isEmpty() ? null : userList.get(0);
   }
 
 
-  public EUser findByToken(String token) {
+  public JpaUser findByToken(String token) {
     UserParams parameters = new UserParams();
     parameters.setToken(token);
-    BlazeExecContext<EUser> blazeExecContext = new BlazeExecContext<>();
+    BlazeExecContext<JpaUser> blazeExecContext = new BlazeExecContext<>();
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByTokenDecorator());
-    List<EUser> userList = this.find(blazeExecContext);
+    List<JpaUser> userList = this.find(blazeExecContext);
     return userList.isEmpty() ? null : userList.get(0);
   }
 }

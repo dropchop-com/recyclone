@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class PermissionService extends RecycloneCrudServiceImpl<Permission, EPermission, UUID>
+public class PermissionService extends RecycloneCrudServiceImpl<Permission, JpaPermission, UUID>
   implements com.dropchop.recyclone.service.api.security.PermissionService {
 
   @Inject
@@ -36,7 +36,7 @@ public class PermissionService extends RecycloneCrudServiceImpl<Permission, EPer
   PermissionToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Permission, EPermission, UUID> getConfiguration() {
+  public ServiceConfiguration<Permission, JpaPermission, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

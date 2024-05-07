@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.model.dto.security.Role;
-import com.dropchop.recyclone.model.entity.jpa.security.ERole;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import org.mapstruct.Builder;
@@ -17,5 +17,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     builder = @Builder(disableBuilder = true),
     uses = ToDtoManipulator.class
 )
-public interface RoleToDtoMapper extends ToDtoMapper<Role, ERole> {
+public interface RoleToDtoMapper extends ToDtoMapper<Role, JpaRole> {
 }

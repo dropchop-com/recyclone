@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.ERole;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 
@@ -13,10 +13,10 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RepositoryType(RECYCLONE_JPA_DEFAULT)
-public class RoleRepository extends BlazeRepository<ERole, String> {
+public class RoleRepository extends BlazeRepository<JpaRole, String> {
 
   @Override
-  public Class<ERole> getRootClass() {
-    return ERole.class;
+  public Class<JpaRole> getRootClass() {
+    return JpaRole.class;
   }
 }

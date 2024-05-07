@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.quarkus.it.model.entity.jpa.EDummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.*;
@@ -17,5 +17,5 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface DummyToEntityMapper extends ToEntityMapper<Dummy, EDummy> {
+public interface DummyToEntityMapper extends ToEntityMapper<Dummy, JpaDummy> {
 }

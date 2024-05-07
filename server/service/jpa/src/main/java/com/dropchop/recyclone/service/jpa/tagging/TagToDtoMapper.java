@@ -4,10 +4,9 @@ import com.dropchop.recyclone.model.dto.tagging.CountryGroup;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.dto.tagging.Owner;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ECountryGroup;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ELanguageGroup;
-import com.dropchop.recyclone.model.entity.jpa.tagging.EOwner;
-import com.dropchop.recyclone.model.entity.jpa.tagging.ETag;
+import com.dropchop.recyclone.model.entity.jpa.tagging.*;
+import com.dropchop.recyclone.model.entity.jpa.tagging.JpaOwner;
+import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
 import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
@@ -23,9 +22,9 @@ import org.mapstruct.*;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true)
 )
-public interface TagToDtoMapper extends ToDtoMapper<Tag, ETag> {
-  @SubclassMapping( source = EOwner.class, target = Owner.class)
-  @SubclassMapping( source = ECountryGroup.class, target = CountryGroup.class)
-  @SubclassMapping( source = ELanguageGroup.class, target = LanguageGroup.class)
-  Tag toDto(ETag tags, @Context MappingContext context);
+public interface TagToDtoMapper extends ToDtoMapper<Tag, JpaTag> {
+  @SubclassMapping( source = JpaOwner.class, target = Owner.class)
+  @SubclassMapping( source = JpaCountryGroup.class, target = CountryGroup.class)
+  @SubclassMapping( source = JpaLanguageGroup.class, target = LanguageGroup.class)
+  Tag toDto(JpaTag tags, @Context MappingContext context);
 }

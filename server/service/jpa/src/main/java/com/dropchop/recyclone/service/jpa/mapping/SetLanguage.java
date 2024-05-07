@@ -8,8 +8,8 @@ import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasLanguageCode;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.Language;
-import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
-import com.dropchop.recyclone.model.entity.jpa.marker.HasELanguage;
+import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
+import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
 import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
 import com.dropchop.recyclone.service.api.mapping.EntityAllPreloadDelegate;
@@ -22,7 +22,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public class SetLanguage
-  extends EntityAllPreloadDelegate<Language, ELanguage, String>
+  extends EntityAllPreloadDelegate<Language, JpaLanguage, String>
   implements AfterToEntityListener {
 
   final Class<?> onlyForEntity;
@@ -43,15 +43,15 @@ public class SetLanguage
       return;
     }
     if (Constants.Actions.CREATE.equals(context.getSecurityAction())) { // for other actions it has no sense
-      if (entity instanceof HasLanguageCode && entity instanceof HasELanguage) {
+      if (entity instanceof HasLanguageCode && entity instanceof HasJpaLanguage) {
         String code = ((HasLanguageCode) entity).getLang();
         if (code == null) {
           throw new ServiceException(ErrorCode.internal_error, "Missing language code in lang field for DTO!",
             Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
         }
-        ELanguage lang = this.findById(new Language(code));
+        JpaLanguage lang = this.findById(new Language(code));
         if (lang != null) {
-          ((HasELanguage) entity).setLanguage(lang);
+          ((HasJpaLanguage) entity).setLanguage(lang);
         }
       }
     }

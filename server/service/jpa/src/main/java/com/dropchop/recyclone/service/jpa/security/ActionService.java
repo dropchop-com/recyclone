@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.model.dto.security.Action;
-import com.dropchop.recyclone.model.entity.jpa.security.EAction;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.ActionRepository;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -21,7 +21,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class ActionService extends RecycloneCrudServiceImpl<Action, EAction, String>
+public class ActionService extends RecycloneCrudServiceImpl<Action, JpaAction, String>
   implements com.dropchop.recyclone.service.api.security.ActionService {
 
   @Inject
@@ -35,7 +35,7 @@ public class ActionService extends RecycloneCrudServiceImpl<Action, EAction, Str
   ActionToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Action, EAction, String> getConfiguration() {
+  public ServiceConfiguration<Action, JpaAction, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

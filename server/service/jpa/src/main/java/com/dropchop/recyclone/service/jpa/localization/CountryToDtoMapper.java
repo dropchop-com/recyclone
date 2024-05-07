@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
 import com.dropchop.recyclone.model.dto.localization.Country;
-import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
+import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.service.api.mapping.DtoPolymorphicFactory;
 import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
@@ -18,5 +18,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   builder = @Builder(disableBuilder = true)
 )
-public interface CountryToDtoMapper extends ToDtoMapper<Country, ECountry> {
+public interface CountryToDtoMapper extends ToDtoMapper<Country, JpaCountry> {
 }

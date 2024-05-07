@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.model.dto.security.Domain;
-import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaDomain;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.DomainRepository;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class DomainService extends RecycloneCrudServiceImpl<Domain, EDomain, String>
+public class DomainService extends RecycloneCrudServiceImpl<Domain, JpaDomain, String>
   implements com.dropchop.recyclone.service.api.security.DomainService {
 
   @Inject
@@ -34,7 +34,7 @@ public class DomainService extends RecycloneCrudServiceImpl<Domain, EDomain, Str
   DomainToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Domain, EDomain, String> getConfiguration() {
+  public ServiceConfiguration<Domain, JpaDomain, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

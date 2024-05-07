@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
 import com.dropchop.recyclone.model.dto.localization.Language;
-import com.dropchop.recyclone.model.entity.jpa.localization.ELanguage;
+import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.service.api.mapping.EntityFactoryInvoker;
 import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
 import org.mapstruct.*;
@@ -17,5 +17,5 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface LanguageToEntityMapper extends ToEntityMapper<Language, ELanguage> {
+public interface LanguageToEntityMapper extends ToEntityMapper<Language, JpaLanguage> {
 }

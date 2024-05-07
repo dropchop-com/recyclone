@@ -1,0 +1,29 @@
+package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
+
+import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.entity.jpa.attr.JpaAttribute;
+import com.dropchop.recyclone.quarkus.it.model.dto.Node;
+import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaNode;
+import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
+ */
+@Mapper(
+  componentModel = "jakarta-cdi",
+  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+  builder = @Builder(disableBuilder = true)
+)
+@SuppressWarnings("unused")
+public interface NodeToEntityMapper extends ToEntityMapper<Node, JpaNode> {
+
+  default Set<JpaAttribute<?>> toEntityAttributes(Set<Attribute<?>> value) {
+    return new HashSet<>();
+  }
+}

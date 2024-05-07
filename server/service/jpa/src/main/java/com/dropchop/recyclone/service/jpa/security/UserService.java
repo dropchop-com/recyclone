@@ -2,7 +2,7 @@ package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.model.entity.jpa.security.EUser;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
@@ -23,7 +23,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
+public class UserService extends RecycloneCrudServiceImpl<User, JpaUser, UUID>
     implements com.dropchop.recyclone.service.api.security.UserService {
 
   @Inject
@@ -41,7 +41,7 @@ public class UserService extends RecycloneCrudServiceImpl<User, EUser, UUID>
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override
-  public ServiceConfiguration<User, EUser, UUID> getConfiguration() {
+  public ServiceConfiguration<User, JpaUser, UUID> getConfiguration() {
     return new ServiceConfiguration<>(
       userRepository,
       toDtoMapper,

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
 import com.dropchop.recyclone.model.dto.localization.Country;
-import com.dropchop.recyclone.model.entity.jpa.localization.ECountry;
+import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class CountryService extends RecycloneCrudServiceImpl<Country, ECountry, String>
+public class CountryService extends RecycloneCrudServiceImpl<Country, JpaCountry, String>
   implements com.dropchop.recyclone.service.api.localization.CountryService {
 
   @Inject
@@ -34,7 +34,7 @@ public class CountryService extends RecycloneCrudServiceImpl<Country, ECountry, 
   CountryToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Country, ECountry, String> getConfiguration() {
+  public ServiceConfiguration<Country, JpaCountry, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

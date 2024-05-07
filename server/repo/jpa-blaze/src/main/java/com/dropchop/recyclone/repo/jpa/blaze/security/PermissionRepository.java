@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,10 +14,10 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RepositoryType(RECYCLONE_JPA_DEFAULT)
-public class PermissionRepository extends BlazeRepository<EPermission, UUID> {
+public class PermissionRepository extends BlazeRepository<JpaPermission, UUID> {
 
   @Override
-  public Class<EPermission> getRootClass() {
-    return EPermission.class;
+  public Class<JpaPermission> getRootClass() {
+    return JpaPermission.class;
   }
 }

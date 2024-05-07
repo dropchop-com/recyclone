@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.EDomain;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaDomain;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,10 +12,10 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RepositoryType(RECYCLONE_JPA_DEFAULT)
-public class DomainRepository extends BlazeRepository<EDomain, String> {
+public class DomainRepository extends BlazeRepository<JpaDomain, String> {
 
   @Override
-  public Class<EDomain> getRootClass() {
-    return EDomain.class;
+  public Class<JpaDomain> getRootClass() {
+    return JpaDomain.class;
   }
 }

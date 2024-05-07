@@ -8,8 +8,8 @@ import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
-import com.dropchop.recyclone.model.entity.jpa.security.EPermission;
-import com.dropchop.recyclone.model.entity.jpa.security.ERole;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
@@ -37,7 +37,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
+public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
 
   @Inject
@@ -63,7 +63,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
   PermissionService permissionService;
 
   @Override
-  public ServiceConfiguration<Role, ERole, String> getConfiguration() {
+  public ServiceConfiguration<Role, JpaRole, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,
@@ -78,8 +78,8 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
-    Collection<ERole> roles = find(getRepositoryExecContext());
-    JoinEntityHelper<ERole, EPermission, UUID> helper =
+    Collection<JpaRole> roles = find(getRepositoryExecContext());
+    JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
       new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(
       toJoin -> params.getPermissionUuids(),
@@ -97,15 +97,15 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, ERole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
-    Collection<ERole> roles = find(getRepositoryExecContext());
-    JoinEntityHelper<ERole, EPermission, UUID> helper =
+    Collection<JpaRole> roles = find(getRepositoryExecContext());
+    JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
       new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(execContextContainer.get()),
       (entity, join) -> {
-        Set<EPermission> permissions = entity.getPermissions();
-        for (EPermission permission : join) {
+        Set<JpaPermission> permissions = entity.getPermissions();
+        for (JpaPermission permission : join) {
           if (!permissions.remove(permission)) {
             throw new ServiceException(ErrorCode.data_validation_error, "Missing permission for role!",
               Set.of(

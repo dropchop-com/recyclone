@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.EAction;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,10 +12,10 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RepositoryType(RECYCLONE_JPA_DEFAULT)
-public class ActionRepository extends BlazeRepository<EAction, String> {
+public class ActionRepository extends BlazeRepository<JpaAction, String> {
 
   @Override
-  public Class<EAction> getRootClass() {
-    return EAction.class;
+  public Class<JpaAction> getRootClass() {
+    return JpaAction.class;
   }
 }

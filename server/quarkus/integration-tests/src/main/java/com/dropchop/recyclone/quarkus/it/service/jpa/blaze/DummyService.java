@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.quarkus.it.model.entity.jpa.EDummy;
-import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
+import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
+import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyRepository;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
-public class DummyService extends RecycloneCrudServiceImpl<Dummy, EDummy, String>
+public class DummyService extends RecycloneCrudServiceImpl<Dummy, JpaDummy, String>
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
   @Inject
@@ -34,7 +34,7 @@ public class DummyService extends RecycloneCrudServiceImpl<Dummy, EDummy, String
   DummyToEntityMapper toEntityMapper;
 
   @Override
-  public ServiceConfiguration<Dummy, EDummy, String> getConfiguration() {
+  public ServiceConfiguration<Dummy, JpaDummy, String> getConfiguration() {
     return new ServiceConfiguration<>(
       repository,
       toDtoMapper,

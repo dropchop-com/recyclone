@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
-import com.dropchop.recyclone.quarkus.it.model.entity.jpa.EDummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -17,5 +17,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     builder = @Builder(disableBuilder = true),
     uses = ToDtoManipulator.class
 )
-public interface DummyToDtoMapper extends ToDtoMapper<Dummy, EDummy> {
+public interface DummyToDtoMapper extends ToDtoMapper<Dummy, JpaDummy> {
 }

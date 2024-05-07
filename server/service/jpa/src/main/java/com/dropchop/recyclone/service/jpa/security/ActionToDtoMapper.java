@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.model.dto.security.Action;
-import com.dropchop.recyclone.model.entity.jpa.security.EAction;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
 import com.dropchop.recyclone.service.api.mapping.ToDtoManipulator;
 import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
 import org.mapstruct.Builder;
@@ -17,5 +17,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     builder = @Builder(disableBuilder = true),
     uses = ToDtoManipulator.class
 )
-public interface ActionToDtoMapper extends ToDtoMapper<Action, EAction> {
+public interface ActionToDtoMapper extends ToDtoMapper<Action, JpaAction> {
 }
