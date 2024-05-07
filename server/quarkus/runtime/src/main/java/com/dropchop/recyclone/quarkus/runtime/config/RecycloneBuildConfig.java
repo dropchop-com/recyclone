@@ -34,6 +34,18 @@ public interface RecycloneBuildConfig {
     Optional<String> path();
 
     /**
+     * Default Params class implementation to be instantiated if can not be determined from code or annotations.
+     */
+    @WithDefault("com.dropchop.recyclone.model.dto.invoke.Params")
+    String defaultParams();
+
+    /**
+     * Default ExecContext class implementation to be instantiated if can not be determined from code or annotations.
+     */
+    @WithDefault("com.dropchop.recyclone.model.dto.invoke.DefaultExecContext")
+    String defaultExecContext();
+
+    /**
      * REST OpenAPI information.
      */
     Info info();

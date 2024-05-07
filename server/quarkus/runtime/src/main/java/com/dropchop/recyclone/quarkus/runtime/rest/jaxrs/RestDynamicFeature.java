@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,12 @@ public class RestDynamicFeature implements DynamicFeature {
 
   @Inject
   ExecContextBinder execContextBinder;
+
+  @ConfigProperty(name = "quarkus.recyclone.rest.default-params")
+  String defaultParamsClassName;
+
+  @ConfigProperty(name = "quarkus.recyclone.rest.default-exec-context")
+  String defaultExecContextClassName;
 
   public RestDynamicFeature() {
     log.info("Creating RestDynamicFeature");
@@ -50,14 +57,13 @@ public class RestDynamicFeature implements DynamicFeature {
 
     log.trace("Looking at [{}#{}]", resourceInfo.getResourceClass().getName(), method.getName());
     RestClass restClass = restMapping.getApiClass(restMethod.getApiClass());
-
     // Input chain
     featureContext.register(
         new ExecContextInitializer( // Load ExecContext and Params from CDI and bind them
             restClass,
             restMethod,
-            "com.dropchop.recyclone.model.dto.invoke.Params",
-            "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext",
+            defaultParamsClassName,
+            defaultExecContextClassName,
             execContextBinder
         ),
         AUTHENTICATION - 100

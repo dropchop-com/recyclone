@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.invoke;
 
 import com.dropchop.recyclone.quarkus.deployment.rest.RestMappingBuildItem;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
@@ -96,6 +97,7 @@ public class ContextProcessor {
   @BuildStep
   void findClassesForProducerGeneration(CombinedIndexBuildItem combinedIndex,
                                         RestMappingBuildItem restMappingBuildItem,
+                                        RecycloneBuildConfig buildConfig,
                                         BuildProducer<ContextsBuildItem> contextBuildProducer,
                                         BuildProducer<ParamsBuildItem> paramsBuildProducer) {
     IndexView indexView = combinedIndex.getIndex();
@@ -131,12 +133,10 @@ public class ContextProcessor {
       }
       contextMappings.add(new ContextMapping(contextClass, dataClass, prio));
     }
-    //,
-    paramsPriority.put("com.dropchop.recyclone.model.dto.invoke.Params", 1);
-    //"com.dropchop.recyclone.model.dto.invoke.DefaultExecContext",
+
+    paramsPriority.put(buildConfig.rest().defaultParams(), 1);
     paramsBuildProducer.produce(new ParamsBuildItem(paramsPriority));
-    contextMappings.add(new ContextMapping(
-        "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext", null, 2));
+    contextMappings.add(new ContextMapping(buildConfig.rest().defaultExecContext(), null, 2));
     contextBuildProducer.produce(new ContextsBuildItem(contextMappings));
   }
 
