@@ -29,7 +29,11 @@ public class TagParams extends TypeParams {
 
     @Override
     public String[] getAvailableSortFields() {
-      return new String[] {"+created", "created", "-created", "+type", "type", "-type"};
+      return new String[] {
+          //TODO: "+name", "name", "-name",
+          "+created", "created", "-created",
+          "+type", "type", "-type"
+      };
     }
   }
 
