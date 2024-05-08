@@ -2,6 +2,7 @@ package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.base.State;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,5 +26,16 @@ public class TagParams extends TypeParams {
     public Collection<State.Code> getAvailableHiddenStates() {
       return Set.of(HasDeactivated.deactivated);
     }
+
+    @Override
+    public String[] getAvailableSortFields() {
+      return new String[] {"+created", "created", "-created", "+type", "type", "-type"};
+    }
+  }
+
+  @Override
+  @JsonIgnore
+  public ResultFilterDefaults getFilterDefaults() {
+    return new Defaults();
   }
 }
