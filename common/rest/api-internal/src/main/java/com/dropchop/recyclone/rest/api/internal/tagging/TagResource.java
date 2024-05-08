@@ -19,7 +19,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
  */
 @Path(Paths.Tagging.TAG)
-@DynamicExecContext(value = TagParams.class, dataClass = Tag.class, internal = true)
+@DynamicExecContext(value = TagParams.class, internal = true)
 @RequiresPermissions(Domains.Tagging.TAG + PERM_DELIM + Actions.VIEW)
 public interface TagResource<T extends Tag> {
 

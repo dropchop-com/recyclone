@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
  */
 @Path(Paths.Security.PERMISSION)
-@DynamicExecContext(value = IdentifierParams.class, dataClass = Permission.class, internal = true)
+@DynamicExecContext(value = IdentifierParams.class, internal = true)
 @RequiresPermissions(Domains.Security.PERMISSION + PERM_DELIM + Actions.VIEW)
 public interface PermissionResource {
 

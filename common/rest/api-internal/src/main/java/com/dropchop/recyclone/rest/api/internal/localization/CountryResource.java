@@ -19,7 +19,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
  */
 @Path(Paths.Localization.COUNTRY)
-@DynamicExecContext(value = CodeParams.class, dataClass = Country.class, internal = true)
+@DynamicExecContext(value = CodeParams.class, internal = true)
 @RequiresPermissions(Domains.Localization.COUNTRY + PERM_DELIM + Actions.VIEW)
 public interface CountryResource {
 

@@ -19,7 +19,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
  */
 @Path(Paths.Localization.LANGUAGE)
-@DynamicExecContext(value = CodeParams.class, dataClass = Language.class, internal = true)
+@DynamicExecContext(value = CodeParams.class, internal = true)
 @RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.VIEW)
 public interface LanguageResource {
 
