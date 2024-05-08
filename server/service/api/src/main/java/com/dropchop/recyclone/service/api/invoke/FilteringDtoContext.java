@@ -2,6 +2,12 @@ package com.dropchop.recyclone.service.api.invoke;
 
 import com.dropchop.recyclone.model.api.filtering.*;
 import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
+import com.dropchop.recyclone.model.api.localization.TitleTranslation;
+import com.dropchop.recyclone.model.api.localization.Translation;
+import com.dropchop.recyclone.model.api.marker.HasTitle;
+import com.dropchop.recyclone.model.api.marker.HasTranslation;
+import com.dropchop.recyclone.model.api.marker.HasTranslationInlined;
 import com.dropchop.recyclone.model.api.utils.Objects;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +24,17 @@ import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT
 public class FilteringDtoContext extends MappingContext {
 
   private FieldFilter filter = null;
+  private String translationLanguage = null;
   private FilteringState state = new FilteringState();
 
   @Override
   public void setParams(@NonNull Params params) {
     super.setParams(params);
     filter = FieldFilter.fromParams(params);
+    ResultFilter.LanguageFilter languageFilter = params.tryGetResultLanguageFilter();
+    if (languageFilter != null) {
+      this.translationLanguage = languageFilter.getTranslation();
+    }
     state = new FilteringState();
   }
 
@@ -100,12 +111,47 @@ public class FilteringDtoContext extends MappingContext {
     return test;
   }
 
+  private void swapTranslations(Object target) {
+    if (!(target instanceof HasTranslation<?>)) {
+      return;
+    }
+    if (this.translationLanguage == null) {
+      return;
+    }
+    Translation swap = ((HasTranslation<?>) target).getTranslation(this.translationLanguage);
+    if (swap == null) {
+      return;
+    }
+    if (target instanceof HasTranslationInlined) {
+      String defaultLang = ((HasTranslationInlined) target).getLang();
+      Translation defaultTrans = ((HasTranslation<?>) target).getTranslation(defaultLang);
+      if (swap instanceof TitleTranslation) {
+        if (defaultTrans == null) {
+          com.dropchop.recyclone.model.dto.localization.TitleTranslation trans = new com.dropchop.recyclone.model.dto.localization.TitleTranslation();
+          if (target instanceof HasTitle) {
+            trans.setTitle(((HasTitle) target).getTitle());
+            ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());
+          }
+          trans.setLang(defaultLang);
+          trans.setBase(true);
+          //noinspection unchecked
+          ((HasTranslation<TitleTranslation>) target).addTranslation(trans);
+        }
+        if (target instanceof HasTitle) {
+          ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());
+        }
+      }
+      ((HasTranslationInlined) target).setLang(swap.getLang());
+    }
+  }
+
   @SuppressWarnings("unused")
   public void after(Object ignoredSource, Object target) {
     PathSegment segment = state.pollSegment();
     if (segment.parent instanceof CollectionPathSegment cps) {
       cps.incCurrentIndex();
     }
+    swapTranslations(target);
     //log.info("End object [{}] -> [{}].", ignoredSource.getClass().getSimpleName(), segment);
   }
 }

@@ -14,6 +14,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
  */
+@SuppressWarnings("LombokGetterMayBeUsed")
 public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {
   private final EntityByIdService<D, E, ID> service;
   private final Set<String> onlyForRegisteredActions = new HashSet<>();

@@ -32,4 +32,12 @@ public interface Params extends Model, HasAttributes {
     }
     return null;
   }
+
+  default ResultFilter.LanguageFilter tryGetResultLanguageFilter() {
+    ResultFilter<?, ?> resultFilter = tryGetResultFilter();
+    if (resultFilter != null) {
+      return resultFilter.getLang();
+    }
+    return null;
+  }
 }

@@ -1,3 +1,4 @@
+-- noinspection SqlResolveForFile
 -- noinspection SqlNoDataSourceInspectionForFile
 
 insert into language (code, title, lang, created, modified) values ('en', 'English', 'en', now(), now());
