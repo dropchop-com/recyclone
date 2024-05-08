@@ -41,7 +41,7 @@ public class RestProcessor {
   private static final Logger log = Logger.getLogger("com.dropchop.recyclone.quarkus");
 
   private static final DotName DYN_CTX_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext"
+      "com.dropchop.recyclone.rest.api.DynamicExecContext"
   );
 
   private static final DotName PATH_ANNOTATION = DotName.createSimple(
@@ -630,8 +630,8 @@ public class RestProcessor {
 
   @BuildStep
   void addJaxRsFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer,
-                        BuildProducer<CustomContainerRequestFilterBuildItem> requestFilterBuildItemBuildProducer,
-                        BuildProducer<CustomExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
+                        BuildProducer<ContainerRequestFilterBuildItem> requestFilterBuildItemBuildProducer,
+                        BuildProducer<ExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
     dynamicFeatureBuildProducer.produce(
         new DynamicFeatureBuildItem(
             RestDynamicFeature.class.getName(), true
@@ -643,14 +643,17 @@ public class RestProcessor {
         )
     );
     requestFilterBuildItemBuildProducer.produce(
-        new CustomContainerRequestFilterBuildItem(
+        new ContainerRequestFilterBuildItem.Builder(
             ContentTypeFilter.class.getName()
-        )
+        ).setRegisterAsBean(true)
+            .setPreMatching(true)
+            .build()
     );
     exceptionMapperBuildItemBuildProducer.produce(
-        new CustomExceptionMapperBuildItem(
-            ServiceErrorExceptionMapper.class.getName()
-        )
+        new ExceptionMapperBuildItem.Builder(
+            ServiceErrorExceptionMapper.class.getName(),
+            Exception.class.getName()
+        ).setRegisterAsBean(true).build()
     );
   }
 

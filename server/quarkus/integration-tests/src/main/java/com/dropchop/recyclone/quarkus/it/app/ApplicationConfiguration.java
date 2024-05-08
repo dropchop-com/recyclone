@@ -8,19 +8,32 @@ import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
+import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
+import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
+import com.dropchop.shiro.filter.ShiroFilter;
+import com.dropchop.shiro.realm.ShiroMapRealm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import org.apache.shiro.realm.Realm;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_HEADER;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.
  */
 @SuppressWarnings("unused")
+@Alternative
+@Priority(1)
 @ApplicationScoped
-public class ApplicationConfiguration {
+public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
 
   @Inject
   ObjectMapperFactory objectMapperFactory;
@@ -43,14 +56,51 @@ public class ApplicationConfiguration {
   @Produces
   @ApplicationScoped
   ObjectMapper getObjectMapper() {
+    // this is just for demo
     RecycloneBuildConfig buildConfig = application.getBuildConfig();
+
+    // this is just for demo
     Map<String, RestClass> restClassMap = restMapping.getApiClasses();
-    //RecycloneRuntimeConfig runtimeConfig = application.getRuntimeConfig();
+
     //mapping is already there collected from the @SubclassMapping annotation of the TagToDtoMapper,
     //but we add it again here just for demonstration
     mapperConfig.addBidiMapping(LanguageGroup.class, JpaLanguageGroup.class);
     return objectMapperFactory.createObjectMapper();
   }
 
+  @Produces
+  public List<Realm> getRealms() {
+    return List.of(
+        new ShiroMapRealm(
+            Map.of(
+                "user1", "password,user",
+                "editor1", "password,staff",
+                "admin1", "password,admin",
+                "usertoken1", "usertoken1,user",
+                "editortoken1", "editortoken1,staff",
+                "admintoken1", "admintoken1,admin"
+            ),
+            Map.of(
+                "admin",
+                "*",
+                "staff",
+                "localization.language:*," +
+                    "security.action:*," +
+                    "security.domain:*," +
+                    "security.permission:*," +
+                    "security.role:*",
+                "user",
+                "localization.language:view," +
+                    "test.dummy:view"
+            )
+        )
+    );
+  }
 
+  @Produces
+  public List<ShiroFilter> getFilters() {
+    List<ShiroFilter> filters = new ArrayList<>(super.getFilters());
+    filters.add(new ApiKeyHttpAuthenticationFilter(DEFAULT_API_KEY_HEADER, "api_key"));
+    return filters;
+  }
 }

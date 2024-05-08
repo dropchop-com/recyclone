@@ -143,6 +143,9 @@ public interface RecycloneBuildConfig {
 
     /**
      * REST resource implementation classes inclusion.
+     * we support API interface class name matching with:
+     *   - glob pattern with * and ?
+     *   - regex pattern if expr starts with ^ character
      */
     Optional<List<String>> includes();
 

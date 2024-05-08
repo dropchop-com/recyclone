@@ -11,7 +11,7 @@ import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextContainer;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextSelector;
-import com.dropchop.recyclone.rest.jaxrs.ClassicReadByCodeResource;
+import com.dropchop.recyclone.rest.server.ClassicReadByCodeResource;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 

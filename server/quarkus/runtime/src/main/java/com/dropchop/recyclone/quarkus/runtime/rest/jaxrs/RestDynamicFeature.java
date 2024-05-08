@@ -69,11 +69,10 @@ public class RestDynamicFeature implements DynamicFeature {
         AUTHENTICATION - 100
     );
 
-    if (restMethod.getAction().equals(RestMethod.Action.READ)) {
-      featureContext.register( // initialize and pass new params to JAX-RS context property
-          new ParamsDecoratorFilter(restClass, restMethod), HEADER_DECORATOR
-      );
-    }
+
+    featureContext.register( // initialize and pass new params to JAX-RS context property
+        new ParamsDecoratorFilter(restClass, restMethod), HEADER_DECORATOR
+    );
 
     featureContext.register( // initialize and pass new params to JAX-RS context property
         new DtoDataInterceptor(restClass, restMethod), HEADER_DECORATOR

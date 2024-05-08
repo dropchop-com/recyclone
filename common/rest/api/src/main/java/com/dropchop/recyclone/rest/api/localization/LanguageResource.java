@@ -1,12 +1,12 @@
-package com.dropchop.recyclone.quarkus.it.rest.api;
+package com.dropchop.recyclone.rest.api.localization;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
+import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.quarkus.it.model.api.Constants;
-import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.rest.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.api.MediaType;
 import jakarta.ws.rs.*;
@@ -16,40 +16,40 @@ import java.util.List;
 import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
-@Path(Constants.Paths.Test.DUMMY)
-@DynamicExecContext(value = CodeParams.class, dataClass = Dummy.class)
-@RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.VIEW)
-public interface DummyResource {
+@Path(Paths.Localization.LANGUAGE)
+@DynamicExecContext(CodeParams.class)
+@RequiresPermissions(Domains.Localization.LANGUAGE + PERM_DELIM + Actions.VIEW)
+public interface LanguageResource {
 
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<Dummy> get();
+  Result<Language> get();
 
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  List<Dummy> getRest();
+  List<Language> getRest();
 
   @GET
-  @Path("{code : [a-z_\\-.]{3,255}}")
+  @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<Dummy> getByCode(@PathParam("code") String code);
+  Result<Language> getByCode(@PathParam("code") String code);
 
   @GET
-  @Path("{code : [a-z_\\-.]{3,255}}")
+  @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
   @Produces(MediaType.APPLICATION_JSON)
-  List<Dummy> getByCodeRest(@PathParam("code") String code);
+  List<Language> getByCodeRest(@PathParam("code") String code);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<Dummy> search(CodeParams params);
+  Result<Language> search(CodeParams parameters);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  List<Dummy> searchRest(CodeParams params);
+  List<Language> searchRest(CodeParams parameters);
 }

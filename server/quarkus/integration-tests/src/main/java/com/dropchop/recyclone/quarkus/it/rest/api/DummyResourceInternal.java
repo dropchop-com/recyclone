@@ -5,8 +5,8 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.rest.jaxrs.api.DynamicExecContext;
-import com.dropchop.recyclone.rest.jaxrs.api.MediaType;
+import com.dropchop.recyclone.rest.api.DynamicExecContext;
+import com.dropchop.recyclone.rest.api.MediaType;
 import jakarta.ws.rs.*;
 
 import java.util.List;
