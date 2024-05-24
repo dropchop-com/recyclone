@@ -10,8 +10,8 @@ import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.AfterToEntityListener;
+import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.AfterToEntityListener;
 import com.dropchop.recyclone.service.api.mapping.EntityAllPreloadDelegate;
 import com.dropchop.recyclone.service.jpa.localization.LanguageService;
 

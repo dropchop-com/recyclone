@@ -35,6 +35,10 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-dto</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-mapper-api</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

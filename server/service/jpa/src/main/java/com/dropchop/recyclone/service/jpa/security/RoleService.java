@@ -1,5 +1,9 @@
 package com.dropchop.recyclone.service.jpa.security;
 
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.jpa.security.RoleToDtoMapper;
+import com.dropchop.recyclone.mapper.jpa.security.RoleToJpaMapper;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
@@ -15,14 +19,11 @@ import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
-import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Set;
@@ -34,7 +35,6 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
-@Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
 public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
@@ -48,7 +48,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   RoleToDtoMapper toDtoMapper;
 
   @Inject
-  RoleToEntityMapper toEntityMapper;
+  RoleToJpaMapper toEntityMapper;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")

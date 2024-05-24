@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.service.api.EntityByIdService;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
 
 import java.util.HashSet;
 import java.util.Set;

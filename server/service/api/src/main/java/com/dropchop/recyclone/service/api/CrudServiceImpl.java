@@ -13,11 +13,11 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.service.api.invoke.FilteringDtoContext;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
-import com.dropchop.recyclone.service.api.mapping.SetEntityDeactivated;
-import com.dropchop.recyclone.service.api.mapping.SetEntityModification;
+import com.dropchop.recyclone.mapper.api.SetEntityDeactivated;
+import com.dropchop.recyclone.mapper.api.SetEntityModification;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -123,7 +123,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   protected RepositoryExecContext<E> getRepositoryExecContextWithTotalCount(MappingContext mapContext) {
     RepositoryExecContext<E> context = getRepositoryExecContext();
-    context.totalCount(mapContext); // get total count and save it
+    //TODO: fix
+    //context.totalCount(mapContext); // get total count and save it
     return context;
   }
 

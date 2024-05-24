@@ -3,8 +3,8 @@ package com.dropchop.recyclone.service.jpa.mapping;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.dto.security.UserAccount;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
-import com.dropchop.recyclone.service.api.mapping.BeforeToEntityListener;
+import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.BeforeToEntityListener;
 
 import java.util.UUID;
 

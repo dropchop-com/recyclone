@@ -3,8 +3,8 @@ package com.dropchop.recyclone.service.api;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.repo.api.CrudRepository;
-import com.dropchop.recyclone.service.api.mapping.ToDtoMapper;
-import com.dropchop.recyclone.service.api.mapping.ToEntityMapper;
+import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.mapper.api.ToEntityMapper;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 2. 05. 22.

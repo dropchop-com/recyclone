@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
+import com.dropchop.recyclone.mapper.jpa.localization.LanguageToDtoMapper;
+import com.dropchop.recyclone.mapper.jpa.localization.LanguageToJpaMapper;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.repo.api.RepositoryType;
@@ -9,14 +11,12 @@ import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
-@Slf4j
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
 public class LanguageService extends RecycloneCrudServiceImpl<Language, JpaLanguage, String>
@@ -30,7 +30,7 @@ public class LanguageService extends RecycloneCrudServiceImpl<Language, JpaLangu
   LanguageToDtoMapper toDtoMapper;
 
   @Inject
-  LanguageToEntityMapper toEntityMapper;
+  LanguageToJpaMapper toEntityMapper;
 
   @Override
   public ServiceConfiguration<Language, JpaLanguage, String> getConfiguration() {

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.service.jpa;
 
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
@@ -9,11 +10,9 @@ import com.dropchop.recyclone.repo.jpa.blaze.*;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceSelector;
-import com.dropchop.recyclone.service.api.invoke.MappingContext;
 import com.dropchop.recyclone.service.jpa.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.mapping.SetLanguage;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
  */
-@Slf4j
 public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, ID>
   extends CrudServiceImpl<D, E, ID> {
 

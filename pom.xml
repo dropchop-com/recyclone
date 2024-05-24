@@ -255,6 +255,16 @@
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-mapper-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-mapper-jpa</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-repo-api</artifactId>
         <version>${project.version}</version>
       </dependency>
