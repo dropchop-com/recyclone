@@ -1,5 +1,9 @@
 package com.dropchop.recyclone.service.api;
 
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.SetEntityDeactivated;
+import com.dropchop.recyclone.mapper.api.SetEntityModification;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
@@ -12,13 +16,8 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.CrudServiceRepository;
-import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
-import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
-import com.dropchop.recyclone.mapper.api.SetEntityDeactivated;
-import com.dropchop.recyclone.mapper.api.SetEntityModification;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -113,12 +112,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
     return context;
   }
 
-  protected abstract Iterable<CriteriaDecorator> getCommonCriteriaDecorators();
-
-  protected abstract RepositoryExecContext<E> getRepositoryExecContext();
-
   protected RepositoryExecContext<E> getRepositoryExecContextWithTotalCount(MappingContext mapContext) {
-    RepositoryExecContext<E> context = getRepositoryExecContext();
+    RepositoryExecContext<E> context = getRepository().getRepositoryExecContext();
     //TODO: fix
     //context.totalCount(mapContext); // get total count and save it
     return context;

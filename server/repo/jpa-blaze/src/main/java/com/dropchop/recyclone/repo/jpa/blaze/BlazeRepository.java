@@ -4,6 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.DeleteCriteriaBuilder;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.repo.api.CrudRepository;
@@ -30,9 +31,31 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   @SuppressWarnings("CdiInjectionPointsInspection")
   CriteriaBuilderFactory cbf;
 
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  ExecContextContainer ctxContainer;
+
   public String getClassAlias(Class<?> cls) {
     return cls.getSimpleName().toLowerCase();
   }
+
+  protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
+    return List.of(
+        new LikeIdentifiersCriteriaDecorator(),
+        new InlinedStatesCriteriaDecorator(),
+        new SortCriteriaDecorator(),
+        new PageCriteriaDecorator()
+    );
+  }
+
+  public RepositoryExecContext<E> getRepositoryExecContext() {
+    BlazeExecContext<E> context = new BlazeExecContext<E>().of(ctxContainer.get());
+    for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
+      context.decorateWith(decorator);
+    }
+    return context;
+  }
+
 
   public <X extends E> CriteriaBuilder<X> getBuilder(Class<X> cls) {
     return cbf.create(em, cls);
