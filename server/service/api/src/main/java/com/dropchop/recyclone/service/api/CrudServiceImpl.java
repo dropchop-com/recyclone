@@ -112,13 +112,6 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
     return context;
   }
 
-  protected RepositoryExecContext<E> getRepositoryExecContextWithTotalCount(MappingContext mapContext) {
-    RepositoryExecContext<E> context = getRepository().getRepositoryExecContext();
-    //TODO: fix
-    //context.totalCount(mapContext); // get total count and save it
-    return context;
-  }
-
   protected List<E> find(RepositoryExecContext<E> repositoryExecContext) {
     return getRepository().find(repositoryExecContext);
   }
@@ -126,7 +119,8 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   @Override
   public Result<D> search() {
     MappingContext mapContext = getMappingContextForRead();
-    List<E> entities = find(getRepositoryExecContextWithTotalCount(mapContext));
+    CrudServiceRepository<D, E, ID> repository = getRepository();
+    List<E> entities = this.find(repository.getRepositoryExecContext(mapContext));
     entities = entities.stream().filter(
       e -> authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());

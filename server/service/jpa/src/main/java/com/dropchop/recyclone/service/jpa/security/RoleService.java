@@ -62,7 +62,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
-    Collection<JpaRole> roles = find(getRepository().getRepositoryExecContext());
+    Collection<JpaRole> roles = find(repository.getRepositoryExecContext());
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
       new JoinEntityHelper<>(authorizationService, permissionService, roles);
     helper.join(

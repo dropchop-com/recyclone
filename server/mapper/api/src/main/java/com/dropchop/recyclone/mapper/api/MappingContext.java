@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class MappingContext
   extends ParamsExecContext<MappingListener>
-  implements DataExecContext<Dto, MappingListener>, SecurityExecContext {
+  implements DataExecContext<Dto, MappingListener>, SecurityExecContext, TotalCountExecContextListener {
 
   private long totalCount;
 

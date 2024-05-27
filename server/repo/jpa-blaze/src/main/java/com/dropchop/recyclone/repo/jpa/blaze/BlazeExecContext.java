@@ -5,8 +5,8 @@ import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContextListener;
-import com.dropchop.recyclone.repo.api.ctx.TotalCountExecContextListener;
+import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
+import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import lombok.*;
 
 /**

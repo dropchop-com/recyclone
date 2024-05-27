@@ -3,6 +3,9 @@ package com.dropchop.recyclone.repo.jpa.blaze;
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.DeleteCriteriaBuilder;
+import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
+import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.marker.HasCode;
@@ -48,6 +51,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
     );
   }
 
+  @Override
   public RepositoryExecContext<E> getRepositoryExecContext() {
     BlazeExecContext<E> context = new BlazeExecContext<E>().of(ctxContainer.get());
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
@@ -56,6 +60,10 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
     return context;
   }
 
+  @Override
+  public RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext) {
+    return getRepositoryExecContext().totalCount(mappingContext);
+  }
 
   public <X extends E> CriteriaBuilder<X> getBuilder(Class<X> cls) {
     return cbf.create(em, cls);

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.repo.api.ctx;
+package com.dropchop.recyclone.mapper.api;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 03. 22.
