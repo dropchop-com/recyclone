@@ -2,8 +2,6 @@ package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.jpa.security.RoleToDtoMapper;
-import com.dropchop.recyclone.mapper.jpa.security.RoleToJpaMapper;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
@@ -17,13 +15,13 @@ import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
-import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Set;
@@ -35,6 +33,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
+@Getter
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
 public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
@@ -43,12 +42,6 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   @Inject
   @RepositoryType(RECYCLONE_JPA_DEFAULT)
   RoleRepository repository;
-
-  @Inject
-  RoleToDtoMapper toDtoMapper;
-
-  @Inject
-  RoleToJpaMapper toEntityMapper;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -61,15 +54,6 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   @Inject
   @ServiceType(RECYCLONE_JPA_DEFAULT)
   PermissionService permissionService;
-
-  @Override
-  public ServiceConfiguration<Role, JpaRole, String> getConfiguration() {
-    return new ServiceConfiguration<>(
-      repository,
-      toDtoMapper,
-      toEntityMapper
-    );
-  }
 
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
@@ -87,7 +71,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       (entity, join) -> entity.getPermissions().addAll(join)
     );
     save(roles);
-    return toDtoMapper.toDtosResult(roles, mapContext);
+    return repository.getToDtoMapper().toDtosResult(roles, mapContext);
   }
 
   @Transactional
@@ -118,6 +102,6 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       }
     );
     save(roles);
-    return toDtoMapper.toDtosResult(roles, mapContext);
+    return repository.getToDtoMapper().toDtosResult(roles, mapContext);
   }
 }

@@ -17,5 +17,5 @@ import org.mapstruct.*;
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
-public interface PermissionToJapMapper extends ToEntityMapper<Permission, JpaPermission> {
+public interface PermissionToJpaMapper extends ToEntityMapper<Permission, JpaPermission> {
 }

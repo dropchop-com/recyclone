@@ -13,11 +13,12 @@ import java.util.Optional;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.
  */
 @Slf4j
+@Deprecated
 @ApplicationScoped
 public class ServiceSelector {
 
-  public static final String IMPL_CONFIG_PROP = "dropchop.service-type";
-  public static final String IMPL_CONFIG_DEFAULT = IMPL_CONFIG_PROP + ".default";
+  public static final String IMPL_CONFIG_PROP = "quarkus.recyclone.service";
+  public static final String IMPL_CONFIG_DEFAULT = IMPL_CONFIG_PROP + ".qualifier";
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")

@@ -16,11 +16,13 @@ import com.dropchop.recyclone.service.jpa.mapping.SetAccountUser;
 import com.dropchop.recyclone.service.jpa.mapping.SetAccountUuid;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Getter;
 
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
+@Getter
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
 public class UserService extends RecycloneCrudServiceImpl<User, JpaUser, UUID>
@@ -28,27 +30,11 @@ public class UserService extends RecycloneCrudServiceImpl<User, JpaUser, UUID>
 
   @Inject
   @RepositoryType(RECYCLONE_JPA_DEFAULT)
-  UserRepository userRepository;
-
-  @Inject
-  UserToDtoMapper toDtoMapper;
-
-  @Inject
-  UserToJpaMapper toEntityMapper;
+  UserRepository repository;
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   MapperSubTypeConfig mapperSubTypeConfig;
-
-  @Override
-  public ServiceConfiguration<User, JpaUser, UUID> getConfiguration() {
-    return new ServiceConfiguration<>(
-      userRepository,
-      toDtoMapper,
-      toEntityMapper
-    );
-  }
-
 
   protected MappingContext getMappingContextForModify() {
     MappingContext context = super.getMappingContextForModify();

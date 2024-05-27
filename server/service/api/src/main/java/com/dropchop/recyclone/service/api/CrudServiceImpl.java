@@ -11,6 +11,7 @@ import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
+import com.dropchop.recyclone.repo.api.CrudServiceRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
@@ -43,22 +44,21 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   @SuppressWarnings("CdiInjectionPointsInspection")
   AuthorizationService authorizationService;
 
-  public abstract ServiceConfiguration<D, E, ID> getConfiguration();
+  public abstract CrudServiceRepository<D, E, ID> getRepository();
 
   @Override
   public Class<E> getRootClass() {
-    return getConfiguration().getRepository().getRootClass();
+    return getRepository().getRootClass();
   }
 
   @Override
   public E findById(D dto) {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     if (dto instanceof DtoCode) {
       //noinspection unchecked
-      return conf.getRepository().findById((ID)((DtoCode) dto).getCode());
+      return getRepository().findById((ID)((DtoCode) dto).getCode());
     } else if (dto instanceof DtoId) {
       //noinspection unchecked
-      return conf.getRepository().findById((ID)((DtoId) dto).getUuid());
+      return getRepository().findById((ID)((DtoId) dto).getUuid());
     } else {
       throw new RuntimeException("findById(" + dto + ") is not supported.");
     }
@@ -66,20 +66,17 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   @Override
   public List<E> findById(Collection<ID> ids) {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    return conf.getRepository().findById(ids);
+    return getRepository().findById(ids);
   }
 
   @Override
   public E findById(ID id) {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    return conf.getRepository().findById(id);
+    return getRepository().findById(id);
   }
 
   @Override
   public List<E> find() {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    return conf.getRepository().find();
+    return getRepository().find();
   }
 
   protected void checkDtoPermissions(List<D> dtos) {
@@ -98,8 +95,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   protected MappingContext getMappingContextForModify() {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    Class<?> rootClass = conf.getRepository().getRootClass();
+    Class<?> rootClass = getRepository().getRootClass();
     MappingContext context = new FilteringDtoContext()
       .of(ctxContainer.get())
       .createWith(
@@ -129,21 +125,19 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   protected List<E> find(RepositoryExecContext<E> repositoryExecContext) {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    return conf.getRepository().find(repositoryExecContext);
+    return getRepository().find(repositoryExecContext);
   }
 
   @Override
   public Result<D> search() {
     MappingContext mapContext = getMappingContextForRead();
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     List<E> entities = find(getRepositoryExecContextWithTotalCount(mapContext));
     entities = entities.stream().filter(
       e -> authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    Result<D> result = conf.getToDtoMapper().toDtosResult(entities, mapContext);
+    Result<D> result = getRepository().getToDtoMapper().toDtosResult(entities, mapContext);
     return result;
   }
 
@@ -188,8 +182,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   }
 
   protected void save(Collection<E> entities) {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    CrudRepository<E, ID> repository = conf.getRepository();
+    CrudRepository<E, ID> repository = getRepository();
     repository.save(entities);
     if (shouldRefreshAfterSave()) {
       repository.refresh(entities);
@@ -198,11 +191,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     MappingContext mapContext = getMappingContextForModify();
-    List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
+    List<E> entities = getRepository().getToEntityMapper().toEntities(dtos, mapContext);
     save(entities);
-    return conf.getToDtoMapper().toDtosResult(entities, mapContext);
+    return getRepository().getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
   @Override
@@ -221,10 +213,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   @Transactional
   public Result<D> delete(List<D> dtos) {
     checkDtoPermissions(dtos);
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
     MappingContext mapContext = getMappingContextForModify();
-    List<E> entities = conf.getToEntityMapper().toEntities(dtos, mapContext);
-    conf.getRepository().delete(entities);
-    return conf.getToDtoMapper().toDtosResult(entities, mapContext);
+    CrudServiceRepository<D, E, ID> repository = getRepository();
+    List<E> entities = repository.getToEntityMapper().toEntities(dtos, mapContext);
+    repository.delete(entities);
+    return repository.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 }

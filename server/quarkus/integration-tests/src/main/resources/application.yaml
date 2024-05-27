@@ -88,10 +88,13 @@ quarkus:
         qualifier: recyclone_jpa_default
       TagService:
         qualifier: recyclone_jpa_default
+        # crud-repository:
+        #  qualifier: recyclone_jpa_default
+        #  type: TagRepository
         #repositories:
         #  - TagRepository:
-        #      qualifier:
-        #      from-dto-mapper:
-        #      to-dto-mapper:
+        #      qualifier: recyclone_jpa_default
+        #  - TagHelperRepository:
+        #      qualifier: recyclone_jpa_default
       DummyService:
         qualifier: alter

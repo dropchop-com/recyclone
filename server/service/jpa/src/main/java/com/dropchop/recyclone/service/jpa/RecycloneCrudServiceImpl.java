@@ -8,7 +8,6 @@ import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.*;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
-import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceSelector;
 import com.dropchop.recyclone.service.jpa.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.mapping.SetLanguage;
@@ -27,6 +26,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
 
+  //TODO: refactor this
   @Inject
   ServiceSelector serviceSelector;
 
@@ -48,8 +48,7 @@ public abstract class RecycloneCrudServiceImpl<D extends Dto, E extends Entity, 
   }
 
   protected MappingContext getMappingContextForModify() {
-    ServiceConfiguration<D, E, ID> conf = getConfiguration();
-    Class<?> rootClass = conf.getRepository().getRootClass();
+    Class<?> rootClass = getRepository().getRootClass();
     MappingContext context = super.getMappingContextForModify();
     context.afterMapping(
       new SetLanguage(serviceSelector.select(LanguageService.class), rootClass)

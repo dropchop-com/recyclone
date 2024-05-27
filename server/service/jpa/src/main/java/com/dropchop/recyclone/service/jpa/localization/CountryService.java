@@ -1,22 +1,21 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
-import com.dropchop.recyclone.mapper.jpa.localization.CountryToDtoMapper;
-import com.dropchop.recyclone.mapper.jpa.localization.CountryToJpaMapper;
 import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;
-import com.dropchop.recyclone.service.api.ServiceConfiguration;
 import com.dropchop.recyclone.service.api.ServiceType;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Getter;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
+@Getter
 @ApplicationScoped
 @ServiceType(RECYCLONE_JPA_DEFAULT)
 public class CountryService extends RecycloneCrudServiceImpl<Country, JpaCountry, String>
@@ -25,19 +24,4 @@ public class CountryService extends RecycloneCrudServiceImpl<Country, JpaCountry
   @Inject
   @RepositoryType(RECYCLONE_JPA_DEFAULT)
   CountryRepository repository;
-
-  @Inject
-  CountryToDtoMapper toDtoMapper;
-
-  @Inject
-  CountryToJpaMapper toEntityMapper;
-
-  @Override
-  public ServiceConfiguration<Country, JpaCountry, String> getConfiguration() {
-    return new ServiceConfiguration<>(
-      repository,
-      toDtoMapper,
-      toEntityMapper
-    );
-  }
 }

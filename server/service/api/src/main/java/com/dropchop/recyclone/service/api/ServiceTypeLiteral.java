@@ -5,6 +5,7 @@ import jakarta.enterprise.util.AnnotationLiteral;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.
  */
+@SuppressWarnings("ClassExplicitlyAnnotation")
 public class ServiceTypeLiteral extends AnnotationLiteral<ServiceType> implements ServiceType {
 
   private final String value;

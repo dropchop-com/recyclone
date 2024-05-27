@@ -2,6 +2,7 @@ package com.dropchop.recyclone.service.api;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.repo.api.CrudServiceRepository;
 
 import java.util.List;
 
