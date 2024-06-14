@@ -5,7 +5,7 @@ import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFi
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.service.ServiceSelector;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
+import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;

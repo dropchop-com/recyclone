@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.spi;
+package com.dropchop.recyclone.quarkus.runtime.app;
 
 import java.util.Collection;
 import java.util.List;

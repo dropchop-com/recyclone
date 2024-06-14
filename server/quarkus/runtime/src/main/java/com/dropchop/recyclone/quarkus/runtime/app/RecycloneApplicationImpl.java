@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.spi.bean;
+package com.dropchop.recyclone.quarkus.runtime.app;
 
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
@@ -7,7 +7,6 @@ import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 24.

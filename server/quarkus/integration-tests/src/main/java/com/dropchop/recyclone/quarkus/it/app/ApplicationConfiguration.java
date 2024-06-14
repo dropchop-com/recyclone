@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplication;
+import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
 import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;

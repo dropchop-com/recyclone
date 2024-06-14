@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.it.repo.jpa;
+package com.dropchop.recyclone.quarkus.it.repo.alt;
 
 import com.dropchop.recyclone.quarkus.it.mapper.jpa.DummyToDtoMapper;
 import com.dropchop.recyclone.quarkus.it.mapper.jpa.DummyToJpaMapper;
@@ -9,14 +9,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
  */
 @Getter
 @ApplicationScoped
-@RecycloneType(RECYCLONE_DEFAULT)
+@RecycloneType("alter")
 public class DummyRepository extends BlazeRepository<JpaDummy, String>
     implements com.dropchop.recyclone.quarkus.it.repo.DummyRepository {
 

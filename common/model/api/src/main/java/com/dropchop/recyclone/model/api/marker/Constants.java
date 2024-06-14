@@ -5,6 +5,8 @@ package com.dropchop.recyclone.model.api.marker;
  */
 public interface Constants {
   interface Implementation {
+    String RECYCLONE_DEFAULT = "recyclone_default";
+    String SAME_AS_DEPENDANT = "<same-as-dependant>";
     String RECYCLONE_JPA_DEFAULT = "recyclone_jpa_default";
     String RECYCLONE_JPA_DEFAULT2 = "recyclone_jpa_default2";
   }

@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaLoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
-import com.dropchop.recyclone.quarkus.runtime.spi.bean.RecycloneApplicationImpl;
+import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
 import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapperImpl;
 import io.quarkus.test.QuarkusUnitTest;

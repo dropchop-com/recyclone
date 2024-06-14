@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
-import com.dropchop.recyclone.service.api.ServiceType;
+import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,6 +15,7 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
@@ -25,8 +26,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Getter
 @ApplicationScoped
-@ServiceType(RECYCLONE_JPA_DEFAULT)
-// default repository class
+@RecycloneType(RECYCLONE_DEFAULT)
 public class TagService extends RecycloneCrudServiceImpl<Tag, JpaTag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 

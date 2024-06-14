@@ -1,31 +1,42 @@
 package com.dropchop.recyclone.quarkus.runtime.service;
 
-import com.dropchop.recyclone.quarkus.runtime.common.Selector;
+import com.dropchop.recyclone.quarkus.runtime.common.ConfigurableSelector;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.service.api.Service;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 
-@ApplicationScoped
-public class ServiceSelector implements Selector<Service> {
+@Dependent
+public class ServiceSelector extends ConfigurableSelector<Service> {
+
+  private final Instance<Service> instances;
 
   @Inject
-  @Any
-  Instance<Service> instances;
+  public ServiceSelector(RecycloneBuildConfig config, @Any Instance<Service> instances) {
+    super(config);
+    this.instances = instances;
+  }
 
-  /**
-   * Here we can select service by an interface also, not only by concrete class.
-   */
-  public <S extends Service> S select(Class<S> sClass) {
-    S service = Selector.super.select(sClass);
-    if (service != null) {
-      return service;
-    }
-    Instance<S> candidates = instances.select(sClass);
-    if (candidates.stream().findAny().isEmpty()) {
-      throw new RuntimeException("Missing service class [" + sClass + "] implementation!");
-    }
-    return candidates.iterator().next();
+  @Override
+  public Instance<Service> getInstances() {
+    return this.instances;
+  }
+
+  @Override
+  public <Y extends Service> Y select(Class<Y> dependencyClass, String targetQualifier, String fallbackQualifier) {
+    return super.select(dependencyClass, targetQualifier, fallbackQualifier);
+  }
+
+  @Override
+  public <Y extends Service> Y select(Class<Y> dependencyClass, Class<?> dependantClass) {
+    return super.select(dependencyClass, dependantClass);
+  }
+
+  @Override
+  public <Y extends Service> Y select(Class<Y> dependencyClass, InjectionPoint injectionPoint) {
+    return super.select(dependencyClass, injectionPoint);
   }
 }

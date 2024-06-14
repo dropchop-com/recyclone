@@ -18,11 +18,6 @@ import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig
 public interface RecycloneBuildConfig {
 
   /**
-   * Configuration for REST resources.
-   */
-  Rest rest();
-
-  /**
    * Configuration for REST implementation.
    */
   @ConfigGroup
@@ -156,6 +151,96 @@ public interface RecycloneBuildConfig {
   }
 
   /**
+   * Configuration for REST resources.
+   */
+  Rest rest();
+
+  /**
+   * Root injection points configuration.
+   */
+  @ConfigGroup
+  interface InjectionPointsConfig {
+
+    /**
+     * Single dependant class injection point configuration.
+     */
+    @ConfigGroup
+    interface Dependant {
+
+      /**
+       * Single injection point configuration.
+       */
+      @ConfigGroup
+      interface Dependency {
+
+        /**
+         * if wildcard is used in match string then match glob class name,
+         * if match string starts with ^ reg-ex is assumed,
+         * if match string is full class name then match class name, or if prefixed with "->" all descendants apply
+         * lastly simple class name is matched
+         */
+        //@WithParentName
+        String match();
+
+        /**
+         * Target's injection point default @Named qualifier value.
+         */
+        @WithDefault("<same-as-dependant>")
+        String targetQualifier();
+
+        /**
+         * Fallback for the target's injection point default @Named qualifier value.
+         */
+        @WithDefault("recyclone_default")
+        String fallbackQualifier();
+      }
+
+      /**
+       * if wildcard is used in match string then match glob class name,
+       * if match string starts with ^ reg-ex is assumed,
+       * if match string is full class name then match class name, or if prefixed with "->" all descendants apply
+       * lastly simple class name is matched
+       */
+      //@WithParentName
+      String match();
+
+      /**
+       * Target's injection point default @Named qualifier value.
+       */
+      @WithDefault("<same-as-dependant>")
+      String targetQualifier();
+
+      /**
+       * Fallback for the target's injection point default @Named qualifier value.
+       */
+      @WithDefault("recyclone_default")
+      String fallbackQualifier();
+
+      /**
+       * List of match rules to match dependencies inside dependants
+       */
+      List<Dependency> matchDependencies();
+    }
+
+    /**
+     * Target's injection point default @Named qualifier value.
+     */
+    @WithDefault("<same-as-dependant>")
+    String targetQualifier();
+
+    /**
+     * Fallback for the target's injection point default @Named qualifier value.
+     */
+    @WithDefault("recyclone_default")
+    String fallbackQualifier();
+
+    /**
+     * List of match rules to match dependants.
+     */
+    List<Dependant> matchDependants();
+  }
+
+  /**
    * Single service configuration.
    */
   interface Service {
@@ -177,4 +262,9 @@ public interface RecycloneBuildConfig {
   //@WithParentName
   @WithUnnamedKey(DEFAULT_SERVICE)
   Map<String, Service> service();
+
+  /**
+   * Injection points configuration.
+   */
+  InjectionPointsConfig injectionPointsConfig();
 }

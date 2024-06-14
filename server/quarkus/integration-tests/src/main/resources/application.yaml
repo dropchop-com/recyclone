@@ -61,7 +61,6 @@ quarkus:
         license:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
-      # noinspection QsYaml
       security:
         ApiKey:
           type: http
@@ -82,6 +81,21 @@ quarkus:
         - "*.localization.*"
         - "*.tagging.*"
         - "*.security.*"
+
+    injection-points-config:
+      target-qualifier: <same-as-dependant>
+      fallback-qualifier: recyclone_default
+      match-dependants:
+        - match: "*.localization.*"
+          target-qualifier: recyclone_default
+        - match: DummyResource
+          target-qualifier: recyclone_default
+          match-dependencies:
+            - match: DummyService
+              target-qualifier: alter
+        - match: DummyService
+          target-qualifier: <same-as-dependant>
+
     service:
       qualifier: recyclone_jpa_default
       LanguageService:

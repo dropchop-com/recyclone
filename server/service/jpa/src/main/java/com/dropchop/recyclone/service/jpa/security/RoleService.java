@@ -15,7 +15,7 @@ import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
-import com.dropchop.recyclone.service.api.ServiceType;
+import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,17 +27,22 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
  */
-@Getter
 @ApplicationScoped
-@ServiceType(RECYCLONE_JPA_DEFAULT)
+@RecycloneType(RECYCLONE_DEFAULT)
 public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
+
+  //TODO: refactor this
+  @Inject
+  @RecycloneType(RECYCLONE_DEFAULT)
+  PermissionService permissionService;
 
   @Inject
   @RepositoryType(RECYCLONE_JPA_DEFAULT)
@@ -51,9 +56,10 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   @SuppressWarnings("CdiInjectionPointsInspection")
   AuthorizationService authorizationService;
 
-  @Inject
-  @ServiceType(RECYCLONE_JPA_DEFAULT)
-  PermissionService permissionService;
+  @Override
+  public RoleRepository getRepository() {
+    return repository;
+  }
 
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {

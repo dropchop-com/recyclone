@@ -8,6 +8,7 @@ import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
@@ -15,8 +16,8 @@ import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.MethodCreator;
 import io.quarkus.gizmo.MethodDescriptor;
 import io.quarkus.gizmo.ResultHandle;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
@@ -40,40 +41,32 @@ public class ServiceProcessor {
       "com.dropchop.recyclone.service.api.ServiceType"
   );
 
+  private final DotName ANNO_NAMED = DotName.createSimple(
+      "com.dropchop.recyclone.service.api.RecycloneType"
+  );
+
   RecycloneBuildConfig config;
 
   @BuildStep
-  void findServicesForProducerGeneration(CombinedIndexBuildItem combinedIndex,
-                                         BuildProducer<ServiceBuildItem> serviceItemProducer) {
+  UnremovableBeanBuildItem findServicesForProducerGeneration(CombinedIndexBuildItem combinedIndex,
+                                                             BuildProducer<ServiceBuildItem> serviceItemProducer) {
     IndexView index = combinedIndex.getIndex();
-    Map<String, RecycloneBuildConfig.Service> serviceMap = config.service();
-    String defaultQualifier = serviceMap.get(RecycloneBuildConfig.Service.DEFAULT_SERVICE).qualifier();
 
     Set<ClassInfo> handled = new HashSet<>();
     Collection<ClassInfo> serviceInterfaces = index.getAllKnownSubinterfaces(SERVICE);
     Set<DotName> serviceNames = serviceInterfaces.stream().map(ClassInfo::name).collect(Collectors.toSet());
     Map<String, String> services = new HashMap<>();
+    Set<String> unremovable = new HashSet<>();
     for(ClassInfo serviceIface : serviceInterfaces) {
       Collection<ClassInfo> candidates = index.getAllKnownImplementors(serviceIface.name());
       if (candidates.isEmpty()) {
         continue;
       }
-      RecycloneBuildConfig.Service serviceConfig = config.service().get(
-          serviceIface.name().withoutPackagePrefix()
-      );
-      String requestedQualifier = defaultQualifier;
-      if (serviceConfig != null) {
-        requestedQualifier = serviceConfig.qualifier();
-      }
       ClassInfo serviceImpl = null;
       for (ClassInfo serviceImplCandidate : candidates) {
-        if (serviceImplCandidate.hasAnnotation(ANNO_SERVICE_TYPE)) {
-          AnnotationInstance annotationInstance = serviceImplCandidate.annotation(ANNO_SERVICE_TYPE);
-          String type = annotationInstance.value().asString();
-          if (type.equals(requestedQualifier)) {
-            serviceImpl = serviceImplCandidate;
-            break;
-          }
+        if (serviceImplCandidate.hasAnnotation(ANNO_NAMED)) {
+          serviceImpl = serviceImplCandidate;
+          unremovable.add(serviceImpl.name().toString());
         }
       }
       if (serviceImpl == null || handled.contains(serviceImpl)) {
@@ -86,9 +79,11 @@ public class ServiceProcessor {
         continue;
       }
       DotName serviceIf = intersection.iterator().next();
+      unremovable.add(serviceImpl.name().toString());
       services.put(serviceIf.toString(), serviceImpl.name().toString());
     }
     serviceItemProducer.produce(new ServiceBuildItem(services));
+    return UnremovableBeanBuildItem.beanClassNames(unremovable);
   }
 
   @BuildStep
@@ -98,12 +93,12 @@ public class ServiceProcessor {
     IndexView index = combinedIndex.getIndex();
     for(Map.Entry<String, String> serviceEntry : serviceBuildItem.getServices().entrySet()) {
       ClassInfo serviceIf = index.getClassByName(serviceEntry.getKey());
-      ClassInfo serviceImpl = index.getClassByName(serviceEntry.getValue());
+      //ClassInfo serviceImpl = index.getClassByName(serviceEntry.getValue());
 
       String producerClassName = serviceIf.name().toString() + "Producer";
       GeneratedBeanGizmoAdaptor classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
       log.info(
-          "Generating producer for injection point {} using {} implementation.", serviceIf, serviceImpl
+          "Generating producer for injection point {}.", serviceIf //, serviceImpl
       );
       try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
           .className(producerClassName)
@@ -111,10 +106,11 @@ public class ServiceProcessor {
 
         MethodCreator methodCreator = classCreator.getMethodCreator(
             "produce" + serviceIf.simpleName(),
-            serviceIf.name().toString()
+            serviceIf.name().toString(),
+            InjectionPoint.class.getName()
         );
         methodCreator.addAnnotation(Produces.class);
-        methodCreator.addAnnotation(ApplicationScoped.class);
+        // methodCreator.addAnnotation(ApplicationScoped.class);
 
         // Get the Arc container and fetch an instance handle of the ServiceProducer
         ResultHandle arcContainerHandle = methodCreator.invokeStaticMethod(
@@ -133,12 +129,15 @@ public class ServiceProcessor {
             serviceProducerHandle
         );
 
-        // Call produceService on the ServiceProducer instance
-        ResultHandle serviceClassHandle = methodCreator.loadClass(serviceImpl.name().toString());
+        // Call produceService on the ServiceProducer instance with service interface class and InjectionPoint param
+        //ResultHandle serviceClassHandle = methodCreator.loadClass(serviceImpl.name().toString());
+        ResultHandle serviceClassHandle = methodCreator.loadClass(serviceIf.name().toString());
+        ResultHandle injectionPointHandle = methodCreator.getMethodParam(0); // Get the InjectionPoint parameter
         ResultHandle instance = methodCreator.invokeVirtualMethod(
-            MethodDescriptor.ofMethod(ServiceSelector.class, "select", Service.class, Class.class  ),
+            MethodDescriptor.ofMethod(ServiceSelector.class, "select", Service.class, Class.class, InjectionPoint.class),
             serviceProducerInstance,
-            serviceClassHandle
+            serviceClassHandle,
+            injectionPointHandle
         );
         methodCreator.returnValue(instance);
       }
