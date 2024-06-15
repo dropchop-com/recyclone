@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.invoke;
 
 import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.quarkus.runtime.common.Selector;
+import com.dropchop.recyclone.quarkus.runtime.selectors.Selector;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 05. 24.

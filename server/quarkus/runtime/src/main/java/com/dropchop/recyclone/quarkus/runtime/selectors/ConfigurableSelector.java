@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.common;
+package com.dropchop.recyclone.quarkus.runtime.selectors;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.utils.ClassNameMatcher;

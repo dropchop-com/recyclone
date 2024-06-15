@@ -82,6 +82,7 @@ quarkus:
         - "*.tagging.*"
         - "*.security.*"
 
+    # this config is actually not needed, but is here to showcase
     injection-points-config:
       target-qualifier: <same-as-dependant>
       fallback-qualifier: recyclone_default
@@ -95,20 +96,3 @@ quarkus:
               target-qualifier: alter
         - match: DummyService
           target-qualifier: <same-as-dependant>
-
-    service:
-      qualifier: recyclone_jpa_default
-      LanguageService:
-        qualifier: recyclone_jpa_default
-      TagService:
-        qualifier: recyclone_jpa_default
-        # crud-repository:
-        #  qualifier: recyclone_jpa_default
-        #  type: TagRepository
-        #repositories:
-        #  - TagRepository:
-        #      qualifier: recyclone_jpa_default
-        #  - TagHelperRepository:
-        #      qualifier: recyclone_jpa_default
-      DummyService:
-        qualifier: alter

@@ -2,7 +2,7 @@ package com.dropchop.recyclone.quarkus.runtime.invoke;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.quarkus.runtime.common.ParameterizedSelector;
+import com.dropchop.recyclone.quarkus.runtime.selectors.ParameterizedSelector;
 import jakarta.enterprise.context.RequestScoped;
 
 /**

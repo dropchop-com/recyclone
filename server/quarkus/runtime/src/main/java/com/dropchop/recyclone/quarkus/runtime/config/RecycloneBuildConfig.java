@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Service.DEFAULT_SERVICE;
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
@@ -162,58 +162,67 @@ public interface RecycloneBuildConfig {
   interface InjectionPointsConfig {
 
     /**
-     * Single dependant class injection point configuration.
+     * Dependant injection point configuration.
      */
     @ConfigGroup
     interface Dependant {
 
       /**
-       * Single injection point configuration.
+       * Dependency injection point configuration.
        */
       @ConfigGroup
       interface Dependency {
 
         /**
-         * if wildcard is used in match string then match glob class name,
-         * if match string starts with ^ reg-ex is assumed,
-         * if match string is full class name then match class name, or if prefixed with "->" all descendants apply
-         * lastly simple class name is matched
+         * This is the order of evaluation for matching against available implementation class names:
+         * <ol>
+         * <li>If a match string starts with "^" symbol, then a reg-ex is assumed.</li>
+         * <li>If wildcard "*" or "?" is used in a match string, then match glob-like class name.</li>
+         * <li>If pattern is prefixed with a "->", then a full class name is assumed and all descendants apply.</li>
+         * <li>If match string contains a "." character then match class name by equality.</li>
+         * <li>Lastly simple class name equality is matched.</li>
+         * </ol>
          */
-        //@WithParentName
         String match();
 
         /**
-         * Target's injection point default @Named qualifier value.
+         * Dependency target <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
          */
         @WithDefault("<same-as-dependant>")
         String targetQualifier();
 
         /**
-         * Fallback for the target's injection point default @Named qualifier value.
+         * Fallback for the dependency
+         * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
          */
-        @WithDefault("recyclone_default")
+        @WithDefault(RECYCLONE_DEFAULT)
         String fallbackQualifier();
       }
 
       /**
-       * if wildcard is used in match string then match glob class name,
-       * if match string starts with ^ reg-ex is assumed,
-       * if match string is full class name then match class name, or if prefixed with "->" all descendants apply
-       * lastly simple class name is matched
+       * This is the order of evaluation for matching against available implementation class names:
+       * <ol>
+       * <li>If a match string starts with "^" symbol, then a reg-ex is assumed.</li>
+       * <li>If wildcard "*" or "?" is used in a match string, then match glob-like class name.</li>
+       * <li>If pattern is prefixed with a "->", then a full class name is assumed and all descendants apply.</li>
+       * <li>If match string contains a "." character then match class name by equality.</li>
+       * <li>Lastly simple class name equality is matched.</li>
+       * </ol>
        */
-      //@WithParentName
       String match();
 
       /**
-       * Target's injection point default @Named qualifier value.
+       * Target's injection point default
+       * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
        */
       @WithDefault("<same-as-dependant>")
       String targetQualifier();
 
       /**
-       * Fallback for the target's injection point default @Named qualifier value.
+       * Fallback for the target's injection point default
+       * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
        */
-      @WithDefault("recyclone_default")
+      @WithDefault(RECYCLONE_DEFAULT)
       String fallbackQualifier();
 
       /**
@@ -223,45 +232,25 @@ public interface RecycloneBuildConfig {
     }
 
     /**
-     * Target's injection point default @Named qualifier value.
+     * Target's injection point default
+     * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
      */
     @WithDefault("<same-as-dependant>")
     String targetQualifier();
 
     /**
-     * Fallback for the target's injection point default @Named qualifier value.
+     * Fallback for the target's injection point default
+     * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
      */
-    @WithDefault("recyclone_default")
+    @WithDefault(RECYCLONE_DEFAULT)
     String fallbackQualifier();
 
     /**
-     * List of match rules to match dependants.
+     * List of match rules to match dependants, classes that have injection points for Recyclone Layer classes.
+     * (i.e.: Resources, Services, Repositories etc ...)
      */
     List<Dependant> matchDependants();
   }
-
-  /**
-   * Single service configuration.
-   */
-  interface Service {
-
-    String DEFAULT_SERVICE = "<default>";
-
-    /**
-     * Service qualifier name.
-     */
-    @WithDefault("recyclone_jpa_default")
-    String qualifier();
-  }
-
-  /**
-   * Services configuration.
-   */
-  @ConfigDocMapKey("service-name")
-  @WithDefaults
-  //@WithParentName
-  @WithUnnamedKey(DEFAULT_SERVICE)
-  Map<String, Service> service();
 
   /**
    * Injection points configuration.

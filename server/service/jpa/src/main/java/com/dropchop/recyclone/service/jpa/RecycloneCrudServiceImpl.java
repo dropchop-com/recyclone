@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
-import com.dropchop.recyclone.quarkus.runtime.service.ServiceSelector;
+import com.dropchop.recyclone.quarkus.runtime.selectors.ServiceSelector;
 import com.dropchop.recyclone.service.jpa.localization.LanguageService;
 import com.dropchop.recyclone.service.jpa.mapping.SetLanguage;
 import jakarta.inject.Inject;

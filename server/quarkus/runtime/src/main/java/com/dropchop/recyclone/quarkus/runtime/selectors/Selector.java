@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.common;
+package com.dropchop.recyclone.quarkus.runtime.selectors;
 
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;

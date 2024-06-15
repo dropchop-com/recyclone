@@ -1,6 +1,5 @@
-package com.dropchop.recyclone.quarkus.runtime.service;
+package com.dropchop.recyclone.quarkus.runtime.selectors;
 
-import com.dropchop.recyclone.quarkus.runtime.common.ConfigurableSelector;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.service.api.Service;
 import jakarta.enterprise.context.Dependent;
