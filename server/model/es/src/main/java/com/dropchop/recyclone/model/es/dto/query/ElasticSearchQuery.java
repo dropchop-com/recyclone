@@ -10,10 +10,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Collection;
 import java.util.List;
 
-public class ElasticSearchQuery<T> extends Query {
+public class ElasticSearchQuery extends Query {
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
-  public ElasticSearchQuery(List<QueryFilter> filters, List<QueryAggregation> aggregations) {
+  public ElasticSearchQuery(List<QueryFilter<?>> filters, List<QueryAggregation> aggregations) {
     super(filters, aggregations);
   }
 
@@ -26,7 +26,7 @@ public class ElasticSearchQuery<T> extends Query {
     ArrayNode shouldNode = boolNode.putArray("should");
     ArrayNode mustNotNode = boolNode.putArray("must_not");
 
-    for (QueryFilter<T> filter : getFilters()) {
+    for (QueryFilter<?> filter : getFilters()) {
       switch (filter.getLogicalOperator()) {
         case AND:
           mustNode.add(createFilterNode(filter));
@@ -51,7 +51,7 @@ public class ElasticSearchQuery<T> extends Query {
     return rootNode.toString();
   }
 
-  private ObjectNode createFilterNode(QueryFilter<T> filter) {
+  private ObjectNode createFilterNode(QueryFilter<?> filter) {
     ObjectNode filterNode = objectMapper.createObjectNode();
     switch (filter.getOperation()) {
       case EQUAL:
@@ -65,15 +65,18 @@ public class ElasticSearchQuery<T> extends Query {
         break;
       case RANGE:
         // the value is a List containing [lowerBound, upperBound]
-        if (filter.getValue() instanceof List) {
+        try {
+          @SuppressWarnings("unchecked")
           List<Number> rangeValues = (List<Number>) filter.getValue();
           if (rangeValues.size() == 2) {
             ObjectNode rangeNode = filterNode.putObject("range").putObject(filter.getField());
             rangeNode.put("gte", objectMapper.valueToTree(rangeValues.get(0)));
             rangeNode.put("lte", objectMapper.valueToTree(rangeValues.get(1)));
           }
+          break;
+        } catch (ClassCastException e) {
+          throw new ClassCastException("Filter value ["+filter.getValue()+"] is not a List of Numbers!");
         }
-        break;
       case IN:
         ArrayNode valuesNode = objectMapper.createArrayNode();
         if (filter.getValue() instanceof Collection) {
@@ -94,9 +97,7 @@ public class ElasticSearchQuery<T> extends Query {
       ArrayNode subFiltersNode = filterNode.putArray("filter");
       ObjectNode boolNode = subFiltersNode.addObject().putObject("bool");
       ArrayNode nestedMustNode = boolNode.putArray("must");
-      filter.getSubFilters().forEach(subFilter -> {
-        nestedMustNode.add(createFilterNode((QueryFilter) subFilter));
-      });
+      filter.getSubFilters().forEach(subFilter -> nestedMustNode.add(createFilterNode(subFilter)));
     }
 
     return filterNode;

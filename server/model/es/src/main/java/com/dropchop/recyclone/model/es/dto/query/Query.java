@@ -8,16 +8,16 @@ import java.util.List;
 
 
 public class Query implements com.dropchop.recyclone.model.es.api.query.Query {
-  private final List<QueryFilter> filters;
+  private final List<QueryFilter<?>> filters;
   private final List<QueryAggregation> aggregations;
 
-  public Query(List<QueryFilter> filters, List<QueryAggregation> aggregations) {
+  public Query(List<QueryFilter<?>> filters, List<QueryAggregation> aggregations) {
     this.filters = Collections.unmodifiableList(filters);
     this.aggregations = Collections.unmodifiableList(aggregations);
   }
 
   @Override
-  public List<QueryFilter> getFilters() {
+  public List<QueryFilter<?>> getFilters() {
     return filters;
   }
 

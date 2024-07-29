@@ -10,14 +10,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QueryFilter<T> implements com.dropchop.recyclone.model.es.api.query.QueryFilter {
+public class QueryFilter<T> implements com.dropchop.recyclone.model.es.api.query.QueryFilter<T> {
   private String field;
   private Operation operation;
   private T value;
   private LogicalOperator logicalOperator;
 
   @Override
-  public List<com.dropchop.recyclone.model.es.api.query.QueryFilter> getSubFilters() {
+  public List<com.dropchop.recyclone.model.es.api.query.QueryFilter<T>> getSubFilters() {
     return Collections.emptyList();
   }
 }
