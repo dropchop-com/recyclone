@@ -115,6 +115,9 @@
     <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
     <microprofile-openapi-api.version>3.1</microprofile-openapi-api.version>
     <microprofile-config-api.version>3.0.3</microprofile-config-api.version>
+
+    <!-- elasticsearch low level rest client -->
+    <elasticsearch.rest-client.version>3.12.3</elasticsearch.rest-client.version>
   </properties>
 
   <dependencyManagement>
@@ -315,6 +318,13 @@
         <artifactId>jsonassert</artifactId>
         <version>${jsonassert.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <!-- Elasticsearch dependencies -->
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-elasticsearch-rest-client</artifactId>
+        <version>${elasticsearch.rest-client.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

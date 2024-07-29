@@ -108,6 +108,13 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Elasticsearch dependencies -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-elasticsearch-rest-client</artifactId>
+      <version>${elasticsearch.rest-client.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
