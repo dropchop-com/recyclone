@@ -77,6 +77,10 @@ public interface Constants {
     interface Tagging {
       String TAG = "tagging.tag";
     }
+
+    interface Query {
+      String QUERY = "query";
+    }
   }
 
   interface Actions {
