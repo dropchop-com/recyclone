@@ -74,8 +74,8 @@ public abstract class ConfigurableSelector<X> implements Selector<X> {
       if (!dependency.isResolvable()) {
         throw new RuntimeException(
             "Missing dependency class [" + dependencyClass +
-                "] implementation for qualifiers [@Named(" + targetQualifier +
-                ")] or [@Named(" + fallbackQualifier + ")]!"
+                "] implementation for qualifiers [@RecycloneType(" + targetQualifier +
+                ")] or [@RecycloneType(" + fallbackQualifier + ")]!"
         );
       }
     }
