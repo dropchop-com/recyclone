@@ -1,28 +1,50 @@
 package com.dropchop.recyclone.model.entity.jpa.localization;
 
 import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
+import jakarta.persistence.*;
 import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.MappedSuperclass;
+import java.time.ZonedDateTime;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
  */
 @Getter
 @Setter
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-@MappedSuperclass
 @Embeddable
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class JpaTitleDescriptionTranslation extends JpaTitleTranslation
   implements TitleDescriptionTranslation {
 
-  public JpaTitleDescriptionTranslation(@NonNull String lang, @NonNull String title) {
+  /*public JpaTitleDescriptionTranslation(@NonNull String lang, @NonNull String title) {
     super(lang, title);
-  }
+  }*/
+
+  @NonNull
+  @Column(name = "lang")
+  @EqualsAndHashCode.Include
+  private String lang;
+
+  @OneToOne(targetEntity = JpaLanguage.class)
+  @JoinColumn(name = "lang", referencedColumnName = "code", insertable = false, updatable = false)
+  private JpaLanguage language;
+
+  @NonNull
+  @Column(name = "title", length = 1024)
+  @EqualsAndHashCode.Exclude
+  private String title;
 
   @Column(name = "description", length = 8096)
   @EqualsAndHashCode.Exclude
   private String description;
+
+  @Column(name="created")
+  private ZonedDateTime created;
+
+  @Column(name="modified")
+  private ZonedDateTime modified;
+
+  transient Boolean base;
 }

@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-@MappedSuperclass
 @Embeddable
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JpaTitleTranslation

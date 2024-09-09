@@ -49,8 +49,9 @@ public class JpaDummy extends JpaCode
   @CollectionTable(
       name="dummy_l",
       uniqueConstraints = @UniqueConstraint(
-          name = "uq_dummy_l_fk_language_code_lang", columnNames = {"fk_dummy_code", "lang"}),
-      foreignKey = @ForeignKey(name = "dummy_l_fk_dummy_code"),
+          name = "uq_dummy_l_fk_language_code_lang", columnNames = {"fk_dummy_code", "lang"}
+      ),
+      foreignKey = @ForeignKey(name = "dummy_l_fk_country_code"),
       joinColumns = @JoinColumn(name="fk_dummy_code")
   )
   private Set<JpaTitleDescriptionTranslation> translations;
