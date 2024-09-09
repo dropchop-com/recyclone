@@ -26,6 +26,5 @@ public class PermissionService extends RecycloneCrudServiceImpl<Permission, JpaP
   implements com.dropchop.recyclone.service.api.security.PermissionService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   PermissionRepository repository;
 }

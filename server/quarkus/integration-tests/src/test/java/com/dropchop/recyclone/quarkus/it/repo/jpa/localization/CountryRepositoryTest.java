@@ -2,7 +2,6 @@ package com.dropchop.recyclone.quarkus.it.repo.jpa.localization;
 
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
-import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.api.TransactionHelper;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.*;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation;
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.LanguageRepositoryTest.lngEnCode;
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.LanguageRepositoryTest.lngSlCode;
 
@@ -29,11 +27,9 @@ public class CountryRepositoryTest {
   public static final String coSiCode = "si";
 
   @Inject
-  @RepositoryType(Implementation.RECYCLONE_JPA_DEFAULT)
   CountryRepository countryRepository;
 
   @Inject
-  @RepositoryType(Implementation.RECYCLONE_JPA_DEFAULT)
   LanguageRepository languageRepository;
 
   @Inject

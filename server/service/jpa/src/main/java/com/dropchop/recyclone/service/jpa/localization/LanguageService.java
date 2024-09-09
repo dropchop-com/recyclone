@@ -23,6 +23,5 @@ public class LanguageService extends RecycloneCrudServiceImpl<Language, JpaLangu
   implements com.dropchop.recyclone.service.api.localization.LanguageService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   LanguageRepository repository;
 }

@@ -45,15 +45,12 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   PermissionService permissionService;
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   RoleRepository repository;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
   CommonExecContextContainer execContextContainer;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
   AuthorizationService authorizationService;
 
   @Override

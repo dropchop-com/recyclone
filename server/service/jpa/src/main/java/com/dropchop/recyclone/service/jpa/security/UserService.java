@@ -27,7 +27,6 @@ public class UserService extends RecycloneCrudServiceImpl<User, JpaUser, UUID>
     implements com.dropchop.recyclone.service.api.security.UserService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   UserRepository repository;
 
   @Inject

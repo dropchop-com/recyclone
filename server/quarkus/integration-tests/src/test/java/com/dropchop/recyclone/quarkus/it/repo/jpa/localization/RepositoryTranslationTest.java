@@ -3,7 +3,6 @@ package com.dropchop.recyclone.quarkus.it.repo.jpa.localization;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
-import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.security.ActionRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -24,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RepositoryTranslationTest {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   ActionRepository actionRepository;
 
   @Test

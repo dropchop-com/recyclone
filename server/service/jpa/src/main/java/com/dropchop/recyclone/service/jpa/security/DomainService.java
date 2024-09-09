@@ -23,6 +23,5 @@ public class DomainService extends RecycloneCrudServiceImpl<Domain, JpaDomain, S
   implements com.dropchop.recyclone.service.api.security.DomainService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   DomainRepository repository;
 }

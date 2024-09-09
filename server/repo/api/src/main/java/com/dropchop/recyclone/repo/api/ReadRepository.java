@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
  */
-public interface ReadRepository<E, ID> extends Repository<E, ID> {
+public interface ReadRepository<E, ID> extends Repository<E> {
 
   List<E> findById(Collection<ID> ids);
 

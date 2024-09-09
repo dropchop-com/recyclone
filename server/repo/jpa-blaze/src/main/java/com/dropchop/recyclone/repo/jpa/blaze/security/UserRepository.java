@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.dto.invoke.UserParams;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
 import com.dropchop.recyclone.repo.api.CrudServiceRepository;
-import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.decorators.SearchByLoginNameDecorator;
@@ -19,11 +18,8 @@ import lombok.Getter;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
-
 @Getter
 @ApplicationScoped
-@RepositoryType(RECYCLONE_JPA_DEFAULT)
 public class UserRepository extends BlazeRepository<JpaUser, UUID>
     implements CrudServiceRepository<User, JpaUser, UUID> {
 

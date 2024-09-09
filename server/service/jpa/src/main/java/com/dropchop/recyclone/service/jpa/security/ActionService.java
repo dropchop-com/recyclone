@@ -24,6 +24,5 @@ public class ActionService extends RecycloneCrudServiceImpl<Action, JpaAction, S
   implements com.dropchop.recyclone.service.api.security.ActionService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   ActionRepository repository;
 }

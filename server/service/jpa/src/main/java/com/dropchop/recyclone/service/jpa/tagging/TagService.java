@@ -31,7 +31,6 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, JpaTag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   TagRepository repository;
 
   @Inject

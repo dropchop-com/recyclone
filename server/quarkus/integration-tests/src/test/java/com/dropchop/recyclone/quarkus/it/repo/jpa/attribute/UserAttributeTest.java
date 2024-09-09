@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.*;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.CountryRepositoryTest.coUkCode;
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.CountryRepositoryTest.generateCountry;
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.LanguageRepositoryTest.lngEnCode;
@@ -35,15 +33,12 @@ public class UserAttributeTest {
     //private static final String LOGIN_NAME = "random-login-name";
 
     @Inject
-    @RepositoryType(RECYCLONE_JPA_DEFAULT)
     LanguageRepository languageRepository;
 
     @Inject
-    @RepositoryType(RECYCLONE_JPA_DEFAULT)
     CountryRepository countryRepository;
 
     @Inject
-    @RepositoryType(RECYCLONE_JPA_DEFAULT)
     UserRepository userRespository;
 
     @BeforeAll

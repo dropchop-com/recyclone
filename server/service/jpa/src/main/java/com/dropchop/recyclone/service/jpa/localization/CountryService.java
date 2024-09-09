@@ -23,6 +23,5 @@ public class CountryService extends RecycloneCrudServiceImpl<Country, JpaCountry
   implements com.dropchop.recyclone.service.api.localization.CountryService {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   CountryRepository repository;
 }
