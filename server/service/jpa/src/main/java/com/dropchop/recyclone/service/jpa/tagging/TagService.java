@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
-import com.dropchop.recyclone.repo.api.RepositoryType;
+import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
@@ -16,7 +16,6 @@ import lombok.Getter;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
 /**
@@ -34,7 +33,9 @@ public class TagService extends RecycloneCrudServiceImpl<Tag, JpaTag, UUID>
   TagRepository repository;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
+  TagMapperProvider mapperProvider;
+
+  @Inject
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override

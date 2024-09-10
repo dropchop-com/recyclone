@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.repo.api.RepositoryType;
+import com.dropchop.recyclone.repo.jpa.blaze.security.UserMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.mapping.EntityPolymorphicCreateFactory;
@@ -18,7 +18,6 @@ import lombok.Getter;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 @Getter
 @ApplicationScoped
@@ -30,7 +29,9 @@ public class UserService extends RecycloneCrudServiceImpl<User, JpaUser, UUID>
   UserRepository repository;
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
+  UserMapperProvider mapperProvider;
+
+  @Inject
   MapperSubTypeConfig mapperSubTypeConfig;
 
   protected MappingContext getMappingContextForModify() {

@@ -12,7 +12,8 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
-import com.dropchop.recyclone.repo.api.RepositoryType;
+import com.dropchop.recyclone.repo.api.MapperProvider;
+import com.dropchop.recyclone.repo.jpa.blaze.security.RoleMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.RecycloneType;
@@ -21,14 +22,12 @@ import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 
 
 /**
@@ -45,6 +44,9 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   PermissionService permissionService;
 
   @Inject
+  RoleMapperProvider mapperProvider;
+
+  @Inject
   RoleRepository repository;
 
   @Inject
@@ -56,6 +58,11 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   @Override
   public RoleRepository getRepository() {
     return repository;
+  }
+
+  @Override
+  public MapperProvider<Role, JpaRole> getMapperProvider() {
+    return mapperProvider;
   }
 
   @Transactional
@@ -74,7 +81,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       (entity, join) -> entity.getPermissions().addAll(join)
     );
     save(roles);
-    return repository.getToDtoMapper().toDtosResult(roles, mapContext);
+    return getMapperProvider().getToDtoMapper().toDtosResult(roles, mapContext);
   }
 
   @Transactional
@@ -105,6 +112,6 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       }
     );
     save(roles);
-    return repository.getToDtoMapper().toDtosResult(roles, mapContext);
+    return getMapperProvider().getToDtoMapper().toDtosResult(roles, mapContext);
   }
 }

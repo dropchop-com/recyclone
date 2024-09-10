@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
+import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,6 +25,8 @@ public class DummyService extends RecycloneCrudServiceImpl<Dummy, JpaDummy, Stri
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
   @Inject
-  @RecycloneType(RECYCLONE_DEFAULT)
   DummyRepository repository;
+
+  @Inject
+  DummyMapperProvider mapperProvider;
 }

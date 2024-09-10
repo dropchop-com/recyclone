@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.api.base.Entity;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 05. 24.
  */
-public interface CrudServiceRepository<D extends Dto, E extends Entity, ID> extends CrudRepository<E, ID> {
+public interface MapperProvider<D extends Dto, E extends Entity> {
 
   ToDtoMapper<D, E> getToDtoMapper();
 
