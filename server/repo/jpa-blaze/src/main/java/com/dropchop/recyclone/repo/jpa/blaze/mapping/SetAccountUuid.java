@@ -1,10 +1,10 @@
-package com.dropchop.recyclone.service.jpa.mapping;
+package com.dropchop.recyclone.repo.jpa.blaze.mapping;
 
+import com.dropchop.recyclone.mapper.api.BeforeToEntityListener;
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.dto.security.UserAccount;
-import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.BeforeToEntityListener;
 
 import java.util.UUID;
 

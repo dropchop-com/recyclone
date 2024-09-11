@@ -12,8 +12,6 @@ import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 public class BaseRepoExecContext<E> extends ParamsExecContext<RepositoryExecContextListener>
   implements RepositoryExecContext<E> {
 
-
-
   @Override
   public BaseRepoExecContext<E> of(ExecContext<?> sourceContext) {
     super.of(sourceContext);

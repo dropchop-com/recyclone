@@ -7,18 +7,20 @@ import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
-import com.dropchop.recyclone.repo.api.MapperProvider;
+import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
+import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
 import com.dropchop.recyclone.service.api.JoinEntityHelper;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
-import com.dropchop.recyclone.service.jpa.RecycloneCrudServiceImpl;
+import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,19 +37,17 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
+public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
-
-  //TODO: refactor this
-  @Inject
-  @RecycloneType(RECYCLONE_DEFAULT)
-  PermissionService permissionService;
 
   @Inject
   RoleMapperProvider mapperProvider;
 
   @Inject
   RoleRepository repository;
+
+  @Inject
+  PermissionRepository permissionRepository;
 
   @Inject
   CommonExecContextContainer execContextContainer;
@@ -61,7 +61,7 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
   }
 
   @Override
-  public MapperProvider<Role, JpaRole> getMapperProvider() {
+  public FilteringMapperProvider<Role, JpaRole, String> getMapperProvider() {
     return mapperProvider;
   }
 
@@ -72,9 +72,11 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
-    Collection<JpaRole> roles = find(repository.getRepositoryExecContext());
+    Collection<JpaRole> roles = getRepository().find(repository.getRepositoryExecContext());
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
-      new JoinEntityHelper<>(authorizationService, permissionService, roles);
+      new JoinEntityHelper<>(
+          authorizationService, Constants.Domains.Security.PERMISSION, permissionRepository, roles
+      );
     helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(execContextContainer.get()),
@@ -91,9 +93,11 @@ public class RoleService extends RecycloneCrudServiceImpl<Role, JpaRole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
-    Collection<JpaRole> roles = find(getRepository().getRepositoryExecContext());
+    Collection<JpaRole> roles = getRepository().find(getRepository().getRepositoryExecContext());
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
-      new JoinEntityHelper<>(authorizationService, permissionService, roles);
+        new JoinEntityHelper<>(
+            authorizationService, Constants.Domains.Security.PERMISSION, permissionRepository, roles
+        );
     helper.join(
       toJoin -> params.getPermissionUuids(),
       helper.new ViewPermitter<>(execContextContainer.get()),

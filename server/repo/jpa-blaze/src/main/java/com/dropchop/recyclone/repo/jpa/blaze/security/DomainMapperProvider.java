@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.jpa.security.DomainToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.DomainToJpaMapper;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaDomain;
-import com.dropchop.recyclone.repo.api.MapperProvider;
+import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -14,7 +14,10 @@ import lombok.Getter;
  */
 @Getter
 @ApplicationScoped
-public class DomainMapperProvider implements MapperProvider<Domain, JpaDomain> {
+public class DomainMapperProvider extends RecycloneMapperProvider<Domain, JpaDomain, String> {
+
+  @Inject
+  DomainRepository repository;
 
   @Inject
   DomainToDtoMapper toDtoMapper;

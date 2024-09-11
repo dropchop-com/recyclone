@@ -1,5 +1,7 @@
-package com.dropchop.recyclone.service.jpa.mapping;
+package com.dropchop.recyclone.repo.jpa.blaze.mapping;
 
+import com.dropchop.recyclone.mapper.api.AfterToEntityListener;
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.base.Model;
@@ -10,10 +12,8 @@ import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
-import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.AfterToEntityListener;
-import com.dropchop.recyclone.service.api.mapping.EntityAllPreloadDelegate;
-import com.dropchop.recyclone.service.jpa.localization.LanguageService;
+import com.dropchop.recyclone.repo.api.mapper.EntityAllPreloadDelegate;
+import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 
 import java.util.Set;
 
@@ -27,13 +27,13 @@ public class SetLanguage
 
   final Class<?> onlyForEntity;
 
-  public SetLanguage(LanguageService service) {
-    super(service);
+  public SetLanguage(LanguageRepository repository) {
+    super(repository);
     this.onlyForEntity = null;
   }
 
-  public SetLanguage(LanguageService service, Class<?> onlyForEntity) {
-    super(service);
+  public SetLanguage(LanguageRepository repository, Class<?> onlyForEntity) {
+    super(repository);
     this.onlyForEntity = onlyForEntity;
   }
 

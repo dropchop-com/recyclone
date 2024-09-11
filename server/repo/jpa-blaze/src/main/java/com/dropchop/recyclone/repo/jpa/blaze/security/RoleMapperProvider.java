@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.jpa.security.RoleToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.RoleToJpaMapper;
 import com.dropchop.recyclone.model.dto.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
-import com.dropchop.recyclone.repo.api.MapperProvider;
+import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -14,7 +14,11 @@ import lombok.Getter;
  */
 @Getter
 @ApplicationScoped
-public class RoleMapperProvider implements MapperProvider<Role, JpaRole> {
+public class RoleMapperProvider extends RecycloneMapperProvider<Role, JpaRole, String> {
+
+  @Inject
+  RoleRepository repository;
+
   @Inject
   RoleToDtoMapper toDtoMapper;
 

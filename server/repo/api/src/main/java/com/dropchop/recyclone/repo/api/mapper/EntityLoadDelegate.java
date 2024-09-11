@@ -1,12 +1,14 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.repo.api.mapper;
 
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.service.api.EntityByIdService;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.model.dto.base.DtoCode;
+import com.dropchop.recyclone.model.dto.base.DtoId;
+import com.dropchop.recyclone.repo.api.ReadRepository;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,22 +18,22 @@ import java.util.Set;
  */
 @SuppressWarnings("LombokGetterMayBeUsed")
 public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {
-  private final EntityByIdService<D, E, ID> service;
+  private final ReadRepository<E, ID> repository;
   private final Set<String> onlyForRegisteredActions = new HashSet<>();
 
   private boolean failIfMissing = true;
   private boolean failIfPresent = false;
 
-  public EntityLoadDelegate(EntityByIdService<D, E, ID> service) {
-    this.service = service;
+  public EntityLoadDelegate(ReadRepository<E, ID> repository) {
+    this.repository = repository;
   }
 
   public Class<E> getEntityType() {
-    return service.getRootClass();
+    return repository.getRootClass();
   }
 
-  public EntityByIdService<D, E, ID> getService() {
-    return service;
+  public ReadRepository<E, ID> getRepository() {
+    return repository;
   }
 
   public EntityLoadDelegate<D, E, ID> forActionOnly(String action) {
@@ -50,7 +52,15 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {
   }
 
   protected E findById(D dto) {
-    return service.findById(dto);
+    if (dto instanceof DtoCode) {
+      //noinspection unchecked
+      return repository.findById((ID)((DtoCode) dto).getCode());
+    } else if (dto instanceof DtoId) {
+      //noinspection unchecked
+      return repository.findById((ID)((DtoId) dto).getUuid());
+    } else {
+      throw new RuntimeException("findById(" + dto + ") is not supported.");
+    }
   }
 
   public E load(D dto, MappingContext context) {

@@ -1,8 +1,8 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.repo.api.mapper;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.service.api.EntityByIdService;
+import com.dropchop.recyclone.repo.api.ReadRepository;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -16,9 +16,9 @@ public class EntityAllPreloadDelegate<D extends Dto, E extends Entity, ID>
 
   private final Map<String, E> preloaded;
 
-  public EntityAllPreloadDelegate(EntityByIdService<D, E, ID> service) {
-    super(service);
-    preloaded = service.find()
+  public EntityAllPreloadDelegate(ReadRepository<E, ID> repository) {
+    super(repository);
+    preloaded = repository.find()
       .stream()
       .collect(Collectors.toMap(E::identifier, Function.identity()));
   }

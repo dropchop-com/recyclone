@@ -1,5 +1,6 @@
-package com.dropchop.recyclone.service.api.mapping;
+package com.dropchop.recyclone.repo.api.mapper;
 
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
@@ -7,8 +8,7 @@ import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.service.api.EntityByIdService;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.repo.api.ReadRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
@@ -23,9 +23,9 @@ public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>
 
   private final MapperSubTypeConfig mapperSubTypeConfig;
 
-  public EntityPolymorphicCreateFactory(EntityByIdService<D, E, ID> service,
+  public EntityPolymorphicCreateFactory(ReadRepository<E, ID> repository,
                                         MapperSubTypeConfig mapperSubTypeConfig) {
-    super(service);
+    super(repository);
     this.mapperSubTypeConfig = mapperSubTypeConfig;
     super.forActionOnly(Constants.Actions.CREATE);
   }

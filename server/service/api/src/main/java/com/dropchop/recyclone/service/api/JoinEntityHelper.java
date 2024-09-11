@@ -5,6 +5,7 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
+import com.dropchop.recyclone.repo.api.ReadRepository;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 
 import java.util.ArrayList;
@@ -37,28 +38,32 @@ public class JoinEntityHelper<E extends Entity, JE extends Entity, JID> {
 
     @Override
     public boolean permit(ID joined) {
-      String securityDomain = dataService.getSecurityDomain();
       return authorizationService.isPermitted(
         Constants.Permission.compose(securityDomain, Constants.Actions.VIEW, joined.toString())
       );
     }
   }
 
-  private final EntityByIdService<?, JE, JID> dataService;
+  private final ReadRepository<JE, JID> repository;
+  private final String securityDomain;
   private final AuthorizationService authorizationService;
   private final Collection<E> parentEntities;
 
   public JoinEntityHelper(AuthorizationService authorizationService,
-                          EntityByIdService<?, JE, JID> dataService) {
-    this.dataService = dataService;
+                          String securityDomain,
+                          ReadRepository<JE, JID> repository) {
+    this.repository = repository;
+    this.securityDomain = securityDomain;
     this.authorizationService = authorizationService;
     this.parentEntities = null;
   }
 
   public JoinEntityHelper(AuthorizationService authorizationService,
-                          EntityByIdService<?, JE, JID> dataService,
+                          String securityDomain,
+                          ReadRepository<JE, JID> repository,
                           Collection<E> parentEntities) {
-    this.dataService = dataService;
+    this.repository = repository;
+    this.securityDomain = securityDomain;
     this.authorizationService = authorizationService;
     this.parentEntities = parentEntities;
   }
@@ -83,7 +88,7 @@ public class JoinEntityHelper<E extends Entity, JE extends Entity, JID> {
           }
         }
       }
-      Collection<JE> joined = dataService.findById(permitted);
+      Collection<JE> joined = repository.findById(permitted);
       if (joined.size() != permitted.size()) {
         throw new ServiceException(ErrorCode.data_validation_error,
           "Loaded joined entities size does not match join model permitted ids size!");
