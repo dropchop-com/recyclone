@@ -14,13 +14,9 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @Embeddable
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-public class JpaTitleDescriptionTranslation extends JpaTitleTranslation
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class JpaTitleDescriptionTranslation
   implements TitleDescriptionTranslation {
-
-  /*public JpaTitleDescriptionTranslation(@NonNull String lang, @NonNull String title) {
-    super(lang, title);
-  }*/
 
   @NonNull
   @Column(name = "lang")
@@ -33,11 +29,9 @@ public class JpaTitleDescriptionTranslation extends JpaTitleTranslation
 
   @NonNull
   @Column(name = "title", length = 1024)
-  @EqualsAndHashCode.Exclude
   private String title;
 
   @Column(name = "description", length = 8096)
-  @EqualsAndHashCode.Exclude
   private String description;
 
   @Column(name="created")
@@ -46,5 +40,6 @@ public class JpaTitleDescriptionTranslation extends JpaTitleTranslation
   @Column(name="modified")
   private ZonedDateTime modified;
 
+  @Transient
   transient Boolean base;
 }

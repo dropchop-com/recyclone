@@ -15,6 +15,7 @@ import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Domain;
+import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleTranslation;
 import com.dropchop.recyclone.quarkus.it.model.dto.Node;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
@@ -66,13 +67,13 @@ class FilteringDtoContextTest {
       ((HasLanguageCode) model).setLang("en");
     }
     if (model instanceof HasTitleTranslation<?> && model instanceof Entity) {
-      Set<JpaTitleDescriptionTranslation> translations = new HashSet<>();
+      Set<JpaTitleTranslation> translations = new HashSet<>();
       for (int i = 0; i < numTranslations; i++) {
         if (numTranslations >= availableLangs.size()) {
           break;
         }
         String lang = availableLangs.get(i);
-        JpaTitleDescriptionTranslation titleTranslation = new JpaTitleDescriptionTranslation();
+        JpaTitleTranslation titleTranslation = new JpaTitleTranslation();
         titleTranslation.setTitle(title + " [" + lang + "]");
         titleTranslation.setLang(lang);
         titleTranslation.setCreated(ZonedDateTime.now());
@@ -80,22 +81,22 @@ class FilteringDtoContextTest {
         translations.add(titleTranslation);
       }
       //noinspection unchecked
-      ((HasTitleTranslation<JpaTitleDescriptionTranslation>) model).setTranslations(translations);
+      ((HasTitleTranslation<JpaTitleTranslation>) model).setTranslations(translations);
     }
     if (model instanceof HasTitleTranslation<?> && model instanceof Dto) {
-      Set<TitleDescriptionTranslation> translations = new HashSet<>();
+      Set<TitleTranslation> translations = new HashSet<>();
       for (int i = 0; i < numTranslations; i++) {
         if (numTranslations >= availableLangs.size()) {
           break;
         }
         String lang = availableLangs.get(i);
-        TitleDescriptionTranslation titleTranslation = new TitleDescriptionTranslation();
+        TitleTranslation titleTranslation = new TitleTranslation();
         titleTranslation.setTitle(title + " [" + lang + "]");
         titleTranslation.setLang(lang);
         translations.add(titleTranslation);
       }
       //noinspection unchecked
-      ((HasTitleTranslation<TitleDescriptionTranslation>) model).setTranslations(translations);
+      ((HasTitleTranslation<TitleTranslation>) model).setTranslations(translations);
     }
     if (model instanceof HasModified) {
       ((HasModified) model).setModified(ZonedDateTime.now());

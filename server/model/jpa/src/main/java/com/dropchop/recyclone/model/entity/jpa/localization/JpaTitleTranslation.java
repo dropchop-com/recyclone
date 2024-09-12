@@ -40,5 +40,6 @@ public class JpaTitleTranslation
   @Column(name="modified")
   private ZonedDateTime modified;
 
+  @Transient
   transient Boolean base;
 }
