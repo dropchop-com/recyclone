@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Serializes any Attribute class to JSON form {"propName": "propValue"}
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 08. 22.
  */
 @Slf4j
 public class AttributeCompactSerializer extends AttributeClassicSerializer {

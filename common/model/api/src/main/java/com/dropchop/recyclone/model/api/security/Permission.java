@@ -9,7 +9,7 @@ import com.dropchop.recyclone.model.api.marker.HasUuid;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 01. 22.
  */
 public interface Permission<
   TDT extends TitleDescriptionTranslation,

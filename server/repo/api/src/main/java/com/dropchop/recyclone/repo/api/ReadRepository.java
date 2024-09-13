@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
 public interface ReadRepository<E, ID> extends Repository<E> {
 

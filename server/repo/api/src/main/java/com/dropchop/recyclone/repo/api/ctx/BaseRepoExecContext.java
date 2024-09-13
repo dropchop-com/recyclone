@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 09. 22.
  */
 @SuppressWarnings("unused")
 public class BaseRepoExecContext<E> extends ParamsExecContext<RepositoryExecContextListener>

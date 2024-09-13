@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 01. 22.
  */
 public class LanguageGroupTest {
 

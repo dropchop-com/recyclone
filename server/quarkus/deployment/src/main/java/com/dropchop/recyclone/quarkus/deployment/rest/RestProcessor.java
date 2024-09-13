@@ -34,7 +34,7 @@ import static com.dropchop.recyclone.model.api.rest.Constants.Paths.PUBLIC_SEGME
 import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
  */
 public class RestProcessor {
 

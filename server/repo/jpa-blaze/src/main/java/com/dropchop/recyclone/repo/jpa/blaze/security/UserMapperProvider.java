@@ -17,7 +17,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 09. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 09. 24.
  */
 @Getter
 @ApplicationScoped

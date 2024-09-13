@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 06. 22.
  */
 @Getter
 @Setter

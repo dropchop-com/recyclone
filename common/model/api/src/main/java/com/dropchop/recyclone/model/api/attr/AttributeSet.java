@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 12. 21.
  */
 @Getter
 @Setter

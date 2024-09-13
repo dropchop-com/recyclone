@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * Modeled after Shiro annotations: org.apache.shiro.authz.annotation.RequiresUser
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 05. 23.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 05. 23.
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

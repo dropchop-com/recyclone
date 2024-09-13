@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 03. 22.
  */
 @NoArgsConstructor(force = true)
 @SuppressWarnings({"unused", "LombokSetterMayBeUsed"})

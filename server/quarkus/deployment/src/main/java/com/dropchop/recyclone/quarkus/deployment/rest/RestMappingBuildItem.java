@@ -4,7 +4,7 @@ import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import io.quarkus.builder.item.SimpleBuildItem;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
  */
 public final class RestMappingBuildItem extends SimpleBuildItem {
   private final RestMapping mapping;

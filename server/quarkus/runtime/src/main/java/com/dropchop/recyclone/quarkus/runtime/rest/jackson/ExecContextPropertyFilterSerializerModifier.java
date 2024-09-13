@@ -9,7 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 08. 22.
  */
 @ApplicationScoped
 @SuppressWarnings("CdiInjectionPointsInspection")

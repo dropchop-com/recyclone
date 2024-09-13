@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 09. 22.
  */
 @Slf4j
 public class MarkerFilterSegment extends FilterSegment {

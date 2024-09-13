@@ -16,7 +16,7 @@ import java.util.List;
 import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 01. 22.
  */
 @Path(Constants.Paths.Test.DUMMY)
 @DynamicExecContext(value = CodeParams.class, dataClass = Dummy.class)

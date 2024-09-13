@@ -8,7 +8,7 @@ import java.nio.CharBuffer;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 8. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 8. 03. 22.
  */
 class StateTest {
 

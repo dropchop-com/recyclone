@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 08. 22.
  */
 @SuppressWarnings("unused")
 public interface ResultFilterDefaults extends Model {

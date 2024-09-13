@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 03. 22.
  */
 @Slf4j
 public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> implements CrudService<D> {

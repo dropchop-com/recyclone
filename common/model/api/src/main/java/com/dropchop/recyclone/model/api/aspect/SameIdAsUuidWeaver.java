@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 8. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 8. 01. 22.
  */
 public interface SameIdAsUuidWeaver {
 

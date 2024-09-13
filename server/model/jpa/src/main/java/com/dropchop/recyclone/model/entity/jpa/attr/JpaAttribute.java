@@ -17,7 +17,7 @@ import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.marshall
 import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.unmarshall;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Getter
 @Setter

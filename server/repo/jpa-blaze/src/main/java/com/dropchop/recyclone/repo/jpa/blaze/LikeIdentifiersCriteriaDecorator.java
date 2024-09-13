@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 public class LikeIdentifiersCriteriaDecorator extends LikeListCriteriaDecorator {
 

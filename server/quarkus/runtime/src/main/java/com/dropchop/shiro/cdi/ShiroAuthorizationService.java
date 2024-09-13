@@ -38,7 +38,7 @@ import static com.dropchop.recyclone.model.api.invoke.ErrorCode.authentication_e
 import static com.dropchop.recyclone.model.api.invoke.ErrorCode.authorization_error;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 06. 22.
  */
 @DefaultBean
 @ApplicationScoped

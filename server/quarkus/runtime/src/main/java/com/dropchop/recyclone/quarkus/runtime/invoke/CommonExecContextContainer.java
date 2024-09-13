@@ -8,7 +8,7 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.RequestScoped;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 04. 24.
  */
 @Unremovable
 @DefaultBean

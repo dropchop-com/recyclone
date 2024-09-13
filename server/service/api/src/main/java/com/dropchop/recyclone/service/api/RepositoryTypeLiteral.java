@@ -4,7 +4,7 @@ import com.dropchop.recyclone.repo.api.RepositoryType;
 import jakarta.enterprise.util.AnnotationLiteral;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 04. 22.
  */
 @SuppressWarnings({"ClassExplicitlyAnnotation", "unused"})
 public class RepositoryTypeLiteral extends AnnotationLiteral<RepositoryType> implements RepositoryType {

@@ -13,7 +13,7 @@ import lombok.Getter;
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
  */
 @Getter
 @ApplicationScoped

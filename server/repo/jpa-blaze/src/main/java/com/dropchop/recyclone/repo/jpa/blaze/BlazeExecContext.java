@@ -10,7 +10,7 @@ import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import lombok.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 03. 22.
  */
 @Getter
 @Setter

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 03. 22.
  */
 public interface HasStateInlinedCommon extends HasStateInlined {
 

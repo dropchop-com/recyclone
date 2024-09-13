@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 15. 03. 24.
  */
 public class RestResourceConfig {
 

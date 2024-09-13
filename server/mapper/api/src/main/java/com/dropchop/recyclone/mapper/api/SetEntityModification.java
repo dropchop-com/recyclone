@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 04. 22.
  */
 public class SetEntityModification
   extends RestrictedAfterToEntityListener {

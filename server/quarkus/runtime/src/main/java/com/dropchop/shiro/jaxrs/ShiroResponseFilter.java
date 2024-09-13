@@ -6,7 +6,7 @@ import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 06. 23.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 06. 23.
  */
 public class ShiroResponseFilter implements ContainerResponseFilter {
 

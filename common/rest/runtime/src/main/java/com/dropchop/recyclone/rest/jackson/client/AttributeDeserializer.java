@@ -17,7 +17,7 @@ import java.util.*;
  * Deserializes JSON form to Attribute class where JSON can be
  * {"name": "propName", "value": "propValue"} or {"propName": "propValue"}
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 02. 22.
  */
 public class AttributeDeserializer extends JsonDeserializer<Attribute<?>> {
 

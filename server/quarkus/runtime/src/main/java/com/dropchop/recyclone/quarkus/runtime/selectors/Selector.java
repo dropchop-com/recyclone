@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 /**
  * Base interface for CDI bean selection.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 04. 24.
  */
 public interface Selector<X> {
 

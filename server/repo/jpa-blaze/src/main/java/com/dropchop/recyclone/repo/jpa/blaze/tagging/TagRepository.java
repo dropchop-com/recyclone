@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 06. 22.
  */
 @Getter
 @ApplicationScoped

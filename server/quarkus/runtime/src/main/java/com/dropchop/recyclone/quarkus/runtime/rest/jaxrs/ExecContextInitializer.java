@@ -19,7 +19,7 @@ import java.io.IOException;
 import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_PATH;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 05. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 05. 24.
  */
 public class ExecContextInitializer implements ContainerRequestFilter {
 

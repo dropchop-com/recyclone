@@ -9,7 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 15. 03. 24.
  */
 @ApplicationScoped
 @RegisterForReflection

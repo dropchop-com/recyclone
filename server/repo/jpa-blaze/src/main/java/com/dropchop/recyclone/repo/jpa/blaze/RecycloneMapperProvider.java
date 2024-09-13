@@ -9,7 +9,7 @@ import com.dropchop.recyclone.repo.jpa.blaze.mapping.SetLanguage;
 import jakarta.inject.Inject;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 09. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 09. 24.
  */
 public abstract class RecycloneMapperProvider<D extends Dto, E extends Entity, ID>
     extends FilteringMapperProvider<D, E, ID> {

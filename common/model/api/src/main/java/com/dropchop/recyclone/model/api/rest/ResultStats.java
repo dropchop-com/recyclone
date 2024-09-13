@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.marker.HasAttributes;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 08. 22.
  */
 public interface ResultStats extends Model, HasAttributes {
   Set<Attribute<?>> getAttributes();

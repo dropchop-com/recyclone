@@ -13,7 +13,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 06. 22.
  */
 @Slf4j
 public class ObjectMapperFactory {

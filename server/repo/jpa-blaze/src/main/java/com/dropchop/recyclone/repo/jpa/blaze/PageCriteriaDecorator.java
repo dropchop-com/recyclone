@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 @Slf4j
 public class PageCriteriaDecorator extends BlazeCriteriaDecorator {

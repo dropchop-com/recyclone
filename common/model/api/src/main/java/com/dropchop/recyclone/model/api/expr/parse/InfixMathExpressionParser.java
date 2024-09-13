@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Written just for the fun of it.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 12. 21.
  */
 @Slf4j
 public class InfixMathExpressionParser extends InfixExpressionParser {

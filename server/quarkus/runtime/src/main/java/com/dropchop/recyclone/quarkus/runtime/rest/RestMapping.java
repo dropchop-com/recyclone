@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 04. 24.
  */
 @SuppressWarnings("unused")
 public class RestMapping {

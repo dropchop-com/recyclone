@@ -14,7 +14,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

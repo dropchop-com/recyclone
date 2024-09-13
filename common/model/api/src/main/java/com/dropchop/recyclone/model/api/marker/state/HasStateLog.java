@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 03. 22.
  */
 @SuppressWarnings("unused")
 public interface HasStateLog extends HasState {

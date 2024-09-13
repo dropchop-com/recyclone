@@ -8,7 +8,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.Config;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 24. 05. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 24. 05. 24.
  */
 @ApplicationScoped
 public class RepositorySelector {

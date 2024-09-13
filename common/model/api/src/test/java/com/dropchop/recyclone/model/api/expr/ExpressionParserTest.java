@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 07. 22.
  */
 class ExpressionParserTest {
 

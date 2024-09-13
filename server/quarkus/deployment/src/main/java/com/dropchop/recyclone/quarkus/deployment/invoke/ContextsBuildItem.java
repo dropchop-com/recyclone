@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 04. 24.
  */
 public final class ContextsBuildItem extends SimpleBuildItem {
 

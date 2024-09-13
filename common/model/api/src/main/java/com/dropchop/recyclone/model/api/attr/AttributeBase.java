@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 11. 21.
  */
 @Data
 @SuperBuilder

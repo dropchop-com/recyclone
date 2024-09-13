@@ -27,7 +27,7 @@ import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_ID;
 import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_NAME;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.
  */
 public class ShiroAuthorizationFilter implements ContainerRequestFilter {
 

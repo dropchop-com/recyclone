@@ -9,7 +9,7 @@ import com.dropchop.recyclone.repo.api.mapper.EntityDelegateFactory;
 import jakarta.inject.Inject;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 09. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 09. 24.
  */
 public abstract class FilteringMapperProvider<D extends Dto, E extends Entity, ID> implements MapperProvider<D, E> {
 

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * This ReaderInterceptor is to intercept methods with Dto data to add them to JAX-RS context internal variable.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 01. 22.
  */
 @ConstrainedTo(RuntimeType.SERVER)
 public class DtoDataInterceptor implements ReaderInterceptor {

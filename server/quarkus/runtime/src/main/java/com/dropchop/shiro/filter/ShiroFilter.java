@@ -4,7 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 06. 23.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 06. 23.
  */
 public interface ShiroFilter {
 

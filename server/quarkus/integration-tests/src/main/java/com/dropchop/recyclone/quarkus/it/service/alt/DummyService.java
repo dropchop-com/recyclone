@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
  */
 @Slf4j
 @Getter

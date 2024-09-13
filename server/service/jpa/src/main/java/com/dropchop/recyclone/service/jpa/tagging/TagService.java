@@ -18,7 +18,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 /**
  * TODO: implement tagging of tags then generalize it and implement logic in CrudServiceImpl
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
  */
 @Getter
 @ApplicationScoped

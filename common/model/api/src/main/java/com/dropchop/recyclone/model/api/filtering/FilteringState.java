@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * Handy helper class for keeping track while traversing object graph.
  * Used by object serializers / mappers to keep track of object traversal.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 09. 22.
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class FilteringState {

@@ -3,7 +3,7 @@ package com.dropchop.recyclone.quarkus.deployment.invoke;
 import java.util.Objects;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 04. 24.
  */
 public class ContextMapping {
   final String contextClass;

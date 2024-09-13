@@ -15,7 +15,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 05. 22.
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

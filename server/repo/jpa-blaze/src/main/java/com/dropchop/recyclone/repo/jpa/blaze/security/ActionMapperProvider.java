@@ -10,7 +10,7 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 09. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 09. 24.
  */
 @Getter
 @ApplicationScoped

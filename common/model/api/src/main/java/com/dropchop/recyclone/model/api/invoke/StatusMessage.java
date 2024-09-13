@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 12. 21.
  */
 @Data
 @AllArgsConstructor

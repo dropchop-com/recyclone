@@ -3,7 +3,7 @@ package com.dropchop.recyclone.quarkus.runtime.rest;
 import io.quarkus.runtime.annotations.RecordableConstructor;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
  */
 @SuppressWarnings("unused")
 public class RestMethod {

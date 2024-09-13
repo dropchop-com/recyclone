@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.api.marker.HasTitleTranslation;
 import java.util.Locale;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 01. 22.
  */
 public interface Language<TT extends TitleTranslation>
   extends Model, HasCode, HasTranslationInlinedTitle, HasTitleTranslation<TT> {

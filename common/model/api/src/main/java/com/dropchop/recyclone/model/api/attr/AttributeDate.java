@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 import java.time.ZonedDateTime;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 11. 21.
  */
 @Getter
 @Setter

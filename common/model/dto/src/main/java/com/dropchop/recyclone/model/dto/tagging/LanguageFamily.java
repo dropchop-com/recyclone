@@ -11,7 +11,7 @@ import lombok.Setter;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 01. 22.
  */
 @Getter
 @Setter

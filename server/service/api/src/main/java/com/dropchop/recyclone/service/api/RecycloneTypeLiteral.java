@@ -3,7 +3,7 @@ package com.dropchop.recyclone.service.api;
 import jakarta.enterprise.util.AnnotationLiteral;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 04. 22.
  */
 public class RecycloneTypeLiteral extends AnnotationLiteral<RecycloneType> implements RecycloneType {
 

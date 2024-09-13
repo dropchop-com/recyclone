@@ -18,7 +18,7 @@ import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.
  */
 @SuppressWarnings("unused")
 public class SetLanguage

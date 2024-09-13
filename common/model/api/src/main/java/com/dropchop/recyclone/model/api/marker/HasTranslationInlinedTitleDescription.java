@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.api.marker;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 05. 22.
  */
 @SuppressWarnings("unused")
 public interface HasTranslationInlinedTitleDescription extends HasTranslationInlinedTitle, HasDescription {

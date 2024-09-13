@@ -14,7 +14,7 @@ import com.dropchop.recyclone.mapper.api.ToDtoMapper;
 import org.mapstruct.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 03. 22.
  */
 @Mapper(
     componentModel = "jakarta-cdi",

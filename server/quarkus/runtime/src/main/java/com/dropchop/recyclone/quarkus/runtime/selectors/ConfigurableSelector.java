@@ -18,7 +18,7 @@ import java.util.Set;
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.SAME_AS_DEPENDANT;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 24.
  */
 public abstract class ConfigurableSelector<X> implements Selector<X> {
 

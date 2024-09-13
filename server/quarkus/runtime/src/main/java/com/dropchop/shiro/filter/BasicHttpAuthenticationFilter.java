@@ -6,7 +6,7 @@ import org.apache.shiro.codec.Base64;
 /**
  * Modeled and copied from Shiro Web.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
 

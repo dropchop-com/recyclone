@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.
  */
 public class EntityDelegateFactory<D extends Dto, E extends Entity, ID>
   extends EntityLoadDelegate<D, E, ID> implements EntityFactoryListener<D, E> {

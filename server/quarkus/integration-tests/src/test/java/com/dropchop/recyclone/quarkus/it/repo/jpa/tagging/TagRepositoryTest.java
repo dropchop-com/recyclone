@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 07. 22.
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 05. 22.
  */
 public class EntityAllPreloadDelegate<D extends Dto, E extends Entity, ID>
   extends EntityLoadDelegate<D, E, ID> {

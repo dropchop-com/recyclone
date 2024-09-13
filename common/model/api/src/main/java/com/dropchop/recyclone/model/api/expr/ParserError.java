@@ -3,7 +3,7 @@ package com.dropchop.recyclone.model.api.expr;
 import lombok.Data;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 11. 21.
  */
 @Data
 public class ParserError {

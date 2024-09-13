@@ -11,7 +11,7 @@ import java.util.Locale;
 /**
  * Modeled and copied from Shiro Web.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 @SuppressWarnings("unused")
 public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {

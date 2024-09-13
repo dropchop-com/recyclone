@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.model.api;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.
  */
 public interface Constants {
   interface Domains {

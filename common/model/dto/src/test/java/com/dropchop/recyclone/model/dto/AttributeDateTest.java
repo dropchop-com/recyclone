@@ -10,7 +10,7 @@ import java.time.temporal.ChronoField;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 02. 22.
  */
 class AttributeDateTest {
 

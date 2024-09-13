@@ -5,7 +5,7 @@ import jakarta.transaction.Transactional;
 import java.util.function.Function;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 8. 06. 23.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 8. 06. 23.
  */
 @ApplicationScoped
 @SuppressWarnings("unused")

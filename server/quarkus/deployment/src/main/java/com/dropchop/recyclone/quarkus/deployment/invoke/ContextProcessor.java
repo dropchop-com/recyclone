@@ -21,7 +21,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 04. 24.
  */
 public class ContextProcessor {
 

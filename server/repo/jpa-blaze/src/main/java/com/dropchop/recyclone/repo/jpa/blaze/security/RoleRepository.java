@@ -6,7 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
 @Getter
 @ApplicationScoped

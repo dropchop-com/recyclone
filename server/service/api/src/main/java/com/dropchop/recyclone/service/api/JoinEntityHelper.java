@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 06. 22.
  */
 public class JoinEntityHelper<E extends Entity, JE extends Entity, JID> {
 

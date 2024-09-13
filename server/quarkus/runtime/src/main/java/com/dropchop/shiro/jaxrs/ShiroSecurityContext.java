@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.
  */
 public class ShiroSecurityContext implements SecurityContext {
 

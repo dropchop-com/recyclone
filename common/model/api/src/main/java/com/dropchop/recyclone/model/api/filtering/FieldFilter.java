@@ -19,7 +19,7 @@ import static com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.*;
 /**
  * FiledFilter object that can evaluate include / exclude FilterSegment rules against PathSegment.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 09. 22.
  */
 public class FieldFilter implements Predicate<PathSegment> {
 

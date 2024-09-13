@@ -15,7 +15,7 @@ import static com.dropchop.recyclone.model.api.expr.parse.ParserState.WINDOW_OFF
 import static com.dropchop.recyclone.model.api.utils.Iso8601.dateTimePattern;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 11. 21.
  */
 public class ParserHelper {
 

@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
 @SuppressWarnings("unused")
 public interface CrudRepository<E, ID> extends ReadRepository<E, ID> {

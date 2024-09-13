@@ -17,7 +17,7 @@ import static com.dropchop.recyclone.model.api.utils.Iso8601.DATE_TIME_MS_TZ_FOR
  * AttributeMarshaller which supports marshalling / unmarshalling of attributes to string.
  * (This string representation ready to be written to a database text column)
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 07. 22.
  */
 public class AttributeMarshaller {
 

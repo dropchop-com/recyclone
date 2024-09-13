@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 @Aspect
 @SuppressWarnings("SpringAopPointcutExpressionInspection")

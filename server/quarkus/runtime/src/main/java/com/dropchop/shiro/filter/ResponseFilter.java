@@ -4,7 +4,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 06. 23.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 06. 23.
  */
 public interface ResponseFilter extends ShiroFilter {
   boolean onFilterResponse(ContainerRequestContext requestContext, ContainerResponseContext responseContext);

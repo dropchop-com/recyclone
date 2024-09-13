@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * CDI Capable ObjectMapperFactory extension.
  * Usage: Inject it and wrap createObjectMapper() in Producer method to customize ObjectMapper.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 06. 22.
  * @noinspection unused
  */
 @ApplicationScoped

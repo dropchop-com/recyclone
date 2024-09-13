@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Deserializes JSON into Params obtained from CDI if applicable.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 05. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 05. 24.
  */
 @ApplicationScoped
 public class ParamsFactoryDeserializerModifier extends BeanDeserializerModifier {

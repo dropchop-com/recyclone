@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 08. 22.
  */
 public interface ReadOnlyService<D extends Dto> extends CrudService<D> {
   @Override

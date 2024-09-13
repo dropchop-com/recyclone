@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 22. 12. 21.
  */
 public abstract class ClassicReadByIdResource<T, P> extends ClassicReadResource<T, P> {
 

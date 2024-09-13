@@ -5,7 +5,7 @@ package com.dropchop.recyclone.model.api.filtering;
  * (Forward looking)
  * Here propertyClass field is a class returned by property getter method.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 09. 22.
  */
 public class PropertyPathSegment extends PathSegment {
 

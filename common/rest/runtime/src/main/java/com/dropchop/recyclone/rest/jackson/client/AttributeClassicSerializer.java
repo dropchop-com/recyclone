@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * Serializes any Attribute class to JSON form {"name": "propName", "value": "propValue"}
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 08. 22.
  */
 @Slf4j
 public class AttributeClassicSerializer extends JsonSerializer<Attribute> {

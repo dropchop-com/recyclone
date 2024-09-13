@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.api.invoke;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 12. 21.
  */
 public enum ErrorCode {
   not_found_error,

@@ -40,7 +40,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.Permission;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 05. 22.
  */
 @QuarkusTest
 class FilteringDtoContextTest {

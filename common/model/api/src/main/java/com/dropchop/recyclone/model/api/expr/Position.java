@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 12. 21.
  */
 @Data
 @NoArgsConstructor

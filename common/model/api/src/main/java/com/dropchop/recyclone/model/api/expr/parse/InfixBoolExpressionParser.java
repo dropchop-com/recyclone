@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 12. 21.
  */
 @Slf4j
 public class InfixBoolExpressionParser extends InfixExpressionParser {

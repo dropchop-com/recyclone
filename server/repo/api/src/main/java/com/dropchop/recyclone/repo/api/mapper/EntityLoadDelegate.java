@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 31. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.
  */
 @SuppressWarnings("LombokGetterMayBeUsed")
 public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {

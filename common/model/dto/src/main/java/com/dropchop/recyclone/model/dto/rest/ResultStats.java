@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 12. 21.
  */
 @Getter
 @Setter

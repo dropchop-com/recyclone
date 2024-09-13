@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 25. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 25. 07. 22.
  */
 public interface HasJpaAttributes extends HasAttributes {
   @Override

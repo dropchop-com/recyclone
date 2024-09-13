@@ -6,7 +6,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14.6.2017.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14.6.2017.
  */
 public class HashCredentialsMatcher extends HashedCredentialsMatcher {
 

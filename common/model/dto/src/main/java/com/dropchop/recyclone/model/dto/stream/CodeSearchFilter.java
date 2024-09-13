@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.dto.base.DtoCode;
 import java.util.function.Predicate;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 08. 22.
  */
 @SuppressWarnings("unused")
 public class CodeSearchFilter<T extends DtoCode>

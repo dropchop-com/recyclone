@@ -10,7 +10,7 @@ import java.lang.annotation.Annotation;
 /**
  * Modeled after: org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 05. 23
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 05. 23
  */
 public class AuthenticatedAnnotationHandler extends AuthorizingAnnotationHandler {
 

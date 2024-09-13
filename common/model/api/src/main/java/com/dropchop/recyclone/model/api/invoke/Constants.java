@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.api.invoke;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 03. 22.
  */
 public interface Constants {
 

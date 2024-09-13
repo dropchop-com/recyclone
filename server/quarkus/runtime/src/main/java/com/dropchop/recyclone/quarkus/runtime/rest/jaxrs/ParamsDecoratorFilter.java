@@ -26,7 +26,7 @@ import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
 /**
  * Fills Params object obtained from ExecContext with request parameters
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.
  */
 @ConstrainedTo(RuntimeType.SERVER)
 public class ParamsDecoratorFilter implements ContainerRequestFilter {

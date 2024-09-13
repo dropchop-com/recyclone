@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 22. 01. 22.
  */
 @Slf4j
 @RequestScoped

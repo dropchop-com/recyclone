@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.marker.HasAttributes;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 11. 21.
  */
 public interface BinaryTree extends HasAttributes, Model {
   String getId();

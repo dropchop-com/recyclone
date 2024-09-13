@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.dto.invoke.TypeParams;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 07. 22.
  */
 public class LikeTypeCriteriaDecorator extends LikeListCriteriaDecorator {
 

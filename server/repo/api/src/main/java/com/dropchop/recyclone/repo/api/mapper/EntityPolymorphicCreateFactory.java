@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 06. 22.
  */
 @Slf4j
 public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>

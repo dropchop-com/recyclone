@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 01. 22.
  */
 @SuppressWarnings("unused")
 public interface TypeParams<
