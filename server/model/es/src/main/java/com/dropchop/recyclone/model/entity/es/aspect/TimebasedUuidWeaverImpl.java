@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.entity.jpa.aspect;
+package com.dropchop.recyclone.model.entity.es.aspect;
 
 import com.dropchop.recyclone.model.api.aspect.TimebasedUuidWeaver;
 import org.aspectj.lang.annotation.After;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @SuppressWarnings("SpringAopPointcutExpressionInspection")
 public class TimebasedUuidWeaverImpl implements TimebasedUuidWeaver {
 
-  @After(value = "set(java.time.ZonedDateTime com.dropchop.recyclone.model.entity.jpa..created) " +
+  @After(value = "set(java.time.ZonedDateTime com.dropchop.recyclone.model.entity.es..created) " +
       "&& this(com.dropchop.recyclone.model.api.marker.state.HasCreated) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV1) " +
       "&& target(oModel) && args(created)",
@@ -23,7 +23,7 @@ public class TimebasedUuidWeaverImpl implements TimebasedUuidWeaver {
     TimebasedUuidWeaver.super.changeClassWithCreated(oModel, created);
   }
 
-  @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity.jpa..uuid) " +
+  @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity.es..uuid) " +
       "&& this(com.dropchop.recyclone.model.api.marker.state.HasCreated) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV1) " +
       "&& target(oModel) && args(uuid)",

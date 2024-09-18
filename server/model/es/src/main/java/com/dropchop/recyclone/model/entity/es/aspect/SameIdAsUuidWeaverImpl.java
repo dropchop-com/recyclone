@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.entity.jpa.aspect;
+package com.dropchop.recyclone.model.entity.es.aspect;
 
 import com.dropchop.recyclone.model.api.aspect.SameIdAsUuidWeaver;
 import org.aspectj.lang.annotation.After;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @SuppressWarnings("SpringAopPointcutExpressionInspection")
 public class SameIdAsUuidWeaverImpl implements SameIdAsUuidWeaver {
 
-  @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..id) " +
+  @After(value = "set(String com.dropchop.recyclone.model.entity.es..id) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasId) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuid) " +
       "&& target(oModel) && args(id)",
@@ -22,7 +22,7 @@ public class SameIdAsUuidWeaverImpl implements SameIdAsUuidWeaver {
     SameIdAsUuidWeaver.super.changeClassWithId(oModel, id);
   }
 
-  @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity.jpa..uuid) " +
+  @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity.es..uuid) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasId) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuid) " +
       "&& target(oModel) && args(uuid)",

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.entity.jpa.aspect;
+package com.dropchop.recyclone.model.entity.es.aspect;
 
 import com.dropchop.recyclone.model.api.aspect.NamespaceUuidWeaver;
 import com.dropchop.recyclone.model.api.marker.HasUuidV3;
@@ -19,8 +19,8 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
     HasUuidV3 model = (HasUuidV3)oModel;
     String newName = oModel.getClass().getSimpleName() + "." + name;
     UUID newUuid;
-    if (newName.startsWith("Jpa") && Character.isUpperCase(newName.charAt(3))) {
-      newUuid = Uuid.getNameBasedV3(newName.substring(3));
+    if (newName.startsWith("Es") && Character.isUpperCase(newName.charAt(2))) {
+      newUuid = Uuid.getNameBasedV3(newName.substring(2));
     } else {
       newUuid = Uuid.getNameBasedV3(newName);
     }
@@ -28,7 +28,7 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
     model.setUuid(newUuid);
   }
 
-  @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..name) " +
+  @After(value = "set(String com.dropchop.recyclone.model.entity.es..name) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasName) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV3) " +
       "&& target(oModel) && args(name)",
@@ -37,7 +37,7 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
     compute(oModel, name);
   }
 
-  @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..code) " +
+  @After(value = "set(String com.dropchop.recyclone.model.entity.es..code) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasCode) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV3) " +
       "&& target(oModel) && args(code)",
