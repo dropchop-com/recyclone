@@ -49,6 +49,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
   }
 
   @Override
+  @Transactional
   public Result<D> search() {
     CrudRepository<E, ID> repository = getRepository();
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
