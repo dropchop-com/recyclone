@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.service.api;
 
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.jpa.security.DomainToDtoMapper;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.base.Model;
@@ -11,21 +14,16 @@ import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleTranslation;
-import com.dropchop.recyclone.quarkus.it.model.dto.Node;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaDomain;
+import com.dropchop.recyclone.quarkus.it.mapper.jpa.NodeToDtoMapper;
+import com.dropchop.recyclone.quarkus.it.model.dto.Node;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaMiki;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaNode;
-import com.dropchop.recyclone.quarkus.it.mapper.jpa.NodeToDtoMapper;
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
-import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.jpa.security.DomainToDtoMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -188,7 +186,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -202,7 +200,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node.getCode());
     assertNull(node.getTitle());
     assertNull(node.getLang());
@@ -223,7 +221,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -237,7 +235,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
     assertNotNull(node.getTitle());
@@ -258,7 +256,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -272,7 +270,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
     assertNotNull(node.getTitle());
@@ -284,7 +282,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
     assertNotNull(node.getTitle());
@@ -305,7 +303,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNull(node.getLang());
@@ -328,7 +326,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getMiki());
@@ -341,7 +339,7 @@ class FilteringDtoContextTest {
     assertNull(node.getTranslations());
     assertNotNull(node.getChildren());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNull(node.getLang());
@@ -362,7 +360,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -384,7 +382,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -395,7 +393,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -417,7 +415,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -442,7 +440,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -456,7 +454,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -482,7 +480,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -495,7 +493,7 @@ class FilteringDtoContextTest {
     assertNotNull(translation.getTitle());
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNull(node.getLang());
@@ -517,7 +515,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -531,7 +529,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -545,7 +543,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNull(node.getLang());
@@ -567,7 +565,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -581,7 +579,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -603,7 +601,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -617,7 +615,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -630,7 +628,7 @@ class FilteringDtoContextTest {
     assertNotNull(translation.getTitle());
     assertNotNull(node.getChildren());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -652,7 +650,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -666,7 +664,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -691,7 +689,7 @@ class FilteringDtoContextTest {
     assertNotNull(result);
     assertEquals(2, result.size());
 
-    Node node = result.get(0);
+    Node node = result.getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -705,7 +703,7 @@ class FilteringDtoContextTest {
     assertNotNull(node.getChildren());
     assertEquals(2, node.getChildren().size());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
@@ -718,7 +716,7 @@ class FilteringDtoContextTest {
     assertNotNull(translation.getTitle());
     assertNotNull(node.getChildren());
 
-    node = node.getChildren().iterator().next();
+    node = node.getChildren().getFirst();
     assertNotNull(node);
     assertNotNull(node.getCode());
     assertNotNull(node.getLang());
