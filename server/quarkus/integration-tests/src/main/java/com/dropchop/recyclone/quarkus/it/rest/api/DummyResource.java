@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -52,4 +53,14 @@ public interface DummyResource {
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   List<Dummy> searchRest(CodeParams params);
+
+  @POST
+  @Path(Paths.QUERY_SEGMENT)
+  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  Result<Dummy> query(QueryParams params);
+
+  @POST
+  @Path(Paths.QUERY_SEGMENT)
+  @Produces(MediaType.APPLICATION_JSON)
+  List<Dummy> queryRest(QueryParams params);
 }

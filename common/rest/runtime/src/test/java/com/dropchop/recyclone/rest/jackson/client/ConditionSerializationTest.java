@@ -28,31 +28,20 @@ public class ConditionSerializationTest {
                 )
             ),
             and(
-                field(
-                    "neki", in("one", "two", "three")
-                )
+                field("neki", in("one", "two", "three"))
             ),
-            field(
-                "modified", Iso8601.fromIso("2024-09-19T10:12:01.123")
-            ),
+            field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
             not(
                 field(
-                "uuid", in(
-                    "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609"
-                    )
+                "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
                 )
             )
         ),
-        field(
-            "type", in(1, 2, 3)
-        ),
-        field(
-            "created", Iso8601.fromIso("2024-09-19T10:12:01.123")
-        )
+        field("type", in(1, 2, 3)),
+        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+        field("miki", null)
     ).and(
-        field(
-            "type2", in(1, 2, 3)
-        )
+        field("type2", in(1, 2, 3))
     );
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
     ObjectMapper mapper = mapperFactory.createObjectMapper();
