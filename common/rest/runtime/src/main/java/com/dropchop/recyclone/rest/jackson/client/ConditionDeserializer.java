@@ -15,11 +15,81 @@ import java.util.*;
  */
 public class ConditionDeserializer extends JsonDeserializer<Condition> {
 
-  private Condition parseConditionedField(String name, Map<String, JsonNode> fields) {
-    return new ConditionedField(name, new Eq<>());
+  private Condition parseConditionedField(String name, Map<String, JsonNode> fields) throws IOException {
+    if (fields.size() != 1 && fields.size() != 2) {
+      throw new IllegalArgumentException("Invalid query conditioned field structure at [" + name + "]!");
+    }
+    List<Class<? extends ConditionOperator>> cClasses = new ArrayList<>();
+    List<String> cNames = new ArrayList<>();
+    for (Map.Entry<String, JsonNode> entry : fields.entrySet()) {
+      String cname = entry.getKey();
+      if (!cname.startsWith("$")) {
+        throw new IllegalArgumentException(
+            "Invalid query conditioned field name structure at [" + name + "." + cname + "]!"
+        );
+      }
+      Class<? extends ConditionOperator> cClass = ConditionOperator.supported().get(cname.substring(1));
+      if (cClass == null) {
+        throw new UnsupportedOperationException(
+            "Missing condition implementation for [" + name + "." + cname + "]!"
+        );
+      }
+      cClasses.add(cClass);
+      cNames.add(cname);
+    }
+
+    if (fields.size() == 2) {
+      String cname1 = cNames.getFirst();
+      String cname2 = cNames.getLast();
+      if (cname1.startsWith("$lt") && cname2.startsWith("$gt")) { // swap values in list
+        Collections.swap(cNames, 0, cNames.size() - 1);
+        Collections.swap(cClasses, 0, cClasses.size() - 1);
+      }
+      JsonNode valueNode1 = fields.get(cNames.getFirst());
+      Object value1 = ValueParser.parse(valueNode1);
+      if (value1 == null) {
+        throw new IllegalArgumentException("Invalid query field value at [" + name + "." + cNames.getFirst() + "]!");
+      }
+      JsonNode valueNode2 = fields.get(cNames.getLast());
+      Object value2 = ValueParser.parse(valueNode2);
+      if (value2 == null) {
+        throw new IllegalArgumentException(
+            "Invalid query second field value at [" + name + "." + cNames.getLast() + "]!"
+        );
+      }
+      if (Gt.class.equals(cClasses.getFirst()) && Lt.class.equals(cClasses.getLast())) {
+        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+      } else if (Gt.class.equals(cClasses.getFirst()) && Lte.class.equals(cClasses.getLast())) {
+        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+      } else if (Gte.class.equals(cClasses.getFirst()) && Lt.class.equals(cClasses.getLast())) {
+        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+      } else if (Gte.class.equals(cClasses.getFirst()) && Lte.class.equals(cClasses.getLast())) {
+        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+      } else {
+        throw new IllegalArgumentException(
+            "Missing condition implementation for conditioned field operators [" + name + "." + cNames + "]!"
+        );
+      }
+    } else {
+      JsonNode valueNode = fields.get(cNames.getFirst());
+      if (Eq.class.equals(cClasses.getFirst())) {
+        Object value1 = ValueParser.parse(valueNode);
+        return new ConditionedField(name, new Eq<>(value1));
+      } else if (In.class.equals(cClasses.getFirst())) {
+        List<Object> tmp = new ArrayList<>(valueNode.size());
+        for (int i = 0; i < valueNode.size(); i++) {
+          tmp.add(ValueParser.parse(valueNode.get(i)));
+        }
+        return new ConditionedField(name, new In<>(tmp));
+      } else {
+        throw new IllegalArgumentException(
+            "Missing condition implementation for conditioned field operator [" + name + "." + cNames.getFirst() + "]!"
+        );
+      }
+    }
   }
 
-  private Condition parseField(String name, JsonNode node) {
+  private Condition parseField(String name, JsonNode node) throws IOException {
     if (node.isObject()) {
       Map<String, JsonNode> fields = new LinkedHashMap<>();
       int numOps = 0;
@@ -37,16 +107,11 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
       }
       return parseConditionedField(name, fields);
     } else {
-      if (node.isFloat()) {
-        return new Field<>(name, node.asDouble());
-      } else if (node.isTextual()) {
-        return new Field<>(name, node.asText());
-      } else if (node.isIntegralNumber()) {
-        return new Field<>(name, node.asLong());
-      } else if (node.isBoolean()) {
-        return new Field<>(name, node.asBoolean());
-      }
-      throw new IllegalArgumentException("Invalid query field value at [" + name + "]!");
+      Object o = ValueParser.parse(node);
+      //if (o == null) {
+      //  throw new IllegalArgumentException("Invalid query field value at [" + name + "]!");
+      //}
+      return new Field<>(name, o);
     }
   }
 
@@ -65,26 +130,26 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
             } else {
               throw new IllegalArgumentException("Invalid query child structure at [" + name + "]!");
             }
-            values.add(parseCondition(cname, v));
+            values.add(parseCondition(cname, v.get(cname)));
           }
         }
-        //noinspection IfCanBeSwitch
         if (cClass.equals(And.class)) {
           return new And(values);
         } else if (cClass.equals(Or.class)) {
           return new Or(values);
         } else if (cClass.equals(Not.class)) {
-          if (values != null) {
-            return new Not(values.getFirst());
-          } else {
-            return new Not();
+          if (!valueNode.isObject() || valueNode.isEmpty() || valueNode.size() != 1) {
+            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
           }
+          String cname = valueNode.fieldNames().next();
+          Condition v = parseCondition(cname, valueNode.get(cname));
+          return new Not(v);
         } else {
           throw new UnsupportedOperationException("Missing condition implementation for [" + name + "]!");
         }
       }
     } else {
-      return parseField(name, valueNode.get(name));
+      return parseField(name, valueNode);
     }
     throw new IllegalArgumentException("Invalid query structure at [" + name + "]!");
   }
@@ -94,7 +159,8 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
     // the root of condition hierarchy
     ObjectCodec oc = jp.getCodec();
     JsonNode node = oc.readTree(jp);
-    for (Iterator<Map.Entry<String, JsonNode>> iterator = node.fields(); iterator.hasNext();) {
+    Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
+    if (iterator.hasNext()) {
       Map.Entry<String, JsonNode> entry = iterator.next();
       String name = entry.getKey();
       JsonNode value = entry.getValue();

@@ -1,21 +1,20 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.api.query.And;
 import com.dropchop.recyclone.model.api.query.Condition;
+import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import static com.dropchop.recyclone.model.api.query.Condition.*;
-import static com.dropchop.recyclone.model.api.query.Condition.field;
-import static com.dropchop.recyclone.model.api.query.ConditionOperator.*;
+import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
+import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
  */
-@Slf4j
 public class ConditionSerializationTest {
   @Test
   void testComposition() throws Exception {
@@ -57,9 +56,13 @@ public class ConditionSerializationTest {
     );
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
     ObjectMapper mapper = mapperFactory.createObjectMapper();
-    String jsonOutput = mapper.writeValueAsString(c);
-    log.info("[{}]", jsonOutput);
-    Condition x = mapper.readValue(jsonOutput, And.class);
-    log.info("[{}]", x);
+    // write original
+    String jsonOutput1 = mapper.writeValueAsString(c);
+    // parse original to duplicate
+    Condition x = mapper.readValue(jsonOutput1, And.class);
+    // write duplicate
+    String jsonOutput2 = mapper.writeValueAsString(x);
+    // compare
+    assertEquals(jsonOutput1, jsonOutput2);
   }
 }

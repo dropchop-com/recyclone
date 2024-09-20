@@ -15,7 +15,7 @@ public class And extends LogicalCondition {
   }
 
   public And(List<Condition> and) {
-    this.setSubConditions(and);
+    super.setSubConditions(and);
   }
 
   public List<Condition> get$and() {
