@@ -23,7 +23,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  * Language representing BCP 47 language tag (ISO 639-3 code - script - region)
  * with name based uuid constructed from "Language.[BCP 74 tag]" string.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Getter
 @Setter

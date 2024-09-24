@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 25. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 25. 05. 22.
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

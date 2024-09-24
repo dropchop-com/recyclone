@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.marker.HasTitleDescriptionTranslation;
 import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescription;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.
  */
 public interface Dummy <TDT extends TitleDescriptionTranslation>
     extends Model, HasCode, HasTranslationInlinedTitleDescription, HasTitleDescriptionTranslation<TDT> {

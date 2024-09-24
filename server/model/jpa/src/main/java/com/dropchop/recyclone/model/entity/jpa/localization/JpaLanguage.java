@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 01. 22.
  */
 @Getter
 @Setter

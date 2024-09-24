@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 08. 22.
  */
 public class FilteringJsonGenerator extends JsonGeneratorDelegate {
 

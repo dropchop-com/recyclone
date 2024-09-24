@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.attr.*;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 
@@ -17,41 +15,13 @@ import java.util.*;
  * Deserializes JSON form to Attribute class where JSON can be
  * {"name": "propName", "value": "propValue"} or {"propName": "propValue"}
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 02. 22.
  */
 public class AttributeDeserializer extends JsonDeserializer<Attribute<?>> {
 
-  private Object parseValue(JsonNode valueNode) throws IOException {
-    if (valueNode == null) {
-      throw new IOException("Attribute node is missing value property!");
-    }
-    if (valueNode.isObject()) {
-      throw new IOException("Attribute value property can not be object!");
-    }
-    String value = valueNode.asText();
-    if (value == null || value.isBlank()) {
-      throw new IOException("Attribute node has empty value property!");
-    }
-
-    if (valueNode.isBoolean()) {
-      return valueNode.asBoolean();
-    } else if (valueNode.isNull()) {
-      return null;
-    } if (valueNode.isFloatingPointNumber() || valueNode.isIntegralNumber()) {
-      return valueNode.decimalValue();
-    }
-
-    ZonedDateTime date = Iso8601.fromIso(value);
-    if (date != null) {
-      return date;
-    }
-
-    return value;
-  }
-
   private Attribute<?> parseAttribute(String name, JsonNode valueNode) throws IOException {
     if (valueNode.isArray()) {
-      if (valueNode.size() == 0) {
+      if (valueNode.isEmpty()) {
         throw new IOException("Attribute value property can not empty array!");
       }
       JsonNode itemNode = valueNode.get(0);
@@ -66,7 +36,7 @@ public class AttributeDeserializer extends JsonDeserializer<Attribute<?>> {
         List<Object> tmp = new ArrayList<>(valueNode.size());
         attr = new AttributeValueList<>(name, tmp);
         for (int i = 0; i < valueNode.size(); i++) {
-          tmp.add(parseValue(valueNode.get(i)));
+          tmp.add(ValueParser.parse(valueNode.get(i)));
         }
       }
       return attr;

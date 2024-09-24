@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
+import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -10,11 +12,14 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
+import static com.dropchop.recyclone.model.api.query.Condition.*;
+import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
+import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -58,6 +63,50 @@ public class DummyResourceTest {
         .body(params)
         .when()
         .post("/api/public/test/dummy/search")
+        .then()
+        .statusCode(200)
+        .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
+  public void dummyQuery() {
+    QueryParams params = QueryParams.builder().condition(
+        and(
+            or(
+                field(
+                    "updated",
+                    gteLt(
+                        Iso8601.fromIso("2024-09-19T10:12:01.123"),
+                        Iso8601.fromIso("2024-09-20T11:00:01.123")
+                    )
+                ),
+                and(
+                    field("neki", in("one", "two", "three"))
+                ),
+                field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+                not(
+                    field(
+                        "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
+                    )
+                )
+            ),
+            field("type", in(1, 2, 3)),
+            field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+            field("miki", null)
+        ).and(
+            field("type2", in(1, 2, 3))
+        )
+    ).build();
+    given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .auth().preemptive().basic("user1", "password")
+        .body(params)
+        .when()
+        .post("/api/public/test/dummy/query")
         .then()
         .statusCode(200)
         .log().all();

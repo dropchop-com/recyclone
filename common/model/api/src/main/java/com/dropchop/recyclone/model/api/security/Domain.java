@@ -9,7 +9,7 @@ import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescrip
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 01. 22.
  */
 public interface Domain<
   TDT extends TitleDescriptionTranslation,

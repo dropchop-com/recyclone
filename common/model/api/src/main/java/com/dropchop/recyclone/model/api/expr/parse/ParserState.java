@@ -8,7 +8,7 @@ import lombok.ToString;
 import java.util.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 11. 21.
  */
 @ToString
 public class ParserState {

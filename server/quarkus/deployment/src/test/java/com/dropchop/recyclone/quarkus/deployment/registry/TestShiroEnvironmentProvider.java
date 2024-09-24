@@ -6,7 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 01. 22.
  */
 @Alternative
 @Priority(1)

@@ -17,7 +17,7 @@ import java.util.Collection;
  *  - an index if parent is a collection like object
  *  - class of a property/segment which is usually current object's class
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 09. 22.
  */
 @SuppressWarnings("UnusedReturnValue")
 @Slf4j

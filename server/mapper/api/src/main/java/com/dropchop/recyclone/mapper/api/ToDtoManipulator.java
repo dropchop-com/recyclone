@@ -7,7 +7,7 @@ import com.dropchop.recyclone.mapper.api.MappingContext;
 import org.mapstruct.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 02. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 02. 24.
  */
 @Mapper
 public interface ToDtoManipulator {

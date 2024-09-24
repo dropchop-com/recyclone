@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 08. 22.
  */
 @Slf4j
 @QuarkusTest

@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 06. 23.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 06. 23.
  */
 public interface JpaTitleDescriptionTranslationHelper extends TitleDescriptionTranslationHelper<JpaTitleDescriptionTranslation> {
     @Override

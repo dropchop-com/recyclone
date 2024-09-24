@@ -10,7 +10,7 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 03. 24.
  */
 public class ShiroProcessor {
 

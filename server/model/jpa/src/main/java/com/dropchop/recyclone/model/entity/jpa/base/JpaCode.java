@@ -9,7 +9,7 @@ import lombok.*;
 import java.util.Objects;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 01. 22.
  */
 @Getter
 @Setter

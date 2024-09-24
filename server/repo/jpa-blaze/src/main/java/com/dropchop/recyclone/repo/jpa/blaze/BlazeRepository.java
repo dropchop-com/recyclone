@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
 @Slf4j
 public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {

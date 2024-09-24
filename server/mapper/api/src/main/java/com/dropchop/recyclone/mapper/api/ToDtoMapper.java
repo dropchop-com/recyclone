@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 04. 22.
  */
 public interface ToDtoMapper<D extends Dto, X extends Model> {
 

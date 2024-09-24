@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Country with ISO 3166 2-letter code.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Getter
 @Setter

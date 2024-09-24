@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.api;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.
  */
 @SuppressWarnings("unused")
 public class MediaType extends jakarta.ws.rs.core.MediaType {

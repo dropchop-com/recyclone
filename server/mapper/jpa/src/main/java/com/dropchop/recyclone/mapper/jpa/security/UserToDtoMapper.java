@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 2. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 2. 02. 22.
  */
 @Mapper(
     componentModel = "jakarta-cdi",

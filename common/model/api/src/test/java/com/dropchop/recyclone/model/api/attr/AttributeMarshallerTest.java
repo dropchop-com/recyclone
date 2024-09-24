@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 07. 22.
  */
 class AttributeMarshallerTest {
 

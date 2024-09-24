@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 11. 21.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

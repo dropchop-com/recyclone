@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 public interface NamespaceUuidWeaver {
 

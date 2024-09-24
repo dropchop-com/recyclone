@@ -6,7 +6,7 @@ import com.blazebit.persistence.WhereOrBuilder;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 public abstract class LikeListCriteriaDecorator extends BlazeCriteriaDecorator {
 

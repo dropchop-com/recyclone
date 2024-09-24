@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 @Slf4j
 public class SortCriteriaDecorator extends BlazeCriteriaDecorator {

@@ -30,7 +30,7 @@ import static com.dropchop.recyclone.model.api.expr.parse.ParserHelper.makeError
  * - dangling value that can't be parsed as decimal, boolean or date is interpreted as and empty object.
  * {'test': 'some string', dangling} == {'test': 'some string', 'dangling': {}}
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27.7.2022.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27.7.2022.
  */
 public abstract class RelaxedJson {
 

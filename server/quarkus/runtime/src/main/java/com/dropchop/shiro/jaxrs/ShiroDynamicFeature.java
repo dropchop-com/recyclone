@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.
  */
 //@Provider
 public class ShiroDynamicFeature implements DynamicFeature {

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.function.Predicate;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 09. 22.
  */
 @Slf4j
 public class FilterSegment extends PathSegment implements Predicate<PathSegment> {

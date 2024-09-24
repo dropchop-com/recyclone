@@ -13,7 +13,7 @@ import static com.dropchop.recyclone.model.api.localization.Language.Variant.non
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 12. 21.
  */
 class LanguageTest {
 

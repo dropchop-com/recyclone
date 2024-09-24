@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 06. 22.
  */
 @Getter
 @Setter

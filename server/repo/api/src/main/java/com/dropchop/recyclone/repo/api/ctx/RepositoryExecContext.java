@@ -5,7 +5,7 @@ import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 03. 22.
  */
 public interface RepositoryExecContext<E> extends ParamsExecContext<RepositoryExecContextListener> {
   @Override

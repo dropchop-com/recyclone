@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 01. 22.
  */
 public interface Account extends Model, HasUuid,  HasType, HasTitle, HasDeactivated {
 }

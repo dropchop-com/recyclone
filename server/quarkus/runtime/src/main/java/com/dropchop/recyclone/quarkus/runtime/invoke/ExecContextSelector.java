@@ -6,7 +6,7 @@ import com.dropchop.recyclone.quarkus.runtime.selectors.ParameterizedSelector;
 import jakarta.enterprise.context.RequestScoped;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 04. 24.
  */
 @RequestScoped
 public class ExecContextSelector implements ParameterizedSelector<ExecContext<?>, Dto> {

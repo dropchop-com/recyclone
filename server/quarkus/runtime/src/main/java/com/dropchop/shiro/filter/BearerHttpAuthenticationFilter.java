@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Modeled and copied from Shiro Web.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
 

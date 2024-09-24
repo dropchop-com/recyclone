@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16.9.2015.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16.9.2015.
  */
 @SuppressWarnings("unused")
 public interface Iso8601 {

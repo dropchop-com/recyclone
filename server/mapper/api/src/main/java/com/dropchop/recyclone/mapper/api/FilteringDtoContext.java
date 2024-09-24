@@ -18,7 +18,7 @@ import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT
 /**
  * MappingContext that can filter (include/exclude) object graph paths based on REST client parameters.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 30. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 04. 22.
  */
 @Slf4j
 public class FilteringDtoContext extends MappingContext {

@@ -7,7 +7,7 @@ import io.smallrye.config.ConfigMapping;
 import java.util.Optional;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
  */
 @ConfigMapping(prefix = "quarkus.recyclone")
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)

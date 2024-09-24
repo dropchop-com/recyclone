@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 26. 08. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 08. 22.
  */
 public class CodeSearch<T extends DtoCode> {
 

@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 11. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 03. 24.
  */
 @SuppressWarnings("SameParameterValue")
 public class OasFilter implements OASFilter {

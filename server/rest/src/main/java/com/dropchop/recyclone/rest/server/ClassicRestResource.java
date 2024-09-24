@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 22. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 22. 12. 21.
  */
 @SuppressWarnings("unused")
 public interface ClassicRestResource<T> {

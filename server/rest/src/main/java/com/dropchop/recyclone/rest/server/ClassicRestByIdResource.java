@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 15. 04. 24.
  */
 public abstract class ClassicRestByIdResource<T, P> extends ClassicReadByIdResource<T, P> {
   public abstract Result<T> create(List<T> data);

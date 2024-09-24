@@ -6,7 +6,7 @@ import jakarta.enterprise.inject.Alternative;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 06. 22.
  */
 @Slf4j
 @Alternative

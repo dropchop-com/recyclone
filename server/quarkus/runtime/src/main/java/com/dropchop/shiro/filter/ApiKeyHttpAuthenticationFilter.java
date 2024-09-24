@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 @SuppressWarnings("unused")
 public class ApiKeyHttpAuthenticationFilter extends BearerHttpAuthenticationFilter {

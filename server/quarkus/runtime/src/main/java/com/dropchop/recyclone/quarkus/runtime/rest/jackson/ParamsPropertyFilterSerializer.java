@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 09. 22.
  */
 public class ParamsPropertyFilterSerializer extends PropertyFilterSerializer {
   private final Params params;

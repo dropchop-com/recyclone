@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 04. 22.
  */
 public interface ToEntityMapper<M extends Model, E extends Entity> {
 

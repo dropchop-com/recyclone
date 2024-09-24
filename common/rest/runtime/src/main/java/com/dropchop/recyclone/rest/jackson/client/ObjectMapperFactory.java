@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.api.query.Condition;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 23. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 06. 22.
  */
 @Slf4j
 public class ObjectMapperFactory {
@@ -35,6 +36,7 @@ public class ObjectMapperFactory {
 
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Attribute.class, new AttributeDeserializer());
+    module.addDeserializer(Condition.class, new ConditionDeserializer());
     module.addSerializer(new AttributeCompactSerializer());
 
     mapper.registerModule(module);

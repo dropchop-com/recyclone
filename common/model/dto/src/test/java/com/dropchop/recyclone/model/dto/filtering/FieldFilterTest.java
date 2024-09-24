@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 09. 22.
  */
 @SuppressWarnings({"unused", "FieldCanBeLocal", "MismatchedQueryAndUpdateOfCollection"})
 class FieldFilterTest {

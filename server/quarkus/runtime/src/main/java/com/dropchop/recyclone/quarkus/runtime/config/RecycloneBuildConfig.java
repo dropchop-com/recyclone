@@ -10,7 +10,7 @@ import java.util.Optional;
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
  */
 @ConfigMapping(prefix = "quarkus.recyclone")
 @ConfigRoot(phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)

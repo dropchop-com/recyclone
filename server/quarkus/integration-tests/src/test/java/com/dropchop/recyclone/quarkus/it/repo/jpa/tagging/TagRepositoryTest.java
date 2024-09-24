@@ -2,7 +2,6 @@ package com.dropchop.recyclone.quarkus.it.repo.jpa.tagging;
 
 import com.dropchop.recyclone.model.api.attr.*;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
-import com.dropchop.recyclone.repo.api.RepositoryType;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -15,20 +14,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_JPA_DEFAULT;
 import static com.dropchop.recyclone.model.api.marker.HasAttributes.getAttributeValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 07. 22.
  */
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TagRepositoryTest {
 
   @Inject
-  @RepositoryType(RECYCLONE_JPA_DEFAULT)
   TagRepository repository;
 
   @Transactional

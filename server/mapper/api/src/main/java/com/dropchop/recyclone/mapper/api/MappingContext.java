@@ -13,7 +13,7 @@ import lombok.ToString;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 29. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 04. 22.
  */
 @Getter
 @Setter

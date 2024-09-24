@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 01. 22.
  */
 @SuppressWarnings("unused")
 public interface HasTitleTranslation<TT extends TitleTranslation>

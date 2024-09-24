@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.quarkus.runtime.selectors.Selector;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 3. 05. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 05. 24.
  */
 public class ParamsSelector implements Selector<Params> {
 

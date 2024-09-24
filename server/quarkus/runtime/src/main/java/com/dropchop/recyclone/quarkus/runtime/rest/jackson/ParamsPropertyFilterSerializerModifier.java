@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 09. 22.
  * @noinspection unused
  */
 public class ParamsPropertyFilterSerializerModifier extends BeanSerializerModifier {

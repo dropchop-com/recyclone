@@ -27,7 +27,7 @@ import java.util.Map;
 import static com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_HEADER;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 22.
  */
 @SuppressWarnings("unused")
 @Alternative

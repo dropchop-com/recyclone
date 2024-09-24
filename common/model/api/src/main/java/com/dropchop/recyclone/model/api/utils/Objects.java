@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 14. 09. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 09. 22.
  */
 public class Objects {
 

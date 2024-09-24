@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 05. 22.
  */
 @Getter
 @Setter

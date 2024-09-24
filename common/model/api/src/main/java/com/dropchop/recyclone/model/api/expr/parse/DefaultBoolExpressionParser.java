@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.api.expr.parse;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 12. 21.
  */
 public class DefaultBoolExpressionParser extends InfixBoolExpressionParser {
 

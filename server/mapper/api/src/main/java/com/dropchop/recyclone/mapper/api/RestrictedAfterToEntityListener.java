@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.mapper.api;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 06. 22.
  */
 public abstract class RestrictedAfterToEntityListener implements AfterToEntityListener {
 

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Container for common current execution variables.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 15. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 15. 03. 22.
  */
 @Getter
 @Setter

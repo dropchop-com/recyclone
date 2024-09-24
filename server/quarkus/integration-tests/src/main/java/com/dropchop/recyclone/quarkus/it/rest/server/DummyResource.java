@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
@@ -18,7 +19,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 20. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 01. 22.
  */
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
@@ -73,5 +74,15 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   @Override
   public Result<Dummy> search(CodeParams params) {
     return service.search();
+  }
+
+  @Override
+  public Result<Dummy> query(QueryParams params) {
+    return service.query();
+  }
+
+  @Override
+  public List<Dummy> queryRest(QueryParams params) {
+    return service.query().getData();
   }
 }

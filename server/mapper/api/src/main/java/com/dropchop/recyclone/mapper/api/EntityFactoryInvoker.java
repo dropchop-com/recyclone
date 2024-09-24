@@ -15,7 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 25. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 25. 05. 22.
  */
 @Slf4j
 @ApplicationScoped

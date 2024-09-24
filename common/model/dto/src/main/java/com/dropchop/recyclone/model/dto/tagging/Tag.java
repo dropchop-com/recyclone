@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Getter
 @Setter

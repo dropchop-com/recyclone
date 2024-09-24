@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  * @author Armando Ota <armando.ota@dropchop.org>
  */
 @Getter

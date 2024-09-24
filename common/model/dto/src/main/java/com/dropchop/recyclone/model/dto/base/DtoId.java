@@ -11,7 +11,7 @@ import java.util.UUID;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 01. 22.
  */
 @Data
 @NoArgsConstructor(force = true)

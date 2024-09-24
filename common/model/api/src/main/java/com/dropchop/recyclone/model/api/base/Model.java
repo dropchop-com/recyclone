@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.api.marker.HasUuid;
 import java.io.Serializable;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 12. 21.
  */
 public interface Model extends Serializable, Cloneable {
 

@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import lombok.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 06. 22.
  */
 @Getter
 @Setter

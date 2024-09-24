@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.repo.api;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 19. 02. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
-public interface Repository<E, ID> {
+public interface Repository<E> {
 
   Class<E> getRootClass();
 }

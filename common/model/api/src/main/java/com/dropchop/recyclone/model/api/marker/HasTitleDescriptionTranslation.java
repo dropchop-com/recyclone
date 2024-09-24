@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 01. 22.
  */
 public interface HasTitleDescriptionTranslation<TDT extends TitleDescriptionTranslation>
   extends HasTitleTranslation<TDT> {

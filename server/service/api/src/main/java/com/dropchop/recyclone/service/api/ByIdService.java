@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 03. 22.
  */
 public interface ByIdService<M extends Model, ID> extends Service {
 

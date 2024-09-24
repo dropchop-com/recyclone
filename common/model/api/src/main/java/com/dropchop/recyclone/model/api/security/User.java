@@ -12,7 +12,7 @@ import com.dropchop.recyclone.model.api.tagging.Tag;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 01. 22.
  */
 @SuppressWarnings("unused")
 public interface User<

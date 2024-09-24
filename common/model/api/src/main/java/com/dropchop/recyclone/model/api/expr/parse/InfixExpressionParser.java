@@ -35,7 +35,7 @@ import static com.dropchop.recyclone.model.api.expr.parse.ParserState.WINDOW_OFF
  * Here, the nodes n1, k2, n2, k4 are given attributes that contain a field named "custom",
  * which is a sub-map with attribute field "color" having value "red".
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 11. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 11. 21.
  */
 @Slf4j
 public abstract class InfixExpressionParser implements ExpressionParser {

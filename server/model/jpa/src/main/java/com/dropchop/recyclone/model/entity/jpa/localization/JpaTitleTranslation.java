@@ -10,12 +10,11 @@ import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Data
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-@MappedSuperclass
 @Embeddable
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JpaTitleTranslation
@@ -41,5 +40,6 @@ public class JpaTitleTranslation
   @Column(name="modified")
   private ZonedDateTime modified;
 
+  @Transient
   transient Boolean base;
 }

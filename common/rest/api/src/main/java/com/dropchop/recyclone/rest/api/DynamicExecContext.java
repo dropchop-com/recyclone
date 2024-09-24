@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 03. 22.
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

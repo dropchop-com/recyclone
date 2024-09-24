@@ -1,10 +1,11 @@
 package com.dropchop.recyclone.model.api.rest;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 10. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 03. 22.
  */
 public interface Constants {
 
+  @SuppressWarnings("unused")
   interface Tags {
     String LOCALIZATION = "localization";
     String SECURITY     = "security";
@@ -23,6 +24,7 @@ public interface Constants {
 
   interface Paths {
     String SEARCH_SEGMENT = "/search";
+    String QUERY_SEGMENT = "/query";
     String LOCALIZATION_SEGMENT = "/localization";
     String SECURITY_SEGMENT = "/security";
     String TAGGING_SEGMENT = "/tagging";

@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 @Aspect
 @SuppressWarnings("SpringAopPointcutExpressionInspection")
@@ -28,7 +28,7 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
     model.setUuid(newUuid);
   }
 
-  @After(value = "set(String com.dropchop.recyclone.model.entity..name) " +
+  @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..name) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasName) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV3) " +
       "&& target(oModel) && args(name)",
@@ -37,7 +37,7 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
     compute(oModel, name);
   }
 
-  @After(value = "set(String com.dropchop.recyclone.model.entity..code) " +
+  @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..code) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasCode) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV3) " +
       "&& target(oModel) && args(code)",

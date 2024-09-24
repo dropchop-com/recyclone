@@ -8,13 +8,13 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 7. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
 @Aspect
 @SuppressWarnings("SpringAopPointcutExpressionInspection")
 public class TimebasedUuidWeaverImpl implements TimebasedUuidWeaver {
 
-  @After(value = "set(java.time.ZonedDateTime com.dropchop.recyclone.model.entity..created) " +
+  @After(value = "set(java.time.ZonedDateTime com.dropchop.recyclone.model.entity.jpa..created) " +
       "&& this(com.dropchop.recyclone.model.api.marker.state.HasCreated) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV1) " +
       "&& target(oModel) && args(created)",
@@ -23,7 +23,7 @@ public class TimebasedUuidWeaverImpl implements TimebasedUuidWeaver {
     TimebasedUuidWeaver.super.changeClassWithCreated(oModel, created);
   }
 
-  @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity..uuid) " +
+  @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity.jpa..uuid) " +
       "&& this(com.dropchop.recyclone.model.api.marker.state.HasCreated) " +
       "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV1) " +
       "&& target(oModel) && args(uuid)",

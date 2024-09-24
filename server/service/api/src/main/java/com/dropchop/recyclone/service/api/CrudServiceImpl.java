@@ -1,23 +1,15 @@
 package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.SetEntityDeactivated;
-import com.dropchop.recyclone.mapper.api.SetEntityModification;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
-import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.dto.base.DtoCode;
-import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
-import com.dropchop.recyclone.repo.api.CrudServiceRepository;
-import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.service.api.mapping.EntityDelegateFactory;
+import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -29,11 +21,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 03. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 03. 22.
  */
 @Slf4j
-public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
-  implements CrudService<D>, EntityByIdService<D, E, ID> {
+public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> implements CrudService<D> {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -43,40 +34,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   @SuppressWarnings("CdiInjectionPointsInspection")
   AuthorizationService authorizationService;
 
-  public abstract CrudServiceRepository<D, E, ID> getRepository();
+  public abstract CrudRepository<E, ID> getRepository();
 
-  @Override
-  public Class<E> getRootClass() {
-    return getRepository().getRootClass();
-  }
+  public abstract FilteringMapperProvider<D, E, ID> getMapperProvider();
 
-  @Override
-  public E findById(D dto) {
-    if (dto instanceof DtoCode) {
-      //noinspection unchecked
-      return getRepository().findById((ID)((DtoCode) dto).getCode());
-    } else if (dto instanceof DtoId) {
-      //noinspection unchecked
-      return getRepository().findById((ID)((DtoId) dto).getUuid());
-    } else {
-      throw new RuntimeException("findById(" + dto + ") is not supported.");
-    }
-  }
-
-  @Override
-  public List<E> findById(Collection<ID> ids) {
-    return getRepository().findById(ids);
-  }
-
-  @Override
-  public E findById(ID id) {
-    return getRepository().findById(id);
-  }
-
-  @Override
-  public List<E> find() {
-    return getRepository().find();
-  }
 
   protected void checkDtoPermissions(List<D> dtos) {
     for (D dto : dtos) {
@@ -87,46 +48,19 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
     }
   }
 
-  protected MappingContext getMappingContextForRead() {
-    MappingContext context = new FilteringDtoContext().of(ctxContainer.get());
-    log.debug("Created mapping context [{}] for reading from execution context [{}].", context, ctxContainer.get());
-    return context;
-  }
-
-  protected MappingContext getMappingContextForModify() {
-    Class<?> rootClass = getRepository().getRootClass();
-    MappingContext context = new FilteringDtoContext()
-      .of(ctxContainer.get())
-      .createWith(
-        new EntityDelegateFactory<>(this)
-          .forActionOnly(Constants.Actions.UPDATE)
-          .forActionOnly(Constants.Actions.DELETE)
-      )
-      .afterMapping(
-        new SetEntityModification(rootClass)
-      )
-      .afterMapping(
-        new SetEntityDeactivated(rootClass)
-      );
-    log.debug("Created mapping context [{}] for modification from execution context [{}].", context, ctxContainer.get());
-    return context;
-  }
-
-  protected List<E> find(RepositoryExecContext<E> repositoryExecContext) {
-    return getRepository().find(repositoryExecContext);
-  }
-
   @Override
+  @Transactional
   public Result<D> search() {
-    MappingContext mapContext = getMappingContextForRead();
-    CrudServiceRepository<D, E, ID> repository = getRepository();
-    List<E> entities = this.find(repository.getRepositoryExecContext(mapContext));
+    CrudRepository<E, ID> repository = getRepository();
+    FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
+    MappingContext mapContext = mapperProvider.getMappingContextForRead();
+    List<E> entities = repository.find(repository.getRepositoryExecContext(mapContext));
     entities = entities.stream().filter(
       e -> authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    Result<D> result = getRepository().getToDtoMapper().toDtosResult(entities, mapContext);
+    Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
     return result;
   }
 
@@ -180,10 +114,11 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
 
   protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
-    MappingContext mapContext = getMappingContextForModify();
-    List<E> entities = getRepository().getToEntityMapper().toEntities(dtos, mapContext);
+    FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<E> entities = mapperProvider.getToEntityMapper().toEntities(dtos, mapContext);
     save(entities);
-    return getRepository().getToDtoMapper().toDtosResult(entities, mapContext);
+    return mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
   @Override
@@ -202,10 +137,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID>
   @Transactional
   public Result<D> delete(List<D> dtos) {
     checkDtoPermissions(dtos);
-    MappingContext mapContext = getMappingContextForModify();
-    CrudServiceRepository<D, E, ID> repository = getRepository();
-    List<E> entities = repository.getToEntityMapper().toEntities(dtos, mapContext);
-    repository.delete(entities);
-    return repository.getToDtoMapper().toDtosResult(entities, mapContext);
+    FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<E> entities = mapperProvider.getToEntityMapper().toEntities(dtos, mapContext);
+    getRepository().delete(entities);
+    return mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 }

@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 01. 22.
  */
 @SuppressWarnings("unused")
 public interface State extends Model, HasCode, HasCreated, HasCreatedBy {

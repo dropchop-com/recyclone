@@ -8,7 +8,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 04. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 04. 22.
  */
 @Qualifier
 @Retention(RUNTIME)

@@ -3,7 +3,7 @@ package com.dropchop.recyclone.quarkus.runtime.rest.openapi;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 12. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 03. 24.
  */
 @SuppressWarnings("unused")
 public class OasMapping {

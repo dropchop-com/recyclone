@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.api.utils;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 27. 07. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 07. 22.
  */
 @SuppressWarnings("unused")
 public interface Strings {

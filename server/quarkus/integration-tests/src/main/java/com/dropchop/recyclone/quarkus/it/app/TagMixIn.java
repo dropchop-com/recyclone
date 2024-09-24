@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * Just ignore this for now.
  *
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 21. 06. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 06. 22.
  */
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,

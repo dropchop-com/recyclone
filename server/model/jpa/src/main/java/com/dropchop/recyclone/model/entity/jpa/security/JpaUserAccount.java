@@ -15,7 +15,7 @@ import lombok.Setter;
 import java.time.ZonedDateTime;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 01. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 01. 22.
  */
 @Getter
 @Setter

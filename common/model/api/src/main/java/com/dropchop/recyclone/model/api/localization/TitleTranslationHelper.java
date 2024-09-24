@@ -7,7 +7,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import java.time.ZonedDateTime;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 05. 22.
  */
 public interface TitleTranslationHelper<TT extends TitleTranslation> extends TranslationHelper<TT>, HasTitleTranslation<TT> {
 

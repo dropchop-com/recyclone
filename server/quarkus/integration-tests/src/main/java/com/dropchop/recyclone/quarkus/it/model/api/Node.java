@@ -12,7 +12,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasModified;
 import java.util.SortedSet;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 9. 05. 22.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 9. 05. 22.
  */
 public interface Node<TT extends TitleTranslation, N extends Node<TT, N>>
   extends Model, HasCode, HasTranslationInlinedTitle, HasTitleTranslation<TT>,

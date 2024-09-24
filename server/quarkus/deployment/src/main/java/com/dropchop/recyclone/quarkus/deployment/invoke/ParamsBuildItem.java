@@ -5,7 +5,7 @@ import io.quarkus.builder.item.SimpleBuildItem;
 import java.util.Map;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 16. 04. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 04. 24.
  */
 public final class ParamsBuildItem extends SimpleBuildItem {
 

@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.List;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 1. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 12. 21.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -13,5 +13,6 @@
 
   <modules>
     <module>jpa</module>
+    <module>es</module>
   </modules>
 </project>

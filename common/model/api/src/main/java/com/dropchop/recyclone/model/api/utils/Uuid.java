@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 12. 21.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @SuppressWarnings("unused")
 public interface Uuid {

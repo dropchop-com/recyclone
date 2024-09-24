@@ -5,7 +5,7 @@ import io.quarkus.builder.item.SimpleBuildItem;
 import java.util.Collection;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 6. 03. 24.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 03. 24.
  */
 public final class JsonSerializationTypeItem extends SimpleBuildItem {
 
