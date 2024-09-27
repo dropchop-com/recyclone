@@ -81,17 +81,14 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
                 "admintoken1", "admintoken1,admin"
             ),
             Map.of(
-                "admin",
-                "*",
-                "staff",
-                "localization.language:*," +
-                    "security.action:*," +
-                    "security.domain:*," +
-                    "security.permission:*," +
-                    "security.role:*",
-                "user",
-                "localization.language:view," +
-                    "test.dummy:view"
+                "admin", "*",
+                "staff", "localization.language:*," +
+                                  "security.action:*," +
+                                  "security.domain:*," +
+                                  "security.permission:*," +
+                                  "security.role:*",
+                "user", "localization.language:view," +
+                                 "test.dummy:view"
             )
         )
     );
