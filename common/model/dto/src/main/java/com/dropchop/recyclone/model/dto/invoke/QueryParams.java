@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.query.And;
-import com.dropchop.recyclone.model.api.query.Condition;
+import com.dropchop.recyclone.model.api.query.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,9 @@ public class QueryParams extends Params implements com.dropchop.recyclone.model.
 
   @ToString.Include
   private Condition condition = new And();
+
+  @ToString.Include
+  private Aggregation aggregation = new Max();
 
   @Override
   public String toString() {

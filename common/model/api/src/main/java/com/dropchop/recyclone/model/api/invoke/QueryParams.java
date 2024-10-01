@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.api.invoke;
 
+import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.Condition;
 
 /**
@@ -14,6 +15,9 @@ public interface QueryParams<
 
   Condition getCondition();
   void setCondition(Condition condition);
+
+  Aggregation getAggregation();
+  void setAggregation(Aggregation aggregation);
 
   default Condition condition() {
     return getCondition();

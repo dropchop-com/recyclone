@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
+import com.dropchop.recyclone.model.api.query.AggregationImpl;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
@@ -12,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
+import static com.dropchop.recyclone.model.api.query.Aggregation.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
@@ -110,6 +112,28 @@ public class DummyResourceTest {
         .then()
         .statusCode(200)
         .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
+  public void dummyQueryTestAggregations() {
+    QueryParams params = QueryParams.builder().aggregation(
+      max("updated_max", "updated"),
+      max("sum_m_reach", "mediaReach"),
+      max("min_m_reach", "mediaReach")
+    ).build();
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 }
