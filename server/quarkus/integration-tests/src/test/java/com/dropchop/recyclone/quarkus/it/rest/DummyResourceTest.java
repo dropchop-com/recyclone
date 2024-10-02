@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
+import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.AggregationImpl;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
@@ -13,7 +14,12 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static com.dropchop.recyclone.model.api.query.Aggregation.*;
+import static com.dropchop.recyclone.model.api.query.Aggregation.aggregationField;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
@@ -119,9 +125,103 @@ public class DummyResourceTest {
   @Order(30)
   public void dummyQueryTestAggregations() {
     QueryParams params = QueryParams.builder().aggregation(
-      max("updated_max", "updated"),
-      max("sum_m_reach", "mediaReach"),
-      max("min_m_reach", "mediaReach")
+      List.of(
+        max(
+          aggregationField("watch_max", "watch"),
+          sum(
+            aggregationField("nested_worker_sum", "worker")
+          ),
+          min(
+            aggregationField("nested_worker_min", "worker")
+          ),
+          avg(
+            aggregationField("nested_worker_avg", "worker"),
+            count(
+              aggregationField("nested_nested_worker_count", "worker")
+            ),
+            cardinality(
+              aggregationField("nested_nested_worker_cardinality", "worker")
+            ),
+            dateHistogram(
+              aggregationHistogramField("nested_nested_worker_dateHistogram", "worker", "month")
+            )
+          )
+        ),
+        terms(
+          aggregationField("nested_worker_terms", "worker")
+        )
+      )
+    ).build();
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
+  public void dummyQueryCombined() {
+    QueryParams params = QueryParams.builder().condition(
+      and(
+        or(
+          field(
+            "updated",
+            gteLt(
+              Iso8601.fromIso("2024-09-19T10:12:01.123"),
+              Iso8601.fromIso("2024-09-20T11:00:01.123")
+            )
+          ),
+          and(
+            field("neki", in("one", "two", "three"))
+          ),
+          field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+          not(
+            field(
+              "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
+            )
+          )
+        ),
+        field("type", in(1, 2, 3)),
+        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+        field("miki", null)
+      ).and(
+        field("type2", in(1, 2, 3))
+      )
+    ).aggregation(
+      List.of(
+        max(
+          aggregationField("watch_max", "watch"),
+          sum(
+            aggregationField("nested_worker_sum", "worker")
+          ),
+          min(
+            aggregationField("nested_worker_min", "worker")
+          ),
+          avg(
+            aggregationField("nested_worker_avg", "worker"),
+            count(
+              aggregationField("nested_nested_worker_count", "worker")
+            ),
+            cardinality(
+              aggregationField("nested_nested_worker_cardinality", "worker")
+            ),
+            dateHistogram(
+              aggregationHistogramField("nested_nested_worker_dateHistogram", "worker", "month")
+            )
+          )
+        ),
+        terms(
+          aggregationField("worker_terms", "worker")
+        )
+      )
     ).build();
     given()
       .log().all()

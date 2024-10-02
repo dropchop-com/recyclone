@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -28,10 +30,10 @@ public class QueryParams extends Params implements com.dropchop.recyclone.model.
   private Condition condition = new And();
 
   @ToString.Include
-  private Aggregation aggregation = new Max();
+  private List<Aggregation> aggregation;
 
   @Override
   public String toString() {
-    return super.toString() + ":" + getCondition();
+    return super.toString() + ":" + getCondition() + ":" + getAggregation();
   }
 }

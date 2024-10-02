@@ -1,29 +1,39 @@
 package com.dropchop.recyclone.model.api.query;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-@Setter
-@Getter
-public class Cardinality implements Aggregation {
+public class Cardinality extends AggregationImpl {
 
-  private String name;
-  private String field;
-  private List<Aggregation> subAggregations;
+  public Cardinality() {
+    this.setSubAggregations(new ArrayList<>());
+  }
 
-  public Cardinality(String name, String field, Aggregation... subAggregations) {
-    this.name = name;
-    this.field = field;
-    this.subAggregations = List.of(subAggregations);
+  public Cardinality(List<Aggregation> subAggregations) {
+    super.setSubAggregations(subAggregations);
   }
 
   public List<Aggregation> get$cardinality() {
-    return subAggregations;
+    return super.getSubAggregations();
   }
 
   public void set$cardinality(List<Aggregation> subAggregations) {
-    this.subAggregations = subAggregations;
+    super.setSubAggregations(subAggregations);
+  }
+
+  public Cardinality cardinality(Aggregation subAggregationsToAdd) {
+    super.add(subAggregationsToAdd);
+    return this;
+  }
+
+  public Cardinality cardinality(Collection<Aggregation> subAggregationsToAdd) {
+    super.add(subAggregationsToAdd);
+    return this;
+  }
+
+  public Cardinality cardinality(Aggregation ... subAggregationsToAdd) {
+    this.add(subAggregationsToAdd);
+    return this;
   }
 }

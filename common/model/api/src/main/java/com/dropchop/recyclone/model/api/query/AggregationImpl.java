@@ -1,24 +1,40 @@
 package com.dropchop.recyclone.model.api.query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class AggregationImpl implements Aggregation {
-  private String name;
-  private String field;
   private List<Aggregation> subAggregations;
 
-  public AggregationImpl() {
+  protected List<Aggregation> getSubAggregations() {
+    return subAggregations;
   }
 
-  public AggregationImpl(String name, String field) {
-    this.name = name;
-    this.field = field;
-    this.subAggregations = new ArrayList<>();
+  protected void setSubAggregations(List<Aggregation> subAggregations) {
+    this.subAggregations = subAggregations;
   }
 
-  public AggregationImpl addSubAggregation(List<Aggregation> subAggregation) {
-    this.subAggregations.add((Aggregation) subAggregation);
-    return this;
+  protected void add(Aggregation subAggregation) {
+    List<Aggregation> subAggregations = this.getSubAggregations();
+    if (subAggregations == null) {
+      subAggregations = new ArrayList<>();
+      this.setSubAggregations(subAggregations);
+    }
+    subAggregations.add(subAggregation);
+  }
+
+  protected void add(Collection<Aggregation> subAggregationsToAdd) {
+    List<Aggregation> subAggregations1 = this.getSubAggregations();
+    if (subAggregations1 == null) {
+      subAggregations1 = new ArrayList<>();
+      this.setSubAggregations(subAggregations1);
+    }
+    subAggregations1.addAll(subAggregationsToAdd);
+  }
+
+  protected void add(Aggregation ... subAggregationsToAdd) {
+    this.add(Arrays.asList(subAggregationsToAdd));
   }
 }

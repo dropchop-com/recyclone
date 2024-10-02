@@ -1,29 +1,39 @@
 package com.dropchop.recyclone.model.api.query;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-@Setter
-@Getter
-public class Count implements Aggregation {
+public class Count extends AggregationImpl {
 
-  private String name;
-  private String field;
-  private List<Aggregation> subAggregations;
+  public Count() {
+    this.setSubAggregations(new ArrayList<>());
+  }
 
-  public Count(String name, String field, Aggregation... subAggregations) {
-    this.name = name;
-    this.field = field;
-    this.subAggregations = List.of(subAggregations);
+  public Count(List<Aggregation> subAggregations) {
+    super.setSubAggregations(subAggregations);
   }
 
   public List<Aggregation> get$count() {
-    return subAggregations;
+    return super.getSubAggregations();
   }
 
   public void set$count(List<Aggregation> subAggregations) {
-    this.subAggregations = subAggregations;
+    super.setSubAggregations(subAggregations);
+  }
+
+  public Count count(Aggregation subAggregationsToAdd) {
+    super.add(subAggregationsToAdd);
+    return this;
+  }
+
+  public Count count(Collection<Aggregation> subAggregationsToAdd) {
+    super.add(subAggregationsToAdd);
+    return this;
+  }
+
+  public Count count(Aggregation ... subAggregationsToAdd) {
+    this.add(subAggregationsToAdd);
+    return this;
   }
 }

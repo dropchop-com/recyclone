@@ -1,41 +1,37 @@
 package com.dropchop.recyclone.model.api.query;
 
-import lombok.Getter;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
-@Getter
-public class Min extends AggregationImpl {
-  
-  public Min() {
+public class Terms extends AggregationImpl{
+  public Terms() {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Min(List<Aggregation> subAggregations) {
+  public Terms(List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
   }
 
-  public List<Aggregation> get$min() {
+  public List<Aggregation> get$terms() {
     return super.getSubAggregations();
   }
 
-  public void set$min(List<Aggregation> subAggregations) {
+  public void set$terms(List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
   }
 
-  public Min min(Aggregation subAggregationsToAdd) {
+  public Terms terms(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);
     return this;
   }
 
-  public Min min(Collection<Aggregation> subAggregationsToAdd) {
+  public Terms terms(Collection<Aggregation> subAggregationsToAdd) {
     super.add(subAggregationsToAdd);
     return this;
   }
 
-  public Min min(Aggregation ... subAggregationsToAdd) {
+  public Terms terms(Aggregation ... subAggregationsToAdd) {
     this.add(subAggregationsToAdd);
     return this;
   }

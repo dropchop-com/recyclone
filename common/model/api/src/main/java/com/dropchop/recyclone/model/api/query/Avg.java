@@ -1,29 +1,39 @@
 package com.dropchop.recyclone.model.api.query;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-@Setter
-@Getter
-public class Avg implements Aggregation {
+public class Avg extends AggregationImpl {
 
-  private String name;
-  private String field;
-  private List<Aggregation> subAggregations;
+  public Avg() {
+    this.setSubAggregations(new ArrayList<>());
+  }
 
-  public Avg(String name, String field, Aggregation... subAggregations) {
-    this.name = name;
-    this.field = field;
-    this.subAggregations = List.of(subAggregations);
+  public Avg(List<Aggregation> subAggregations) {
+    super.setSubAggregations(subAggregations);
   }
 
   public List<Aggregation> get$avg() {
-    return subAggregations;
+    return super.getSubAggregations();
   }
 
   public void set$avg(List<Aggregation> subAggregations) {
-    this.subAggregations = subAggregations;
+    super.setSubAggregations(subAggregations);
+  }
+
+  public Avg avg(Aggregation subAggregationsToAdd) {
+    super.add(subAggregationsToAdd);
+    return this;
+  }
+
+  public Avg avg(Collection<Aggregation> subAggregationsToAdd) {
+    super.add(subAggregationsToAdd);
+    return this;
+  }
+
+  public Avg avg(Aggregation ... subAggregationsToAdd) {
+    this.add(subAggregationsToAdd);
+    return this;
   }
 }

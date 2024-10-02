@@ -14,41 +14,83 @@ public interface Aggregation {
       "max", Max.class,
       "count", Count.class,
       "avg", Avg.class,
+      "terms", Terms.class,
       "cardinality", Cardinality.class,
-      "dateHistogram", DateHistogram.class
+      "dateHistogram", DateHistogram.class,
+      "aggregationField", AggregationField.class
     );
   }
 
   // Static factory methods for building aggregations
-  static Max max(String name, String field, Aggregation... subAggregations) {
-    return new Max(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Max max(Aggregation... subAggregations) {
+    return new Max(new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Max max(String name, String field, List<Aggregation> subAggregations) {
-    return new Max(name, field, subAggregations);
+  static Max max(List<Aggregation> subAggregations) {
+    return new Max(subAggregations);
   }
 
-  static Min min(String name, String field, Aggregation... subAggregations) {
-    return new Min(name, field, subAggregations);
+  static Min min(Aggregation... subAggregations) {
+    return new Min(new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Sum sum(String name, String field, Aggregation... subAggregations) {
-    return new Sum(name, field, subAggregations);
+  static Min min(List<Aggregation> subAggregations) {
+    return new Min(subAggregations);
   }
 
-  static Count count(String name, String field, Aggregation... subAggregations) {
-    return new Count(name, field, subAggregations);
+  static Sum sum(Aggregation... subAggregations) {
+    return new Sum(new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Avg avg(String name, String field, Aggregation... subAggregations) {
-    return new Avg(name, field, subAggregations);
+  static Sum sum(List<Aggregation> subAggregations) {
+    return new Sum(subAggregations);
   }
 
-  static Cardinality cardinality(String name, String field, Aggregation... subAggregations) {
-    return new Cardinality(name, field, subAggregations);
+  static Count count(Aggregation... subAggregations) {
+    return new Count(new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static DateHistogram dateHistogram(String name, String field, Aggregation... subAggregations) {
-    return new DateHistogram(name, field, subAggregations);
+  static Count count(List<Aggregation> subAggregations) {
+    return new Count(subAggregations);
+  }
+
+  static Avg avg(Aggregation... subAggregations) {
+    return new Avg(new ArrayList<>(Arrays.asList(subAggregations)));
+  }
+
+  static Avg avg(List<Aggregation> subAggregations) {
+    return new Avg(subAggregations);
+  }
+
+  static Cardinality cardinality(Aggregation... subAggregations) {
+    return new Cardinality(new ArrayList<>(Arrays.asList(subAggregations)));
+  }
+
+  static Cardinality cardinality(List<Aggregation> subAggregations) {
+    return new Cardinality(subAggregations);
+  }
+
+  static DateHistogram dateHistogram(Aggregation... subAggregations) {
+    return new DateHistogram(new ArrayList<>(Arrays.asList(subAggregations)));
+  }
+
+  static DateHistogram dateHistogram(List<Aggregation> subAggregations) {
+    return new DateHistogram(subAggregations);
+  }
+
+  static Terms terms(Aggregation... subAggregations) {
+    return new Terms(new ArrayList<>(Arrays.asList(subAggregations)));
+  }
+
+  static Terms terms(List<Aggregation> subAggregations) {
+    return new Terms(subAggregations);
+  }
+
+  static AggregationField aggregationField(String name, String field) {
+    return new AggregationField(name, field);
+  }
+
+  static AggregationField aggregationHistogramField(String name, String field, String calendarInterval) {
+    return new AggregationField(name, field, calendarInterval);
   }
 }
