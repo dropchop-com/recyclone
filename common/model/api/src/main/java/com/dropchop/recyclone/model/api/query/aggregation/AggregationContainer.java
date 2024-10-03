@@ -5,6 +5,8 @@ import lombok.Getter;
 
 import java.util.HashMap;
 
+import static com.dropchop.recyclone.model.api.query.Aggregation.*;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 10. 24.
  */
@@ -14,7 +16,7 @@ public class AggregationContainer extends HashMap<String, Aggregation> implement
   private String name;
 
   public AggregationContainer(Aggregation val) {
-    this.name = "$" + val.getClass().getSimpleName().toLowerCase();
+    this.name = computeName(val);
     this.put(name, val);
   }
 
@@ -22,7 +24,7 @@ public class AggregationContainer extends HashMap<String, Aggregation> implement
   }
 
   public void set(Aggregation val) {
-    this.name = "$" + val.getClass().getSimpleName().toLowerCase();
+    this.name = computeName(val);
     this.put(this.name, val);
   }
 }

@@ -22,6 +22,11 @@ public interface Aggregation {
     );
   }
 
+  static String computeName(Aggregation aggregation) {
+    String name = aggregation.getClass().getSimpleName();
+    return "$" + name.substring(0, 1).toLowerCase() + name.substring(1);
+  }
+
   static List<AggregationContainer> aggs(Aggregation ... aggs) {
     return Arrays.stream(aggs).map(AggregationContainer::new).toList();
   }
