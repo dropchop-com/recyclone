@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,18 +12,18 @@ public class Sum extends BaseAggregation {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Sum(AggregationField field, List<Aggregation> subAggregations) {
+  public Sum(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
   }
 
   public List<Aggregation> get$sum() {
     return super.getSubAggregations();
   }
 
-  public void set$sum(AggregationField field, List<Aggregation> subAggregations) {
+  public void set$sum(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
   }
 
   public Sum sum(Aggregation subAggregationsToAdd) {

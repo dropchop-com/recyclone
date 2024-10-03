@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +13,8 @@ public class Count extends BaseAggregation {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Count(AggregationField field, List<Aggregation> subAggregations) {
-    super.setAggregationField(field);
+  public Count(String name, String field, List<Aggregation> subAggregations) {
+    super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
   }
 
@@ -20,8 +22,8 @@ public class Count extends BaseAggregation {
     return super.getSubAggregations();
   }
 
-  public void set$count(AggregationField field, List<Aggregation> subAggregations) {
-    super.setAggregationField(field);
+  public void set$count(String name, String field, List<Aggregation> subAggregations) {
+    super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
   }
 

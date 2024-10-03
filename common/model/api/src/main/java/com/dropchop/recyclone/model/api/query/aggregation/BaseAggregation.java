@@ -1,28 +1,32 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
+@Setter
 public abstract class BaseAggregation implements Aggregation {
   private List<Aggregation> subAggregations;
-  private AggregationField aggregationField;
+  private String name;
+  private String field;
 
   protected List<Aggregation> getSubAggregations() {
     return subAggregations;
-  }
-
-  public AggregationField get$aggregationField() {
-    return aggregationField;
   }
 
   protected void setSubAggregations(List<Aggregation> subAggregations) {
     this.subAggregations = subAggregations;
   }
 
-  protected void setAggregationField(AggregationField aggregationField) {
-    this.aggregationField = aggregationField;
+  protected void setAggregationField(String name, String field) {
+    this.name = name;
+    this.field = field;
   }
 
   protected void add(Aggregation subAggregation) {

@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,18 +13,18 @@ public class Max extends BaseAggregation {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Max(AggregationField field, List<Aggregation> subAggregations) {
+  public Max(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
   }
 
   public List<Aggregation> get$max() {
     return super.getSubAggregations();
   }
 
-  public void set$max(AggregationField field, List<Aggregation> subAggregations) {
+  public void set$max(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
   }
 
   public Max max(Aggregation subAggregationsToAdd) {

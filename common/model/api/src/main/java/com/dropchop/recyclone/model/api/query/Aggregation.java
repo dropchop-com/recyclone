@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.model.api.query;
 
+import com.dropchop.recyclone.model.api.query.aggregation.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,81 +18,72 @@ public interface Aggregation {
       "avg", Avg.class,
       "terms", Terms.class,
       "cardinality", Cardinality.class,
-      "dateHistogram", DateHistogram.class,
-      "aggregationField", AggregationField.class
+      "dateHistogram", DateHistogram.class
     );
   }
 
   // Static factory methods for building aggregations
-  static Max max(AggregationField field, Aggregation... subAggregations) {
-    return new Max(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Max max(String name, String field, Aggregation... subAggregations) {
+    return new Max(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Max max(AggregationField field, List<Aggregation> subAggregations) {
-    return new Max(field, subAggregations);
+  static Max max(String name, String field, List<Aggregation> subAggregations) {
+    return new Max(name, field, subAggregations);
   }
 
-  static Min min(AggregationField field, Aggregation... subAggregations) {
-    return new Min(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Min min(String name, String field, Aggregation... subAggregations) {
+    return new Min(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Min min(AggregationField field, List<Aggregation> subAggregations) {
-    return new Min(field, subAggregations);
+  static Min min(String name, String field, List<Aggregation> subAggregations) {
+    return new Min(name, field, subAggregations);
   }
 
-  static Sum sum(AggregationField field, Aggregation... subAggregations) {
-    return new Sum(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Sum sum(String name, String field, Aggregation... subAggregations) {
+    return new Sum(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Sum sum(AggregationField field, List<Aggregation> subAggregations) {
-    return new Sum(field, subAggregations);
+  static Sum sum(String name, String field, List<Aggregation> subAggregations) {
+    return new Sum(name, field, subAggregations);
   }
 
-  static Count count(AggregationField field, Aggregation... subAggregations) {
-    return new Count(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Count count(String name, String field, Aggregation... subAggregations) {
+    return new Count(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Count count(AggregationField field, List<Aggregation> subAggregations) {
-    return new Count(field, subAggregations);
+  static Count count(String name, String field, List<Aggregation> subAggregations) {
+    return new Count(name, field, subAggregations);
   }
 
-  static Avg avg(AggregationField field, Aggregation... subAggregations) {
-    return new Avg(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Avg avg(String name, String field, Aggregation... subAggregations) {
+    return new Avg(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Avg avg(AggregationField field, List<Aggregation> subAggregations) {
-    return new Avg(field, subAggregations);
+  static Avg avg(String name, String field, List<Aggregation> subAggregations) {
+    return new Avg(name, field, subAggregations);
   }
 
-  static Cardinality cardinality(AggregationField field, Aggregation... subAggregations) {
-    return new Cardinality(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Cardinality cardinality(String name, String field, Aggregation... subAggregations) {
+    return new Cardinality(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Cardinality cardinality(AggregationField field, List<Aggregation> subAggregations) {
-    return new Cardinality(field, subAggregations);
+  static Cardinality cardinality(String name, String field, List<Aggregation> subAggregations) {
+    return new Cardinality(name, field, subAggregations);
   }
 
-  static DateHistogram dateHistogram(AggregationField field, Aggregation... subAggregations) {
-    return new DateHistogram(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static DateHistogram dateHistogram(String name, String field, String calendar_interval, Aggregation... subAggregations) {
+    return new DateHistogram(name, field, calendar_interval, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static DateHistogram dateHistogram(AggregationField field, List<Aggregation> subAggregations) {
-    return new DateHistogram(field, subAggregations);
+  static DateHistogram dateHistogram(String name, String field, String calendar_interval, List<Aggregation> subAggregations) {
+    return new DateHistogram(name, field, calendar_interval, subAggregations);
   }
 
-  static Terms terms(AggregationField field, Aggregation... subAggregations) {
-    return new Terms(field, new ArrayList<>(Arrays.asList(subAggregations)));
+  static Terms terms(String name, String field, Aggregation... subAggregations) {
+    return new Terms(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Terms terms(AggregationField field, List<Aggregation> subAggregations) {
-    return new Terms(field, subAggregations);
-  }
-
-  static AggregationField aggregationField(String name, String field) {
-    return new AggregationField(name, field);
-  }
-
-  static AggregationField aggregationHistogramField(String name, String field, String calendarInterval) {
-    return new AggregationField(name, field, calendarInterval);
+  static Terms terms(String name, String field, List<Aggregation> subAggregations) {
+    return new Terms(name, field, subAggregations);
   }
 }

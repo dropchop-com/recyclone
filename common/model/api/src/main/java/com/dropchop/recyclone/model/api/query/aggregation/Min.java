@@ -1,5 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
 
+import com.dropchop.recyclone.model.api.query.Aggregation;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -14,17 +15,17 @@ public class Min extends BaseAggregation {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Min(AggregationField field, List<Aggregation> subAggregations) {
+  public Min(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
   }
 
   public List<Aggregation> get$min() {
     return super.getSubAggregations();
   }
 
-  public void set$min(AggregationField field, List<Aggregation> subAggregations) {
-    super.setAggregationField(field);
+  public void set$min(String name, String field, List<Aggregation> subAggregations) {
+    super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
   }
 

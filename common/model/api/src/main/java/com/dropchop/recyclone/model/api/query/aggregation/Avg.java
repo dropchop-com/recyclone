@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,17 +13,17 @@ public class Avg extends BaseAggregation {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Avg(AggregationField field, List<Aggregation> subAggregations) {
+  public Avg(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
   }
 
   public List<Aggregation> get$avg() {
     return super.getSubAggregations();
   }
 
-  public void set$avg(AggregationField field, List<Aggregation> subAggregations) {
-    super.setAggregationField(field);
+  public void set$avg(String name, String field, List<Aggregation> subAggregations) {
+    super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
   }
 

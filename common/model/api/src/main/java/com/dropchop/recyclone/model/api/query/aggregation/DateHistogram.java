@@ -1,28 +1,32 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class DateHistogram extends BaseAggregation {
+public class DateHistogram extends HistogramAggregation {
 
   public DateHistogram() {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public DateHistogram(AggregationField field, List<Aggregation> subAggregations) {
+  public DateHistogram(String name, String field, String calender_interval, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
+    super.setCalenderInterval(calender_interval);
   }
 
   public List<Aggregation> get$dateHistogram() {
     return super.getSubAggregations();
   }
 
-  public void set$dateHistogram(AggregationField field, List<Aggregation> subAggregations) {
+  public void set$dateHistogram(String name, String field, String calender_interval, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
-    super.setAggregationField(field);
+    super.setAggregationField(name, field);
+    super.setCalenderInterval(calender_interval);
   }
 
   public DateHistogram dateHistogram(Aggregation subAggregationsToAdd) {

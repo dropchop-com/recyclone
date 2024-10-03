@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.aggregation;
+
+import com.dropchop.recyclone.model.api.query.Aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,8 +12,8 @@ public class Terms extends BaseAggregation {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Terms(AggregationField field, List<Aggregation> subAggregations) {
-    super.setAggregationField(field);
+  public Terms(String name, String field, List<Aggregation> subAggregations) {
+    super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
   }
 
@@ -19,8 +21,8 @@ public class Terms extends BaseAggregation {
     return super.getSubAggregations();
   }
 
-  public void set$terms(AggregationField field, List<Aggregation> subAggregations) {
-    super.setAggregationField(field);
+  public void set$terms(String name, String field, List<Aggregation> subAggregations) {
+    super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
   }
 

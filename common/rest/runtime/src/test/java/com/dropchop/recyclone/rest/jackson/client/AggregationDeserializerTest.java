@@ -15,38 +15,48 @@ public class AggregationDeserializerTest {
   @Test
   public void testAggregationCompositionTest() throws Exception {
     List<Aggregation> a = List.of(
-        max(
-            aggregationField("watch_max", "watch"),
-            sum(
-                aggregationField("nested_worker_sum", "worker")
-            ),
-            min(
-                aggregationField("nested_worker_min", "worker")
-            ),
-            avg(
-                aggregationField("nested_worker_avg", "worker"),
-                count(
-                    aggregationField("nested_nested_worker_count", "worker")
-                ),
-                cardinality(
-                    aggregationField("nested_nested_worker_cardinality", "worker")
-                ),
-                dateHistogram(
-                    aggregationHistogramField("nested_nested_worker_dateHistogram", "worker", "month")
-                )
-            )
+      max(
+        "watch_max",
+        "watch",
+        sum(
+          "nested_worker_sum",
+          "worker"
         ),
-        terms(
-            aggregationField("worker_terms", "worker")
+        min(
+          "nested_worker_min",
+          "worker"
+        ),
+        avg(
+          "nested_worker_avg",
+          "worker"
+        ),
+        count(
+          "nested_nested_worker_count",
+          "worker"
         )
+      ),
+      cardinality(
+        "nested_nested_worker_cardinality",
+        "worker"
+      ),
+      dateHistogram(
+        "nested_nested_worker_dateHistogram",
+        "worker",
+        "month"
+      ),
+      terms(
+        "nested_worker_terms",
+        "worker"
+      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    String expected = "";
-    //JSONAssert.assertEquals(expected, jsonOutput1, false);
+    System.out.printf(mapper.writeValueAsString(jsonOutput1));
+    String expected = "[{\"name\":\"watch_max\",\"field\":\"watch\",\"$max\":[{\"name\":\"nested_worker_sum\",\"field\":\"worker\",\"$sum\":[]},{\"name\":\"nested_worker_min\",\"field\":\"worker\",\"$min\":[]},{\"name\":\"nested_worker_avg\",\"field\":\"worker\",\"$avg\":[]},{\"name\":\"nested_nested_worker_count\",\"field\":\"worker\",\"$count\":[]}]},{\"name\":\"nested_nested_worker_cardinality\",\"field\":\"worker\",\"$cardinality\":[]},{\"name\":\"nested_nested_worker_dateHistogram\",\"field\":\"worker\",\"calenderInterval\":\"month\",\"$dateHistogram\":[]},{\"name\":\"nested_worker_terms\",\"field\":\"worker\",\"$terms\":[]}]";
+    JSONAssert.assertEquals(expected, jsonOutput1, true);
   }
 
   @Test

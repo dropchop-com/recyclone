@@ -16,7 +16,6 @@ import org.junit.jupiter.api.*;
 import java.util.List;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.*;
-import static com.dropchop.recyclone.model.api.query.Aggregation.aggregationField;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
@@ -123,9 +122,13 @@ public class DummyResourceTest {
   public void dummyQueryTestAggregation() {
     QueryParams params = QueryParams.builder().aggregation(List.of(
       dateHistogram(
-        aggregationField("watch_max", "watch"),
+        "watch_max",
+        "watch",
+        "seconds",
         dateHistogram(
-          aggregationField("nested_watch_max", "watch")
+          "nested_watch_max",
+          "watch",
+          "month"
         )
       )
     )).build();
@@ -150,29 +153,37 @@ public class DummyResourceTest {
     QueryParams params = QueryParams.builder().aggregation(
       List.of(
         max(
-          aggregationField("watch_max", "watch"),
+          "watch_max",
+          "watch",
           sum(
-            aggregationField("nested_worker_sum", "worker")
+            "nested_worker_sum",
+            "worker"
           ),
           min(
-            aggregationField("nested_worker_min", "worker")
+            "nested_worker_min",
+            "worker"
           ),
           avg(
-            aggregationField("nested_worker_avg", "worker"),
+            "nested_worker_avg",
+            "worker"
+          ),
             count(
-              aggregationField("nested_nested_worker_count", "worker")
-            ),
-            cardinality(
-              aggregationField("nested_nested_worker_cardinality", "worker")
-            ),
-            dateHistogram(
-              aggregationHistogramField("nested_nested_worker_dateHistogram", "worker", "month")
-            ),
-            aggregationField("watch_max", "watch")
-          )
+              "nested_nested_worker_count",
+              "worker"
+            )
+        ),
+        cardinality(
+          "nested_nested_worker_cardinality",
+          "worker"
+        ),
+        dateHistogram(
+          "nested_nested_worker_dateHistogram",
+          "worker",
+          "month"
         ),
         terms(
-          aggregationField("nested_worker_terms", "worker")
+          "nested_worker_terms",
+          "worker"
         )
       )
     ).build();
@@ -222,28 +233,37 @@ public class DummyResourceTest {
     ).aggregation(
       List.of(
         max(
-          aggregationField("watch_max", "watch"),
+          "watch_max",
+          "watch",
           sum(
-            aggregationField("nested_worker_sum", "worker")
+            "nested_worker_sum",
+            "worker"
           ),
           min(
-            aggregationField("nested_worker_min", "worker")
+            "nested_worker_min",
+            "worker"
           ),
           avg(
-            aggregationField("nested_worker_avg", "worker"),
-            count(
-              aggregationField("nested_nested_worker_count", "worker")
-            ),
-            cardinality(
-              aggregationField("nested_nested_worker_cardinality", "worker")
-            ),
-            dateHistogram(
-              aggregationHistogramField("nested_nested_worker_dateHistogram", "worker", "month")
-            )
+            "nested_worker_avg",
+            "worker"
+          ),
+          count(
+            "nested_nested_worker_count",
+            "worker"
           )
         ),
+        cardinality(
+          "nested_nested_worker_cardinality",
+          "worker"
+        ),
+        dateHistogram(
+          "nested_nested_worker_dateHistogram",
+          "worker",
+          "month"
+        ),
         terms(
-          aggregationField("worker_terms", "worker")
+          "nested_worker_terms",
+          "worker"
         )
       )
     ).build();
