@@ -22,7 +22,7 @@ public interface Aggregation {
     );
   }
 
-  static String computeName(Aggregation aggregation) {
+  static String computeTypeName(Aggregation aggregation) {
     String name = aggregation.getClass().getSimpleName();
     return "$" + name.substring(0, 1).toLowerCase() + name.substring(1);
   }
@@ -63,4 +63,6 @@ public interface Aggregation {
     return new Terms(name, field, subAggregations);
   }
 
+  String getName();
+  String getField();
 }
