@@ -18,14 +18,14 @@ public class Max extends BaseAggregation {
     super.setAggregationField(name, field);
   }
 
-  public List<Aggregation> get$max() {
+  /*public List<Aggregation> get$max() {
     return super.getSubAggregations();
   }
 
   public void set$max(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
     super.setAggregationField(name, field);
-  }
+  }*/
 
   public Max max(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

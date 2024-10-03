@@ -17,14 +17,14 @@ public class Terms extends BaseAggregation {
     super.setSubAggregations(subAggregations);
   }
 
-  public List<Aggregation> get$terms() {
+  /*public List<Aggregation> get$terms() {
     return super.getSubAggregations();
   }
 
   public void set$terms(String name, String field, List<Aggregation> subAggregations) {
     super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
-  }
+  }*/
 
   public Terms terms(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

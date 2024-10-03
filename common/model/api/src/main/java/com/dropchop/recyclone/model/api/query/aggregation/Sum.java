@@ -17,14 +17,14 @@ public class Sum extends BaseAggregation {
     super.setAggregationField(name, field);
   }
 
-  public List<Aggregation> get$sum() {
+  /*public List<Aggregation> get$sum() {
     return super.getSubAggregations();
   }
 
   public void set$sum(String name, String field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
     super.setAggregationField(name, field);
-  }
+  }*/
 
   public Sum sum(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

@@ -22,8 +22,16 @@ public interface Aggregation {
     );
   }
 
+  static List<AggregationContainer> aggs(Aggregation ... aggs) {
+    return Arrays.stream(aggs).map(AggregationContainer::new).toList();
+  }
+
+  static Max2 max(String name, String field, Aggregation... subAggregations) {
+    return new Max2(name, field, subAggregations);
+  }
+
   // Static factory methods for building aggregations
-  static Max max(String name, String field, Aggregation... subAggregations) {
+  /*static Max max(String name, String field, Aggregation... subAggregations) {
     return new Max(name, field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
@@ -85,5 +93,5 @@ public interface Aggregation {
 
   static Terms terms(String name, String field, List<Aggregation> subAggregations) {
     return new Terms(name, field, subAggregations);
-  }
+  }*/
 }

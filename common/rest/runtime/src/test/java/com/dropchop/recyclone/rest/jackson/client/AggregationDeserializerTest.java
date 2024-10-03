@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.query.Aggregation;
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationContainer;
+import com.dropchop.recyclone.model.api.query.aggregation.Max2;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ public class AggregationDeserializerTest {
 
   @Test
   public void testAggregationCompositionTest() throws Exception {
-    List<Aggregation> a = List.of(
+    /*List<Aggregation> a = List.of(
       max(
         "watch_max",
         "watch",
@@ -48,6 +50,11 @@ public class AggregationDeserializerTest {
         "nested_worker_terms",
         "worker"
       )
+    );*/
+
+    List<AggregationContainer> a = aggs(
+        max("agg_name1", "my_field1"),
+        max("agg_name2", "my_field2")
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();

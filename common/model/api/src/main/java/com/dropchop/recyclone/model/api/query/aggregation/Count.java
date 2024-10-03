@@ -18,14 +18,14 @@ public class Count extends BaseAggregation {
     super.setSubAggregations(subAggregations);
   }
 
-  public List<Aggregation> get$count() {
+  /*public List<Aggregation> get$count() {
     return super.getSubAggregations();
   }
 
   public void set$count(String name, String field, List<Aggregation> subAggregations) {
     super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
-  }
+  }*/
 
   public Count count(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

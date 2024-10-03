@@ -19,7 +19,7 @@ public class DateHistogram extends HistogramAggregation {
     super.setCalenderInterval(calender_interval);
   }
 
-  public List<Aggregation> get$dateHistogram() {
+  /*public List<Aggregation> get$dateHistogram() {
     return super.getSubAggregations();
   }
 
@@ -27,7 +27,7 @@ public class DateHistogram extends HistogramAggregation {
     super.setSubAggregations(subAggregations);
     super.setAggregationField(name, field);
     super.setCalenderInterval(calender_interval);
-  }
+  }*/
 
   public DateHistogram dateHistogram(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

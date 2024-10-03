@@ -20,14 +20,14 @@ public class Min extends BaseAggregation {
     super.setAggregationField(name, field);
   }
 
-  public List<Aggregation> get$min() {
+  /*public List<Aggregation> get$min() {
     return super.getSubAggregations();
   }
 
   public void set$min(String name, String field, List<Aggregation> subAggregations) {
     super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
-  }
+  }*/
 
   public Min min(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

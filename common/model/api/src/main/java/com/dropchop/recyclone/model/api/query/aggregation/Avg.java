@@ -18,14 +18,14 @@ public class Avg extends BaseAggregation {
     super.setAggregationField(name, field);
   }
 
-  public List<Aggregation> get$avg() {
+  /*public List<Aggregation> get$avg() {
     return super.getSubAggregations();
   }
 
   public void set$avg(String name, String field, List<Aggregation> subAggregations) {
     super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
-  }
+  }*/
 
   public Avg avg(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);

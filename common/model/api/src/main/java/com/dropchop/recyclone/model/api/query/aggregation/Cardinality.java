@@ -18,14 +18,14 @@ public class Cardinality extends BaseAggregation {
     super.setSubAggregations(subAggregations);
   }
 
-  public List<Aggregation> get$cardinality() {
+  /*public List<Aggregation> get$cardinality() {
     return super.getSubAggregations();
   }
 
   public void set$cardinality(String name, String field, List<Aggregation> subAggregations) {
     super.setAggregationField(name, field);
     super.setSubAggregations(subAggregations);
-  }
+  }*/
 
   public Cardinality cardinality(Aggregation subAggregationsToAdd) {
     super.add(subAggregationsToAdd);
