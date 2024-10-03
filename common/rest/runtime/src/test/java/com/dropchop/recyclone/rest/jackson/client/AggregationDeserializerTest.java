@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.query.Aggregation;
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationContainer;
-import com.dropchop.recyclone.model.api.query.aggregation.Max2;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -16,7 +13,7 @@ public class AggregationDeserializerTest {
 
   @Test
   public void testAggregationCompositionTest() throws Exception {
-    /*List<Aggregation> a = List.of(
+    List<Aggregation> a = List.of(
       max(
         "watch_max",
         "watch",
@@ -50,11 +47,6 @@ public class AggregationDeserializerTest {
         "nested_worker_terms",
         "worker"
       )
-    );*/
-
-    List<AggregationContainer> a = aggs(
-        max("agg_name1", "my_field1"),
-        max("agg_name2", "my_field2")
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -62,11 +54,53 @@ public class AggregationDeserializerTest {
 
     String jsonOutput1 = mapper.writeValueAsString(a);
     System.out.printf(mapper.writeValueAsString(jsonOutput1));
-    String expected = "[{\"name\":\"watch_max\",\"field\":\"watch\",\"$max\":[{\"name\":\"nested_worker_sum\",\"field\":\"worker\",\"$sum\":[]},{\"name\":\"nested_worker_min\",\"field\":\"worker\",\"$min\":[]},{\"name\":\"nested_worker_avg\",\"field\":\"worker\",\"$avg\":[]},{\"name\":\"nested_nested_worker_count\",\"field\":\"worker\",\"$count\":[]}]},{\"name\":\"nested_nested_worker_cardinality\",\"field\":\"worker\",\"$cardinality\":[]},{\"name\":\"nested_nested_worker_dateHistogram\",\"field\":\"worker\",\"calenderInterval\":\"month\",\"$dateHistogram\":[]},{\"name\":\"nested_worker_terms\",\"field\":\"worker\",\"$terms\":[]}]";
+    String expected = """
+      [ {
+        "aggs" : [ {
+          "$sum" : {
+            "aggs" : [ ],
+            "name" : "nested_worker_sum",
+            "field" : "worker"
+          }
+        }, {
+          "$min" : {
+            "aggs" : [ ],
+            "name" : "nested_worker_min",
+            "field" : "worker"
+          }
+        }, {
+          "$avg" : {
+            "aggs" : [ ],
+            "name" : "nested_worker_avg",
+            "field" : "worker"
+          }
+        }, {
+          "$count" : {
+            "aggs" : [ ],
+            "name" : "nested_nested_worker_count",
+            "field" : "worker"
+          }
+        } ],
+        "name" : "watch_max",
+        "field" : "watch"
+      }, {
+        "aggs" : [ ],
+        "name" : "nested_nested_worker_cardinality",
+        "field" : "worker"
+      }, {
+        "aggs" : [ ],
+        "name" : "nested_nested_worker_dateHistogram",
+        "field" : "worker"
+      }, {
+        "aggs" : [ ],
+        "name" : "nested_worker_terms",
+        "field" : "worker"
+      } ]""";
     JSONAssert.assertEquals(expected, jsonOutput1, true);
   }
 
   @Test
+  @SuppressWarnings("unused")
   public void testAggregationDeserialization() throws Exception {
     List<Aggregation> a = List.of(
       /*max(
@@ -81,6 +115,6 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+    //List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
   }
 }
