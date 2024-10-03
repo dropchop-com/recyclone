@@ -103,7 +103,8 @@ public class AggregationDeserializerTest {
            "$dateHistogram": {
              "aggs": [],
              "name": "nested_nested_worker_dateHistogram",
-             "field": "worker"
+             "field": "worker",
+             "calendar_interval": "month"
            }
          },
          {
