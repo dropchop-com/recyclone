@@ -9,16 +9,18 @@ public class Sum extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Sum(List<Aggregation> subAggregations) {
+  public Sum(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public List<Aggregation> get$sum() {
     return super.getSubAggregations();
   }
 
-  public void set$sum(List<Aggregation> subAggregations) {
+  public void set$sum(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public Sum sum(Aggregation subAggregationsToAdd) {

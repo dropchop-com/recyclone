@@ -22,68 +22,68 @@ public interface Aggregation {
   }
 
   // Static factory methods for building aggregations
-  static Max max(Aggregation... subAggregations) {
-    return new Max(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Max max(AggregationField field, Aggregation... subAggregations) {
+    return new Max(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Max max(List<Aggregation> subAggregations) {
-    return new Max(subAggregations);
+  static Max max(AggregationField field, List<Aggregation> subAggregations) {
+    return new Max(field, subAggregations);
   }
 
-  static Min min(Aggregation... subAggregations) {
-    return new Min(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Min min(AggregationField field, Aggregation... subAggregations) {
+    return new Min(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Min min(List<Aggregation> subAggregations) {
-    return new Min(subAggregations);
+  static Min min(AggregationField field, List<Aggregation> subAggregations) {
+    return new Min(field, subAggregations);
   }
 
-  static Sum sum(Aggregation... subAggregations) {
-    return new Sum(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Sum sum(AggregationField field, Aggregation... subAggregations) {
+    return new Sum(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Sum sum(List<Aggregation> subAggregations) {
-    return new Sum(subAggregations);
+  static Sum sum(AggregationField field, List<Aggregation> subAggregations) {
+    return new Sum(field, subAggregations);
   }
 
-  static Count count(Aggregation... subAggregations) {
-    return new Count(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Count count(AggregationField field, Aggregation... subAggregations) {
+    return new Count(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Count count(List<Aggregation> subAggregations) {
-    return new Count(subAggregations);
+  static Count count(AggregationField field, List<Aggregation> subAggregations) {
+    return new Count(field, subAggregations);
   }
 
-  static Avg avg(Aggregation... subAggregations) {
-    return new Avg(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Avg avg(AggregationField field, Aggregation... subAggregations) {
+    return new Avg(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Avg avg(List<Aggregation> subAggregations) {
-    return new Avg(subAggregations);
+  static Avg avg(AggregationField field, List<Aggregation> subAggregations) {
+    return new Avg(field, subAggregations);
   }
 
-  static Cardinality cardinality(Aggregation... subAggregations) {
-    return new Cardinality(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Cardinality cardinality(AggregationField field, Aggregation... subAggregations) {
+    return new Cardinality(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Cardinality cardinality(List<Aggregation> subAggregations) {
-    return new Cardinality(subAggregations);
+  static Cardinality cardinality(AggregationField field, List<Aggregation> subAggregations) {
+    return new Cardinality(field, subAggregations);
   }
 
-  static DateHistogram dateHistogram(Aggregation... subAggregations) {
-    return new DateHistogram(new ArrayList<>(Arrays.asList(subAggregations)));
+  static DateHistogram dateHistogram(AggregationField field, Aggregation... subAggregations) {
+    return new DateHistogram(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static DateHistogram dateHistogram(List<Aggregation> subAggregations) {
-    return new DateHistogram(subAggregations);
+  static DateHistogram dateHistogram(AggregationField field, List<Aggregation> subAggregations) {
+    return new DateHistogram(field, subAggregations);
   }
 
-  static Terms terms(Aggregation... subAggregations) {
-    return new Terms(new ArrayList<>(Arrays.asList(subAggregations)));
+  static Terms terms(AggregationField field, Aggregation... subAggregations) {
+    return new Terms(field, new ArrayList<>(Arrays.asList(subAggregations)));
   }
 
-  static Terms terms(List<Aggregation> subAggregations) {
-    return new Terms(subAggregations);
+  static Terms terms(AggregationField field, List<Aggregation> subAggregations) {
+    return new Terms(field, subAggregations);
   }
 
   static AggregationField aggregationField(String name, String field) {

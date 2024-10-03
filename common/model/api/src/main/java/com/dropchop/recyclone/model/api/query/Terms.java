@@ -9,7 +9,8 @@ public class Terms extends AggregationImpl{
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Terms(List<Aggregation> subAggregations) {
+  public Terms(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 
@@ -17,7 +18,8 @@ public class Terms extends AggregationImpl{
     return super.getSubAggregations();
   }
 
-  public void set$terms(List<Aggregation> subAggregations) {
+  public void set$terms(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 

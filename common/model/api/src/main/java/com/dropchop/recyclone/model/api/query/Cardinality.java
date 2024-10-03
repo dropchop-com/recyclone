@@ -10,7 +10,8 @@ public class Cardinality extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Cardinality(List<Aggregation> subAggregations) {
+  public Cardinality(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 
@@ -18,7 +19,8 @@ public class Cardinality extends AggregationImpl {
     return super.getSubAggregations();
   }
 
-  public void set$cardinality(List<Aggregation> subAggregations) {
+  public void set$cardinality(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 

@@ -10,7 +10,8 @@ public class Count extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Count(List<Aggregation> subAggregations) {
+  public Count(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 
@@ -18,7 +19,8 @@ public class Count extends AggregationImpl {
     return super.getSubAggregations();
   }
 
-  public void set$count(List<Aggregation> subAggregations) {
+  public void set$count(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 

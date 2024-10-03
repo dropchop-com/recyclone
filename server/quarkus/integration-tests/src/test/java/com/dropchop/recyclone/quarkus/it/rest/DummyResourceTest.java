@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -123,6 +124,32 @@ public class DummyResourceTest {
 
   @Test
   @Order(30)
+  public void dummyQueryTestAggregation() {
+    QueryParams params = QueryParams.builder().aggregation(List.of(
+      dateHistogram(
+        aggregationField("watch_max", "watch"),
+        dateHistogram(
+          aggregationField("nested_watch_max", "watch")
+        )
+      )
+    )).build();
+    Log.debug(params.toString());
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
   public void dummyQueryTestAggregations() {
     QueryParams params = QueryParams.builder().aggregation(
       List.of(
@@ -144,7 +171,8 @@ public class DummyResourceTest {
             ),
             dateHistogram(
               aggregationHistogramField("nested_nested_worker_dateHistogram", "worker", "month")
-            )
+            ),
+            aggregationField("watch_max", "watch")
           )
         ),
         terms(

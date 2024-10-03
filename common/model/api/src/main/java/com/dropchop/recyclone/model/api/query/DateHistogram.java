@@ -10,16 +10,18 @@ public class DateHistogram extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public DateHistogram(List<Aggregation> subAggregations) {
+  public DateHistogram(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public List<Aggregation> get$dateHistogram() {
     return super.getSubAggregations();
   }
 
-  public void set$dateHistogram(List<Aggregation> subAggregations) {
+  public void set$dateHistogram(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public DateHistogram dateHistogram(Aggregation subAggregationsToAdd) {

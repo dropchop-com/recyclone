@@ -13,15 +13,17 @@ public class Min extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Min(List<Aggregation> subAggregations) {
+  public Min(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public List<Aggregation> get$min() {
     return super.getSubAggregations();
   }
 
-  public void set$min(List<Aggregation> subAggregations) {
+  public void set$min(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 

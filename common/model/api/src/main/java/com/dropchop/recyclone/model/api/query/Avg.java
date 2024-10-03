@@ -10,15 +10,17 @@ public class Avg extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Avg(List<Aggregation> subAggregations) {
+  public Avg(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public List<Aggregation> get$avg() {
     return super.getSubAggregations();
   }
 
-  public void set$avg(List<Aggregation> subAggregations) {
+  public void set$avg(AggregationField field, List<Aggregation> subAggregations) {
+    super.setAggregationField(field);
     super.setSubAggregations(subAggregations);
   }
 

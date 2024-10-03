@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.Condition;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -37,6 +38,7 @@ public class ObjectMapperFactory {
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Attribute.class, new AttributeDeserializer());
     module.addDeserializer(Condition.class, new ConditionDeserializer());
+    module.addDeserializer(Aggregation.class, new AggregationDeserializer());
     module.addSerializer(new AttributeCompactSerializer());
 
     mapper.registerModule(module);

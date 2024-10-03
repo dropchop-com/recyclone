@@ -12,16 +12,18 @@ public class Max extends AggregationImpl {
     this.setSubAggregations(new ArrayList<>());
   }
 
-  public Max(List<Aggregation> subAggregations) {
+  public Max(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public List<Aggregation> get$max() {
     return super.getSubAggregations();
   }
 
-  public void set$max(List<Aggregation> subAggregations) {
+  public void set$max(AggregationField field, List<Aggregation> subAggregations) {
     super.setSubAggregations(subAggregations);
+    super.setAggregationField(field);
   }
 
   public Max max(Aggregation subAggregationsToAdd) {

@@ -6,14 +6,23 @@ import java.util.Collection;
 import java.util.List;
 
 public class AggregationImpl implements Aggregation {
+  private AggregationField aggregationField;
   private List<Aggregation> subAggregations;
 
   protected List<Aggregation> getSubAggregations() {
     return subAggregations;
   }
 
+  public AggregationField get$aggregationField() {
+    return aggregationField;
+  }
+
   protected void setSubAggregations(List<Aggregation> subAggregations) {
     this.subAggregations = subAggregations;
+  }
+
+  protected void setAggregationField(AggregationField aggregationField) {
+    this.aggregationField = aggregationField;
   }
 
   protected void add(Aggregation subAggregation) {

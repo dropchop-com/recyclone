@@ -3,8 +3,6 @@ package com.dropchop.recyclone.model.api.query;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Getter
