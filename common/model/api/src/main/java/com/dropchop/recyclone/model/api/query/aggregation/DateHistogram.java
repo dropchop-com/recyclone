@@ -1,12 +1,16 @@
 package com.dropchop.recyclone.model.api.query.aggregation;
 
 import com.dropchop.recyclone.model.api.query.Aggregation;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
+@Setter
 @SuppressWarnings("unused")
-public class DateHistogram extends BaseAggregation {
+public class DateHistogram extends BaseAggregation implements Aggregation {
   private String calendar_interval;
 
   public DateHistogram(String name, String field, String calendar_interval, Aggregation... aggs) {
