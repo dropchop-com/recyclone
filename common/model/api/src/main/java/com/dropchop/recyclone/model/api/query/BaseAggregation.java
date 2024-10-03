@@ -7,6 +7,7 @@ import java.util.List;
 
 public abstract class BaseAggregation implements Aggregation {
   private List<Aggregation> subAggregations;
+  private AggregationField aggregationField;
 
   protected List<Aggregation> getSubAggregations() {
     return subAggregations;
