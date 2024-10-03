@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.operator;
+
+import com.dropchop.recyclone.model.api.query.ConditionOperator;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.

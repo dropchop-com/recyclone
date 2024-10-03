@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.operator;
+
+import com.dropchop.recyclone.model.api.query.ConditionOperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

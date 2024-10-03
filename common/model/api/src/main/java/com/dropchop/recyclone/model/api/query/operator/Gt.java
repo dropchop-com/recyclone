@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.operator;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,20 +9,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public class Gte<T> extends UnaryValueOperator<T> {
+public class Gt<T> extends UnaryValueOperator<T> {
 
-  public Gte() {
+  public Gt() {
   }
 
-  public Gte(T value) {
+  public Gt(T value) {
     super(value);
   }
 
-  public T get$gte() {
+  public T get$gt() {
     return super.getValue();
   }
 
-  public void set$gte(T value) {
+  public void set$gt(T value) {
     super.setValue(value);
   }
 }

@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
 import com.dropchop.recyclone.model.api.query.*;
+import com.dropchop.recyclone.model.api.query.condition.And;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

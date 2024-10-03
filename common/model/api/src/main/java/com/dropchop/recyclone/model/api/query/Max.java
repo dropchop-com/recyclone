@@ -1,12 +1,11 @@
 package com.dropchop.recyclone.model.api.query;
 
-import lombok.Getter;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Max extends AggregationImpl {
+@SuppressWarnings("unused")
+public class Max extends BaseAggregation {
 
   public Max() {
     this.setSubAggregations(new ArrayList<>());

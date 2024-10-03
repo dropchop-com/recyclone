@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Cardinality extends AggregationImpl {
+@SuppressWarnings("unused")
+public class Cardinality extends BaseAggregation {
 
   public Cardinality() {
     this.setSubAggregations(new ArrayList<>());

@@ -1,6 +1,10 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.query.*;
+import com.dropchop.recyclone.model.api.query.condition.And;
+import com.dropchop.recyclone.model.api.query.condition.Not;
+import com.dropchop.recyclone.model.api.query.condition.Or;
+import com.dropchop.recyclone.model.api.query.operator.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;

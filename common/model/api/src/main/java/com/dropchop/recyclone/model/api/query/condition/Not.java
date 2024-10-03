@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.condition;
+
+import com.dropchop.recyclone.model.api.query.Condition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
  */
+@SuppressWarnings("unused")
 public class Not extends LogicalCondition {
 
   public Not() {

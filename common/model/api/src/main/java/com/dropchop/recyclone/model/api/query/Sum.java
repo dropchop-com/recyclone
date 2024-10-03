@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Sum extends AggregationImpl {
+@SuppressWarnings("unused")
+public class Sum extends BaseAggregation {
   public Sum() {
     this.setSubAggregations(new ArrayList<>());
   }

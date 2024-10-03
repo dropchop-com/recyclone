@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Getter
-public class Min extends AggregationImpl {
+@SuppressWarnings("unused")
+public class Min extends BaseAggregation {
   
   public Min() {
     this.setSubAggregations(new ArrayList<>());

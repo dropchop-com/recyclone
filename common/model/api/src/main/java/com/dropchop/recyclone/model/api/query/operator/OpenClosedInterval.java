@@ -1,8 +1,9 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.operator;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
  */
+@SuppressWarnings("unused")
 public class OpenClosedInterval<T> extends BinaryValueOperator<T> {
 
   public OpenClosedInterval() {
