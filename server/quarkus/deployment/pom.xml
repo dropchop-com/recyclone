@@ -58,6 +58,15 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-spi-deployment</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-deployment</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-server-spi-deployment</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -67,6 +76,11 @@
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-dto</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-rest-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

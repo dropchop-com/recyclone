@@ -8,6 +8,7 @@ import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeature;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.dropchop.recyclone.quarkus.runtime.rest.openapi.OasFilter;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
+import io.quarkus.arc.deployment.BeanArchiveIndexBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -15,6 +16,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.resteasy.reactive.server.spi.AnnotationsTransformerBuildItem;
 import io.quarkus.resteasy.reactive.spi.*;
 import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
@@ -64,7 +66,7 @@ public class RestProcessor {
       "jakarta.ws.rs.DELETE"
   );
 
-  private static final DotName JUTIL_COLLECTION = DotName.createSimple(
+  private static final DotName JAVA_UTIL_COLLECTION = DotName.createSimple(
       "java.util.Collection"
   );
 
@@ -246,14 +248,14 @@ public class RestProcessor {
     if (!method.hasAnnotation(GET_ANNOTATION)) {
       List<Type> types = method.parameterTypes();
       if (types.size() != 1) {
-        log.warn("Contract violation: The rest method should have only one parameter class [{}] ");
+        log.warnf("Contract violation: The rest method should have only one parameter class [%s]", method);
       } else {
-        Type methodParameterType = types.iterator().next();
+        Type methodParameterType = types.getFirst();
         methodParamClass = methodParameterType.name();
         if (methodParameterType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
           if (!methodParameterType.asParameterizedType().arguments().isEmpty()) {
             // Get the first type argument
-            Type typeArgument = methodParameterType.asParameterizedType().arguments().get(0);
+            Type typeArgument = methodParameterType.asParameterizedType().arguments().getFirst();
             if (typeArgument.kind() == Type.Kind.CLASS &&
                 isOrSubtype(ANNO_DATA_CLASS,
                     indexView.getClassByName(typeArgument.asClassType().name()), indexView)) {
@@ -274,7 +276,7 @@ public class RestProcessor {
       } else if (returnType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
         if (!returnType.asParameterizedType().arguments().isEmpty()) {
           // Get the first type argument
-          Type typeArgument = returnType.asParameterizedType().arguments().get(0);
+          Type typeArgument = returnType.asParameterizedType().arguments().getFirst();
           if (typeArgument.kind() == Type.Kind.CLASS &&
               isOrSubtype(ANNO_DATA_CLASS,
                   indexView.getClassByName(typeArgument.asClassType().name()), indexView)) {
@@ -400,7 +402,7 @@ public class RestProcessor {
         if (List.class.getName().equals(methodParamClass.toString())
             && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
           return RestMethod.Action.CREATE;
-        } else if (isOrSubtype(JUTIL_COLLECTION, methodParamClassInfo, indexView)
+        } else if (isOrSubtype(JAVA_UTIL_COLLECTION, methodParamClassInfo, indexView)
             && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
           return RestMethod.Action.CREATE;
         } else {
@@ -557,12 +559,14 @@ public class RestProcessor {
   }
 
   @BuildStep
+  @SuppressWarnings("unused")
   public void addMissingPathImplementationRestResources(
-      CombinedIndexBuildItem cibi,
+      BeanArchiveIndexBuildItem beanArchiveIndexBuildItem,
       RestMappingBuildItem restMappingBuildItem,
       BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
-      BuildProducer<AdditionalResourceClassBuildItem> additionalProducer) {
-    IndexView indexView = cibi.getIndex();
+      BuildProducer<AdditionalResourceClassBuildItem> additionalProducer,
+      List<AnnotationsTransformerBuildItem> annotationsTransformerBuildItems) {
+    IndexView indexView = beanArchiveIndexBuildItem.getIndex();
     for (Map.Entry<String, RestClass> entry : restMappingBuildItem.getMapping().getApiClasses().entrySet()) {
       RestClass mapping = entry.getValue();
       if (mapping.isExcluded()) {
