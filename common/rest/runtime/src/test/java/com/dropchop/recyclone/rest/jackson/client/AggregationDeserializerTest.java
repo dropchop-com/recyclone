@@ -54,7 +54,6 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    System.out.printf(mapper.writeValueAsString(jsonOutput1));
     String expected = """
         [
          {
