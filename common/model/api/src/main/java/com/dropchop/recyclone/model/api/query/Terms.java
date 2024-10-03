@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Terms extends AggregationImpl{
+@SuppressWarnings("unused")
+public class Terms extends BaseAggregation {
   public Terms() {
     this.setSubAggregations(new ArrayList<>());
   }

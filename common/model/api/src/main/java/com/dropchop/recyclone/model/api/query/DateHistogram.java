@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class DateHistogram extends AggregationImpl {
+@SuppressWarnings("unused")
+public class DateHistogram extends BaseAggregation {
 
   public DateHistogram() {
     this.setSubAggregations(new ArrayList<>());

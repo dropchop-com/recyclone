@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Avg extends AggregationImpl {
+@SuppressWarnings("unused")
+public class Avg extends BaseAggregation {
 
   public Avg() {
     this.setSubAggregations(new ArrayList<>());

@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class AggregationImpl implements Aggregation {
-  private AggregationField aggregationField;
+public abstract class BaseAggregation implements Aggregation {
   private List<Aggregation> subAggregations;
 
   protected List<Aggregation> getSubAggregations() {

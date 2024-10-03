@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Count extends AggregationImpl {
+@SuppressWarnings("unused")
+public class Count extends BaseAggregation {
 
   public Count() {
     this.setSubAggregations(new ArrayList<>());
