@@ -138,7 +138,7 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<>() {});
 
     List<AggregationContainer> a2 = aggs(a1);
 
@@ -169,7 +169,7 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<>() {});
 
     List<AggregationContainer> a2 = aggs(a1);
 
@@ -225,7 +225,7 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<>() {});
 
     List<AggregationContainer> a2 = aggs(a1);
 
