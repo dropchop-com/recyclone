@@ -2,6 +2,7 @@ package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.aggregation.AggregationContainer;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -121,19 +122,114 @@ public class AggregationDeserializerTest {
   @Test
   @SuppressWarnings("unused")
   public void testAggregationDeserialization() throws Exception {
-    List<Aggregation> a = List.of(
-      /*max(
-        aggregationField("price_max", "price"),
+    List<AggregationContainer> a = aggs(
+      max(
+        "price_max",
+        "price",
         dateHistogram(
-          aggregationHistogramField("price_histogram", "price", "month")
+          "price_histogram",
+          "price",
+          "month"
         )
-      )*/
+      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    //List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+
+    List<AggregationContainer> a2 = aggs(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a2);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
+  }
+
+  @Test
+  @SuppressWarnings("unused")
+  public void testNestedAggregationDeserialization() throws Exception {
+    List<AggregationContainer> a = aggs(
+      max(
+        "price_max",
+        "price",
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "month"
+        )
+      ),
+      min(
+        "price_min",
+        "price"
+      )
+    );
+
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+
+    String jsonOutput1 = mapper.writeValueAsString(a);
+    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+
+    List<AggregationContainer> a2 = aggs(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a2);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
+  }
+
+  @Test
+  @SuppressWarnings("unused")
+  public void completeAggregationDeserialization() throws Exception {
+    List<AggregationContainer> a = aggs(
+      max(
+        "price_max",
+        "price",
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "month"
+        ),
+        count(
+          "price_count",
+          "price"
+        ),
+        avg(
+          "price_avg",
+          "price",
+          cardinality(
+            "price_cardinality",
+            "price",
+            terms(
+              "price_terms",
+              "price"
+            )
+          )
+        )
+      ),
+      min(
+        "price_min",
+        "price",
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "seconds",
+          sum(
+            "price_sum",
+            "price"
+          )
+        )
+      )
+    );
+
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+
+    String jsonOutput1 = mapper.writeValueAsString(a);
+    List<Aggregation> a1 = mapper.readValue(jsonOutput1, new TypeReference<List<Aggregation>>() {});
+
+    List<AggregationContainer> a2 = aggs(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a2);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
   }
 }

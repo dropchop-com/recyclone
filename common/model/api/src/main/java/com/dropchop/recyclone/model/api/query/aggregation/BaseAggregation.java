@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public abstract class BaseAggregation implements Aggregation {
-  private List<AggregationContainer> aggs;
+  private List<AggregationContainer> aggs = List.of();
   private String name;
   private String field;
 

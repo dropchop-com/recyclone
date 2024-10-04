@@ -31,6 +31,10 @@ public interface Aggregation {
     return Arrays.stream(aggs).map(AggregationContainer::new).toList();
   }
 
+  static List<AggregationContainer> aggs(List<Aggregation> aggs) {
+    return aggs.stream().map(AggregationContainer::new).toList();
+  }
+
   static Max max(String name, String field, Aggregation... subAggregations) {
     return new Max(name, field, subAggregations);
   }
