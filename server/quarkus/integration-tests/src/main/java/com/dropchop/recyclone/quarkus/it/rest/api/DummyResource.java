@@ -8,6 +8,7 @@ import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.dto.invoke.DummyQueryParams;
 import com.dropchop.recyclone.rest.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.api.MediaType;
 import jakarta.ws.rs.*;
@@ -57,10 +58,10 @@ public interface DummyResource {
   @POST
   @Path(Paths.QUERY_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<Dummy> query(QueryParams params);
+  Result<Dummy> query(DummyQueryParams params);
 
   @POST
   @Path(Paths.QUERY_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  List<Dummy> queryRest(QueryParams params);
+  List<Dummy> queryRest(DummyQueryParams params);
 }
