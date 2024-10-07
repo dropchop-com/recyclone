@@ -3,7 +3,6 @@ package com.dropchop.recyclone.rest.jackson.client;
 import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrapper;
 import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrappers;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;

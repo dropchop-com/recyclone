@@ -2,7 +2,6 @@ package com.dropchop.recyclone.model.api.query;
 
 import com.dropchop.recyclone.model.api.query.aggregation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

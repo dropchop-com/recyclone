@@ -14,8 +14,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 06. 22.
  */
