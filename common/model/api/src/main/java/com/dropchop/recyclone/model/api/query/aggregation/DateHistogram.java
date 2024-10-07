@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -14,10 +16,10 @@ public class DateHistogram extends BaseAggregation implements Aggregation {
   private String calendar_interval;
 
   public DateHistogram(String name, String field, String calendar_interval, Aggregation... aggs) {
-    this(name, field, calendar_interval, Arrays.stream(aggs).map(AggregationContainer::new).toList());
+    this(name, field, calendar_interval, Arrays.stream(aggs).map(AggregationWrapper::new).toList());
   }
 
-  public DateHistogram(String name, String field, String calendar_interval, List<AggregationContainer> aggs) {
+  public DateHistogram(String name, String field, String calendar_interval, List<AggregationWrapper> aggs) {
     super(name, field, aggs);
     this.calendar_interval = calendar_interval;
   }

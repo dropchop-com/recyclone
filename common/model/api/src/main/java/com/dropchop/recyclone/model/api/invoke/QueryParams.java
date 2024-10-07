@@ -1,7 +1,8 @@
 package com.dropchop.recyclone.model.api.invoke;
 
-import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.Condition;
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrapper;
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrappers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,8 @@ public interface QueryParams<
   Condition getCondition();
   void setCondition(Condition condition);
 
-  List<Aggregation> getAggregation();
-  void setAggregation(List<Aggregation> aggregations);
+  AggregationWrappers getAggregation();
+  void setAggregation(AggregationWrappers aggregations);
 
   default Condition condition() {
     return getCondition();

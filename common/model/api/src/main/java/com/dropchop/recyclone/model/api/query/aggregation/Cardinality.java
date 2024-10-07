@@ -11,7 +11,7 @@ public class Cardinality extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Cardinality(String name, String field, List<AggregationContainer> aggs) {
+  public Cardinality(String name, String field, List<AggregationWrapper> aggs) {
     super(name, field, aggs);
   }
 

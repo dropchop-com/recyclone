@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrappers;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
@@ -120,7 +121,7 @@ public class DummyResourceTest {
   @Test
   @Order(30)
   public void dummyQueryTestAggregation() {
-    QueryParams params = QueryParams.builder().aggregation(List.of(
+    QueryParams params = QueryParams.builder().aggregation(aggs(
       dateHistogram(
         "watch_max",
         "watch",
@@ -151,7 +152,7 @@ public class DummyResourceTest {
   @Order(30)
   public void dummyQueryTestAggregations() {
     QueryParams params = QueryParams.builder().aggregation(
-      List.of(
+      aggs(
         max(
           "watch_max",
           "watch",
@@ -231,7 +232,7 @@ public class DummyResourceTest {
         field("type2", in(1, 2, 3))
       )
     ).aggregation(
-      List.of(
+      aggs(
         max(
           "watch_max",
           "watch",

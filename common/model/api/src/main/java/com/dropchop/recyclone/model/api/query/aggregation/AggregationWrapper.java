@@ -10,15 +10,15 @@ import static com.dropchop.recyclone.model.api.query.Aggregation.computeTypeName
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 10. 24.
  */
 @SuppressWarnings("unused")
-public class AggregationContainer extends HashMap<String, Aggregation> implements Aggregation {
+public class AggregationWrapper extends HashMap<String, Aggregation> implements Aggregation {
   private Aggregation aggregation;
 
-  public AggregationContainer(Aggregation val) {
+  public AggregationWrapper(Aggregation val) {
     this.aggregation = val;
     this.put(computeTypeName(val), val);
   }
 
-  public AggregationContainer() {
+  public AggregationWrapper() {
   }
 
   public void set(Aggregation val) {
