@@ -15,17 +15,6 @@ import java.util.stream.Collectors;
 
 public class AggregationDeserializer extends JsonDeserializer<AggregationWrappers> {
 
-  public static Map<String, JsonNode> extractValues(JsonNode jsonNode, String... keys) {
-    Map<String, JsonNode> values = new HashMap<>();
-    for (String key : keys) {
-      JsonNode value = jsonNode.get(key);
-      if (value != null) {
-        values.put(key, value);
-      }
-    }
-    return values;
-  }
-
   private List<AggregationWrapper> convertToAggregationContainer(List<Aggregation> aggs) {
     return aggs.stream().map(AggregationWrapper::new).toList();
   }
@@ -34,23 +23,20 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
     Class<? extends Aggregation> cClass,
     String name, String field,
     List<Aggregation> subAggregations,
-    Map.Entry<String, JsonNode> entry) throws NoSuchMethodException, Exception {
+    Map.Entry<String, JsonNode> entry) throws Exception {
 
     List<AggregationWrapper> subAggregation = convertToAggregationContainer(subAggregations);
 
     try {
       Constructor<? extends Aggregation> constructor;
 
-      if(cClass.getSimpleName().equals("DateHistogram")) {
+      if(cClass.equals(DateHistogram.class)) {
         String interval = entry.getValue().get("calendar_interval").asText();
 
         if(subAggregation.isEmpty()) {
-          constructor = cClass.getConstructor(String.class, String.class, String.class);
-          return constructor.newInstance(name, field, interval);
+          return new DateHistogram(name, field, interval);
         }
-
-        constructor = cClass.getConstructor(String.class, String.class, String.class, List.class);
-        return constructor.newInstance(name, field, interval, subAggregation);
+        return new DateHistogram(name, field, interval, subAggregation);
       }
 
       if(subAggregation.isEmpty()) {
@@ -92,7 +78,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
   }
 
   @Override
-  public AggregationWrappers deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+  public AggregationWrappers deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
     ObjectCodec codec = jsonParser.getCodec();
     JsonNode node = codec.readTree(jsonParser);
     List<Aggregation> aggregations = new ArrayList<>();
@@ -104,6 +90,10 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
       }
     }
 
-    return convertToAggregationContainer(aggregations).stream().collect(Collectors.toCollection(AggregationWrappers::new));
+    return convertToAggregationContainer(aggregations)
+        .stream()
+        .collect(
+            Collectors.toCollection(AggregationWrappers::new)
+        );
   }
 }
