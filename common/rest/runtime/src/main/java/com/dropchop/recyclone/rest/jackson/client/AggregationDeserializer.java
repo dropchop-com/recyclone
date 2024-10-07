@@ -1,7 +1,8 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
 import com.dropchop.recyclone.model.api.query.Aggregation;
-import com.dropchop.recyclone.model.api.query.aggregation.*;
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
+import com.dropchop.recyclone.model.api.query.aggregation.DateHistogram;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -10,22 +11,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
-public class AggregationDeserializer extends JsonDeserializer<AggregationWrappers> {
-
-  private List<AggregationWrapper> convertToAggregationContainer(List<Aggregation> aggs) {
-    return aggs.stream().map(AggregationWrapper::new).toList();
-  }
+public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
   private Aggregation aggregationSwitch(
     Class<? extends Aggregation> cClass,
     String name, String field,
-    List<Aggregation> subAggregations,
+    AggregationList subAggregations,
     Map.Entry<String, JsonNode> entry) throws Exception {
-
-    List<AggregationWrapper> subAggregation = convertToAggregationContainer(subAggregations);
 
     try {
       Constructor<? extends Aggregation> constructor;
@@ -33,19 +28,19 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
       if(cClass.equals(DateHistogram.class)) {
         String interval = entry.getValue().get("calendar_interval").asText();
 
-        if(subAggregation.isEmpty()) {
+        if(subAggregations.isEmpty()) {
           return new DateHistogram(name, field, interval);
         }
-        return new DateHistogram(name, field, interval, subAggregation);
+        return new DateHistogram(name, field, interval, subAggregations);
       }
 
-      if(subAggregation.isEmpty()) {
+      if(subAggregations.isEmpty()) {
         constructor = cClass.getConstructor(String.class, String.class);
         return constructor.newInstance(name, field);
       }
 
       constructor = cClass.getConstructor(String.class, String.class, List.class);
-      return constructor.newInstance(name, field, subAggregation);
+      return constructor.newInstance(name, field, subAggregations);
     } catch (NoSuchMethodException e) {
       throw new NoSuchMethodException("Constructor with the specified signature not found in " + e);
     } catch (Exception e) {
@@ -62,15 +57,15 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
       String field = entry.getValue().get("field").asText();
       JsonNode aggs = entry.getValue().get("aggs");
 
-      List<Aggregation> subAggregation = new ArrayList<>();
+      AggregationList aggregations = new AggregationList();
 
       if(!aggs.isEmpty()) {
         for(JsonNode obType : aggs ) {
-          subAggregation.add(deserializeStep(obType.fields().next()));
+          aggregations.add(deserializeStep(obType.fields().next()));
         }
       }
 
-      return aggregationSwitch(cClass, name, field, subAggregation, entry);
+      return aggregationSwitch(cClass, name, field, aggregations, entry);
 
     } else {
       throw new IllegalArgumentException("Invalid query structure at [" + type + "]!");
@@ -78,10 +73,11 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
   }
 
   @Override
-  public AggregationWrappers deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
+  public AggregationList deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
     ObjectCodec codec = jsonParser.getCodec();
     JsonNode node = codec.readTree(jsonParser);
-    List<Aggregation> aggregations = new ArrayList<>();
+    AggregationList aggregations = new AggregationList();
+
     for(JsonNode ob : node) {
       try {
         aggregations.add(deserializeStep(ob.fields().next()));
@@ -90,10 +86,6 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationWrapper
       }
     }
 
-    return convertToAggregationContainer(aggregations)
-        .stream()
-        .collect(
-            Collectors.toCollection(AggregationWrappers::new)
-        );
+    return new AggregationList(aggregations);
   }
 }

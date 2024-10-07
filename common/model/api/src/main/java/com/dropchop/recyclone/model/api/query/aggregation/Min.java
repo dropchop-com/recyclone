@@ -13,7 +13,7 @@ public class Min extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Min(String name, String field, List<AggregationWrapper> aggs) {
+  public Min(String name, String field, AggregationList aggs) {
     super(name, field, aggs);
   }
 

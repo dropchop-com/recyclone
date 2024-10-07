@@ -10,7 +10,7 @@ public class Terms extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Terms(String name, String field, List<AggregationWrapper> aggs) {
+  public Terms(String name, String field, AggregationList aggs) {
     super(name, field, aggs);
   }
 

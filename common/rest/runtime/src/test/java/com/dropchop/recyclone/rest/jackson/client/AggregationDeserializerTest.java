@@ -1,14 +1,10 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.query.Aggregation;
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
 import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrapper;
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrappers;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.util.List;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.*;
 
@@ -16,7 +12,7 @@ public class AggregationDeserializerTest {
 
   @Test
   public void testAggregationCompositionTest() throws Exception {
-    List<AggregationWrapper> a = Aggregation.aggs(
+    AggregationList a = AggregationWrapper.aggs(
       max(
         "watch_max",
         "watch",
@@ -123,7 +119,7 @@ public class AggregationDeserializerTest {
   @Test
   @SuppressWarnings("unused")
   public void testAggregationDeserialization() throws Exception {
-    List<AggregationWrapper> a = aggs(
+    AggregationList a = aggs(
       max(
         "price_max",
         "price",
@@ -139,7 +135,7 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    AggregationWrappers a1 = mapper.readValue(jsonOutput1, AggregationWrappers.class);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
 
     String jsonOutput2 = mapper.writeValueAsString(a1);
     JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
@@ -148,7 +144,7 @@ public class AggregationDeserializerTest {
   @Test
   @SuppressWarnings("unused")
   public void testNestedAggregationDeserialization() throws Exception {
-    List<AggregationWrapper> a = aggs(
+    AggregationList a = aggs(
       max(
         "price_max",
         "price",
@@ -168,7 +164,7 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    AggregationWrappers a1 = mapper.readValue(jsonOutput1, AggregationWrappers.class);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
 
     String jsonOutput2 = mapper.writeValueAsString(a1);
     JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
@@ -177,7 +173,7 @@ public class AggregationDeserializerTest {
   @Test
   @SuppressWarnings("unused")
   public void completeAggregationDeserialization() throws Exception {
-    List<AggregationWrapper> a = aggs(
+    AggregationList a = aggs(
       max(
         "price_max",
         "price",
@@ -222,7 +218,7 @@ public class AggregationDeserializerTest {
     ObjectMapper mapper = mapperFactory.createObjectMapper();
 
     String jsonOutput1 = mapper.writeValueAsString(a);
-    AggregationWrappers a1 = mapper.readValue(jsonOutput1, AggregationWrappers.class);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
 
     String jsonOutput2 = mapper.writeValueAsString(a1);
     JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);

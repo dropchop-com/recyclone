@@ -11,7 +11,7 @@ public class Sum extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Sum(String name, String field, List<AggregationWrapper> aggs) {
+  public Sum(String name, String field, AggregationList aggs) {
     super(name, field, aggs);
   }
 

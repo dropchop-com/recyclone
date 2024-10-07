@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationWrappers;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
@@ -13,8 +12,6 @@ import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
-
-import java.util.List;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;

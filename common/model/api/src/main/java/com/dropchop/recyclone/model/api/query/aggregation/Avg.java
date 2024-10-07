@@ -11,7 +11,7 @@ public class Avg extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Avg(String name, String field, List<AggregationWrapper> aggs) {
+  public Avg(String name, String field, AggregationList aggs) {
     super(name, field, aggs);
   }
 
