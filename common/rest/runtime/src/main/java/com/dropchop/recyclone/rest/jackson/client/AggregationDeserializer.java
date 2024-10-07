@@ -9,78 +9,71 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class AggregationDeserializer extends JsonDeserializer<List<Aggregation>> {
+public class AggregationDeserializer extends JsonDeserializer<AggregationWrappers> {
 
-  private List<AggregationContainer> convertToAggregationContainer(List<Aggregation> aggs) {
-    return aggs.stream().map(AggregationContainer::new).toList();
+  public static Map<String, JsonNode> extractValues(JsonNode jsonNode, String... keys) {
+    Map<String, JsonNode> values = new HashMap<>();
+    for (String key : keys) {
+      JsonNode value = jsonNode.get(key);
+      if (value != null) {
+        values.put(key, value);
+      }
+    }
+    return values;
+  }
+
+  private List<AggregationWrapper> convertToAggregationContainer(List<Aggregation> aggs) {
+    return aggs.stream().map(AggregationWrapper::new).toList();
   }
 
   private Aggregation aggregationSwitch(
     Class<? extends Aggregation> cClass,
     String name, String field,
     List<Aggregation> subAggregations,
-    Map.Entry<String, JsonNode> entry) {
+    Map.Entry<String, JsonNode> entry) throws NoSuchMethodException, Exception {
 
-    List<AggregationContainer> subAggregation = convertToAggregationContainer(subAggregations);
+    List<AggregationWrapper> subAggregation = convertToAggregationContainer(subAggregations);
 
-    switch (cClass.getSimpleName()) {
-      case "Max":
+    try {
+      Constructor<? extends Aggregation> constructor;
+
+      if(cClass.getSimpleName().equals("DateHistogram")) {
+        String interval = entry.getValue().get("calendar_interval").asText();
+
         if(subAggregation.isEmpty()) {
-          return new Max(name, field);
+          constructor = cClass.getConstructor(String.class, String.class, String.class);
+          return constructor.newInstance(name, field, interval);
         }
-        return new Max(name, field, subAggregation);
-      case "Min":
-        if(subAggregation == null) {
-          return new Min(name, field);
-        }
-        return new Min(name, field, subAggregation);
-      case "Sum":
-        if(subAggregation == null) {
-          return new Sum(name, field);
-        }
-        return new Sum(name, field, subAggregation);
-      case "Avg":
-        if(subAggregation == null) {
-          return new Avg(name, field);
-        }
-        return new Avg(name, field, subAggregation);
-      case "Count":
-        if(subAggregation == null) {
-          return new Count(name, field);
-        }
-        return new Count(name, field, subAggregation);
-      case "Cardinality":
-        if(subAggregation == null) {
-          return new Cardinality(name, field);
-        }
-        return new Cardinality(name, field, subAggregation);
-      case "Terms":
-        if(subAggregation == null) {
-          return new Terms(name, field);
-        }
-        return new Terms(name, field, subAggregation);
-      case "DateHistogram":
-        String interval = entry.getValue().get("calendar_interval").toString();
-        interval = interval.substring(1, interval.length()-1);
-        if(subAggregation == null) {
-          return new DateHistogram(name, field, interval);
-        }
-        return new DateHistogram(name, field, interval, subAggregation);
+
+        constructor = cClass.getConstructor(String.class, String.class, String.class, List.class);
+        return constructor.newInstance(name, field, interval, subAggregation);
+      }
+
+      if(subAggregation.isEmpty()) {
+        constructor = cClass.getConstructor(String.class, String.class);
+        return constructor.newInstance(name, field);
+      }
+
+      constructor = cClass.getConstructor(String.class, String.class, List.class);
+      return constructor.newInstance(name, field, subAggregation);
+    } catch (NoSuchMethodException e) {
+      throw new NoSuchMethodException("Constructor with the specified signature not found in " + e);
+    } catch (Exception e) {
+      throw new Exception("Error creating instance of " + cClass.getSimpleName());
     }
-    return null;
   }
 
-  private Aggregation deserializeStep(Map.Entry<String, JsonNode> entry) {
+  private Aggregation deserializeStep(Map.Entry<String, JsonNode> entry) throws Exception {
     String type = entry.getKey().substring(1);
     Class<? extends Aggregation> cClass = Aggregation.supported().get(type);
 
     if(cClass != null) {
-      String name = entry.getValue().get("name").toString();
-      name = name.substring(1, name.length()-1);
-      String field = entry.getValue().get("field").toString();
-      field = field.substring(1, field.length()-1);
+      String name = entry.getValue().get("name").asText();
+      String field = entry.getValue().get("field").asText();
       JsonNode aggs = entry.getValue().get("aggs");
 
       List<Aggregation> subAggregation = new ArrayList<>();
@@ -99,14 +92,18 @@ public class AggregationDeserializer extends JsonDeserializer<List<Aggregation>>
   }
 
   @Override
-  public List<Aggregation> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+  public AggregationWrappers deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
     ObjectCodec codec = jsonParser.getCodec();
     JsonNode node = codec.readTree(jsonParser);
     List<Aggregation> aggregations = new ArrayList<>();
     for(JsonNode ob : node) {
-      aggregations.add(deserializeStep(ob.fields().next()));
+      try {
+        aggregations.add(deserializeStep(ob.fields().next()));
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
 
-    return aggregations;
+    return convertToAggregationContainer(aggregations).stream().collect(Collectors.toCollection(AggregationWrappers::new));
   }
 }

@@ -11,7 +11,7 @@ public class Max extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Max(String name, String field, List<AggregationContainer> aggs) {
+  public Max(String name, String field, List<AggregationWrapper> aggs) {
     super(name, field, aggs);
   }
 

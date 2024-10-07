@@ -2,9 +2,11 @@ package com.dropchop.recyclone.model.api.query;
 
 import com.dropchop.recyclone.model.api.query.aggregation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public interface Aggregation {
@@ -27,12 +29,12 @@ public interface Aggregation {
     return "$" + name.substring(0, 1).toLowerCase() + name.substring(1);
   }
 
-  static List<AggregationContainer> aggs(Aggregation ... aggs) {
-    return Arrays.stream(aggs).map(AggregationContainer::new).toList();
+  static AggregationWrappers aggs(Aggregation ... aggs) {
+    return Arrays.stream(aggs).map(AggregationWrapper::new).collect(Collectors.toCollection(AggregationWrappers::new));
   }
 
-  static List<AggregationContainer> aggs(List<Aggregation> aggs) {
-    return aggs.stream().map(AggregationContainer::new).toList();
+  static AggregationWrappers aggs(List<Aggregation> aggs) {
+    return aggs.stream().map(AggregationWrapper::new).collect(Collectors.toCollection(AggregationWrappers::new));
   }
 
   static Max max(String name, String field, Aggregation... subAggregations) {

@@ -11,7 +11,7 @@ public class Count extends BaseAggregation {
     super(name, field, aggs);
   }
 
-  public Count(String name, String field, List<AggregationContainer> aggs) {
+  public Count(String name, String field, List<AggregationWrapper> aggs) {
     super(name, field, aggs);
   }
 
