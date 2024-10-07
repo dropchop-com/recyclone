@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.api.invoke;
 import com.dropchop.recyclone.model.api.query.Aggregation;
 import com.dropchop.recyclone.model.api.query.Condition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,10 @@ public interface QueryParams<
   CF extends ResultFilter.ContentFilter,
   LF extends ResultFilter.LanguageFilter,
   FD extends ResultFilterDefaults> extends CommonParams<RF, CF, LF, FD> {
+
+  default List<String> getAvailableFields() {
+    return new ArrayList<>();
+  }
 
   Condition getCondition();
   void setCondition(Condition condition);
