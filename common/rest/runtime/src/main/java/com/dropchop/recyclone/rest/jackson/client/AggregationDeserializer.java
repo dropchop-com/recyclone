@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.List;
 import java.util.Map;
 
 public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
@@ -39,7 +38,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         return constructor.newInstance(name, field);
       }
 
-      constructor = cClass.getConstructor(String.class, String.class, List.class);
+      constructor = cClass.getConstructor(String.class, String.class, AggregationList.class);
       return constructor.newInstance(name, field, subAggregations);
     } catch (NoSuchMethodException e) {
       throw new NoSuchMethodException("Constructor with the specified signature not found in " + e);

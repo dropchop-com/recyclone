@@ -1,6 +1,6 @@
-package com.dropchop.recyclone.model.api.query.aggregation;
+package com.dropchop.recyclone.model.api.query;
 
-import com.dropchop.recyclone.model.api.query.Aggregation;
+import com.dropchop.recyclone.model.api.query.aggregation.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +28,18 @@ public class AggregationWrapper extends HashMap<String, Aggregation> implements 
     this.clear();
     this.aggregation = val;
     this.put(computeTypeName(val), val);
+  }
+
+  public static AggregationList wrap(AggregationList aggs) {
+    AggregationList result = new AggregationList();
+    for (Aggregation agg : aggs) {
+      AggregationWrapper wrapped = new AggregationWrapper(agg);
+      result.add(wrapped);
+      if (agg instanceof BaseAggregation b) {
+        b.setAggs(wrap(b.getAggs() != null ? b.getAggs() : new AggregationList()));
+      }
+    }
+    return result;
   }
 
   @Override
