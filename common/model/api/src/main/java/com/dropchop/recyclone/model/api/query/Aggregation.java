@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
  *         )
  *     )
  * );
+ * Do not mix Aggregation and Aggregation.Wrapper tree construction.
+ * @see Wrapper
  */
 @SuppressWarnings("unused")
 public interface Aggregation {
