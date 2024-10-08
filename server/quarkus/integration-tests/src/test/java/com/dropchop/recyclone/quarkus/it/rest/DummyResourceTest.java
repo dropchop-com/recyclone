@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
-import static com.dropchop.recyclone.model.api.query.AggregationWrapper.*;
+import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
