@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  * Base interface that marks aggregation description bearing object.
  * This interface supports also the fluent api methods for Aggregation tree construction.
  * For example:
+ * <pre>{@code
  * AggregationList a = Aggregation.aggs(
  *       max(
  *         "watch_max",
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  *         )
  *     )
  * );
+ * }</pre>
  * Do not mix Aggregation and Aggregation.Wrapper tree construction.
  * @see Wrapper
  */
@@ -95,12 +97,15 @@ public interface Aggregation {
    * aggregation tree is to be serialized to JSON w/o special type information as it wraps each aggregation
    * in a aggregation type information object.
    * For example:
+   * <pre>{@code
    * {
    *   "aggs": [],
    *   "name": "nested_worker_sum",
    *   "field": "worker"
    * }
+   * }</pre>
    * is wrapped in to:
+   * <pre>{@code
    * {
    *   "$sum": {
    *     "aggs": [],
@@ -108,9 +113,11 @@ public interface Aggregation {
    *     "field": "worker"
    *   }
    * },
+   * }</pre>
    * If you have unwrapped version of the tree you can wrap it with the Wrapper.wrap() method.
    * This interface supports also the fluent api methods for Aggregation tree construction.
    * For example:
+   * <pre>{@code
    * AggregationList a = Wrapper.aggs(
    *       max(
    *         "watch_max",
@@ -121,6 +128,14 @@ public interface Aggregation {
    *         )
    *     )
    * );
+   * }</pre>
+   * Do not mix Aggregation and Aggregation.Wrapper tree construction use either one.
+   * <pre>{@code
+   * AggregationList unwrapped = Aggregation.aggs(...
+   * AggregationList wrapped = Aggregation.Wrapper.wrap(unwrapped)
+   * //or
+   * AggregationList wrapped = Wrapper.aggs(...
+   * }</pre>
    */
   class Wrapper extends HashMap<String, Aggregation> implements Aggregation {
     private Aggregation aggregation;
