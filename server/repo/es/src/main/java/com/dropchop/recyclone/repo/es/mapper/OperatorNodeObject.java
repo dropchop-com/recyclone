@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.repo.es.mapper;
 
-import java.util.Collection;
-
 @SuppressWarnings("unused")
 public class OperatorNodeObject extends QueryNodeObject {
 
