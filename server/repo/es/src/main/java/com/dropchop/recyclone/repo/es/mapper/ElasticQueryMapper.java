@@ -10,11 +10,24 @@ import com.dropchop.recyclone.model.api.query.condition.LogicalCondition;
 import com.dropchop.recyclone.model.api.query.condition.Not;
 import com.dropchop.recyclone.model.api.query.condition.Or;
 import com.dropchop.recyclone.model.api.query.operator.*;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 
 import java.util.Iterator;
 
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class ElasticQueryMapper {
+
+  public static QueryNodeObject elasticQueryMapper(QueryParams params) {
+    QueryNodeObject conditions = mapCondition(params.getCondition(), null);
+    QueryNodeObject aggregations = mapAggregation(params.getAggregation());
+    QueryNodeObject bool = new QueryNodeObject();
+    bool.put("bool",conditions);
+
+    QueryNodeObject end = new QueryNodeObject();
+    end.put("query", bool);
+    end.putAll(aggregations);
+    return end;
+  }
 
   public static QueryNodeObject mapCondition(Condition condition, BoolQueryObject previousCondition) {
     if (condition instanceof LogicalCondition logicalCondition) {
@@ -43,6 +56,10 @@ public class ElasticQueryMapper {
 
   public static OperatorNodeObject mapConditionField(String field, ConditionOperator operator) {
     OperatorNodeObject operatorNode = new OperatorNodeObject();
+
+    if (operator == null) {
+      return operatorNode;
+    }
 
     if (operator instanceof Eq) {
       operatorNode.addEqOperator(field, ((Eq<?>) operator).get$eq());
