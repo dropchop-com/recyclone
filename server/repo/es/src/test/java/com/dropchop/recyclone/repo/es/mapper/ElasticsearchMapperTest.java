@@ -207,7 +207,7 @@ public class ElasticsearchMapperTest {
 
   @Test
   @SuppressWarnings("unused")
-  public void testQueryParamsMapper() throws JsonProcessingException {
+  public void testQueryParamsMapper() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
       and(
         or(
@@ -219,7 +219,8 @@ public class ElasticsearchMapperTest {
             )
           ),
           and(
-            field("neki", in("one", "two", "three"))
+            field("neki", in("one", "two", "three")),
+            field("created", lt(Iso8601.fromIso("2024-09-19T10:12:01.123")))
           ),
           field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
           not(
@@ -232,7 +233,8 @@ public class ElasticsearchMapperTest {
         field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
         field("miki", null)
       ).and(
-        field("type2", in(1, 2, 3))
+        field("type2", in(1, 2, 3)),
+        field("type4", "type8")
       )
     ).aggregation(
       aggs(
@@ -272,10 +274,166 @@ public class ElasticsearchMapperTest {
       )
     ).build();
 
+    String correctJson = """
+    
+      {
+           "query": {
+             "bool": {
+               "must": [
+                 {
+                   "bool": {
+                     "should": [
+                       {
+                         "range": {
+                           "updated": {
+                             "gte": "2024-09-19T10:12:01.123+02:00",
+                             "lt": "2024-09-20T11:00:01.123+02:00"
+                           }
+                         }
+                       },
+                       {
+                         "bool": {
+                           "must": [
+                             {
+                               "terms": {
+                                 "neki": [
+                                   "one",
+                                   "two",
+                                   "three"
+                                 ]
+                               }
+                             },
+                             {
+                               "range": {
+                                 "created": {
+                                   "lt": "2024-09-19T10:12:01.123+02:00"
+                                 }
+                               }
+                             }
+                           ]
+                         }
+                       },
+                       {
+                         "range": {
+                           "modified": {
+                             "gte": "2024-09-19T10:12:01.123+02:00",
+                             "lte": "2024-09-19T10:12:01.123+02:00"
+                           }
+                         }
+                       },
+                       {
+                         "bool": {
+                           "must_not": {
+                             "terms": {
+                               "uuid": [
+                                 "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db",
+                                 "c456c510-3939-4e2a-98d1-3d02c5d2c609"
+                               ]
+                             }
+                           }
+                         }
+                       }
+                     ],
+                     "minimum_should_match": 1
+                   }
+                 },
+                 {
+                   "terms": {
+                     "type": [
+                       1,
+                       2,
+                       3
+                     ]
+                   }
+                 },
+                 {
+                   "range": {
+                     "created": {
+                       "gte": "2024-09-19T10:12:01.123+02:00",
+                       "lte": "2024-09-19T10:12:01.123+02:00"
+                     }
+                   }
+                 },
+                 {
+                   "bool": {
+                     "must_not": {
+                       "exists": {
+                         "field": "miki"
+                       }
+                     }
+                   }
+                 },
+                 {
+                   "terms": {
+                     "type2": [
+                       1,
+                       2,
+                       3
+                     ]
+                   }
+                 },
+                 {
+                   "term": {
+                     "type4": "type8"
+                   }
+                 }
+               ]
+             }
+           },
+           "aggs": {
+             "watch_max": {
+               "max": {
+                 "field": "watch"
+               },
+               "aggs": {
+                 "nested_worker_sum": {
+                   "sum": {
+                     "field": "worker"
+                   }
+                 },
+                 "nested_worker_min": {
+                   "min": {
+                     "field": "worker"
+                   }
+                 },
+                 "nested_worker_avg": {
+                   "avg": {
+                     "field": "worker"
+                   }
+                 },
+                 "nested_nested_worker_count": {
+                   "value_count": {
+                     "field": "worker"
+                   }
+                 }
+               }
+             },
+             "nested_nested_worker_cardinality": {
+               "cardinality": {
+                 "field": "worker"
+               }
+             },
+             "nested_nested_worker_dateHistogram": {
+               "date_histogram": {
+                 "field": "worker",
+                 "calendar_interval": "month"
+               }
+             },
+             "nested_worker_terms": {
+               "terms": {
+                 "field": "worker"
+               }
+             }
+           }
+         }
+    """;
+
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = elasticQueryMapper(params);
 
     String json = ob.writeValueAsString(correct);
+
+    JSONAssert.assertEquals(correctJson, json, true);
   }
 }

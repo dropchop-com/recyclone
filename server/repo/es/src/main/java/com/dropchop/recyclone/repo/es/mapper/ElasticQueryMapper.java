@@ -12,6 +12,7 @@ import com.dropchop.recyclone.model.api.query.condition.Or;
 import com.dropchop.recyclone.model.api.query.operator.*;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 
+import java.time.ZonedDateTime;
 import java.util.Iterator;
 
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
@@ -49,6 +50,21 @@ public class ElasticQueryMapper {
       ConditionOperator operator = (ConditionOperator) conditionedField.values().toArray()[0];
 
       return mapConditionField(fieldName, operator);
+    } else if (condition instanceof Field<?> field) {
+
+      if(field.iterator().next() instanceof ZonedDateTime) {
+        OperatorNodeObject operator = new OperatorNodeObject();
+        if(field.iterator().next() instanceof ZonedDateTime date) {
+          operator.addClosedInterval(field.getName(), date, date);
+        }
+        return operator;
+      }
+
+      QueryNodeObject query = new QueryNodeObject();
+      QueryNodeObject queryWrapper = new QueryNodeObject();
+      query.put(field.getName(), field.iterator().next());
+      queryWrapper.put("term", query);
+      return queryWrapper;
     }
 
     return previousCondition;
@@ -56,10 +72,6 @@ public class ElasticQueryMapper {
 
   public static OperatorNodeObject mapConditionField(String field, ConditionOperator operator) {
     OperatorNodeObject operatorNode = new OperatorNodeObject();
-
-    if (operator == null) {
-      return operatorNode;
-    }
 
     if (operator instanceof Eq) {
       operatorNode.addEqOperator(field, ((Eq<?>) operator).get$eq());
@@ -79,8 +91,10 @@ public class ElasticQueryMapper {
       operatorNode.addClosedOpenInterval(field, interval.get$gte(), interval.get$lt());
     } else if (operator instanceof OpenClosedInterval<?> interval) {
       operatorNode.addOpenClosedInterval(field, interval.get$gt(), interval.get$lte());
+    } else if (operator == null) {
+      operatorNode.addNullSearch(field);
     } else {
-      throw new IllegalArgumentException("Unsupported ConditionOperator type: " + operator.getClass());
+      operatorNode.addEqOperator(field, operator);
     }
 
     return operatorNode;

@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.model.api.query;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
@@ -37,5 +38,9 @@ public class Field<T> extends HashMap<String, T> implements Condition {
     }
     this.put(name, val);
     this.name = name;
+  }
+
+  public Iterator<T> iterator() {
+    return this.values().iterator();
   }
 }

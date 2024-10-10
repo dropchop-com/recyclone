@@ -7,14 +7,12 @@ public class OperatorNodeObject extends QueryNodeObject {
     super();
   }
 
-  // Handle "eq" operator
   public <T> void addEqOperator(String field, T value) {
     QueryNodeObject termNode = new QueryNodeObject();
     termNode.put(field, value);
     this.put("term", termNode);
   }
 
-  // Handle "gt", "lt", "gte", "lte" range queries
   public <T> void addRangeOperator(String field, String operator, T value) {
     QueryNodeObject rangeNode = new QueryNodeObject();
     QueryNodeObject operatorNode = new QueryNodeObject();
@@ -23,14 +21,12 @@ public class OperatorNodeObject extends QueryNodeObject {
     this.put("range", rangeNode);
   }
 
-  // Handle "in" operator
   public <T> void addInOperator(String field, T values) {
     QueryNodeObject termsNode = new QueryNodeObject();
     termsNode.put(field, values);
     this.put("terms", termsNode);
   }
 
-  // Handle interval operators (ClosedInterval, OpenInterval, etc.)
   public <T> void addClosedInterval(String field, T from, T to) {
     QueryNodeObject rangeNode = new QueryNodeObject();
     QueryNodeObject intervalNode = new QueryNodeObject();
@@ -66,4 +62,15 @@ public class OperatorNodeObject extends QueryNodeObject {
     rangeNode.put(field, intervalNode);
     this.put("range", rangeNode);
   }
+
+  public <T> void addNullSearch(String field) {
+    QueryNodeObject termNode = new QueryNodeObject();
+    QueryNodeObject searchNode = new QueryNodeObject();
+    QueryNodeObject nullNode = new QueryNodeObject();
+    termNode.put("field", field);
+    searchNode.put("exists", termNode);
+    nullNode.put("must_not", searchNode);
+    this.put("bool", nullNode);
+  }
+
 }
