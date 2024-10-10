@@ -32,10 +32,6 @@
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>
     </dependency>
-    <!--<dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>-->
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jdk8</artifactId>
@@ -52,16 +48,10 @@
       <scope>provided</scope>
     </dependency>
 
-    <!--<dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-server-common</artifactId>
-    </dependency>-->
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>org.apache.shiro</groupId>
       <artifactId>shiro-core</artifactId>

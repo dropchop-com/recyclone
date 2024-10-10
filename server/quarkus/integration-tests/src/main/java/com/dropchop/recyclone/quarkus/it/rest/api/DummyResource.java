@@ -2,6 +2,7 @@ package com.dropchop.recyclone.quarkus.it.rest.api;
 
 import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
+import com.dropchop.recyclone.model.api.security.annotations.Logical;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
@@ -22,7 +23,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  */
 @Path(Constants.Paths.Test.DUMMY)
 @DynamicExecContext(value = CodeParams.class, dataClass = Dummy.class)
-@RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.VIEW)
+@RequiresPermissions(value = Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.VIEW, logical = Logical.OR)
 public interface DummyResource {
 
   @GET

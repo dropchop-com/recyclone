@@ -4,8 +4,6 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.security.annotations.Logical;
-import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.shiro.filter.RequestFilter;
 import com.dropchop.shiro.filter.ResponseFilter;
@@ -21,6 +19,8 @@ import jakarta.ws.rs.container.ContainerResponseContext;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
@@ -140,7 +140,11 @@ public class ShiroAuthorizationService implements AuthorizationService {
 
     if (requiredPermissions != null && requiredPermissions.length > 0) {
       execContext.setRequiredPermissions(Arrays.asList(requiredPermissions));
-      execContext.setRequiredPermissionsOp(requiredPermissionsOp);
+      execContext.setRequiredPermissionsOp(
+          requiredPermissionsOp == Logical.AND ?
+              com.dropchop.recyclone.model.api.security.annotations.Logical.AND :
+              com.dropchop.recyclone.model.api.security.annotations.Logical.OR
+      );
     }
   }
 

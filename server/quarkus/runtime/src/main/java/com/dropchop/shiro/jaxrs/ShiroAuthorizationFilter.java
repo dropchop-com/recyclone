@@ -4,13 +4,12 @@ import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.shiro.aop.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
-import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
+import org.apache.shiro.authz.annotation.*;
+import org.apache.shiro.authz.aop.*;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +54,7 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
 
   @SuppressWarnings("unused")
   public ShiroAuthorizationFilter(ShiroAuthorizationService authorizationService,
-                                  Collection<Annotation> authzSpecs,
-                                  String resourceClassName, String resourceMethodName) {
+                                  Collection<Annotation> authzSpecs) {
     Map<AuthorizingAnnotationHandler, Annotation> authChecks = new HashMap<>(authzSpecs.size());
     for (Annotation authSpec : authzSpecs) {
       authChecks.put(createHandler(authSpec), authSpec);
