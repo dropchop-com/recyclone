@@ -1,23 +1,15 @@
 package com.dropchop.recyclone.quarkus.deployment.shiro;
 
-import com.dropchop.recyclone.quarkus.deployment.rest.RestMappingBuildItem;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
-import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
 import com.dropchop.shiro.cdi.ShiroAuthenticationService;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import com.dropchop.shiro.cdi.ShiroEnvironment;
-import com.dropchop.shiro.jaxrs.ShiroAuthorizationFilter2;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.BytecodeTransformerBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
-import io.quarkus.resteasy.reactive.spi.ContainerRequestFilterBuildItem;
-import io.quarkus.resteasy.reactive.spi.CustomContainerRequestFilterBuildItem;
-import io.smallrye.openapi.runtime.util.JandexUtil;
-import jakarta.ws.rs.Priorities;
 import javassist.ByteArrayClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -30,7 +22,9 @@ import javassist.bytecode.annotation.MemberValue;
 import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 
@@ -383,6 +377,12 @@ public class ShiroProcessor {
     );
   }
 
+  /* I wanted to implement shiro JaxRS filter binding to a specific filter and pass annos to it but,
+  This would be far more complex than current DynamicFeature, although I have all the information in build-time.
+
+  Problem is: Binding specific method to a specific filter instance preconfigured
+              with java.lang.Annotation expected in org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.
+
   private static MethodInfo findDirectImplementation(ClassInfo classInfo, MethodInfo methodToFind) {
     for (MethodInfo method : classInfo.methods()) {
       if (methodsMatch(method, methodToFind)) {
@@ -464,7 +464,7 @@ public class ShiroProcessor {
     return null;
   }
 
-  //@BuildStep
+  @BuildStep
   void addRestShiroSecurity(
       CombinedIndexBuildItem cibi,
       RestMappingBuildItem restMappingBuildItem,
@@ -472,9 +472,11 @@ public class ShiroProcessor {
     IndexView indexView = cibi.getIndex();
     for (Map.Entry<String, RestClass> entry : restMappingBuildItem.getMapping().getApiClasses().entrySet()) {
       RestClass mapping = entry.getValue();
-      //if (mapping.isExcluded()) {
       ClassInfo apiClass = indexView.getClassByName(mapping.getApiClass());
       ClassInfo implClass = indexView.getClassByName(mapping.getImplClass());
+      if (!apiClass.name().equals(DotName.createSimple("com.dropchop.recyclone.quarkus.it.rest.api.DummyResource"))) {
+        break;
+      }
       AnnotationInstance permAnno = null;
       if (apiClass.hasDeclaredAnnotation(SHIRO_PERMISSION_ANNO)) {
         permAnno = apiClass.annotation(SHIRO_PERMISSION_ANNO);
@@ -487,6 +489,7 @@ public class ShiroProcessor {
         String methodRef = JandexUtil.createUniqueMethodReference(apiClass, method);
         apiMethodInfoMap.put(methodRef, method);
       }
+
       for(Map.Entry<String, RestMethod> mEntry : mapping.getApiMethodMappings().entrySet()) {
         RestMethod method = mEntry.getValue();
         MethodInfo apiMethodInfo = apiMethodInfoMap.get(method.getMethodRef());
@@ -505,8 +508,8 @@ public class ShiroProcessor {
                 .setPriority(Priorities.AUTHORIZATION)
                 .build()
         );
+
       }
-      //}
     }
-  }
+  }*/
 }

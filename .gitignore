@@ -11,6 +11,9 @@ release.properties
 # Gradle
 .gradle/
 
+# Quarkus CLI
+.quarkus/
+
 # Python
 **/.tmp/
 **/__pycache__
