@@ -131,12 +131,14 @@ public class ShiroProcessor {
         if (annotations[i].getTypeName().equals(oldAnnoName)) {
           Annotation oldAnnotation = annotations[i];
           Annotation newAnnotation = new Annotation(newAnnoName, constPool);
-          for (String member : oldAnnotation.getMemberNames()) {
-            MemberValue value = oldAnnotation.getMemberValue(member);
-            if (value instanceof EnumMemberValue enumValue && enumValue.getType().equals(OLD_LOGICAL.toString())) {
-              enumValue.setType(NEW_LOGICAL.toString());
+          if (oldAnnotation.getMemberNames() != null) {
+            for (String member : oldAnnotation.getMemberNames()) {
+              MemberValue value = oldAnnotation.getMemberValue(member);
+              if (value instanceof EnumMemberValue enumValue && enumValue.getType().equals(OLD_LOGICAL.toString())) {
+                enumValue.setType(NEW_LOGICAL.toString());
+              }
+              newAnnotation.addMemberValue(member, value);
             }
-            newAnnotation.addMemberValue(member, value);
           }
           annotations[i] = newAnnotation;
         }
