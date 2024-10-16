@@ -51,7 +51,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -83,6 +82,12 @@
       <artifactId>jackson-module-parameter-names</artifactId>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>org.elasticsearch.client</groupId>
+          <artifactId>elasticsearch-rest-client</artifactId>
+          <version>8.15.0</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
 </project>

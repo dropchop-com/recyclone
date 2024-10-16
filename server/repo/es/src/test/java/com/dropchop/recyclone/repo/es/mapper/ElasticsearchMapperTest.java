@@ -436,4 +436,38 @@ public class ElasticsearchMapperTest {
 
     JSONAssert.assertEquals(correctJson, json, true);
   }
+
+  @Test
+  public void debugConditionMustNotExist() {
+    QueryParams params = QueryParams.builder().condition(
+      and(
+        or(
+          field(
+            "updated",
+            gteLt(
+              Iso8601.fromIso("2024-09-19T10:12:01.123"),
+              Iso8601.fromIso("2024-09-20T11:00:01.123")
+            )
+          ),
+          and(
+            field("neki", in("one", "two", "three"))
+          ),
+          field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+          not(
+            field(
+              "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
+            )
+          )
+        ),
+        field("type", in(1, 2, 3)),
+        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+        field("miki", null)
+      ).and(
+        field("type2", in(1, 2, 3))
+      )
+    ).build();
+
+    QueryNodeObject correct = elasticQueryMapper(params);
+    return;
+  }
 }

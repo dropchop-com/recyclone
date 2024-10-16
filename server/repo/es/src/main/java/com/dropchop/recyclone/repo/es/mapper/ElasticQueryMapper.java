@@ -11,22 +11,31 @@ import com.dropchop.recyclone.model.api.query.condition.Not;
 import com.dropchop.recyclone.model.api.query.condition.Or;
 import com.dropchop.recyclone.model.api.query.operator.*;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 
+@ApplicationScoped
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class ElasticQueryMapper {
 
   public static QueryNodeObject elasticQueryMapper(QueryParams params) {
-    QueryNodeObject conditions = mapCondition(params.getCondition(), null);
-    QueryNodeObject aggregations = mapAggregation(params.getAggregation());
     QueryNodeObject bool = new QueryNodeObject();
-    bool.put("bool",conditions);
-
     QueryNodeObject end = new QueryNodeObject();
+
+    if(params.getCondition() != null) {
+      QueryNodeObject conditions = mapCondition(params.getCondition(), null);
+      bool.put("bool",conditions);
+    }
+
     end.put("query", bool);
-    end.putAll(aggregations);
+
+    if(params.getAggregation() != null) {
+      QueryNodeObject aggregations = mapAggregation(params.getAggregation());
+      end.putAll(aggregations);
+    }
+
     return end;
   }
 
@@ -60,10 +69,23 @@ public class ElasticQueryMapper {
         return operator;
       }
 
+      if(field.iterator().next() == null) {
+        OperatorNodeObject operator = new OperatorNodeObject();
+        operator.addNullSearch(field.getName());
+        return operator;
+      }
+
+      QueryNodeObject mustWrapper = new QueryNodeObject();
       QueryNodeObject query = new QueryNodeObject();
       QueryNodeObject queryWrapper = new QueryNodeObject();
       query.put(field.getName(), field.iterator().next());
       queryWrapper.put("term", query);
+      mustWrapper.put("must", queryWrapper);
+
+      if(previousCondition == null) {
+        return mustWrapper;
+      }
+
       return queryWrapper;
     }
 

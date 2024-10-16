@@ -30,6 +30,8 @@ quarkus:
   elasticsearch:
     devservices:
       enabled: true
+      port: 9300
+
 
     # uncomment for native image build
     #jdbc:
