@@ -5,7 +5,7 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleRole;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.util.PermissionUtils;
-import org.apache.shiro.util.StringUtils;
+//import org.apache.shiro.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -47,9 +47,9 @@ public class ShiroMapRealm extends SimpleAccountRealm {
 
       String value = userDefs.get(username);
 
-      String[] passwordAndRolesArray = StringUtils.split(value);
+      String[] passwordAndRolesArray = value.split(",", 255);
 
-      String password = passwordAndRolesArray[0];
+      String password = passwordAndRolesArray[0] != null ? passwordAndRolesArray[0].trim() : null;
 
       SimpleAccount account = getUser(username);
       if (account == null) {

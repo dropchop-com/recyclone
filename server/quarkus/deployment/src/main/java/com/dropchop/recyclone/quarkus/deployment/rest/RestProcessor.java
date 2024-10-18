@@ -248,12 +248,12 @@ public class RestProcessor {
       if (types.size() != 1) {
         log.warn("Contract violation: The rest method should have only one parameter class [{}] ");
       } else {
-        Type methodParameterType = types.iterator().next();
+        Type methodParameterType = types.getFirst();
         methodParamClass = methodParameterType.name();
         if (methodParameterType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
           if (!methodParameterType.asParameterizedType().arguments().isEmpty()) {
             // Get the first type argument
-            Type typeArgument = methodParameterType.asParameterizedType().arguments().get(0);
+            Type typeArgument = methodParameterType.asParameterizedType().arguments().getFirst();
             if (typeArgument.kind() == Type.Kind.CLASS &&
                 isOrSubtype(ANNO_DATA_CLASS,
                     indexView.getClassByName(typeArgument.asClassType().name()), indexView)) {
@@ -274,7 +274,7 @@ public class RestProcessor {
       } else if (returnType.kind() == Type.Kind.PARAMETERIZED_TYPE) {
         if (!returnType.asParameterizedType().arguments().isEmpty()) {
           // Get the first type argument
-          Type typeArgument = returnType.asParameterizedType().arguments().get(0);
+          Type typeArgument = returnType.asParameterizedType().arguments().getFirst();
           if (typeArgument.kind() == Type.Kind.CLASS &&
               isOrSubtype(ANNO_DATA_CLASS,
                   indexView.getClassByName(typeArgument.asClassType().name()), indexView)) {
