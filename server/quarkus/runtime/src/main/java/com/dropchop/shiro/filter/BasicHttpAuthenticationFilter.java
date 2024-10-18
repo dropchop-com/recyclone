@@ -1,7 +1,7 @@
 package com.dropchop.shiro.filter;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
-import org.apache.shiro.codec.Base64;
+import java.util.Base64;
 
 /**
  * Modeled and copied from Shiro Web.
@@ -32,7 +32,8 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
    * @return the username (index 0)/password (index 1) pair obtained from the encoded header data.
    */
   protected String[] getPrincipalsAndCredentials(String scheme, String encoded) {
-    String decoded = Base64.decodeToString(encoded);
-    return decoded.split(":", 2);
+    byte[] decodedBytes = Base64.getDecoder().decode(encoded);
+    String decodedString = new String(decodedBytes);
+    return decodedString.split(":", 2);
   }
 }

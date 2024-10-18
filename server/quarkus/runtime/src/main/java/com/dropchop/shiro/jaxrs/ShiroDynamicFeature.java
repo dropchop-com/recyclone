@@ -1,6 +1,5 @@
 package com.dropchop.shiro.jaxrs;
 
-import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
@@ -9,6 +8,7 @@ import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
+import org.apache.shiro.authz.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,9 +139,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
       context.register(
         new ShiroAuthorizationFilter(
             authorizationService,
-            authzSpecs,
-            resourceInfo.getResourceClass().getSimpleName(),
-            resourceInfo.getResourceMethod().getName()),
+            authzSpecs),
         Priorities.AUTHORIZATION
       );
       log.debug(
