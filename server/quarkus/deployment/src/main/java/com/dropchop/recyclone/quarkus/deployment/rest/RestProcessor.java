@@ -8,7 +8,6 @@ import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeature;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.dropchop.recyclone.quarkus.runtime.rest.openapi.OasFilter;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
-import io.quarkus.arc.deployment.BeanArchiveIndexBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -16,7 +15,6 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
-import io.quarkus.resteasy.reactive.server.spi.AnnotationsTransformerBuildItem;
 import io.quarkus.resteasy.reactive.spi.*;
 import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
@@ -559,14 +557,12 @@ public class RestProcessor {
   }
 
   @BuildStep
-  @SuppressWarnings("unused")
   public void addMissingPathImplementationRestResources(
-      BeanArchiveIndexBuildItem beanArchiveIndexBuildItem,
+      CombinedIndexBuildItem cibi,
       RestMappingBuildItem restMappingBuildItem,
       BuildProducer<ReflectiveClassBuildItem> reflectiveBuildProducer,
-      BuildProducer<AdditionalResourceClassBuildItem> additionalProducer,
-      List<AnnotationsTransformerBuildItem> annotationsTransformerBuildItems) {
-    IndexView indexView = beanArchiveIndexBuildItem.getIndex();
+      BuildProducer<AdditionalResourceClassBuildItem> additionalProducer) {
+    IndexView indexView = cibi.getIndex();
     for (Map.Entry<String, RestClass> entry : restMappingBuildItem.getMapping().getApiClasses().entrySet()) {
       RestClass mapping = entry.getValue();
       if (mapping.isExcluded()) {
