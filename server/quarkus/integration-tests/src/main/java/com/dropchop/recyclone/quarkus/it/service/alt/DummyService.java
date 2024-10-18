@@ -21,13 +21,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -76,26 +73,21 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
     try {
-      // Convert the query parameters to the JSON query string for Elasticsearch
       String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
 
-      // Execute the search using the elasticRepository
       Response response = elasticRepository.search(json);
       log.info("Response from Elasticsearch: [{}]", response.toString());
 
-      // Deserialize the Elasticsearch response into a list of Dummy objects
-
       ElasticSearchResult<Dummy> searchResult = objectMapper.readValue(
         response.getEntity().getContent(),
-        new TypeReference<ElasticSearchResult<Dummy>>() {}
+        new TypeReference<>() {
+        }
       );
 
-      // Extract the list of Dummy objects from the response
       List<Dummy> results = searchResult.getHits().getHits().stream()
         .map(ElasticSearchResult.Hit::getSource)
         .collect(Collectors.toList());
 
-      // Create and return a successful Result with the data
       return new Result<Dummy>().toSuccess(results, results.size());
     } catch (IOException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error processing the Elasticsearch response!", e);

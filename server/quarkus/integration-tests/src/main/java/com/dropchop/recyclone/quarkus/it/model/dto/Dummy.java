@@ -24,9 +24,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
-public class Dummy extends DtoCode
-    implements com.dropchop.recyclone.quarkus.it.model.api.Dummy<TitleDescriptionTranslation>,
-    HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
+public class Dummy extends DtoCode implements HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
+    /*implements com.dropchop.recyclone.quarkus.it.model.api.Dummy<TitleDescriptionTranslation>,
+    HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {*/
 
   private String title;
 
@@ -34,8 +34,8 @@ public class Dummy extends DtoCode
 
   private String lang;
 
-  @JsonInclude(NON_EMPTY)
-  private Set<TitleDescriptionTranslation> translations;
+  //@JsonInclude(NON_EMPTY)
+  //private Set<TitleDescriptionTranslation> translations;
 
   private ZonedDateTime created;
 
