@@ -76,7 +76,7 @@ public class ExecContextInitializer implements ContainerRequestFilter {
       dataClassName = restClass.getDataClass();
     }
     dataClass = dataClassName != null ? (Class<? extends Dto>) loadClass(dataClassName) : null;
-    log.info("Registering REST initializer for [{}#{}] with [{}, {}, {}]",
+    log.debug("Registering REST initializer for [{}#{}] with [{}, {}, {}]",
         restClass.getImplClass(),
         restMethod.getName(),
         execContextClass,

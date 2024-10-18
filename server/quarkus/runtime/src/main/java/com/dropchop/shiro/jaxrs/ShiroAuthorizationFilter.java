@@ -6,19 +6,12 @@ import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
 import com.dropchop.recyclone.model.api.security.annotations.*;
 import com.dropchop.recyclone.model.dto.security.User;
-//import com.dropchop.shiro.aop.*;
+import com.dropchop.shiro.aop.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.subject.Subject;
-
-import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
-import org.apache.shiro.authz.aop.GuestAnnotationHandler;
-import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
-import org.apache.shiro.authz.aop.RoleAnnotationHandler;
-import org.apache.shiro.authz.aop.UserAnnotationHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

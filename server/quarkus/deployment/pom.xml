@@ -36,11 +36,11 @@
       <artifactId>quarkus-smallrye-openapi-deployment</artifactId>
     </dependency>
 
-    <!--<dependency>
+    <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.30.2-GA</version>
-    </dependency>-->
+    </dependency>
     <dependency>
       <groupId>io.quarkus.gizmo</groupId>
       <artifactId>gizmo</artifactId>
@@ -57,11 +57,6 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-spi-deployment</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-deployment</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>

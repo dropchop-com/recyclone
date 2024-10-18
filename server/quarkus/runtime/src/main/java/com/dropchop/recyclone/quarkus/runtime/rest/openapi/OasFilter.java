@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.api.rest.Constants;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
@@ -401,11 +402,35 @@ public class OasFilter implements OASFilter {
       operation.setTags(List.of(method.getSegment()));
     }
 
+    if ((!"GET".equalsIgnoreCase(method.getVerb()))) {
+      String paramClassName = method.getParamClass();
+      if (paramClassName == null) {
+        return operation;
+      }
+      Params dtoParameters = paramsInstanceCache.computeIfAbsent(paramClassName, this::createInstance);
+      if (dtoParameters == null) {
+        return operation;
+      }
+      if (dtoParameters instanceof QueryParams queryParams) {
+        Collection<String> fields = queryParams.getAvailableFields();
+        if (fields != null && !fields.isEmpty()) {
+          String description = operation.getDescription();
+          String newSummary = description == null ? "" : description + "<br />";
+          operation.setDescription(
+              newSummary + "You can use only the following condition and aggregation fields in query: <br />" +
+                  "<b>" + fields + "<b />"
+          );
+        }
+      }
+      return operation;
+    }
+
     String paramClass = restClass.getParamClass();
     if (paramClass == null) {
       paramClass = method.getParamClass();
     }
-    if (paramClass == null || (!"GET".equalsIgnoreCase(method.getVerb()))) {
+
+    if (paramClass == null) {
       return operation;
     }
 

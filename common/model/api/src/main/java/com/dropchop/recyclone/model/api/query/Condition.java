@@ -1,5 +1,9 @@
 package com.dropchop.recyclone.model.api.query;
 
+import com.dropchop.recyclone.model.api.query.condition.And;
+import com.dropchop.recyclone.model.api.query.condition.Not;
+import com.dropchop.recyclone.model.api.query.condition.Or;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

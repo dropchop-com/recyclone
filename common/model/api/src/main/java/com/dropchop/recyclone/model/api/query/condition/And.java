@@ -1,4 +1,6 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.condition;
+
+import com.dropchop.recyclone.model.api.query.Condition;
 
 import java.util.ArrayList;
 import java.util.Collection;

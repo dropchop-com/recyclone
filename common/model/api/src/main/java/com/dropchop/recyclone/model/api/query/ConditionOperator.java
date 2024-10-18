@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.model.api.query;
 
+import com.dropchop.recyclone.model.api.query.operator.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +10,7 @@ import java.util.Map;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
  */
+@SuppressWarnings("unused")
 public interface ConditionOperator {
 
   static Map<String, Class<? extends ConditionOperator>> supported() {

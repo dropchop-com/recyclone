@@ -3,6 +3,8 @@ package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 import com.dropchop.recyclone.model.api.attr.Attribute;
 import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.query.Condition;
+import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
+import com.dropchop.recyclone.rest.jackson.client.AggregationDeserializer;
 import com.dropchop.recyclone.rest.jackson.client.AttributeCompactSerializer;
 import com.dropchop.recyclone.rest.jackson.client.AttributeDeserializer;
 import com.dropchop.recyclone.rest.jackson.client.ConditionDeserializer;
@@ -85,6 +87,7 @@ public class ObjectMapperFactory {
     module = new SimpleModule();
     module.addDeserializer(Attribute.class, new AttributeDeserializer());
     module.addDeserializer(Condition.class, new ConditionDeserializer());
+    module.addDeserializer(AggregationList.class, new AggregationDeserializer());
     module.addSerializer(new AttributeCompactSerializer());
 
     mapper.registerModule(module);

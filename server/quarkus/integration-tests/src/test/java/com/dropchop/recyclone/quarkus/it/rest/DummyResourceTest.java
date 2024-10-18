@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -12,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
+import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
@@ -110,6 +112,170 @@ public class DummyResourceTest {
         .then()
         .statusCode(200)
         .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
+  public void dummyQueryTestAggregation() {
+    QueryParams params = QueryParams.builder().aggregation(aggs(
+      dateHistogram(
+        "watch_max",
+        "watch",
+        "seconds",
+        dateHistogram(
+          "nested_watch_max",
+          "watch",
+          "month"
+        )
+      )
+    )).build();
+    Log.debug(params.toString());
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
+  public void dummyQueryTestAggregations() {
+    QueryParams params = QueryParams.builder().aggregation(
+      aggs(
+        max(
+          "watch_max",
+          "watch",
+          sum(
+            "nested_worker_sum",
+            "worker"
+          ),
+          min(
+            "nested_worker_min",
+            "worker"
+          ),
+          avg(
+            "nested_worker_avg",
+            "worker"
+          ),
+            count(
+              "nested_nested_worker_count",
+              "worker"
+            )
+        ),
+        cardinality(
+          "nested_nested_worker_cardinality",
+          "worker"
+        ),
+        dateHistogram(
+          "nested_nested_worker_dateHistogram",
+          "worker",
+          "month"
+        ),
+        terms(
+          "nested_worker_terms",
+          "worker"
+        )
+      )
+    ).build();
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  @Order(30)
+  public void dummyQueryCombined() {
+    QueryParams params = QueryParams.builder().condition(
+      and(
+        or(
+          field(
+            "updated",
+            gteLt(
+              Iso8601.fromIso("2024-09-19T10:12:01.123"),
+              Iso8601.fromIso("2024-09-20T11:00:01.123")
+            )
+          ),
+          and(
+            field("neki", in("one", "two", "three"))
+          ),
+          field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+          not(
+            field(
+              "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
+            )
+          )
+        ),
+        field("type", in(1, 2, 3)),
+        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+        field("miki", null)
+      ).and(
+        field("type2", in(1, 2, 3))
+      )
+    ).aggregation(
+      aggs(
+        max(
+          "watch_max",
+          "watch",
+          sum(
+            "nested_worker_sum",
+            "worker"
+          ),
+          min(
+            "nested_worker_min",
+            "worker"
+          ),
+          avg(
+            "nested_worker_avg",
+            "worker"
+          ),
+          count(
+            "nested_nested_worker_count",
+            "worker"
+          )
+        ),
+        cardinality(
+          "nested_nested_worker_cardinality",
+          "worker"
+        ),
+        dateHistogram(
+          "nested_nested_worker_dateHistogram",
+          "worker",
+          "month"
+        ),
+        terms(
+          "nested_worker_terms",
+          "worker"
+        )
+      )
+    ).build();
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 }

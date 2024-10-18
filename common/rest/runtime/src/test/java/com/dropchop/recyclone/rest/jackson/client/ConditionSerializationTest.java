@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.query.And;
+import com.dropchop.recyclone.model.api.query.condition.And;
 import com.dropchop.recyclone.model.api.query.Condition;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.fasterxml.jackson.databind.ObjectMapper;

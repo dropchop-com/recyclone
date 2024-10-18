@@ -9,6 +9,7 @@ import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.dto.invoke.DummyQueryParams;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextContainer;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextSelector;
@@ -77,12 +78,12 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   }
 
   @Override
-  public Result<Dummy> query(QueryParams params) {
+  public Result<Dummy> query(DummyQueryParams params) {
     return service.query();
   }
 
   @Override
-  public List<Dummy> queryRest(QueryParams params) {
+  public List<Dummy> queryRest(DummyQueryParams params) {
     return service.query().getData();
   }
 }

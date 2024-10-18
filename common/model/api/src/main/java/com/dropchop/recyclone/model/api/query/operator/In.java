@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.model.api.query;
+package com.dropchop.recyclone.model.api.query.operator;
 
 import java.util.Collection;
 
