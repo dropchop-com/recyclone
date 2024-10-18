@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.*;
 
@@ -45,53 +44,56 @@ public class DummyResourceTest {
     try {
       RestClient restClient = RestClient.builder(new HttpHost("localhost", 9300, "http")).build();
       Request request = new Request("PUT", "dummy/_doc/1");
-      request.setJsonEntity("{\n" +
-        "    \"title\": \"Introduction to Java\",\n" +
-        "    \"description\": \"A beginner's guide to Java programming.\",\n" +
-        "    \"lang\": \"en\",\n" +
-        "    \"translations\": {\n" +
-        "      \"es\": \"Introducción a Java\",\n" +
-        "      \"fr\": \"Introduction à Java\"\n" +
-        "    },\n" +
-        "    \"created\": \"2023-01-15T10:00:00Z\",\n" +
-        "    \"modified\": \"2023-05-20T14:30:00Z\",\n" +
-        "    \"deactivated\": null,\n" +
-        "    \"code\": \"JAVA101\"\n" +
-        "  }");
+      request.setJsonEntity("""
+        {
+            "title": "Introduction to Java",
+            "description": "A beginner's guide to Java programming.",
+            "lang": "en",
+            "translations": {
+              "es": "Introducción a Java",
+              "fr": "Introduction à Java"
+            },
+            "created": "2023-01-15T10:00:00Z",
+            "modified": "2023-05-20T14:30:00Z",
+            "deactivated": null,
+            "code": "JAVA101"
+          }""");
 
       restClient.performRequest(request);
 
       Request request2 = new Request("PUT", "dummy/_doc/2");
-      request.setJsonEntity("{\n" +
-        "    \"title\": \"Frontend Development with Vue.js\",\n" +
-        "    \"description\": \"Comprehensive guide to building web applications using Vue.js.\",\n" +
-        "    \"lang\": \"en\",\n" +
-        "    \"translations\": {\n" +
-        "      \"ja\": \"Vue.jsを使ったフロントエンド開発\",\n" +
-        "      \"zh\": \"使用Vue.js进行前端开发\"\n" +
-        "    },\n" +
-        "    \"created\": \"2023-03-22T09:30:00Z\",\n" +
-        "    \"modified\": \"2023-07-18T13:45:00Z\",\n" +
-        "    \"deactivated\": null,\n" +
-        "    \"code\": \"VUE303\"\n" +
-        "  }");
+      request2.setJsonEntity("""
+        {
+            "title": "Frontend Development with Vue.js",
+            "description": "Comprehensive guide to building web applications using Vue.js.",
+            "lang": "en",
+            "translations": {
+              "ja": "Vue.jsを使ったフロントエンド開発",
+              "zh": "使用Vue.js进行前端开发"
+            },
+            "created": "2023-03-22T09:30:00Z",
+            "modified": "2023-07-18T13:45:00Z",
+            "deactivated": null,
+            "code": "VUE303"
+          }""");
 
       restClient.performRequest(request2);
 
       Request request3 = new Request("PUT", "dummy/_doc/3");
-      request.setJsonEntity("{\n" +
-        "    \"title\": \"Advanced Python Techniques\",\n" +
-        "    \"description\": \"A deep dive into advanced Python concepts.\",\n" +
-        "    \"lang\": \"en\",\n" +
-        "    \"translations\": {\n" +
-        "      \"de\": \"Fortgeschrittene Python-Techniken\",\n" +
-        "      \"it\": \"Tecniche avanzate di Python\"\n" +
-        "    },\n" +
-        "    \"created\": \"2022-11-10T08:45:00Z\",\n" +
-        "    \"modified\": \"2023-02-14T16:00:00Z\",\n" +
-        "    \"deactivated\": \"2023-09-01T12:00:00Z\",\n" +
-        "    \"code\": \"PYT202\"\n" +
-        "  }");
+      request3.setJsonEntity("""
+        {
+            "title": "Advanced Python Techniques",
+            "description": "A deep dive into advanced Python concepts.",
+            "lang": "en",
+            "translations": {
+              "de": "Fortgeschrittene Python-Techniken",
+              "it": "Tecniche avanzate di Python"
+            },
+            "created": "2022-11-10T08:45:00Z",
+            "modified": "2023-02-14T16:00:00Z",
+            "deactivated": "2023-09-01T12:00:00Z",
+            "code": "PYT202"
+          }""");
 
       restClient.performRequest(request3);
     } catch (Exception e) {

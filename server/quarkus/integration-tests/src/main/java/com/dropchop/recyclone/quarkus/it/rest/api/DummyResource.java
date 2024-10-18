@@ -4,7 +4,6 @@ import com.dropchop.recyclone.model.api.rest.Constants.Paths;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
