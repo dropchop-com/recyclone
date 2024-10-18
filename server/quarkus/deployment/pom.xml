@@ -41,10 +41,10 @@
       <artifactId>javassist</artifactId>
       <version>3.30.2-GA</version>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>io.quarkus.gizmo</groupId>
       <artifactId>gizmo</artifactId>
-    </dependency>
+    </dependency>-->
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
@@ -71,11 +71,6 @@
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-model-dto</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-rest-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

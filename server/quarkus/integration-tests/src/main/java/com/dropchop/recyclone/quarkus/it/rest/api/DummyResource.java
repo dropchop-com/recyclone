@@ -65,4 +65,9 @@ public interface DummyResource {
   @Path(Paths.QUERY_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   List<Dummy> queryRest(DummyQueryParams params);
+
+  @POST
+  @Path(Paths.ELASTICSEARCH_SEGMENT)
+  @Produces(MediaType.APPLICATION_JSON)
+  Result<Dummy> esSearch(DummyQueryParams params);
 }

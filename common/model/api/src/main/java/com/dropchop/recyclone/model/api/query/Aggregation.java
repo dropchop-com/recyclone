@@ -2,10 +2,7 @@ package com.dropchop.recyclone.model.api.query;
 
 import com.dropchop.recyclone.model.api.query.aggregation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -164,6 +161,10 @@ public interface Aggregation {
         }
       }
       return result;
+    }
+
+    public Iterator<Aggregation> iterator() {
+      return List.of(this.aggregation).iterator();
     }
 
     @Override

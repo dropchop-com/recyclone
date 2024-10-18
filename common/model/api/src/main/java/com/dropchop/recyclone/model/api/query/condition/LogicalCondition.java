@@ -2,10 +2,7 @@ package com.dropchop.recyclone.model.api.query.condition;
 
 import com.dropchop.recyclone.model.api.query.Condition;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
@@ -41,5 +38,9 @@ public abstract class LogicalCondition implements Condition {
 
   protected void add(Condition ... subConditions) {
     this.add(Arrays.asList(subConditions));
+  }
+
+  public Iterator<Condition> iterator() {
+    return this.getSubConditions().iterator();
   }
 }

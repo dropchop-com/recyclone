@@ -27,6 +27,11 @@ quarkus:
     db-kind: postgresql
     username: recyclone_test
     password: recyclone_test
+  elasticsearch:
+    devservices:
+      enabled: true
+      port: 9300
+
 
     # uncomment for native image build
     #jdbc:

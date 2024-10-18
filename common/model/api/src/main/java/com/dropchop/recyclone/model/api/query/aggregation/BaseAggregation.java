@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Iterator;
 
 @Getter
 @Setter
@@ -31,5 +30,9 @@ public abstract class BaseAggregation implements Aggregation {
   }
 
   public BaseAggregation() {
+  }
+
+  public Iterator<Aggregation> iterator() {
+    return this.aggs.iterator();
   }
 }

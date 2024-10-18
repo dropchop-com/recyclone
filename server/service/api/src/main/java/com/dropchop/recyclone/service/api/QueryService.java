@@ -8,4 +8,5 @@ import com.dropchop.recyclone.model.dto.rest.Result;
  */
 public interface QueryService<D extends Dto> extends Service {
   Result<D> query();
+  Result<D> esSearch();
 }
