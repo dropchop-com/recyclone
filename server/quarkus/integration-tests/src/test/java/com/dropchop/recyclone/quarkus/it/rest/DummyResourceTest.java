@@ -472,6 +472,26 @@ public class DummyResourceTest {
   }
 
   @Test
+  @Order(30)
+  public void dummySearchMultipleDummyTest() {
+    QueryParams params = QueryParams.builder().condition(
+      field("lang", "en")
+    ).build();
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/es_search")
+      .then()
+      .statusCode(200)
+      .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
   public void dummySaveCollection() {
     Dummy dummy1 = new Dummy();
     dummy1.setTitle("Introduction to Java");

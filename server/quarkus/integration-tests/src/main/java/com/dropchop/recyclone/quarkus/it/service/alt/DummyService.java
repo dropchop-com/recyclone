@@ -75,18 +75,7 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     try {
       String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
 
-      Response response = elasticRepository.search(json);
-      log.info("Response from Elasticsearch: [{}]", response.toString());
-
-      ElasticSearchResult<Dummy> searchResult = objectMapper.readValue(
-        response.getEntity().getContent(),
-        new TypeReference<>() {
-        }
-      );
-
-      List<Dummy> results = searchResult.getHits().getHits().stream()
-        .map(ElasticSearchResult.Hit::getSource)
-        .collect(Collectors.toList());
+      List<Dummy> results = elasticRepository.search(json, 0, 100);
 
       return new Result<Dummy>().toSuccess(results, results.size());
     } catch (IOException e) {

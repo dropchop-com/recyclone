@@ -21,6 +21,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Response;
 
+import java.util.List;
+
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 
@@ -68,9 +70,8 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     QueryParams queryParams = context.getParams();
     try {
       String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
-      Response result = elasticRepository.search(json);
-      log.info("response is: [{}]", result.toString());
-      return null;
+      List<Dummy> results = elasticRepository.search(json, 0, 100);
+      return new Result<Dummy>().toSuccess(results, results.size());
     } catch (Exception e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }

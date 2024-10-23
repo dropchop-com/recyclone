@@ -3,13 +3,18 @@ package com.dropchop.recyclone.repo.es;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import lombok.Setter;
 import org.apache.http.HttpHost;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
@@ -169,13 +174,49 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     return List.of();
   }
 
-  public Response search(String query) {
+  public <S extends E> List<S> search(String query) {
+    return search(query, 0, 10000);
+  }
+
+  public <S extends E> List<S> search(String query, int from, int size) {
     try {
+      StringBuilder builder = new StringBuilder();
+      builder.append(query);
+      builder.insert(builder.length() - 1, ",\"size\":" + size + ",");
+
       this.indexName = getRootClass().getSimpleName().toLowerCase();
       Request request = new Request("GET", "/" + indexName + "/_search");
-      request.setJsonEntity(query);
 
-      return elasticsearchClient.performRequest(request);
+      boolean hasMoreResults = true;
+      List<S> results = new ArrayList<>();
+
+      while (hasMoreResults) {
+        StringBuilder builder2 = new StringBuilder();
+        builder2.append(builder);
+        builder2.insert(builder.length() - 1, "\"from\":" + from);
+        request.setJsonEntity(builder2.toString());
+
+        Response response = elasticsearchClient.performRequest(request);
+        String jsonResponse = EntityUtils.toString(response.getEntity());
+
+        // Parse the JSON response
+        ElasticSearchResult<S> searchResult = this.objectMapper.readValue(
+          jsonResponse, new TypeReference<ElasticSearchResult<S>>() {}
+        );
+
+        // Get hits
+        List<S> hits = searchResult.getHits().getHits().stream()
+          .map(ElasticSearchResult.Hit::getSource)
+          .collect(Collectors.toList());
+
+        results.addAll(hits);
+
+        // Check if more results are available
+        hasMoreResults = hits.size() == size; // Stop if fewer results than 'size' are returned
+        from += size;
+      }
+
+      return results;
     } catch (IOException e) {
       throw new RuntimeException("Failed to search in Elasticsearch", e);
     }
