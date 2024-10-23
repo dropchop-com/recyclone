@@ -1,17 +1,18 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.naming.directory.SearchResult;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import lombok.Setter;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -22,13 +23,13 @@ import org.elasticsearch.client.RestClient;
  */
 public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> {
 
-  private final ObjectMapper objectMapper;
+  @Setter
+  private ObjectMapper objectMapper = new ObjectMapper();
   private final RestClient elasticsearchClient;
   private String indexName = null;
 
   protected ElasticRepository() {
     this.elasticsearchClient = RestClient.builder(new HttpHost("localhost", 9300, "http")).build();
-    this.objectMapper = new ObjectMapper();
   }
 
   public String getClassAlias(Class<?> cls) {
@@ -47,20 +48,48 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
   @Override
   public <S extends E> List<S> save(Collection<S> entities) {
-    for (S entity : entities) {
-      save(entity);
+    if (entities == null || entities.isEmpty()) {
+      return Collections.emptyList();
     }
-    return List.copyOf(entities);
+
+    StringBuilder bulkRequestBody = new StringBuilder();
+
+    try {
+      for (S entity : entities) {
+        bulkRequestBody.append("{ \"index\" : { \"_index\" : \"your_index_name\", \"_id\" : \"")
+          .append(UUID.randomUUID())
+          .append("\" } }\n");
+        bulkRequestBody.append(this.objectMapper.writeValueAsString(entity)).append("\n");
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to serialize entity to JSON", e);
+    }
+
+    Request request = new Request("POST", "/_bulk");
+    request.setJsonEntity(bulkRequestBody.toString());
+
+    try {
+      Response response = elasticsearchClient.performRequest(request);
+
+      if(response.getStatusLine().getStatusCode() == 200) {
+        return List.copyOf(entities);
+      }
+
+      throw new RuntimeException("Failed to save entity to Elasticsearch, status code is " + response.getStatusLine().getStatusCode());
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to save entity to Elasticsearch", e);
+    }
   }
 
   @Override
   public <S extends E> S save(S entity) {
     try {
       String id = getEntityId(entity);
-      String jsonDocument = objectMapper.writeValueAsString(convertEntityToMap(entity));
 
       Request request = new Request("PUT", "/" + indexName + "/_doc/" + id);
-      request.setJsonEntity(jsonDocument);
+      if(entity instanceof String) {
+        request.setJsonEntity((String) entity);
+      }
 
       Response response = elasticsearchClient.performRequest(request);
       System.out.println("Indexed document: " + response.getStatusLine());

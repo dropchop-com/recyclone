@@ -3,6 +3,8 @@ package com.dropchop.recyclone.quarkus.it.rest;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,6 +18,9 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
@@ -38,7 +43,7 @@ public class DummyResourceTest {
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+      objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
     );
 
     try {
@@ -105,15 +110,15 @@ public class DummyResourceTest {
   @Order(10)
   public void dummyRestGet() {
     given()
-        .log().all()
-        //.accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("user1", "password")
-        .when()
-        .get("/api/public/test/dummy")
-        .then()
-        .statusCode(200)
-        .log().all();
-        //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+      .log().all()
+      //.accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .when()
+      .get("/api/public/test/dummy")
+      .then()
+      .statusCode(200)
+      .log().all();
+    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
 
@@ -122,16 +127,16 @@ public class DummyResourceTest {
   public void dummySearch() {
     CodeParams params = CodeParams.builder().code("neki").build();
     given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("user1", "password")
-        .body(params)
-        .when()
-        .post("/api/public/test/dummy/search")
-        .then()
-        .statusCode(200)
-        .log().all();
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/search")
+      .then()
+      .statusCode(200)
+      .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
@@ -139,43 +144,43 @@ public class DummyResourceTest {
   @Order(30)
   public void dummyQuery() {
     QueryParams params = QueryParams.builder().condition(
-        and(
-            or(
-                field(
-                    "updated",
-                    gteLt(
-                        Iso8601.fromIso("2024-09-19T10:12:01.123"),
-                        Iso8601.fromIso("2024-09-20T11:00:01.123")
-                    )
-                ),
-                and(
-                    field("neki", in("one", "two", "three"))
-                ),
-                field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
-                not(
-                    field(
-                        "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
-                    )
-                )
-            ),
-            field("type", in(1, 2, 3)),
-            field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
-            field("miki", null)
-        ).and(
-            field("type2", in(1, 2, 3))
-        )
+      and(
+        or(
+          field(
+            "updated",
+            gteLt(
+              Iso8601.fromIso("2024-09-19T10:12:01.123"),
+              Iso8601.fromIso("2024-09-20T11:00:01.123")
+            )
+          ),
+          and(
+            field("neki", in("one", "two", "three"))
+          ),
+          field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+          not(
+            field(
+              "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
+            )
+          )
+        ),
+        field("type", in(1, 2, 3)),
+        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+        field("miki", null)
+      ).and(
+        field("type2", in(1, 2, 3))
+      )
     ).build();
     given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("user1", "password")
-        .body(params)
-        .when()
-        .post("/api/public/test/dummy/query")
-        .then()
-        .statusCode(200)
-        .log().all();
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
@@ -229,10 +234,10 @@ public class DummyResourceTest {
             "nested_worker_avg",
             "worker"
           ),
-            count(
-              "nested_nested_worker_count",
-              "worker"
-            )
+          count(
+            "nested_nested_worker_count",
+            "worker"
+          )
         ),
         cardinality(
           "nested_nested_worker_cardinality",
@@ -464,5 +469,37 @@ public class DummyResourceTest {
       .statusCode(200)
       .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+  }
+
+  @Test
+  public void dummySaveCollection() {
+    Dummy dummy1 = new Dummy();
+    dummy1.setTitle("Introduction to Java");
+    dummy1.setDescription("A comprehensive guide to Java programming.");
+    dummy1.setLang("en");
+    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
+    dummy1.setModified(ZonedDateTime.now());
+    dummy1.setDeactivated(null);
+
+    Dummy dummy2 = new Dummy();
+    dummy2.setTitle("Advanced Python Techniques");
+    dummy2.setDescription("Explore advanced concepts in Python programming.");
+    dummy2.setLang("en");
+    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
+    dummy2.setModified(ZonedDateTime.now().minusDays(5));
+    dummy2.setDeactivated(null);
+
+    Dummy dummy3 = new Dummy();
+    dummy3.setTitle("Introduction to Machine Learning");
+    dummy3.setDescription("An introductory course to machine learning and its applications.");
+    dummy3.setLang("es");
+    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
+    dummy3.setModified(ZonedDateTime.now().minusDays(10));
+    dummy3.setDeactivated(null);
+
+    ElasticDummyRepository esRepo = new ElasticDummyRepository();
+    esRepo.setObjectMapper(mapper);
+    List<Dummy> getConfirmation = esRepo.save(List.of(dummy1, dummy2, dummy3));
+    Assertions.assertEquals(List.of(dummy1, dummy2, dummy3), getConfirmation);
   }
 }
