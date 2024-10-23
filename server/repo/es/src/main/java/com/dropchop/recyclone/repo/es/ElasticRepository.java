@@ -1,14 +1,10 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.naming.directory.SearchResult;
 import java.io.IOException;
 import java.util.*;
 
@@ -21,6 +17,7 @@ import org.elasticsearch.client.RestClient;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
  */
+@SuppressWarnings("unused")
 public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Setter
