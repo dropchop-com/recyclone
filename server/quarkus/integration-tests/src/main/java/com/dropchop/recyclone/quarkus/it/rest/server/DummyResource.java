@@ -17,6 +17,7 @@ import com.dropchop.recyclone.rest.server.ClassicReadByCodeResource;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
+import java.util.Collection;
 import java.util.List;
 
 /**

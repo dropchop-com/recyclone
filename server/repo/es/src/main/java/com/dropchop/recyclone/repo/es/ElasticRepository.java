@@ -1,19 +1,17 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.DataInput;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import lombok.Setter;
-import org.apache.http.HttpHost;
+import jakarta.annotation.PostConstruct;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -25,17 +23,20 @@ import org.elasticsearch.client.RestClient;
 @SuppressWarnings("unused")
 public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> {
 
-  @Setter
-  private ObjectMapper objectMapper = new ObjectMapper();
-  private final RestClient elasticsearchClient;
-  private String indexName = null;
+  private RestClient elasticsearchClient;
+  private ObjectMapper objectMapper;
+  private Class<E> rootClass;
 
-  protected ElasticRepository() {
-    this.elasticsearchClient = RestClient.builder(new HttpHost("localhost", 9300, "http")).build();
+  @PostConstruct
+  public void init() {
+    this.elasticsearchClient = getElasticsearchClient();
+    this.objectMapper = getObjectMapper();
+    this.rootClass = getRootClass();
   }
 
-  public String getClassAlias(Class<?> cls) {
-    return cls.getSimpleName().toLowerCase();
+  @Override
+  public Class<E> getRootClass() {
+    return rootClass;
   }
 
   @Override
@@ -88,7 +89,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     try {
       String id = getEntityId(entity);
 
-      Request request = new Request("PUT", "/" + indexName + "/_doc/" + id);
+      Request request = new Request("PUT", "/" + Strings.toSnakeCase(rootClass.getSimpleName()) + "/_doc/" + id);
       if(entity instanceof String) {
         request.setJsonEntity((String) entity);
       }
@@ -118,7 +119,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   @Override
   public int deleteById(ID id) {
     try {
-      Request request = new Request("DELETE", "/" + indexName + "/_doc/" + id.toString());
+      Request request = new Request("DELETE", "/" + Strings.toSnakeCase(rootClass.getSimpleName()) + "/_doc/" + id.toString());
       Response response = elasticsearchClient.performRequest(request);
       return response.getStatusLine().getStatusCode() == 200 ? 1 : 0;
     } catch (IOException e) {
@@ -144,7 +145,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   @Override
   public E findById(ID id) {
     try {
-      Request request = new Request("GET", "/" + indexName + "/_doc/" + id.toString());
+      Request request = new Request("GET", "/" + Strings.toSnakeCase(rootClass.getSimpleName()) + "/_doc/" + id.toString());
       Response response = elasticsearchClient.performRequest(request);
 
       if (response.getStatusLine().getStatusCode() == 200) {
@@ -184,8 +185,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
       builder.append(query);
       builder.insert(builder.length() - 1, ",\"size\":" + size + ",");
 
-      this.indexName = getRootClass().getSimpleName().toLowerCase();
-      Request request = new Request("GET", "/" + indexName + "/_search");
+      Request request = new Request("GET", "/" + Strings.toSnakeCase(rootClass.getSimpleName()) + "/_search");
 
       boolean hasMoreResults = true;
       List<S> results = new ArrayList<>();
@@ -199,20 +199,18 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
         Response response = elasticsearchClient.performRequest(request);
         String jsonResponse = EntityUtils.toString(response.getEntity());
 
-        // Parse the JSON response
         ElasticSearchResult<S> searchResult = this.objectMapper.readValue(
-          jsonResponse, new TypeReference<ElasticSearchResult<S>>() {}
+          jsonResponse, new TypeReference<>() {
+          }
         );
 
-        // Get hits
         List<S> hits = searchResult.getHits().getHits().stream()
           .map(ElasticSearchResult.Hit::getSource)
-          .collect(Collectors.toList());
+          .toList();
 
         results.addAll(hits);
 
-        // Check if more results are available
-        hasMoreResults = hits.size() == size; // Stop if fewer results than 'size' are returned
+        hasMoreResults = hits.size() == size;
         from += size;
       }
 
@@ -222,12 +220,14 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     }
   }
 
-  protected abstract Map<String, Object> convertEntityToMap(E entity);
-
   protected abstract E convertMapToEntity(Map<String, Object> source);
 
   protected abstract String getEntityId(E entity);
 
+  protected abstract ObjectMapper getObjectMapper();
+
+  protected abstract RestClient getElasticsearchClient();
+  
   public void close() throws IOException {
     this.elasticsearchClient.close();
   }

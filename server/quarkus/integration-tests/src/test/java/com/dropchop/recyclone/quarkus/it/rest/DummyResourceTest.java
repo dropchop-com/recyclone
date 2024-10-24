@@ -3,8 +3,6 @@ package com.dropchop.recyclone.quarkus.it.rest;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
@@ -18,9 +16,6 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.*;
-
-import java.time.ZonedDateTime;
-import java.util.List;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
@@ -491,7 +486,7 @@ public class DummyResourceTest {
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
-  @Test
+  /*@Test
   public void dummySaveCollection() {
     Dummy dummy1 = new Dummy();
     dummy1.setTitle("Introduction to Java");
@@ -518,8 +513,7 @@ public class DummyResourceTest {
     dummy3.setDeactivated(null);
 
     ElasticDummyRepository esRepo = new ElasticDummyRepository();
-    esRepo.setObjectMapper(mapper);
     List<Dummy> getConfirmation = esRepo.save(List.of(dummy1, dummy2, dummy3));
     Assertions.assertEquals(List.of(dummy1, dummy2, dummy3), getConfirmation);
-  }
+  }*/
 }

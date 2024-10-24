@@ -378,4 +378,11 @@ public interface Strings {
   static boolean matchPath(String[] tokPattern, String[] tokStr, boolean isCaseSensitive) {
     return matchPath(tokPattern, tokPattern.length - 1, tokStr, tokStr.length - 1, isCaseSensitive);
   }
+
+  static String toSnakeCase(String input) {
+    String result = input.replaceAll("([a-z])([A-Z]+)", "$1_$2")
+      .replaceAll("([A-Z])([A-Z][a-z])", "$1_$2");
+
+    return result.toLowerCase();
+  }
 }

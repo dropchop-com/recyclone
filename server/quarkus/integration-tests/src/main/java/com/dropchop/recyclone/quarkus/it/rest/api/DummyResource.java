@@ -13,6 +13,7 @@ import com.dropchop.recyclone.rest.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.api.MediaType;
 import jakarta.ws.rs.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;

@@ -2,12 +2,21 @@ package com.dropchop.recyclone.quarkus.it.repo.es;
 
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.elasticsearch.client.RestClient;
 
 import java.util.Map;
 
 @ApplicationScoped
 public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
+
+  @Inject
+  ObjectMapper objectMapper;
+
+  @Inject
+  RestClient elasticsearchClient;
 
   Class<Dummy> rootClass = Dummy.class;
 
@@ -17,16 +26,13 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
   }
 
   @Override
-  protected Map<String, Object> convertEntityToMap(Dummy entity) {
-    return Map.of(
-      "code", entity.getCode(),
-      "title", entity.getTitle(),
-      "description", entity.getDescription(),
-      "lang", entity.getLang(),
-      "created", entity.getCreated().toString(),
-      "modified", entity.getModified().toString(),
-      "deactivated", entity.getDeactivated() != null ? entity.getDeactivated().toString() : null
-    );
+  protected ObjectMapper getObjectMapper() {
+    return objectMapper;
+  }
+
+  @Override
+  protected RestClient getElasticsearchClient() {
+    return elasticsearchClient;
   }
 
   @Override
@@ -43,4 +49,5 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
   protected String getEntityId(Dummy entity) {
     return entity.getCode();
   }
+
 }
