@@ -150,7 +150,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
       if (response.getStatusLine().getStatusCode() == 200) {
         String json = response.getEntity().getContent().toString();
-        Map<String, Object> sourceMap = objectMapper.readValue(json, Map.class);
+        Map<String, Object> sourceMap = objectMapper.readValue(json, new TypeReference<>() {});
         return convertMapToEntity(sourceMap);
       } else {
         return null;
@@ -200,8 +200,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
         String jsonResponse = EntityUtils.toString(response.getEntity());
 
         ElasticSearchResult<S> searchResult = this.objectMapper.readValue(
-          jsonResponse, new TypeReference<>() {
-          }
+          jsonResponse, new TypeReference<>() {}
         );
 
         List<S> hits = searchResult.getHits().getHits().stream()
@@ -227,7 +226,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   protected abstract ObjectMapper getObjectMapper();
 
   protected abstract RestClient getElasticsearchClient();
-  
+
   public void close() throws IOException {
     this.elasticsearchClient.close();
   }
