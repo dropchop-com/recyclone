@@ -6,18 +6,15 @@ import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.DataInput;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import lombok.Setter;
 import org.apache.http.HttpHost;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
@@ -149,7 +146,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
       if (response.getStatusLine().getStatusCode() == 200) {
         String json = response.getEntity().getContent().toString();
-        Map<String, Object> sourceMap = objectMapper.readValue(json, Map.class);
+        Map<String, Object> sourceMap = objectMapper.readValue(json, new TypeReference<>() {});
         return convertMapToEntity(sourceMap);
       } else {
         return null;
@@ -201,13 +198,13 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
         // Parse the JSON response
         ElasticSearchResult<S> searchResult = this.objectMapper.readValue(
-          jsonResponse, new TypeReference<ElasticSearchResult<S>>() {}
+          jsonResponse, new TypeReference<>() {}
         );
 
         // Get hits
         List<S> hits = searchResult.getHits().getHits().stream()
           .map(ElasticSearchResult.Hit::getSource)
-          .collect(Collectors.toList());
+          .toList();
 
         results.addAll(hits);
 
