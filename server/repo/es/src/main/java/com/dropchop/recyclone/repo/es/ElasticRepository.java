@@ -1,8 +1,10 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
+import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -22,6 +25,10 @@ import org.elasticsearch.client.RestClient;
  */
 @SuppressWarnings("unused")
 public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> {
+
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  ExecContextContainer ctxContainer;
 
   private RestClient elasticsearchClient;
   private ObjectMapper objectMapper;
@@ -34,6 +41,12 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     this.rootClass = getRootClass();
   }
 
+  protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
+    return List.of(
+      new PageCriteriaDecorator()
+    );
+  }
+
   @Override
   public Class<E> getRootClass() {
     return rootClass;
@@ -41,12 +54,16 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext() {
-    return null;
+    ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
+    for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
+      context.decorateWith(decorator);
+    }
+    return context;
   }
 
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext) {
-    return null;
+    return getRepositoryExecContext().totalCount(mappingContext);
   }
 
   @Override
