@@ -76,7 +76,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     }
 
     StringBuilder bulkRequestBody = new StringBuilder();
-
+    ObjectMapper objectMapper = getObjectMapper();
     try {
       String indexName = getIndexName();
       for (S entity : entities) {
@@ -84,8 +84,9 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
             .append(indexName)
             .append("\", \"_id\" : \"")
             .append(getEntityId(entity))
-            .append("\" } }\n");
-        bulkRequestBody.append(getObjectMapper().writeValueAsString(entity)).append("\n");
+            .append("\" } }\n")
+            .append(objectMapper.writeValueAsString(entity))
+            .append("\n");
       }
     } catch (IOException e) {
       throw new RuntimeException("Failed to serialize entity to JSON", e);
