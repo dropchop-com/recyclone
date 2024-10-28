@@ -18,11 +18,9 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
   @Inject
   RestClient elasticsearchClient;
 
-  Class<Dummy> rootClass = Dummy.class;
-
   @Override
   public Class<Dummy> getRootClass() {
-    return rootClass;
+    return Dummy.class;
   }
 
   @Override
@@ -44,10 +42,4 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
     dummy.setLang((String) source.get("lang"));
     return dummy;
   }
-
-  @Override
-  protected String getEntityId(Dummy entity) {
-    return entity.getCode();
-  }
-
 }
