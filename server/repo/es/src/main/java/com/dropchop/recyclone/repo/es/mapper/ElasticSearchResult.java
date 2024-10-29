@@ -46,5 +46,8 @@ public class ElasticSearchResult<T> {
   public static class Hit<T> {
     @JsonProperty("_source")
     private T source;
+
+    @JsonProperty("sort")
+    private List<Object> sort;
   }
 }

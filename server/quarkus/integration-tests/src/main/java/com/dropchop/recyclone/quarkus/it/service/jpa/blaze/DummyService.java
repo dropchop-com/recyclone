@@ -20,6 +20,7 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
@@ -64,14 +65,14 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     return new Result<>("my-query-jpa-blaze");
   }
 
+  @Override
   public Result<Dummy> esSearch() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
     try {
-      String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
-      List<Dummy> results = elasticRepository.search(json, 0, 100);
+      List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
       return new Result<Dummy>().toSuccess(results, results.size());
-    } catch (Exception e) {
+    } catch (ServiceException | IOException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
   }

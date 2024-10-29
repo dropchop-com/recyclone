@@ -69,14 +69,9 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
     try {
-      String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
-
-      List<Dummy> results = elasticRepository.search(json, 0, 100);
-
+      List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
       return new Result<Dummy>().toSuccess(results, results.size());
-    } catch (IOException e) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Error processing the Elasticsearch response!", e);
-    } catch (Exception e) {
+    } catch (ServiceException | IOException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
   }

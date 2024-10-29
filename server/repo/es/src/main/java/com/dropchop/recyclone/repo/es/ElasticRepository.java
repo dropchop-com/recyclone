@@ -1,21 +1,23 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
+import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 
 import java.io.IOException;
 import java.util.*;
@@ -148,7 +150,8 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
         )
       );
     } catch (ServiceException | IOException e) {
-      throw new ServiceException(new StatusMessage(ErrorCode.unknown_error, "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
+      throw new ServiceException(new StatusMessage(ErrorCode.unknown_error,
+        "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
     }
   }
 
@@ -242,54 +245,89 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   // (responsibility for converting from com.dropchop.recyclone.model.api.query.Query to String should be here)
   // to allow for extensions a set of callbacks should be provided via execution context.
   // think about on and after which steps should we callback (I didn't yet)
-  public <S extends E> List<S> search(String query) {
-    return search(query, 0, 10000);
-  }
 
-  public <S extends E> List<S> search(String query, int from, int size) {
-    try {
-      StringBuilder builder = new StringBuilder();
-      builder.append(query);
-      builder.insert(builder.length() - 1, ",\"size\":" + size + ",");
+  public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) throws IOException {
+    List<S> allHits = new ArrayList<>();
+    List<Object> searchAfterValues = null;
 
-      Request request = new Request("GET", "/" + getIndexName() + "/_search");
+    int size = 0, from = 0;
 
-      boolean hasMoreResults = true;
-      List<S> results = new ArrayList<>();
+    if (context != null) {
+      if (context instanceof ElasticExecContext) {
+        ((ElasticExecContext<S>) context).init((Class<S>) getRootClass(),
+          Strings.toSnakeCase(getRootClass().getSimpleName()), params);
+      }
+
+      for (RepositoryExecContextListener listener : context.getListeners()) {
+        if (listener instanceof CriteriaDecorator decorator) {
+          decorator.decorate();
+        }
+      }
+
+      size = context.getParams().tryGetResultFilter().size();
+      from = context.getParams().tryGetResultFilter().from();
 
       ObjectMapper mapper = getObjectMapper();
       RestClient restClient = getElasticsearchClient();
-      while (hasMoreResults) {
-        StringBuilder builder2 = new StringBuilder();
-        builder2.append(builder);
-        builder2.insert(builder.length() - 1, "\"from\":" + from);
-        request.setJsonEntity(builder2.toString());
+      ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
 
-        Response response = restClient.performRequest(request);
-        String jsonResponse = EntityUtils.toString(response.getEntity());
+      QueryNodeObject sortOrder = new QueryNodeObject();
 
-        ElasticSearchResult<S> searchResult = mapper.readValue(
-          jsonResponse, new TypeReference<>() {}
-        );
-
-        List<S> hits = searchResult.getHits().getHits().stream()
-          .map(ElasticSearchResult.Hit::getSource)
-          .toList();
-
-        results.addAll(hits);
-
-        hasMoreResults = hits.size() == size;
-        from += size;
+      if (context.getParams().tryGetResultFilter().sort() != null) {
+        sortOrder.put("sort", context.getParams().tryGetResultFilter().sort());
+      } else {
+        sortOrder.put("sort", "code");
       }
 
-      return results;
-    } catch (IOException e) {
-      //TODO: rewrite to service exception with more elaborate error report of what went wrong
-      throw new RuntimeException("Failed to search in Elasticsearch", e);
+      boolean hasMoreHits = true;
+      while (hasMoreHits && allHits.size() < size) {
+        QueryNodeObject queryObject = esQueryMapper.mapToString(context.getParams());
+        queryObject.put("size", Math.min(size - allHits.size(), 10000));
+
+        if (searchAfterValues == null) {
+          queryObject.put("from", from);
+        }
+
+        queryObject.put("sort", sortOrder);
+
+        if (searchAfterValues != null) {
+          queryObject.put("search_after", searchAfterValues);
+        }
+
+        String query = mapper.writeValueAsString(queryObject);
+
+        if (context instanceof ElasticExecContext<S>) {
+          Request request = new Request("GET", "/" +
+            ((ElasticExecContext<S>) context).getRootAlias() + "/_search");
+          request.setJsonEntity(query);
+
+          String response = EntityUtils.toString(restClient.performRequest(request).getEntity());
+
+          ElasticSearchResult<S> searchResult = mapper.readValue(response, new TypeReference<>() {});
+
+          List<S> hits = searchResult.getHits().getHits().stream()
+            .map(ElasticSearchResult.Hit::getSource)
+            .toList();
+
+          allHits.addAll(hits);
+
+          if (!hits.isEmpty()) {
+            int lastIndex = hits.size() - 1;
+            searchAfterValues = searchResult.getHits().getHits().get(lastIndex).getSort();
+          } else {
+            hasMoreHits = false;
+          }
+        }
+      }
     }
+
+    return allHits;
   }
 
+
   protected abstract E convertMapToEntity(Map<String, Object> source);
+
+  protected abstract ElasticQueryMapper getElasticQueryMapper();
 
   protected abstract ObjectMapper getObjectMapper();
 

@@ -2,6 +2,7 @@ package com.dropchop.recyclone.repo.es.localization;
 
 import com.dropchop.recyclone.model.entity.es.localization.EsCountry;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
+import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
@@ -20,6 +21,11 @@ public class CountryRepository extends ElasticRepository<EsCountry, String> {
 
   @Override
   protected EsCountry convertMapToEntity(Map<String, Object> source) {
+    return null;
+  }
+
+  @Override
+  protected ElasticQueryMapper getElasticQueryMapper() {
     return null;
   }
 

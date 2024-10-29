@@ -12,15 +12,22 @@ import com.dropchop.recyclone.model.api.query.condition.Or;
 import com.dropchop.recyclone.model.api.query.operator.*;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Default;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 
+@Slf4j
 @ApplicationScoped
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class ElasticQueryMapper {
 
-  public static QueryNodeObject elasticQueryMapper(QueryParams params) {
+  public ElasticQueryMapper() {
+
+  }
+
+  public QueryNodeObject mapToString(QueryParams params) {
     QueryNodeObject bool = new QueryNodeObject();
     QueryNodeObject end = new QueryNodeObject();
 
@@ -39,7 +46,7 @@ public class ElasticQueryMapper {
     return end;
   }
 
-  public static QueryNodeObject mapCondition(Condition condition, BoolQueryObject previousCondition) {
+  protected QueryNodeObject mapCondition(Condition condition, BoolQueryObject previousCondition) {
     if (condition instanceof LogicalCondition logicalCondition) {
       BoolQueryObject query = new BoolQueryObject();
 
@@ -92,7 +99,7 @@ public class ElasticQueryMapper {
     return previousCondition;
   }
 
-  public static OperatorNodeObject mapConditionField(String field, ConditionOperator operator) {
+  protected OperatorNodeObject mapConditionField(String field, ConditionOperator operator) {
     OperatorNodeObject operatorNode = new OperatorNodeObject();
 
     if (operator instanceof Eq) {
@@ -122,7 +129,7 @@ public class ElasticQueryMapper {
     return operatorNode;
   }
 
-  public static QueryNodeObject mapAggregation(AggregationList aggList) {
+  protected QueryNodeObject mapAggregation(AggregationList aggList) {
     QueryNodeObject query = new QueryNodeObject();
     QueryNodeObject aggsList = new QueryNodeObject();
 
@@ -137,7 +144,7 @@ public class ElasticQueryMapper {
     return query;
   }
 
-  protected static QueryNodeObject mapAggregationStep(Aggregation agg) {
+  protected QueryNodeObject mapAggregationStep(Aggregation agg) {
     if (agg instanceof Aggregation.Wrapper) {
       Aggregation baseAggregation = ((Aggregation.Wrapper) agg).iterator().next();
       QueryNodeObject subQuery = new QueryNodeObject();
@@ -179,7 +186,7 @@ public class ElasticQueryMapper {
     return null;
   }
 
-  protected static String setCorrectAggregationType(Aggregation aggregation) {
+  protected String setCorrectAggregationType(Aggregation aggregation) {
     String className = aggregation.getClass().getSimpleName().toLowerCase();
 
     if(aggregation instanceof Count) {
