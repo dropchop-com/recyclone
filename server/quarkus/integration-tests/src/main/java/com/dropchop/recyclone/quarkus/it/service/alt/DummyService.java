@@ -80,4 +80,11 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
   }
+
+  @Override
+  public List<Dummy> esSave() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+
+    return elasticRepository.save(context.getData());
+  }
 }

@@ -90,4 +90,7 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   public Result<Dummy> esSearch(DummyQueryParams params) {
     return service.esSearch();
   }
+
+  @Override
+  public List<Dummy> esSave(List<Dummy> params) { return service.esSave(); }
 }

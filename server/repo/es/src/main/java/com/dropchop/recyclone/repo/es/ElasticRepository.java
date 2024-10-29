@@ -1,7 +1,11 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.utils.Strings;
@@ -10,6 +14,7 @@ import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -26,7 +31,7 @@ import org.elasticsearch.client.RestClient;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
  */
 @Slf4j
-@SuppressWarnings("unused")
+@SuppressWarnings("unused, unchecked")
 public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Inject
@@ -89,25 +94,61 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
             .append("\n");
       }
     } catch (IOException e) {
-      throw new RuntimeException("Failed to serialize entity to JSON", e);
+      throw new ServiceException(new StatusMessage(ErrorCode.data_error, "Failed to serialize entity to JSON",
+        Set.of(new AttributeString("error", e.getMessage()))));
     }
 
     Request request = new Request("POST", "/_bulk");
     request.setJsonEntity(bulkRequestBody.toString());
-    //TODO: what elasticsearch bulk request returns? ***
+
+    List<S> successfullySavedEntities = new ArrayList<>();
+    List<StatusMessage> errorMessages = new ArrayList<>();
+
     try {
       Response response = getElasticsearchClient().performRequest(request);
 
       if(response.getStatusLine().getStatusCode() == 200) {
-        return List.copyOf(entities); //TODO*** examine and return only successfully stored entities
+
+        JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
+        if (responseBody.has("items")) {
+          int i = 0;
+          for (JsonNode item : responseBody.get("items")) {
+            JsonNode indexResult = item.get("index");
+            if (indexResult != null &&
+              ("created".equals(indexResult.get("result").asText()) ||
+                "updated".equals(indexResult.get("result").asText()))) {
+              successfullySavedEntities.add((S) entities.toArray()[i]);
+            } else {
+              if(indexResult != null) {
+                String error = indexResult.get("error").toString();
+                int statusCode = indexResult.get("status").asInt();
+                errorMessages.add(new StatusMessage(
+                  ErrorCode.process_error,
+                  "Failed to index entity " + i,
+                  Set.of(new AttributeString("status",
+                    String.valueOf(statusCode)), new AttributeString("error", error))
+                ));
+              }
+            }
+            i++;
+          }
+        }
+        if(entities.equals(successfullySavedEntities)) {
+          return successfullySavedEntities;
+        }
+        else {
+          throw new ServiceException(errorMessages);
+        }
       }
-      //TODO: rewrite to service exception with more elaborate error report of what went wrong possibly for each entity
-      throw new RuntimeException(
-          "Failed to save entity to Elasticsearch, status code is " + response.getStatusLine().getStatusCode()
+      throw new ServiceException(
+        new StatusMessage(
+          ErrorCode.internal_error,
+          "Bulk request failed with status code: " + response.getStatusLine().getStatusCode(),
+          null
+        )
       );
-    } catch (IOException e) {
-      //TODO: rewrite to service exception with more elaborate error report
-      throw new RuntimeException("Failed to save entity to Elasticsearch", e);
+    } catch (ServiceException | IOException e) {
+      throw new ServiceException(new StatusMessage(ErrorCode.unknown_error, "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
     }
   }
 

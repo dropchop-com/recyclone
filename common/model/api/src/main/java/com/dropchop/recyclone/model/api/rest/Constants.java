@@ -28,7 +28,8 @@ public interface Constants {
     String LOCALIZATION_SEGMENT = "/localization";
     String SECURITY_SEGMENT = "/security";
     String TAGGING_SEGMENT = "/tagging";
-    String ELASTICSEARCH_SEGMENT = "/es_search";
+    String ELASTICSEARCH_SEARCH_SEGMENT = "/es_search";
+    String ELASTICSEARCH_SAVE_SEGMENT = "/es_save";
 
     String INTERNAL_SEGMENT = "/internal";
     String PUBLIC_SEGMENT = "/public";

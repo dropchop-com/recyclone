@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.it.rest;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,6 +17,10 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
@@ -486,7 +491,7 @@ public class DummyResourceTest {
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
-  /*@Test
+  @Test
   public void dummySaveCollection() {
     Dummy dummy1 = new Dummy();
     dummy1.setTitle("Introduction to Java");
@@ -495,6 +500,7 @@ public class DummyResourceTest {
     dummy1.setCreated(ZonedDateTime.now().minusDays(10));
     dummy1.setModified(ZonedDateTime.now());
     dummy1.setDeactivated(null);
+    dummy1.setCode(UUID.randomUUID().toString());
 
     Dummy dummy2 = new Dummy();
     dummy2.setTitle("Advanced Python Techniques");
@@ -503,6 +509,7 @@ public class DummyResourceTest {
     dummy2.setCreated(ZonedDateTime.now().minusDays(20));
     dummy2.setModified(ZonedDateTime.now().minusDays(5));
     dummy2.setDeactivated(null);
+    dummy2.setCode(UUID.randomUUID().toString());
 
     Dummy dummy3 = new Dummy();
     dummy3.setTitle("Introduction to Machine Learning");
@@ -511,9 +518,20 @@ public class DummyResourceTest {
     dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
     dummy3.setModified(ZonedDateTime.now().minusDays(10));
     dummy3.setDeactivated(null);
+    dummy3.setCode(UUID.randomUUID().toString());
 
-    ElasticDummyRepository esRepo = new ElasticDummyRepository();
-    List<Dummy> getConfirmation = esRepo.save(List.of(dummy1, dummy2, dummy3));
-    Assertions.assertEquals(List.of(dummy1, dummy2, dummy3), getConfirmation);
-  }*/
+    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(dummies)
+      .when()
+      .post("/api/public/test/dummy/es_save")
+      .then()
+      .statusCode(200)
+      .log().all();
+  }
 }
