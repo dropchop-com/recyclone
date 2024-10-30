@@ -178,14 +178,26 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   @Override
   public int deleteById(ID id) {
     try {
-      Request request = new Request(
-          "DELETE", "/" + getIndexName() + "/_doc/" + id.toString()
-      );
+      Request request = new Request("DELETE", "/" + getIndexName() + "/_doc/" + id);
       Response response = getElasticsearchClient().performRequest(request);
-      return response.getStatusLine().getStatusCode() == 200 ? 1 : 0; //TODO: if non 200 wouldn't that be an error we'd like to report?
+
+      if (response.getStatusLine().getStatusCode() == 200) {
+        return 1;
+      } else {
+        int statusCode = response.getStatusLine().getStatusCode();
+        throw  new ServiceException(
+          ErrorCode.data_error,
+          "Failed to delete entity with ID: " + id + ". Status code: " + statusCode,
+          Set.of(new AttributeString("status", String.valueOf(statusCode)))
+        );
+      }
     } catch (IOException e) {
-      //TODO: rewrite to service exception with more elaborate error report of what went wrong
-      throw new RuntimeException("Failed to delete entity from Elasticsearch", e);
+      throw new ServiceException(
+        ErrorCode.data_error,
+        "Error occurred during deletion of entity with ID: " + id,
+        Set.of(new AttributeString("ID", id.toString())),
+        e
+      );
     }
   }
 
@@ -209,17 +221,27 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     try {
       Request request = new Request("GET", "/" + getIndexName() + "/_doc/" + id.toString());
       Response response = getElasticsearchClient().performRequest(request);
+
       if (response.getStatusLine().getStatusCode() == 200) {
-        String json = response.getEntity().getContent().toString();
+        String json = EntityUtils.toString(response.getEntity());
         Map<String, Object> sourceMap = getObjectMapper().readValue(json, new TypeReference<>() {});
-        //TODO: get a mapper as getElasticsearchClient and separate serialization and retrieval
-        // (so they can both change/use/test independently)
         return convertMapToEntity(sourceMap);
-      } else {
+      } else if (response.getStatusLine().getStatusCode() == 404) {
         return null;
+      } else {
+        throw new ServiceException(
+          ErrorCode.data_error,
+          "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+          Set.of(new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())))
+        );
       }
     } catch (IOException e) {
-      throw new RuntimeException("Failed to retrieve entity from Elasticsearch", e);
+      throw new ServiceException(
+        ErrorCode.data_error,
+        "Failed to retrieve entity with ID: " + id,
+        Set.of(new AttributeString("ID", id.toString())),
+        e
+      );
     }
   }
 
@@ -267,7 +289,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
           searchAfterValues = getSearchAfterValues(hits);
           allHits.addAll(hits.stream().map(ElasticSearchResult.Hit::getSource).toList());
         }
-      } catch (IOException e) {
+      } catch (ServiceException e) {
         throw new ServiceException(
           ErrorCode.data_error,
           "Failed to execute search query.",
