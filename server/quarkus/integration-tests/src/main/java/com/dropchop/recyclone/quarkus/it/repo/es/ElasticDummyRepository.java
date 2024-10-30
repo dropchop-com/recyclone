@@ -5,7 +5,6 @@ import com.dropchop.recyclone.repo.es.ElasticRepository;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 import org.elasticsearch.client.RestClient;
 

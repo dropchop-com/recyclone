@@ -12,7 +12,6 @@ import com.dropchop.recyclone.model.api.query.condition.Or;
 import com.dropchop.recyclone.model.api.query.operator.*;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Default;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;

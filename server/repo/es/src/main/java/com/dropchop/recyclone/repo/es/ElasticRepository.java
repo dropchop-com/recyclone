@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.marker.HasCode;
@@ -13,7 +12,6 @@ import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -240,90 +238,124 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     return List.of();
   }
 
-  //TODO: Query mapTo QueryNode mapTo String should be controlled by repository
-  // therefore -> no public method should be allowed to invoke a ES query with a string!!!!!
-  // (responsibility for converting from com.dropchop.recyclone.model.api.query.Query to String should be here)
-  // to allow for extensions a set of callbacks should be provided via execution context.
-  // think about on and after which steps should we callback (I didn't yet)
-
   public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) throws IOException {
+    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
+      throw new ServiceException(
+        ErrorCode.parameter_validation_error,
+        "Invalid context: Expected ElasticExecContext but received " + context.getClass().getSimpleName()
+      );
+    }
+
+    initializeContext(elasticContext, params);
+    applyDecorators(context);
+
     List<S> allHits = new ArrayList<>();
     List<Object> searchAfterValues = null;
+    int size = getResultFilterSize(context);
+    int from = getResultFilterFrom(context);
+    QueryNodeObject sortOrder = buildSortOrder(context.getParams().tryGetResultFilter().sort());
 
-    int size = 0, from = 0;
+    boolean hasMoreHits = true;
+    while (hasMoreHits) {
+      try {
+        QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
+        List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 
-    if (context != null) {
-      if (context instanceof ElasticExecContext) {
-        ((ElasticExecContext<S>) context).init((Class<S>) getRootClass(),
-          Strings.toSnakeCase(getRootClass().getSimpleName()), params);
-      }
-
-      for (RepositoryExecContextListener listener : context.getListeners()) {
-        if (listener instanceof CriteriaDecorator decorator) {
-          decorator.decorate();
+        if (hits.isEmpty()) {
+          hasMoreHits = false;
+        } else {
+          searchAfterValues = getSearchAfterValues(hits);
+          allHits.addAll(hits.stream().map(ElasticSearchResult.Hit::getSource).toList());
         }
-      }
-
-      size = context.getParams().tryGetResultFilter().size();
-      from = context.getParams().tryGetResultFilter().from();
-
-      ObjectMapper mapper = getObjectMapper();
-      RestClient restClient = getElasticsearchClient();
-      ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
-
-      QueryNodeObject sortOrder = new QueryNodeObject();
-
-      if (context.getParams().tryGetResultFilter().sort() != null) {
-        sortOrder.put("sort", context.getParams().tryGetResultFilter().sort());
-      } else {
-        sortOrder.put("sort", "code");
-      }
-
-      boolean hasMoreHits = true;
-      while (hasMoreHits && allHits.size() < size) {
-        QueryNodeObject queryObject = esQueryMapper.mapToString(context.getParams());
-        queryObject.put("size", Math.min(size - allHits.size(), 10000));
-
-        if (searchAfterValues == null) {
-          queryObject.put("from", from);
-        }
-
-        queryObject.put("sort", sortOrder);
-
-        if (searchAfterValues != null) {
-          queryObject.put("search_after", searchAfterValues);
-        }
-
-        String query = mapper.writeValueAsString(queryObject);
-
-        if (context instanceof ElasticExecContext<S>) {
-          Request request = new Request("GET", "/" +
-            ((ElasticExecContext<S>) context).getRootAlias() + "/_search");
-          request.setJsonEntity(query);
-
-          String response = EntityUtils.toString(restClient.performRequest(request).getEntity());
-
-          ElasticSearchResult<S> searchResult = mapper.readValue(response, new TypeReference<>() {});
-
-          List<S> hits = searchResult.getHits().getHits().stream()
-            .map(ElasticSearchResult.Hit::getSource)
-            .toList();
-
-          allHits.addAll(hits);
-
-          if (!hits.isEmpty()) {
-            int lastIndex = hits.size() - 1;
-            searchAfterValues = searchResult.getHits().getHits().get(lastIndex).getSort();
-          } else {
-            hasMoreHits = false;
-          }
-        }
+      } catch (IOException e) {
+        throw new ServiceException(
+          ErrorCode.data_error,
+          "Failed to execute search query.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())),
+          e
+        );
+      } catch (Exception e) {
+        throw new ServiceException(
+          ErrorCode.internal_error,
+          "Unexpected error occurred during search execution.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())),
+          e
+        );
       }
     }
 
     return allHits;
   }
 
+  private <S extends E> void initializeContext(ElasticExecContext<S> context, QueryParams params) {
+    context.init((Class<S>) getRootClass(), Strings.toSnakeCase(getRootClass().getSimpleName()), params);
+  }
+
+  private void applyDecorators(RepositoryExecContext<?> context) {
+    context.getListeners().stream()
+      .filter(listener -> listener instanceof CriteriaDecorator)
+      .map(listener -> (CriteriaDecorator) listener)
+      .forEach(CriteriaDecorator::decorate);
+  }
+
+  private int getResultFilterSize(RepositoryExecContext<?> context) {
+    return context.getParams().tryGetResultFilter().size();
+  }
+
+  private int getResultFilterFrom(RepositoryExecContext<?> context) {
+    return context.getParams().tryGetResultFilter().from();
+  }
+
+  private QueryNodeObject buildSortOrder(List<String> sortList) {
+    QueryNodeObject sortOrder = new QueryNodeObject();
+    if (!sortList.isEmpty()) {
+      List<QueryNodeObject> sortEntries = sortList.stream()
+        .map(sort -> {
+          QueryNodeObject sortEntry = new QueryNodeObject();
+          sortEntry.put(sort, "desc");
+          return sortEntry;
+        })
+        .toList();
+      sortOrder.put("sort", sortEntries);
+    } else {
+      QueryNodeObject defaultSort = new QueryNodeObject();
+      defaultSort.put("code.keyword", "desc");
+      sortOrder.put("sort", defaultSort);
+    }
+    return sortOrder;
+  }
+
+  private QueryNodeObject buildQueryObject(RepositoryExecContext<?> context,
+                                           List<Object> searchAfterValues,
+                                           QueryNodeObject sortOrder,
+                                           int size, int from) {
+    ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
+    QueryNodeObject queryObject = esQueryMapper.mapToString(context.getParams());
+    queryObject.put("size", Math.min(size, 10000));
+
+    if (searchAfterValues == null) queryObject.put("from", from);
+    queryObject.putAll(sortOrder);
+    if (searchAfterValues != null) queryObject.put("search_after", searchAfterValues);
+
+    return queryObject;
+  }
+
+  private <S extends E> List<ElasticSearchResult.Hit<S>> executeSearchAndExtractHits(
+    QueryNodeObject queryObject,
+    ElasticExecContext<S> context) throws IOException {
+    String query = getObjectMapper().writeValueAsString(queryObject);
+    Request request = new Request("GET", "/" + context.getRootAlias() + "/_search");
+    request.setJsonEntity(query);
+
+    String response = EntityUtils.toString(getElasticsearchClient().performRequest(request).getEntity());
+    ElasticSearchResult<S> searchResult = getObjectMapper().readValue(response, new TypeReference<>() {});
+
+    return searchResult.getHits().getHits();
+  }
+
+  private <S> List<Object> getSearchAfterValues(List<ElasticSearchResult.Hit<S>> hits) {
+    return hits.isEmpty() ? null : hits.getLast().getSort();
+  }
 
   protected abstract E convertMapToEntity(Map<String, Object> source);
 
