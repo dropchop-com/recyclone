@@ -82,21 +82,8 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
     StringBuilder bulkRequestBody = new StringBuilder();
     ObjectMapper objectMapper = getObjectMapper();
-    try {
-      String indexName = getIndexName();
-      for (S entity : entities) {
-        bulkRequestBody.append("{ \"index\" : { \"_index\" : \"")
-            .append(indexName)
-            .append("\", \"_id\" : \"")
-            .append(getEntityId(entity))
-            .append("\" } }\n")
-            .append(objectMapper.writeValueAsString(entity))
-            .append("\n");
-      }
-    } catch (IOException e) {
-      throw new ServiceException(new StatusMessage(ErrorCode.data_error, "Failed to serialize entity to JSON",
-        Set.of(new AttributeString("error", e.getMessage()))));
-    }
+
+    bulkRequestBody = buildBulkRequest(entities, bulkRequestBody, objectMapper);
 
     Request request = new Request("POST", "/_bulk");
     request.setJsonEntity(bulkRequestBody.toString());
@@ -150,6 +137,33 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     } catch (ServiceException | IOException e) {
       throw new ServiceException(new StatusMessage(ErrorCode.unknown_error,
         "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
+    }
+  }
+
+  protected <S extends E> StringBuilder buildBulkRequest(
+    Collection<S> entities,
+    StringBuilder bulkRequestBody,
+    ObjectMapper objectMapper) {
+
+    try {
+      String indexName = getIndexName();
+      for (S entity : entities) {
+        bulkRequestBody
+          .append("{ \"index\" : { \"_index\" : \"")
+          .append(indexName)
+          .append("\", \"_id\" : \"")
+          .append(getEntityId(entity))
+          .append("\" } }\n")
+          .append(objectMapper.writeValueAsString(entity))
+          .append("\n");
+      }
+
+      return bulkRequestBody;
+    } catch (IOException e) {
+      throw new ServiceException(new StatusMessage(
+        ErrorCode.data_error,
+        "Failed to serialize entity to JSON",
+        Set.of(new AttributeString("error", e.getMessage()))));
     }
   }
 
