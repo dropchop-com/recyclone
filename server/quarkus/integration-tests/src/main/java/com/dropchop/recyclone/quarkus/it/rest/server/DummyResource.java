@@ -93,4 +93,9 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
 
   @Override
   public List<Dummy> esSave(List<Dummy> params) { return service.esSave(); }
+
+  @Override
+  public List<Dummy> esDelete(List<Dummy> params) {
+    return service.esDelete();
+  }
 }

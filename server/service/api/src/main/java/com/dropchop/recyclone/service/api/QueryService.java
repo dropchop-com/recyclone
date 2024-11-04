@@ -12,4 +12,5 @@ public interface QueryService<D extends Dto> extends Service {
   Result<D> query();
   Result<D> esSearch();
   List<D> esSave();
+  List<D> esDelete();
 }

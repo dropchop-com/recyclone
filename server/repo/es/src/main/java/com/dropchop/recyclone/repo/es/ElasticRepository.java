@@ -3,8 +3,6 @@ package com.dropchop.recyclone.repo.es;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
-import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
@@ -13,7 +11,6 @@ import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 
@@ -62,20 +59,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     return Strings.toSnakeCase(getRootClass().getSimpleName());
   }
 
-  protected <S extends E> String getEntityId(S entity) {
-    if (entity instanceof HasUuid uEntity) {
-      return uEntity.getUuid().toString();
-    } if (entity instanceof HasCode cEntity) {
-      return cEntity.getCode();
-    } else {
-      throw new UnsupportedOperationException(
-          "Missing implementation for getEntityId for entity type [" + entity.getClass() + "]"
-      );
-    }
-  }
-
-  @Override
-  public <S extends E> List<S> save(Collection<S> entities) {
+  protected <S extends E> List<S> executeBulkRequest(Collection<S> entities, ElasticBulkMethod method) {
     if (entities == null || entities.isEmpty()) {
       return Collections.emptyList();
     }
@@ -83,88 +67,29 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     StringBuilder bulkRequestBody = new StringBuilder();
     ObjectMapper objectMapper = getObjectMapper();
 
-    bulkRequestBody = buildBulkRequest(entities, bulkRequestBody, objectMapper);
+    bulkRequestBody = method.buildBulkRequest(entities, bulkRequestBody, objectMapper);
 
     Request request = new Request("POST", "/_bulk");
     request.setJsonEntity(bulkRequestBody.toString());
 
-    List<S> successfullySavedEntities = new ArrayList<>();
-    List<StatusMessage> errorMessages = new ArrayList<>();
-
     try {
       Response response = getElasticsearchClient().performRequest(request);
 
-      if(response.getStatusLine().getStatusCode() == 200) {
+      return method.checkSuccessfulResponse(entities, response, objectMapper);
 
-        JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
-        if (responseBody.has("items")) {
-          int i = 0;
-          for (JsonNode item : responseBody.get("items")) {
-            JsonNode indexResult = item.get("index");
-            if (indexResult != null &&
-              ("created".equals(indexResult.get("result").asText()) ||
-                "updated".equals(indexResult.get("result").asText()))) {
-              successfullySavedEntities.add((S) entities.toArray()[i]);
-            } else {
-              if(indexResult != null) {
-                String error = indexResult.get("error").toString();
-                int statusCode = indexResult.get("status").asInt();
-                errorMessages.add(new StatusMessage(
-                  ErrorCode.process_error,
-                  "Failed to index entity " + i,
-                  Set.of(new AttributeString("status",
-                    String.valueOf(statusCode)), new AttributeString("error", error))
-                ));
-              }
-            }
-            i++;
-          }
-        }
-        if(entities.equals(successfullySavedEntities)) {
-          return successfullySavedEntities;
-        }
-        else {
-          throw new ServiceException(errorMessages);
-        }
-      }
-      throw new ServiceException(
-        new StatusMessage(
-          ErrorCode.internal_error,
-          "Bulk request failed with status code: " + response.getStatusLine().getStatusCode(),
-          null
-        )
-      );
     } catch (ServiceException | IOException e) {
       throw new ServiceException(new StatusMessage(ErrorCode.unknown_error,
         "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
     }
   }
 
-  protected <S extends E> StringBuilder buildBulkRequest(
-    Collection<S> entities,
-    StringBuilder bulkRequestBody,
-    ObjectMapper objectMapper) {
+  @Override
+  public <S extends E> List<S> save(Collection<S> entities) {
+    ElasticBulkMethod saveBulkMethod = new ElasticBulkMethod(
+      ElasticBulkMethod.MethodType.INDEX,
+      getIndexName());
 
-    try {
-      String indexName = getIndexName();
-      for (S entity : entities) {
-        bulkRequestBody
-          .append("{ \"index\" : { \"_index\" : \"")
-          .append(indexName)
-          .append("\", \"_id\" : \"")
-          .append(getEntityId(entity))
-          .append("\" } }\n")
-          .append(objectMapper.writeValueAsString(entity))
-          .append("\n");
-      }
-
-      return bulkRequestBody;
-    } catch (IOException e) {
-      throw new ServiceException(new StatusMessage(
-        ErrorCode.data_error,
-        "Failed to serialize entity to JSON",
-        Set.of(new AttributeString("error", e.getMessage()))));
-    }
+    return executeBulkRequest(entities, saveBulkMethod);
   }
 
   @Override
@@ -217,7 +142,12 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
   @Override
   public <S extends E> List<S> delete(Collection<S> entities) {
-    return List.of();
+    ElasticBulkMethod elasticDeleteMethod = new ElasticBulkMethod(
+      ElasticBulkMethod.MethodType.DELETE,
+      getIndexName()
+    );
+
+    return executeBulkRequest(entities, elasticDeleteMethod);
   }
 
   @Override

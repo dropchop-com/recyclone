@@ -74,4 +74,9 @@ public interface DummyResource {
   @Path(Paths.ELASTICSEARCH_SAVE_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   List<Dummy> esSave(List<Dummy> params);
+
+  @POST
+  @Path(Paths.ELASTICSEARCH_DELETE_SEGMENT)
+  @Produces(MediaType.APPLICATION_JSON)
+  List<Dummy> esDelete(List<Dummy> params);
 }

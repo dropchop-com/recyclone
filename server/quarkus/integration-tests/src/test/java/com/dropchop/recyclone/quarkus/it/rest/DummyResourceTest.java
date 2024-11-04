@@ -502,4 +502,60 @@ public class DummyResourceTest {
       .statusCode(200)
       .log().all();
   }
+
+  @Test
+  public void deleteFromIndex() {
+    Dummy dummy1 = new Dummy();
+    dummy1.setTitle("Introduction to Java");
+    dummy1.setDescription("A comprehensive guide to Java programming.");
+    dummy1.setLang("en");
+    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
+    dummy1.setModified(ZonedDateTime.now());
+    dummy1.setDeactivated(null);
+    dummy1.setCode(UUID.randomUUID().toString());
+
+    Dummy dummy2 = new Dummy();
+    dummy2.setTitle("Advanced Python Techniques");
+    dummy2.setDescription("Explore advanced concepts in Python programming.");
+    dummy2.setLang("en");
+    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
+    dummy2.setModified(ZonedDateTime.now().minusDays(5));
+    dummy2.setDeactivated(null);
+    dummy2.setCode(UUID.randomUUID().toString());
+
+    Dummy dummy3 = new Dummy();
+    dummy3.setTitle("Introduction to Machine Learning");
+    dummy3.setDescription("An introductory course to machine learning and its applications.");
+    dummy3.setLang("es");
+    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
+    dummy3.setModified(ZonedDateTime.now().minusDays(10));
+    dummy3.setDeactivated(null);
+    dummy3.setCode(UUID.randomUUID().toString());
+
+    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(dummies)
+      .when()
+      .post("/api/public/test/dummy/es_save")
+      .then()
+      .statusCode(200)
+      .log().all();
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(dummies)
+      .when()
+      .post("/api/public/test/dummy/es_delete")
+      .then()
+      .statusCode(200)
+      .log().all();
+  }
 }

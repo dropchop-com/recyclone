@@ -30,11 +30,6 @@ public class CountryRepository extends ElasticRepository<EsCountry, String> {
   }
 
   @Override
-  protected String getEntityId(EsCountry entity) {
-    return "";
-  }
-
-  @Override
   protected ObjectMapper getObjectMapper() {
     return null;
   }

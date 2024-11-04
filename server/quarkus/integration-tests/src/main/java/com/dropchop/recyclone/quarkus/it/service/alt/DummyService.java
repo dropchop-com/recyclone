@@ -82,4 +82,10 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
 
     return elasticRepository.save(context.getData());
   }
+
+  @Override
+  public List<Dummy> esDelete() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+    return elasticRepository.delete(context.getData());
+  }
 }
