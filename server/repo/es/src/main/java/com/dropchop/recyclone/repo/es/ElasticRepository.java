@@ -157,7 +157,11 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
   @Override
   public List<E> findById(Collection<ID> ids) {
-    return List.of();
+    List<E> findings = new ArrayList<>();
+    for (ID id : ids) {
+      findings.add(this.findById(id));
+    }
+    return findings;
   }
 
   @Override
