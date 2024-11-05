@@ -152,7 +152,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
 
   @Override
   public <S extends E> S delete(S entity) {
-    return null;
+    return delete(List.of(entity)).getFirst();
   }
 
   @Override
