@@ -8,6 +8,7 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
@@ -15,6 +16,7 @@ import com.dropchop.recyclone.model.dto.security.RoleNode;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
+import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
 import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.*;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
@@ -46,6 +48,8 @@ public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, Stri
   @Inject
   RoleNodeRepository repository;
 
+  @Inject
+  CommonExecContextContainer execContextContainer;
 
   @Override
   public RoleNodeRepository getRepository() {
@@ -56,5 +60,18 @@ public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, Stri
   public FilteringMapperProvider<RoleNode, JpaRoleNode, String> getMapperProvider() {
     return mapperProvider;
   }
+
+  @Transactional
+  public Result<RoleNode> addPermissions(RoleNodeParams params) {
+    Result<RoleNode> result = new Result<>();
+    return result;
+  }
+
+  @Transactional
+  public Result<RoleNode> removePermissions(RoleNodeParams params) {
+    Result<RoleNode> result = new Result<>();
+    return result;
+  }
+
 
 }

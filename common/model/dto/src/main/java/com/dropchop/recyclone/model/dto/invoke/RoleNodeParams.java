@@ -16,4 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 public class RoleNodeParams extends IdentifierParams {
+
+  private List<UUID> permissionUuids;
+
 }
