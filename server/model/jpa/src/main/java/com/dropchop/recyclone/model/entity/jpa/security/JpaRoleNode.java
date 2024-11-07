@@ -10,6 +10,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * @author Armando Ota <armando.ota@dropchop.com>
+ */
 
 @Getter
 @Setter
@@ -18,7 +21,7 @@ import java.util.List;
 @Table(name = "security_role_node")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
-public class JpaRoleNode extends JpaUuid implements RoleNode<
+abstract public class JpaRoleNode extends JpaUuid implements RoleNode<
         JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
 
     @ManyToOne
