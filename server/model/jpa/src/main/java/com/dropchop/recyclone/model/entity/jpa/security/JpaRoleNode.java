@@ -19,10 +19,14 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_role_node")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
-abstract public class JpaRoleNode extends JpaUuid implements RoleNode<
+public class JpaRoleNode extends JpaUuid implements RoleNode<
         JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
+
+    @Column(name = "target", nullable = false)
+    private String target;
+
+    @Column(name = "target_id")
+    private String targetId;
 
     @ManyToOne
     @JoinColumn(name = "fk_role_node_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "security_role_node_parent_role_node_fk"))

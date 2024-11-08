@@ -14,6 +14,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_role_node_permission")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("Instance")
 public class JpaRoleNodePermission extends JpaUuid implements RoleNodePermission<
         JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
 

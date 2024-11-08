@@ -15,6 +15,12 @@ public interface RoleNode<
         TDT extends TitleDescriptionTranslation
         > extends Model {
 
+    String getTarget();
+    void setTarget(String target);
+
+    String getTargetId();
+    void setTargetId(String targetId);
+
     RN getParent();
     void setParent(RN parent);
 
@@ -26,5 +32,7 @@ public interface RoleNode<
 
     String getEntityUuid();
     void setEntityUuid(String entityUuid);
+
+
 
 }
