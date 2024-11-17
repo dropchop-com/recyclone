@@ -35,9 +35,10 @@ public class JpaRoleNode extends JpaUuid implements RoleNode<
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "roleNode")
     private List<JpaRoleNodePermission> roleNodePermissions;
 
+    @Column(name = "entity")
     private String entity;
 
-    private String entityUuid;
-
+    @Column(name = "entity_id")
+    private String entityId;
 
 }

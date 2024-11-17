@@ -18,11 +18,18 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class RoleNode extends DtoId implements com.dropchop.recyclone.model.api.security.RoleNode<
         Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
 
+    //target info
     private String target;
     private String targetId;
+
+    //parent node
     private RoleNode parent;
+
+    //permissions set for role node
     private List<RoleNodePermission> roleNodePermissions;
+
+    //db entity instance info
     private String entity;
-    private String entityUuid;
+    private String entityId;
 
 }

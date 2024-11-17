@@ -16,12 +16,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
+import java.util.UUID;
+
 /**
  * @author Armando Ota <armando.ota@dropchop.com>
  */
 @Getter
 @ApplicationScoped
-public class RoleNodePermissionMapperProvider extends RecycloneMapperProvider<RoleNodePermission, JpaRoleNodePermission, String> {
+public class RoleNodePermissionMapperProvider extends RecycloneMapperProvider<RoleNodePermission, JpaRoleNodePermission, UUID> {
 
   @Inject
   RoleNodePermissionRepository repository;

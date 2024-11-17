@@ -39,7 +39,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, String>
+public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, UUID>
   implements com.dropchop.recyclone.service.api.security.RoleNodeService {
 
   @Inject
@@ -57,7 +57,7 @@ public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, Stri
   }
 
   @Override
-  public FilteringMapperProvider<RoleNode, JpaRoleNode, String> getMapperProvider() {
+  public FilteringMapperProvider<RoleNode, JpaRoleNode, UUID> getMapperProvider() {
     return mapperProvider;
   }
 
