@@ -6,7 +6,6 @@ import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.dto.invoke.DummyQueryParams;
@@ -90,5 +89,13 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   @Override
   public Result<Dummy> esSearch(DummyQueryParams params) {
     return service.esSearch();
+  }
+
+  @Override
+  public List<Dummy> esSave(List<Dummy> params) { return service.esSave(); }
+
+  @Override
+  public List<Dummy> esDelete(List<Dummy> params) {
+    return service.esDelete();
   }
 }

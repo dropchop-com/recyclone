@@ -19,7 +19,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.Response;
+
+import java.io.IOException;
+import java.util.List;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
@@ -63,16 +65,28 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     return new Result<>("my-query-jpa-blaze");
   }
 
+  @Override
   public Result<Dummy> esSearch() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
     try {
-      String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
-      Response result = elasticRepository.search(json);
-      log.info("response is: [{}]", result.toString());
-      return null;
-    } catch (Exception e) {
+      List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
+      return new Result<Dummy>().toSuccess(results, results.size());
+    } catch (ServiceException | IOException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
+  }
+
+  @Override
+  public List<Dummy> esSave() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+    List<Dummy> results = context.getData();
+    return elasticRepository.save(results);
+  }
+
+  @Override
+  public List<Dummy> esDelete() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+    return elasticRepository.delete(context.getData());
   }
 }

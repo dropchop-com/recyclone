@@ -2,31 +2,44 @@ package com.dropchop.recyclone.quarkus.it.repo.es;
 
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
+import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.elasticsearch.client.RestClient;
 
 import java.util.Map;
 
 @ApplicationScoped
 public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
 
-  Class<Dummy> rootClass = Dummy.class;
+  @Inject
+  ObjectMapper objectMapper;
+
+  @Inject
+  RestClient elasticsearchClient;
+
+  @Inject
+  ElasticQueryMapper queryMapper;
 
   @Override
   public Class<Dummy> getRootClass() {
-    return rootClass;
+    return Dummy.class;
   }
 
   @Override
-  protected Map<String, Object> convertEntityToMap(Dummy entity) {
-    return Map.of(
-      "code", entity.getCode(),
-      "title", entity.getTitle(),
-      "description", entity.getDescription(),
-      "lang", entity.getLang(),
-      "created", entity.getCreated().toString(),
-      "modified", entity.getModified().toString(),
-      "deactivated", entity.getDeactivated() != null ? entity.getDeactivated().toString() : null
-    );
+  protected ElasticQueryMapper getElasticQueryMapper() {
+    return queryMapper;
+  }
+
+  @Override
+  protected ObjectMapper getObjectMapper() {
+    return objectMapper;
+  }
+
+  @Override
+  protected RestClient getElasticsearchClient() {
+    return elasticsearchClient;
   }
 
   @Override
@@ -37,10 +50,5 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
     dummy.setDescription((String) source.get("description"));
     dummy.setLang((String) source.get("lang"));
     return dummy;
-  }
-
-  @Override
-  protected String getEntityId(Dummy entity) {
-    return entity.getCode();
   }
 }

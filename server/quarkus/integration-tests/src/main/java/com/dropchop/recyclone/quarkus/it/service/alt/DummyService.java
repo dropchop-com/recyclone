@@ -12,20 +12,16 @@ import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
-import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.Response;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -73,26 +69,23 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
     try {
-      String json = objectMapper.writeValueAsString(ElasticQueryMapper.elasticQueryMapper(queryParams));
-
-      Response response = elasticRepository.search(json);
-      log.info("Response from Elasticsearch: [{}]", response.toString());
-
-      ElasticSearchResult<Dummy> searchResult = objectMapper.readValue(
-        response.getEntity().getContent(),
-        new TypeReference<>() {
-        }
-      );
-
-      List<Dummy> results = searchResult.getHits().getHits().stream()
-        .map(ElasticSearchResult.Hit::getSource)
-        .collect(Collectors.toList());
-
+      List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
       return new Result<Dummy>().toSuccess(results, results.size());
-    } catch (IOException e) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Error processing the Elasticsearch response!", e);
-    } catch (Exception e) {
+    } catch (ServiceException | IOException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
+  }
+
+  @Override
+  public List<Dummy> esSave() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+
+    return elasticRepository.save(context.getData());
+  }
+
+  @Override
+  public List<Dummy> esDelete() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+    return elasticRepository.delete(context.getData());
   }
 }

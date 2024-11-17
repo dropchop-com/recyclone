@@ -11,22 +11,43 @@ import java.util.List;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ElasticSearchResult<T> {
+
   @JsonProperty("hits")
   private Hits<T> hits;
 
   @Setter
   @Getter
+  @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Hits<T> {
+
+    @JsonProperty("total")
+    private Total total;
+
+    @JsonProperty("max_score")
+    private Float maxScore;
+
     @JsonProperty("hits")
     private List<Hit<T>> hits;
-
   }
 
   @Setter
   @Getter
+  public static class Total {
+    @JsonProperty("value")
+    private int value;
+
+    @JsonProperty("relation")
+    private String relation;
+  }
+
+  @Setter
+  @Getter
+  @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Hit<T> {
     @JsonProperty("_source")
     private T source;
 
+    @JsonProperty("sort")
+    private List<Object> sort;
   }
 }

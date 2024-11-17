@@ -64,7 +64,7 @@ public class RestProcessor {
       "jakarta.ws.rs.DELETE"
   );
 
-  private static final DotName JUTIL_COLLECTION = DotName.createSimple(
+  private static final DotName JAVA_UTIL_COLLECTION = DotName.createSimple(
       "java.util.Collection"
   );
 
@@ -246,7 +246,7 @@ public class RestProcessor {
     if (!method.hasAnnotation(GET_ANNOTATION)) {
       List<Type> types = method.parameterTypes();
       if (types.size() != 1) {
-        log.warn("Contract violation: The rest method should have only one parameter class [{}] ");
+        log.warnf("Contract violation: The rest method should have only one parameter class [%s]", method);
       } else {
         Type methodParameterType = types.getFirst();
         methodParamClass = methodParameterType.name();
@@ -400,7 +400,7 @@ public class RestProcessor {
         if (List.class.getName().equals(methodParamClass.toString())
             && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
           return RestMethod.Action.CREATE;
-        } else if (isOrSubtype(JUTIL_COLLECTION, methodParamClassInfo, indexView)
+        } else if (isOrSubtype(JAVA_UTIL_COLLECTION, methodParamClassInfo, indexView)
             && isOrSubtype(ANNO_DATA_CLASS, dataClassInfo, indexView)) {
           return RestMethod.Action.CREATE;
         } else {
