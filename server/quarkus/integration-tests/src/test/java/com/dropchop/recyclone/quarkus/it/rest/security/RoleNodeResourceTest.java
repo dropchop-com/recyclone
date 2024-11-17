@@ -15,8 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.*;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,7 +90,7 @@ public class RoleNodeResourceTest {
       .and()
       .body(List.of(roleNode))
       .when()
-      .post("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE)
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE)
       .then()
       .statusCode(200)
       .extract()
@@ -108,7 +111,7 @@ public class RoleNodeResourceTest {
       .and()
       .body(List.of(roleNode))
       .when()
-      .post("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE)
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE)
       .then()
       .statusCode(200)
       .extract()
@@ -129,7 +132,7 @@ public class RoleNodeResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
-      .get("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE + "/" + UUID1)
+      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + "/" + UUID1)
       .then()
       .statusCode(200)
       .extract()
@@ -152,7 +155,7 @@ public class RoleNodeResourceTest {
       .and()
       .body(List.of(respRole))
       .when()
-      .put("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE)
+      .put("/api" + INTERNAL_SEGMENT + ROLE_NODE)
       .then()
       .statusCode(200)
       .extract()
@@ -169,7 +172,7 @@ public class RoleNodeResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
-      .get("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE + "/" + UUID1)
+      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + "/" + UUID1)
       .then()
       .statusCode(200)
       .extract()
@@ -197,7 +200,7 @@ public class RoleNodeResourceTest {
       .and()
       .body(List.of(node))
       .when()
-      .delete("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE)
+      .delete("/api" + INTERNAL_SEGMENT + ROLE_NODE)
       .then()
       .statusCode(200);
 
@@ -207,7 +210,7 @@ public class RoleNodeResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
-      .get("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE + "/" + UUID1)
+      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + "/" + UUID1)
       .then()
       .statusCode(200)
       .extract()
@@ -216,21 +219,106 @@ public class RoleNodeResourceTest {
   }
 
 
-  private List<Permission> prepPermissions(List<Permission> permissions) {
+  private Domain prepDomain() {
+
+    Action view = new Action();
+    view.setCode(Constants.Actions.VIEW);
+
+    Action create = new Action();;
+    create.setCode(Constants.Actions.CREATE);
+
+    Action update = new Action();;
+    update.setCode(Constants.Actions.UPDATE);
+
+    Action delete = new Action();;
+    delete.setCode(Constants.Actions.DELETE);
+
+    Domain domain = new Domain();
+    domain.setCode(DOMAIN_ACCOUNT);
+    domain.setLang("en");
+    domain.setTitle(DOMAIN_ACCOUNT);
+    domain.setActions(Set.of(view, create, update, delete));
+
+    List<Domain> domainsResult = given()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(domain))
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + DOMAIN)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Domain.class);
+    assertEquals(1, domainsResult.size());
+    Domain resultDomain = domainsResult.get(0);
+    assertEquals(4, resultDomain.getActions().size());
+
+    return resultDomain;
+  }
+
+
+  private List<Permission> prepPermissions() {
+
+    Permission permissionCreate = permissionOf(PERMISSION1, DOMAIN_ACCOUNT, Constants.Actions.CREATE);
+    Permission permissionUpdate = permissionOf(PERMISSION2, DOMAIN_ACCOUNT, Constants.Actions.UPDATE);
+    Permission permissionView = permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
+    Permission permissionDelete = permissionOf(PERMISSION4, DOMAIN_ACCOUNT, Constants.Actions.DELETE);
+
+    List<Permission> permissions = List.of(permissionCreate, permissionUpdate, permissionView, permissionDelete);
+
     List<Permission> permissionsResult = given()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic("admin1", "password")
       .and()
-      .body(List.of(permissions))
+      .body(permissions)
       .when()
-      .post("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.PERMISSION + "?c_level=2")
+      .post("/api" + INTERNAL_SEGMENT + PERMISSION + "?c_level=2")
       .then()
       .statusCode(200)
       .extract()
-      .body().jsonPath().getList(".", Permission.class);
+      .body().jsonPath().getList("data", Permission.class);
     assertEquals(permissions.size(), permissionsResult.size());
-    return permissionsResult;
+
+    return permissions;
+  }
+
+
+  private RoleNode prepRoleNode1() {
+    RoleNode roleNode = roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
+    List<RoleNode> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(roleNode))
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNode.class);
+    assertEquals(1, result.size());
+    return result.get(0);
+  }
+
+
+  private RoleNode getRoleNode2() {
+    List<RoleNode> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + "/" + UUID2)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNode.class);
+    assertTrue(result.isEmpty());
+    return result.get(0);
   }
 
 
@@ -238,13 +326,13 @@ public class RoleNodeResourceTest {
   @Order(40)
   public void addPermissionToRoleNode() {
 
-    //Store test permissions
-    Permission permissionCreate = permissionOf(PERMISSION1, DOMAIN_ACCOUNT, Constants.Actions.CREATE);
-    Permission permissionUpdate = permissionOf(PERMISSION2, DOMAIN_ACCOUNT, Constants.Actions.UPDATE);
-    Permission permissionView = permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
-    Permission permissionDelete = permissionOf(PERMISSION4, DOMAIN_ACCOUNT, Constants.Actions.DELETE);
+    Domain domain = this.prepDomain();
+    List<Permission> permissions = this.prepPermissions();
+    RoleNode roleNode1 = this.prepRoleNode1();
+    RoleNode roleNode2 = this.getRoleNode2();
 
-    //this.prepPermissions(List.of(permissionCreate, permissionUpdate, permissionView, permissionDelete));
+
+
 
 /*
 
@@ -253,7 +341,7 @@ public class RoleNodeResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
-      .get("/api/internal" + com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.ROLE_NODE + UUID1)
+      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + UUID1)
       .then()
       .statusCode(200)
       .extract()
