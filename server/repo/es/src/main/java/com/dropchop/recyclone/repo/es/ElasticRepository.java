@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.*;
 
 import jakarta.inject.Inject;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -37,7 +36,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
 
-  private QuerySearchResultListener<?> resultListener = new QuerySearchResultListener<>() {
+  private QuerySearchResultListener resultListener = new QuerySearchResultListener() {
     @Override
     public <S> void onResult(S result) {
       int i = 234;
@@ -45,7 +44,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     }
   };
 
-  public void setQuerySearchResultListener(QuerySearchResultListener<E> resultListener) {
+  public void setQuerySearchResultListener(QuerySearchResultListener resultListener) {
     this.resultListener = resultListener;
   }
 

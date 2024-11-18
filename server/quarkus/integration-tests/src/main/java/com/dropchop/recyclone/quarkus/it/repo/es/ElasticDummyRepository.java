@@ -11,8 +11,6 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RestClient;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Slf4j
@@ -51,7 +49,7 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
   @PostConstruct
   public void initialize() {
     // Adding a custom listener to log each search result
-    this.setQuerySearchResultListener(new QuerySearchResultListener<>() {
+    this.setQuerySearchResultListener(new QuerySearchResultListener() {
       @Override
       public <S> void onResult(S result) {
         log.info("Custom processing for result: {}", result);
