@@ -15,20 +15,26 @@ import lombok.Setter;
 @Entity
 @Table(name = "security_role_node_permission")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("Instance")
 public class JpaRoleNodePermission extends JpaUuid implements RoleNodePermission<
-        JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
+  JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
 
-    @ManyToOne
-    @JoinColumn(name = "fk_role_node_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "security_role_node_permission_role_node_fk"))
-    private JpaRoleNode roleNode;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "fk_role_node_uuid",
+    referencedColumnName = "uuid",
+    foreignKey = @ForeignKey(name = "security_role_node_permission_security_role_node_fk"),
+    nullable = false)
+  private JpaRoleNode roleNode;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_permission_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "security_role_node_permission_permission_fk"))
-    private JpaPermission permission;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "fk_permission_uuid",
+    referencedColumnName = "uuid",
+    foreignKey = @ForeignKey(name = "security_role_node_permission_security_permission_fk"),
+    nullable = false)
+  private JpaPermission permission;
 
-    @Column(name="allowed")
-    private Boolean allowed;
+  @Column(name = "allowed", nullable = false)
+  private Boolean allowed;
 
 }

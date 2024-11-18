@@ -2,11 +2,10 @@ package com.dropchop.recyclone.quarkus.it.rest.security;
 
 
 import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.dto.security.Action;
-import com.dropchop.recyclone.model.dto.security.Domain;
-import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.dto.security.RoleNode;
+import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
+import com.dropchop.recyclone.model.dto.security.*;
 import com.dropchop.recyclone.rest.api.MediaType;
+import com.google.common.base.Strings;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.MethodOrderer;
@@ -17,8 +16,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.model.api.rest.Constants.Paths.SEARCH_SEGMENT;
 import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.*;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,7 +77,18 @@ public class RoleNodeResourceTest {
     return permission;
   }
 
-
+  public static RoleNodePermission roleNodePermissionOf(String uuid,
+                                                        Permission permission,
+                                                        Boolean allowed,
+                                                        RoleNode parent
+  ) {
+    RoleNodePermission roleNodePermission = new RoleNodePermission();
+    roleNodePermission.setUuid(Strings.isNullOrEmpty(uuid) ? UUID.randomUUID().toString() : uuid);
+    roleNodePermission.setRoleNode(parent);
+    roleNodePermission.setPermission(permission);
+    roleNodePermission.setAllowed(allowed);
+    return roleNodePermission;
+  }
 
   @Test
   @Order(10)
@@ -261,12 +273,12 @@ public class RoleNodeResourceTest {
 
   private List<Permission> prepPermissions() {
 
+    Permission permissionView = permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
     Permission permissionCreate = permissionOf(PERMISSION1, DOMAIN_ACCOUNT, Constants.Actions.CREATE);
     Permission permissionUpdate = permissionOf(PERMISSION2, DOMAIN_ACCOUNT, Constants.Actions.UPDATE);
-    Permission permissionView = permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
     Permission permissionDelete = permissionOf(PERMISSION4, DOMAIN_ACCOUNT, Constants.Actions.DELETE);
 
-    List<Permission> permissions = List.of(permissionCreate, permissionUpdate, permissionView, permissionDelete);
+    List<Permission> permissions = List.of(permissionView, permissionCreate, permissionUpdate, permissionDelete);
 
     List<Permission> permissionsResult = given()
       .contentType(ContentType.JSON)
@@ -322,36 +334,103 @@ public class RoleNodeResourceTest {
   }
 
 
+  private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions) {
+    return permissions.stream()
+      .map(p -> roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node))
+      .toList();
+  }
+
   @Test
   @Order(40)
   public void addPermissionToRoleNode() {
 
-    Domain domain = this.prepDomain();
+    this.prepDomain();
     List<Permission> permissions = this.prepPermissions();
     RoleNode roleNode1 = this.prepRoleNode1();
     RoleNode roleNode2 = this.getRoleNode2();
 
+    List<RoleNodePermission> roleNodePermissions1 = this.prepRoleNodePermissions(roleNode1, permissions);
+    List<RoleNodePermission> roleNodePermissions2 = this.prepRoleNodePermissions(roleNode2, List.of(permissions.get(0)));
 
 
-
-/*
-
-    List<RoleNode> result = given()
+    //store all permissions on role node
+    List<RoleNodePermission> result = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
-      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + UUID1)
+      .and()
+      .body(roleNodePermissions1)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
       .then()
       .statusCode(200)
       .extract()
-      .body().jsonPath().getList("data", RoleNode.class);
-    RoleNode respRole = result.get(0);
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(4, result.size());
 
-*/
+
+    //store one permissions on role node
+    result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(roleNodePermissions2)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(1, result.size());
 
 
   }
+
+
+  @Test
+  @Order(50)
+  public void listRoleNodePermissions() {
+
+    RoleNodePermissionParams params = new RoleNodePermissionParams();
+    params.setRoleNodeId(UUID1);
+
+    List<RoleNodePermission> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION + SEARCH_SEGMENT)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(4, result.size());
+
+    params.setRoleNodeId(UUID2);
+
+    result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION + SEARCH_SEGMENT)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(1, result.size());
+  }
+
+
 }
 
 

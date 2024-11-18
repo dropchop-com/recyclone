@@ -17,5 +17,6 @@ import java.util.UUID;
 @SuperBuilder
 public class RoleNodePermissionParams extends IdentifierParams {
 
+  private String roleNodeId;
 
 }

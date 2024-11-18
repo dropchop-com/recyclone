@@ -26,6 +26,7 @@ import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Set;
@@ -37,6 +38,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 /**
  * @author Armando Ota <armando.ota@dropchop.com>
  */
+@Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, UUID>
@@ -47,31 +49,5 @@ public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, UUID
 
   @Inject
   RoleNodeRepository repository;
-
-  @Inject
-  CommonExecContextContainer execContextContainer;
-
-  @Override
-  public RoleNodeRepository getRepository() {
-    return repository;
-  }
-
-  @Override
-  public FilteringMapperProvider<RoleNode, JpaRoleNode, UUID> getMapperProvider() {
-    return mapperProvider;
-  }
-
-  @Transactional
-  public Result<RoleNode> addPermissions(RoleNodeParams params) {
-    Result<RoleNode> result = new Result<>();
-    return result;
-  }
-
-  @Transactional
-  public Result<RoleNode> removePermissions(RoleNodeParams params) {
-    Result<RoleNode> result = new Result<>();
-    return result;
-  }
-
 
 }

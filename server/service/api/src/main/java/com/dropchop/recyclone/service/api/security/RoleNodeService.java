@@ -18,7 +18,4 @@ public interface RoleNodeService extends CrudService<RoleNode> {
     return Constants.Domains.Security.ROLE;
   }
 
-
-  Result<RoleNode> addPermissions(RoleNodeParams params);
-  Result<RoleNode> removePermissions(RoleNodeParams params);
 }

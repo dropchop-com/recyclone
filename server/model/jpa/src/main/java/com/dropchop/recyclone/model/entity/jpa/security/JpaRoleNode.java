@@ -29,7 +29,10 @@ public class JpaRoleNode extends JpaUuid implements RoleNode<
     private String targetId;
 
     @ManyToOne
-    @JoinColumn(name = "fk_role_node_uuid", referencedColumnName = "uuid", foreignKey = @ForeignKey(name = "security_role_node_parent_role_node_fk"))
+    @JoinColumn(name = "fk_role_node_uuid",
+      referencedColumnName = "uuid",
+      foreignKey = @ForeignKey(name = "security_role_node_parent_role_node_fk")
+    )
     private JpaRoleNode parent;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "roleNode")
