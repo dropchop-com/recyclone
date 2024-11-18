@@ -5,8 +5,9 @@ import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.Constants.Domains;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
+import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.RoleNode;
+import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.rest.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.api.MediaType;
 import jakarta.ws.rs.*;
@@ -19,70 +20,70 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 /**
  * @author Armando Ota <armando.ota@dropchop.com>
  */
-@Path(Paths.Security.ROLE_NODE)
-@DynamicExecContext(value = RoleNodeParams.class, internal = true)
+@Path(Paths.Security.ROLE_NODE_PERMISSION)
+@DynamicExecContext(value = RoleNodePermissionParams.class, internal = true)
 @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.VIEW)
-public interface RoleNodeResource {
+public interface RoleNodePermissionResource {
 
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<RoleNode> get();
+  Result <RoleNodePermission> get();
 
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  List<RoleNode> getRest();
+  List <RoleNodePermission> getRest();
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<RoleNode> getById(@PathParam("id") UUID id);
+  Result <RoleNodePermission> getById(@PathParam("id") UUID id);
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON)
-  List<RoleNode> getByIdRest(@PathParam("id") UUID id);
+  List <RoleNodePermission> getByIdRest(@PathParam("id") UUID id);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<RoleNode> search(RoleNodeParams params);
+  Result <RoleNodePermission> search(RoleNodePermissionParams params);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  List<RoleNode> searchRest(RoleNodeParams params);
+  List <RoleNodePermission> searchRest(RoleNodePermissionParams params);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.CREATE)
-  Result<RoleNode> create(List<RoleNode> objects);
+  Result <RoleNodePermission> create(List <RoleNodePermission> objects);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.CREATE)
-  List<RoleNode> createRest(List<RoleNode> roles);
+  List <RoleNodePermission> createRest(List <RoleNodePermission> objects);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.UPDATE)
-  Result<RoleNode> update(List<RoleNode> objects);
+  Result <RoleNodePermission> update(List <RoleNodePermission> objects);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.UPDATE)
-  List<RoleNode> updateRest(List<RoleNode> roles);
+  List <RoleNodePermission> updateRest(List <RoleNodePermission> roles);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.DELETE)
-  Result<RoleNode> delete(List<RoleNode> objects);
+  Result <RoleNodePermission> delete(List <RoleNodePermission> objects);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.DELETE)
-  List<RoleNode> deleteRest(List<RoleNode> roles);
-
+  List <RoleNodePermission> deleteRest(List <RoleNodePermission> objects);
+  
 }
 

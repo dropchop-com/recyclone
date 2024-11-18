@@ -34,17 +34,4 @@ public class RoleNodeMapperProvider extends RecycloneMapperProvider<RoleNode, Jp
   @Inject
   RoleNodeToJpaMapper toEntityMapper;
 
-  @Inject
-  MapperSubTypeConfig mapperSubTypeConfig;
-
-
-  @Override
-  public MappingContext getMappingContextForModify() {
-    MappingContext context = super.getMappingContextForModify();
-    context
-        .createWith(
-            new EntityPolymorphicCreateFactory<>(getRepository(), getMapperSubTypeConfig())
-        );
-    return context;
-  }
 }

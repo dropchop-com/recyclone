@@ -61,23 +61,4 @@ public class RoleNodeResource extends ClassicRestByIdResource<RoleNode, RoleNode
     return service.update(roles);
   }
 
-  @Override
-  public Result<RoleNode> addPermissions(RoleNodeParams params) {
-    return service.addPermissions(params);
-  }
-
-  @Override
-  public List<RoleNode> addPermissionsRest(RoleNodeParams params) {
-    return unwrap(addPermissions(params));
-  }
-
-  @Override
-  public Result<RoleNode> removePermissions(RoleNodeParams params) {
-    return service.removePermissions(params);
-  }
-
-  @Override
-  public List<RoleNode> removePermissionsRest(RoleNodeParams params) {
-    return unwrap(removePermissions(params));
-  }
 }

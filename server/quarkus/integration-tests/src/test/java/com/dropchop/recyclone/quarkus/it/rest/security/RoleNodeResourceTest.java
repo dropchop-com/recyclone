@@ -317,7 +317,7 @@ public class RoleNodeResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
-    assertTrue(result.isEmpty());
+    assertEquals(1, result.size());
     return result.get(0);
   }
 
