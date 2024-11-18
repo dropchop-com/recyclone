@@ -7,6 +7,7 @@ import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.es.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 import jakarta.inject.Inject;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -34,6 +36,18 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
+
+  private QuerySearchResultListener<?> resultListener = new QuerySearchResultListener<>() {
+    @Override
+    public <S> void onResult(S result) {
+      int i = 234;
+      log.info("i equals 234");
+    }
+  };
+
+  public void setQuerySearchResultListener(QuerySearchResultListener<E> resultListener) {
+    this.resultListener = resultListener;
+  }
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
@@ -235,7 +249,12 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
           hasMoreHits = false;
         } else {
           searchAfterValues = getSearchAfterValues(hits);
-          allHits.addAll(hits.stream().map(ElasticSearchResult.Hit::getSource).toList());
+          for(ElasticSearchResult.Hit<S> hit : hits) {
+            S result = hit.getSource();
+            allHits.add(result);
+
+            resultListener.onResult(result);
+          }
         }
       } catch (ServiceException e) {
         throw new ServiceException(
