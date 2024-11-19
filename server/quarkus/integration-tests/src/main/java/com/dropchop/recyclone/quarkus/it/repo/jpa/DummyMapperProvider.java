@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa;
 
+import com.dropchop.recyclone.quarkus.it.mapper.jpa.DummyMapToDtoMapper;
 import com.dropchop.recyclone.quarkus.it.mapper.jpa.DummyToDtoMapper;
 import com.dropchop.recyclone.quarkus.it.mapper.jpa.DummyToJpaMapper;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -26,4 +27,7 @@ public class DummyMapperProvider extends FilteringMapperProvider<Dummy, JpaDummy
 
   @Inject
   DummyToJpaMapper toEntityMapper;
+
+  @Inject
+  DummyMapToDtoMapper mapToDtoMapper;
 }

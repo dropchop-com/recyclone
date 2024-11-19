@@ -48,7 +48,6 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
 
   @PostConstruct
   public void initialize() {
-    // Adding a custom listener to log each search result
     this.setQuerySearchResultListener(new QuerySearchResultListener() {
       @Override
       public <S> void onResult(S result) {

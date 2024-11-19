@@ -11,7 +11,7 @@ import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
-import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
+import com.dropchop.recyclone.repo.es.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -69,8 +71,21 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
     try {
+      List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
+      elasticRepository.setQuerySearchResultListener(new QuerySearchResultListener() {
+
+        @Override
+        public <S> void onResult(S result) {
+          try {
+            actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
+          } catch (ServiceException e) {
+            throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
+          }
+        }
+      });
+
       List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
-      return new Result<Dummy>().toSuccess(results, results.size());
+      return new Result<Dummy>().toSuccess(actualResults, actualResults.size());
     } catch (ServiceException | IOException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
