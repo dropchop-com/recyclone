@@ -11,8 +11,6 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RestClient;
 
-import java.util.Map;
-
 @Slf4j
 @ApplicationScoped
 public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
@@ -54,15 +52,5 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
         log.info("Custom processing for result: {}", result);
       }
     });
-  }
-
-  @Override
-  protected Dummy convertMapToEntity(Map<String, Object> source) {
-    Dummy dummy = new Dummy();
-    dummy.setCode((String) source.get("code"));
-    dummy.setTitle((String) source.get("title"));
-    dummy.setDescription((String) source.get("description"));
-    dummy.setLang((String) source.get("lang"));
-    return dummy;
   }
 }

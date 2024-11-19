@@ -8,8 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 import org.elasticsearch.client.RestClient;
 
-import java.util.Map;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
  */
@@ -18,11 +16,6 @@ import java.util.Map;
 public class CountryRepository extends ElasticRepository<EsCountry, String> {
 
   Class<EsCountry> rootClass = EsCountry.class;
-
-  @Override
-  protected EsCountry convertMapToEntity(Map<String, Object> source) {
-    return null;
-  }
 
   @Override
   protected ElasticQueryMapper getElasticQueryMapper() {

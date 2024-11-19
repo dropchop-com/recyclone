@@ -182,11 +182,18 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     try {
       Request request = new Request("GET", "/" + getIndexName() + "/_doc/" + id.toString());
       Response response = getElasticsearchClient().performRequest(request);
+      E result = null;
 
       if (response.getStatusLine().getStatusCode() == 200) {
         String json = EntityUtils.toString(response.getEntity());
-        Map<String, Object> sourceMap = getObjectMapper().readValue(json, new TypeReference<>() {});
-        return convertMapToEntity(sourceMap);
+        ElasticSearchResult<E> searchResult = getObjectMapper().readValue(json, new TypeReference<>() {});
+        List<ElasticSearchResult.Hit<E>> results = searchResult.getHits().getHits();
+
+        for(ElasticSearchResult.Hit<E> hit : results) {
+          result = hit.getSource();
+        }
+
+        return result;
       } else if (response.getStatusLine().getStatusCode() == 404) {
         return null;
       } else {
@@ -344,8 +351,6 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   private <S> List<Object> getSearchAfterValues(List<ElasticSearchResult.Hit<S>> hits) {
     return hits.isEmpty() ? null : hits.getLast().getSort();
   }
-
-  protected abstract E convertMapToEntity(Map<String, Object> source);
 
   protected abstract ElasticQueryMapper getElasticQueryMapper();
 
