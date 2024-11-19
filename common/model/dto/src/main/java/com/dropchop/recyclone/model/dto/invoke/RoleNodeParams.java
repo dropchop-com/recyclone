@@ -17,6 +17,26 @@ import java.util.UUID;
 @SuperBuilder
 public class RoleNodeParams extends IdentifierParams {
 
-  private List<UUID> permissionUuids;
+  //Defines entity type
+  private String entity;
+
+  //Defines entity id;
+  private String entityId;
+
+  //Defines target group
+  private String target;
+
+  //Defines target group id
+  private String targetId;
+
+  //Defines how many levels up on hierarchy
+  private Integer maxParentInstanceLevel;
+
+  public boolean isEmpty() {
+    return (this.entity == null || this.entity.isBlank())
+        && (this.entityId == null || this.entityId.isBlank())
+        && (this.target == null || this.target.isBlank())
+        && (this.targetId == null || this.targetId.isBlank());
+  }
 
 }
