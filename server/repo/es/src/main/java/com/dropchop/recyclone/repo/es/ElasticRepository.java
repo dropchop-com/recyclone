@@ -39,8 +39,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
   private QuerySearchResultListener resultListener = new QuerySearchResultListener() {
     @Override
     public <S> void onResult(S result) {
-      int i = 234;
-      log.info("i equals 234");
+
     }
   };
 
