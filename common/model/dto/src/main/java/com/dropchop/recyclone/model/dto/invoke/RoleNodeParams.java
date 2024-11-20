@@ -32,6 +32,9 @@ public class RoleNodeParams extends IdentifierParams {
   //Defines how many levels up on hierarchy
   private Integer maxParentInstanceLevel;
 
+  //Defines if you want to get back denied permissions.
+  private Boolean all;
+
   public boolean isEmpty() {
     return (this.entity == null || this.entity.isBlank())
         && (this.entityId == null || this.entityId.isBlank())

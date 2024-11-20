@@ -20,7 +20,7 @@ public interface SecurityLoadingService {
   /**
    * Resolves Apache Shiro permissions for entity and/or target defined by exactly 1 role node!
    * @param params - parameters with entity and/or target data
-   * @return list of resolved role node permissions
+   * @return list of resolved apache shiro permissions
    */
   List<Permission> loadPermissions(RoleNodeParams params);
 
