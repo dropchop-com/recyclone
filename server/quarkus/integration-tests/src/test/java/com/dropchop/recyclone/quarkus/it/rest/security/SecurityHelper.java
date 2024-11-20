@@ -47,6 +47,8 @@ public class SecurityHelper {
 
   public static RoleNodePermission roleNodePermissionOf(String uuid,
                                                         Permission permission,
+                                                        String target,
+                                                        String targetId,
                                                         Boolean allowed,
                                                         RoleNode parent,
                                                         boolean asTemplate
@@ -56,6 +58,10 @@ public class SecurityHelper {
     roleNodePermission.setRoleNode(parent);
     roleNodePermission.setPermission(permission);
     roleNodePermission.setAllowed(allowed);
+    if (roleNodePermission instanceof RoleNodePermissionTemplate) {
+      ((RoleNodePermissionTemplate) roleNodePermission).setTarget(target);
+      ((RoleNodePermissionTemplate) roleNodePermission).setTargetId(targetId);
+    }
     return roleNodePermission;
   }
 

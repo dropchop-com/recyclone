@@ -129,9 +129,9 @@ public class SecurityLoadingTest {
   }
 
 
-  private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions, boolean asTemplate) {
+  private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions, String target, String targetId,  boolean asTemplate) {
     return permissions.stream()
-      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node, asTemplate))
+      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, target, targetId, true, node, asTemplate))
       .toList();
   }
 
@@ -146,8 +146,8 @@ public class SecurityLoadingTest {
     RoleNode roleNodeOrgTemplate = SecurityHelper.roleNodeOf(ORG_TEMPLATE_ROLE_NODE_ID, ORG_ENTITY, null, null,null);
     RoleNode roleNodeOrgUnitTemplate = SecurityHelper.roleNodeOf(ORG_UNIT_TEMPLATE_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, null,null);
 
-    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(roleNodeOrgTemplate, permissions, true);
-    List<RoleNodePermission> roleNodeOrgUnitPermissions = this.prepRoleNodePermissions(roleNodeOrgUnitTemplate, permissions, true);
+    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(roleNodeOrgTemplate, permissions, ORG_ENTITY, null, true);
+    List<RoleNodePermission> roleNodeOrgUnitPermissions = this.prepRoleNodePermissions(roleNodeOrgUnitTemplate, permissions, ORG_UNIT_ENTITY, null, true);
 
     //store templates for org role node
     List<RoleNode> resultOrg = given()

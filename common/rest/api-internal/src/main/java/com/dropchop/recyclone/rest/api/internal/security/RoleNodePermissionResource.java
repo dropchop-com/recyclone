@@ -22,67 +22,67 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @Path(Paths.Security.ROLE_NODE_PERMISSION)
 @DynamicExecContext(value = RoleNodePermissionParams.class, internal = true)
 @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.VIEW)
-public interface RoleNodePermissionResource {
+public interface RoleNodePermissionResource<P extends RoleNodePermission> {
 
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result <RoleNodePermission> get();
+  Result <P> get();
 
   @GET
   @Path("")
   @Produces(MediaType.APPLICATION_JSON)
-  List <RoleNodePermission> getRest();
+  List <P> getRest();
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result <RoleNodePermission> getById(@PathParam("id") UUID id);
+  Result <P> getById(@PathParam("id") UUID id);
 
   @GET
   @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
   @Produces(MediaType.APPLICATION_JSON)
-  List <RoleNodePermission> getByIdRest(@PathParam("id") UUID id);
+  List <P> getByIdRest(@PathParam("id") UUID id);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result <RoleNodePermission> search(RoleNodePermissionParams params);
+  Result <P> search(RoleNodePermissionParams params);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  List <RoleNodePermission> searchRest(RoleNodePermissionParams params);
+  List <P> searchRest(RoleNodePermissionParams params);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.CREATE)
-  Result <RoleNodePermission> create(List <RoleNodePermission> objects);
+  Result <P> create(List <P> objects);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.CREATE)
-  List <RoleNodePermission> createRest(List <RoleNodePermission> objects);
+  List <P> createRest(List <P> objects);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.UPDATE)
-  Result <RoleNodePermission> update(List <RoleNodePermission> objects);
+  Result <P> update(List <P> objects);
 
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.UPDATE)
-  List <RoleNodePermission> updateRest(List <RoleNodePermission> roles);
+  List <P> updateRest(List <P> roles);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.DELETE)
-  Result <RoleNodePermission> delete(List <RoleNodePermission> objects);
+  Result <P> delete(List <P> objects);
 
   @DELETE
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.DELETE)
-  List <RoleNodePermission> deleteRest(List <RoleNodePermission> objects);
+  List <P> deleteRest(List <P> objects);
   
 }
 

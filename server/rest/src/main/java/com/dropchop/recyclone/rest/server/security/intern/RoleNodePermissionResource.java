@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class RoleNodePermissionResource extends ClassicRestByIdResource <RoleNodePermission, RoleNodePermissionParams> implements
-    com.dropchop.recyclone.rest.api.internal.security.RoleNodePermissionResource {
+    com.dropchop.recyclone.rest.api.internal.security.RoleNodePermissionResource<RoleNodePermission> {
 
   @Inject
   RoleNodePermissionService service;
@@ -47,17 +47,17 @@ public class RoleNodePermissionResource extends ClassicRestByIdResource <RoleNod
   };
 
   @Override
-  public Result <RoleNodePermission> create(List <RoleNodePermission> roles) {
-    return service.create(roles);
+  public Result <RoleNodePermission> create(List <RoleNodePermission> permissions) {
+    return service.create(permissions);
   }
 
   @Override
-  public Result <RoleNodePermission> delete(List <RoleNodePermission> roles) {
-    return service.delete(roles);
+  public Result <RoleNodePermission> delete(List <RoleNodePermission> permissions) {
+    return service.delete(permissions);
   }
 
   @Override
-  public Result <RoleNodePermission> update(List <RoleNodePermission> roles) {
-    return service.update(roles);
+  public Result <RoleNodePermission> update(List <RoleNodePermission> permissions) {
+    return service.update(permissions);
   }
 }
