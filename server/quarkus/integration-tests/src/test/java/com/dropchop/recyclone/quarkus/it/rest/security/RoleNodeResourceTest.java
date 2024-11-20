@@ -293,7 +293,7 @@ public class RoleNodeResourceTest {
 
   private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions) {
     return permissions.stream()
-      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node))
+      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node, false))
       .toList();
   }
 

@@ -7,9 +7,9 @@ import com.dropchop.recyclone.model.dto.security.*;
 import com.dropchop.recyclone.rest.api.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
-import org.junit.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
@@ -129,16 +129,16 @@ public class SecurityLoadingTest {
   }
 
 
-  private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions) {
+  private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions, boolean asTemplate) {
     return permissions.stream()
-      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node))
+      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node, asTemplate))
       .toList();
   }
 
 
   @Test
   @Order(10)
-  public void testTemplateData() {
+  public void testLoadTemplatePermissions() {
 
     this.prepDomain();
     List<Permission> permissions = this.prepPermissions();
@@ -146,8 +146,8 @@ public class SecurityLoadingTest {
     RoleNode roleNodeOrgTemplate = SecurityHelper.roleNodeOf(ORG_TEMPLATE_ROLE_NODE_ID, ORG_ENTITY, null, null,null);
     RoleNode roleNodeOrgUnitTemplate = SecurityHelper.roleNodeOf(ORG_UNIT_TEMPLATE_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, null,null);
 
-    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(roleNodeOrgTemplate, permissions);
-    List<RoleNodePermission> roleNodeOrgUnitPermissions = this.prepRoleNodePermissions(roleNodeOrgUnitTemplate, permissions);
+    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(roleNodeOrgTemplate, permissions, true);
+    List<RoleNodePermission> roleNodeOrgUnitPermissions = this.prepRoleNodePermissions(roleNodeOrgUnitTemplate, permissions, true);
 
     //store templates for org role node
     List<RoleNode> resultOrg = given()
@@ -236,7 +236,7 @@ public class SecurityLoadingTest {
       .and()
       .body(orgParams)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + PERMISSION_LIST)
+      .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT)
       .then()
       .statusCode(200)
       .extract()
@@ -254,7 +254,7 @@ public class SecurityLoadingTest {
       .and()
       .body(orgUnitParams)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + PERMISSION_LIST)
+      .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT)
       .then()
       .statusCode(200)
       .extract()

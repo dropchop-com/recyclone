@@ -213,6 +213,14 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
   }
 
 
+  private boolean isInstanceOnlyRoleNode(JpaRoleNode loadedRoleNode) {
+    return loadedRoleNode.getRoleNodePermissions().stream()
+      .filter(p -> p instanceof JpaRoleNodePermissionTemplate)
+      .findFirst()
+      .orElse(null) != null;
+  }
+
+
   @Transactional
   @Override
   public List<RoleNodePermission> loadRoleNodePermissions(RoleNodeParams roleNodeParams) {
@@ -222,22 +230,16 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
     //Load role node.
     JpaRoleNode loadedRoleNode = this.loadRoleNode(roleNodeParams, mapContext);
-    if (loadedRoleNode.getParent() == null) {
+    if (this.isInstanceOnlyRoleNode(loadedRoleNode)) {
       //return what we have for root node
-      List<JpaRoleNodePermission> roleNodePermissions = loadedRoleNode.getRoleNodePermissions().stream()
-        .filter(p -> {
-          if (p instanceof JpaRoleNodePermissionTemplate) {
-            return false;
-          }
-          return true;
-        }).toList();
-      return this.roleNodePermissionMapperProvider.getToDtoMapper().toDtos(roleNodePermissions, mapContext);
+      return this.roleNodePermissionMapperProvider.getToDtoMapper().toDtos(loadedRoleNode.getRoleNodePermissions(), mapContext);
     }
     //execute magic of hierarchy permission resolving
     Collection<JpaRoleNodePermission> resolvedPermissions = this.resolveHierarchyPermissions(
       loadedRoleNode, roleNodeParams.getMaxParentInstanceLevel(), mapContext);
     return this.roleNodePermissionMapperProvider.getToDtoMapper().toDtos(resolvedPermissions, mapContext);
   }
+
 
   @Transactional
   @Override

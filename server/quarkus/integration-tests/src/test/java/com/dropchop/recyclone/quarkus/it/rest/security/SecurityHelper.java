@@ -48,9 +48,10 @@ public class SecurityHelper {
   public static RoleNodePermission roleNodePermissionOf(String uuid,
                                                         Permission permission,
                                                         Boolean allowed,
-                                                        RoleNode parent
+                                                        RoleNode parent,
+                                                        boolean asTemplate
   ) {
-    RoleNodePermission roleNodePermission = new RoleNodePermission();
+    RoleNodePermission roleNodePermission = asTemplate ? new RoleNodePermissionTemplate() : new RoleNodePermission();
     roleNodePermission.setUuid(Strings.isNullOrEmpty(uuid) ? UUID.randomUUID().toString() : uuid);
     roleNodePermission.setRoleNode(parent);
     roleNodePermission.setPermission(permission);
