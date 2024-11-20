@@ -1,8 +1,12 @@
 package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.model.api.attr.AttributeBool;
+import com.dropchop.recyclone.model.api.attr.AttributeDecimal;
+import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
@@ -16,19 +20,24 @@ import com.dropchop.recyclone.repo.jpa.blaze.security.RoleNodePermissionMapperPr
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleNodePermissionRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleNodeRepository;
 import com.dropchop.recyclone.service.api.RecycloneType;
+import com.dropchop.recyclone.service.api.Service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.model.api.security.Constants.Domains.Security.PERMISSION;
 
-
+@Slf4j
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 public class SecurityLoadingService implements com.dropchop.recyclone.service.api.security.SecurityLoadingService {
+
 
   @Inject
   RoleNodeRepository roleNodeRepository;
@@ -46,19 +55,42 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
   ExecContextBinder execContextBinder;
 
 
+  private static StatusMessage getStatusMessage(String error, RoleNodeParams params) {
+    StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
+    if (params != null) {
+      status.setDetails(Set.of(
+        new AttributeString("roleNodeIs", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""),
+        new AttributeString("target", params.getTarget() != null ? params.getTarget() : ""),
+        new AttributeString("targetId", params.getTargetId() != null ? params.getTargetId() : ""),
+        new AttributeString("entity", params.getEntity() != null ? params.getEntity() : ""),
+        new AttributeString("entityId", params.getEntityId() != null ? params.getEntityId() : ""),
+        new AttributeBool("all", params.getAll() != null ? params.getAll() : false),
+        new AttributeDecimal("maxParentInstanceLevel",
+          params.getMaxParentInstanceLevel() != null ? params.getMaxParentInstanceLevel() : -1)
+      ));
+    }
+    return status;
+  }
+
+
   /**
    * Loads role node for provided parameters.
    * NOTE: Parameters must define only 1 role node. Combination target/entity should be unique per role node.
    *
    * @param params         - role node target/entity parameters
    * @param mappingContext - mapping context
-   * @return found role node or assert error if not found.
+   * @return found role node or service exception if not found.
    */
   private JpaRoleNode loadRoleNode(RoleNodeParams params, MappingContext mappingContext) {
     RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext(mappingContext);
     execContext.setParams(params);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);
-    assert jpaRoleNodes.size() == 1 : "Too many role nodes. Parameters should only define and return 1!";
+    if (jpaRoleNodes == null || jpaRoleNodes.isEmpty()) {
+      throw new ServiceException(getStatusMessage("Role node not found for params", params));
+    }
+    if (jpaRoleNodes.size() != 1) {
+      throw new ServiceException(getStatusMessage("Only one role node must be found by params", params));
+    }
     return jpaRoleNodes.get(0);
   }
 
@@ -76,7 +108,9 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
                                                RoleNodeParams params,
                                                int currentLevel
   ) {
-    assert roleNode != null : "Role node is null";
+    if (roleNode == null) {
+      throw new ServiceException(getStatusMessage("Role node cannot be null", null));
+    }
     //if max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
     if (params.getMaxParentInstanceLevel() != null && params.getMaxParentInstanceLevel() >= currentLevel) {
@@ -137,7 +171,9 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
    * @return collection of permissions resolved from hierarchy.
    */
   private Collection<JpaRoleNodePermission> mergePermissionLevels(List<List<JpaRoleNodePermission>> permissionsByLevel) {
-    assert permissionsByLevel != null : "Null permissions by level";
+    if (permissionsByLevel == null) {
+      throw new ServiceException(getStatusMessage("Role node permissions levels cannot be null", null));
+    }
     if (permissionsByLevel.isEmpty()) {
       return Collections.emptyList();
     }
@@ -177,6 +213,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
   }
 
 
+  @Transactional
   @Override
   public List<RoleNodePermission> loadRoleNodePermissions(RoleNodeParams roleNodeParams) {
     if (roleNodeParams.isEmpty()) {
@@ -202,7 +239,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     return this.roleNodePermissionMapperProvider.getToDtoMapper().toDtos(resolvedPermissions, mapContext);
   }
 
-
+  @Transactional
   @Override
   public List<Permission> loadPermissions(RoleNodeParams roleNodeParams) {
     Boolean all = roleNodeParams.getAll();

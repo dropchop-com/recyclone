@@ -55,6 +55,7 @@ public interface Constants {
       String ROLE_NODE_PERMISSION = SECURITY_SEGMENT + ROLE_NODE_PERMISSION_SEGMENT;
       String PERMISSION_SEGMENT = "/permission";
       String PERMISSION = SECURITY_SEGMENT + PERMISSION_SEGMENT;
+      String PERMISSION_LIST = PERMISSION + "/list";
       String USER_SEGMENT = "/user";
       String USER = SECURITY_SEGMENT + USER_SEGMENT;
     }

@@ -5,7 +5,6 @@ import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
 import com.dropchop.recyclone.model.dto.security.*;
 import com.dropchop.recyclone.rest.api.MediaType;
-import com.google.common.base.Strings;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
 import static com.dropchop.recyclone.model.api.rest.Constants.Paths.SEARCH_SEGMENT;
@@ -32,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleNodeResourceTest {
-
 
   private static final String UUID1 = UUID.randomUUID().toString();
   private static final String ENTITY1 = "Role";
@@ -50,50 +47,10 @@ public class RoleNodeResourceTest {
   private static final String PERMISSION4 = UUID.randomUUID().toString();
 
 
-  public static RoleNode roleNodeOf(String uuid, String entity, String entityUuid) {
-    RoleNode roleNode = new RoleNode();
-    roleNode.setUuid(uuid);
-    roleNode.setTarget(entity);
-    roleNode.setEntity(entity);
-    roleNode.setEntityId(entityUuid);
-    return roleNode;
-  }
-
-
-
-  public static Permission permissionOf(String uuid, String domainCode, String actionCode) {
-    Domain domain = new Domain();
-    domain.setCode(domainCode);
-
-    Action action = new Action();
-    action.setCode(actionCode);
-
-    Permission permission = new Permission();
-    permission.setUuid(uuid);
-    permission.setDomain(domain);
-    permission.setAction(action);
-    permission.setTitle("Permit " + actionCode + " actions on " + domainCode);
-    permission.setLang("en");
-    return permission;
-  }
-
-  public static RoleNodePermission roleNodePermissionOf(String uuid,
-                                                        Permission permission,
-                                                        Boolean allowed,
-                                                        RoleNode parent
-  ) {
-    RoleNodePermission roleNodePermission = new RoleNodePermission();
-    roleNodePermission.setUuid(Strings.isNullOrEmpty(uuid) ? UUID.randomUUID().toString() : uuid);
-    roleNodePermission.setRoleNode(parent);
-    roleNodePermission.setPermission(permission);
-    roleNodePermission.setAllowed(allowed);
-    return roleNodePermission;
-  }
-
   @Test
   @Order(10)
   public void createRoleNodeForEntity() {
-    RoleNode roleNode = roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
+    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -114,7 +71,7 @@ public class RoleNodeResourceTest {
     assertEquals(roleNode.getEntity(), respRole.getEntity());
     assertEquals(roleNode.getEntityId(), respRole.getEntityId());
 
-    roleNode = roleNodeOf(UUID2, ENTITY2, ENTITY2_ID);
+    roleNode = SecurityHelper.roleNodeOf(UUID2, ENTITY2, ENTITY2_ID);
     result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -273,10 +230,10 @@ public class RoleNodeResourceTest {
 
   private List<Permission> prepPermissions() {
 
-    Permission permissionView = permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
-    Permission permissionCreate = permissionOf(PERMISSION1, DOMAIN_ACCOUNT, Constants.Actions.CREATE);
-    Permission permissionUpdate = permissionOf(PERMISSION2, DOMAIN_ACCOUNT, Constants.Actions.UPDATE);
-    Permission permissionDelete = permissionOf(PERMISSION4, DOMAIN_ACCOUNT, Constants.Actions.DELETE);
+    Permission permissionView = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
+    Permission permissionCreate = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_ACCOUNT, Constants.Actions.CREATE);
+    Permission permissionUpdate = SecurityHelper.permissionOf(PERMISSION2, DOMAIN_ACCOUNT, Constants.Actions.UPDATE);
+    Permission permissionDelete = SecurityHelper.permissionOf(PERMISSION4, DOMAIN_ACCOUNT, Constants.Actions.DELETE);
 
     List<Permission> permissions = List.of(permissionView, permissionCreate, permissionUpdate, permissionDelete);
 
@@ -299,7 +256,7 @@ public class RoleNodeResourceTest {
 
 
   private RoleNode prepRoleNode1() {
-    RoleNode roleNode = roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
+    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -336,7 +293,7 @@ public class RoleNodeResourceTest {
 
   private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions) {
     return permissions.stream()
-      .map(p -> roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node))
+      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, true, node))
       .toList();
   }
 
@@ -392,7 +349,7 @@ public class RoleNodeResourceTest {
 
   @Test
   @Order(50)
-  public void listRoleNodePermissions() {
+  public void getRoleNodePermissions() {
 
     RoleNodePermissionParams params = new RoleNodePermissionParams();
     params.setRoleNodeId(UUID1);
@@ -429,7 +386,6 @@ public class RoleNodeResourceTest {
       .body().jsonPath().getList("data", RoleNodePermission.class);
     assertEquals(1, result.size());
   }
-
 
 }
 

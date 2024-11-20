@@ -18,6 +18,7 @@ import java.util.UUID;
  * User is main subject and has set some permissions.
  * But user has user accounts (sub subject) so each account can have different permissions set.
  */
+@Deprecated
 @SuppressWarnings("unused")
 public interface SecurityLoaderService {
 

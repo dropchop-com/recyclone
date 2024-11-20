@@ -1,13 +1,18 @@
 package com.dropchop.recyclone.service.api.security;
 
+import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
+import com.dropchop.recyclone.service.api.Service;
 
 import java.util.List;
 
-public interface SecurityLoadingService {
+public interface SecurityLoadingService extends Service {
 
+  default String getSecurityDomain() {
+    return Constants.Domains.Security.PERMISSION;
+  }
 
   /**
    * Resolves role node permissions for entity and/or target defined by exactly 1 role node!
