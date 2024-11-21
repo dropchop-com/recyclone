@@ -114,18 +114,15 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     //if max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
     if (params.getMaxParentInstanceLevel() != null && params.getMaxParentInstanceLevel() >= currentLevel) {
-      permissionsByLevel.add(roleNode.getRoleNodePermissions().stream().filter(p -> {
-        if (p instanceof JpaRoleNodePermissionTemplate) {
-          return false;
-        }
-        return true;
-      }).toList());
+      permissionsByLevel.add(roleNode.getRoleNodePermissions().stream()
+        .filter(p -> !(p instanceof JpaRoleNodePermissionTemplate))
+        .toList());
     } else {
       //if instance permissions are not taken from parents, load template permissions for target on current node.
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream().filter(p -> {
         if (p instanceof JpaRoleNodePermissionTemplate permissionTemplate) {
           return permissionTemplate.getTarget().equals(params.getTarget())
-            && permissionTemplate.getTargetId().equals(params.getTargetId());
+            && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
         }
         return false;
       }).toList());
@@ -152,7 +149,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     permissionsByLevel.add(loadedRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof JpaRoleNodePermissionTemplate permissionTemplate) {
         return permissionTemplate.getTarget().equals(params.getTarget())
-          && permissionTemplate.getTargetId().equals(params.getTargetId());
+          && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
       }
       return false;
     }).toList());

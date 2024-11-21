@@ -348,7 +348,7 @@ public class SecurityLoadingTest {
         this.prepRoleNodePermissions(organizationRoleNode, permissions, ORG_UNIT_ENTITY, null, true);
     //take one permission and change allowed state to override org unit defaults
     RoleNodePermission deletePermission = roleNodeOrgUnitPermissions.stream()
-        .filter(p -> p.getPermission().getAction().equals(Constants.Actions.DELETE))
+        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
         .map((RoleNodePermission p) -> {p.setAllowed(false); return p;}).findFirst().orElse(null);
 
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
@@ -369,6 +369,28 @@ public class SecurityLoadingTest {
       assertInstanceOf(RoleNodePermissionTemplate.class, p);
       assertNotNull(((RoleNodePermissionTemplate)p).getTarget());
     }
+
+
+    //load permissions for org unit
+    RoleNodeParams params = new RoleNodeParams();
+    params.setEntity(ORG_UNIT_ENTITY);
+    params.setEntityId(ORG_UNIT_ENTITY_ID);
+
+    List<RoleNodePermission> orgUnitCombinedPermissions = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT + "?c_level=4")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+
+    assertEquals(4, orgUnitCombinedPermissions.size());
 
   }
 

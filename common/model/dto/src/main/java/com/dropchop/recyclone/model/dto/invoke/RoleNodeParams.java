@@ -1,8 +1,6 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -11,10 +9,18 @@ import java.util.UUID;
 /**
  * @author Armando Ota <armando.ota@dropchop.com>
  */
-@Getter
+/*@Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder*/
+
+
+@Getter
+@Setter
+@RequiredArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class RoleNodeParams extends IdentifierParams {
 
   //Defines entity type

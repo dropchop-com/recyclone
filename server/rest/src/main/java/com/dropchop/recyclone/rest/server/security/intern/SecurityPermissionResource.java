@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.rest.server.security.intern;
 
+import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class SecurityPermissionResource implements
-    com.dropchop.recyclone.rest.api.internal.security.SecurityPermissionsResource, ClassicRestResource<RoleNodeParams> {
+    com.dropchop.recyclone.rest.api.internal.security.SecurityPermissionsResource, ClassicRestResource<RoleNodePermission> {
 
 
   @Inject
@@ -26,6 +27,10 @@ public class SecurityPermissionResource implements
 
   @Inject
   RoleNodeParams params;
+
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  CommonExecContextContainer ctxContainer;
 
 
   @Override

@@ -31,25 +31,30 @@ public class RoleNodeParamsDecorator extends BlazeCriteriaDecorator {
         String entity = roleNodeParams.getEntity();
         String entityId = roleNodeParams.getEntityId();
 
-        if (target != null && !target.isBlank()) {
-          cb.where(alias + DELIM + "target").eq(target);
-        } else {
-          cb.where(alias + DELIM + "target").isNull();
-        }
-        if (targetId != null && !targetId.isBlank()) {
-          cb.where(alias + DELIM + "targetId").eq(targetId);
-        } else {
-          cb.where(alias + DELIM + "targetId").isNull();
-        }
-        if (entity != null && !entity.isBlank()) {
+        if (entity != null && !entity.isBlank() && entityId != null && !entityId.isBlank()) {
           cb.where(alias + DELIM + "entity").eq(entity);
-        } else {
-          cb.where(alias + DELIM + "entity").isNull();
-        }
-        if (entityId != null && !entityId.isBlank()) {
           cb.where(alias + DELIM + "entityId").eq(entityId);
         } else {
-          cb.where(alias + DELIM + "entityId").isNull();
+          if (entity == null || entity.isBlank()) {
+            cb.where(alias + DELIM + "entity").isNull();
+          } else {
+            cb.where(alias + DELIM + "entity").eq(entity);
+          }
+          if (entityId == null || entityId.isBlank()) {
+            cb.where(alias + DELIM + "entityId").isNull();
+          } else {
+            cb.where(alias + DELIM + "entityId").eq(entityId);
+          }
+          if (target != null && !target.isBlank()) {
+            cb.where(alias + DELIM + "target").eq(target);
+          } else {
+            cb.where(alias + DELIM + "target").isNull();
+          }
+          if (targetId != null && !targetId.isBlank()) {
+            cb.where(alias + DELIM + "targetId").eq(targetId);
+          } else {
+            cb.where(alias + DELIM + "targetId").isNull();
+          }
         }
       }
     }
