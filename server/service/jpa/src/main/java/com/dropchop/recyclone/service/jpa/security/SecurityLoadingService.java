@@ -59,7 +59,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
     if (params != null) {
       status.setDetails(Set.of(
-        new AttributeString("roleNodeIs", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""),
+        new AttributeString("roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""),
         new AttributeString("target", params.getTarget() != null ? params.getTarget() : ""),
         new AttributeString("targetId", params.getTargetId() != null ? params.getTargetId() : ""),
         new AttributeString("entity", params.getEntity() != null ? params.getEntity() : ""),

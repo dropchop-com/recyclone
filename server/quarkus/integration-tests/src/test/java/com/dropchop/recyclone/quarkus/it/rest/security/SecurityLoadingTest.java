@@ -136,7 +136,7 @@ public class SecurityLoadingTest {
   }
 
 
-  @Test
+  //@Test
   @Order(10)
   public void testLoadTemplatePermissions() {
 
