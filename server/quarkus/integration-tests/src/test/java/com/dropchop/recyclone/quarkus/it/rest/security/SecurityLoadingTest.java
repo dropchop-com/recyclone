@@ -116,9 +116,9 @@ public class SecurityLoadingTest {
 
 
   private List<Permission> getPermissions() {
-    Permission permissionView = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_PROJECTS, Constants.Actions.VIEW);
-    Permission permissionCreate = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_PROJECTS, Constants.Actions.CREATE);
-    Permission permissionUpdate = SecurityHelper.permissionOf(PERMISSION2, DOMAIN_PROJECTS, Constants.Actions.UPDATE);
+    Permission permissionView = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_PROJECTS, Constants.Actions.VIEW);
+    Permission permissionCreate = SecurityHelper.permissionOf(PERMISSION2, DOMAIN_PROJECTS, Constants.Actions.CREATE);
+    Permission permissionUpdate = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_PROJECTS, Constants.Actions.UPDATE);
     Permission permissionDelete = SecurityHelper.permissionOf(PERMISSION4, DOMAIN_PROJECTS, Constants.Actions.DELETE);
     return List.of(permissionView, permissionCreate, permissionUpdate, permissionDelete);
   }
@@ -157,6 +157,12 @@ public class SecurityLoadingTest {
   }
 
 
+
+  /**
+   * Creates role nodes for organization and organization unit targets
+   * Adds template permissions both targets.
+   * Tests if all data is properly loaded.
+   **/
   @Test
   @Order(10)
   public void testLoadTemplatePermissions() {
@@ -246,9 +252,7 @@ public class SecurityLoadingTest {
       .body().jsonPath().getList("data", RoleNodePermission.class);
     assertEquals(4, resultOrgUnitPermissions.size());
 
-    //
     //load template permissions and check if permissions are set properly
-    //
 
     RoleNodeParams orgParams = new RoleNodeParams();
     orgParams.setTarget(ORG_ENTITY);
@@ -297,16 +301,18 @@ public class SecurityLoadingTest {
 
 
   /**
-   * Will check if organizations templates for organization unit are correctly loaded
+   *
+   * Creates role nodes for organization and organization unit instances.
+   * Creates template permission (DELETE with allowed = false) for organization unit on organization instance role node
+   * Loads permissions for organization unit and checks if resolved organization unit DELETE permission is not allowed
    */
-
   @Test
   @Order(20)
   public void testLoadFirstLevelPermissionTemplates() {
-    //organization instance role node
+    //role node for organization instance
     RoleNode organizationRoleNode =
         SecurityHelper.roleNodeOf(ORG_ROLE_NODE_ID, ORG_ENTITY, null, ORG_ENTITY, ORG_ENTITY_ID);
-    //organization unit instance role node
+    //role node for organization unit instance
     RoleNode organizationUnitRoleNode =
         SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID);
     organizationUnitRoleNode.setParent(organizationRoleNode); //connect to parent node !!!
@@ -346,10 +352,11 @@ public class SecurityLoadingTest {
     List<Permission> permissions = this.getPermissions();
     List<RoleNodePermission> roleNodeOrgUnitPermissions =
         this.prepRoleNodePermissions(organizationRoleNode, permissions, ORG_UNIT_ENTITY, null, true);
-    //take one permission and change allowed state to override org unit defaults
+
+    //take one permission (DELETE) and change allowed state to override org unit defaults
     RoleNodePermission deletePermission = roleNodeOrgUnitPermissions.stream()
         .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
-        .map((RoleNodePermission p) -> {p.setAllowed(false); return p;}).findFirst().orElse(null);
+        .map((RoleNodePermission p) -> {p.setAllowed(false); return p;}).findFirst().get();
 
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
         .log().all()
@@ -370,11 +377,11 @@ public class SecurityLoadingTest {
       assertNotNull(((RoleNodePermissionTemplate)p).getTarget());
     }
 
-
     //load permissions for org unit
     RoleNodeParams params = new RoleNodeParams();
     params.setEntity(ORG_UNIT_ENTITY);
     params.setEntityId(ORG_UNIT_ENTITY_ID);
+    params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgUnitCombinedPermissions = given()
       .log().all()
@@ -384,7 +391,7 @@ public class SecurityLoadingTest {
       .and()
       .body(params)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT + "?c_level=4")
+      .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT )
       .then()
       .statusCode(200)
       .extract()
@@ -392,7 +399,89 @@ public class SecurityLoadingTest {
 
     assertEquals(4, orgUnitCombinedPermissions.size());
 
+    //check if DELETE permission is not allowed as set by ORG template for ORG UNIT
+    assertFalse(orgUnitCombinedPermissions.stream()
+      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE)).findFirst().get().getAllowed());
+
   }
+
+
+  @Test
+  @Order(30)
+  public void testLoadAndCheckPermissionInstanceForEntity() {
+    RoleNode organizationUnitRoleNode =
+      SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID);
+
+    List<Permission> permissions = this.getPermissions();
+    List<RoleNodePermission> roleNodeOrgUnitPermissions =
+      this.prepRoleNodePermissions(organizationUnitRoleNode, permissions, null, null, false);
+
+    List<RoleNodePermission> roleNodeOrgUnitInstancePermissions = roleNodeOrgUnitPermissions.stream()
+      .filter(p-> !p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
+      .filter(p-> !p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
+      .map(p -> {p.setAllowed(false); return p;})
+      .toList();
+
+    List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(roleNodeOrgUnitInstancePermissions)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(2, resultRoleNodeOrgUnitPermissions.size());
+    for (RoleNodePermission p : resultRoleNodeOrgUnitPermissions) {
+      assertInstanceOf(RoleNodePermission.class, p);
+    }
+
+
+    //load permissions for org unit
+    RoleNodeParams params = new RoleNodeParams();
+    params.setEntity(ORG_UNIT_ENTITY);
+    params.setEntityId(ORG_UNIT_ENTITY_ID);
+    params.getFilter().getContent().setTreeLevel(4);
+
+    List<RoleNodePermission> orgUnitCombinedPermissions = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT )
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+
+    assertEquals(4, orgUnitCombinedPermissions.size());
+
+    //check permissions states
+    assertTrue(orgUnitCombinedPermissions.stream()
+      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
+      .findFirst().get().getAllowed());
+
+    assertFalse(orgUnitCombinedPermissions.stream()
+      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
+      .findFirst().get().getAllowed());
+
+    assertFalse(orgUnitCombinedPermissions.stream()
+      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.CREATE))
+      .findFirst().get().getAllowed());
+
+    assertFalse(orgUnitCombinedPermissions.stream()
+      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.UPDATE))
+      .findFirst().get().getAllowed());
+
+  }
+
 
 
 }
