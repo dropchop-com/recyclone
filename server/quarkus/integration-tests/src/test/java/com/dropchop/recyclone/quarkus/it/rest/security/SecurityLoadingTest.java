@@ -5,12 +5,13 @@ import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.*;
 import com.dropchop.recyclone.rest.api.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,7 @@ import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEG
 import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.*;
 import static com.dropchop.recyclone.quarkus.it.rest.security.SecurityLoadingTest.Data.*;
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
@@ -60,6 +62,17 @@ public class SecurityLoadingTest {
     String ORG_UNIT_TEMPLATE_ROLE_NODE_ID = UUID.randomUUID().toString();
 
   }
+
+  @Inject
+  ObjectMapper mapper;
+
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper
+        ));
+  }
+
 
 
   private Domain prepDomain() {
@@ -136,7 +149,7 @@ public class SecurityLoadingTest {
   }
 
 
-  //@Test
+  @Test
   @Order(10)
   public void testLoadTemplatePermissions() {
 
