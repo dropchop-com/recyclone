@@ -35,6 +35,9 @@ public class SecurityPermissionResource implements
 
   @Override
   public Result<RoleNodePermission> list(RoleNodeParams params) {
+    if (params.getFilter().getContent().getTreeLevel() == null) {
+      params.getFilter().getContent().setTreeLevel(3); //no need to deserialize whole role node on permission
+    }
     List<RoleNodePermission> roleNodePermissions = this.securityLoadingService.loadRoleNodePermissions(params);
     ResultStatus status = new ResultStatus();
     status.setCode(ResultCode.success);

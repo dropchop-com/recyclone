@@ -307,10 +307,11 @@ public class SecurityLoadingTest {
 
 
   /**
-   *
    * Creates role nodes for organization and organization unit instances.
    * Creates template permission (DELETE with allowed = false) for organization unit on organization instance role node
-   * Loads permissions for organization unit and checks if resolved organization unit DELETE permission is not allowed
+   * Loads permissions for organization unit and checks if resolved organization unit DELETE permission is not allowed.
+   *
+   * Test data prepare by previous test.
    */
   @Test
   @Order(20)
@@ -487,6 +488,101 @@ public class SecurityLoadingTest {
 
   }
 
+
+  @Test
+  @Order(40)
+  public void testLoadAndCheckPermissionOFSecondLevelInstanceForEntity() {
+    RoleNode organizationUnitRoleNode =
+        SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0);
+
+    //Create role node for user on organization unit
+    RoleNode organizationUnitUserRoleNode =
+        SecurityHelper.roleNodeOf(USER_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, USER_ENTITY, USER_ENTITY_ID, 1);
+    organizationUnitUserRoleNode.setParent(organizationUnitRoleNode); //connect to parent node !!!
+
+    List<RoleNode> resultOrg = given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(List.of(organizationUnitUserRoleNode))
+        .when()
+        .post("/api" + INTERNAL_SEGMENT + ROLE_NODE + "?c_level=4")
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList("data", RoleNode.class);
+    assertEquals(1, resultOrg.size());
+
+    List<Permission> permissions = this.getPermissions();
+    List<RoleNodePermission> roleNodeOrgUnitUserPermissions =
+        this.prepRoleNodePermissions(organizationUnitRoleNode, permissions, null, null, false);
+
+    List<RoleNodePermission> roleNodeOrgUnitInstancePermissions = roleNodeOrgUnitUserPermissions.stream()
+        .filter(p-> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
+        .map(p -> {p.setAllowed(false); return p;})
+        .toList();
+
+    //Store role node permissions for user of organization unit
+    List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(roleNodeOrgUnitInstancePermissions)
+        .when()
+        .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION + "?c_level=4")
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(1, resultRoleNodeOrgUnitPermissions.size());
+    for (RoleNodePermission p : resultRoleNodeOrgUnitPermissions) {
+      assertInstanceOf(RoleNodePermission.class, p);
+    }
+
+    //load permissions for org unit user
+    RoleNodeParams params = new RoleNodeParams();
+    params.setEntity(ORG_UNIT_ENTITY);
+    params.setEntityId(ORG_UNIT_ENTITY_ID);
+    params.getFilter().getContent().setTreeLevel(4);
+
+    List<RoleNodePermission> orgUnitUserCombinedPermissions = given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(params)
+        .when()
+        .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT  + "?c_level=4")
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList("data", RoleNodePermission.class);
+
+    assertEquals(4, orgUnitUserCombinedPermissions.size());
+
+    //check permissions states
+    assertFalse(orgUnitUserCombinedPermissions.stream()
+        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
+        .findFirst().get().getAllowed());
+
+    assertFalse(orgUnitUserCombinedPermissions.stream()
+        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
+        .findFirst().get().getAllowed());
+
+    assertFalse(orgUnitUserCombinedPermissions.stream()
+        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.CREATE))
+        .findFirst().get().getAllowed());
+
+    assertFalse(orgUnitUserCombinedPermissions.stream()
+        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.UPDATE))
+        .findFirst().get().getAllowed());
+
+  }
 
 
 }
