@@ -11,6 +11,8 @@ import com.dropchop.recyclone.service.api.security.SecurityLoadingService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,12 +40,14 @@ public class SecurityPermissionResource implements
     if (params.getFilter().getContent().getTreeLevel() == null) {
       params.getFilter().getContent().setTreeLevel(3); //no need to deserialize whole role node on permission
     }
-    List<RoleNodePermission> roleNodePermissions = this.securityLoadingService.loadRoleNodePermissions(params);
+    Collection<RoleNodePermission> roleNodePermissions = this.securityLoadingService.loadRoleNodePermissions(params);
     ResultStatus status = new ResultStatus();
     status.setCode(ResultCode.success);
     status.setTotal(roleNodePermissions.size());
+    List<RoleNodePermission> permissions = new ArrayList<>();
+    permissions.addAll(roleNodePermissions);
     Result<RoleNodePermission> result = new Result<>();
-    result.setData(roleNodePermissions);
+    result.setData(permissions);
     result.setStatus(status);
     return result;
   }

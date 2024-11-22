@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.service.api.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface SecurityLoadingService extends Service {
@@ -19,7 +20,7 @@ public interface SecurityLoadingService extends Service {
    * @param params - parameters with entity and/or target data.
    * @return list of resolved role node permissions
    */
-  List<RoleNodePermission> loadRoleNodePermissions(RoleNodeParams params);
+  Collection<RoleNodePermission> loadRoleNodePermissions(RoleNodeParams params);
 
 
   /**
@@ -27,7 +28,7 @@ public interface SecurityLoadingService extends Service {
    * @param params - parameters with entity and/or target data
    * @return list of resolved apache shiro permissions
    */
-  List<Permission> loadPermissions(RoleNodeParams params);
+  Collection<Permission> loadPermissions(RoleNodeParams params);
 
 
 }
