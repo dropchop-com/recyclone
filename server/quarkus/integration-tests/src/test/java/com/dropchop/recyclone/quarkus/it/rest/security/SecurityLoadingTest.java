@@ -445,6 +445,7 @@ public class SecurityLoadingTest {
     RoleNodeParams params = new RoleNodeParams();
     params.setEntity(ORG_UNIT_ENTITY);
     params.setEntityId(ORG_UNIT_ENTITY_ID);
+    params.setMaxParentInstanceLevel(1);
     params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgUnitCombinedPermissions = given()

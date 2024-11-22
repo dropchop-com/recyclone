@@ -210,11 +210,9 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
   }
 
 
-  private boolean isInstanceOnlyRoleNode(JpaRoleNode loadedRoleNode) {
-    return loadedRoleNode.getRoleNodePermissions().stream()
-      .filter(p -> p instanceof JpaRoleNodePermissionTemplate)
-      .findFirst()
-      .orElse(null) != null;
+  private boolean isInstanceRoleNode(JpaRoleNode loadedRoleNode) {
+    return loadedRoleNode.getEntity() != null && !loadedRoleNode.getEntity().isBlank()
+        && loadedRoleNode.getEntityId() != null && !loadedRoleNode.getEntityId().isBlank();
   }
 
 
@@ -227,7 +225,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
     //Load role node.
     JpaRoleNode loadedRoleNode = this.loadRoleNode(roleNodeParams, mapContext);
-    if (this.isInstanceOnlyRoleNode(loadedRoleNode)) {
+    if (this.isInstanceRoleNode(loadedRoleNode) && loadedRoleNode.getParent() == null) {
       //return what we have for root node
       return this.roleNodePermissionMapperProvider.getToDtoMapper().toDtos(loadedRoleNode.getRoleNodePermissions(), mapContext);
     }
