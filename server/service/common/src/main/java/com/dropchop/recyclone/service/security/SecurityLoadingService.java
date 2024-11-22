@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service;
+package com.dropchop.recyclone.service.security;
 
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
