@@ -35,9 +35,6 @@ public class RoleNodeParams extends IdentifierParams {
   //Defines target group id
   private String targetId;
 
-  //Defines how many levels up on hierarchy
-  private Integer maxParentInstanceLevel;
-
   //Defines if you want to get back denied permissions.
   private Boolean all;
 

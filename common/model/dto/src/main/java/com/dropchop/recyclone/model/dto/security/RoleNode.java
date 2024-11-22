@@ -32,4 +32,7 @@ public class RoleNode extends DtoId implements com.dropchop.recyclone.model.api.
     private String entity;
     private String entityId;
 
+    //Defines how many levels up on hierarchy
+    private Integer maxParentInstanceLevel;
+
 }

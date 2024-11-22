@@ -135,7 +135,7 @@ public class RoleNodeResourceTest {
 
 
   private RoleNode prepRoleNode1() {
-    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
+    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -184,7 +184,7 @@ public class RoleNodeResourceTest {
   @Test
   @Order(10)
   public void createRoleNodeForEntity() {
-    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID);
+    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -205,7 +205,7 @@ public class RoleNodeResourceTest {
     assertEquals(roleNode.getEntity(), respRole.getEntity());
     assertEquals(roleNode.getEntityId(), respRole.getEntityId());
 
-    roleNode = SecurityHelper.roleNodeOf(UUID2, ENTITY2, ENTITY2_ID);
+    roleNode = SecurityHelper.roleNodeOf(UUID2, ENTITY2, ENTITY2_ID, null);
     result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -416,7 +416,7 @@ public class RoleNodeResourceTest {
   @Order(60)
   public void addTemplatePermissionToRoleNode() {
 
-    RoleNode roleNodeTpl = SecurityHelper.roleNodeOf(UUID3, TPL_TARGET_NAME, null, null, null);
+    RoleNode roleNodeTpl = SecurityHelper.roleNodeOf(UUID3, TPL_TARGET_NAME, null, null, null, null);
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)

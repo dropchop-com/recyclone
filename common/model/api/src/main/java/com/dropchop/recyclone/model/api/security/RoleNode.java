@@ -46,6 +46,10 @@ public interface RoleNode<
     String getEntityId();
     void setEntityId(String entityId);
 
+    //Defines how many levels up on hierarchy
+    Integer getMaxParentInstanceLevel();
+    void setMaxParentInstanceLevel(Integer maxParentInstanceLevel);
+
 
 
 }

@@ -7,23 +7,30 @@ import java.util.UUID;
 
 public class SecurityHelper {
 
-  public static RoleNode roleNodeOf(String uuid, String entity, String entityUuid) {
+  public static RoleNode roleNodeOf(String uuid, String entity, String entityUuid, Integer maxParentLevelInstsance) {
     RoleNode roleNode = new RoleNode();
     roleNode.setUuid(uuid);
     roleNode.setTarget(entity);
     roleNode.setEntity(entity);
     roleNode.setEntityId(entityUuid);
+    roleNode.setMaxParentInstanceLevel(maxParentLevelInstsance);
     return roleNode;
   }
 
 
-  public static RoleNode roleNodeOf(String uuid, String target, String targetId, String entity, String entityUuid) {
+  public static RoleNode roleNodeOf(String uuid,
+                                    String target,
+                                    String targetId,
+                                    String entity,
+                                    String entityUuid,
+                                    Integer maxParentLevelInstsance) {
     RoleNode roleNode = new RoleNode();
     roleNode.setUuid(uuid);
     roleNode.setTarget(target);
     roleNode.setTargetId(targetId);
     roleNode.setEntity(entity);
     roleNode.setEntityId(entityUuid);
+    roleNode.setMaxParentInstanceLevel(maxParentLevelInstsance);
     return roleNode;
   }
 

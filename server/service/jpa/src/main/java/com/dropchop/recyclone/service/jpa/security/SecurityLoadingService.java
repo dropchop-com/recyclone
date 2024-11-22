@@ -59,14 +59,12 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
     if (params != null) {
       status.setDetails(Set.of(
-        new AttributeString("roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""),
-        new AttributeString("target", params.getTarget() != null ? params.getTarget() : ""),
-        new AttributeString("targetId", params.getTargetId() != null ? params.getTargetId() : ""),
-        new AttributeString("entity", params.getEntity() != null ? params.getEntity() : ""),
-        new AttributeString("entityId", params.getEntityId() != null ? params.getEntityId() : ""),
-        new AttributeBool("all", params.getAll() != null ? params.getAll() : false),
-        new AttributeDecimal("maxParentInstanceLevel",
-          params.getMaxParentInstanceLevel() != null ? params.getMaxParentInstanceLevel() : -1)
+          new AttributeString("roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""),
+          new AttributeString("target", params.getTarget() != null ? params.getTarget() : ""),
+          new AttributeString("targetId", params.getTargetId() != null ? params.getTargetId() : ""),
+          new AttributeString("entity", params.getEntity() != null ? params.getEntity() : ""),
+          new AttributeString("entityId", params.getEntityId() != null ? params.getEntityId() : ""),
+          new AttributeBool("all", params.getAll() != null ? params.getAll() : false)
       ));
     }
     return status;
@@ -106,23 +104,24 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
   private void resolveRoleNodePermissionLevels(JpaRoleNode roleNode,
                                                List<List<JpaRoleNodePermission>> permissionsByLevel,
                                                RoleNodeParams params,
-                                               int currentLevel
+                                               int currentLevel,
+                                               Integer maxParentInstanceLevel
   ) {
     if (roleNode == null) {
       throw new ServiceException(getStatusMessage("Role node cannot be null", null));
     }
     //if max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
-    if (params.getMaxParentInstanceLevel() != null && params.getMaxParentInstanceLevel() >= currentLevel) {
+    if (maxParentInstanceLevel != null && maxParentInstanceLevel >= currentLevel) {
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream()
-        .filter(p -> !(p instanceof JpaRoleNodePermissionTemplate))
-        .toList());
+          .filter(p -> !(p instanceof JpaRoleNodePermissionTemplate))
+          .toList());
     } else {
       //if instance permissions are not taken from parents, load template permissions for target on current node.
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream().filter(p -> {
         if (p instanceof JpaRoleNodePermissionTemplate permissionTemplate) {
           return permissionTemplate.getTarget().equals(params.getTarget())
-            && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
+              && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
         }
         return false;
       }).toList());
@@ -131,7 +130,9 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     JpaRoleNode parentRoleNode = roleNode.getParent();
     if (parentRoleNode != null) {
       JpaRoleNode loadedParentRoleNode = this.roleNodeRepository.findById(parentRoleNode.getUuid());
-      this.resolveRoleNodePermissionLevels(loadedParentRoleNode, permissionsByLevel, params, currentLevel + 1);
+      this.resolveRoleNodePermissionLevels(
+          loadedParentRoleNode, permissionsByLevel, params, currentLevel + 1, maxParentInstanceLevel
+      );
     }
   }
 
@@ -149,7 +150,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     permissionsByLevel.add(loadedRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof JpaRoleNodePermissionTemplate permissionTemplate) {
         return permissionTemplate.getTarget().equals(params.getTarget())
-          && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
+            && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
       }
       return false;
     }).toList());
@@ -188,21 +189,23 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
 
   /**
    * Main method to start hierarchy permission resolving for loaded role node.
-   * @param roleNode                - role node to start resolving on
-   * @param maxParentInstanceLevel  - maximum level of instance permission taken from parents that influence end permission state
-   * @param mapContext              - passing mapping context for convenience.
+   *
+   * @param roleNode               - role node to start resolving on
+   * @param maxParentInstanceLevel - maximum level of instance permission taken from parents that influence end permission state
+   * @param mapContext             - passing mapping context for convenience.
    * @return list or merged role node permissions of all role nodes in the hierarchy.
    */
   private Collection<JpaRoleNodePermission> resolveHierarchyPermissions(JpaRoleNode roleNode,
-                                                               Integer maxParentInstanceLevel, MappingContext mapContext) {
+                                                                        Integer maxParentInstanceLevel,
+                                                                        MappingContext mapContext
+  ) {
     List<List<JpaRoleNodePermission>> permissionsByLevel = new LinkedList<>();
     //prepare target parameters
     RoleNodeParams params = new RoleNodeParams(); //will be passing original target details up the hierarchy
     params.setTarget(roleNode.getTarget());
     params.setTargetId(roleNode.getTargetId());
-    params.setMaxParentInstanceLevel(maxParentInstanceLevel);
     //resolve all hierarchy permissions from parent nodes and add permissions into permission levels list.
-    this.resolveRoleNodePermissionLevels(roleNode, permissionsByLevel, params, 1);
+    this.resolveRoleNodePermissionLevels(roleNode, permissionsByLevel, params, 0, maxParentInstanceLevel);
     //resolve root level template permissions and add them as last level in permission levels list.
     this.resolveRootTargetPermission(params, permissionsByLevel, mapContext);
     //merge all permission levels into final list or resolved permissions.
@@ -231,7 +234,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     }
     //execute magic of hierarchy permission resolving
     Collection<JpaRoleNodePermission> resolvedPermissions = this.resolveHierarchyPermissions(
-      loadedRoleNode, roleNodeParams.getMaxParentInstanceLevel(), mapContext);
+        loadedRoleNode, loadedRoleNode.getMaxParentInstanceLevel(), mapContext);
     return this.roleNodePermissionMapperProvider.getToDtoMapper().toDtos(resolvedPermissions, mapContext);
   }
 
@@ -243,7 +246,7 @@ public class SecurityLoadingService implements com.dropchop.recyclone.service.ap
     List<RoleNodePermission> roleNodePermissions = this.loadRoleNodePermissions(roleNodeParams);
     List<Permission> permissions = new LinkedList<>();
     roleNodePermissions.forEach(roleNodePermission -> {
-      if ((all != null && all) || roleNodePermission.getAllowed() ) {
+      if ((all != null && all) || roleNodePermission.getAllowed()) {
         permissions.add(roleNodePermission.getPermission());
       }
     });

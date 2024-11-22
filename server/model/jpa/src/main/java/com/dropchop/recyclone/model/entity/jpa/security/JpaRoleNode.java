@@ -44,4 +44,6 @@ public class JpaRoleNode extends JpaUuid implements RoleNode<
     @Column(name = "entity_id")
     private String entityId;
 
+    @Column(name = "max_parent_instance_level")
+    private Integer maxParentInstanceLevel;
 }

@@ -171,12 +171,18 @@ public class SecurityLoadingTest {
     List<Permission> permissions = this.prepPermissions();
 
     //template node for organizations
-    RoleNode roleNodeOrgTemplate = SecurityHelper.roleNodeOf(ORG_TEMPLATE_ROLE_NODE_ID, ORG_ENTITY, null, null,null);
+    RoleNode roleNodeOrgTemplate = SecurityHelper.roleNodeOf(
+        ORG_TEMPLATE_ROLE_NODE_ID, ORG_ENTITY, null, null,null,null
+    );
     //organization template permissions
-    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(roleNodeOrgTemplate, permissions, ORG_ENTITY, null, true);
+    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(
+        roleNodeOrgTemplate, permissions, ORG_ENTITY, null, true
+    );
 
     //template node for organization units
-    RoleNode roleNodeOrgUnitTemplate = SecurityHelper.roleNodeOf(ORG_UNIT_TEMPLATE_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, null,null);
+    RoleNode roleNodeOrgUnitTemplate = SecurityHelper.roleNodeOf(
+        ORG_UNIT_TEMPLATE_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, null, null, null
+    );
     //organization unit template permissions
     List<RoleNodePermission> roleNodeOrgUnitPermissions = this.prepRoleNodePermissions(roleNodeOrgUnitTemplate, permissions, ORG_UNIT_ENTITY, null, true);
 
@@ -311,10 +317,10 @@ public class SecurityLoadingTest {
   public void testLoadFirstLevelPermissionTemplates() {
     //role node for organization instance
     RoleNode organizationRoleNode =
-        SecurityHelper.roleNodeOf(ORG_ROLE_NODE_ID, ORG_ENTITY, null, ORG_ENTITY, ORG_ENTITY_ID);
+        SecurityHelper.roleNodeOf(ORG_ROLE_NODE_ID, ORG_ENTITY, null, ORG_ENTITY, ORG_ENTITY_ID, 0);
     //role node for organization unit instance
     RoleNode organizationUnitRoleNode =
-        SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID);
+        SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0);
     organizationUnitRoleNode.setParent(organizationRoleNode); //connect to parent node !!!
     //store both nodes
     List<RoleNode> resultOrg = given()
@@ -410,7 +416,7 @@ public class SecurityLoadingTest {
   @Order(30)
   public void testLoadAndCheckPermissionInstanceForEntity() {
     RoleNode organizationUnitRoleNode =
-      SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID);
+      SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0);
 
     List<Permission> permissions = this.getPermissions();
     List<RoleNodePermission> roleNodeOrgUnitPermissions =
@@ -440,12 +446,10 @@ public class SecurityLoadingTest {
       assertInstanceOf(RoleNodePermission.class, p);
     }
 
-
     //load permissions for org unit
     RoleNodeParams params = new RoleNodeParams();
     params.setEntity(ORG_UNIT_ENTITY);
     params.setEntityId(ORG_UNIT_ENTITY_ID);
-    params.setMaxParentInstanceLevel(1);
     params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgUnitCombinedPermissions = given()
