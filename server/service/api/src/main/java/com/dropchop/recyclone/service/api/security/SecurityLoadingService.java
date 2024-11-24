@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.service.api.Service;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface SecurityLoadingService extends Service {
 

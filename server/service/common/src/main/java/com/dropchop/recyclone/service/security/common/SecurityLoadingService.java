@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.security;
+package com.dropchop.recyclone.service.security.common;
 
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
@@ -10,16 +10,24 @@ import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.RoleNode;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermissionTemplate;
+import com.dropchop.recyclone.service.api.RecycloneType;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 22. 11. 24.
  */
+@Slf4j
+@Getter
 abstract public class SecurityLoadingService implements com.dropchop.recyclone.service.api.security.SecurityLoadingService {
 
-  private static StatusMessage getStatusMessage(String error, RoleNodeParams params) {
+  protected static StatusMessage getStatusMessage(String error, RoleNodeParams params) {
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
     if (params != null) {
       status.setDetails(Set.of(
@@ -196,6 +204,14 @@ abstract public class SecurityLoadingService implements com.dropchop.recyclone.s
    * @return found role node or service exception if not found.
    */
   abstract protected RoleNode loadRoleNode(RoleNodeParams params);
+
+
+  /**
+   * Loads role node for provided uuid.
+   *
+   * @param uuid         - role node uuid
+   * @return found role node or service exception if not found.
+   */
   abstract protected RoleNode loadRoleNodeById(UUID uuid);
 
 }
