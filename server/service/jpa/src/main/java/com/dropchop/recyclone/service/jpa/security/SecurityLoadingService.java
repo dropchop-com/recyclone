@@ -1,9 +1,13 @@
 package com.dropchop.recyclone.service.jpa.security;
 
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserToDtoMapper;
+import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.dto.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.RoleNode;
 import com.dropchop.recyclone.model.dto.security.User;
@@ -89,26 +93,32 @@ public class SecurityLoadingService extends com.dropchop.recyclone.service.commo
   }
 
 
-  @Override
-  public User loadUserByToken(String token) {
-    JpaUser user = this.userRepository.findByToken(token);
+  /**
+   * Maps loaded jsa user to dto with user accounts.
+   * @param user - jsa user instance.
+   * @return user dto or null if not loaded.
+   */
+  private User mapToUser(JpaUser user) {
     if (user == null) {
       return null;
     }
-    MappingContext mapContext = userMapperProvider.getMappingContextForRead();
+    Params params = new Params();
+    params.getFilter().getContent().setTreeLevel(5);
+    MappingContext mapContext = new FilteringDtoContext();
+    mapContext.setParams(params);
     UserToDtoMapper userToDtoMapper = this.userMapperProvider.getToDtoMapper();
     return userToDtoMapper.toDto(user, mapContext);
   }
 
 
   @Override
+  public User loadUserByToken(String token) {
+    return this.mapToUser(this.userRepository.findByToken(token));
+  }
+
+
+  @Override
   public User loadUserByUsername(String loginName) {
-    JpaUser user = this.userRepository.findByLoginName(loginName);
-    if (user == null) {
-      return null;
-    }
-    MappingContext mapContext = userMapperProvider.getMappingContextForRead();
-    UserToDtoMapper userToDtoMapper = this.userMapperProvider.getToDtoMapper();
-    return userToDtoMapper.toDto(user, mapContext);
+    return this.mapToUser(this.userRepository.findByLoginName(loginName));
   }
 }
