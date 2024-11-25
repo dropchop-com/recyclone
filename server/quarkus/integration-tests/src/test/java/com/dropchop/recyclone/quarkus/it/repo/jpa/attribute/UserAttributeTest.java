@@ -39,7 +39,7 @@ public class UserAttributeTest {
     CountryRepository countryRepository;
 
     @Inject
-    UserRepository userRespository;
+    UserRepository userRepository;
 
     @BeforeAll
     @Transactional
@@ -65,14 +65,14 @@ public class UserAttributeTest {
         user.setAttributeValue("ChangeMeWithAdd", Boolean.FALSE);
         user.setAttributeValue("ChangeMeWithSet", Boolean.FALSE);
 
-        this.userRespository.save(user);
+        this.userRepository.save(user);
     }
 
     @AfterAll
     @Transactional
     public void tearDown() {
-        JpaUser user = this.userRespository.findById(USER_UUID);
-        userRespository.delete(user);
+        JpaUser user = this.userRepository.findById(USER_UUID);
+        userRepository.delete(user);
         JpaCountry countryUk = countryRepository.findById(coUkCode);
         countryRepository.delete(countryUk);
     }
@@ -80,7 +80,7 @@ public class UserAttributeTest {
     @Test
     @Order(1)
     public void testStoredUser() {
-        JpaUser user = this.userRespository.findById(USER_UUID);
+        JpaUser user = this.userRepository.findById(USER_UUID);
         assertEquals("Testko", user.getFirstName());
         assertEquals("Testic", user.getLastName());
         assertEquals(Boolean.FALSE, user.getAttributeValue("ChangeMeWithAdd"));
@@ -91,11 +91,11 @@ public class UserAttributeTest {
     @Order(2)
     @Transactional
     public void testUpdateUserAttributeWithAdd() {
-        JpaUser user = this.userRespository.findById(USER_UUID);
+        JpaUser user = this.userRepository.findById(USER_UUID);
         assertEquals(Boolean.FALSE, user.getAttributeValue("ChangeMeWithAdd"));
         user.addAttribute(new AttributeBool("ChangeMeWithAdd", Boolean.TRUE));
-        this.userRespository.save(user);
-        JpaUser changedUser = this.userRespository.findById(USER_UUID);
+        this.userRepository.save(user);
+        JpaUser changedUser = this.userRepository.findById(USER_UUID);
         assertEquals(Boolean.TRUE, changedUser.getAttributeValue("ChangeMeWithAdd"));
     }
 
@@ -103,11 +103,11 @@ public class UserAttributeTest {
     @Order(3)
     @Transactional
     public void testUpdateUserAttributeWithSetValue() {
-        JpaUser user = this.userRespository.findById(USER_UUID);
+        JpaUser user = this.userRepository.findById(USER_UUID);
         assertEquals(Boolean.FALSE, user.getAttributeValue("ChangeMeWithSet"));
         user.setAttributeValue("ChangeMeWithSet", Boolean.TRUE);
-        this.userRespository.save(user);
-        JpaUser changedUser = this.userRespository.findById(USER_UUID);
+        this.userRepository.save(user);
+        JpaUser changedUser = this.userRepository.findById(USER_UUID);
         assertEquals(Boolean.TRUE, changedUser.getAttributeValue("ChangeMeWithSet"));
     }
 

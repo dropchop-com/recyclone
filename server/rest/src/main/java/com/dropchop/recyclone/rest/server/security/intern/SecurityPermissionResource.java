@@ -9,6 +9,7 @@ import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.rest.server.ClassicRestResource;
 import com.dropchop.recyclone.service.api.security.SecurityLoadingService;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class SecurityPermissionResource implements
 
 
   @Inject
+  @Any
   SecurityLoadingService securityLoadingService;
 
   @Inject
