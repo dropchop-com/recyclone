@@ -26,7 +26,6 @@ public class SecurityPermissionResource implements
 
 
   @Inject
-  @Any
   SecurityLoadingService securityLoadingService;
 
   @Inject

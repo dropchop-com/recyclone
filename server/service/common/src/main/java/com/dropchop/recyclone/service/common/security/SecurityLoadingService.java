@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.security.common;
+package com.dropchop.recyclone.service.common.security;
 
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
@@ -10,15 +10,11 @@ import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.RoleNode;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermissionTemplate;
-import com.dropchop.recyclone.service.api.RecycloneType;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 22. 11. 24.

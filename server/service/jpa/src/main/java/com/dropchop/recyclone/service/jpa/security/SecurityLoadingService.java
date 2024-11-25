@@ -25,7 +25,8 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-public class SecurityLoadingService extends com.dropchop.recyclone.service.security.common.SecurityLoadingService {
+public class SecurityLoadingService extends com.dropchop.recyclone.service.common.security.SecurityLoadingService
+    implements com.dropchop.recyclone.service.api.security.SecurityLoadingService {
 
   @Inject
   UserRepository userRepository;
