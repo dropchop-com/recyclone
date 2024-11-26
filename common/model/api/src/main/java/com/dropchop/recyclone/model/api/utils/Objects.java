@@ -3,6 +3,7 @@ package com.dropchop.recyclone.model.api.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -36,6 +37,15 @@ public class Objects {
         log.warn("Unable to find property [{}] getter!", propName, e1);
         return null;
       }
+    }
+  }
+
+  public static boolean hasField(Class<?> clazz, String fieldName) {
+    try {
+      Field field = clazz.getDeclaredField(fieldName);
+      return true;
+    } catch (NoSuchFieldException e) {
+      return false;
     }
   }
 }

@@ -3,6 +3,7 @@ package com.dropchop.recyclone.repo.es;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
+import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
@@ -242,7 +243,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     List<Object> searchAfterValues = null;
     int size = getResultFilterSize(context);
     int from = getResultFilterFrom(context);
-    QueryNodeObject sortOrder = buildSortOrder(context.getParams().tryGetResultFilter().sort());
+    QueryNodeObject sortOrder = buildSortOrder(context.getParams().tryGetResultFilter().sort(), ((ElasticExecContext<S>) context).getRootClass());
 
     boolean hasMoreHits = true;
     while (hasMoreHits) {
@@ -300,7 +301,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     return context.getParams().tryGetResultFilter().from();
   }
 
-  private QueryNodeObject buildSortOrder(List<String> sortList) {
+  private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {
     QueryNodeObject sortOrder = new QueryNodeObject();
     if (!sortList.isEmpty()) {
       List<QueryNodeObject> sortEntries = sortList.stream()
@@ -313,8 +314,19 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
       sortOrder.put("sort", sortEntries);
     } else {
       QueryNodeObject defaultSort = new QueryNodeObject();
-      defaultSort.put("code.keyword", "desc");
-      sortOrder.put("sort", defaultSort);
+
+      if(Objects.hasField(rootClass, "id")) {
+        defaultSort.put("id.keyword", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else if(Objects.hasField(rootClass, "code")) {
+        defaultSort.put("code.keyword", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else {
+        throw new ServiceException(
+          ErrorCode.internal_error,
+          "No Id or Code set to sort by; for Es deep pagination!"
+        );
+      }
     }
     return sortOrder;
   }
@@ -338,7 +350,7 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     QueryNodeObject queryObject,
     ElasticExecContext<S> context) throws IOException {
     String query = getObjectMapper().writeValueAsString(queryObject);
-    Request request = new Request("GET", "/" + context.getRootAlias() + "/_search");
+    Request request = new Request("GET", "/" + getIndexName() + "/_search");
     request.setJsonEntity(query);
 
     String response = EntityUtils.toString(getElasticsearchClient().performRequest(request).getEntity());
