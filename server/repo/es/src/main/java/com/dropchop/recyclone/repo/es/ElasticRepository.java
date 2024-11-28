@@ -8,7 +8,7 @@ import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.es.listener.QuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;

@@ -2,7 +2,7 @@ package com.dropchop.recyclone.quarkus.it.repo.es;
 
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
-import com.dropchop.recyclone.repo.es.listener.QuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

@@ -11,7 +11,7 @@ import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
-import com.dropchop.recyclone.repo.es.listener.QuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;

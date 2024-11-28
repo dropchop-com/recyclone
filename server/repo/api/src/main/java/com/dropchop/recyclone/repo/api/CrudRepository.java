@@ -2,6 +2,7 @@ package com.dropchop.recyclone.repo.api;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,4 +26,6 @@ public interface CrudRepository<E, ID> extends ReadRepository<E, ID> {
 
   <S extends E> List<S> delete(Collection<S> entities);
   <S extends E> S delete(S entity);
+
+  void setQuerySearchResultListener(QuerySearchResultListener querySearchResultListener);
 }
