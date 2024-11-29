@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.*;
 import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
-import com.dropchop.recyclone.repo.api.CrudRepository;
+import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
@@ -31,7 +31,7 @@ import org.elasticsearch.client.RestClient;
  */
 @Slf4j
 @SuppressWarnings("unused, unchecked")
-public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> {
+public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<E, ID> {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -228,7 +228,8 @@ public abstract class ElasticRepository<E, ID> implements CrudRepository<E, ID> 
     return List.of();
   }
 
-  public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) throws IOException {
+  @Override
+  public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) {
     if (!(context instanceof ElasticExecContext<S> elasticContext)) {
       throw new ServiceException(
         ErrorCode.parameter_validation_error,

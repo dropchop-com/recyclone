@@ -26,6 +26,4 @@ public interface CrudRepository<E, ID> extends ReadRepository<E, ID> {
 
   <S extends E> List<S> delete(Collection<S> entities);
   <S extends E> S delete(S entity);
-
-  void setQuerySearchResultListener(QuerySearchResultListener querySearchResultListener);
 }

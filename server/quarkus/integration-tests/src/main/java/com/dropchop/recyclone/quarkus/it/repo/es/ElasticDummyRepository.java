@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;

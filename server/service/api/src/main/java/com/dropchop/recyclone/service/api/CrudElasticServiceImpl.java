@@ -11,6 +11,7 @@ import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
+import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
 
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
@@ -35,14 +36,14 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
   @SuppressWarnings("CdiInjectionPointsInspection")
   CommonExecContextContainer ctxContainer;
 
-  public abstract CrudRepository<E, ID> getRepository();
+  public abstract ElasticCrudRepository<E, ID> getRepository();
 
   public abstract FilteringElasticMapperProvider<D, E, ID> getFilteringMapperProvider();
 
   @Override
   @Transactional
   @SuppressWarnings("unchecked")
-  public Result<D> search() throws JsonProcessingException {
+  public Result<D> search() {
     CommonExecContext<D, ?> context = ctxContainer.get();
     QueryParams params;
 
@@ -60,11 +61,19 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
 
         @Override
         public <S> void onResult(S result) {
-          E entity = getFilteringMapperProvider().getMapToEntityMapper().fromMap((Map<String, Object>) result);
+          try {
+            E entity = (E) getFilteringMapperProvider().getMapToEntityMapper().fromMap((Map<String, Object>) result);
+            results.add(getFilteringMapperProvider().getToDtoMapper().toDto(entity, mappingContext));
+          } catch (ServiceException e) {
+            throw new ServiceException(ErrorCode.data_validation_error,
+              "Error mapping from Map<String, String> to Dummy: ", e);
+          }
         }
       });
 
-    } catch (ServiceException | IOException e) {
+      getRepository().search(params, getRepository().getRepositoryExecContext());
+      return new Result<D>().toSuccess(results, results.size());
+    } catch (ServiceException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
   }

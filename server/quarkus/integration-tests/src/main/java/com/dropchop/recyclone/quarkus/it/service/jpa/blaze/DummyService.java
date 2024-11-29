@@ -67,14 +67,7 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
 
   @Override
   public Result<Dummy> esSearch() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    QueryParams queryParams = context.getParams();
-    try {
-      List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
-      return new Result<Dummy>().toSuccess(results, results.size());
-    } catch (ServiceException | IOException e) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
-    }
+    return null;
   }
 
   @Override

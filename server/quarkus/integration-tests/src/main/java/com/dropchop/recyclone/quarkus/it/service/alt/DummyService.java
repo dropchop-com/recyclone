@@ -84,9 +84,9 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
         }
       });
 
-      List<Dummy> results = elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
+      elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
       return new Result<Dummy>().toSuccess(actualResults, actualResults.size());
-    } catch (ServiceException | IOException e) {
+    } catch (ServiceException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
   }
