@@ -11,7 +11,6 @@ import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
-import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +19,6 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;

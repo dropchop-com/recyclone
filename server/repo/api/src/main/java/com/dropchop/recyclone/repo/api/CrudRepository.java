@@ -2,7 +2,6 @@ package com.dropchop.recyclone.repo.api;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 
 import java.util.Collection;
 import java.util.List;

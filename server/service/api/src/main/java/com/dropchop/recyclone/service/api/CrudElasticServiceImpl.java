@@ -10,17 +10,13 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
-
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

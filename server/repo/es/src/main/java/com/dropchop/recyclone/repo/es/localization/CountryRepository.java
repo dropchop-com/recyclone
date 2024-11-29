@@ -1,8 +1,6 @@
 package com.dropchop.recyclone.repo.es.localization;
 
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.entity.es.localization.EsCountry;
-import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
