@@ -17,10 +17,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Samo Pritrznik <samo.pritrznik@dropchop.com> on 28. 11. 24
@@ -72,5 +69,18 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
     } catch (ServiceException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
     }
+  }
+
+  @Override
+  @Transactional
+  public Result<D> create(List<D> dtos) {
+    MappingContext mappingContext = new FilteringDtoContext().of(ctxContainer.get());
+
+    List<E> entites = getFilteringMapperProvider().getToEntityMapper().toEntities(dtos, mappingContext);
+
+    List<E> saved = getRepository().save(entites);
+
+    return new Result<D>().toSuccess(getFilteringMapperProvider()
+      .getToDtoMapper().toDtos(saved, mappingContext));
   }
 }

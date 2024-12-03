@@ -316,8 +316,8 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     } else {
       QueryNodeObject defaultSort = new QueryNodeObject();
 
-      if(Objects.hasField(rootClass, "id")) {
-        defaultSort.put("id.keyword", "desc");
+      if(Objects.hasField(rootClass, "uuid")) {
+        defaultSort.put("uuid.keyword", "desc");
         sortOrder.put("sort", defaultSort);
       } else if(Objects.hasField(rootClass, "code")) {
         defaultSort.put("code.keyword", "desc");
