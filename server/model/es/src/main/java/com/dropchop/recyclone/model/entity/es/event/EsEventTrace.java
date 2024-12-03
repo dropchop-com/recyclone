@@ -14,7 +14,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class EsEventTrace extends EsUuid implements EventTrace {
+
+  private String group;
+  private String context;
+
 }

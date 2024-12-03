@@ -17,8 +17,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class EsEvent extends EsUuid implements Event<EsEventDetail, EsEventItem, EsEventTrace> {
 
   private String application;

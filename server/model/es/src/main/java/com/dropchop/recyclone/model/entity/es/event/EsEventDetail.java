@@ -15,8 +15,7 @@ import java.time.ZonedDateTime;
  */
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class EsEventDetail extends EsUuid implements EventDetail<EsEventDetail> {
 
   private String name;

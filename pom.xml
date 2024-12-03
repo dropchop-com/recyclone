@@ -286,6 +286,11 @@
         <artifactId>recyclone-repo-jpa-blaze</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-repo-es</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
@@ -295,6 +300,11 @@
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-service-jpa</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-service-es</artifactId>
         <version>${project.version}</version>
       </dependency>
 
