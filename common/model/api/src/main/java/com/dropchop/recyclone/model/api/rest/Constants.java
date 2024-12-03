@@ -59,6 +59,10 @@ public interface Constants {
       String TAG_SEGMENT = "/tag";
       String TAG = TAGGING_SEGMENT + TAG_SEGMENT;
     }
+
+    interface Event {
+      String EVENTS = "/events";
+    }
   }
 
   interface Params {

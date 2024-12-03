@@ -77,6 +77,10 @@ public interface Constants {
     interface Tagging {
       String TAG = "tagging.tag";
     }
+
+    interface Events {
+      String EVENT = "events.event";
+    }
   }
 
   interface Actions {
