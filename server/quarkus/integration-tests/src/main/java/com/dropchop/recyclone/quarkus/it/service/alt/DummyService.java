@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.service.alt;
 
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
@@ -69,20 +71,22 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   public Result<Dummy> esSearch() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
-    try {
-      List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
-      elasticRepository.setQuerySearchResultListener(new QuerySearchResultListener() {
 
-        @Override
-        public <S> void onResult(S result) {
-          try {
-            actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
-          } catch (ServiceException e) {
-            throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
-          }
+    List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
+
+    MappingContext map = new FilteringDtoContext().of(ctxContainer.get());
+    map.listener(new QuerySearchResultListener() {
+      @Override
+      public <S> void onResult(S result) {
+        try {
+          actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
+        } catch (ServiceException e) {
+          throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
         }
-      });
+      }
+    });
 
+    try {
       elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
       return new Result<Dummy>().toSuccess(actualResults, actualResults.size());
     } catch (ServiceException e) {

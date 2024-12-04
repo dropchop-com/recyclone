@@ -2,9 +2,13 @@ package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.*;
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
@@ -14,17 +18,15 @@ import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-
-import java.io.IOException;
-import java.util.*;
-
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
@@ -37,16 +39,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
 
-  private QuerySearchResultListener resultListener = new QuerySearchResultListener() {
-    @Override
-    public <S> void onResult(S result) {
-
-    }
-  };
-
-  public void setQuerySearchResultListener(QuerySearchResultListener resultListener) {
-    this.resultListener = resultListener;
-  }
+  private QuerySearchResultListener queryListener = null;
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
@@ -65,6 +58,12 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext) {
+    queryListener = (QuerySearchResultListener) mappingContext.getListeners().getFirst();
+
+    ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
+    for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
+      context.decorateWith(decorator);
+    }
     return getRepositoryExecContext().totalCount(mappingContext);
   }
 
@@ -260,7 +259,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
             S result = hit.getSource();
             allHits.add(result);
 
-            resultListener.onResult(result);
+            queryListener.onResult(result);
           }
         }
       } catch (ServiceException e) {

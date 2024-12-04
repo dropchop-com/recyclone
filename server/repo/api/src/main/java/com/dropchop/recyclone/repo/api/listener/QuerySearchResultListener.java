@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.repo.api.listener;
 
-public interface QuerySearchResultListener {
+import com.dropchop.recyclone.mapper.api.MappingListener;
+
+public interface QuerySearchResultListener extends MappingListener {
   <S> void onResult(S result);
 }

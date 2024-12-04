@@ -23,6 +23,7 @@ import java.util.*;
  * @author Samo Pritrznik <samo.pritrznik@dropchop.com> on 28. 11. 24
  **/
 @Slf4j
+@SuppressWarnings("unused")
 public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID> implements CrudService<D> {
 
   @Inject
@@ -46,24 +47,23 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
       throw new ServiceException(ErrorCode.internal_error, "ExecContext is null!");
     }
 
+    List<D> results = new ArrayList<>(Collections.emptyList());
     MappingContext mappingContext = new FilteringDtoContext().of(ctxContainer.get());
 
-    try {
-      List<D> results = new ArrayList<>(Collections.emptyList());
-      getRepository().setQuerySearchResultListener(new QuerySearchResultListener() {
-
-        @Override
-        public <S> void onResult(S result) {
-          try {
-            E entity = (E) getFilteringMapperProvider().getMapToEntityMapper().fromMap((Map<String, Object>) result);
-            results.add(getFilteringMapperProvider().getToDtoMapper().toDto(entity, mappingContext));
-          } catch (ServiceException e) {
-            throw new ServiceException(ErrorCode.data_validation_error,
-              "Error mapping from Map<String, String> to Dummy: ", e);
-          }
+    mappingContext.listener(new QuerySearchResultListener() {
+      @Override
+      public <S> void onResult(S result) {
+        try {
+          E entity = (E) getFilteringMapperProvider().getMapToEntityMapper().fromMap((Map<String, Object>) result);
+          results.add(getFilteringMapperProvider().getToDtoMapper().toDto(entity, mappingContext));
+        } catch (ServiceException e) {
+          throw new ServiceException(ErrorCode.data_validation_error,
+            "Error mapping from Map<String, String> to Dummy: ", e);
         }
-      });
+      }
+    });
 
+    try {
       getRepository().search(params, getRepository().getRepositoryExecContext());
       return new Result<D>().toSuccess(results, results.size());
     } catch (ServiceException e) {
