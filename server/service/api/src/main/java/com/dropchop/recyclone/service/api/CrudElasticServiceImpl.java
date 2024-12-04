@@ -95,4 +95,10 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
     return new Result<D>().toSuccess(getFilteringMapperProvider()
       .getToDtoMapper().toDtos(deleted, mappingContext));
   }
+
+  @Override
+  @Transactional
+  public Result<D> update(List<D> dtos) {
+    return this.create(dtos);
+  }
 }

@@ -31,6 +31,7 @@ public interface Constants {
     String ELASTICSEARCH_SEARCH_SEGMENT = "/es_search";
     String ELASTICSEARCH_SAVE_SEGMENT = "/es_save";
     String ELASTICSEARCH_DELETE_SEGMENT = "/es_delete";
+    String ELASTICSEARCH_UPDATE_SEGMENT = "/es_update";
 
     String INTERNAL_SEGMENT = "/internal";
     String PUBLIC_SEGMENT = "/public";
