@@ -25,14 +25,18 @@ public class TokenRealm extends BaseAuthenticatingRealm {
   @Override
   protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token) {
     if (token instanceof BearerToken) {
-      User p = this.getSecurityLoaderService().loadByToken(String.valueOf(token.getPrincipal()));
+      String loginToken = String.valueOf(token.getPrincipal());
+      User p = this.getSecurityLoadingService().loadUserByToken(loginToken);
       if (p != null && p.getDeactivated() == null) {
-        UserAccount account = p.getAccounts().stream().filter(a -> a instanceof TokenAccount).findFirst().orElse(null);
+        UserAccount account = p.getAccounts().stream()
+            .filter(a -> a instanceof TokenAccount)
+            .filter(a -> ((TokenAccount)a).getToken().equals(loginToken))
+            .findFirst()
+            .orElse(null);
         if (account != null) {
-          //TODO: fill principal settings from customer if needed
           return new SimpleAuthenticationInfo(p, token.getPrincipal(), this.getName());
         }
-        log.debug("Not Token account found for ");
+        log.debug("No account found on principal [{}] for token [{}]", p.getUuid(), loginToken);
       }
     }
     throw new AuthenticationException("Unsupported token type [" + token + "]!");

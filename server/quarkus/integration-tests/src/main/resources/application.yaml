@@ -12,6 +12,9 @@ quarkus:
     recyclone-repo-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-repo-jpa-blaze
+    recyclone-service-common:
+        group-id: com.dropchop.recyclone
+        artifact-id: recyclone-service-common
     recyclone-repo-es:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-repo-es
