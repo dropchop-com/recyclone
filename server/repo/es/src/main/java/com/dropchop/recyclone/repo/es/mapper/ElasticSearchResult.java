@@ -28,6 +28,9 @@ public class ElasticSearchResult<T> {
 
     @JsonProperty("hits")
     private List<Hit<T>> hits;
+
+    @JsonProperty("hits")
+    private List<T> sources;
   }
 
   @Setter

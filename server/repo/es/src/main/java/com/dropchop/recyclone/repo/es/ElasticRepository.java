@@ -10,7 +10,6 @@ import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
@@ -19,11 +18,11 @@ import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.api.listener.EntityQuerySearchResultListener;
 import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
-import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
-import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
-import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
+import com.dropchop.recyclone.repo.es.mapper.*;
+import com.dropchop.recyclone.repo.es.parser.ElasticEntityParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
@@ -258,7 +257,8 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
 
         if(listener instanceof EntityQuerySearchResultListener) {
-          //((EntityQuerySearchResultListener) queryListener).onResult();
+
+          List<E> entities = executeSearchAndExtractEntities(queryObject, elasticContext);
         } else if(listener instanceof MapQuerySearchResultListener) {
           List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 
@@ -363,6 +363,19 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     if (searchAfterValues != null) queryObject.put("search_after", searchAfterValues);
 
     return queryObject;
+  }
+
+  private List<E> executeSearchAndExtractEntities(
+    QueryNodeObject queryObject,
+    ElasticExecContext context) throws IOException {
+
+    String query = getObjectMapper().writeValueAsString(queryObject);
+    Request request = new Request("GET", "/" + getIndexName() + "/_search");
+    request.setJsonEntity(query);
+
+    String response = EntityUtils.toString(getElasticsearchClient().performRequest(request).getEntity());
+    ElasticEntityParser parser = new ElasticEntityParser(getObjectMapper());
+    return parser.parseResponse(response, context.getRootClass());
   }
 
   private <S extends E> List<ElasticSearchResult.Hit<S>> executeSearchAndExtractHits(

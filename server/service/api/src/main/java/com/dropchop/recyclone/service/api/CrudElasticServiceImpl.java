@@ -13,7 +13,7 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.listener.EntityQuerySearchResultListener;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -48,11 +48,12 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
       throw new ServiceException(ErrorCode.internal_error, "ExecContext is null!");
     }
 
-    List<D> results = new ArrayList<>(Collections.emptyList());
     MappingContext mappingContext = new FilteringDtoContext().of(ctxContainer.get());
     RepositoryExecContext<E> ctx = getRepository().getRepositoryExecContext();
 
-    ctx.listener(new MapQuerySearchResultListener() {
+    List<D> results = new ArrayList<>(Collections.emptyList());
+
+    /*ctx.listener(new MapQuerySearchResultListener() {
       @Override
       public <S> void onResult(S result) {
         try {
@@ -63,6 +64,14 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
             "Error mapping from Map<String, String> to Dummy: ", e);
         }
       }
+    });*/
+
+    ctx.listener(new EntityQuerySearchResultListener() {
+      @Override
+      public <X extends Entity> void onResult(X result) {
+        results.add(getFilteringMapperProvider().getToDtoMapper().toDto((E) result, mappingContext));
+      }
+
     });
 
     try {
