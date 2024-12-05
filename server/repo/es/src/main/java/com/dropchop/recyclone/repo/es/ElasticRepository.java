@@ -7,6 +7,9 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.model.api.marker.HasUuid;
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
@@ -328,17 +331,19 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       sortOrder.put("sort", sortEntries);
     } else {
       QueryNodeObject defaultSort = new QueryNodeObject();
-
-      if(Objects.hasField(rootClass, "uuid")) {
+      if(HasCreated.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("created", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else if(HasUuid.class.isAssignableFrom(rootClass)) {
         defaultSort.put("uuid.keyword", "desc");
         sortOrder.put("sort", defaultSort);
-      } else if(Objects.hasField(rootClass, "code")) {
+      } else if(HasCode.class.isAssignableFrom(rootClass)) {
         defaultSort.put("code.keyword", "desc");
         sortOrder.put("sort", defaultSort);
       } else {
         throw new ServiceException(
-          ErrorCode.internal_error,
-          "No Id or Code set to sort by; for Es deep pagination!"
+            ErrorCode.internal_error,
+            "No Id or Code set to sort by; for Es deep pagination!"
         );
       }
     }
