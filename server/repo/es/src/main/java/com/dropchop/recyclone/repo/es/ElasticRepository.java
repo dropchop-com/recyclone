@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
@@ -12,6 +13,8 @@ import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.listener.EntityQuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
@@ -39,8 +42,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
 
-  private QuerySearchResultListener queryListener = null;
-
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
       new PageCriteriaDecorator()
@@ -58,8 +59,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext) {
-    queryListener = (QuerySearchResultListener) mappingContext.getListeners().getFirst();
-
     ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
       context.decorateWith(decorator);
@@ -243,24 +242,39 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     List<Object> searchAfterValues = null;
     int size = getResultFilterSize(context);
     int from = getResultFilterFrom(context);
-    QueryNodeObject sortOrder = buildSortOrder(context.getParams().tryGetResultFilter().sort(), ((ElasticExecContext<S>) context).getRootClass());
+    QueryNodeObject sortOrder = buildSortOrder(
+      context.getParams().tryGetResultFilter().sort(),
+      ((ElasticExecContext<S>) context).getRootClass());
+
+    RepositoryExecContextListener listener = context.getListeners().stream()
+      .filter(l -> l instanceof QuerySearchResultListener).findFirst().orElse(null);
 
     boolean hasMoreHits = true;
     while (hasMoreHits) {
       try {
         QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
-        List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 
-        if (hits.isEmpty()) {
-          hasMoreHits = false;
-        } else {
-          searchAfterValues = getSearchAfterValues(hits);
-          for(ElasticSearchResult.Hit<S> hit : hits) {
-            S result = hit.getSource();
-            allHits.add(result);
+        if(listener instanceof EntityQuerySearchResultListener) {
+          //((EntityQuerySearchResultListener) queryListener).onResult();
+        } else if(listener instanceof MapQuerySearchResultListener) {
+          List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 
-            queryListener.onResult(result);
+          if (hits.isEmpty()) {
+            hasMoreHits = false;
+          } else {
+            searchAfterValues = getSearchAfterValues(hits);
+            for(ElasticSearchResult.Hit<S> hit : hits) {
+              S result = hit.getSource();
+              allHits.add(result);
+
+              ((MapQuerySearchResultListener) listener).onResult(result);
+            }
           }
+        } else {
+          throw new ServiceException(
+            ErrorCode.process_error,
+            "No query listener is set!"
+          );
         }
       } catch (ServiceException e) {
         throw new ServiceException(

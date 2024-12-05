@@ -12,7 +12,8 @@ import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
-import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +50,9 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
 
     List<D> results = new ArrayList<>(Collections.emptyList());
     MappingContext mappingContext = new FilteringDtoContext().of(ctxContainer.get());
+    RepositoryExecContext<E> ctx = getRepository().getRepositoryExecContext();
 
-    mappingContext.listener(new QuerySearchResultListener() {
+    ctx.listener(new MapQuerySearchResultListener() {
       @Override
       public <S> void onResult(S result) {
         try {
@@ -64,7 +66,7 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
     });
 
     try {
-      getRepository().search(params, getRepository().getRepositoryExecContext());
+      getRepository().search(params, ctx);
       return new Result<D>().toSuccess(results, results.size());
     } catch (ServiceException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
