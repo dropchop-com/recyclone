@@ -61,17 +61,20 @@ public interface Constants {
 
   interface Domains {
     String ALL = "*";
+
     interface Localization {
       String LANGUAGE = "localization.language";
-      String COUNTRY  = "localization.country";
+      String COUNTRY = "localization.country";
     }
 
+
     interface Security {
-      String ACTION     = "security.action";
-      String DOMAIN     = "security.domain";
-      String ROLE       = "security.role";
+      String ACTION = "security.action";
+      String DOMAIN = "security.domain";
+      String ROLE = "security.role";
+      String ROLE_NODE = "security.role_node";
       String PERMISSION = "security.permission";
-      String USER       = "security.user";
+      String USER = "security.user";
     }
 
     interface Tagging {
@@ -80,11 +83,11 @@ public interface Constants {
   }
 
   interface Actions {
-    String ALL        = "*";
-    String VIEW       = "view";
-    String CREATE     = "create";
-    String DELETE     = "delete";
-    String UPDATE     = "update";
+    String ALL = "*";
+    String VIEW = "view";
+    String CREATE = "create";
+    String DELETE = "delete";
+    String UPDATE = "update";
     String DEACTIVATE = "deactivate"; //on tuesdays it's covered by update on fridays a see it as a separate action ... a možda i nije
   }
 }

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.mapper.jpa.security;
 
+import com.dropchop.recyclone.mapper.api.DtoPolymorphicFactory;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.dto.security.UserAccount;
@@ -13,12 +14,11 @@ import org.mapstruct.*;
 
 @Mapper(
     componentModel = "jakarta-cdi",
-    uses = {ToDtoManipulator.class},
+    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true)
 )
 public interface UserAccountToDtoMapper extends ToDtoMapper<UserAccount, JpaUserAccount> {
-
   @SubclassMapping( source = JpaLoginAccount.class, target = LoginAccount.class)
   @SubclassMapping( source = JpaTokenAccount.class, target = TokenAccount.class)
   UserAccount toDto(JpaUserAccount tags, @Context MappingContext context);

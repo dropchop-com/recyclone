@@ -48,8 +48,8 @@ public class ResultFilter
     }
 
     @JsonIgnore
-    public ContentFilter exclude(String include) {
-      excludes.add(include);
+    public ContentFilter exclude(String exclude) {
+      excludes.add(exclude);
       return this;
     }
 

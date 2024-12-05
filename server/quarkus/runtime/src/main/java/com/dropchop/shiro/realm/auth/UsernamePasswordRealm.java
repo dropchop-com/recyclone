@@ -22,13 +22,16 @@ public class UsernamePasswordRealm extends BaseAuthenticatingRealm {
   protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token) {
     if (token instanceof UsernamePasswordToken) {
       String loginName = ((UsernamePasswordToken) token).getUsername();
-      User p = this.getSecurityLoaderService().loadByLoginName(loginName);
+      User p = this.getSecurityLoadingService().loadUserByUsername(loginName);
       if (p != null && p.getDeactivated() == null) {
-        UserAccount account = p.getAccounts().stream().filter(a -> a instanceof LoginAccount).findFirst().orElse(null);
+        UserAccount account = p.getAccounts().stream()
+            .filter(a -> a instanceof LoginAccount)
+            .filter(a -> ((LoginAccount)a).getLoginName().equals(loginName))
+            .findFirst().orElse(null);
         if (account != null) {
           return new SimpleAuthenticationInfo(p, ((LoginAccount)account).getPassword(), this.getName());
         }
-        log.debug("No user Login account found for [{}]", loginName);
+        log.debug("No account found on principal [{}] for login name [{}]", p.getUuid(), loginName);
       }
     }
     throw new AuthenticationException("Unsupported token type [" + token + "]!");

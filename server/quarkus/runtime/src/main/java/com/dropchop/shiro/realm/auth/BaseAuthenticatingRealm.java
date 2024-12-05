@@ -1,6 +1,6 @@
 package com.dropchop.shiro.realm.auth;
 
-import com.dropchop.shiro.loaders.SecurityLoaderService;
+import com.dropchop.recyclone.service.api.security.SecurityLoadingService;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -9,12 +9,24 @@ import org.apache.shiro.realm.AuthenticatingRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 @SuppressWarnings("unused")
 abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
 
   private static final Logger log = LoggerFactory.getLogger(BaseAuthenticatingRealm.class);
 
-  private SecurityLoaderService securityLoaderService;
+  //private SecurityLoaderService securityLoaderService;
+  private SecurityLoadingService securityLoadingService;
+
+
+  public SecurityLoadingService getSecurityLoadingService() {
+    return securityLoadingService;
+  }
+
+
+  public void setSecurityLoadingService(SecurityLoadingService securityLoadingService) {
+    this.securityLoadingService = securityLoadingService;
+  }
 
 
   public BaseAuthenticatingRealm() {
@@ -45,12 +57,4 @@ abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
 
   abstract protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token);
 
-
-  public SecurityLoaderService getSecurityLoaderService() {
-    return securityLoaderService;
-  }
-
-  public void setSecurityLoaderService(SecurityLoaderService securityLoaderService) {
-    this.securityLoaderService = securityLoaderService;
-  }
 }
