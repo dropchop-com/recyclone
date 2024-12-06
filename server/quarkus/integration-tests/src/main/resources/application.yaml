@@ -36,6 +36,8 @@ quarkus:
     password: recyclone_test
   elasticsearch:
     devservices:
+      image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test
+      distribution: elastic
       enabled: true
       port: 9300
 

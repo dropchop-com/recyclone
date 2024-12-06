@@ -305,29 +305,21 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   private void applyDecorators(RepositoryExecContext<?> context) {
     context.getListeners().stream()
-      .filter(listener -> listener instanceof CriteriaDecorator)
-      .map(listener -> (CriteriaDecorator) listener)
-      .forEach(CriteriaDecorator::decorate);
-  }
-
-  private int getResultFilterSize(RepositoryExecContext<?> context) {
-    return context.getParams().tryGetResultFilter().size();
-  }
-
-  private int getResultFilterFrom(RepositoryExecContext<?> context) {
-    return context.getParams().tryGetResultFilter().from();
+        .filter(listener -> listener instanceof CriteriaDecorator)
+        .map(listener -> (CriteriaDecorator) listener)
+        .forEach(CriteriaDecorator::decorate);
   }
 
   private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {
     QueryNodeObject sortOrder = new QueryNodeObject();
     if (!sortList.isEmpty()) {
       List<QueryNodeObject> sortEntries = sortList.stream()
-        .map(sort -> {
-          QueryNodeObject sortEntry = new QueryNodeObject();
-          sortEntry.put(sort, "desc");
-          return sortEntry;
-        })
-        .toList();
+          .map(sort -> {
+            QueryNodeObject sortEntry = new QueryNodeObject();
+            sortEntry.put(sort, "desc");
+            return sortEntry;
+          })
+          .toList();
       sortOrder.put("sort", sortEntries);
     } else {
       QueryNodeObject defaultSort = new QueryNodeObject();
@@ -379,8 +371,8 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   }
 
   private <S extends E> List<ElasticSearchResult.Hit<S>> executeSearchAndExtractHits(
-    QueryNodeObject queryObject,
-    ElasticExecContext<S> context) throws IOException {
+      QueryNodeObject queryObject,
+      ElasticExecContext<S> context) throws IOException {
     String query = getObjectMapper().writeValueAsString(queryObject);
     Request request = new Request("GET", "/" + getIndexName() + "/_search");
     request.setJsonEntity(query);
@@ -395,9 +387,73 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     return hits.isEmpty() ? null : hits.getLast().getSort();
   }
 
-  protected abstract ElasticQueryMapper getElasticQueryMapper();
+  @Override
+  public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) {
+    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
+      throw new ServiceException(
+        ErrorCode.parameter_validation_error,
+        "Invalid context: Expected ElasticExecContext but received " + context.getClass()
+      );
+    }
 
-  protected abstract ObjectMapper getObjectMapper();
+    initializeContext(elasticContext, params);
+    applyDecorators(context);
 
-  protected abstract RestClient getElasticsearchClient();
+    List<S> allHits = new ArrayList<>();
+    List<Object> searchAfterValues = null;
+    int size = context.getParams().tryGetResultFilter().size();
+    int from = context.getParams().tryGetResultFilter().from();
+    QueryNodeObject sortOrder = buildSortOrder(
+        context.getParams().tryGetResultFilter().sort(), elasticContext.getRootClass()
+    );
+
+    RepositoryExecContextListener listener = context.getListeners().stream()
+      .filter(l -> l instanceof QuerySearchResultListener).findFirst().orElse(null);
+
+    boolean hasMoreHits = true;
+    while (hasMoreHits) {
+      try {
+        QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
+
+        if(listener instanceof EntityQuerySearchResultListener) {
+          //((EntityQuerySearchResultListener) queryListener).onResult();
+        } else if(listener instanceof MapQuerySearchResultListener) {
+          List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
+
+          if (hits.isEmpty()) {
+            hasMoreHits = false;
+          } else {
+            searchAfterValues = getSearchAfterValues(hits);
+            for(ElasticSearchResult.Hit<S> hit : hits) {
+              S result = hit.getSource();
+              allHits.add(result);
+
+              ((MapQuerySearchResultListener) listener).onResult(result);
+            }
+          }
+        } else {
+          throw new ServiceException(
+            ErrorCode.process_error,
+            "No query listener is set!"
+          );
+        }
+      } catch (ServiceException e) {
+        throw new ServiceException(
+          ErrorCode.data_error,
+          "Failed to execute search query.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())),
+          e
+        );
+      } catch (Exception e) {
+        throw new ServiceException(
+          ErrorCode.internal_error,
+          "Unexpected error occurred during search execution.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())),
+          e
+        );
+      }
+    }
+
+    return allHits;
+  }
 }
