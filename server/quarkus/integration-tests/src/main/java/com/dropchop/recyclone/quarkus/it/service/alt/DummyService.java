@@ -6,6 +6,7 @@ import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -56,6 +57,18 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
 
   @Inject
   ObjectMapper objectMapper;
+
+
+  @Override
+  public Result<Dummy> search() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+    CodeParams codeParams = context.getParams();
+    List<String> codes = codeParams.getCodes();
+    List<EsDummy> entities = elasticRepository.findById(codes);
+    MappingContext mapCtx = new FilteringDtoContext().of(ctxContainer.get());
+    List<Dummy> dtos = mapperProvider.getToEsDtoMapper().toDtos(entities, mapCtx);
+    return new Result<Dummy>().toSuccess(dtos, dtos.size());
+  }
 
   @Override
   public Result<Dummy> query() {

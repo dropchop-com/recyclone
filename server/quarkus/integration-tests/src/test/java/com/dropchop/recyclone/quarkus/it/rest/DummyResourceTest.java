@@ -94,7 +94,7 @@ public class DummyResourceTest {
   @Test
   @Order(20)
   public void dummySearch() {
-    CodeParams params = CodeParams.builder().code("neki").build();
+    CodeParams params = CodeParams.builder().code("dummy_code1").build();
     given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -317,9 +317,10 @@ public class DummyResourceTest {
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
   */
+
   @Test
   @Order(30)
-  public void dummySearchTest() {
+  public void dummyQueryTest() {
     QueryParams params = QueryParams.builder().condition(
       and(
         or(

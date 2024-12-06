@@ -18,6 +18,7 @@ import lombok.Getter;
  */
 @Getter
 @ApplicationScoped
+@SuppressWarnings("unused")
 public class DummyMapperProvider extends FilteringMapperProvider<Dummy, JpaDummy, String> {
 
   @Inject
@@ -32,6 +33,9 @@ public class DummyMapperProvider extends FilteringMapperProvider<Dummy, JpaDummy
 
   @Inject
   DummyToEsMapper toEsEntityMapper;
+
+  @Inject
+  com.dropchop.recyclone.quarkus.it.mapper.es.DummyToDtoMapper toEsDtoMapper;
 
   @Inject
   DummyMapToDtoMapper mapToDtoMapper;
