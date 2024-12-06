@@ -7,15 +7,12 @@ import com.dropchop.recyclone.mapper.es.events.EventToEsMapper;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.entity.es.event.EsEvent;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
-import com.dropchop.recyclone.repo.api.RepositoryType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
 import java.util.Map;
 import java.util.UUID;
-
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_ES;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 3. 12. 24.
