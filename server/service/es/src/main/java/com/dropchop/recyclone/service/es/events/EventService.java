@@ -33,11 +33,9 @@ public class EventService extends CrudElasticServiceImpl<Event, EsEvent, UUID>
 
 
   @Inject
-  @RepositoryType(RECYCLONE_ES)
   EventRepository repository;
 
   @Inject
-  @RepositoryType(RECYCLONE_ES)
   EventMapperProvider filteringMapperProvider;
 
 

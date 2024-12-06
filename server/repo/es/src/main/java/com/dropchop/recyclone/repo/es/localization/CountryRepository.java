@@ -17,7 +17,6 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Getter
 @ApplicationScoped
-@RepositoryType(RECYCLONE_ES)
 public class CountryRepository extends ElasticRepository<EsCountry, String> {
 
   Class<EsCountry> rootClass = EsCountry.class;

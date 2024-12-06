@@ -20,7 +20,6 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Getter
 @ApplicationScoped
-@RepositoryType(RECYCLONE_ES)
 public class EventRepository extends ElasticRepository<EsEvent, UUID> {
 
   Class<EsEvent> rootClass = EsEvent.class;

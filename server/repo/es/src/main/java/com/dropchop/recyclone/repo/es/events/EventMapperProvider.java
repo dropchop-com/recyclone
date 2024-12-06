@@ -22,12 +22,10 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
  */
 @Getter
 @ApplicationScoped
-@RepositoryType(RECYCLONE_ES)
 public class EventMapperProvider extends FilteringElasticMapperProvider<Event, EsEvent, UUID>
     implements MapToEntityMapper<EsEvent> {
 
   @Inject
-  @RepositoryType(RECYCLONE_ES)
   EventRepository repository;
 
   @Inject
