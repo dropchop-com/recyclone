@@ -50,4 +50,14 @@ public class ElasticSearchResult<T> {
     @JsonProperty("sort")
     private List<Object> sort;
   }
+
+  @Setter
+  @Getter
+  public static class Container<T extends Hit<?>> {
+    private T hit;
+
+    public boolean isEmpty() {
+      return hit == null;
+    }
+  }
 }
