@@ -10,7 +10,6 @@ import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
@@ -44,6 +43,12 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
+
+  protected abstract ElasticQueryMapper getElasticQueryMapper();
+
+  protected abstract ObjectMapper getObjectMapper();
+
+  protected abstract RestClient getElasticsearchClient();
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
@@ -229,12 +234,87 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     return List.of();
   }
 
+  private <S extends E> void initializeContext(ElasticExecContext<S> context, QueryParams params) {
+    context.init((Class<S>) getRootClass(), Strings.toSnakeCase(getRootClass().getSimpleName()), params);
+  }
+
+  private void applyDecorators(RepositoryExecContext<?> context) {
+    context.getListeners().stream()
+        .filter(listener -> listener instanceof CriteriaDecorator)
+        .map(listener -> (CriteriaDecorator) listener)
+        .forEach(CriteriaDecorator::decorate);
+  }
+
+  private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {
+    QueryNodeObject sortOrder = new QueryNodeObject();
+    if (!sortList.isEmpty()) {
+      List<QueryNodeObject> sortEntries = sortList.stream()
+          .map(sort -> {
+            QueryNodeObject sortEntry = new QueryNodeObject();
+            sortEntry.put(sort, "desc");
+            return sortEntry;
+          })
+          .toList();
+      sortOrder.put("sort", sortEntries);
+    } else {
+      QueryNodeObject defaultSort = new QueryNodeObject();
+      if(HasCreated.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("created", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else if(HasUuid.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("uuid.keyword", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else if(HasCode.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("code.keyword", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else {
+        throw new ServiceException(
+            ErrorCode.internal_error,
+            "No Id or Code set to sort by; for Es deep pagination!"
+        );
+      }
+    }
+    return sortOrder;
+  }
+
+  private QueryNodeObject buildQueryObject(RepositoryExecContext<?> context,
+                                           List<Object> searchAfterValues,
+                                           QueryNodeObject sortOrder,
+                                           int size, int from) {
+    ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
+    QueryNodeObject queryObject = esQueryMapper.mapToString(context.getParams());
+    queryObject.put("size", Math.min(size, 10000));
+
+    if (searchAfterValues == null) queryObject.put("from", from);
+    queryObject.putAll(sortOrder);
+    if (searchAfterValues != null) queryObject.put("search_after", searchAfterValues);
+
+    return queryObject;
+  }
+
+  private <S extends E> List<ElasticSearchResult.Hit<S>> executeSearchAndExtractHits(
+      QueryNodeObject queryObject,
+      ElasticExecContext<S> context) throws IOException {
+    String query = getObjectMapper().writeValueAsString(queryObject);
+    Request request = new Request("GET", "/" + getIndexName() + "/_search");
+    request.setJsonEntity(query);
+
+    String response = EntityUtils.toString(getElasticsearchClient().performRequest(request).getEntity());
+    ElasticSearchResult<S> searchResult = getObjectMapper().readValue(response, new TypeReference<>() {});
+
+    return searchResult.getHits().getHits();
+  }
+
+  private <S> List<Object> getSearchAfterValues(List<ElasticSearchResult.Hit<S>> hits) {
+    return hits.isEmpty() ? null : hits.getLast().getSort();
+  }
+
   @Override
   public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) {
     if (!(context instanceof ElasticExecContext<S> elasticContext)) {
       throw new ServiceException(
         ErrorCode.parameter_validation_error,
-        "Invalid context: Expected ElasticExecContext but received " + context.getClass().getSimpleName()
+        "Invalid context: Expected ElasticExecContext but received " + context.getClass()
       );
     }
 
@@ -243,11 +323,11 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
     List<S> allHits = new ArrayList<>();
     List<Object> searchAfterValues = null;
-    int size = getResultFilterSize(context);
-    int from = getResultFilterFrom(context);
+    int size = context.getParams().tryGetResultFilter().size();
+    int from = context.getParams().tryGetResultFilter().from();
     QueryNodeObject sortOrder = buildSortOrder(
-      context.getParams().tryGetResultFilter().sort(),
-      ((ElasticExecContext<S>) context).getRootClass());
+        context.getParams().tryGetResultFilter().sort(), elasticContext.getRootClass()
+    );
 
     RepositoryExecContextListener listener = context.getListeners().stream()
       .filter(l -> l instanceof QuerySearchResultListener).findFirst().orElse(null);
@@ -298,93 +378,4 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
     return allHits;
   }
-
-  private <S extends E> void initializeContext(ElasticExecContext<S> context, QueryParams params) {
-    context.init((Class<S>) getRootClass(), Strings.toSnakeCase(getRootClass().getSimpleName()), params);
-  }
-
-  private void applyDecorators(RepositoryExecContext<?> context) {
-    context.getListeners().stream()
-      .filter(listener -> listener instanceof CriteriaDecorator)
-      .map(listener -> (CriteriaDecorator) listener)
-      .forEach(CriteriaDecorator::decorate);
-  }
-
-  private int getResultFilterSize(RepositoryExecContext<?> context) {
-    return context.getParams().tryGetResultFilter().size();
-  }
-
-  private int getResultFilterFrom(RepositoryExecContext<?> context) {
-    return context.getParams().tryGetResultFilter().from();
-  }
-
-  private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {
-    QueryNodeObject sortOrder = new QueryNodeObject();
-    if (!sortList.isEmpty()) {
-      List<QueryNodeObject> sortEntries = sortList.stream()
-        .map(sort -> {
-          QueryNodeObject sortEntry = new QueryNodeObject();
-          sortEntry.put(sort, "desc");
-          return sortEntry;
-        })
-        .toList();
-      sortOrder.put("sort", sortEntries);
-    } else {
-      QueryNodeObject defaultSort = new QueryNodeObject();
-      if(HasCreated.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("created", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if(HasUuid.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("uuid.keyword", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if(HasCode.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("code.keyword", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else {
-        throw new ServiceException(
-            ErrorCode.internal_error,
-            "No Id or Code set to sort by; for Es deep pagination!"
-        );
-      }
-    }
-    return sortOrder;
-  }
-
-  private QueryNodeObject buildQueryObject(RepositoryExecContext<?> context,
-                                           List<Object> searchAfterValues,
-                                           QueryNodeObject sortOrder,
-                                           int size, int from) {
-    ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
-    QueryNodeObject queryObject = esQueryMapper.mapToString(context.getParams());
-    queryObject.put("size", Math.min(size, 10000));
-
-    if (searchAfterValues == null) queryObject.put("from", from);
-    queryObject.putAll(sortOrder);
-    if (searchAfterValues != null) queryObject.put("search_after", searchAfterValues);
-
-    return queryObject;
-  }
-
-  private <S extends E> List<ElasticSearchResult.Hit<S>> executeSearchAndExtractHits(
-    QueryNodeObject queryObject,
-    ElasticExecContext<S> context) throws IOException {
-    String query = getObjectMapper().writeValueAsString(queryObject);
-    Request request = new Request("GET", "/" + getIndexName() + "/_search");
-    request.setJsonEntity(query);
-
-    String response = EntityUtils.toString(getElasticsearchClient().performRequest(request).getEntity());
-    ElasticSearchResult<S> searchResult = getObjectMapper().readValue(response, new TypeReference<>() {});
-
-    return searchResult.getHits().getHits();
-  }
-
-  private <S> List<Object> getSearchAfterValues(List<ElasticSearchResult.Hit<S>> hits) {
-    return hits.isEmpty() ? null : hits.getLast().getSort();
-  }
-
-  protected abstract ElasticQueryMapper getElasticQueryMapper();
-
-  protected abstract ObjectMapper getObjectMapper();
-
-  protected abstract RestClient getElasticsearchClient();
 }
