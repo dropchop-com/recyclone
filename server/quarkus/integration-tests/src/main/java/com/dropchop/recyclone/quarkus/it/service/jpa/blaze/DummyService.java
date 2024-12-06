@@ -66,11 +66,6 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   }
 
   @Override
-  public Result<Dummy> esSearch() {
-    return null;
-  }
-
-  @Override
   protected Result<Dummy> createOrUpdate(List<Dummy> dtos) {
     Result<Dummy> result = super.createOrUpdate(dtos);
     MappingContext mapContext = mapperProvider.getMappingContextForModify();

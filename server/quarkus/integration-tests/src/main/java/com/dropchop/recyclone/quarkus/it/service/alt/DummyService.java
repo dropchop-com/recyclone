@@ -25,7 +25,6 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -62,19 +61,6 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   public Result<Dummy> query() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
-    try {
-      String json = objectMapper.writeValueAsString(queryParams.getCondition());
-      log.info("Got query params: [{}]", json);
-    } catch (Exception e) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
-    }
-    return new Result<>("my-query-alternative");
-  }
-
-  @Override
-  public Result<Dummy> esSearch() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    QueryParams queryParams = context.getParams();
 
     List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
 
@@ -82,16 +68,19 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     RepositoryExecContext<? extends EsDummy> ctx = elasticRepository.getRepositoryExecContext();
     try {
       ctx.listener(
-        new MapQuerySearchResultListener() {
-          @Override
-          public <S> void onResult(S result) {
-            try {
-              actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
-            } catch (ServiceException e) {
-              throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
+          new MapQuerySearchResultListener() {
+            @Override
+            public <S> void onResult(S result) {
+              try {
+                //noinspection unchecked
+                actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
+              } catch (ServiceException e) {
+                throw new ServiceException(
+                    ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e
+                );
+              }
             }
           }
-        }
       );
       elasticRepository.search(queryParams, ctx);
       return new Result<Dummy>().toSuccess(actualResults, actualResults.size());

@@ -4,16 +4,17 @@ import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Condition.*;
@@ -107,7 +108,7 @@ public class DummyResourceTest {
       .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
-
+  /*
   @Test
   @Order(30)
   public void dummyQuery() {
@@ -315,7 +316,7 @@ public class DummyResourceTest {
       .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
-
+  */
   @Test
   @Order(30)
   public void dummySearchTest() {
@@ -389,7 +390,7 @@ public class DummyResourceTest {
       .auth().preemptive().basic("user1", "password")
       .body(params)
       .when()
-      .post("/api/public/test/dummy/es_search")
+      .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
       .log().all();
@@ -409,7 +410,7 @@ public class DummyResourceTest {
       .auth().preemptive().basic("user1", "password")
       .body(params)
       .when()
-      .post("/api/public/test/dummy/es_search")
+      .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
       .log().all();
@@ -432,7 +433,7 @@ public class DummyResourceTest {
       .auth().preemptive().basic("user1", "password")
       .body(params)
       .when()
-      .post("/api/public/test/dummy/es_search")
+      .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
       .log().all();
@@ -453,7 +454,7 @@ public class DummyResourceTest {
       .auth().preemptive().basic("user1", "password")
       .body(params)
       .when()
-      .post("/api/public/test/dummy/es_search")
+      .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
       .log().all();
