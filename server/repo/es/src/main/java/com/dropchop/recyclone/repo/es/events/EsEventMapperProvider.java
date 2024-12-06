@@ -19,11 +19,11 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
-public class EventMapperProvider extends FilteringElasticMapperProvider<Event, EsEvent, UUID>
+public class EsEventMapperProvider extends FilteringElasticMapperProvider<Event, EsEvent, UUID>
     implements MapToEntityMapper<EsEvent> {
 
   @Inject
-  EventRepository repository;
+  EsEventRepository repository;
 
   @Inject
   EventToDtoMapper toDtoMapper;

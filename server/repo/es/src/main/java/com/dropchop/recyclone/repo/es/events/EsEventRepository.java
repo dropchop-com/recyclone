@@ -15,7 +15,7 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
-public class EventRepository extends ElasticRepository<EsEvent, UUID> {
+public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
 
   Class<EsEvent> rootClass = EsEvent.class;
 

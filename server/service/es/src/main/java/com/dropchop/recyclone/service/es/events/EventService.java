@@ -3,8 +3,8 @@ package com.dropchop.recyclone.service.es.events;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.entity.es.event.EsEvent;
-import com.dropchop.recyclone.repo.es.events.EventMapperProvider;
-import com.dropchop.recyclone.repo.es.events.EventRepository;
+import com.dropchop.recyclone.repo.es.events.EsEventMapperProvider;
+import com.dropchop.recyclone.repo.es.events.EsEventRepository;
 import com.dropchop.recyclone.service.api.CrudElasticServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -31,10 +31,10 @@ public class EventService extends CrudElasticServiceImpl<Event, EsEvent, UUID>
 
 
   @Inject
-  EventRepository repository;
+  EsEventRepository repository;
 
   @Inject
-  EventMapperProvider filteringMapperProvider;
+  EsEventMapperProvider filteringMapperProvider;
 
 
   @Override
