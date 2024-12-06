@@ -31,6 +31,7 @@ public interface Constants {
     String ELASTICSEARCH_SEARCH_SEGMENT = "/es_search";
     String ELASTICSEARCH_SAVE_SEGMENT = "/es_save";
     String ELASTICSEARCH_DELETE_SEGMENT = "/es_delete";
+    String ELASTICSEARCH_UPDATE_SEGMENT = "/es_update";
 
     String INTERNAL_SEGMENT = "/internal";
     String PUBLIC_SEGMENT = "/public";
@@ -49,8 +50,15 @@ public interface Constants {
       String DOMAIN = SECURITY_SEGMENT + DOMAIN_SEGMENT;
       String ROLE_SEGMENT = "/role";
       String ROLE = SECURITY_SEGMENT + ROLE_SEGMENT;
+      String ROLE_NODE_SEGMENT = "/roleNode";
+      String ROLE_NODE = SECURITY_SEGMENT + ROLE_NODE_SEGMENT;
+      String ROLE_NODE_PERMISSION_SEGMENT = "/roleNodePermission";
+      String ROLE_NODE_PERMISSION = SECURITY_SEGMENT + ROLE_NODE_PERMISSION_SEGMENT;
       String PERMISSION_SEGMENT = "/permission";
       String PERMISSION = SECURITY_SEGMENT + PERMISSION_SEGMENT;
+      String PERMISSIONS_SEGMENT = "/permissions";;
+      String PERMISSIONS = SECURITY_SEGMENT + PERMISSIONS_SEGMENT;;
+      String PERMISSIONS_LIST_SEGMENT = "/list";
       String USER_SEGMENT = "/user";
       String USER = SECURITY_SEGMENT + USER_SEGMENT;
     }

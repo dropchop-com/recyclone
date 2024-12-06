@@ -1,30 +1,38 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.*;
+import com.dropchop.recyclone.model.api.invoke.ErrorCode;
+import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.model.api.marker.HasUuid;
+import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.Objects;
 import com.dropchop.recyclone.model.api.utils.Strings;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.listener.EntityQuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-
-import java.io.IOException;
-import java.util.*;
-
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
@@ -36,17 +44,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
-
-  private QuerySearchResultListener resultListener = new QuerySearchResultListener() {
-    @Override
-    public <S> void onResult(S result) {
-
-    }
-  };
-
-  public void setQuerySearchResultListener(QuerySearchResultListener resultListener) {
-    this.resultListener = resultListener;
-  }
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
@@ -65,6 +62,10 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext) {
+    ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
+    for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
+      context.decorateWith(decorator);
+    }
     return getRepositoryExecContext().totalCount(mappingContext);
   }
 
@@ -244,24 +245,39 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     List<Object> searchAfterValues = null;
     int size = getResultFilterSize(context);
     int from = getResultFilterFrom(context);
-    QueryNodeObject sortOrder = buildSortOrder(context.getParams().tryGetResultFilter().sort(), ((ElasticExecContext<S>) context).getRootClass());
+    QueryNodeObject sortOrder = buildSortOrder(
+      context.getParams().tryGetResultFilter().sort(),
+      ((ElasticExecContext<S>) context).getRootClass());
+
+    RepositoryExecContextListener listener = context.getListeners().stream()
+      .filter(l -> l instanceof QuerySearchResultListener).findFirst().orElse(null);
 
     boolean hasMoreHits = true;
     while (hasMoreHits) {
       try {
         QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
-        List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 
-        if (hits.isEmpty()) {
-          hasMoreHits = false;
-        } else {
-          searchAfterValues = getSearchAfterValues(hits);
-          for(ElasticSearchResult.Hit<S> hit : hits) {
-            S result = hit.getSource();
-            allHits.add(result);
+        if(listener instanceof EntityQuerySearchResultListener) {
+          //((EntityQuerySearchResultListener) queryListener).onResult();
+        } else if(listener instanceof MapQuerySearchResultListener) {
+          List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 
-            resultListener.onResult(result);
+          if (hits.isEmpty()) {
+            hasMoreHits = false;
+          } else {
+            searchAfterValues = getSearchAfterValues(hits);
+            for(ElasticSearchResult.Hit<S> hit : hits) {
+              S result = hit.getSource();
+              allHits.add(result);
+
+              ((MapQuerySearchResultListener) listener).onResult(result);
+            }
           }
+        } else {
+          throw new ServiceException(
+            ErrorCode.process_error,
+            "No query listener is set!"
+          );
         }
       } catch (ServiceException e) {
         throw new ServiceException(
@@ -315,17 +331,19 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       sortOrder.put("sort", sortEntries);
     } else {
       QueryNodeObject defaultSort = new QueryNodeObject();
-
-      if(Objects.hasField(rootClass, "uuid")) {
+      if(HasCreated.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("created", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else if(HasUuid.class.isAssignableFrom(rootClass)) {
         defaultSort.put("uuid.keyword", "desc");
         sortOrder.put("sort", defaultSort);
-      } else if(Objects.hasField(rootClass, "code")) {
+      } else if(HasCode.class.isAssignableFrom(rootClass)) {
         defaultSort.put("code.keyword", "desc");
         sortOrder.put("sort", defaultSort);
       } else {
         throw new ServiceException(
-          ErrorCode.internal_error,
-          "No Id or Code set to sort by; for Es deep pagination!"
+            ErrorCode.internal_error,
+            "No Id or Code set to sort by; for Es deep pagination!"
         );
       }
     }

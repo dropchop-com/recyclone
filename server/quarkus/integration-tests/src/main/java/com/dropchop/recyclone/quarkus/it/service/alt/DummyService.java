@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.service.alt;
 
+import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
@@ -11,7 +13,8 @@ import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
-import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,21 +72,25 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   public Result<Dummy> esSearch() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
-    try {
-      List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
-      elasticRepository.setQuerySearchResultListener(new QuerySearchResultListener() {
 
-        @Override
-        public <S> void onResult(S result) {
-          try {
-            actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
-          } catch (ServiceException e) {
-            throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
+    List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
+
+    MappingContext map = new FilteringDtoContext().of(ctxContainer.get());
+    RepositoryExecContext ctx = elasticRepository.getRepositoryExecContext();
+    try {
+      ctx.listener(
+        new MapQuerySearchResultListener() {
+          @Override
+          public <S> void onResult(S result) {
+            try {
+              actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
+            } catch (ServiceException e) {
+              throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
+            }
           }
         }
-      });
-
-      elasticRepository.search(queryParams, elasticRepository.getRepositoryExecContext());
+      );
+      elasticRepository.search(queryParams, ctx);
       return new Result<Dummy>().toSuccess(actualResults, actualResults.size());
     } catch (ServiceException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);

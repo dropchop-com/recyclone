@@ -9,6 +9,7 @@ import com.dropchop.recyclone.service.api.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
+import org.mapstruct.Mapper;
 
 import java.util.UUID;
 

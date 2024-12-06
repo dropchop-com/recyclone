@@ -12,7 +12,8 @@ import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
-import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
+import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.*;
  * @author Samo Pritrznik <samo.pritrznik@dropchop.com> on 28. 11. 24
  **/
 @Slf4j
+@SuppressWarnings("unused")
 public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID> implements CrudService<D> {
 
   @Inject
@@ -46,25 +48,25 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
       throw new ServiceException(ErrorCode.internal_error, "ExecContext is null!");
     }
 
+    List<D> results = new ArrayList<>(Collections.emptyList());
     MappingContext mappingContext = new FilteringDtoContext().of(ctxContainer.get());
+    RepositoryExecContext<E> ctx = getRepository().getRepositoryExecContext();
+
+    ctx.listener(new MapQuerySearchResultListener() {
+      @Override
+      public <S> void onResult(S result) {
+        try {
+          E entity = (E) getFilteringMapperProvider().getMapToEntityMapper().fromMap((Map<String, Object>) result);
+          results.add(getFilteringMapperProvider().getToDtoMapper().toDto(entity, mappingContext));
+        } catch (ServiceException e) {
+          throw new ServiceException(ErrorCode.data_validation_error,
+            "Error mapping from Map<String, String> to Dummy: ", e);
+        }
+      }
+    });
 
     try {
-      List<D> results = new ArrayList<>(Collections.emptyList());
-      getRepository().setQuerySearchResultListener(new QuerySearchResultListener() {
-
-        @Override
-        public <S> void onResult(S result) {
-          try {
-            E entity = (E) getFilteringMapperProvider().getMapToEntityMapper().fromMap((Map<String, Object>) result);
-            results.add(getFilteringMapperProvider().getToDtoMapper().toDto(entity, mappingContext));
-          } catch (ServiceException e) {
-            throw new ServiceException(ErrorCode.data_validation_error,
-              "Error mapping from Map<String, String> to Dummy: ", e);
-          }
-        }
-      });
-
-      getRepository().search(params, getRepository().getRepositoryExecContext());
+      getRepository().search(params, ctx);
       return new Result<D>().toSuccess(results, results.size());
     } catch (ServiceException e) {
       throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
@@ -94,5 +96,11 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
 
     return new Result<D>().toSuccess(getFilteringMapperProvider()
       .getToDtoMapper().toDtos(deleted, mappingContext));
+  }
+
+  @Override
+  @Transactional
+  public Result<D> update(List<D> dtos) {
+    return this.create(dtos);
   }
 }

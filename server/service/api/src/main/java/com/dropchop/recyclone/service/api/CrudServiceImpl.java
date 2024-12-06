@@ -34,6 +34,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
   @SuppressWarnings("CdiInjectionPointsInspection")
   AuthorizationService authorizationService;
 
+
   public abstract CrudRepository<E, ID> getRepository();
 
   public abstract FilteringMapperProvider<D, E, ID> getMapperProvider();
@@ -47,6 +48,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
       }
     }
   }
+
 
   @Override
   @Transactional
@@ -63,6 +65,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
     return result;
   }
+
 
   protected boolean shouldRefreshAfterSave() {
     Params params = ctxContainer.get().getParams();
@@ -99,10 +102,11 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     return cLevel == 1 &&
       (
         ContentDetail.ALL_OBJS_IDCODE_TITLE.equals(cDetail) ||
-        ContentDetail.NESTED_OBJS_IDCODE.equals(cDetail) ||
-        ContentDetail.NESTED_OBJS_IDCODE_TITLE.equals(cDetail)
+          ContentDetail.NESTED_OBJS_IDCODE.equals(cDetail) ||
+          ContentDetail.NESTED_OBJS_IDCODE_TITLE.equals(cDetail)
       );
   }
+
 
   protected void save(Collection<E> entities) {
     CrudRepository<E, ID> repository = getRepository();
@@ -111,6 +115,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
       repository.refresh(entities);
     }
   }
+
 
   protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
@@ -121,17 +126,20 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     return mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
   }
 
+
   @Override
   @Transactional
   public Result<D> create(List<D> dtos) {
     return createOrUpdate(dtos);
   }
 
+
   @Override
   @Transactional
   public Result<D> update(List<D> dtos) {
     return createOrUpdate(dtos);
   }
+
 
   @Override
   @Transactional

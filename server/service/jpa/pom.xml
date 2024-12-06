@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>recyclone-service-jpa</artifactId>
   <name>Recyclone - Server - Service - JPA</name>
@@ -18,44 +19,23 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.enterprise</groupId>
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
-    </dependency>
 
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-repo-jpa-blaze</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-quarkus-extension</artifactId>
+      <artifactId>recyclone-service-common</artifactId>
     </dependency>
 
-    <!-- tests -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-    </dependency>
   </dependencies>
+
+
 </project>

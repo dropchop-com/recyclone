@@ -39,17 +39,4 @@ public class Objects {
       }
     }
   }
-
-  public static boolean hasField(Class<?> clazz, String fieldName) {
-    try {
-      if (clazz == null) {
-        return false;
-      }
-
-      Field field = clazz.getDeclaredField(fieldName);
-      return true;
-    } catch (NoSuchFieldException e) {
-      return hasField(clazz.getSuperclass(), fieldName);
-    }
-  }
 }
