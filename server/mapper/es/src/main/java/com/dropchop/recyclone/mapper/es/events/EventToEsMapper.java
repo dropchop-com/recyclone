@@ -9,7 +9,7 @@ import com.dropchop.recyclone.model.entity.es.localization.EsCountry;
 import org.mapstruct.*;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 2. 02. 22.
+ * @author Armando Ota <armando.ota@dropchop.com>
  */
 @Mapper(
   componentModel = "jakarta-cdi",

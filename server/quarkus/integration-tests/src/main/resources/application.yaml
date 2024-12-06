@@ -9,18 +9,24 @@ quarkus:
     recyclone-mapper-jpa:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-mapper-jpa
+    recyclone-mapper-es:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-mapper-es
     recyclone-repo-jpa-blaze:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-repo-jpa-blaze
-    recyclone-service-common:
-        group-id: com.dropchop.recyclone
-        artifact-id: recyclone-service-common
     recyclone-repo-es:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-repo-es
+    recyclone-service-common:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-service-common
     recyclone-service-jpa:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-jpa
+    recyclone-service-es:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-service-es
 
   rest:
     path: /api
