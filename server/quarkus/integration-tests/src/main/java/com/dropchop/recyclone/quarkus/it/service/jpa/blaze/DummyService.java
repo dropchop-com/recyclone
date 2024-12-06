@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
+import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
@@ -7,6 +8,7 @@ import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
@@ -69,15 +71,20 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   }
 
   @Override
-  public List<Dummy> esSave() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    List<Dummy> results = context.getData();
-    return elasticRepository.save(results);
+  protected Result<Dummy> createOrUpdate(List<Dummy> dtos) {
+    Result<Dummy> result = super.createOrUpdate(dtos);
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
+    elasticRepository.save(entities);
+    return result;
   }
 
   @Override
-  public List<Dummy> esDelete() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    return elasticRepository.delete(context.getData());
+  public Result<Dummy> delete(List<Dummy> dtos) {
+    Result<Dummy> result = super.delete(dtos);
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
+    elasticRepository.delete(entities);
+    return result;
   }
 }

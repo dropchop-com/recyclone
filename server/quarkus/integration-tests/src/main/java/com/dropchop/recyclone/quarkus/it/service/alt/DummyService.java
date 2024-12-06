@@ -9,6 +9,7 @@ import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
@@ -20,9 +21,11 @@ import com.dropchop.recyclone.service.api.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +79,7 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
 
     MappingContext map = new FilteringDtoContext().of(ctxContainer.get());
-    RepositoryExecContext ctx = elasticRepository.getRepositoryExecContext();
+    RepositoryExecContext<? extends EsDummy> ctx = elasticRepository.getRepositoryExecContext();
     try {
       ctx.listener(
         new MapQuerySearchResultListener() {
@@ -98,15 +101,22 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   }
 
   @Override
-  public List<Dummy> esSave() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-
-    return elasticRepository.save(context.getData());
+  @Transactional
+  protected Result<Dummy> createOrUpdate(List<Dummy> dtos) {
+    Result<Dummy> result = super.createOrUpdate(dtos);
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
+    elasticRepository.save(entities);
+    return result;
   }
 
   @Override
-  public List<Dummy> esDelete() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    return elasticRepository.delete(context.getData());
+  @Transactional
+  public Result<Dummy> delete(List<Dummy> dtos) {
+    Result<Dummy> result = super.delete(dtos);
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
+    elasticRepository.delete(entities);
+    return result;
   }
 }

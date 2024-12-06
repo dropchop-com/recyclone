@@ -75,7 +75,11 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   }
 
   protected String getIndexName() {
-    return Strings.toSnakeCase(getRootClass().getSimpleName());
+    String simpleName = getRootClass().getSimpleName();
+    if (simpleName.startsWith("Es")) {
+      simpleName = simpleName.substring(3);
+    }
+    return Strings.toSnakeCase(simpleName);
   }
 
   protected <S extends E> List<S> executeBulkRequest(Collection<S> entities, ElasticBulkMethod method) {

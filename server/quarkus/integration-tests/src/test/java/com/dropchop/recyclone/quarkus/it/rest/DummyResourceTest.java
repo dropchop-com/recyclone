@@ -29,8 +29,9 @@ import static io.restassured.RestAssured.given;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DummyResourceTest {
 
-  @BeforeEach
-  public void setUp() {
+  @Test
+  @Order(5)
+  public void create() {
     Dummy dummy1 = new Dummy();
     dummy1.setTitle("Introduction to Java");
     dummy1.setDescription("A comprehensive guide to Java programming.");
@@ -38,7 +39,7 @@ public class DummyResourceTest {
     dummy1.setCreated(ZonedDateTime.now().minusDays(10));
     dummy1.setModified(ZonedDateTime.now());
     dummy1.setDeactivated(null);
-    dummy1.setCode(UUID.randomUUID().toString());
+    dummy1.setCode("dummy_code1");
 
     Dummy dummy2 = new Dummy();
     dummy2.setTitle("Advanced Python Techniques");
@@ -47,16 +48,16 @@ public class DummyResourceTest {
     dummy2.setCreated(ZonedDateTime.now().minusDays(20));
     dummy2.setModified(ZonedDateTime.now().minusDays(5));
     dummy2.setDeactivated(null);
-    dummy2.setCode(UUID.randomUUID().toString());
+    dummy2.setCode("dummy_code2");
 
     Dummy dummy3 = new Dummy();
     dummy3.setTitle("Introduction to Machine Learning");
     dummy3.setDescription("An introductory course to machine learning and its applications.");
-    dummy3.setLang("es");
+    dummy3.setLang("en");
     dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
     dummy3.setModified(ZonedDateTime.now().minusDays(10));
     dummy3.setDeactivated(null);
-    dummy3.setCode(UUID.randomUUID().toString());
+    dummy3.setCode("dummy_code3");
 
     List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
 
@@ -64,10 +65,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("editor1", "password")
       .body(dummies)
       .when()
-      .post("/api/public/test/dummy/es_save")
+      .post("/api/internal/test/dummy")
       .then()
       .statusCode(200)
       .log().all();
@@ -79,7 +80,7 @@ public class DummyResourceTest {
     given()
       .log().all()
       //.accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("editor1", "password")
       .when()
       .get("/api/public/test/dummy")
       .then()
@@ -460,7 +461,7 @@ public class DummyResourceTest {
   }
 
   @Test
-  public void dummySaveCollection() {
+  public void delete() {
     Dummy dummy1 = new Dummy();
     dummy1.setTitle("Introduction to Java");
     dummy1.setDescription("A comprehensive guide to Java programming.");
@@ -468,7 +469,7 @@ public class DummyResourceTest {
     dummy1.setCreated(ZonedDateTime.now().minusDays(10));
     dummy1.setModified(ZonedDateTime.now());
     dummy1.setDeactivated(null);
-    dummy1.setCode(UUID.randomUUID().toString());
+    dummy1.setCode("dummy_delete_code1");
 
     Dummy dummy2 = new Dummy();
     dummy2.setTitle("Advanced Python Techniques");
@@ -477,7 +478,7 @@ public class DummyResourceTest {
     dummy2.setCreated(ZonedDateTime.now().minusDays(20));
     dummy2.setModified(ZonedDateTime.now().minusDays(5));
     dummy2.setDeactivated(null);
-    dummy2.setCode(UUID.randomUUID().toString());
+    dummy2.setCode("dummy_delete_code2");
 
     Dummy dummy3 = new Dummy();
     dummy3.setTitle("Introduction to Machine Learning");
@@ -486,7 +487,7 @@ public class DummyResourceTest {
     dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
     dummy3.setModified(ZonedDateTime.now().minusDays(10));
     dummy3.setDeactivated(null);
-    dummy3.setCode(UUID.randomUUID().toString());
+    dummy3.setCode("dummy_delete_code3");
 
     List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
 
@@ -494,54 +495,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("editor1", "password")
       .body(dummies)
       .when()
-      .post("/api/public/test/dummy/es_save")
-      .then()
-      .statusCode(200)
-      .log().all();
-  }
-
-  @Test
-  public void deleteFromIndex() {
-    Dummy dummy1 = new Dummy();
-    dummy1.setTitle("Introduction to Java");
-    dummy1.setDescription("A comprehensive guide to Java programming.");
-    dummy1.setLang("en");
-    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
-    dummy1.setModified(ZonedDateTime.now());
-    dummy1.setDeactivated(null);
-    dummy1.setCode(UUID.randomUUID().toString());
-
-    Dummy dummy2 = new Dummy();
-    dummy2.setTitle("Advanced Python Techniques");
-    dummy2.setDescription("Explore advanced concepts in Python programming.");
-    dummy2.setLang("en");
-    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
-    dummy2.setModified(ZonedDateTime.now().minusDays(5));
-    dummy2.setDeactivated(null);
-    dummy2.setCode(UUID.randomUUID().toString());
-
-    Dummy dummy3 = new Dummy();
-    dummy3.setTitle("Introduction to Machine Learning");
-    dummy3.setDescription("An introductory course to machine learning and its applications.");
-    dummy3.setLang("es");
-    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
-    dummy3.setModified(ZonedDateTime.now().minusDays(10));
-    dummy3.setDeactivated(null);
-    dummy3.setCode(UUID.randomUUID().toString());
-
-    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
-
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
-      .body(dummies)
-      .when()
-      .post("/api/public/test/dummy/es_save")
+      .post("/api/internal/test/dummy")
       .then()
       .statusCode(200)
       .log().all();
@@ -550,10 +507,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("editor1", "password")
       .body(dummies)
       .when()
-      .post("/api/public/test/dummy/es_delete")
+      .delete("/api/internal/test/dummy")
       .then()
       .statusCode(200)
       .log().all();

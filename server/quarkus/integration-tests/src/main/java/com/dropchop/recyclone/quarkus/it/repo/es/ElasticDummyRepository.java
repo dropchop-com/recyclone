@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
-import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.repo.es.ElasticRepository;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import org.elasticsearch.client.RestClient;
 
 @Slf4j
 @ApplicationScoped
-public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
+public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
 
   @Inject
   ObjectMapper objectMapper;
@@ -23,8 +23,8 @@ public class ElasticDummyRepository extends ElasticRepository<Dummy, String> {
   ElasticQueryMapper queryMapper;
 
   @Override
-  public Class<Dummy> getRootClass() {
-    return Dummy.class;
+  public Class<EsDummy> getRootClass() {
+    return EsDummy.class;
   }
 
   @Override

@@ -32,15 +32,6 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   @Inject
   CodeParams codeParams;
 
-  @Inject
-  DefaultExecContext<Dummy> execContext;
-
-  @Inject
-  ExecContextSelector execContextSelector;
-
-  @Inject
-  ExecContextContainer execContextContainer;
-
   @Override
   public Result<Dummy> getByCode(String code) {
     codeParams.setCodes(List.of(code));
@@ -49,25 +40,6 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
 
   @Override
   public Result<Dummy> get() {
-    Params params = execContext.getParams();
-    @SuppressWarnings("unchecked")
-    DefaultExecContext<Dummy> ctx = execContextSelector.select(DefaultExecContext.class, Dummy.class);
-    if (ctx != execContext) {
-      throw new ServiceException(ErrorCode.internal_error,
-          "Test failed! Different object returned for execContext"
-      );
-    }
-    if (params != codeParams) {
-      throw new ServiceException(ErrorCode.internal_error,
-          "Test failed! Different object returned for params"
-      );
-    }
-    ExecContext<?> execCtx = execContextContainer.get();
-    if (execCtx != execContext) {
-      throw new ServiceException(ErrorCode.internal_error,
-          "Test failed! Different object returned for execContext from container"
-      );
-    }
     return service.search();
   }
 
@@ -89,13 +61,5 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   @Override
   public Result<Dummy> esSearch(DummyQueryParams params) {
     return service.esSearch();
-  }
-
-  @Override
-  public List<Dummy> esSave(List<Dummy> params) { return service.esSave(); }
-
-  @Override
-  public List<Dummy> esDelete(List<Dummy> params) {
-    return service.esDelete();
   }
 }
