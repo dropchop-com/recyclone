@@ -68,7 +68,7 @@ public abstract class CrudElasticServiceImpl<D extends Dto, E extends Entity, ID
 
     ctx.listener(new EntityQuerySearchResultListener() {
       @Override
-      public <X extends Entity> void onResult(X result) {
+      public <X> void onResult(X result) {
         results.add(getFilteringMapperProvider().getToDtoMapper().toDto((E) result, mappingContext));
       }
 

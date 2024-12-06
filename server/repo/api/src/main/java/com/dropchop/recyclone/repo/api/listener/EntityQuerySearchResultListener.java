@@ -7,5 +7,5 @@ import com.dropchop.recyclone.model.api.base.Model;
  * @author Samo Pritrznik <samo.pritrznik@dropchop.com> on 5. 12. 24
  **/
 public interface EntityQuerySearchResultListener extends QuerySearchResultListener {
-  <X extends Entity> void onResult(X result);
+  <E> void onResult(E result);
 }

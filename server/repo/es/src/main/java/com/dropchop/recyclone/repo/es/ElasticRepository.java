@@ -18,11 +18,12 @@ import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.api.listener.EntityQuerySearchResultListener;
 import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import com.dropchop.recyclone.repo.api.listener.QuerySearchResultListener;
-import com.dropchop.recyclone.repo.es.mapper.*;
+import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
+import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
+import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
 import com.dropchop.recyclone.repo.es.parser.ElasticEntityParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
@@ -43,6 +44,12 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   ExecContextContainer ctxContainer;
+
+  protected abstract ElasticQueryMapper getElasticQueryMapper();
+
+  protected abstract ObjectMapper getObjectMapper();
+
+  protected abstract RestClient getElasticsearchClient();
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
@@ -228,77 +235,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     return List.of();
   }
 
-  @Override
-  public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) {
-    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
-      throw new ServiceException(
-        ErrorCode.parameter_validation_error,
-        "Invalid context: Expected ElasticExecContext but received " + context.getClass().getSimpleName()
-      );
-    }
-
-    initializeContext(elasticContext, params);
-    applyDecorators(context);
-
-    List<S> allHits = new ArrayList<>();
-    List<Object> searchAfterValues = null;
-    int size = getResultFilterSize(context);
-    int from = getResultFilterFrom(context);
-    QueryNodeObject sortOrder = buildSortOrder(
-      context.getParams().tryGetResultFilter().sort(),
-      ((ElasticExecContext<S>) context).getRootClass());
-
-    RepositoryExecContextListener listener = context.getListeners().stream()
-      .filter(l -> l instanceof QuerySearchResultListener).findFirst().orElse(null);
-
-    boolean hasMoreHits = true;
-    while (hasMoreHits) {
-      try {
-        QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
-
-        if(listener instanceof EntityQuerySearchResultListener) {
-
-          List<E> entities = executeSearchAndExtractEntities(queryObject, elasticContext);
-        } else if(listener instanceof MapQuerySearchResultListener) {
-          List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
-
-          if (hits.isEmpty()) {
-            hasMoreHits = false;
-          } else {
-            searchAfterValues = getSearchAfterValues(hits);
-            for(ElasticSearchResult.Hit<S> hit : hits) {
-              S result = hit.getSource();
-              allHits.add(result);
-
-              ((MapQuerySearchResultListener) listener).onResult(result);
-            }
-          }
-        } else {
-          throw new ServiceException(
-            ErrorCode.process_error,
-            "No query listener is set!"
-          );
-        }
-      } catch (ServiceException e) {
-        throw new ServiceException(
-          ErrorCode.data_error,
-          "Failed to execute search query.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())),
-          e
-        );
-      } catch (Exception e) {
-        throw new ServiceException(
-          ErrorCode.internal_error,
-          "Unexpected error occurred during search execution.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())),
-          e
-        );
-      }
-    }
-
-    return allHits;
-  }
-
   private <S extends E> void initializeContext(ElasticExecContext<S> context, QueryParams params) {
     context.init((Class<S>) getRootClass(), Strings.toSnakeCase(getRootClass().getSimpleName()), params);
   }
@@ -357,7 +293,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     return queryObject;
   }
 
-  private List<E> executeSearchAndExtractEntities(
+  private ElasticEntityParser.ElasticEntityResult<E> executeSearchAndExtractEntities(
     QueryNodeObject queryObject,
     ElasticExecContext context) throws IOException {
 
@@ -416,7 +352,16 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         QueryNodeObject queryObject = buildQueryObject(context, searchAfterValues, sortOrder, size, from);
 
         if(listener instanceof EntityQuerySearchResultListener) {
-          //((EntityQuerySearchResultListener) queryListener).onResult();
+          ElasticEntityParser.ElasticEntityResult<E> result =
+            executeSearchAndExtractEntities(queryObject, elasticContext);
+
+          if(result.getEntities().isEmpty()) {
+            hasMoreHits = false;
+          } else {
+            E lastEntity = result.getEntities().getLast();
+            result.getEntities().forEach(e -> ((EntityQuerySearchResultListener) listener).onResult(e));
+          }
+
         } else if(listener instanceof MapQuerySearchResultListener) {
           List<ElasticSearchResult.Hit<S>> hits = executeSearchAndExtractHits(queryObject, elasticContext);
 

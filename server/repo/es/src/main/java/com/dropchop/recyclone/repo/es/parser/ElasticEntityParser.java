@@ -2,6 +2,9 @@ package com.dropchop.recyclone.repo.es.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.format.DateTimeFormatter;
 
 import java.io.IOException;
@@ -16,11 +19,18 @@ public class ElasticEntityParser {
 
   private final ObjectMapper objectMapper;
 
+  @Getter
+  @Setter
+  public class ElasticEntityResult<E> {
+    private Long hits;
+    private List<E> entities;
+  }
+
   public ElasticEntityParser(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 
-  public <T> List<T> parseResponse(String response, Class<T> entityClass) throws IOException {
+  public <T> ElasticEntityResult<T> parseResponse(String response, Class<T> entityClass) throws IOException {
     JsonNode rootNode = objectMapper.readTree(response);
     JsonNode hitsNode = rootNode.path("hits").path("hits");
 
@@ -31,7 +41,11 @@ public class ElasticEntityParser {
       entities.add(entity);
     }
 
-    return entities;
+    ElasticEntityResult<T> result = new ElasticEntityResult<>();
+    result.setEntities(entities);
+    result.setHits(getTotalHits(response));
+
+    return result;
   }
 
   private <T> T parseHit(JsonNode source, Class<T> entityClass) throws IOException {
@@ -39,6 +53,17 @@ public class ElasticEntityParser {
       return objectMapper.treeToValue(source, entityClass);
     } catch (Exception e) {
       throw new IOException("Error parsing entity", e);
+    }
+  }
+
+  private long getTotalHits(String response) throws IOException {
+    JsonNode rootNode = objectMapper.readTree(response);
+    JsonNode totalNode = rootNode.path("hits").path("total");
+
+    if (totalNode.isObject() && totalNode.has("value")) {
+      return totalNode.get("value").asLong();
+    } else {
+      return totalNode.asLong();
     }
   }
 }
