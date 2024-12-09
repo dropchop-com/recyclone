@@ -87,7 +87,6 @@ public class EventsResourceTest {
         //.log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
-        //.header("Authorization", "Bearer editortoken1")
         .auth().preemptive().basic("admin1", "password")
         .and()
         .body(List.of(event))
@@ -107,48 +106,48 @@ public class EventsResourceTest {
     assertEquals(Strings.DATA, rspEvent.getData());
     assertEquals(event.getValue(), rspEvent.getValue());
     assertEquals(Strings.UNIT, rspEvent.getUnit());
-    assertNotNull(event.getSource());
-    assertNotNull(event.getSource().getSubject());
-    assertNotNull(event.getSource().getSubject().getCreated());
-    assertEquals(Strings.EVENT_DETAIL, detail.getName());
-    assertNotNull(event.getSource().getObject());
-    assertNotNull(event.getSource().getObject().getCreated());
-    assertEquals(Strings.EVENT_DETAIL, detail.getName());
-    assertNotNull(event.getSource().getService());
-    assertNotNull(event.getSource().getService().getCreated());
-    assertEquals(Strings.EVENT_DETAIL, detail.getName());
-    assertNotNull(event.getSource().getContext());
-    assertNotNull(event.getSource().getContext().getCreated());
-    assertEquals(event.getSource().getContext().getName(), detail.getName());
-    assertNotNull(event.getCause());
-    assertNotNull(event.getCause().getSubject());
-    assertNotNull(event.getCause().getSubject().getCreated());
-    assertEquals(event.getCause().getSubject().getName(), detail.getName());
-    assertNotNull(event.getCause().getObject());
-    assertNotNull(event.getCause().getObject().getCreated());
-    assertEquals(event.getCause().getObject().getName(), detail.getName());
-    assertNotNull(event.getCause().getService());
-    assertNotNull(event.getCause().getService().getCreated());
-    assertEquals(event.getCause().getService().getName(), detail.getName());
-    assertNotNull(event.getCause().getContext());
-    assertNotNull(event.getCause().getContext().getCreated());
-    assertEquals(event.getCause().getContext().getName(), detail.getName());
-    assertNotNull(event.getTarget());
-    assertNotNull(event.getTarget().getSubject());
-    assertNotNull(event.getTarget().getSubject().getCreated());
-    assertEquals(event.getTarget().getSubject().getName(), detail.getName());
-    assertNotNull(event.getTarget().getObject());
-    assertNotNull(event.getTarget().getObject().getCreated());
-    assertEquals(event.getTarget().getObject().getName(), detail.getName());
-    assertNotNull(event.getTarget().getService());
-    assertNotNull(event.getTarget().getService().getCreated());
-    assertEquals(event.getTarget().getService().getName(), detail.getName());
-    assertNotNull(event.getTarget().getContext());
-    assertNotNull(event.getTarget().getContext().getCreated());
-    assertEquals(event.getTarget().getContext().getName(), detail.getName());
-    assertNotNull(event.getTrace());
-    assertEquals(event.getTrace().getContext(), eventTrace.getContext());
-    assertEquals(event.getTrace().getGroup(), eventTrace.getGroup());
+    assertNotNull(rspEvent.getSource());
+    assertNotNull(rspEvent.getSource().getSubject());
+    assertNotNull(rspEvent.getSource().getSubject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getSubject().getName());
+    assertNotNull(rspEvent.getSource().getObject());
+    assertNotNull(rspEvent.getSource().getObject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getObject().getName());
+    assertNotNull(rspEvent.getSource().getService());
+    assertNotNull(rspEvent.getSource().getService().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getService().getName());
+    assertNotNull(rspEvent.getSource().getContext());
+    assertNotNull(rspEvent.getSource().getContext().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getContext().getName());
+    assertNotNull(rspEvent.getCause());
+    assertNotNull(rspEvent.getCause().getSubject());
+    assertNotNull(rspEvent.getCause().getSubject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getSubject().getName());
+    assertNotNull(rspEvent.getCause().getObject());
+    assertNotNull(rspEvent.getCause().getObject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getObject().getName());
+    assertNotNull(rspEvent.getCause().getService());
+    assertNotNull(rspEvent.getCause().getService().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getService().getName());
+    assertNotNull(rspEvent.getCause().getContext());
+    assertNotNull(rspEvent.getCause().getContext().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getContext().getName());
+    assertNotNull(rspEvent.getTarget());
+    assertNotNull(rspEvent.getTarget().getSubject());
+    assertNotNull(rspEvent.getTarget().getSubject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getSubject().getName());
+    assertNotNull(rspEvent.getTarget().getObject());
+    assertNotNull(rspEvent.getTarget().getObject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getObject().getName());
+    assertNotNull(rspEvent.getTarget().getService());
+    assertNotNull(rspEvent.getTarget().getService().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getService().getName());
+    assertNotNull(rspEvent.getTarget().getContext());
+    assertNotNull(rspEvent.getTarget().getContext().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getContext().getName());
+    assertNotNull(rspEvent.getTrace());
+    assertEquals(Strings.CONTEXT, rspEvent.getTrace().getContext());
+    assertEquals(Strings.GROUP, rspEvent.getTrace().getGroup());
   }
 
 
@@ -162,7 +161,6 @@ public class EventsResourceTest {
         //.log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
-        //.header("Authorization", "Bearer editortoken1")
         .auth().preemptive().basic("admin1", "password")
         .and()
         .body(List.of(event))
@@ -173,7 +171,58 @@ public class EventsResourceTest {
         .extract()
         .body().jsonPath().getList(".", Event.class);
 
-
+    assertEquals(1, events.size());
+    Event rspEvent = events.get(0);
+    assertEquals(event.getId(), rspEvent.getId());
+    assertNotNull(event.getCreated());
+    assertEquals(Strings.APPLICATION, rspEvent.getApplication());
+    assertEquals(Strings.TYPE, rspEvent.getType());
+    assertEquals(Strings.ACTION, rspEvent.getAction());
+    assertEquals(Strings.DATA, rspEvent.getData());
+    assertEquals(event.getValue(), rspEvent.getValue());
+    assertEquals(Strings.UNIT, rspEvent.getUnit());
+    assertNotNull(rspEvent.getSource());
+    assertNotNull(rspEvent.getSource().getSubject());
+    assertNotNull(rspEvent.getSource().getSubject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getSubject().getName());
+    assertNotNull(rspEvent.getSource().getObject());
+    assertNotNull(rspEvent.getSource().getObject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getObject().getName());
+    assertNotNull(rspEvent.getSource().getService());
+    assertNotNull(rspEvent.getSource().getService().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getService().getName());
+    assertNotNull(rspEvent.getSource().getContext());
+    assertNotNull(rspEvent.getSource().getContext().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getContext().getName());
+    assertNotNull(rspEvent.getCause());
+    assertNotNull(rspEvent.getCause().getSubject());
+    assertNotNull(rspEvent.getCause().getSubject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getSubject().getName());
+    assertNotNull(rspEvent.getCause().getObject());
+    assertNotNull(rspEvent.getCause().getObject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getObject().getName());
+    assertNotNull(rspEvent.getCause().getService());
+    assertNotNull(rspEvent.getCause().getService().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getService().getName());
+    assertNotNull(rspEvent.getCause().getContext());
+    assertNotNull(rspEvent.getCause().getContext().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getContext().getName());
+    assertNotNull(rspEvent.getTarget());
+    assertNotNull(rspEvent.getTarget().getSubject());
+    assertNotNull(rspEvent.getTarget().getSubject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getSubject().getName());
+    assertNotNull(rspEvent.getTarget().getObject());
+    assertNotNull(rspEvent.getTarget().getObject().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getObject().getName());
+    assertNotNull(rspEvent.getTarget().getService());
+    assertNotNull(rspEvent.getTarget().getService().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getService().getName());
+    assertNotNull(rspEvent.getTarget().getContext());
+    assertNotNull(rspEvent.getTarget().getContext().getCreated());
+    assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getContext().getName());
+    assertNotNull(rspEvent.getTrace());
+    assertEquals(Strings.CONTEXT, rspEvent.getTrace().getContext());
+    assertEquals(Strings.GROUP, rspEvent.getTrace().getGroup());
 
   }
 
@@ -190,7 +239,6 @@ public class EventsResourceTest {
         //.log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
-        //.header("Authorization", "Bearer editortoken1")
         .auth().preemptive().basic("admin1", "password")
         .and()
         .body(List.of(event))
@@ -200,6 +248,25 @@ public class EventsResourceTest {
         .statusCode(200)
         .extract()
         .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(1, events.size());
+
+    events = given()
+      //.log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .header("Authorization", "Bearer editortoken1")
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(event))
+      .when()
+      .delete("/api/internal/events/?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(0, events.size());
   }
 
 

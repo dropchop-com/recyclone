@@ -101,6 +101,7 @@ quarkus:
         - "*.localization.*"
         - "*.tagging.*"
         - "*.security.*"
+        - "*.events.*"
 
     # this config is actually not needed, but is here to showcase
     injection-points-config:
@@ -121,3 +122,4 @@ quarkus:
               target-qualifier: alter
         - match: DummyService
           target-qualifier: <same-as-dependant>
+

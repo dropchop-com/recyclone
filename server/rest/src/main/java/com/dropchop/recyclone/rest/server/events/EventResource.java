@@ -10,6 +10,7 @@ import com.dropchop.recyclone.rest.server.ClassicModifyResource;
 import com.dropchop.recyclone.rest.server.ClassicReadByCodeResource;
 import com.dropchop.recyclone.rest.server.ClassicReadByIdResource;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
+import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.events.EventService;
 import com.dropchop.recyclone.service.api.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 22. 01. 22.
@@ -31,10 +34,11 @@ public class EventResource extends ClassicRestByIdResource<Event, EventParams> i
     com.dropchop.recyclone.rest.api.internal.events.EventResource {
 
   @Inject
+  @RecycloneType(RECYCLONE_ES_DEFAULT)
   EventService service;
 
   @Inject
-  IdentifierParams params;
+  EventParams params;
 
   @Override
   public Result<Event> create(List<Event> data) {
