@@ -1,8 +1,10 @@
 package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.model.api.invoke.CommonParams;
+import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -23,7 +25,10 @@ public class PageCriteriaDecorator extends ElasticCriteriaDecorator {
   }
 
   private void applyPagination(ElasticExecContext<?> context, int from, int size) {
-    context.getQueryParams().getFilter().setFrom(from);
-    context.getQueryParams().getFilter().setSize(size);
+    Params params = context.getParams();
+    if (params instanceof QueryParams queryParams) {
+      queryParams.getFilter().setFrom(from);
+      queryParams.getFilter().setSize(size);
+    }
   }
 }

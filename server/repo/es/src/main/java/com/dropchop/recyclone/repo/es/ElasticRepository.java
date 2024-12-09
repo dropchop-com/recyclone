@@ -57,6 +57,10 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
 
   protected abstract RestClient getElasticsearchClient();
 
+  public String getClassAlias(Class<?> cls) {
+    return cls.getSimpleName().toLowerCase();
+  }
+
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
       new PageCriteriaDecorator()
@@ -66,9 +70,11 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext() {
     ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
+    String alias = getClassAlias(this.getRootClass());
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
       context.decorateWith(decorator);
     }
+    context.init(this.getRootClass(), alias, context.getParams());
     return context;
   }
 
@@ -332,7 +338,13 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
 
   @Override
   public List<E> find(RepositoryExecContext<E> context) {
-    return List.of();
+    if (!(context instanceof ElasticExecContext<E> elasticContext)) {
+      throw new ServiceException(
+        ErrorCode.parameter_validation_error,
+        "Invalid context: Expected ElasticExecContext but received " + context.getClass()
+      );
+    }
+    return this.search((QueryParams) elasticContext.getParams(), elasticContext);
   }
 
   @Override
@@ -345,9 +357,6 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     return List.of();
   }
 
-  private <S extends E> void initializeContext(ElasticExecContext<S> context, QueryParams params) {
-    context.init((Class<S>) getRootClass(), Strings.toSnakeCase(getRootClass().getSimpleName()), params);
-  }
 
   private void applyDecorators(RepositoryExecContext<?> context) {
     context.getListeners().stream()
@@ -369,7 +378,6 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
       );
     }
 
-    initializeContext(elasticContext, params);
     applyDecorators(context);
 
     List<Object> searchAfterValues = null;
