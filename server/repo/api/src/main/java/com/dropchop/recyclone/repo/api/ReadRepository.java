@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.repo.api;
 
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 
 import java.util.Collection;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
-public interface ReadRepository<E, ID> extends Repository<E> {
+public interface ReadRepository<E extends Model, ID> extends Repository<E> {
 
   List<E> findById(Collection<ID> ids);
 

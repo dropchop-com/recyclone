@@ -3,10 +3,10 @@ package com.dropchop.recyclone.repo.es;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
@@ -45,7 +45,7 @@ import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused, unchecked")
-public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<E, ID> {
+public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID> {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -101,15 +101,14 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
     Request request = new Request("POST", "/_bulk");
     request.setJsonEntity(bulkRequestBody.toString());
-
     try {
       Response response = getElasticsearchClient().performRequest(request);
-
       return method.checkSuccessfulResponse(entities, response, objectMapper);
-
     } catch (ServiceException | IOException e) {
-      throw new ServiceException(new StatusMessage(ErrorCode.unknown_error,
-        "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
+      throw new ServiceException(
+          ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
+          Set.of(new AttributeString("error", e.getMessage()))
+      );
     }
   }
 
@@ -118,7 +117,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     ElasticBulkMethod saveBulkMethod = new ElasticBulkMethod(
       ElasticBulkMethod.MethodType.INDEX,
       getIndexName());
-
     return executeBulkRequest(entities, saveBulkMethod);
   }
 
@@ -155,17 +153,14 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       } else {
         int statusCode = response.getStatusLine().getStatusCode();
         throw  new ServiceException(
-          ErrorCode.data_error,
-          "Failed to delete entity with ID: " + id + ". Status code: " + statusCode,
+          ErrorCode.data_error, "Failed to delete entity with ID: " + id + ". Status code: " + statusCode,
           Set.of(new AttributeString("status", String.valueOf(statusCode)))
         );
       }
     } catch (IOException e) {
       throw new ServiceException(
-        ErrorCode.data_error,
-        "Error occurred during deletion of entity with ID: " + id,
-        Set.of(new AttributeString("ID", id.toString())),
-        e
+        ErrorCode.data_error, "Error occurred during deletion of entity with ID: " + id,
+        Set.of(new AttributeString("ID", id.toString())), e
       );
     }
   }
@@ -287,11 +282,9 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
           }
         }
         log.debug("Executed query [{}] with [{}] result size in [{}]ms.", query, count, timer.stop());
-
       } else if (response.getStatusLine().getStatusCode() == 404) {
         throw new ServiceException(
-            ErrorCode.data_missing_error,
-            "Missing data for query",
+            ErrorCode.data_missing_error, "Missing data for query",
             Set.of(
                 new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
                 new AttributeString("query", query)
@@ -299,8 +292,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         );
       } else {
         throw new ServiceException(
-            ErrorCode.data_error,
-            "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
             Set.of(
                 new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
                 new AttributeString("query", query)
@@ -309,14 +301,11 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       }
     } catch (IOException e) {
       throw new ServiceException(
-          ErrorCode.internal_error,
-          "Unable to execute query",
-          Set.of(new AttributeString("query", query)),
-          e
+          ErrorCode.internal_error, "Unable to execute query",
+          Set.of(new AttributeString("query", query)), e
       );
     }
   }
-
 
   @Override
   public List<E> findById(Collection<ID> ids) {
@@ -393,7 +382,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     if (listener == null && elasticContext.isSkipObjectParsing()) {
       throw new ServiceException(
           ErrorCode.internal_error,
-          "Skip object parsing was enabled but there is no raw result listener. Shuch implementation makes no sense!"
+          "Skip object parsing was enabled but there is no raw result listener. Such implementation makes no sense!"
       );
     }
 
@@ -423,17 +412,13 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         }
       } catch (ServiceException e) {
         throw new ServiceException(
-          ErrorCode.data_error,
-          "Failed to execute search query.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())),
-          e
+          ErrorCode.data_error, "Failed to execute search query.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())), e
         );
       } catch (Exception e) {
         throw new ServiceException(
-          ErrorCode.internal_error,
-          "Unexpected error occurred during search execution.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())),
-          e
+          ErrorCode.internal_error, "Unexpected error occurred during search execution.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())), e
         );
       }
     }
