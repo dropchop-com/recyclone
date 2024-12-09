@@ -42,6 +42,8 @@ quarkus:
     password: recyclone_test
   elasticsearch:
     devservices:
+      image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test
+      distribution: elastic
       enabled: true
       port: 9300
 
@@ -108,6 +110,11 @@ quarkus:
         - match: "*.localization.*"
           target-qualifier: recyclone_default
         - match: DummyResource
+          target-qualifier: recyclone_default
+          match-dependencies:
+            - match: DummyService
+              target-qualifier: alter
+        - match: DummyResourceInternal
           target-qualifier: recyclone_default
           match-dependencies:
             - match: DummyService

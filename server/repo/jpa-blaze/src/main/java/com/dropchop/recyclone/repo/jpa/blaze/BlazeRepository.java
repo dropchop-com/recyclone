@@ -6,9 +6,11 @@ import com.blazebit.persistence.DeleteCriteriaBuilder;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.model.api.marker.HasId;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.*;
@@ -25,7 +27,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
 @Slf4j
-public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
+public abstract class BlazeRepository<E extends Model, ID> implements CrudRepository<E, ID> {
 
   @Inject
   EntityManager em;
@@ -72,7 +74,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   @Override
   public E findById(ID id) {
     List<E> entities = findById(List.of(id));
-    return entities.isEmpty() ? null : entities.get(0);
+    return entities.isEmpty() ? null : entities.getFirst();
   }
 
   @Override
@@ -84,6 +86,8 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
       cb.where(alias + ".code").in(ids);
     } else if (HasUuid.class.isAssignableFrom(tClass)) {
       cb.where(alias + ".uuid").in(ids);
+    } else if (HasId.class.isAssignableFrom(tClass)) {
+      cb.where(alias + ".id").in(ids);
     }
     return cb.getResultList();
   }
@@ -171,7 +175,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Override
   public <S extends E> S save(S entity) {
-    return this.save(List.of(entity)).get(0);
+    return this.save(List.of(entity)).getFirst();
   }
 
   @Override
@@ -186,6 +190,6 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Override
   public <S extends E> S delete(S entity) {
-    return this.delete(List.of(entity)).get(0);
+    return this.delete(List.of(entity)).getFirst();
   }
 }

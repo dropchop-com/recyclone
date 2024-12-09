@@ -1,8 +1,24 @@
-# dc-test-quarkus Project
+# Recylone Integration Test
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+## Elasticsearch integration tests with a Devservices custom image
+
+Build testing Elasticsearch image if you need to change the default index templates:
+
+```shell script
+mvn docker:build
+mvn docker:push
+```
+
+And don't forget to add credentials to your .m2/settings.xml if you want to push changes to remote repo:
+
+```xml
+    <server>
+      <id>ghcr.io/dropchop-com</id>
+      <username>ivlcic</username>
+      <password>ghp_DxiyZz****************</password>
+    </server>
+```
 
 ## Running the application in dev mode
 

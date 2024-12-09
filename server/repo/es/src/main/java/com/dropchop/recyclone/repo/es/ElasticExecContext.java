@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.repo.es;
 
-import com.blazebit.persistence.CriteriaBuilder;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
@@ -25,6 +24,8 @@ public class ElasticExecContext<E> extends ParamsExecContext<RepositoryExecConte
 
   @NonNull
   private QueryParams queryParams;
+
+  private boolean skipObjectParsing;
 
   public void init(Class<E> rootClass, String rootAlias, QueryParams queryParams) {
     this.rootClass = rootClass;
