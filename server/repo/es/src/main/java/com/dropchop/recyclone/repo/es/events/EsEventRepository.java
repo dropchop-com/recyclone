@@ -5,6 +5,7 @@ import com.dropchop.recyclone.repo.es.ElasticRepository;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.Getter;
 import org.elasticsearch.client.RestClient;
 
@@ -19,18 +20,12 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
 
   Class<EsEvent> rootClass = EsEvent.class;
 
-  @Override
-  protected ElasticQueryMapper getElasticQueryMapper() {
-    return null;
-  }
+  @Inject
+  ObjectMapper objectMapper;
 
-  @Override
-  protected ObjectMapper getObjectMapper() {
-    return null;
-  }
+  @Inject
+  RestClient elasticsearchClient;
 
-  @Override
-  protected RestClient getElasticsearchClient() {
-    return null;
-  }
+  @Inject
+  ElasticQueryMapper elasticQueryMapper;
 }

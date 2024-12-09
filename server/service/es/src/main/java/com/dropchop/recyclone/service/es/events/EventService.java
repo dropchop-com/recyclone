@@ -36,9 +36,4 @@ public class EventService extends CrudServiceImpl<Event, EsEvent, UUID>
   @Inject
   EsEventMapperProvider mapperProvider;
 
-
-  @Override
-  public Result<Event> update(List<Event> dtos) {
-    return null;
-  }
 }

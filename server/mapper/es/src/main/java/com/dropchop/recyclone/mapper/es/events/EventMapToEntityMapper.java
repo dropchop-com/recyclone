@@ -2,6 +2,7 @@ package com.dropchop.recyclone.mapper.es.events;
 
 import com.dropchop.recyclone.mapper.api.MapToEntityMapper;
 import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.model.entity.es.attr.EsAttribute;
 import com.dropchop.recyclone.model.entity.es.event.EsEvent;
 import com.dropchop.recyclone.model.entity.es.event.EsEventDetail;
 import com.dropchop.recyclone.model.entity.es.event.EsEventItem;
@@ -115,6 +116,17 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default Set<Attribute<?>> mapToAttributes(Object value) {
+    if (value instanceof Collection collection) {
+      for (Object attributeObj : collection) {
+        if (attributeObj instanceof Map attribute) {
+          attribute.get("something");
+        }
+      }
+    }
+    return null;
+  }
+
+  default Set<EsAttribute<?>> mapToEsAttributes(Object value) {
     if (value instanceof Collection collection) {
       for (Object attributeObj : collection) {
         if (attributeObj instanceof Map attribute) {

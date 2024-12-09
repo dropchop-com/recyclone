@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.rest.events;
 
+import com.dropchop.recyclone.model.api.attr.AttributeBool;
+import com.dropchop.recyclone.model.api.attr.AttributeDecimal;
+import com.dropchop.recyclone.model.api.attr.AttributeString;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.dto.event.EventDetail;
@@ -17,6 +20,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +49,10 @@ public class EventsResourceTest {
     String ACTION = "action";
     String DATA = "data";
     String UNIT = "unit";
+    String ATTRIBUTE_STR = "attribute_string";
+    String ATTRIBUTE_NUM = "attribute_num";
+    String ATTRIBUTE_BOOL = "attribute_num";
+    String ATTRIBUTE_LIST = "attribute_list";
   }
 
 
@@ -82,6 +90,9 @@ public class EventsResourceTest {
     event.setCause(eventItem);
     event.setTarget(eventItem);
     event.setTrace(eventTrace);
+    /*event.addAttribute(new AttributeString(Strings.ATTRIBUTE_STR, Strings.ATTRIBUTE_STR));
+    event.addAttribute(new AttributeDecimal(Strings.ATTRIBUTE_NUM, 1));
+    event.addAttribute(new AttributeBool(Strings.ATTRIBUTE_BOOL, true));*/
 
     List<Event> events = given()
         //.log().all()
@@ -122,6 +133,7 @@ public class EventsResourceTest {
     assertNotNull(rspEvent.getCause());
     assertNotNull(rspEvent.getCause().getSubject());
     assertNotNull(rspEvent.getCause().getSubject().getCreated());
+    assertNotNull(rspEvent.getCause().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getSubject().getName());
     assertNotNull(rspEvent.getCause().getObject());
     assertNotNull(rspEvent.getCause().getObject().getCreated());
@@ -148,12 +160,19 @@ public class EventsResourceTest {
     assertNotNull(rspEvent.getTrace());
     assertEquals(Strings.CONTEXT, rspEvent.getTrace().getContext());
     assertEquals(Strings.GROUP, rspEvent.getTrace().getGroup());
+    /*assertNotNull(rspEvent.getAttributeValue(Strings.ATTRIBUTE_STR));
+    assertEquals(Strings.ATTRIBUTE_STR, rspEvent.getAttributeValue(Strings.ATTRIBUTE_STR));
+    assertEquals(1, ((BigDecimal)rspEvent.getAttributeValue(Strings.ATTRIBUTE_NUM)).intValue());
+    assertEquals(true, rspEvent.getAttributeValue(Strings.ATTRIBUTE_BOOL));*/
   }
 
 
   @Test
   @Order(20)
   public void get() {
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {}
     Event event = new Event();
     event.setId(EVENT_ID.toString());
 
@@ -165,7 +184,7 @@ public class EventsResourceTest {
         .and()
         .body(List.of(event))
         .when()
-        .delete("/api/internal/events/?c_level=5")
+        .post("/api/internal/events/search?c_level=5")
         .then()
         .statusCode(200)
         .extract()
@@ -251,6 +270,10 @@ public class EventsResourceTest {
 
     assertEquals(1, events.size());
 
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {}
+
     events = given()
       //.log().all()
       .contentType(ContentType.JSON)
@@ -260,7 +283,7 @@ public class EventsResourceTest {
       .and()
       .body(List.of(event))
       .when()
-      .delete("/api/internal/events/?c_level=5")
+      .post("/api/internal/events/search?c_level=5")
       .then()
       .statusCode(200)
       .extract()
