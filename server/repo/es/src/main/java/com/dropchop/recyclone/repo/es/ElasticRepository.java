@@ -343,7 +343,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   @Override
   public List<E> find(RepositoryExecContext<E> context) {
-    return List.of();
+    return search(context.getParams(), context);
   }
 
   @Override
