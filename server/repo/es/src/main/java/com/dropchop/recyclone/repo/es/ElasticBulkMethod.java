@@ -5,8 +5,6 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.client.Response;
@@ -64,14 +62,12 @@ public class ElasticBulkMethod {
     }
   }
 
-  public <S> List<S> checkSuccessfulResponse(Collection<S> entities,
-                                             Response response,
-                                             ObjectMapper objectMapper) throws IOException {
-
+  public <S extends Model> List<S> checkSuccessfulResponse(Collection<S> entities,
+                                                           Response response,
+                                                           ObjectMapper objectMapper) throws IOException {
     List<S> successfullyProcessedEntities = new ArrayList<>();
     List<StatusMessage> errorMessages = new ArrayList<>();
     List<S> entitiesToProcess = new ArrayList<>(entities);
-
     if (response.getStatusLine().getStatusCode() != 200) {
       throw new ServiceException(
           ErrorCode.internal_error,
