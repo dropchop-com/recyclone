@@ -83,12 +83,13 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
             Map.of(
                 "admin", "*",
                 "staff", "localization.language:*," +
-                                  "security.action:*," +
-                                  "security.domain:*," +
-                                  "security.permission:*," +
-                                  "security.role:*",
-                "user", "localization.language:view," +
-                                 "test.dummy:view"
+                         "security.action:*," +
+                         "security.domain:*," +
+                         "security.permission:*," +
+                         "security.role:*," +
+                         "test.dummy:*",
+                "user",  "localization.language:view," +
+                         "test.dummy:view"
             )
         )
     );

@@ -2,6 +2,7 @@ package com.dropchop.recyclone.quarkus.it.rest.api;
 
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -17,7 +18,7 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 01. 22.
  */
 @Path(Constants.Paths.Test.DUMMY)
-@DynamicExecContext(internal = true)
+@DynamicExecContext(value = CodeParams.class, internal = true)
 @RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.VIEW)
 public interface DummyResourceInternal {
 

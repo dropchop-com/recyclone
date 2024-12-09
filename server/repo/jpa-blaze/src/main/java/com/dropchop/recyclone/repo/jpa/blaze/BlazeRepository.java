@@ -72,7 +72,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
   @Override
   public E findById(ID id) {
     List<E> entities = findById(List.of(id));
-    return entities.isEmpty() ? null : entities.get(0);
+    return entities.isEmpty() ? null : entities.getFirst();
   }
 
   @Override
@@ -171,7 +171,7 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Override
   public <S extends E> S save(S entity) {
-    return this.save(List.of(entity)).get(0);
+    return this.save(List.of(entity)).getFirst();
   }
 
   @Override
@@ -186,6 +186,6 @@ public abstract class BlazeRepository<E, ID> implements CrudRepository<E, ID> {
 
   @Override
   public <S extends E> S delete(S entity) {
-    return this.delete(List.of(entity)).get(0);
+    return this.delete(List.of(entity)).getFirst();
   }
 }

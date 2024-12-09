@@ -4,28 +4,27 @@ import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.repo.api.listener.MapQuerySearchResultListener;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -55,58 +54,51 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   @Inject
   ObjectMapper objectMapper;
 
+
   @Override
-  public Result<Dummy> query() {
+  public Result<Dummy> search() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    QueryParams queryParams = context.getParams();
-    try {
-      String json = objectMapper.writeValueAsString(queryParams.getCondition());
-      log.info("Got query params: [{}]", json);
-    } catch (Exception e) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
-    }
-    return new Result<>("my-query-alternative");
+    CodeParams codeParams = context.getParams();
+    List<String> codes = codeParams.getCodes();
+    List<EsDummy> entities = elasticRepository.findById(codes);
+    MappingContext mapCtx = new FilteringDtoContext().of(ctxContainer.get());
+    List<Dummy> dtos = mapperProvider.getToEsDtoMapper().toDtos(entities, mapCtx);
+    return new Result<Dummy>().toSuccess(dtos, dtos.size());
   }
 
   @Override
-  public Result<Dummy> esSearch() {
+  public Result<Dummy> query() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
     QueryParams queryParams = context.getParams();
 
     List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
 
     MappingContext map = new FilteringDtoContext().of(ctxContainer.get());
-    RepositoryExecContext ctx = elasticRepository.getRepositoryExecContext();
-    try {
-      ctx.listener(
-        new MapQuerySearchResultListener() {
-          @Override
-          public <S> void onResult(S result) {
-            try {
-              actualResults.add(mapperProvider.getMapToDtoMapper().fromMap((Map<String, String>) result));
-            } catch (ServiceException e) {
-              throw new ServiceException(ErrorCode.data_validation_error, "Error mapping from Map<String, String> to Dummy: ", e);
-            }
-          }
-        }
-      );
-      elasticRepository.search(queryParams, ctx);
-      return new Result<Dummy>().toSuccess(actualResults, actualResults.size());
-    } catch (ServiceException e) {
-      throw new ServiceException(ErrorCode.data_validation_error, "Error extracting query params!", e);
-    }
+    RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext();
+    List<EsDummy> entities = elasticRepository.search(queryParams, ctx);
+    MappingContext mapCtx = new FilteringDtoContext().of(ctxContainer.get());
+    List<Dummy> dtos = mapperProvider.getToEsDtoMapper().toDtos(entities, mapCtx);
+
+    return new Result<Dummy>().toSuccess(actualResults, actualResults.size());
   }
 
   @Override
-  public List<Dummy> esSave() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-
-    return elasticRepository.save(context.getData());
+  @Transactional
+  protected Result<Dummy> createOrUpdate(List<Dummy> dtos) {
+    Result<Dummy> result = super.createOrUpdate(dtos);
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
+    elasticRepository.save(entities);
+    return result;
   }
 
   @Override
-  public List<Dummy> esDelete() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    return elasticRepository.delete(context.getData());
+  @Transactional
+  public Result<Dummy> delete(List<Dummy> dtos) {
+    Result<Dummy> result = super.delete(dtos);
+    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
+    elasticRepository.delete(entities);
+    return result;
   }
 }

@@ -270,6 +270,10 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
+    if (paramType == null) {
+      log.warn("Missing parameter type for {}!", requestContext.getUriInfo());
+      return;
+    }
     if (!CommonParams.class.isAssignableFrom(paramType) || CommonParams.class.equals(paramType)) {
       return;
     }
