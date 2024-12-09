@@ -3,11 +3,14 @@ package com.dropchop.recyclone.quarkus.it.rest.events;
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeDecimal;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
+import com.dropchop.recyclone.model.api.query.Condition;
 import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.dto.event.EventDetail;
 import com.dropchop.recyclone.model.dto.event.EventItem;
 import com.dropchop.recyclone.model.dto.event.EventTrace;
+import com.dropchop.recyclone.model.dto.invoke.EventParams;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
@@ -26,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.dropchop.recyclone.model.api.query.Condition.field;
+import static com.dropchop.recyclone.model.api.query.Condition.or;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventsResourceTest {
 
-  public static UUID EVENT_ID = UUID.randomUUID();
-  public static UUID EVENT_DETAIL_ID = UUID.randomUUID();
-  public static UUID EVENT_TRACE_ID = UUID.randomUUID();
+  public static String EVENT_ID = UUID.randomUUID().toString();
+  public static String EVENT_DETAIL_ID = UUID.randomUUID().toString();
+  public static String EVENT_TRACE_ID = UUID.randomUUID().toString();
 
   interface Strings {
     String EVENT_DETAIL = "event_detail";
@@ -62,7 +67,7 @@ public class EventsResourceTest {
 
     EventDetail detail = new EventDetail();
     detail.setCreated(ZonedDateTime.now());
-    detail.setId(EVENT_DETAIL_ID.toString());
+    detail.setId(EVENT_DETAIL_ID);
     detail.setName(Strings.EVENT_DETAIL);
 
     EventItem eventItem = new EventItem();
@@ -73,12 +78,12 @@ public class EventsResourceTest {
     eventItem.setContext(detail);
 
     EventTrace eventTrace = new EventTrace();
-    eventTrace.setId(EVENT_TRACE_ID.toString());
+    eventTrace.setId(EVENT_TRACE_ID);
     eventTrace.setContext(Strings.CONTEXT);
     eventTrace.setGroup(Strings.GROUP);
 
     Event event = new Event();
-    event.setId(EVENT_ID.toString());
+    event.setId(EVENT_ID);
     event.setCreated(ZonedDateTime.now());
     event.setApplication(Strings.APPLICATION);
     event.setType(Strings.TYPE);
@@ -95,7 +100,7 @@ public class EventsResourceTest {
     event.addAttribute(new AttributeBool(Strings.ATTRIBUTE_BOOL, true));*/
 
     List<Event> events = given()
-        //.log().all()
+        .log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
         .auth().preemptive().basic("admin1", "password")
@@ -109,8 +114,8 @@ public class EventsResourceTest {
         .body().jsonPath().getList(".", Event.class);
     assertEquals(1, events.size());
     Event rspEvent = events.get(0);
-    assertEquals(event.getId(), rspEvent.getId());
-    assertNotNull(event.getCreated());
+    assertEquals(EVENT_ID, rspEvent.getId());
+    assertNotNull(rspEvent.getCreated());
     assertEquals(Strings.APPLICATION, rspEvent.getApplication());
     assertEquals(Strings.TYPE, rspEvent.getType());
     assertEquals(Strings.ACTION, rspEvent.getAction());
@@ -173,18 +178,24 @@ public class EventsResourceTest {
     try {
       Thread.sleep(5000);
     } catch (InterruptedException e) {}
-    Event event = new Event();
-    event.setId(EVENT_ID.toString());
+
+    Condition c = or(
+      field("uuid", EVENT_ID)
+    );
+
+    EventParams params = EventParams.builder().condition(c).build();
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-        //.log().all()
+        .log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
         .auth().preemptive().basic("admin1", "password")
         .and()
-        .body(List.of(event))
+        .body(params)
         .when()
-        .post("/api/internal/events/search?c_level=5")
+        .post("/api/internal/events/search")
         .then()
         .statusCode(200)
         .extract()
@@ -192,13 +203,13 @@ public class EventsResourceTest {
 
     assertEquals(1, events.size());
     Event rspEvent = events.get(0);
-    assertEquals(event.getId(), rspEvent.getId());
-    assertNotNull(event.getCreated());
+    assertEquals(EVENT_ID, rspEvent.getId());
+    assertNotNull(rspEvent.getCreated());
     assertEquals(Strings.APPLICATION, rspEvent.getApplication());
     assertEquals(Strings.TYPE, rspEvent.getType());
     assertEquals(Strings.ACTION, rspEvent.getAction());
     assertEquals(Strings.DATA, rspEvent.getData());
-    assertEquals(event.getValue(), rspEvent.getValue());
+    assertEquals(rspEvent.getValue(), rspEvent.getValue());
     assertEquals(Strings.UNIT, rspEvent.getUnit());
     assertNotNull(rspEvent.getSource());
     assertNotNull(rspEvent.getSource().getSubject());
@@ -252,10 +263,10 @@ public class EventsResourceTest {
   public void delete() {
 
     Event event = new Event();
-    event.setId(EVENT_ID.toString());
+    event.setId(EVENT_ID);
 
     List<Event> events = given()
-        //.log().all()
+        .log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
         .auth().preemptive().basic("admin1", "password")
@@ -275,7 +286,7 @@ public class EventsResourceTest {
     } catch (InterruptedException e) {}
 
     events = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .header("Authorization", "Bearer editortoken1")

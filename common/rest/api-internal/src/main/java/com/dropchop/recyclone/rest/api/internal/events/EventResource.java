@@ -4,6 +4,7 @@ import com.dropchop.recyclone.model.api.rest.Constants;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.dto.invoke.EventParams;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.rest.api.DynamicExecContext;
 import com.dropchop.recyclone.rest.api.MediaType;
@@ -51,16 +52,6 @@ public interface EventResource {
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(com.dropchop.recyclone.model.api.security.Constants.Domains.Events.EVENT + PERM_DELIM + com.dropchop.recyclone.model.api.security.Constants.Actions.DELETE)
   List<Event> deleteRest(List<Event> languages);
-
-  @GET
-  @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
-  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result <Event> getById(@PathParam("id") UUID id);
-
-  @GET
-  @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
-  @Produces(MediaType.APPLICATION_JSON)
-  List <Event> getByIdRest(@PathParam("id") UUID id);
 
   @POST
   @Path(Constants.Paths.SEARCH_SEGMENT)
