@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.entity.es.event.EsEvent;
 import com.dropchop.recyclone.repo.es.events.EsEventMapperProvider;
 import com.dropchop.recyclone.repo.es.events.EsEventRepository;
-import com.dropchop.recyclone.service.api.CrudElasticServiceImpl;
+import com.dropchop.recyclone.service.api.CrudServiceImpl;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,7 +26,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @ApplicationScoped
 @RecycloneType(RECYCLONE_ES_DEFAULT)
 @SuppressWarnings("unused")
-public class EventService extends CrudElasticServiceImpl<Event, EsEvent, UUID>
+public class EventService extends CrudServiceImpl<Event, EsEvent, UUID>
     implements com.dropchop.recyclone.service.api.events.EventService {
 
 
@@ -34,7 +34,7 @@ public class EventService extends CrudElasticServiceImpl<Event, EsEvent, UUID>
   EsEventRepository repository;
 
   @Inject
-  EsEventMapperProvider filteringMapperProvider;
+  EsEventMapperProvider mapperProvider;
 
 
   @Override
