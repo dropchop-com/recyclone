@@ -5,7 +5,7 @@ SCRIPT=$(readlink -f $0)
 # Directory of an absolute path to this script
 SCRIPTPATH=`dirname $SCRIPT`
 ES_HOST=http://localhost:9200
-INDICES=("dummy" "events")
+INDICES=("dummy" "event")
 ROLES_USERS=( )
 
 ES_AUTH=""

@@ -77,6 +77,10 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-jpa</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-service-es</artifactId>
+    </dependency>
 
     <!-- testcontainers are currently not used -->
     <!--suppress VulnerableLibrariesLocal -->

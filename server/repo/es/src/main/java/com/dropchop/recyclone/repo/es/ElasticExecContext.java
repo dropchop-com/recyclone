@@ -4,7 +4,6 @@ import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import lombok.*;
@@ -22,15 +21,11 @@ public class ElasticExecContext<E> extends ParamsExecContext<RepositoryExecConte
   @NonNull
   private String rootAlias;
 
-  @NonNull
-  private QueryParams queryParams;
-
   private boolean skipObjectParsing;
 
-  public void init(Class<E> rootClass, String rootAlias, QueryParams queryParams) {
+  public void init(Class<E> rootClass, String rootAlias) {
     this.rootClass = rootClass;
     this.rootAlias = rootAlias;
-    this.queryParams = queryParams;
 
     for (RepositoryExecContextListener decorator : listeners()) {
       if (decorator instanceof ElasticCriteriaDecorator elasticCriteriaDecorator) {

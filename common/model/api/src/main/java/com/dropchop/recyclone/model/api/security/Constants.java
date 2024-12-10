@@ -80,6 +80,10 @@ public interface Constants {
     interface Tagging {
       String TAG = "tagging.tag";
     }
+
+    interface Events {
+      String EVENT = "events.event";
+    }
   }
 
   interface Actions {
@@ -88,6 +92,7 @@ public interface Constants {
     String CREATE = "create";
     String DELETE = "delete";
     String UPDATE = "update";
-    String DEACTIVATE = "deactivate"; //on tuesdays it's covered by update on fridays a see it as a separate action ... a možda i nije
+    //on tuesdays it's covered by update on fridays a see it as a separate action ... a možda i nije
+    String DEACTIVATE = "deactivate";
   }
 }

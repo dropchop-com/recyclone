@@ -3,11 +3,13 @@ package com.dropchop.recyclone.repo.es;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
+import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.model.api.marker.HasId;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.ProfileTimer;
@@ -44,8 +46,8 @@ import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
  */
 @Slf4j
-@SuppressWarnings("unused, unchecked")
-public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<E, ID> {
+@SuppressWarnings("unused")
+public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID> {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -57,6 +59,10 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   protected abstract RestClient getElasticsearchClient();
 
+  public String getClassAlias(Class<?> cls) {
+    return cls.getSimpleName().toLowerCase();
+  }
+
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
       new PageCriteriaDecorator()
@@ -66,9 +72,11 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   @Override
   public RepositoryExecContext<E> getRepositoryExecContext() {
     ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
+    String alias = getClassAlias(this.getRootClass());
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
       context.decorateWith(decorator);
     }
+    context.init(this.getRootClass(), alias);
     return context;
   }
 
@@ -104,12 +112,12 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
     try {
       Response response = getElasticsearchClient().performRequest(request);
-
       return method.checkSuccessfulResponse(entities, response, objectMapper);
-
     } catch (ServiceException | IOException e) {
-      throw new ServiceException(new StatusMessage(ErrorCode.unknown_error,
-        "Failed to save entity to Elasticsearch", Set.of(new AttributeString("error", e.getMessage()))));
+      throw new ServiceException(
+          ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
+          Set.of(new AttributeString("error", e.getMessage()))
+      );
     }
   }
 
@@ -118,7 +126,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     ElasticBulkMethod saveBulkMethod = new ElasticBulkMethod(
       ElasticBulkMethod.MethodType.INDEX,
       getIndexName());
-
     return executeBulkRequest(entities, saveBulkMethod);
   }
 
@@ -137,9 +144,9 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   }
 
   @Override
-  public int deleteById(Collection<? extends ID> ids) {
-    if (ids.isEmpty()) {
-      return 0;
+  public <X extends ID> int deleteById(Collection<X> ids) {
+    for(ID id : ids) {
+      deleteById(id);
     }
 
     Collection<String> strIds = ids.stream().map(Object::toString).toList();
@@ -154,8 +161,8 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       throw new IllegalArgumentException("Unsupported entity type for deletion");
     }
 
-    QueryNodeObject queryObject = buildQueryObject(params, null, null);
-
+  @Override
+  public <X extends ID> int deleteById(X id) {
     try {
       Request request = new Request("POST", "/" + getIndexName() + "/_delete_by_query");
       request.setJsonEntity(getObjectMapper().writeValueAsString(queryObject));
@@ -166,25 +173,18 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         Map<String, Object> responseMap = getObjectMapper().readValue(responseBody, new TypeReference<>() {});
         return ((Integer) responseMap.get("deleted"));
       } else {
-        throw new ServiceException(
-          ErrorCode.data_error,
-          "Failed to delete entities by ID. Status code: " + response.getStatusLine().getStatusCode(),
-          Set.of(new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())))
+        int statusCode = response.getStatusLine().getStatusCode();
+        throw  new ServiceException(
+          ErrorCode.data_error, "Failed to delete entity with ID: " + id + ". Status code: " + statusCode,
+          Set.of(new AttributeString("status", String.valueOf(statusCode)))
         );
       }
     } catch (IOException e) {
       throw new ServiceException(
-        ErrorCode.data_error,
-        "Error occurred during deletion of entities",
-        Set.of(new AttributeString("error", e.getMessage())),
-        e
+        ErrorCode.data_error, "Error occurred during deletion of entity with ID: " + id,
+        Set.of(new AttributeString("ID", id.toString())), e
       );
     }
-  }
-
-  @Override
-  public int deleteById(ID id) {
-    return deleteById(Collections.singletonList(id));
   }
 
   @Override
@@ -219,10 +219,13 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         defaultSort.put("created", "desc");
         sortOrder.put("sort", defaultSort);
       } else if(HasUuid.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("uuid.keyword", "desc");
+        defaultSort.put("uuid", "desc");
         sortOrder.put("sort", defaultSort);
       } else if(HasCode.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("code.keyword", "desc");
+        defaultSort.put("code", "desc");
+        sortOrder.put("sort", defaultSort);
+      } else if(HasId.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("is", "desc");
         sortOrder.put("sort", defaultSort);
       } else {
         throw new ServiceException(
@@ -258,8 +261,8 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
   }
 
   @Override
-  public E findById(ID id) {
-    List<E> entities = findById(List.of(id));
+  public <S extends E, X extends ID> S findById(X id) {
+    List<S> entities = findById(List.of(id));
     return entities.isEmpty() ? null : entities.getFirst();
   }
 
@@ -304,11 +307,9 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
           }
         }
         log.debug("Executed query [{}] with [{}] result size in [{}]ms.", query, count, timer.stop());
-
       } else if (response.getStatusLine().getStatusCode() == 404) {
         throw new ServiceException(
-            ErrorCode.data_missing_error,
-            "Missing data for query",
+            ErrorCode.data_missing_error, "Missing data for query",
             Set.of(
                 new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
                 new AttributeString("query", query)
@@ -316,8 +317,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         );
       } else {
         throw new ServiceException(
-            ErrorCode.data_error,
-            "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
             Set.of(
                 new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
                 new AttributeString("query", query)
@@ -326,17 +326,14 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       }
     } catch (IOException e) {
       throw new ServiceException(
-          ErrorCode.internal_error,
-          "Unable to execute query",
-          Set.of(new AttributeString("query", query)),
-          e
+          ErrorCode.internal_error, "Unable to execute query",
+          Set.of(new AttributeString("query", query)), e
       );
     }
   }
 
-
   @Override
-  public List<E> findById(Collection<ID> ids) {
+  public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
     Collection<String> strIds = ids.stream().map(Object::toString).toList();
     Class<E> cls = getRootClass();
     QueryParams params = new QueryParams();
@@ -351,31 +348,42 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     } else {
       queryObject = buildQueryObject(params, null, null);
     }
-    List<E> results = new ArrayList<>();
+    List<S> results = new ArrayList<>();
     executeQuery(queryObject, false, List.of(
-        (QueryResultListener<E>) result -> results.add(result.getSource())
+        (QueryResultListener<S>) result -> results.add(result.getSource())
     ));
     return results;
   }
 
   @Override
-  public List<E> find(RepositoryExecContext<E> context) {
-    return List.of();
+  public <S extends E> List<S> find(RepositoryExecContext<S> context) {
+    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
+      throw new ServiceException(
+        ErrorCode.parameter_validation_error,
+        "Invalid context: Expected ElasticExecContext but received " + context.getClass()
+      );
+    }
+    //TODO: any params can be used here with the correct criteria decorators
+    //      this impl is false
+    return this.search((QueryParams) elasticContext.getParams(), elasticContext);
   }
 
   @Override
   public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
-    return List.of();
+    throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unimplemented"
+    );
   }
 
   @Override
-  public List<E> find() {
-    return List.of();
+  public <S extends E> List<S> find() {
+    throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unimplemented"
+    );
   }
 
-  private <S extends E> void initializeContext(ElasticExecContext<S> context, QueryParams params) {
-    context.init((Class<S>) getRootClass(), Strings.toSnakeCase(getRootClass().getSimpleName()), params);
-  }
 
   private void applyDecorators(RepositoryExecContext<?> context) {
     context.getListeners().stream()
@@ -397,7 +405,6 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
       );
     }
 
-    initializeContext(elasticContext, params);
     applyDecorators(context);
 
     List<Object> searchAfterValues = null;
@@ -410,7 +417,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     if (listener == null && elasticContext.isSkipObjectParsing()) {
       throw new ServiceException(
           ErrorCode.internal_error,
-          "Skip object parsing was enabled but there is no raw result listener. Shuch implementation makes no sense!"
+          "Skip object parsing was enabled but there is no raw result listener. Such implementation makes no sense!"
       );
     }
 
@@ -440,17 +447,13 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         }
       } catch (ServiceException e) {
         throw new ServiceException(
-          ErrorCode.data_error,
-          "Failed to execute search query.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())),
-          e
+          ErrorCode.data_error, "Failed to execute search query.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())), e
         );
       } catch (Exception e) {
         throw new ServiceException(
-          ErrorCode.internal_error,
-          "Unexpected error occurred during search execution.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())),
-          e
+          ErrorCode.internal_error, "Unexpected error occurred during search execution.",
+          Set.of(new AttributeString("errorMessage", e.getMessage())), e
         );
       }
     }
