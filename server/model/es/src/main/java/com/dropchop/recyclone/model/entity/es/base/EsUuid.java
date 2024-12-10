@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.model.entity.es.base;
 
-import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import lombok.*;
 
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-public abstract class EsUuid implements Entity, HasUuid, Comparable<EsUuid> {
+public abstract class EsUuid implements EsEntity, HasUuid, Comparable<EsUuid> {
 
   @NonNull
   private UUID uuid;

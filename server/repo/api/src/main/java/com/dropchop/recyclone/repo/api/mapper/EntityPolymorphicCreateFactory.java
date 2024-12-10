@@ -11,6 +11,7 @@ import com.dropchop.recyclone.model.api.security.Constants;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -20,30 +21,47 @@ import java.util.Set;
 public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>
     extends EntityDelegateFactory<D, E, ID> {
 
-
   private final MapperSubTypeConfig mapperSubTypeConfig;
+  private final Class<?> entityHierarchyRoot;
 
   public EntityPolymorphicCreateFactory(ReadRepository<E, ID> repository,
                                         MapperSubTypeConfig mapperSubTypeConfig) {
     super(repository);
     this.mapperSubTypeConfig = mapperSubTypeConfig;
+    this.entityHierarchyRoot = mapperSubTypeConfig.getEntityRootMarkerFor(repository.getRootClass());
     super.forActionOnly(Constants.Actions.CREATE);
   }
 
   @Override
   public E create(D dto, MappingContext context) {
+    Class<?> targetType = null;
     if (mapperSubTypeConfig != null) {
-      Class<?> type = mapperSubTypeConfig.mapsTo(dto.getClass());
-      if (type != null) {
-        log.debug("Will instantiate entity [{}] for dto class [{}] from polymorphic registry.",
-          type, dto.getClass());
+      Collection<Class<?>> types = mapperSubTypeConfig.mapsTo(dto.getClass());
+      if (types != null && !types.isEmpty()) {
+        for (Class<?> type : types) {
+          if (entityHierarchyRoot.isAssignableFrom(type)) {
+            targetType = type;
+            break;
+          }
+        }
+        if (targetType == null) {
+          throw new ServiceException(
+              ErrorCode.internal_error,
+              String.format("Unable to find appropriate child of [%s] for [%s]!", entityHierarchyRoot, dto.getClass())
+          );
+        }
+        log.debug(
+            "Will instantiate entity [{}] for dto class [{}] from polymorphic registry.",
+            targetType, dto.getClass()
+        );
         try {
           //noinspection unchecked
-          return ((Class<E>)type).getDeclaredConstructor().newInstance();
+          return ((Class<E>)targetType).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-          throw new ServiceException(ErrorCode.internal_error,
-            String.format("Unable to instantiate [%s]!", type),
-              Set.of(new AttributeString("class", type.getName())), e);
+          throw new ServiceException(
+              ErrorCode.internal_error, String.format("Unable to instantiate [%s]!", targetType),
+              Set.of(new AttributeString("class", targetType.getName())), e
+          );
         }
       }
     } else {

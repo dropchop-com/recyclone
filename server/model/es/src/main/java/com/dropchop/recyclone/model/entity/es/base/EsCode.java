@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.model.entity.es.base;
 
-import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import lombok.*;
 
@@ -13,7 +12,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-public abstract class EsCode implements Entity, HasCode, Comparable<EsCode> {
+public abstract class EsCode implements EsEntity, HasCode, Comparable<EsCode> {
 
   @NonNull
   private String code;

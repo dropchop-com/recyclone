@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.model.entity.jpa.base;
 
-import com.dropchop.recyclone.model.api.base.Entity;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -16,7 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @MappedSuperclass
-public abstract class JpaCode implements Entity, HasCode, Comparable<JpaCode> {
+public abstract class JpaCode implements JpaEntity, HasCode, Comparable<JpaCode> {
 
   @Id
   @NonNull

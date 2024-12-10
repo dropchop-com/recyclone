@@ -32,6 +32,10 @@ public class RegistryProcessor {
       "com.fasterxml.jackson.annotation.JsonTypeInfo"
   );
 
+  private final DotName ENTITY_INTERFACE = DotName.createSimple(
+      "com.dropchop.recyclone.model.api.base.Entity"
+  );
+
   private void processMappingAnnotation(AnnotationInstance annotation, Map<String, String> mappingClasses) {
     AnnotationValue targetValue = annotation.value("target");
 
@@ -54,8 +58,19 @@ public class RegistryProcessor {
   }
 
   @BuildStep
+  void collectEntityRootInterfaceClasses(CombinedIndexBuildItem combinedIndexBuildItem,
+                                         BuildProducer<EntityRootInterfacesTypeItem> classProducer) {
+    IndexView index = combinedIndexBuildItem.getIndex();
+    Collection<String> entityInterfaces = new LinkedHashSet<>();
+    for (ClassInfo entityRootMarker : index.getKnownDirectSubinterfaces(ENTITY_INTERFACE)) {
+      entityInterfaces.add(entityRootMarker.name().toString());
+    }
+    classProducer.produce(new EntityRootInterfacesTypeItem(entityInterfaces));
+  }
+
+  @BuildStep
   void collectSubclassMappingAnnotatedClasses(CombinedIndexBuildItem combinedIndexBuildItem,
-                                              BuildProducer<MapperSubTypeItem> classProducer) {
+                                         BuildProducer<MapperSubTypeItem> classProducer) {
     IndexView index = combinedIndexBuildItem.getIndex();
     Map<String, String> mappingClasses = new LinkedHashMap<>();
     for (AnnotationInstance annotation : index.getAnnotations(MAPPING_ANNO)) {
@@ -115,11 +130,17 @@ public class RegistryProcessor {
   @BuildStep
   @Record(STATIC_INIT)
   SyntheticBeanBuildItem setupMapperSubTypeConfig(RegistryRecorder recorder,
-                                                  MapperSubTypeItem mappingBuildItems) {
+                                                  MapperSubTypeItem mappingBuildItems,
+                                                  EntityRootInterfacesTypeItem entityRootInterfacesTypeItem) {
     return SyntheticBeanBuildItem.configure(MapperSubTypeConfig.class)
         .scope(ApplicationScoped.class)
         .unremovable()
-        .runtimeValue(recorder.createMapperSubTypeConfig(mappingBuildItems.getClassNames()))
+        .runtimeValue(
+            recorder.createMapperSubTypeConfig(
+                mappingBuildItems.getClassNames(),
+                entityRootInterfacesTypeItem.getClassNames()
+            )
+        )
         .done();
   }
 

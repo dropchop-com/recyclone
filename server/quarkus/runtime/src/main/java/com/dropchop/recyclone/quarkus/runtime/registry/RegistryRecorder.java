@@ -30,7 +30,8 @@ public class RegistryRecorder {
     return new RuntimeValue<>(config);
   }
 
-  public RuntimeValue<MapperSubTypeConfig> createMapperSubTypeConfig(Map<String, String> mapperConf) {
+  public RuntimeValue<MapperSubTypeConfig> createMapperSubTypeConfig(Map<String, String> mapperConf,
+                                                                     Collection<String> entityRootInterfaces) {
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     MapperSubTypeConfig mapperSubTypeConfig = new MapperSubTypeConfigImpl();
     for (Map.Entry<String, String> entry : mapperConf.entrySet()) {
@@ -38,6 +39,13 @@ public class RegistryRecorder {
         mapperSubTypeConfig.addBidiMapping(
             cl.loadClass(entry.getKey()), cl.loadClass(entry.getValue())
         );
+      } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    for (String entityInterface : entityRootInterfaces) {
+      try {
+        mapperSubTypeConfig.addEntityRootMarker(cl.loadClass(entityInterface));
       } catch (ClassNotFoundException e) {
         throw new RuntimeException(e);
       }
