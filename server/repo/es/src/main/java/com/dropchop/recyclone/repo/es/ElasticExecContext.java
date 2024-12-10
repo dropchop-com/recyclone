@@ -3,15 +3,11 @@ package com.dropchop.recyclone.repo.es;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor

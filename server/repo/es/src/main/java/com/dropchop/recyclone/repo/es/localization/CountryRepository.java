@@ -31,5 +31,4 @@ public class CountryRepository extends ElasticRepository<EsCountry, String> {
   protected RestClient getElasticsearchClient() {
     return null;
   }
-
 }

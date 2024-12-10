@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
+import com.blazebit.persistence.BaseWhereBuilder;
 import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.DeleteCriteriaBuilder;
@@ -71,17 +72,7 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     return cbf.create(em, cls);
   }
 
-  @Override
-  public E findById(ID id) {
-    List<E> entities = findById(List.of(id));
-    return entities.isEmpty() ? null : entities.getFirst();
-  }
-
-  @Override
-  public List<E> findById(Collection<ID> ids) {
-    Class<E> tClass = getRootClass();
-    String alias = getClassAlias(tClass);
-    CriteriaBuilder<E> cb = getBuilder(tClass).from(getRootClass(), alias);
+  protected void addIdCriteria(BaseWhereBuilder<?> cb, String alias, Class<?> tClass, Collection<?> ids) {
     if (HasCode.class.isAssignableFrom(tClass)) {
       cb.where(alias + ".code").in(ids);
     } else if (HasUuid.class.isAssignableFrom(tClass)) {
@@ -89,17 +80,31 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     } else if (HasId.class.isAssignableFrom(tClass)) {
       cb.where(alias + ".id").in(ids);
     }
+  }
+
+  @Override
+  public <S extends E, X extends ID> S findById(X id) {
+    List<S> entities = findById(List.of(id));
+    return entities.isEmpty() ? null : entities.getFirst();
+  }
+
+  @Override
+  public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
+    Class<S> tClass = getRootClass();
+    String alias = getClassAlias(tClass);
+    CriteriaBuilder<S> cb = getBuilder(tClass).from(getRootClass(), alias);
+    addIdCriteria(cb, alias, tClass, ids);
     return cb.getResultList();
   }
 
   @Override
-  public <X extends E> List<X> find(Class<X> cls, RepositoryExecContext<X> context) {
+  public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
     String alias = getClassAlias(cls);
-    CriteriaBuilder<X> cb = getBuilder(cls).from(cls, alias);
+    CriteriaBuilder<S> cb = getBuilder(cls).from(cls, alias);
     TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();
     if (context != null) {
       if (context instanceof BlazeExecContext) {
-        ((BlazeExecContext<X>) context).init(cls, alias, cb);
+        ((BlazeExecContext<S>) context).init(cls, alias, cb);
       }
       for (RepositoryExecContextListener listener : context.getListeners()) {
         if (listener instanceof PageCriteriaDecorator) {
@@ -128,7 +133,7 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
   }
 
   @Override
-  public List<E> find(RepositoryExecContext<E> context) {
+  public <S extends E> List<S> find(RepositoryExecContext<S> context) {
     return find(getRootClass(), context);
   }
 
@@ -141,25 +146,21 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
   }
 
   @Override
-  public List<E> find() {
+  public <S extends E> List<S> find() {
     return find(null);
   }
 
   @Override
-  public int deleteById(ID id) {
+  public <X extends ID> int deleteById(X id) {
     return deleteById(List.of(id));
   }
 
   @Override
-  public int deleteById(Collection<? extends ID> ids) {
+  public <X extends ID> int deleteById(Collection<X> ids) {
     Class<E> tClass = getRootClass();
     String alias = getClassAlias(tClass);
     DeleteCriteriaBuilder<E> cb = cbf.delete(em, getRootClass(), alias);
-    if (HasCode.class.isAssignableFrom(tClass)) {
-      cb.where(alias + ".code").in(ids);
-    } else if (HasUuid.class.isAssignableFrom(tClass)) {
-      cb.where(alias + ".uuid").in(ids);
-    }
+    addIdCriteria(cb, alias, tClass, ids);
     return cb.executeUpdate();
   }
 

@@ -2,16 +2,11 @@ package com.dropchop.recyclone.rest.server.events;
 
 import com.dropchop.recyclone.model.api.query.Condition;
 import com.dropchop.recyclone.model.dto.event.Event;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.EventParams;
-import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-import com.dropchop.recyclone.model.dto.localization.Country;
 import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.rest.server.*;
+import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.events.EventService;
-import com.dropchop.recyclone.service.api.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -46,24 +41,20 @@ public class EventResource extends ClassicRestByIdResource<Event, EventParams> i
     return service.create(data);
   }
 
-
   @Override
   public Result<Event> delete(List<Event> data) {
     return service.delete(data);
   }
-
 
   @Override
   public Result<Event> update(List<Event> data) {
     return service.update(data);
   }
 
-
   @Override
   public Result<Event> get() {
     return service.search();
   }
-
 
   @Override
   public Result<Event> getById(UUID id) {

@@ -8,6 +8,7 @@ import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.model.api.marker.HasId;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.ProfileTimer;
@@ -44,7 +45,7 @@ import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
  */
 @Slf4j
-@SuppressWarnings("unused, unchecked")
+@SuppressWarnings("unused")
 public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID> {
 
   @Inject
@@ -141,7 +142,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   }
 
   @Override
-  public int deleteById(Collection<? extends ID> ids) {
+  public <X extends ID> int deleteById(Collection<X> ids) {
     for(ID id : ids) {
       deleteById(id);
     }
@@ -149,7 +150,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   }
 
   @Override
-  public int deleteById(ID id) {
+  public <X extends ID> int deleteById(X id) {
     try {
       Request request = new Request("DELETE", "/" + getIndexName() + "/_doc/" + id);
       Response response = getElasticsearchClient().performRequest(request);
@@ -208,6 +209,9 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
       } else if(HasCode.class.isAssignableFrom(rootClass)) {
         defaultSort.put("code", "desc");
         sortOrder.put("sort", defaultSort);
+      } else if(HasId.class.isAssignableFrom(rootClass)) {
+        defaultSort.put("is", "desc");
+        sortOrder.put("sort", defaultSort);
       } else {
         throw new ServiceException(
             ErrorCode.internal_error,
@@ -242,8 +246,8 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   }
 
   @Override
-  public E findById(ID id) {
-    List<E> entities = findById(List.of(id));
+  public <S extends E, X extends ID> S findById(X id) {
+    List<S> entities = findById(List.of(id));
     return entities.isEmpty() ? null : entities.getFirst();
   }
 
@@ -314,7 +318,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   }
 
   @Override
-  public List<E> findById(Collection<ID> ids) {
+  public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
     Collection<String> strIds = ids.stream().map(Object::toString).toList();
     Class<E> cls = getRootClass();
     QueryParams params = new QueryParams();
@@ -329,32 +333,40 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     } else {
       queryObject = buildQueryObject(params, null, null);
     }
-    List<E> results = new ArrayList<>();
+    List<S> results = new ArrayList<>();
     executeQuery(queryObject, false, List.of(
-        (QueryResultListener<E>) result -> results.add(result.getSource())
+        (QueryResultListener<S>) result -> results.add(result.getSource())
     ));
     return results;
   }
 
   @Override
-  public List<E> find(RepositoryExecContext<E> context) {
-    if (!(context instanceof ElasticExecContext<E> elasticContext)) {
+  public <S extends E> List<S> find(RepositoryExecContext<S> context) {
+    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
       throw new ServiceException(
         ErrorCode.parameter_validation_error,
         "Invalid context: Expected ElasticExecContext but received " + context.getClass()
       );
     }
+    //TODO: any params can be used here with the correct criteria decorators
+    //      this impl is false
     return this.search((QueryParams) elasticContext.getParams(), elasticContext);
   }
 
   @Override
   public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
-    return List.of();
+    throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unimplemented"
+    );
   }
 
   @Override
-  public List<E> find() {
-    return List.of();
+  public <S extends E> List<S> find() {
+    throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unimplemented"
+    );
   }
 
 
