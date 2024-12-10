@@ -45,7 +45,7 @@ import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused, unchecked")
-public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID> {
+public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<E, ID> {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")

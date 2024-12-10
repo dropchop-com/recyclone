@@ -11,7 +11,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.
  */
 @SuppressWarnings("unused")
-public interface CrudRepository<E extends Model, ID> extends ReadRepository<E, ID> {
+public interface CrudRepository<E, ID> extends ReadRepository<E, ID> {
 
   RepositoryExecContext<E> getRepositoryExecContext();
   RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext);
