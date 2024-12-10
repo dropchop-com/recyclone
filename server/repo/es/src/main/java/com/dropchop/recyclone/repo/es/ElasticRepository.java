@@ -138,36 +138,53 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
 
   @Override
   public int deleteById(Collection<? extends ID> ids) {
-    for(ID id : ids) {
-      deleteById(id);
+    if (ids.isEmpty()) {
+      return 0;
     }
-    return 1;
-  }
 
-  @Override
-  public int deleteById(ID id) {
+    Collection<String> strIds = ids.stream().map(Object::toString).toList();
+    Class<E> cls = getRootClass();
+    QueryParams params = new QueryParams();
+
+    if (HasCode.class.isAssignableFrom(cls)) {
+      params.condition(and(field("code", in(strIds))));
+    } else if (HasUuid.class.isAssignableFrom(cls)) {
+      params.condition(and(field("uuid", in(strIds))));
+    } else {
+      throw new IllegalArgumentException("Unsupported entity type for deletion");
+    }
+
+    QueryNodeObject queryObject = buildQueryObject(params, null, null);
+
     try {
-      Request request = new Request("DELETE", "/" + getIndexName() + "/_doc/" + id);
-      Response response = getElasticsearchClient().performRequest(request);
+      Request request = new Request("POST", "/" + getIndexName() + "/_delete_by_query");
+      request.setJsonEntity(getObjectMapper().writeValueAsString(queryObject));
 
+      Response response = getElasticsearchClient().performRequest(request);
       if (response.getStatusLine().getStatusCode() == 200) {
-        return 1;
+        String responseBody = EntityUtils.toString(response.getEntity());
+        Map<String, Object> responseMap = getObjectMapper().readValue(responseBody, new TypeReference<>() {});
+        return ((Integer) responseMap.get("deleted"));
       } else {
-        int statusCode = response.getStatusLine().getStatusCode();
-        throw  new ServiceException(
+        throw new ServiceException(
           ErrorCode.data_error,
-          "Failed to delete entity with ID: " + id + ". Status code: " + statusCode,
-          Set.of(new AttributeString("status", String.valueOf(statusCode)))
+          "Failed to delete entities by ID. Status code: " + response.getStatusLine().getStatusCode(),
+          Set.of(new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())))
         );
       }
     } catch (IOException e) {
       throw new ServiceException(
         ErrorCode.data_error,
-        "Error occurred during deletion of entity with ID: " + id,
-        Set.of(new AttributeString("ID", id.toString())),
+        "Error occurred during deletion of entities",
+        Set.of(new AttributeString("error", e.getMessage())),
         e
       );
     }
+  }
+
+  @Override
+  public int deleteById(ID id) {
+    return deleteById(Collections.singletonList(id));
   }
 
   @Override

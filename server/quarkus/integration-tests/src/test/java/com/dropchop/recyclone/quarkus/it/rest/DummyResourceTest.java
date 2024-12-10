@@ -108,6 +108,22 @@ public class DummyResourceTest {
       .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
+
+  @Test
+  public void deleteById() {
+    CodeParams params = CodeParams.builder().code("dummy_code1").build();
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("editor1", "password")
+      .body(params)
+      .when()
+      .delete("/api/internal/test/dummy/deleteById")
+      .then()
+      .statusCode(200)
+      .log().all();
+  }
   /*
   @Test
   @Order(30)

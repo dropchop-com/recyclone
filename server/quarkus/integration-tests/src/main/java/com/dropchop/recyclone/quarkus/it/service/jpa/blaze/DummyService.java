@@ -82,4 +82,9 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     elasticRepository.delete(entities);
     return result;
   }
+
+  @Override
+  public int delete() {
+    return 0;
+  }
 }

@@ -51,4 +51,10 @@ public interface DummyResourceInternal {
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.DELETE)
   List<Dummy> deleteRest(List<Dummy> dummies);
+
+  @DELETE
+  @Path("/deleteById")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.DELETE)
+  int deleteById(CodeParams params);
 }

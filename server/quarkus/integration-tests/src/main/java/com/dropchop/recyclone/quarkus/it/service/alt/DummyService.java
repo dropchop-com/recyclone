@@ -94,11 +94,10 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
 
   @Override
   @Transactional
-  public Result<Dummy> delete(List<Dummy> dtos) {
-    Result<Dummy> result = super.delete(dtos);
-    MappingContext mapContext = mapperProvider.getMappingContextForModify();
-    List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
-    elasticRepository.delete(entities);
-    return result;
+  public int delete() {
+    CommonExecContext<Dummy, ?> context = ctxContainer.get();
+    CodeParams codeParams = context.getParams();
+    List<String> codes = codeParams.getCodes();
+    return elasticRepository.deleteById(codes);
   }
 }
