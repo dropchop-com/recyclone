@@ -45,7 +45,7 @@ import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused, unchecked")
-public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<E, ID> {
+public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID> {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -74,7 +74,7 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
       context.decorateWith(decorator);
     }
-    context.init(this.getRootClass(), alias, context.getParams());
+    context.init(this.getRootClass(), alias);
     return context;
   }
 
@@ -203,10 +203,10 @@ public abstract class ElasticRepository<E, ID> implements ElasticCrudRepository<
         defaultSort.put("created", "desc");
         sortOrder.put("sort", defaultSort);
       } else if(HasUuid.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("uuid.keyword", "desc");
+        defaultSort.put("uuid", "desc");
         sortOrder.put("sort", defaultSort);
       } else if(HasCode.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("code.keyword", "desc");
+        defaultSort.put("code", "desc");
         sortOrder.put("sort", defaultSort);
       } else {
         throw new ServiceException(

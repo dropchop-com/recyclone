@@ -1,0 +1,533 @@
+{
+  "index_patterns": [
+    "event*"
+  ],
+  "priority": 10,
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "uuid": {
+          "type": "keyword"
+        },
+        "created": {
+          "type": "date"
+        },
+        "application": {
+          "type": "keyword"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "action": {
+          "type": "keyword"
+        },
+        "data": {
+          "type": "text"
+        },
+        "value": {
+          "type": "float"
+        },
+        "unit": {
+          "type": "text"
+        },
+        "source": {
+          "properties": {
+            "subject": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "object": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "service": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "context": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "target": {
+          "properties": {
+            "subject": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "object": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "service": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "context": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "cause": {
+          "properties": {
+            "subject": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "object": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "service": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "context": {
+              "properties": {
+                "created": {
+                  "type": "date"
+                },
+                "name": {
+                  "type": "text"
+                },
+                "uuid": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "child": {
+                  "properties": {
+                    "created": {
+                      "type": "date"
+                    },
+                    "name": {
+                      "type": "text"
+                    },
+                    "uuid": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "trace": {
+          "properties": {
+            "uuid": {
+              "type": "keyword"
+            },
+            "context": {
+              "type": "keyword"
+            },
+            "group": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}

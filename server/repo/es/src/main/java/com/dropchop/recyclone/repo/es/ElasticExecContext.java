@@ -25,23 +25,11 @@ public class ElasticExecContext<E> extends ParamsExecContext<RepositoryExecConte
   @NonNull
   private String rootAlias;
 
-  @NonNull
-  private QueryParams queryParams;
-
   private boolean skipObjectParsing;
 
-  public void init(Class<E> rootClass, String rootAlias, Params params) {
+  public void init(Class<E> rootClass, String rootAlias) {
     this.rootClass = rootClass;
     this.rootAlias = rootAlias;
-    if (params instanceof QueryParams tmpQueryParams) {
-      this.queryParams = tmpQueryParams;
-    } else {
-      if (params == null) {
-        log.warn("No provided params");
-      } else {
-        log.warn("Provided params [{}] are not of type QueryParams", params.getClass());
-      }
-    }
 
     for (RepositoryExecContextListener decorator : listeners()) {
       if (decorator instanceof ElasticCriteriaDecorator elasticCriteriaDecorator) {

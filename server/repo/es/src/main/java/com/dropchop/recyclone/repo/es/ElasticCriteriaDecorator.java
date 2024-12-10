@@ -18,7 +18,7 @@ public abstract class ElasticCriteriaDecorator implements CriteriaDecorator {
   }
 
   protected CommonParams<?, ?, ?, ?> commonParamsGet() {
-    Params params = getContext().getQueryParams();
+    Params params = getContext().getParams();
     if (!(params instanceof CommonParams<?, ?, ?, ?> parameters)) {
       log.warn("Wrong parameters instance [{}] should be [{}]", params.getClass(), CommonParams.class);
       return null;

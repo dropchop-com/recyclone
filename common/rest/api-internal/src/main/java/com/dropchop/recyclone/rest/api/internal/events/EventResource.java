@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
+import static com.dropchop.recyclone.rest.api.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 3. 12. 24.
@@ -22,6 +24,16 @@ import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
 @DynamicExecContext(value = EventParams.class, internal = true)
 @RequiresPermissions(com.dropchop.recyclone.model.api.security.Constants.Domains.Events.EVENT + PERM_DELIM + com.dropchop.recyclone.model.api.security.Constants.Actions.VIEW)
 public interface EventResource {
+
+  @GET
+  @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
+  @Produces(APPLICATION_JSON_DROPCHOP_RESULT)
+  Result<Event> getById(@PathParam("id") UUID id);
+
+  @GET
+  @Path("{id: [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}")
+  @Produces(APPLICATION_JSON)
+  List<Event> getByIdRest(@PathParam("id") UUID id);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
