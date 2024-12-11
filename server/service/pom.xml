@@ -15,6 +15,5 @@
     <module>api</module>
     <module>jpa</module>
     <module>es</module>
-    <module>common</module>
   </modules>
 </project>

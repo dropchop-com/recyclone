@@ -4,8 +4,6 @@ import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserToDtoMapper;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
@@ -13,10 +11,10 @@ import com.dropchop.recyclone.model.dto.security.RoleNode;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextBinder;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.security.*;
 import com.dropchop.recyclone.service.api.RecycloneType;
+import com.dropchop.recyclone.service.api.security.HierarchicalSecurityLoadingService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -29,7 +27,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-public class SecurityLoadingService extends com.dropchop.recyclone.service.common.security.SecurityLoadingService
+public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     implements com.dropchop.recyclone.service.api.security.SecurityLoadingService {
 
   @Inject
@@ -42,16 +40,7 @@ public class SecurityLoadingService extends com.dropchop.recyclone.service.commo
   RoleNodeRepository roleNodeRepository;
 
   @Inject
-  RoleNodePermissionRepository roleNodePermissionRepository;
-
-  @Inject
   RoleNodeMapperProvider roleNodeMapperProvider;
-
-  @Inject
-  RoleNodePermissionMapperProvider roleNodePermissionMapperProvider;
-
-  @Inject
-  ExecContextBinder execContextBinder;
 
 
   /**
@@ -74,7 +63,7 @@ public class SecurityLoadingService extends com.dropchop.recyclone.service.commo
       throw new ServiceException(getStatusMessage("Only one role node must be found by params", params));
     }
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
-    return roleNodeToDtoMapper.toDto(jpaRoleNodes.get(0), mapContext);
+    return roleNodeToDtoMapper.toDto(jpaRoleNodes.getFirst(), mapContext);
   }
 
 

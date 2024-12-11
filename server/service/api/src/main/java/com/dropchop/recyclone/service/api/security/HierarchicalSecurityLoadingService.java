@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.service.common.security;
+package com.dropchop.recyclone.service.api.security;
 
 import com.dropchop.recyclone.model.api.attr.AttributeBool;
 import com.dropchop.recyclone.model.api.attr.AttributeString;
@@ -21,18 +21,30 @@ import java.util.*;
  */
 @Slf4j
 @Getter
-abstract public class SecurityLoadingService implements com.dropchop.recyclone.service.api.security.SecurityLoadingService {
+abstract public class HierarchicalSecurityLoadingService implements SecurityLoadingService {
 
   protected static StatusMessage getStatusMessage(String error, RoleNodeParams params) {
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
     if (params != null) {
       status.setDetails(Set.of(
-          new AttributeString("roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""),
-          new AttributeString("target", params.getTarget() != null ? params.getTarget() : ""),
-          new AttributeString("targetId", params.getTargetId() != null ? params.getTargetId() : ""),
-          new AttributeString("entity", params.getEntity() != null ? params.getEntity() : ""),
-          new AttributeString("entityId", params.getEntityId() != null ? params.getEntityId() : ""),
-          new AttributeBool("all", params.getAll() != null ? params.getAll() : false)
+          new AttributeString(
+              "roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""
+          ),
+          new AttributeString(
+              "target", params.getTarget() != null ? params.getTarget() : ""
+          ),
+          new AttributeString(
+              "targetId", params.getTargetId() != null ? params.getTargetId() : ""
+          ),
+          new AttributeString(
+              "entity", params.getEntity() != null ? params.getEntity() : ""
+          ),
+          new AttributeString(
+              "entityId", params.getEntityId() != null ? params.getEntityId() : ""
+          ),
+          new AttributeBool(
+              "all", params.getAll() != null ? params.getAll() : false
+          )
       ));
     }
     return status;
@@ -121,12 +133,12 @@ abstract public class SecurityLoadingService implements com.dropchop.recyclone.s
     }
     Map<UUID, RoleNodePermission> resolvedPermissions = new LinkedHashMap<>();
     Collections.reverse(permissionsByLevel);
-    permissionsByLevel.forEach(levelPermissions -> {
-      levelPermissions.forEach(roleNodePermission -> {
-        UUID permissionUuid = roleNodePermission.getPermission().getUuid();
-        resolvedPermissions.put(permissionUuid, roleNodePermission);
-      });
-    });
+    permissionsByLevel.forEach(levelPermissions ->
+        levelPermissions.forEach(roleNodePermission -> {
+          UUID permissionUuid = roleNodePermission.getPermission().getUuid();
+          resolvedPermissions.put(permissionUuid, roleNodePermission);
+        })
+    );
     return resolvedPermissions.values();
   }
 

@@ -20,7 +20,6 @@
   </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -30,12 +29,5 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-service-api</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-quarkus-extension</artifactId>
-    </dependency>
-
   </dependencies>
-
 </project>

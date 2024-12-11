@@ -20,7 +20,7 @@ quarkus:
       artifact-id: recyclone-repo-es
     recyclone-service-common:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-common
+      artifact-id: recyclone-service-api
     recyclone-service-jpa:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-service-jpa

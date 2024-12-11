@@ -32,13 +32,10 @@
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.dropchop.recyclone</groupId>
             <artifactId>recyclone-model-es</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.dropchop.recyclone</groupId>
-            <artifactId>recyclone-mapper-es</artifactId>
         </dependency>
         <dependency>
             <groupId>com.dropchop.recyclone</groupId>

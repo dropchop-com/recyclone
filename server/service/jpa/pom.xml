@@ -19,23 +19,21 @@
   </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-service-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-repo-jpa-blaze</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-common</artifactId>
-    </dependency>
-
   </dependencies>
-
-
 </project>
