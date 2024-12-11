@@ -78,8 +78,9 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       //if instance permissions are not taken from parents, load template permissions for target on current node.
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream().filter(p -> {
         if (p instanceof RoleNodePermissionTemplate permissionTemplate) {
+          String targetId = permissionTemplate.getTargetId();
           return permissionTemplate.getTarget().equals(params.getTarget())
-              && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
+              && (targetId == null || targetId.equals(params.getTargetId()));
         }
         return false;
       }).toList());
@@ -105,8 +106,9 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     RoleNode loadedRoleNode = this.loadRoleNode(params);
     permissionsByLevel.add(loadedRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof RoleNodePermissionTemplate permissionTemplate) {
+        String targetId = permissionTemplate.getTargetId();
         return permissionTemplate.getTarget().equals(params.getTarget())
-            && (permissionTemplate.getTargetId() == null || permissionTemplate.getTargetId().equals(params.getTargetId()));
+            && (targetId == null || targetId.equals(params.getTargetId()));
       }
       return false;
     }).toList());
@@ -115,10 +117,12 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
   /**
    * Merges role node permissions levels hierarchy into flat list of resolved role node permissions.
-   * This method expects that permission levels are reverted, meaning the 1st level (at index 0) holds the permissions of starting role node.
+   * This method expects that permission levels are reverted, meaning the 1st level (at index 0) holds
+   * the permissions of starting role node.
    * Each level (index +1) then holds permissions from parent role node.
-   * So to make code mode readable list of permission levels is reversed so the 1st level (at index 0) has ROOT role node permissions
-   * and each level then has its child role node permissions. Last level has the permissions of starting role node.
+   * So to make code mode readable list of permission levels is reversed so the 1st level (at index 0) has ROOT
+   * role node permissions and each level then has its child role node permissions.
+   * Last level has the permissions of starting role node.
    * When merging permissions each level (n+1) overrides previous level permissions (if in the list).
    *
    * @param permissionsByLevel - list of permissions for each role node in the starting role node hierarchy.
@@ -126,7 +130,10 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
    */
   private Collection<RoleNodePermission> mergePermissionLevels(List<List<RoleNodePermission>> permissionsByLevel) {
     if (permissionsByLevel == null) {
-      throw new ServiceException(getStatusMessage("Role node permissions levels cannot be null", null));
+      throw new ServiceException(
+          ErrorCode.data_validation_error,
+          "Role node permissions levels cannot be null"
+      );
     }
     if (permissionsByLevel.isEmpty()) {
       return Collections.emptyList();
@@ -147,7 +154,8 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
    * Main method to start hierarchy permission resolving for loaded role node.
    *
    * @param roleNode               - role node to start resolving on
-   * @param maxParentInstanceLevel - maximum level of instance permission taken from parents that influence end permission state
+   * @param maxParentInstanceLevel - maximum level of instance permission taken from parents
+   *                                 that influence end permission state
    * @return list or merged role node permissions of all role nodes in the hierarchy.
    */
   private Collection<RoleNodePermission> resolveHierarchyPermissions(RoleNode roleNode,
