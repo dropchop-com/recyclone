@@ -12,7 +12,6 @@
   </parent>
 
   <modules>
-    <module>model</module>
-    <module>rest</module>
+    <module>base</module>
   </modules>
 </project>
