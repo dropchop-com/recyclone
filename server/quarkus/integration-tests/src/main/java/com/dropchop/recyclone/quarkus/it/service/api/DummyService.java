@@ -16,4 +16,5 @@ public interface DummyService extends CrudService<Dummy>, QueryService<Dummy> {
   }
 
   int delete();
+  int deleteByQuery();
 }

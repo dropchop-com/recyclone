@@ -13,6 +13,7 @@ import com.dropchop.recyclone.model.api.marker.HasUuid;
 import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.ProfileTimer;
 import com.dropchop.recyclone.model.api.utils.Strings;
+import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
@@ -208,6 +209,13 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   @Override
   public <S extends E> S delete(S entity) {
     return delete(List.of(entity)).getFirst();
+  }
+
+  @Override
+  public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
+    QueryParams params = context.getParams();
+    QueryNodeObject queryObject = getElasticQueryMapper().mapToString(params);
+    return 0;
   }
 
   private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {

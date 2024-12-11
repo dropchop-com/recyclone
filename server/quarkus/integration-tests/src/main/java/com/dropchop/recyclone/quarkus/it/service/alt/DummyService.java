@@ -100,4 +100,11 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     List<String> codes = codeParams.getCodes();
     return elasticRepository.deleteById(codes);
   }
+
+  @Override
+  @Transactional
+  public int deleteByQuery() {
+    RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext();
+    return elasticRepository.deleteByQuery(ctx);
+  }
 }
