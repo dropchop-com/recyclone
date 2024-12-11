@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.rest.server;
 
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
@@ -39,5 +40,10 @@ public class DummyResourceInternal extends ClassicModifyResource<Dummy> implemen
   @Override
   public int deleteById(CodeParams codeParams) {
     return service.delete();
+  }
+
+  @Override
+  public int deleteByQuery(QueryParams codeParams) {
+    return service.deleteByQuery();
   }
 }

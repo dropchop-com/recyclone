@@ -54,7 +54,7 @@ public class DummyResourceTest {
     Dummy dummy3 = new Dummy();
     dummy3.setTitle("Introduction to Machine Learning");
     dummy3.setDescription("An introductory course to machine learning and its applications.");
-    dummy3.setLang("en");
+    dummy3.setLang("si");
     dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
     dummy3.setModified(ZonedDateTime.now().minusDays(10));
     dummy3.setDeactivated(null);
@@ -110,7 +110,7 @@ public class DummyResourceTest {
   }
 
   @Test
-  @Order(30)
+  @Order(40)
   public void deleteById() {
     CodeParams params1 = CodeParams.builder().code("dummy_code1").build();
 
@@ -122,6 +122,26 @@ public class DummyResourceTest {
       .body(params1)
       .when()
       .delete("/api/internal/test/dummy/deleteById")
+      .then()
+      .statusCode(200)
+      .log().all();
+  }
+
+  @Test
+  @Order(30)
+  public void deleteByQuery() {
+    QueryParams s = QueryParams.builder().condition(
+      field("lang", "si")
+    ).build();
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("editor1", "password")
+      .body(s)
+      .when()
+      .delete("/api/internal/test/dummy/deleteByQuery")
       .then()
       .statusCode(200)
       .log().all();
