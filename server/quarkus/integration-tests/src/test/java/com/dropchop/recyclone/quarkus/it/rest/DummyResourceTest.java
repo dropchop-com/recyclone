@@ -110,14 +110,16 @@ public class DummyResourceTest {
   }
 
   @Test
+  @Order(30)
   public void deleteById() {
-    CodeParams params = CodeParams.builder().code("dummy_code1").build();
+    CodeParams params1 = CodeParams.builder().code("dummy_code1").build();
+
     given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic("editor1", "password")
-      .body(params)
+      .body(params1)
       .when()
       .delete("/api/internal/test/dummy/deleteById")
       .then()

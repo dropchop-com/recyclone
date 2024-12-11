@@ -7,7 +7,6 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
 import com.dropchop.recyclone.model.api.marker.HasCode;
 import com.dropchop.recyclone.model.api.marker.HasId;
 import com.dropchop.recyclone.model.api.marker.HasUuid;
@@ -26,6 +25,7 @@ import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult.Container;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult.Hit;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.inject.Inject;
@@ -145,46 +145,54 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
 
   @Override
   public <X extends ID> int deleteById(Collection<X> ids) {
-    for(ID id : ids) {
-      deleteById(id);
+    if (ids == null || ids.isEmpty()) {
+      return 0;
     }
 
-    Collection<String> strIds = ids.stream().map(Object::toString).toList();
-    Class<E> cls = getRootClass();
-    QueryParams params = new QueryParams();
+    Class<E> rootClass = getRootClass();
 
-    if (HasCode.class.isAssignableFrom(cls)) {
-      params.condition(and(field("code", in(strIds))));
-    } else if (HasUuid.class.isAssignableFrom(cls)) {
-      params.condition(and(field("uuid", in(strIds))));
-    } else {
-      throw new IllegalArgumentException("Unsupported entity type for deletion");
+    StringBuilder bulkRequestBody = new StringBuilder();
+    ObjectMapper objectMapper = getObjectMapper();
+
+    for (X id : ids) {
+      bulkRequestBody
+        .append("{ \"delete\" : { \"_index\" : \"")
+        .append(getIndexName())
+        .append("\", \"_id\" : \"")
+        .append(id.toString())
+        .append("\" } }\n");
     }
+
+    Request request = new Request("POST", "/_bulk");
+    request.setJsonEntity(bulkRequestBody.toString());
+
+    try {
+      Response response = getElasticsearchClient().performRequest(request);
+      JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
+
+      int deletedCount = 0;
+      if (responseBody.has("items")) {
+        for (JsonNode item : responseBody.get("items")) {
+          JsonNode deleteResult = item.get("delete");
+          if (deleteResult != null && "deleted".equals(deleteResult.get("result").asText())) {
+            deletedCount++;
+          }
+        }
+      }
+
+      return deletedCount;
+    } catch (IOException e) {
+      throw new ServiceException(
+        ErrorCode.data_error,
+        "Failed to delete entities by ID",
+        Set.of(new AttributeString("error", e.getMessage()))
+      );
+    }
+  }
 
   @Override
   public <X extends ID> int deleteById(X id) {
-    try {
-      Request request = new Request("POST", "/" + getIndexName() + "/_delete_by_query");
-      request.setJsonEntity(getObjectMapper().writeValueAsString(queryObject));
-
-      Response response = getElasticsearchClient().performRequest(request);
-      if (response.getStatusLine().getStatusCode() == 200) {
-        String responseBody = EntityUtils.toString(response.getEntity());
-        Map<String, Object> responseMap = getObjectMapper().readValue(responseBody, new TypeReference<>() {});
-        return ((Integer) responseMap.get("deleted"));
-      } else {
-        int statusCode = response.getStatusLine().getStatusCode();
-        throw  new ServiceException(
-          ErrorCode.data_error, "Failed to delete entity with ID: " + id + ". Status code: " + statusCode,
-          Set.of(new AttributeString("status", String.valueOf(statusCode)))
-        );
-      }
-    } catch (IOException e) {
-      throw new ServiceException(
-        ErrorCode.data_error, "Error occurred during deletion of entity with ID: " + id,
-        Set.of(new AttributeString("ID", id.toString())), e
-      );
-    }
+    return deleteById(Collections.singletonList(id));
   }
 
   @Override
