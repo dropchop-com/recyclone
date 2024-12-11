@@ -115,8 +115,8 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
       return method.checkSuccessfulResponse(entities, response, objectMapper);
     } catch (ServiceException | IOException e) {
       throw new ServiceException(
-          ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
-          Set.of(new AttributeString("error", e.getMessage()))
+        ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
+        Set.of(new AttributeString("error", e.getMessage()))
       );
     }
   }
@@ -214,31 +214,31 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     QueryNodeObject sortOrder = new QueryNodeObject();
     if (!sortList.isEmpty()) {
       List<QueryNodeObject> sortEntries = sortList.stream()
-          .map(sort -> {
-            QueryNodeObject sortEntry = new QueryNodeObject();
-            sortEntry.put(sort, "desc");
-            return sortEntry;
-          })
-          .toList();
+        .map(sort -> {
+          QueryNodeObject sortEntry = new QueryNodeObject();
+          sortEntry.put(sort, "desc");
+          return sortEntry;
+        })
+        .toList();
       sortOrder.put("sort", sortEntries);
     } else {
       QueryNodeObject defaultSort = new QueryNodeObject();
-      if(HasCreated.class.isAssignableFrom(rootClass)) {
+      if (HasCreated.class.isAssignableFrom(rootClass)) {
         defaultSort.put("created", "desc");
         sortOrder.put("sort", defaultSort);
-      } else if(HasUuid.class.isAssignableFrom(rootClass)) {
+      } else if (HasUuid.class.isAssignableFrom(rootClass)) {
         defaultSort.put("uuid", "desc");
         sortOrder.put("sort", defaultSort);
-      } else if(HasCode.class.isAssignableFrom(rootClass)) {
+      } else if (HasCode.class.isAssignableFrom(rootClass)) {
         defaultSort.put("code", "desc");
         sortOrder.put("sort", defaultSort);
-      } else if(HasId.class.isAssignableFrom(rootClass)) {
+      } else if (HasId.class.isAssignableFrom(rootClass)) {
         defaultSort.put("is", "desc");
         sortOrder.put("sort", defaultSort);
       } else {
         throw new ServiceException(
-            ErrorCode.internal_error,
-            "No Id or Code set to sort by; for Es deep pagination!"
+          ErrorCode.internal_error,
+          "No Id or Code set to sort by; for Es deep pagination!"
         );
       }
     }
@@ -283,9 +283,9 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
       query = objectMapper.writeValueAsString(queryObject);
     } catch (IOException e) {
       throw new ServiceException(
-          ErrorCode.internal_error,
-          "Unable to serialize QueryNodeObject",
-          e
+        ErrorCode.internal_error,
+        "Unable to serialize QueryNodeObject",
+        e
       );
     }
     Class<E> cls = getRootClass();
@@ -298,13 +298,14 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
         ElasticSearchResult<X> searchResult;
         if (skipParsing) {
           searchResult = objectMapper.readValue(
-              responseBody, new TypeReference<>() {}
+            responseBody, new TypeReference<>() {
+            }
           );
         } else {
           searchResult = objectMapper.readValue(
-              responseBody, TypeFactory.defaultInstance().constructParametricType(
-                  ElasticSearchResult.class, cls
-              )
+            responseBody, TypeFactory.defaultInstance().constructParametricType(
+              ElasticSearchResult.class, cls
+            )
           );
         }
         int count = 0;
@@ -317,25 +318,25 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
         log.debug("Executed query [{}] with [{}] result size in [{}]ms.", query, count, timer.stop());
       } else if (response.getStatusLine().getStatusCode() == 404) {
         throw new ServiceException(
-            ErrorCode.data_missing_error, "Missing data for query",
-            Set.of(
-                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
-                new AttributeString("query", query)
-            )
+          ErrorCode.data_missing_error, "Missing data for query",
+          Set.of(
+            new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+            new AttributeString("query", query)
+          )
         );
       } else {
         throw new ServiceException(
-            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
-            Set.of(
-                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
-                new AttributeString("query", query)
-            )
+          ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+          Set.of(
+            new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+            new AttributeString("query", query)
+          )
         );
       }
     } catch (IOException e) {
       throw new ServiceException(
-          ErrorCode.internal_error, "Unable to execute query",
-          Set.of(new AttributeString("query", query)), e
+        ErrorCode.internal_error, "Unable to execute query",
+        Set.of(new AttributeString("query", query)), e
       );
     }
   }
@@ -358,7 +359,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     }
     List<S> results = new ArrayList<>();
     executeQuery(queryObject, false, List.of(
-        (QueryResultListener<S>) result -> results.add(result.getSource())
+      (QueryResultListener<S>) result -> results.add(result.getSource())
     ));
     return results;
   }
@@ -379,25 +380,25 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   @Override
   public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
     throw new ServiceException(
-        ErrorCode.internal_error,
-        "Unimplemented"
+      ErrorCode.internal_error,
+      "Unimplemented"
     );
   }
 
   @Override
   public <S extends E> List<S> find() {
     throw new ServiceException(
-        ErrorCode.internal_error,
-        "Unimplemented"
+      ErrorCode.internal_error,
+      "Unimplemented"
     );
   }
 
 
   private void applyDecorators(RepositoryExecContext<?> context) {
     context.getListeners().stream()
-        .filter(listener -> listener instanceof CriteriaDecorator)
-        .map(listener -> (CriteriaDecorator) listener)
-        .forEach(CriteriaDecorator::decorate);
+      .filter(listener -> listener instanceof CriteriaDecorator)
+      .map(listener -> (CriteriaDecorator) listener)
+      .forEach(CriteriaDecorator::decorate);
   }
 
   private <S> List<Object> getSearchAfterValues(List<Hit<S>> hits) {
@@ -417,15 +418,15 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
 
     List<Object> searchAfterValues = null;
     QueryNodeObject sortOrder = buildSortOrder(
-        context.getParams().tryGetResultFilter().sort(), elasticContext.getRootClass()
+      context.getParams().tryGetResultFilter().sort(), elasticContext.getRootClass()
     );
 
     RepositoryExecContextListener listener = context.getListeners().stream()
       .filter(l -> l instanceof MapResultListener).findFirst().orElse(null);
     if (listener == null && elasticContext.isSkipObjectParsing()) {
       throw new ServiceException(
-          ErrorCode.internal_error,
-          "Skip object parsing was enabled but there is no raw result listener. Such implementation makes no sense!"
+        ErrorCode.internal_error,
+        "Skip object parsing was enabled but there is no raw result listener. Such implementation makes no sense!"
       );
     }
 
@@ -438,14 +439,14 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
         Container<Hit<S>> last = new Container<>();
         if (((ElasticExecContext<S>) context).isSkipObjectParsing() && listener != null) {
           executeQuery(queryObject, true, List.of(
-              (QueryResultListener<S>) last::setHit
+            (QueryResultListener<S>) last::setHit
           ));
         } else {
           executeQuery(queryObject, false, List.of(
-              (QueryResultListener<S>) hit -> {
-                results.add(hit.getSource());
-                last.setHit(hit);
-              }
+            (QueryResultListener<S>) hit -> {
+              results.add(hit.getSource());
+              last.setHit(hit);
+            }
           ));
         }
         if (last.isEmpty()) {
