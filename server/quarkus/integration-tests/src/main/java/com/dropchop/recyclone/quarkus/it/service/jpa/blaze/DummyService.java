@@ -87,4 +87,9 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   public int delete() {
     return 0;
   }
+
+  @Override
+  public int deleteByQuery() {
+    return 0;
+  }
 }

@@ -24,6 +24,7 @@ import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult.Container;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult.Hit;
 import com.dropchop.recyclone.repo.es.mapper.QueryNodeObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -208,6 +209,55 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
   @Override
   public <S extends E> S delete(S entity) {
     return delete(List.of(entity)).getFirst();
+  }
+
+  @Override
+  public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
+    QueryParams params = context.getParams();
+    QueryNodeObject queryObject = getElasticQueryMapper().mapToString(params);
+    String query;
+
+    try {
+      query = getObjectMapper().writeValueAsString(queryObject);
+    } catch (JsonProcessingException e) {
+      throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unable to serialize QueryNodeObject",
+        e
+      );
+    }
+
+    try {
+      Request request = new Request("POST", "/" + getIndexName() + "/_delete_by_query");
+      request.setJsonEntity(query);
+      Response response = getElasticsearchClient().performRequest(request);
+      if (response.getStatusLine().getStatusCode() == 200) {
+        String responseBody = EntityUtils.toString(response.getEntity());
+        JsonNode jsonResponse = getObjectMapper().readTree(responseBody);
+        return jsonResponse.get("deleted").asInt();
+      } else if (response.getStatusLine().getStatusCode() == 404) {
+        throw new ServiceException(
+          ErrorCode.data_missing_error, "Missing data for query",
+          Set.of(
+            new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+            new AttributeString("delete query", query)
+          )
+        );
+      } else {
+        throw new ServiceException(
+          ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+          Set.of(
+            new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+            new AttributeString("query", query)
+          )
+        );
+      }
+    } catch (IOException e) {
+      throw new ServiceException(
+        ErrorCode.internal_error, "Unable to execute delete query",
+        Set.of(new AttributeString("delete query", query)), e
+      );
+    }
   }
 
   private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {

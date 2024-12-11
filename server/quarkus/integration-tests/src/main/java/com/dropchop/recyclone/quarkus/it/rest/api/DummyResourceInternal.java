@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.it.rest.api;
 import com.dropchop.recyclone.model.api.security.Constants.Actions;
 import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
+import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -57,4 +58,10 @@ public interface DummyResourceInternal {
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.DELETE)
   int deleteById(CodeParams params);
+
+  @DELETE
+  @Path("/deleteByQuery")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Constants.Domains.Test.DUMMY + PERM_DELIM + Actions.DELETE)
+  int deleteByQuery(QueryParams params);
 }
