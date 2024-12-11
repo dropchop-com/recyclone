@@ -166,8 +166,12 @@
           <registry>ghcr.io/dropchop-com:443</registry>
           <images>
             <image>
-              <name>ghcr.io/dropchop-com/recyclone/elastic-it-test:%l</name>
+              <name>ghcr.io/dropchop-com/recyclone/elastic-it-test</name>
               <build>
+                <tags>
+                  <tag>%T</tag>
+                  <tag>%l</tag>
+                </tags>
                 <dockerFileDir>${project.basedir}/src/main/docker/elastic-it-test</dockerFileDir>
               </build>
             </image>
