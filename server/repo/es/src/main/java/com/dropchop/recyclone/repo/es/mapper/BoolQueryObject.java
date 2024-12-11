@@ -80,6 +80,5 @@ public class BoolQueryObject extends QueryNodeObject{
   }
 
   public void put() {
-
   }
 }

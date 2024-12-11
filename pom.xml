@@ -470,10 +470,10 @@
             </dependency>
           </dependencies>
           <configuration>
-            <showWeaveInfo>true</showWeaveInfo>
+            <showWeaveInfo>false</showWeaveInfo>
             <Xlint>ignore</Xlint>
             <forceAjcCompile>true</forceAjcCompile>
-            <verbose>true</verbose>
+            <verbose>false</verbose>
             <!--<weaveDependencies>
               <weaveDependency>
                 <groupId>com.dropchop.recyclone</groupId>

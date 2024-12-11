@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SuppressWarnings("unused")
 public class EsTitleTranslation
   implements HasEsLanguage, TitleTranslation, HasCreated, HasModified {
 
@@ -25,7 +26,6 @@ public class EsTitleTranslation
   private EsLanguage language;
 
   @NonNull
-  @EqualsAndHashCode.Exclude
   private String title;
 
   private ZonedDateTime created;

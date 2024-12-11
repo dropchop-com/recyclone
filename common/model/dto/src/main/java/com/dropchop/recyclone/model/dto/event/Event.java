@@ -23,9 +23,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class Event extends DtoId
-    implements com.dropchop.recyclone.model.api.event.Event<
-    EventDetail, EventItem, EventTrace
-    > {
+    implements com.dropchop.recyclone.model.api.event.Event<EventDetail, EventItem, EventTrace> {
 
   private String application;
   private String type;
