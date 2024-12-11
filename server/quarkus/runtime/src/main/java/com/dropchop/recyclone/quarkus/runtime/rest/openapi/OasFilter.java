@@ -13,12 +13,6 @@ import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import io.smallrye.openapi.api.models.OperationImpl;
-import io.smallrye.openapi.api.models.PathItemImpl;
-import io.smallrye.openapi.api.models.info.ContactImpl;
-import io.smallrye.openapi.api.models.info.InfoImpl;
-import io.smallrye.openapi.api.models.info.LicenseImpl;
-import io.smallrye.openapi.api.models.security.SecurityRequirementImpl;
-import io.smallrye.openapi.api.models.security.SecuritySchemeImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.*;
@@ -61,7 +55,7 @@ public class OasFilter implements OASFilter {
   private License getOrCreateLicense(Info info) {
     License license = info.getLicense();
     if (license == null) {
-      license = new LicenseImpl();
+      license = OASFactory.createLicense();
       info.setLicense(license);
     }
     return license;
@@ -70,7 +64,7 @@ public class OasFilter implements OASFilter {
   private Contact getOrCreateContact(Info info) {
     Contact contact = info.getContact();
     if (contact == null) {
-      contact = new ContactImpl();
+      contact = OASFactory.createContact();
       info.setContact(contact);
     }
     return contact;
@@ -79,7 +73,7 @@ public class OasFilter implements OASFilter {
   private Info getOrCreateInfo(OpenAPI openAPI) {
     Info info = openAPI.getInfo();
     if (info == null) {
-      info = new InfoImpl();
+      info = OASFactory.createInfo();
       openAPI.setInfo(info);
       getOrCreateContact(info);
       getOrCreateLicense(info);
@@ -91,7 +85,7 @@ public class OasFilter implements OASFilter {
     List<SecurityRequirement> securityRequirements = new ArrayList<>(security.size());
     for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
       String name = entry.getKey();
-      SecurityRequirement securityRequirement = new SecurityRequirementImpl();
+      SecurityRequirement securityRequirement = OASFactory.createSecurityRequirement();
       securityRequirement.addScheme(name);
       securityRequirements.add(securityRequirement);
     }
@@ -106,14 +100,14 @@ public class OasFilter implements OASFilter {
     }
     for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
       String name = entry.getKey();
-      SecurityRequirement securityRequirement = new SecurityRequirementImpl();
+      SecurityRequirement securityRequirement = OASFactory.createSecurityRequirement();
       securityRequirement.addScheme(name);
       securityRequirements.add(securityRequirement);
       Rest.Security restSecurity = entry.getValue();
 
       Components components = openAPI.getComponents();
       if (components != null && restSecurity != null) {
-        SecurityScheme securityScheme = new SecuritySchemeImpl();
+        SecurityScheme securityScheme = OASFactory.createSecurityScheme();
         if (restSecurity.type().isPresent()) {
           if (restSecurity.type().get().equalsIgnoreCase("http")) {
             securityScheme.setType(SecurityScheme.Type.HTTP);
@@ -200,7 +194,7 @@ public class OasFilter implements OASFilter {
             if (original.equals(tmp)) {
               continue;
             }
-            PathItem newPathItem = rewrittenItems.computeIfAbsent(tmp, x -> new PathItemImpl());
+            PathItem newPathItem = rewrittenItems.computeIfAbsent(tmp, x -> OASFactory.createPathItem());
             removeOps.put(op.getKey(), opImpl);
             newPathItem.setOperation(op.getKey(), opImpl);
           }
@@ -279,22 +273,22 @@ public class OasFilter implements OASFilter {
 
   private Parameter createIntParam(Parameter.In in, String name, String descr, int min) {
     Schema schema = OASFactory.createSchema();
-    schema.type(Schema.SchemaType.INTEGER);
+    schema.type(List.of(Schema.SchemaType.INTEGER));
     schema.minimum(new BigDecimal(min));
     return createParam(schema, in, name, descr);
   }
 
   private Parameter createStrParam(Parameter.In in, String name, String descr) {
     Schema schema = OASFactory.createSchema();
-    schema.type(Schema.SchemaType.STRING);
+    schema.type(List.of(Schema.SchemaType.STRING));
     return createParam(schema, in, name, descr);
   }
 
   private Parameter createStrArrayParam(Parameter.In in, String name, String descr) {
     Schema itemSchema = OASFactory.createSchema();
-    itemSchema.type(Schema.SchemaType.STRING);
+    itemSchema.type(List.of(Schema.SchemaType.STRING));
     Schema schema = OASFactory.createSchema();
-    schema.type(Schema.SchemaType.ARRAY);
+    schema.type(List.of(Schema.SchemaType.ARRAY));
     schema.setItems(itemSchema);
     return createParam(schema, in, name, descr);
   }
@@ -302,7 +296,7 @@ public class OasFilter implements OASFilter {
   @SuppressWarnings("unused")
   private Parameter createStrEnumParam(Parameter.In in, String name, String descr, List<String> enums) {
     Schema schema = OASFactory.createSchema();
-    schema.type(Schema.SchemaType.STRING);
+    schema.type(List.of(Schema.SchemaType.STRING));
     for (String en : enums) {
       schema.addEnumeration(en);
     }
@@ -311,10 +305,10 @@ public class OasFilter implements OASFilter {
 
   private Parameter createStatesParam(Parameter.In in, String descr, Iterable<State.Code> hidden) {
     Schema itemSchema = OASFactory.createSchema();
-    itemSchema.type(Schema.SchemaType.STRING);
+    itemSchema.type(List.of(Schema.SchemaType.STRING));
 
     Schema schema = OASFactory.createSchema();
-    schema.type(Schema.SchemaType.ARRAY);
+    schema.type(List.of(Schema.SchemaType.ARRAY));
     schema.items(itemSchema);
     for (State.Code code : hidden) {
       itemSchema.addEnumeration(code.toString());
@@ -324,10 +318,10 @@ public class OasFilter implements OASFilter {
 
   private Parameter createSortParam(Parameter.In in, String descr, String[] sort) {
     Schema itemSchema = OASFactory.createSchema();
-    itemSchema.type(Schema.SchemaType.STRING);
+    itemSchema.type(List.of(Schema.SchemaType.STRING));
 
     Schema schema = OASFactory.createSchema();
-    schema.type(Schema.SchemaType.ARRAY);
+    schema.type(List.of(Schema.SchemaType.ARRAY));
     schema.items(itemSchema);
     for (String s : sort) {
       itemSchema.addEnumeration(s);
