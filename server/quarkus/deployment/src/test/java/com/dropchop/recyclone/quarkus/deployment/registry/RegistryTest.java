@@ -4,8 +4,11 @@ import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
+import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import com.dropchop.recyclone.model.entity.es.tagging.EsLanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaLoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
+import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
 import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapper;
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public class RegistryTest {
@@ -30,6 +34,10 @@ public class RegistryTest {
             .addClasses(
                 UserAccountToDtoMapper.class,
                 UserAccountToDtoMapperImpl.class,
+                com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapper.class,
+                com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapperImpl.class,
+                com.dropchop.recyclone.mapper.es.tagging.TagToDtoMapper.class,
+                com.dropchop.recyclone.mapper.es.tagging.TagToDtoMapperImpl.class,
                 TestShiroEnvironmentProvider.class
             )
         );
@@ -72,17 +80,25 @@ public class RegistryTest {
     @Test
     public void getMapperSubTypeConfigService() {
         MapperSubTypeConfig config = service.getMapperSubTypeConfig();
-        Assertions.assertEquals(JpaLoginAccount.class, config.mapsTo(LoginAccount.class));
-        Assertions.assertEquals(LoginAccount.class, config.mapsTo(JpaLoginAccount.class));
-        Assertions.assertEquals(JpaTokenAccount.class, config.mapsTo(TokenAccount.class));
-        Assertions.assertEquals(TokenAccount.class, config.mapsTo(JpaTokenAccount.class));
+        Assertions.assertEquals(Set.of(JpaLoginAccount.class), config.mapsTo(LoginAccount.class));
+        Assertions.assertEquals(Set.of(LoginAccount.class), config.mapsTo(JpaLoginAccount.class));
+        Assertions.assertEquals(Set.of(JpaTokenAccount.class), config.mapsTo(TokenAccount.class));
+        Assertions.assertEquals(Set.of(TokenAccount.class), config.mapsTo(JpaTokenAccount.class));
     }
 
     @Test
     public void getMapperSubTypeConfig() {
-        Assertions.assertEquals(JpaLoginAccount.class, mapperSubTypeConfig.mapsTo(LoginAccount.class));
-        Assertions.assertEquals(LoginAccount.class, mapperSubTypeConfig.mapsTo(JpaLoginAccount.class));
-        Assertions.assertEquals(JpaTokenAccount.class, mapperSubTypeConfig.mapsTo(TokenAccount.class));
-        Assertions.assertEquals(TokenAccount.class, mapperSubTypeConfig.mapsTo(JpaTokenAccount.class));
+        Assertions.assertEquals(Set.of(JpaLoginAccount.class), mapperSubTypeConfig.mapsTo(LoginAccount.class));
+        Assertions.assertEquals(Set.of(LoginAccount.class), mapperSubTypeConfig.mapsTo(JpaLoginAccount.class));
+        Assertions.assertEquals(Set.of(JpaTokenAccount.class), mapperSubTypeConfig.mapsTo(TokenAccount.class));
+        Assertions.assertEquals(Set.of(TokenAccount.class), mapperSubTypeConfig.mapsTo(JpaTokenAccount.class));
+    }
+
+    @Test
+    public void getMultiMapperSubTypeConfig() {
+        Assertions.assertEquals(
+            Set.of(JpaLanguageGroup.class, EsLanguageGroup.class),
+            mapperSubTypeConfig.mapsTo(LanguageGroup.class)
+        );
     }
 }

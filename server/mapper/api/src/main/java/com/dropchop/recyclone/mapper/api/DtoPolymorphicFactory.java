@@ -6,7 +6,6 @@ import com.dropchop.recyclone.model.api.base.Model;
 import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.api.invoke.ErrorCode;
 import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.mapper.api.MappingContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.mapstruct.Context;
 import org.mapstruct.ObjectFactory;
 import org.mapstruct.TargetType;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -33,11 +33,12 @@ public class DtoPolymorphicFactory {
                                                    @Context MappingContext context,
                                                    @TargetType Class<D> type) {
     if (mapperSubTypeConfig != null) {
-      Class<?> tmp = mapperSubTypeConfig.mapsTo(model.getClass());
-      if (tmp != null) {
+      Collection<Class<?>> tmp = mapperSubTypeConfig.mapsTo(model.getClass());
+      if (tmp != null && !tmp.isEmpty()) {
+        Class<?> dtoCls = tmp.iterator().next();
         log.debug("Will instantiate dto [{}] instead of [{}] for model class [{}] from polymorphic registry.",
-          tmp, type, model.getClass());
-        type = (Class<D>) tmp;
+            dtoCls, type, model.getClass());
+        type = (Class<D>) dtoCls;
       }
     } else {
       log.warn("Polymorphic registry is missing please configure your application.");
