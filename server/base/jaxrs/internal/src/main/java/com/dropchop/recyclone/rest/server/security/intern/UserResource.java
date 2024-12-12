@@ -49,7 +49,7 @@ public class UserResource extends ClassicRestByIdResource<User, UserParams> impl
     if (users.isEmpty()) {
       return null;
     }
-    return users.iterator().next();
+    return users.getFirst();
   }
 
   @Override

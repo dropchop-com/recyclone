@@ -44,7 +44,7 @@ public class RoleNodeResource extends ClassicRestByIdResource<RoleNode, RoleNode
   @Override
   public List<RoleNode> searchRest(RoleNodeParams params) {
     return unwrap(search(params));
-  };
+  }
 
   @Override
   public Result<RoleNode> create(List<RoleNode> roles) {

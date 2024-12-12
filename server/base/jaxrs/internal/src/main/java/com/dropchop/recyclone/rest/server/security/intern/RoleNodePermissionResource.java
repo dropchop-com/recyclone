@@ -44,7 +44,7 @@ public class RoleNodePermissionResource extends ClassicRestByIdResource <RoleNod
   @Override
   public List <RoleNodePermission> searchRest(RoleNodePermissionParams params) {
     return unwrap(search(params));
-  };
+  }
 
   @Override
   public Result <RoleNodePermission> create(List <RoleNodePermission> permissions) {
