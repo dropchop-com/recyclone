@@ -25,6 +25,28 @@ quarkus:
       group-id: com.dropchop.recyclone
       artifact-id: recyclone-base-es-service
 
+    recyclone-events-es-model:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-es-model
+    recyclone-events-es-mapper:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-es-mapper
+    recyclone-events-es-repo:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-es-repo
+    recyclone-events-api-service:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-api-service
+    recyclone-events-es-service:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-es-service
+    recyclone-events-api-jaxrs-internal:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-api-jaxrs-internal
+    recyclone-events-jaxrs-internal:
+      group-id: com.dropchop.recyclone
+      artifact-id: recyclone-events-jaxrs-internal
+
   rest:
     path: /api
   swagger-ui:

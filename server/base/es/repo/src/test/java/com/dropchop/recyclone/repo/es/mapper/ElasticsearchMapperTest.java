@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.rest.jackson.client.ObjectMapperFactory;
 import org.json.JSONException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.sum;

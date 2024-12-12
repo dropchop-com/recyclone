@@ -15,5 +15,6 @@
 
   <modules>
     <module>base</module>
+    <module>events</module>
   </modules>
 </project>

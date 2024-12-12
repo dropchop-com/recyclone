@@ -17,7 +17,6 @@
     <module>model</module>
     <module>mapper</module>
     <module>repo</module>
-    <module>service</module>
   </modules>
 
 </project>
