@@ -4,11 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>recyclone-base-api-rest</artifactId>
+  <name>Recyclone - Server - Base - API - REST</name>
+
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
     <artifactId>recyclone-server-base-api</artifactId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>
+
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+    <maven.install.skip>false</maven.install.skip>
+    <maven.javadoc.skip>false</maven.javadoc.skip>
+    <maven.source.skip>false</maven.source.skip>
+  </properties>
 
   <dependencies>
     <dependency>
