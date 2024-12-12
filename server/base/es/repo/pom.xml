@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>recyclone-repo-es</artifactId>
-  <name>Recyclone - Server - Base - Elasticsearch - Repositories</name>
+  <artifactId>recyclone-base-es-repo</artifactId>
+  <name>Recyclone - Server - Base - Elasticsearch - Repos</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
@@ -25,27 +25,27 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-api</artifactId>
+      <artifactId>recyclone-base-api-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-dto</artifactId>
+      <artifactId>recyclone-base-dto-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-repo-api</artifactId>
+      <artifactId>recyclone-base-api-repo</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-es</artifactId>
+      <artifactId>recyclone-base-es-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-mapper-api</artifactId>
+      <artifactId>recyclone-base-api-mapper</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-mapper-es</artifactId>
+      <artifactId>recyclone-base-es-mapper</artifactId>
     </dependency>
     <dependency>
       <groupId>jakarta.enterprise</groupId>
@@ -68,7 +68,7 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-rest-runtime</artifactId>
+      <artifactId>recyclone-base-jackson</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

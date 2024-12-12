@@ -53,15 +53,15 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-dto</artifactId>
+      <artifactId>recyclone-base-dto-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-rest-api-internal</artifactId>
+      <artifactId>recyclone-base-api-jaxrs-internal</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-api</artifactId>
+      <artifactId>recyclone-base-api-service</artifactId>
     </dependency>
 
     <dependency>

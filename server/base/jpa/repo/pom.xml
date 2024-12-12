@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>recyclone-repo-jpa-blaze</artifactId>
-  <name>Recyclone - Server - Base - JPA - Repositories</name>
+  <artifactId>recyclone-base-jpa-repo</artifactId>
+  <name>Recyclone - Server - Base - JPA - Repos</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
@@ -32,19 +32,19 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-dto</artifactId>
+      <artifactId>recyclone-base-dto-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-jpa</artifactId>
+      <artifactId>recyclone-base-jpa-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-repo-api</artifactId>
+      <artifactId>recyclone-base-api-repo</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-mapper-jpa</artifactId>
+      <artifactId>recyclone-base-jpa-mapper</artifactId>
     </dependency>
   </dependencies>
 </project>

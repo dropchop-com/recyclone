@@ -6,27 +6,24 @@ quarkus:
       "com.dropchop":
         level: DEBUG
   index-dependency:
-    recyclone-mapper-jpa:
+    recyclone-base-jpa-mapper:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-mapper-jpa
-    recyclone-mapper-es:
+      artifact-id: recyclone-base-jpa-mapper
+    recyclone-base-jpa-repo:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-mapper-es
-    recyclone-repo-jpa-blaze:
+      artifact-id: recyclone-base-jpa-repo
+    recyclone-base-jpa-service:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-repo-jpa-blaze
-    recyclone-repo-es:
+      artifact-id: recyclone-base-jpa-service
+    recyclone-base-es-mapper:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-repo-es
-    recyclone-service-common:
+      artifact-id: recyclone-base-es-mapper
+    recyclone-base-es-repo:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-api
-    recyclone-service-jpa:
+      artifact-id: recyclone-base-es-repo
+    recyclone-base-es-service:
       group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-jpa
-    recyclone-service-es:
-      group-id: com.dropchop.recyclone
-      artifact-id: recyclone-service-es
+      artifact-id: recyclone-base-es-service
 
   rest:
     path: /api
@@ -40,18 +37,16 @@ quarkus:
     db-kind: postgresql
     username: recyclone_test
     password: recyclone_test
+    # uncomment for native image build
+    #jdbc:
+    #  url: jdbc:postgresql://localhost:5432/recyclone_test
+    #  max-size: 16
   elasticsearch:
     devservices:
       image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test
       distribution: elastic
       enabled: true
       port: 9300
-
-
-    # uncomment for native image build
-    #jdbc:
-    #  url: jdbc:postgresql://localhost:5432/recyclone_test
-    #  max-size: 16
 
   hibernate-orm:
     database:

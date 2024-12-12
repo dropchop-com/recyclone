@@ -49,7 +49,7 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-api</artifactId>
+      <artifactId>recyclone-base-api-model</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
@@ -71,32 +71,32 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-dto</artifactId>
+      <artifactId>recyclone-base-dto-model</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-jpa</artifactId>
+      <artifactId>recyclone-base-jpa-model</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-mapper-jpa</artifactId>
+      <artifactId>recyclone-base-jpa-mapper</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-es</artifactId>
+      <artifactId>recyclone-base-es-model</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-mapper-es</artifactId>
+      <artifactId>recyclone-base-es-mapper</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-service-jpa</artifactId>
+      <artifactId>recyclone-base-jpa-service</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

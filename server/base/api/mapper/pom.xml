@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>recyclone-mapper-api</artifactId>
-  <name>Recyclone - Server - Base - Mapper - API</name>
+  <artifactId>recyclone-base-api-mapper</artifactId>
+  <name>Recyclone - Server - Base - API - Mappers</name>
 
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
@@ -45,7 +45,7 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-model-dto</artifactId>
+      <artifactId>recyclone-base-dto-model</artifactId>
     </dependency>
 
     <!-- tests -->

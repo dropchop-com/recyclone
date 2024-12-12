@@ -50,15 +50,33 @@ class RecycloneProcessor {
 
   @BuildStep
   void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
-    indexDependency.produce(new IndexDependencyBuildItem("org.apache.shiro", "shiro-core"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-model-api"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-model-dto"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-api"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-api-internal"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-server"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-mapper-api"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-repo-api"));
-    indexDependency.produce(new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-service-api"));
+    indexDependency.produce(
+        new IndexDependencyBuildItem("org.apache.shiro", "shiro-core")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-model")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-dto-model")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-jaxrs")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-jaxrs-internal")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-server")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-mapper")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-repo")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-service")
+    );
   }
 
   @BuildStep
@@ -147,6 +165,7 @@ class RecycloneProcessor {
   );
 
 
+  @SuppressWarnings("SameParameterValue")
   private void addItemsForProducer(IndexView index, Class<?> rootIface, Class<?> selector, Set<String> unremovable,
                                    Set<ProducerMapping> producerMappings) {
     Collection<ClassInfo> interfaces = index.getAllKnownSubinterfaces(rootIface);
