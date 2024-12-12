@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.server.events;
+package com.dropchop.recyclone.rest.server.events.intern;
 
 import com.dropchop.recyclone.model.api.query.Condition;
 import com.dropchop.recyclone.model.dto.event.Event;

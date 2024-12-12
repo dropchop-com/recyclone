@@ -13,9 +13,6 @@
 
   <modules>
     <module>public</module>
-    <!--<module>jaxrs</module>
-    <module>jpa</module>
-    <module>es</module>-->
+    <module>internal</module>
   </modules>
-
 </project>

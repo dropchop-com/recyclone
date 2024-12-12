@@ -15,6 +15,7 @@
     <module>mapper</module>
     <module>service</module>
     <module>repo</module>
+    <module>rest</module>
   </modules>
 
 </project>

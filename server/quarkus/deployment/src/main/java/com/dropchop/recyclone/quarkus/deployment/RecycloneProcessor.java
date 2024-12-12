@@ -66,7 +66,13 @@ class RecycloneProcessor {
         new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-jaxrs-internal")
     );
     indexDependency.produce(
-        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-rest-server")
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-rest")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-jaxrs")
+    );
+    indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-jaxrs-internal")
     );
     indexDependency.produce(
         new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-mapper")

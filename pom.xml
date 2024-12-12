@@ -252,27 +252,7 @@
       <!-- backend API -->
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-jpa-model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-es-model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-base-api-mapper</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-jpa-mapper</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-es-mapper</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -282,23 +262,41 @@
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-jpa-repo</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-es-repo</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-base-api-service</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-service-common</artifactId>
+        <artifactId>recyclone-base-api-rest</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- backend rest impl -->
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-jaxrs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-jaxrs-internal</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- backend JPA impl -->
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-jpa-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-jpa-mapper</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-jpa-repo</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -306,15 +304,26 @@
         <artifactId>recyclone-base-jpa-service</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- backend Elasticsearch impl -->
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-es-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-es-mapper</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-es-repo</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-base-es-service</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-rest-server</artifactId>
         <version>${project.version}</version>
       </dependency>
 

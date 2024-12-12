@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.rest.server.security.intern;
 
-import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.api.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -9,7 +8,6 @@ import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
 import com.dropchop.recyclone.rest.server.ClassicRestResource;
 import com.dropchop.recyclone.service.api.security.SecurityLoadingService;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
@@ -28,14 +26,6 @@ public class SecurityPermissionResource implements
   @Inject
   SecurityLoadingService securityLoadingService;
 
-  @Inject
-  RoleNodeParams params;
-
-  @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContextContainer ctxContainer;
-
-
   @Override
   public Result<RoleNodePermission> list(RoleNodeParams params) {
     if (params.getFilter().getContent().getTreeLevel() == null) {
@@ -45,8 +35,7 @@ public class SecurityPermissionResource implements
     ResultStatus status = new ResultStatus();
     status.setCode(ResultCode.success);
     status.setTotal(roleNodePermissions.size());
-    List<RoleNodePermission> permissions = new ArrayList<>();
-    permissions.addAll(roleNodePermissions);
+    List<RoleNodePermission> permissions = new ArrayList<>(roleNodePermissions);
     Result<RoleNodePermission> result = new Result<>();
     result.setData(permissions);
     result.setStatus(status);
