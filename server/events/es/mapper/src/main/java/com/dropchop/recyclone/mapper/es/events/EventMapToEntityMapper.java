@@ -60,7 +60,10 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default Double mapToFloat(Object value) {
-    if (value instanceof Float) {
+    if (value instanceof Float f) {
+      return f.doubleValue();
+    }
+    if (value instanceof Double) {
       return (Double) value;
     }
     if (value instanceof String) {
@@ -77,7 +80,7 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default EsEventItem mapToEsEventItem(Object value) {
-    if (value instanceof Map valueMap) {
+    if (value instanceof Map<?, ?> valueMap) {
       EsEventItem esEventItem = new EsEventItem();
       esEventItem.setUuid(String.valueOf(valueMap.get("uuid")));
       esEventItem.setService(this.mapToEsEventDetail(valueMap.get("service")));
@@ -91,7 +94,7 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default EsEventTrace mapToEsEventTrace(Object value) {
-    if (value instanceof Map valueMap) {
+    if (value instanceof Map<?, ?> valueMap) {
       EsEventTrace esEventTrace = new EsEventTrace();
       esEventTrace.setUuid(String.valueOf(valueMap.get("uuid")));
       esEventTrace.setContext(String.valueOf(valueMap.get("context")));
@@ -102,7 +105,7 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default EsEventDetail mapToEsEventDetail(Object value) {
-    if (value instanceof Map valueMap) {
+    if (value instanceof Map<?, ?> valueMap) {
       EsEventDetail esEventDetail = new EsEventDetail();
       esEventDetail.setUuid(String.valueOf(valueMap.get("uuid")));
       esEventDetail.setName(String.valueOf(valueMap.get("name")));
@@ -115,9 +118,9 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default Set<Attribute<?>> mapToAttributes(Object value) {
-    if (value instanceof Collection collection) {
+    if (value instanceof Collection<?> collection) {
       for (Object attributeObj : collection) {
-        if (attributeObj instanceof Map attribute) {
+        if (attributeObj instanceof Map<?, ?> attribute) {
           attribute.get("something");
         }
       }
@@ -126,9 +129,9 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   }
 
   default Set<EsAttribute<?>> mapToEsAttributes(Object value) {
-    if (value instanceof Collection collection) {
+    if (value instanceof Collection<?> collection) {
       for (Object attributeObj : collection) {
-        if (attributeObj instanceof Map attribute) {
+        if (attributeObj instanceof Map<?, ?> attribute) {
           attribute.get("something");
         }
       }

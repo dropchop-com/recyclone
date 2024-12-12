@@ -434,6 +434,7 @@ public class ElasticsearchMapperTest {
   }
 
   @Test
+  @SuppressWarnings("unused")
   public void debugConditionMustNotExist() {
     ElasticQueryMapper es = new ElasticQueryMapper();
 

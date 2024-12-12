@@ -19,7 +19,7 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
-@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
+@SuppressWarnings({"unused"})
 public class EsEventMapperProvider extends FilteringElasticMapperProvider<Event, EsEvent, UUID>
     implements MapToEntityMapper<EsEvent> {
 
@@ -39,7 +39,4 @@ public class EsEventMapperProvider extends FilteringElasticMapperProvider<Event,
   public EsEvent fromMap(Map<String, Object> result) {
     return null;
   }
-
-
-
 }
