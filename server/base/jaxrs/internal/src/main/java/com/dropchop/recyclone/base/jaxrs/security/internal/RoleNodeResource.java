@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
-import com.dropchop.recyclone.service.api.security.RoleNodeService;
+import com.dropchop.recyclone.base.api.service.security.RoleNodeService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 

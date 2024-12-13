@@ -2,8 +2,8 @@ package com.dropchop.recyclone.quarkus.it.service.api;
 
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.service.api.CrudService;
-import com.dropchop.recyclone.service.api.QueryService;
+import com.dropchop.recyclone.base.api.service.CrudService;
+import com.dropchop.recyclone.base.api.service.QueryService;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 12. 21.

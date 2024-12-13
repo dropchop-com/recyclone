@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.repo.jpa.blaze.tagging;
 
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
-import com.dropchop.recyclone.repo.api.mapper.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

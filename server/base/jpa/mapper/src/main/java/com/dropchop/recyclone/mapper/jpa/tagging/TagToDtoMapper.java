@@ -7,10 +7,10 @@ import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.*;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaOwner;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
-import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.DtoPolymorphicFactory;
-import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
-import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
+import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import org.mapstruct.*;
 
 /**

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.selectors;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.service.api.Service;
+import com.dropchop.recyclone.base.api.service.Service;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;

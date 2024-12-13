@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.mapper.es.events;
 
-import com.dropchop.recyclone.mapper.api.MapToEntityMapper;
+import com.dropchop.recyclone.base.api.mapper.MapToEntityMapper;
 import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.model.entity.es.attr.EsAttribute;
 import com.dropchop.recyclone.model.entity.es.events.EsEvent;

@@ -186,14 +186,14 @@ public interface RecycloneBuildConfig {
         String match();
 
         /**
-         * Dependency target <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+         * Dependency target <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
          */
         @WithDefault("<same-as-dependant>")
         String targetQualifier();
 
         /**
          * Fallback for the dependency
-         * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+         * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
          */
         @WithDefault(RECYCLONE_DEFAULT)
         String fallbackQualifier();
@@ -213,14 +213,14 @@ public interface RecycloneBuildConfig {
 
       /**
        * Target's injection point default
-       * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+       * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
        */
       @WithDefault("<same-as-dependant>")
       String targetQualifier();
 
       /**
        * Fallback for the target's injection point default
-       * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+       * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
        */
       @WithDefault(RECYCLONE_DEFAULT)
       String fallbackQualifier();
@@ -233,14 +233,14 @@ public interface RecycloneBuildConfig {
 
     /**
      * Target's injection point default
-     * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+     * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
      */
     @WithDefault("<same-as-dependant>")
     String targetQualifier();
 
     /**
      * Fallback for the target's injection point default
-     * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+     * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
      */
     @WithDefault(RECYCLONE_DEFAULT)
     String fallbackQualifier();

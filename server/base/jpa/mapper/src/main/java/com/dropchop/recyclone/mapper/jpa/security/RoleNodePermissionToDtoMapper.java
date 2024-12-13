@@ -2,10 +2,10 @@ package com.dropchop.recyclone.mapper.jpa.security;
 
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
-import com.dropchop.recyclone.mapper.api.DtoPolymorphicFactory;
-import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
-import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
+import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import com.dropchop.recyclone.model.entity.jpa.security.*;
 import org.mapstruct.*;
 

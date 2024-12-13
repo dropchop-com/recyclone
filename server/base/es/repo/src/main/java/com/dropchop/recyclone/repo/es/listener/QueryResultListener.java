@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.es.listener;
 
-import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
+import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticSearchResult.Hit;
 
 /**

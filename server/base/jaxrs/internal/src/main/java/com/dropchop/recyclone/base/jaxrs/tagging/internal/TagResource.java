@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.jaxrs.tagging.internal;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.rest.server.ClassicModifyResource;
-import com.dropchop.recyclone.service.api.tagging.TagService;
+import com.dropchop.recyclone.base.api.service.tagging.TagService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;

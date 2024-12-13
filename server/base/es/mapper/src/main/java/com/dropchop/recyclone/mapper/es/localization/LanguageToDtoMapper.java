@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.mapper.es.localization;
 
-import com.dropchop.recyclone.mapper.api.DtoPolymorphicFactory;
-import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
-import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
+import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.model.entity.es.localization.EsLanguage;
 import org.mapstruct.Builder;

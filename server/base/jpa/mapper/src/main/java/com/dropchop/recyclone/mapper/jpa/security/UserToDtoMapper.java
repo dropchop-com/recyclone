@@ -2,8 +2,8 @@ package com.dropchop.recyclone.mapper.jpa.security;
 
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
-import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
+import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

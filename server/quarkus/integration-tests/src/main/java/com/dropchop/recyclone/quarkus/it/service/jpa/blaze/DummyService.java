@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
@@ -13,8 +13,8 @@ import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
-import com.dropchop.recyclone.service.api.CrudServiceImpl;
-import com.dropchop.recyclone.service.api.RecycloneType;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

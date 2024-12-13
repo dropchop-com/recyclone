@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.mapper.api.AfterToDtoListener;
-import com.dropchop.recyclone.mapper.api.AfterToEntityListener;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.AfterToDtoListener;
+import com.dropchop.recyclone.base.api.mapper.AfterToEntityListener;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodePermissionToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodePermissionToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
@@ -10,7 +10,7 @@ import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermissionTemplate;
-import com.dropchop.recyclone.repo.api.mapper.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

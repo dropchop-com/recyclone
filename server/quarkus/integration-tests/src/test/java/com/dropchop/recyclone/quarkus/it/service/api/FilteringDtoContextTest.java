@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.service.api;
 
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.DomainToDtoMapper;
 import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;

@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaLoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.repo.api.TransactionHelper;
+import com.dropchop.recyclone.base.api.repo.TransactionHelper;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;

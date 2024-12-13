@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
@@ -13,14 +13,14 @@ import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
-import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
+import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleRepository;
-import com.dropchop.recyclone.service.api.JoinEntityHelper;
-import com.dropchop.recyclone.service.api.RecycloneType;
-import com.dropchop.recyclone.service.api.security.AuthorizationService;
-import com.dropchop.recyclone.service.api.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.JoinEntityHelper;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -39,7 +39,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
-  implements com.dropchop.recyclone.service.api.security.RoleService {
+  implements com.dropchop.recyclone.base.api.service.security.RoleService {
 
   @Inject
   RoleMapperProvider mapperProvider;

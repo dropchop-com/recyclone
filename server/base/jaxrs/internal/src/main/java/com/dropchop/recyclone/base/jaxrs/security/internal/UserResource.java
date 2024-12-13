@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
-import com.dropchop.recyclone.service.api.security.UserService;
+import com.dropchop.recyclone.base.api.service.security.UserService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 

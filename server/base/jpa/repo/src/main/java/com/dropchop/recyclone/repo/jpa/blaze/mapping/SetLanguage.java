@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze.mapping;
 
-import com.dropchop.recyclone.mapper.api.AfterToEntityListener;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.AfterToEntityListener;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.base.Model;
@@ -12,7 +12,7 @@ import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
-import com.dropchop.recyclone.repo.api.mapper.EntityAllPreloadDelegate;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityAllPreloadDelegate;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 
 import java.util.Set;

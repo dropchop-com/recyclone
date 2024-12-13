@@ -4,8 +4,8 @@ import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
-import com.dropchop.recyclone.service.api.CrudServiceImpl;
-import com.dropchop.recyclone.service.api.RecycloneType;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings("unused")
 public class LanguageService extends CrudServiceImpl<Language, JpaLanguage, String>
-  implements com.dropchop.recyclone.service.api.localization.LanguageService {
+  implements com.dropchop.recyclone.base.api.service.localization.LanguageService {
 
   @Inject
   LanguageRepository repository;

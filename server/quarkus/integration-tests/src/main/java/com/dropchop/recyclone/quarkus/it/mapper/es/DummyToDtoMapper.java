@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.mapper.es;
 
-import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
-import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
+import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import org.mapstruct.Builder;

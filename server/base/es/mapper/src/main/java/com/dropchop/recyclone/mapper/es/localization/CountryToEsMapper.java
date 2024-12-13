@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.mapper.es.localization;
 
-import com.dropchop.recyclone.mapper.api.EntityFactoryInvoker;
-import com.dropchop.recyclone.mapper.api.ToEntityMapper;
+import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
+import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.model.entity.es.localization.EsCountry;
 import org.mapstruct.*;

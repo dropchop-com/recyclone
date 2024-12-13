@@ -4,7 +4,7 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.JoinType;
 import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
-import com.dropchop.recyclone.repo.api.utils.SearchFields;
+import com.dropchop.recyclone.base.api.repo.utils.SearchFields;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeCriteriaDecorator;
 import lombok.extern.slf4j.Slf4j;
 

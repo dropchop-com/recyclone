@@ -4,8 +4,8 @@ import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;
-import com.dropchop.recyclone.service.api.CrudServiceImpl;
-import com.dropchop.recyclone.service.api.RecycloneType;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings("unused")
 public class PermissionService extends CrudServiceImpl<Permission, JpaPermission, UUID>
-  implements com.dropchop.recyclone.service.api.security.PermissionService {
+  implements com.dropchop.recyclone.base.api.service.security.PermissionService {
 
   @Inject
   PermissionRepository repository;

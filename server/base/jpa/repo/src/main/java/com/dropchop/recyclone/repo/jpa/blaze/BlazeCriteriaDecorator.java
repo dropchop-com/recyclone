@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
-import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
+import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

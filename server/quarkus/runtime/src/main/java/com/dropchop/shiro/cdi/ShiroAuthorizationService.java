@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.service.api.security.AuthorizationService;
+import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
 import com.dropchop.shiro.filter.RequestFilter;
 import com.dropchop.shiro.filter.ResponseFilter;
 import com.dropchop.shiro.filter.ShiroFilter;

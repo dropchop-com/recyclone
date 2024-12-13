@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.UserToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.repo.api.mapper.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.mapping.SetAccountUser;
 import com.dropchop.recyclone.repo.jpa.blaze.mapping.SetAccountUuid;

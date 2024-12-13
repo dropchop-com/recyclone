@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.es;
 
-import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
@@ -14,9 +14,9 @@ import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.model.utils.Strings;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
-import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
-import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
-import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.api.repo.ElasticCrudRepository;
+import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
+import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.es.listener.MapResultListener;
 import com.dropchop.recyclone.repo.es.listener.QueryResultListener;
 import com.dropchop.recyclone.repo.es.mapper.ElasticQueryMapper;

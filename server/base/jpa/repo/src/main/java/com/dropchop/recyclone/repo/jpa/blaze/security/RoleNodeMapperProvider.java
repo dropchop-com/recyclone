@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.mapper.api.AfterToDtoListener;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.AfterToDtoListener;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodeToJpaMapper;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;

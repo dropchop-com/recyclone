@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
@@ -11,10 +11,10 @@ import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.security.*;
-import com.dropchop.recyclone.service.api.RecycloneType;
-import com.dropchop.recyclone.service.api.security.HierarchicalSecurityLoadingService;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -28,7 +28,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 public class SecurityLoadingService extends HierarchicalSecurityLoadingService
-    implements com.dropchop.recyclone.service.api.security.SecurityLoadingService {
+    implements com.dropchop.recyclone.base.api.service.security.SecurityLoadingService {
 
   @Inject
   UserRepository userRepository;

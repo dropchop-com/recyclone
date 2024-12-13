@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.dto.model.invoke.IdentifierParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
-import com.dropchop.recyclone.service.api.security.PermissionService;
+import com.dropchop.recyclone.base.api.service.security.PermissionService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 

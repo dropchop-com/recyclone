@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.mapper.jpa;
 
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
-import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
-import com.dropchop.recyclone.mapper.api.ToDtoMapper;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
+import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;

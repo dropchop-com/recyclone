@@ -1,8 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
-import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
+import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.LikeIdentifiersCriteriaDecorator;
 import com.dropchop.recyclone.repo.jpa.blaze.PageCriteriaDecorator;

@@ -1,7 +1,7 @@
 package com.dropchop.shiro.cdi;
 
 import com.dropchop.recyclone.base.api.model.security.PermissionBearer;
-import com.dropchop.recyclone.service.api.security.AuthenticationService;
+import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.shiro.SecurityUtils;
