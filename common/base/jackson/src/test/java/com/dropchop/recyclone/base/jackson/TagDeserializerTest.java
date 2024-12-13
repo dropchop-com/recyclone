@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.client;
+package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -44,7 +44,7 @@ class TagDeserializerTest {
           }
       ]""";
 
-    com.dropchop.recyclone.rest.jackson.client.ObjectMapperFactory mapperFactory = new ObjectMapperFactory(
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory(
         new JsonSerializationTypeConfigImpl().addSubType("LanguageGroup", LanguageGroup.class)
     );
 

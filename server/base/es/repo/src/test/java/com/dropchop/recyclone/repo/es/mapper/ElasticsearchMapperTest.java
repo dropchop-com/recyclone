@@ -2,7 +2,7 @@ package com.dropchop.recyclone.repo.es.mapper;
 
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
-import com.dropchop.recyclone.rest.jackson.client.ObjectMapperFactory;
+import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 

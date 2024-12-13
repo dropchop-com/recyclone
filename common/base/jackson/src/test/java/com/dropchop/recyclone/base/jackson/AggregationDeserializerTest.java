@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.client;
+package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper;

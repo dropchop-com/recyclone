@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.jackson.client;
+package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.attr.AttributeToRemove;
