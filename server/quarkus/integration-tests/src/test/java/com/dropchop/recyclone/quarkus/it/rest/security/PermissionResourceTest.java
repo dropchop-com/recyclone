@@ -5,7 +5,7 @@ import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
@@ -55,7 +55,7 @@ public class PermissionResourceTest {
       .extract()
       .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
-    Permission retPermission = permissions.get(0);
+    Permission retPermission = permissions.getFirst();
     assertEquals(permission, retPermission);
     assertEquals(permission.getDomain(), retPermission.getDomain());
     assertEquals("Localization/Languages", retPermission.getDomain().getTitle());
@@ -65,9 +65,11 @@ public class PermissionResourceTest {
     assertEquals("en", retPermission.getAction().getLang());
     assertEquals("Permit all actions on Language", retPermission.getTitle());
     assertEquals("en", retPermission.getLang());
-    assertEquals(Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
+    assertEquals(
+        Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")),
+        retPermission.getTranslations()
+    );
   }
-
 
   //TODO: FIX THE PROBLEM WITH GETTING ENTITY BY UUID
   @Test
@@ -103,7 +105,6 @@ public class PermissionResourceTest {
         .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
 
-
     permissions = given()
         //.log().all()
         .contentType(ContentType.JSON)
@@ -118,7 +119,7 @@ public class PermissionResourceTest {
         .extract()
         .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
-    assertEquals(permUuid, permissions.iterator().next().getUuid().toString());
+    assertEquals(permUuid, permissions.getFirst().getUuid().toString());
   }
 
   @Test
@@ -148,7 +149,7 @@ public class PermissionResourceTest {
       .extract()
       .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
-    Permission retPermission = permissions.get(0);
+    Permission retPermission = permissions.getFirst();
     assertEquals(permission, retPermission);
     assertEquals(permission.getDomain(), retPermission.getDomain());
     assertEquals("Security/Roles", retPermission.getDomain().getTitle());
@@ -158,7 +159,10 @@ public class PermissionResourceTest {
     assertEquals("en", retPermission.getAction().getLang());
     assertEquals("Permit all actions on Language", retPermission.getTitle());
     assertEquals("en", retPermission.getLang());
-    assertEquals(Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
+    assertEquals(
+        Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")),
+        retPermission.getTranslations()
+    );
   }
 
   @Test
@@ -182,7 +186,7 @@ public class PermissionResourceTest {
       .extract()
       .body().jsonPath().getList(".", Permission.class);
     assertEquals(1, permissions.size());
-    Permission retPermission = permissions.get(0);
+    Permission retPermission = permissions.getFirst();
     assertNotNull(retPermission);
     assertNotNull(retPermission.getDomain());
     assertEquals("Security/Roles", retPermission.getDomain().getTitle());
@@ -192,6 +196,9 @@ public class PermissionResourceTest {
     assertEquals("en", retPermission.getAction().getLang());
     assertEquals("Permit all actions on Language", retPermission.getTitle());
     assertEquals("en", retPermission.getLang());
-    assertEquals(Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")), retPermission.getTranslations());
+    assertEquals(
+        Set.of(new TitleDescriptionTranslation("sl", "Dovoli vse akcije na jezikih.")),
+        retPermission.getTranslations()
+    );
   }
 }

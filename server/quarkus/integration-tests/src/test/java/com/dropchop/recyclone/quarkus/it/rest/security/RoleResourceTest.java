@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.security.Role;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.MethodOrderer;
@@ -78,13 +78,12 @@ public class RoleResourceTest {
       .extract()
       .body().jsonPath().getList("data", Role.class);
     assertEquals(1, result.size());
-    Role respRole = result.get(0);
+    Role respRole = result.getFirst();
     assertEquals(role, respRole);
     assertEquals(role.getTitle(), respRole.getTitle());
     assertEquals(role.getLang(), respRole.getLang());
     assertEquals(role.getTranslations(), respRole.getTranslations());
   }
-
 
   @Test
   @Order(25)
@@ -110,7 +109,7 @@ public class RoleResourceTest {
       .extract()
       .body().jsonPath().getList("data", Role.class);
     assertEquals(1, result.size());
-    Role respRole = result.get(0);
+    Role respRole = result.getFirst();
     assertEquals(role, respRole);
     assertEquals(role.getTitle(), respRole.getTitle());
     assertEquals(role.getLang(), respRole.getLang());
@@ -149,7 +148,7 @@ public class RoleResourceTest {
       .extract()
       .body().jsonPath().getList(".", Role.class);
     assertEquals(1, roles.size());
-    Role respRole = roles.get(0);
+    Role respRole = roles.getFirst();
     Set<String> perms = permissions.stream().map(UUID::toString).collect(Collectors.toSet());
     Set<String> respPerms = respRole.getPermissions().stream().map(DtoId::getId).collect(Collectors.toSet());
     assertEquals(perms, respPerms);
@@ -187,7 +186,7 @@ public class RoleResourceTest {
       .extract()
       .body().jsonPath().getList(".", Role.class);
     assertEquals(1, roles.size());
-    Role respRole = roles.get(0);
+    Role respRole = roles.getFirst();
     Set<String> perms = permissions.stream().map(UUID::toString).collect(Collectors.toSet());
     Set<String> respPerms = respRole.getPermissions().stream().map(DtoId::getId).collect(Collectors.toSet());
     //TODO: FIX TESTS CAUSE IT'S NO LONGER ENOUGH TO POST PERMISSION UUIDS !!!!
@@ -222,7 +221,7 @@ public class RoleResourceTest {
       .body().jsonPath().getList(".", Role.class);
     //TODO: FIX TESTS CAUSE IT'S NO LONGER ENOUGH TO POST PERMISSION UUIDS !!!!
     assertEquals(1, roles.size());
-    Role respRole = roles.get(0);
+    Role respRole = roles.getFirst();
     assertEquals(0, respRole.getPermissions().size());
   }
 

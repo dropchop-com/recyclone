@@ -7,8 +7,8 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions
 import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
-import com.dropchop.recyclone.rest.api.DynamicExecContext;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.DynamicExecContext;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import jakarta.ws.rs.*;
 
 import java.util.List;

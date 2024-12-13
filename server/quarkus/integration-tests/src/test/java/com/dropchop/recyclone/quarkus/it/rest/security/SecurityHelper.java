@@ -3,6 +3,8 @@ package com.dropchop.recyclone.quarkus.it.rest.security;
 import com.dropchop.recyclone.model.dto.security.*;
 import com.google.common.base.Strings;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.UUID;
 
 public class SecurityHelper {
@@ -16,7 +18,6 @@ public class SecurityHelper {
     roleNode.setMaxParentInstanceLevel(maxParentLevelInstsance);
     return roleNode;
   }
-
 
   public static RoleNode roleNodeOf(String uuid,
                                     String target,
@@ -34,8 +35,6 @@ public class SecurityHelper {
     return roleNode;
   }
 
-
-
   public static Permission permissionOf(String uuid, String domainCode, String actionCode) {
     Domain domain = new Domain();
     domain.setCode(domainCode);
@@ -52,15 +51,16 @@ public class SecurityHelper {
     return permission;
   }
 
-  public static RoleNodePermission roleNodePermissionOf(String uuid,
-                                                        Permission permission,
-                                                        String target,
-                                                        String targetId,
-                                                        Boolean allowed,
-                                                        RoleNode parent,
-                                                        boolean asTemplate
-  ) {
-    RoleNodePermission roleNodePermission = asTemplate ? new RoleNodePermissionTemplate() : new RoleNodePermission();
+  public static <P extends RoleNodePermission> P roleNodePermissionOf(Class<P> pClass, String uuid,
+                                                                      Permission permission, String target,
+                                                                      String targetId, Boolean allowed,
+                                                                      RoleNode parent) {
+    P roleNodePermission;
+    try {
+      roleNodePermission = pClass.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
     roleNodePermission.setUuid(Strings.isNullOrEmpty(uuid) ? UUID.randomUUID().toString() : uuid);
     roleNodePermission.setRoleNode(parent);
     roleNodePermission.setPermission(permission);
@@ -72,4 +72,18 @@ public class SecurityHelper {
     return roleNodePermission;
   }
 
+  @SuppressWarnings("SameParameterValue")
+  public static  <P extends RoleNodePermission> List<P> prepRoleNodePermissions(Class<P> pClass,
+                                                                                RoleNode node,
+                                                                                List<Permission> permissions,
+                                                                                String target,
+                                                                                String targetId) {
+    return permissions.stream()
+        .map(
+            p -> SecurityHelper.roleNodePermissionOf(
+                pClass, UUID.randomUUID().toString(), p, target, targetId, true, node
+            )
+        )
+        .toList();
+  }
 }

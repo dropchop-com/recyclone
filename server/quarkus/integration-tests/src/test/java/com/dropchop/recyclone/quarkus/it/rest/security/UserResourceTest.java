@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
@@ -20,11 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 25. 05. 22.
  */
-//@Disabled
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserResourceTest {
-
 
   private static final String userId = UUID.randomUUID().toString();
   private static final String userId2 = UUID.randomUUID().toString();
@@ -54,15 +52,13 @@ public class UserResourceTest {
       .extract()
       .body().jsonPath().getList("data", User.class);
     assertEquals(1, result.size());
-    User respUser = result.get(0);
+    User respUser = result.getFirst();
     assertEquals(user, respUser );
     assertEquals(user.getLanguage(), respUser.getLanguage());
     assertEquals(user.getCountry(), respUser.getCountry());
     assertEquals(user.getFirstName(), respUser.getFirstName());
     assertEquals(user.getLastName(), respUser.getLastName());
-
   }
-
 
   @Test
   @Order(20)
@@ -88,7 +84,7 @@ public class UserResourceTest {
       .extract()
       .body().jsonPath().getList("data", User.class);
     assertEquals(1, result.size());
-    User respUser = result.get(0);
+    User respUser = result.getFirst();
     assertEquals(user, respUser );
     assertEquals(user.getLanguage(), respUser.getLanguage());
     assertEquals(user.getCountry(), respUser.getCountry());
@@ -140,14 +136,12 @@ public class UserResourceTest {
       .extract()
       .body().jsonPath().getList("data", User.class);
     assertEquals(1, result.size());
-    User respUser = result.get(0);
+    User respUser = result.getFirst();
     assertEquals(user, respUser );
     assertEquals(user.getLanguage(), respUser.getLanguage());
     assertEquals(user.getCountry(), respUser.getCountry());
     assertEquals(user.getFirstName(), respUser.getFirstName());
     assertEquals(user.getLastName(), respUser.getLastName());
     assertEquals(user.getAccounts().size(), respUser.getAccounts().size());
-
   }
-
 }

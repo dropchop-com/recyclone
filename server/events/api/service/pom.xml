@@ -20,11 +20,13 @@
   </properties>
 
   <dependencies>
+    <!-- general -->
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
     </dependency>
 
+    <!-- recyclone -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-api-service</artifactId>

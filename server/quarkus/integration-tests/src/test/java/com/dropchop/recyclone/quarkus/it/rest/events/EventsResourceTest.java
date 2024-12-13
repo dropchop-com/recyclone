@@ -6,7 +6,7 @@ import com.dropchop.recyclone.model.dto.event.EventDetail;
 import com.dropchop.recyclone.model.dto.event.EventItem;
 import com.dropchop.recyclone.model.dto.event.EventTrace;
 import com.dropchop.recyclone.model.dto.invoke.EventParams;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.MethodOrderer;
@@ -44,23 +44,18 @@ public class EventsResourceTest {
     String ACTION = "action";
     String DATA = "data";
     String UNIT = "unit";
-    String ATTRIBUTE_STR = "attribute_string";
-    String ATTRIBUTE_NUM = "attribute_num";
-    String ATTRIBUTE_BOOL = "attribute_num";
-    String ATTRIBUTE_LIST = "attribute_list";
   }
-
 
   private void validate(List<Event> events) {
     assertEquals(1, events.size());
-    Event rspEvent = events.get(0);
+    Event rspEvent = events.getFirst();
     assertEquals(EVENT_ID, rspEvent.getId());
     assertNotNull(rspEvent.getCreated());
     assertEquals(Strings.APPLICATION, rspEvent.getApplication());
     assertEquals(Strings.TYPE, rspEvent.getType());
     assertEquals(Strings.ACTION, rspEvent.getAction());
     assertEquals(Strings.DATA, rspEvent.getData());
-    assertEquals(rspEvent.getValue(), rspEvent.getValue());
+    //assertEquals(rspEvent.getValue(), rspEvent.getValue());
     assertEquals(Strings.UNIT, rspEvent.getUnit());
     assertNotNull(rspEvent.getSource());
     assertNotNull(rspEvent.getSource().getSubject());
@@ -111,7 +106,6 @@ public class EventsResourceTest {
     assertEquals(true, rspEvent.getAttributeValue(Strings.ATTRIBUTE_BOOL));*/
 
   }
-
 
   @Test
   @Order(10)
@@ -169,13 +163,12 @@ public class EventsResourceTest {
     this.validate(events);
   }
 
-
   @Test
   @Order(20)
   public void search() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException ignored) {}
 
     Condition c = or(
       field("uuid", EVENT_ID)
@@ -200,16 +193,14 @@ public class EventsResourceTest {
         .body().jsonPath().getList(".", Event.class);
 
     this.validate(events);
-
   }
-
 
   @Test
   @Order(25)
   public void get() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException ignored) {}
 
     List<Event> events = given()
         .log().all()
@@ -227,8 +218,6 @@ public class EventsResourceTest {
     this.validate(events);
 
   }
-
-
 
   @Test
   @Order(30)
@@ -255,7 +244,7 @@ public class EventsResourceTest {
 
     try {
       Thread.sleep(5000);
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException ignored) {}
 
     events = given()
       .log().all()
@@ -274,6 +263,4 @@ public class EventsResourceTest {
 
     assertEquals(0, events.size());
   }
-
-
 }

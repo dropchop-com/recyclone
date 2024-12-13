@@ -6,13 +6,13 @@ import com.dropchop.recyclone.model.api.security.annotations.RequiresAuthenticat
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
-import com.dropchop.recyclone.rest.api.DynamicExecContext;
+import com.dropchop.recyclone.model.api.rest.DynamicExecContext;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 
 import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.PERMISSIONS_LIST_SEGMENT;
-import static com.dropchop.recyclone.rest.api.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
+import static com.dropchop.recyclone.model.api.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
 
 @Path(Constants.Paths.Security.PERMISSIONS)
 @DynamicExecContext(value = RoleNodeParams.class, internal = true)

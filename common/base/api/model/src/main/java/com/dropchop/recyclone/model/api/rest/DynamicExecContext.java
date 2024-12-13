@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.api;
+package com.dropchop.recyclone.model.api.rest;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 03. 22.
  */
+@SuppressWarnings("unused")
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DynamicExecContext {

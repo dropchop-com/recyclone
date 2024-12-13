@@ -9,8 +9,8 @@ import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.dto.invoke.DummyQueryParams;
-import com.dropchop.recyclone.rest.api.DynamicExecContext;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.DynamicExecContext;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import jakarta.ws.rs.*;
 
 import java.util.List;

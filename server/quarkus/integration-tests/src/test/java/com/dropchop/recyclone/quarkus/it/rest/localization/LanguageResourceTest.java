@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -142,7 +142,7 @@ public class LanguageResourceTest {
     Language language = languages.get(1);
     List<Tag> tags = language.getTags();
     assertEquals(1, tags.size());
-    LanguageGroup group = (LanguageGroup)tags.get(0);
+    LanguageGroup group = (LanguageGroup)tags.getFirst();
     assertEquals("slavic", group.getName());
     assertEquals(UUID.fromString("c73847a8-836a-3ad3-b4f8-4a331248088d"), group.getUuid());
     assertEquals("c73847a8-836a-3ad3-b4f8-4a331248088d", group.getId());
@@ -176,13 +176,14 @@ public class LanguageResourceTest {
       .extract()
       .jsonPath().getList("data", Language.class);
     assertEquals(7, languages.size());
-    assertEquals(new Language("en"), languages.get(0));
-    assertNotNull(languages.get(0).getLang());
-    assertNotNull(languages.get(0).getTitle());
-    assertNotNull(languages.get(0).getCreated());
-    assertNotNull(languages.get(0).getModified());
-    assertNull(languages.get(0).getDeactivated());
-    assertNotNull(languages.get(0).getTranslations());
+    Language language = languages.getFirst();
+    assertEquals(new Language("en"), language);
+    assertNotNull(language.getLang());
+    assertNotNull(language.getTitle());
+    assertNotNull(language.getCreated());
+    assertNotNull(language.getModified());
+    assertNull(language.getDeactivated());
+    assertNotNull(language.getTranslations());
     assertEquals(new Language("sl"), languages.get(1));
     assertEquals(new Language("sl-nonstandard"), languages.get(2));
     assertEquals(new Language("hr"), languages.get(3));
@@ -203,13 +204,14 @@ public class LanguageResourceTest {
       .extract()
       .jsonPath().getList("data", Language.class);
     assertEquals(2, languages.size());
-    assertEquals(new Language("sl"), languages.get(0));
-    assertNull(languages.get(0).getLang());
-    assertNotNull(languages.get(0).getTitle());
-    assertNull(languages.get(0).getCreated());
-    assertNull(languages.get(0).getModified());
-    assertNull(languages.get(0).getDeactivated());
-    assertNull(languages.get(0).getTranslations());
+    Language language = languages.getFirst();
+    assertEquals(new Language("sl"), language);
+    assertNull(language.getLang());
+    assertNotNull(language.getTitle());
+    assertNull(language.getCreated());
+    assertNull(language.getModified());
+    assertNull(language.getDeactivated());
+    assertNull(language.getTranslations());
     assertEquals(new Language("hr"), languages.get(1));
   }
 
@@ -267,7 +269,7 @@ public class LanguageResourceTest {
       .extract()
       .body().jsonPath().getList(".", Language.class);
     assertEquals(1, languages.size());
-    assertEquals(language, languages.get(0));
+    assertEquals(language, languages.getFirst());
   }
 
   @Test
@@ -288,7 +290,7 @@ public class LanguageResourceTest {
       .extract()
       .body().jsonPath().getList(".", Language.class);
     assertEquals(1, languages.size());
-    assertEquals(new Language("bs"), languages.get(0));
+    assertEquals(new Language("bs"), languages.getFirst());
   }
 
   @Test
@@ -307,7 +309,7 @@ public class LanguageResourceTest {
       .extract()
       .jsonPath().getList("data", Language.class);
     assertEquals(2, languages.size());
-    assertEquals(new Language("sl"), languages.get(0));
+    assertEquals(new Language("sl"), languages.getFirst());
     /*assertNull(languages.get(0).getLang());
     assertNotNull(languages.get(0).getTitle());
     assertNull(languages.get(0).getCreated());

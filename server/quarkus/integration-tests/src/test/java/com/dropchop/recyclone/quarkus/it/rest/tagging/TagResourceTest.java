@@ -3,7 +3,7 @@ package com.dropchop.recyclone.quarkus.it.rest.tagging;
 import com.dropchop.recyclone.model.api.attr.*;
 import com.dropchop.recyclone.model.api.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.model.api.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -128,9 +128,7 @@ public class TagResourceTest {
     assertEquals(role.getTitle(), respRole.getTitle());
     assertEquals(role.getLang(), respRole.getLang());
     assertEquals(role.getTranslations(), respRole.getTranslations());*/
-
   }
-
 
   @Test
   @Order(30)
@@ -163,6 +161,6 @@ public class TagResourceTest {
         .extract()
         .body().jsonPath().getList("data", LanguageGroup.class);
     assertEquals(1, result.size());
-    assertEquals(3, result.get(0).getAttributes().size());
+    assertEquals(3, result.getFirst().getAttributes().size());
   }
 }

@@ -41,7 +41,7 @@ public class RestProcessor {
   private static final Logger log = Logger.getLogger("com.dropchop.recyclone.quarkus");
 
   private static final DotName DYN_CTX_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.rest.api.DynamicExecContext"
+      "com.dropchop.recyclone.model.api.rest.DynamicExecContext"
   );
 
   private static final DotName PATH_ANNOTATION = DotName.createSimple(

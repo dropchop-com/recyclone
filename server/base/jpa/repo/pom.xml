@@ -20,6 +20,7 @@
   </properties>
 
   <dependencies>
+    <!-- general -->
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
@@ -28,9 +29,11 @@
       <groupId>com.blazebit</groupId>
       <artifactId>blaze-persistence-core-api-jakarta</artifactId>
     </dependency>
+
+    <!-- recyclone -->
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-base-api-repo</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
@@ -39,10 +42,6 @@
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-jpa-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-base-api-repo</artifactId>
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>

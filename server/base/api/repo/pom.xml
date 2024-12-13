@@ -21,10 +21,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
     </dependency>
@@ -35,10 +31,6 @@
 
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-base-api-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-dto-model</artifactId>
     </dependency>
     <dependency>
@@ -46,5 +38,4 @@
       <artifactId>recyclone-base-api-mapper</artifactId>
     </dependency>
   </dependencies>
-
 </project>

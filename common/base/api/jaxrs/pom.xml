@@ -17,4 +17,18 @@
     <module>public</module>
     <module>internal</module>
   </modules>
+
+  <dependencies>
+    <!-- general -->
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+    </dependency>
+
+    <!-- recyclone -->
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-base-dto-model</artifactId>
+    </dependency>
+  </dependencies>
 </project>
