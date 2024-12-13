@@ -14,7 +14,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class TitleDescriptionTranslation
   extends TitleTranslation
-  implements com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation {
+  implements com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslation {
 
   public TitleDescriptionTranslation(@NonNull String lang, @NonNull String title) {
     super(lang, title);

@@ -14,11 +14,11 @@ import java.util.List;
 @SuperBuilder
 @RequiredArgsConstructor
 public class IdentifierParams extends Params
-  implements com.dropchop.recyclone.model.api.invoke.IdentifierParams<
-  ResultFilter,
-  ResultFilter.ContentFilter,
-  ResultFilter.LanguageFilter,
-  ResultFilterDefaults> {
+  implements com.dropchop.recyclone.base.api.model.invoke.IdentifierParams<
+    ResultFilter,
+    ResultFilter.ContentFilter,
+    ResultFilter.LanguageFilter,
+    ResultFilterDefaults> {
 
   @Singular
   @ToString.Include

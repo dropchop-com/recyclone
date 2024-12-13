@@ -10,7 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
@@ -18,6 +18,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
+@SuppressWarnings("unused")
 public class LanguageService extends CrudServiceImpl<Language, JpaLanguage, String>
   implements com.dropchop.recyclone.service.api.localization.LanguageService {
 

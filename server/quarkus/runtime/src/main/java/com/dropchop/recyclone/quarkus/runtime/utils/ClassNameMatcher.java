@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.runtime.utils;
 
-import com.dropchop.recyclone.model.api.utils.Strings;
+import com.dropchop.recyclone.base.api.model.utils.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

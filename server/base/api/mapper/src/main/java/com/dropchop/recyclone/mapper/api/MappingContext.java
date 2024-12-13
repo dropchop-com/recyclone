@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
-import com.dropchop.recyclone.model.api.invoke.DataExecContext;
-import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.api.security.annotations.Logical;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.DataExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
+import com.dropchop.recyclone.base.api.model.security.annotations.Logical;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import lombok.Getter;
 import lombok.Setter;

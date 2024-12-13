@@ -1,11 +1,10 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.rest.ResultCode;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;
-import com.dropchop.recyclone.mapper.api.MappingContext;
 import org.mapstruct.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

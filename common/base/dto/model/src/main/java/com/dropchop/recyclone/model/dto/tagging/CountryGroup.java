@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 )
 @SuppressWarnings("unused")
 public class CountryGroup extends NamedTag
-  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<Tag, TitleDescriptionTranslation> {
+  implements com.dropchop.recyclone.base.api.model.tagging.CountryGroup<Tag, TitleDescriptionTranslation> {
 
   public CountryGroup(@NonNull String name) {
     super(name);

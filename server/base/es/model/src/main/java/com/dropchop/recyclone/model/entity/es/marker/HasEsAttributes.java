@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.entity.es.marker;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.marker.HasAttributes;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.model.entity.es.attr.EsAttribute;
 
 import java.util.HashSet;

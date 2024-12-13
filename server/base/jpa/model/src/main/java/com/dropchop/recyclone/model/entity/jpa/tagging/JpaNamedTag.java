@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
-import com.dropchop.recyclone.model.api.tagging.NamedTag;
+import com.dropchop.recyclone.base.api.model.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

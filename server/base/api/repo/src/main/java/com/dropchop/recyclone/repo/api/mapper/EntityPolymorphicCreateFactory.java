@@ -1,13 +1,13 @@
 package com.dropchop.recyclone.repo.api.mapper;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 import lombok.extern.slf4j.Slf4j;
 

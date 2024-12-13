@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.security.PermissionTemplate;
+import com.dropchop.recyclone.base.api.model.security.PermissionTemplate;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue(value = "Template")
+@SuppressWarnings("unused")
 public class JpaPermissionTemplate extends JpaPermissionInstance implements PermissionTemplate<JpaPermission,
     JpaTitleDescriptionTranslation, JpaAction, JpaDomain> {
 
@@ -22,5 +23,4 @@ public class JpaPermissionTemplate extends JpaPermissionInstance implements Perm
 
   @Column(name = "sub_subject_uuid")
   private UUID subSubjectId;
-
 }

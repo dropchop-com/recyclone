@@ -3,7 +3,7 @@ package com.dropchop.recyclone.repo.jpa.blaze.security;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.UserToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserToJpaMapper;
-import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
 import com.dropchop.recyclone.repo.api.mapper.EntityPolymorphicCreateFactory;
@@ -21,6 +21,7 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
+@SuppressWarnings("unused")
 public class UserMapperProvider extends RecycloneMapperProvider<User, JpaUser, UUID> {
 
   @Inject

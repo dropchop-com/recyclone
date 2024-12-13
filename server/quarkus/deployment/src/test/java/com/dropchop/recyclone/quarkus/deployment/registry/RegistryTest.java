@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;

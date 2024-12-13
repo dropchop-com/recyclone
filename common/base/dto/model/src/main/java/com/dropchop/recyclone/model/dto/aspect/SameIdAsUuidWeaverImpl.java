@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.aspect;
 
-import com.dropchop.recyclone.model.api.aspect.SameIdAsUuidWeaver;
+import com.dropchop.recyclone.base.api.model.aspect.SameIdAsUuidWeaver;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 
@@ -14,8 +14,8 @@ import java.util.UUID;
 public class SameIdAsUuidWeaverImpl implements SameIdAsUuidWeaver {
 
   @After(value = "set(String com.dropchop.recyclone.model.dto..id) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasId) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasUuid) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasId) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasUuid) " +
       "&& target(oModel) && args(id)",
     argNames = "oModel,id")
   public void changeClassWithId(Object oModel, String id) {
@@ -23,8 +23,8 @@ public class SameIdAsUuidWeaverImpl implements SameIdAsUuidWeaver {
   }
 
   @After(value = "set(java.util.UUID com.dropchop.recyclone.model.dto..uuid) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasId) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasUuid) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasId) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasUuid) " +
       "&& target(oModel) && args(uuid)",
     argNames = "oModel,uuid")
   public void changeClassWithUuid(Object oModel, UUID uuid) {

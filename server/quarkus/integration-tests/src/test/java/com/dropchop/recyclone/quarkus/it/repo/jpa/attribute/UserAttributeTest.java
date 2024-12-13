@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.attribute;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
+import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;

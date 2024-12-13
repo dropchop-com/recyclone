@@ -19,7 +19,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 public class PermissionInstance extends DtoId
-  implements com.dropchop.recyclone.model.api.security.PermissionInstance<Permission, TitleDescriptionTranslation, Action, Domain> {
+  implements com.dropchop.recyclone.base.api.model.security.PermissionInstance<Permission, TitleDescriptionTranslation, Action, Domain> {
 
   private Permission permission;
   private String subject;

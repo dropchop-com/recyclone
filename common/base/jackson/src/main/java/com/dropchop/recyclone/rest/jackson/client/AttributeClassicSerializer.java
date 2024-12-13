@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -19,36 +19,38 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 08. 22.
  */
 @Slf4j
+@SuppressWarnings("rawtypes")
 public class AttributeClassicSerializer extends JsonSerializer<Attribute> {
 
   protected void valueWrite(JsonGenerator gen, Object value) throws IOException {
-    if (value == null) {
-      gen.writeNull();
-    } else if (value instanceof String) {
-      gen.writeString((String) value);
-    } else if (value instanceof Boolean) {
-      gen.writeBoolean((Boolean) value);
-    } else if (value instanceof ZonedDateTime) {
-      gen.writeString(Iso8601.DATE_TIME_MS_TZ_FORMATTER.get().format((ZonedDateTime) value));
-    } else if (value instanceof BigDecimal) {
-      gen.writeNumber((BigDecimal) value);
-    } else if (value instanceof List<?>) {
-      gen.writeStartArray(value);
-      for (Object item : (List<?>)value) {
-        valueWrite(gen, item);
-      }
-      gen.writeEndArray();
-    } else if (value instanceof Set<?>) {
-      gen.writeStartObject(value);
-      for (Object item : (Set<?>)value) {
-        if (item instanceof Attribute<?> attr) {
-          nameValueWrite(gen, attr, attr.getName(), attr.getValue());
-        } else {
-          log.warn("Item [{}] in set is not instance of [{}]. Skipping serialization!",
-            item, Attribute.class.getName());
+    switch (value) {
+      case null -> gen.writeNull();
+      case String s -> gen.writeString(s);
+      case Boolean b -> gen.writeBoolean(b);
+      case ZonedDateTime zonedDateTime ->
+          gen.writeString(Iso8601.DATE_TIME_MS_TZ_FORMATTER.get().format(zonedDateTime));
+      case BigDecimal bigDecimal -> gen.writeNumber(bigDecimal);
+      case List<?> objects -> {
+        gen.writeStartArray(value);
+        for (Object item : objects) {
+          valueWrite(gen, item);
         }
+        gen.writeEndArray();
       }
-      gen.writeEndObject();
+      case Set<?> objects -> {
+        gen.writeStartObject(value);
+        for (Object item : objects) {
+          if (item instanceof Attribute<?> attr) {
+            nameValueWrite(gen, attr, attr.getName(), attr.getValue());
+          } else {
+            log.warn("Item [{}] in set is not instance of [{}]. Skipping serialization!",
+                item, Attribute.class.getName());
+          }
+        }
+        gen.writeEndObject();
+      }
+      default -> {
+      }
     }
   }
 

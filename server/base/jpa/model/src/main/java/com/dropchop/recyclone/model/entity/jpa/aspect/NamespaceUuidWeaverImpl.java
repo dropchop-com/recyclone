@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.entity.jpa.aspect;
 
-import com.dropchop.recyclone.model.api.aspect.NamespaceUuidWeaver;
-import com.dropchop.recyclone.model.api.marker.HasUuidV3;
-import com.dropchop.recyclone.model.api.utils.Uuid;
+import com.dropchop.recyclone.base.api.model.aspect.NamespaceUuidWeaver;
+import com.dropchop.recyclone.base.api.model.marker.HasUuidV3;
+import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 
@@ -29,8 +29,8 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
   }
 
   @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..name) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasName) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV3) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasName) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasUuidV3) " +
       "&& target(oModel) && args(name)",
     argNames = "oModel,name")
   public void changeClassWithName(Object oModel, String name) {
@@ -38,8 +38,8 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
   }
 
   @After(value = "set(String com.dropchop.recyclone.model.entity.jpa..code) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasCode) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV3) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasCode) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasUuidV3) " +
       "&& target(oModel) && args(code)",
     argNames = "oModel,code")
   public void changeClassWithCode(Object oModel, String code) {

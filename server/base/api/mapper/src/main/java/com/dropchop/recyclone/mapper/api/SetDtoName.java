@@ -1,9 +1,8 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.marker.HasName;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.marker.HasName;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.base;
 
-import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;

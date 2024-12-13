@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.runtime.app;
 
-import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import io.quarkus.arc.DefaultBean;
 import io.vertx.core.impl.ConcurrentHashSet;
 import jakarta.enterprise.context.ApplicationScoped;

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.security.LoginAccount;
+import com.dropchop.recyclone.base.api.model.security.LoginAccount;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

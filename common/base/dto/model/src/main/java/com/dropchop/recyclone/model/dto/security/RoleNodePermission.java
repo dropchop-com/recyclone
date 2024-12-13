@@ -19,18 +19,17 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
-public class RoleNodePermission extends DtoId implements com.dropchop.recyclone.model.api.security.RoleNodePermission<
+public class RoleNodePermission extends DtoId implements com.dropchop.recyclone.base.api.model.security.RoleNodePermission<
         Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
 
-    private final String type = this.getClass().getSimpleName();
+  @Getter
+  private final String type = this.getClass().getSimpleName();
 
-    private RoleNode roleNode;
-    private Permission permission;
-    private Boolean allowed;
+  private RoleNode roleNode;
 
-    public String getType() {
-        return this.type;
-    }
+  private Permission permission;
 
-    public void setType(String type) {}
+  private Boolean allowed;
+
+  public void setType(String type) {}
 }

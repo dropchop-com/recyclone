@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.quarkus.it.rest.events;
 
-import com.dropchop.recyclone.model.api.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.dto.event.EventDetail;
 import com.dropchop.recyclone.model.dto.event.EventItem;
 import com.dropchop.recyclone.model.dto.event.EventTrace;
 import com.dropchop.recyclone.model.dto.invoke.EventParams;
-import com.dropchop.recyclone.model.api.rest.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.MethodOrderer;
@@ -18,8 +18,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.query.Condition.field;
-import static com.dropchop.recyclone.model.api.query.Condition.or;
+import static com.dropchop.recyclone.base.api.model.query.Condition.field;
+import static com.dropchop.recyclone.base.api.model.query.Condition.or;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

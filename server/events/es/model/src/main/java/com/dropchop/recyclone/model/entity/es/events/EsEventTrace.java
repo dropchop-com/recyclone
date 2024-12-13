@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.events;
 
-import com.dropchop.recyclone.model.api.event.EventTrace;
+import com.dropchop.recyclone.base.api.model.event.EventTrace;
 import com.dropchop.recyclone.model.entity.es.base.EsUuid;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

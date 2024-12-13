@@ -36,7 +36,7 @@ public class ShiroProcessor {
   private static final Logger LOG = Logger.getLogger(ShiroProcessor.class);
 
   private static final DotName OLD_LOGICAL = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.security.annotations.Logical"
+      "com.dropchop.recyclone.base.api.model.security.annotations.Logical"
   );
 
   private static final DotName NEW_LOGICAL = DotName.createSimple(
@@ -44,7 +44,7 @@ public class ShiroProcessor {
   );
 
   private static final DotName DC_PERMISSION_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions"
+      "com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions"
   );
 
   private static final DotName SHIRO_PERMISSION_ANNO = DotName.createSimple(
@@ -52,7 +52,7 @@ public class ShiroProcessor {
   );
 
   private static final DotName DC_ROLE_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.security.annotations.RequiresRoles"
+      "com.dropchop.recyclone.base.api.model.security.annotations.RequiresRoles"
   );
 
   private static final DotName SHIRO_ROLE_ANNO = DotName.createSimple(
@@ -60,7 +60,7 @@ public class ShiroProcessor {
   );
 
   private static final DotName DC_USER_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.security.annotations.RequiresUser"
+      "com.dropchop.recyclone.base.api.model.security.annotations.RequiresUser"
   );
 
   private static final DotName SHIRO_USER_ANNO = DotName.createSimple(
@@ -68,7 +68,7 @@ public class ShiroProcessor {
   );
 
   private static final DotName DC_GUEST_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.security.annotations.RequiresGuest"
+      "com.dropchop.recyclone.base.api.model.security.annotations.RequiresGuest"
   );
 
   private static final DotName SHIRO_GUEST_ANNO = DotName.createSimple(
@@ -76,7 +76,7 @@ public class ShiroProcessor {
   );
 
   private static final DotName DC_AUTH_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.security.annotations.RequiresAuthentication"
+      "com.dropchop.recyclone.base.api.model.security.annotations.RequiresAuthentication"
   );
 
   private static final DotName SHIRO_AUTH_ANNO = DotName.createSimple(

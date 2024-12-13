@@ -1,15 +1,15 @@
 package com.dropchop.recyclone.repo.es.mapper;
 
-import com.dropchop.recyclone.model.api.query.*;
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
-import com.dropchop.recyclone.model.api.query.aggregation.BaseAggregation;
-import com.dropchop.recyclone.model.api.query.aggregation.Count;
-import com.dropchop.recyclone.model.api.query.aggregation.DateHistogram;
-import com.dropchop.recyclone.model.api.query.condition.And;
-import com.dropchop.recyclone.model.api.query.condition.LogicalCondition;
-import com.dropchop.recyclone.model.api.query.condition.Not;
-import com.dropchop.recyclone.model.api.query.condition.Or;
-import com.dropchop.recyclone.model.api.query.operator.*;
+import com.dropchop.recyclone.base.api.model.query.*;
+import com.dropchop.recyclone.base.api.model.query.operator.*;
+import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.api.model.query.aggregation.BaseAggregation;
+import com.dropchop.recyclone.base.api.model.query.aggregation.Count;
+import com.dropchop.recyclone.base.api.model.query.aggregation.DateHistogram;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
+import com.dropchop.recyclone.base.api.model.query.condition.Not;
+import com.dropchop.recyclone.base.api.model.query.condition.Or;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;

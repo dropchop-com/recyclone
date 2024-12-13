@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.attr.*;
+import com.dropchop.recyclone.base.api.model.attr.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;

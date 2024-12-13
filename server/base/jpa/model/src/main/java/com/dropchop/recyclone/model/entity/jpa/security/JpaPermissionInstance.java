@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.security.PermissionInstance;
+import com.dropchop.recyclone.base.api.model.security.PermissionInstance;
 import com.dropchop.recyclone.model.entity.jpa.base.JpaUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import jakarta.persistence.*;

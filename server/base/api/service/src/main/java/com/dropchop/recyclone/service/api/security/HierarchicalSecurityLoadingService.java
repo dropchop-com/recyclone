@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.service.api.security;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.Permission;
 import com.dropchop.recyclone.model.dto.security.RoleNode;

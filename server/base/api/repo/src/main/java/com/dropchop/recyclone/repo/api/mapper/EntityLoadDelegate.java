@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.repo.api.mapper;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.repo.api.ReadRepository;

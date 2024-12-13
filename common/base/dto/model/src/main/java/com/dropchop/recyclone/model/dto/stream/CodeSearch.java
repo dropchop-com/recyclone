@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.stream;
 
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 

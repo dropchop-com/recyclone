@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.attr;
 
-import com.dropchop.recyclone.model.api.attr.*;
+import com.dropchop.recyclone.base.api.model.attr.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +13,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.marshall;
-import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.unmarshall;
+import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.marshall;
+import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.unmarshall;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
@@ -97,20 +97,14 @@ public class JpaAttribute<X> implements Attribute<X> {
     jpaAttribute.setName(attribute.getName());
     jpaAttribute.setValue(attribute.getValue());
     jpaAttribute.setStrValue(marshall(attribute));
-    if (attribute instanceof AttributeString) {
-      jpaAttribute.setType(Type.str);
-    } else if (attribute instanceof AttributeBool) {
-      jpaAttribute.setType(Type.bool);
-    } else if (attribute instanceof AttributeDate) {
-      jpaAttribute.setType(Type.date);
-    } else if (attribute instanceof AttributeDecimal) {
-      jpaAttribute.setType(Type.num);
-    } else if (attribute instanceof AttributeSet) {
-      jpaAttribute.setType(Type.set);
-    } else if (attribute instanceof AttributeValueList<?>) {
-      jpaAttribute.setType(Type.list);
-    } else {
-      throw new UnsupportedOperationException("Unsupported Attribute to JpaAttribute conversion");
+    switch (attribute) {
+      case AttributeString ignored -> jpaAttribute.setType(Type.str);
+      case AttributeBool ignored -> jpaAttribute.setType(Type.bool);
+      case AttributeDate ignored -> jpaAttribute.setType(Type.date);
+      case AttributeDecimal ignored -> jpaAttribute.setType(Type.num);
+      case AttributeSet ignored -> jpaAttribute.setType(Type.set);
+      case AttributeValueList<?> ignored -> jpaAttribute.setType(Type.list);
+      default -> throw new UnsupportedOperationException("Unsupported Attribute to JpaAttribute conversion");
     }
 
     return jpaAttribute;

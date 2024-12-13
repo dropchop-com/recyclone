@@ -1,13 +1,12 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.localization.Translation;
-import com.dropchop.recyclone.model.api.marker.HasTranslation;
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.security.Constants.Actions;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.localization.Translation;
+import com.dropchop.recyclone.base.api.model.marker.HasTranslation;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -15,6 +14,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 04. 22.
  */
+@SuppressWarnings("unused")
 public class SetEntityModification
   extends RestrictedAfterToEntityListener {
 

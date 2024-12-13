@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.model.dto.localization;
 
-import com.dropchop.recyclone.model.api.marker.HasTags;
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.api.model.marker.HasTags;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoCode;
 import com.dropchop.recyclone.model.dto.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,7 +30,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 public class Country extends DtoCode
-  implements com.dropchop.recyclone.model.api.localization.Country<TitleTranslation>,
+  implements com.dropchop.recyclone.base.api.model.localization.Country<TitleTranslation>,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon,
   HasTags<Tag, TitleDescriptionTranslation> {
 

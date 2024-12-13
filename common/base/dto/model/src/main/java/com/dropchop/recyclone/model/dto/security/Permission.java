@@ -1,15 +1,14 @@
 package com.dropchop.recyclone.model.dto.security;
 
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -26,7 +25,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 public class Permission extends DtoId
-  implements com.dropchop.recyclone.model.api.security.Permission<TitleDescriptionTranslation, Action, Domain>,
+  implements com.dropchop.recyclone.base.api.model.security.Permission<TitleDescriptionTranslation, Action, Domain>,
   Comparable<Permission>, HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
   private Domain domain;
@@ -62,14 +61,14 @@ public class Permission extends DtoId
       buff.append(this.domain.getCode());
     }
     if (this.action != null) {
-      if (buff.length() == 0) {
+      if (buff.isEmpty()) {
         buff.append("*");
       }
       buff.append(":");
       buff.append(this.action.getCode());
     }
     if (this.instances != null && !this.instances.isEmpty()) {
-      if (buff.length() == 0) {
+      if (buff.isEmpty()) {
         buff.append("*:*");
       }
       buff.append(":");
@@ -80,7 +79,7 @@ public class Permission extends DtoId
         buff.append(this.instances.get(i));
       }
     }
-    if (buff.length() == 0) {
+    if (buff.isEmpty()) {
       buff.append("*");
     }
     return buff.toString();

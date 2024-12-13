@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
 import com.dropchop.recyclone.repo.jpa.blaze.mapping.SetLanguage;

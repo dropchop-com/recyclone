@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.Constants;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.Constants;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextBinder;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
@@ -16,7 +16,7 @@ import org.slf4j.MDC;
 
 import java.io.IOException;
 
-import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_PATH;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_PATH;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 05. 24.

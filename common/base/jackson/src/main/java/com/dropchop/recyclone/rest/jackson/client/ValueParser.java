@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;

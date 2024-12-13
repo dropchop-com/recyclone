@@ -15,7 +15,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
-public class RoleNode extends DtoId implements com.dropchop.recyclone.model.api.security.RoleNode<
+public class RoleNode extends DtoId implements com.dropchop.recyclone.base.api.model.security.RoleNode<
         Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
 
     //target group info

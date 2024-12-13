@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 3. 12. 24.

@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class Person extends DtoId
-  implements com.dropchop.recyclone.model.api.common.Person<Country, Language, TitleTranslation> {
+  implements com.dropchop.recyclone.base.api.model.common.Person<Country, Language, TitleTranslation> {
 
   private Country country;
   private Language language;

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.events;
 
-import com.dropchop.recyclone.model.api.event.Event;
+import com.dropchop.recyclone.base.api.model.event.Event;
 import com.dropchop.recyclone.model.entity.es.attr.EsAttribute;
 import com.dropchop.recyclone.model.entity.es.base.EsUuid;
 import com.dropchop.recyclone.model.entity.es.marker.HasEsAttributes;

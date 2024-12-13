@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;

@@ -12,11 +12,12 @@ import lombok.Getter;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
+@SuppressWarnings("unused")
 public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
     implements com.dropchop.recyclone.service.api.security.UserService {
 

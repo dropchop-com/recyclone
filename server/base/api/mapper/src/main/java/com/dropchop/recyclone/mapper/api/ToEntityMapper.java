@@ -1,8 +1,7 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Model;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Context;

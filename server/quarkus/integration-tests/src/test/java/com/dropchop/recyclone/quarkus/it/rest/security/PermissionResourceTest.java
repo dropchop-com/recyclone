@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
-import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.security.Action;
 import com.dropchop.recyclone.model.dto.security.Domain;
 import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.api.rest.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;

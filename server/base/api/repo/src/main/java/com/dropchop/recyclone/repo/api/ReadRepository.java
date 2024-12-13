@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.api;
 
-import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 
 import java.util.Collection;

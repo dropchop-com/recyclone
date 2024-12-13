@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.dto.rest;
 
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.api.rest.ResultCode;
+import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
+import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @SuppressWarnings("unused")
-public class ResultStatus implements com.dropchop.recyclone.model.api.rest.ResultStatus<ResultStats> {
+public class ResultStatus implements com.dropchop.recyclone.base.api.model.rest.ResultStatus<ResultStats> {
 
   @NonNull
   private ResultCode code;

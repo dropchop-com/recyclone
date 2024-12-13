@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.dto.query;
 
-import com.dropchop.recyclone.model.api.query.AggregationCriteria;
-import com.dropchop.recyclone.model.api.query.FilterCriteria;
-import com.dropchop.recyclone.model.api.query.SortCriterion;
+import com.dropchop.recyclone.base.api.model.query.AggregationCriteria;
+import com.dropchop.recyclone.base.api.model.query.FilterCriteria;
+import com.dropchop.recyclone.base.api.model.query.SortCriterion;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -65,8 +65,8 @@ class QueryTest {
     assertEquals(1, query.getPage());
     assertEquals(20, query.getSize());
     assertEquals(1, query.getSortCriteria().size());
-    assertEquals("relevance", query.getSortCriteria().get(0).getField());
-    assertEquals("desc", query.getSortCriteria().get(0).getDirection());
+    assertEquals("relevance", query.getSortCriteria().getFirst().getField());
+    assertEquals("desc", query.getSortCriteria().getFirst().getDirection());
     assertEquals("category", query.getFilterCriteria().getField());
     assertEquals("IN", query.getFilterCriteria().getOperation());
     assertTrue(((List<?>) query.getFilterCriteria().getValue()).contains("books"));
@@ -105,14 +105,14 @@ class QueryTest {
     assertEquals(1, query.getPage());
     assertEquals(20, query.getSize());
     assertEquals(1, query.getSortCriteria().size());
-    assertEquals("relevance", query.getSortCriteria().get(0).getField());
-    assertEquals("desc", query.getSortCriteria().get(0).getDirection());
+    assertEquals("relevance", query.getSortCriteria().getFirst().getField());
+    assertEquals("desc", query.getSortCriteria().getFirst().getDirection());
     assertEquals("category", query.getFilterCriteria().getField());
     assertEquals("IN", query.getFilterCriteria().getOperation());
     assertTrue(((List<?>) query.getFilterCriteria().getValue()).contains("books"));
     assertTrue(((List<?>) query.getFilterCriteria().getValue()).contains("electronics"));
     assertEquals(1, query.getAggregations().size());
-    assertEquals("count_users", query.getAggregations().get(0).getField());
-    assertEquals("count", query.getAggregations().get(0).getType());
+    assertEquals("count_users", query.getAggregations().getFirst().getField());
+    assertEquals("count", query.getAggregations().getFirst().getType());
   }
 }

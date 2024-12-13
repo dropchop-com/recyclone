@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
-import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 /**

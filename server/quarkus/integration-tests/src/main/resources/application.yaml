@@ -76,10 +76,10 @@ quarkus:
     sql-load-script: dev-import.sql
     packages:
       - com.blazebit.persistence.impl.function.entity
-      - com.dropchop.recyclone.model.api
-      - com.dropchop.recyclone.model.api.marker
-      - com.dropchop.recyclone.model.api.localization
-      - com.dropchop.recyclone.model.api.security
+      - com.dropchop.recyclone.base.api.model
+      - com.dropchop.recyclone.base.api.model.marker
+      - com.dropchop.recyclone.base.api.model.localization
+      - com.dropchop.recyclone.base.api.model.security
       - com.dropchop.recyclone.model.entity.jpa
       - com.dropchop.recyclone.model.entity.jpa.localization
       - com.dropchop.recyclone.model.entity.jpa.security

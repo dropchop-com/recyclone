@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.api.mapper;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 
 import java.util.Map;

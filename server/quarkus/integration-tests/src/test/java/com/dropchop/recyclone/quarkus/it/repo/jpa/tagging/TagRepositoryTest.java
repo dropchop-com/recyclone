@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.tagging;
 
-import com.dropchop.recyclone.model.api.attr.*;
+import com.dropchop.recyclone.base.api.model.attr.*;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.dropchop.recyclone.model.api.marker.HasAttributes.getAttributeValue;
+import static com.dropchop.recyclone.base.api.model.marker.HasAttributes.getAttributeValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -100,7 +100,7 @@ public class TagRepositoryTest {
 
     transact(lg -> repository.save(lg), languageGroup1);
     transact(lg -> repository.save(lg), languageGroup2);
-    JpaLanguageGroup group1 = (JpaLanguageGroup) repository.findById(languageGroup1.getUuid());
+    JpaLanguageGroup group1 = repository.findById(languageGroup1.getUuid());
     assertNotNull(group1);
     assertEquals(Boolean.TRUE, group1.getAttributeValue("test1Bool1"));
     assertEquals(Boolean.FALSE, group1.getAttributeValue("test1Bool2"));
@@ -123,7 +123,7 @@ public class TagRepositoryTest {
     }
 
 
-    JpaLanguageGroup group2 = (JpaLanguageGroup) repository.findById(languageGroup2.getUuid());
+    JpaLanguageGroup group2 = repository.findById(languageGroup2.getUuid());
     assertNotNull(group2);
     assertEquals(Boolean.TRUE, group2.getAttributeValue("test2Bool1"));
     assertEquals(Boolean.FALSE, group2.getAttributeValue("test2Bool2"));

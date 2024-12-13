@@ -10,6 +10,7 @@ import java.util.Map;
 /**
  * Not used ... just here as a sample of how to replace annotations.
  */
+@SuppressWarnings("unused")
 public class RestResourceAnnotationProcessor implements AnnotationsTransformer {
 
   final Map<DotName, String> addAnnotation;

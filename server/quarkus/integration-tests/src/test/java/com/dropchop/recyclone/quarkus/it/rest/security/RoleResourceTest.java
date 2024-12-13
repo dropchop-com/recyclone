@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.model.dto.security.Role;
-import com.dropchop.recyclone.model.api.rest.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.MethodOrderer;

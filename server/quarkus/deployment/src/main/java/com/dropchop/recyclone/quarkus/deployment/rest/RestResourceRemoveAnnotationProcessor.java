@@ -9,6 +9,7 @@ import org.jboss.jandex.MethodInfo;
 import java.util.Collection;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class RestResourceRemoveAnnotationProcessor implements AnnotationsTransformer {
 
   private final Set<DotName> classNamesToTransform;

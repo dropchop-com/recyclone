@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.repo.api;
 
 import com.dropchop.recyclone.mapper.api.*;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
-import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
+import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.repo.api.mapper.EntityDelegateFactory;
 import jakarta.inject.Inject;
 
@@ -18,14 +18,12 @@ public abstract class FilteringMapperProvider<D extends Dto, E extends Entity, I
   CommonExecContextContainer ctxContainer;
 
   public MappingContext getMappingContextForRead() {
-    MappingContext context = new FilteringDtoContext().of(ctxContainer.get());
-    //log.debug("Created mapping context [{}] for reading from execution context [{}].", context, ctxContainer.get());
-    return context;
+    return new FilteringDtoContext().of(ctxContainer.get());
   }
 
   public MappingContext getMappingContextForModify() {
     Class<?> rootClass = getRepository().getRootClass();
-    MappingContext context = new FilteringDtoContext()
+    return new FilteringDtoContext()
         .of(ctxContainer.get())
         .createWith(
             new EntityDelegateFactory<>(getRepository())
@@ -38,9 +36,6 @@ public abstract class FilteringMapperProvider<D extends Dto, E extends Entity, I
         .afterMapping(
             new SetEntityDeactivated(rootClass)
         );
-
-    //log.debug("Created mapping context [{}] for modification from execution context [{}].", context, ctxContainer.get());
-    return context;
   }
 
   public abstract CrudRepository<E, ID> getRepository();

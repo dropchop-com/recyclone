@@ -1,14 +1,14 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.base.State;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
-import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
-import com.dropchop.recyclone.model.api.marker.state.HasState;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlined;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCurrent;
+import com.dropchop.recyclone.base.api.model.base.State;
+import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.base.api.model.marker.state.HasState;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlined;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCurrent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;

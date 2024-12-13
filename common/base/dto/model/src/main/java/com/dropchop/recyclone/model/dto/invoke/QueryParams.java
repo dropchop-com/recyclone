@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.query.*;
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
-import com.dropchop.recyclone.model.api.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @RequiredArgsConstructor
-public class QueryParams extends Params implements com.dropchop.recyclone.model.api.invoke.QueryParams<
+public class QueryParams extends Params implements com.dropchop.recyclone.base.api.model.invoke.QueryParams<
     ResultFilter,
     ResultFilter.ContentFilter,
     ResultFilter.LanguageFilter,

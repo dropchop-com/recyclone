@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class SortCriteriaDecorator extends BlazeCriteriaDecorator {
 
   private boolean nullsFirst = false;

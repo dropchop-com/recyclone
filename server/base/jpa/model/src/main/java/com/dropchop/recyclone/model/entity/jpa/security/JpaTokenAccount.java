@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.security.TokenAccount;
+import com.dropchop.recyclone.base.api.model.security.TokenAccount;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;

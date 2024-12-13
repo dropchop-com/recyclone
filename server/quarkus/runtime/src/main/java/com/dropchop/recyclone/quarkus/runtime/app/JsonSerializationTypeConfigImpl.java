@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.runtime.app;
 
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 

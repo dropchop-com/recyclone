@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.SAME_AS_DEPENDANT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.SAME_AS_DEPENDANT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 24.

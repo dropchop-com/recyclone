@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
-import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.api.security.annotations.Logical;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext.Listener;
+import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
+import com.dropchop.recyclone.base.api.model.security.annotations.Logical;
 import lombok.*;
 
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class DefaultExecContext<D extends Dto>
   extends ParamsExecContext<Listener>
   implements CommonExecContext<D, Listener>, SecurityExecContext {

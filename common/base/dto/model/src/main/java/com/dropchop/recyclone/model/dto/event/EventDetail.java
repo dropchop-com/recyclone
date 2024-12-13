@@ -19,7 +19,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
-public class EventDetail extends DtoId implements com.dropchop.recyclone.model.api.event.EventDetail<EventDetail> {
+public class EventDetail extends DtoId implements com.dropchop.recyclone.base.api.model.event.EventDetail<EventDetail> {
 
   private String name;
   private EventDetail parent;

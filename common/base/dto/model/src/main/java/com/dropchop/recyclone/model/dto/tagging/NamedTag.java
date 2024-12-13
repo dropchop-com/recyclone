@@ -18,7 +18,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   property = "type"
 )
 public class NamedTag extends Tag
-  implements com.dropchop.recyclone.model.api.tagging.NamedTag<Tag, TitleDescriptionTranslation> {
+  implements com.dropchop.recyclone.base.api.model.tagging.NamedTag<Tag, TitleDescriptionTranslation> {
 
   @NonNull
   private String name;

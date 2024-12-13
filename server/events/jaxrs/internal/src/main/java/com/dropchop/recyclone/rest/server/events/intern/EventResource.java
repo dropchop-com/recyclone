@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.server.events.intern;
 
-import com.dropchop.recyclone.model.api.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.model.dto.event.Event;
 import com.dropchop.recyclone.model.dto.invoke.EventParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
-import static com.dropchop.recyclone.model.api.query.Condition.field;
-import static com.dropchop.recyclone.model.api.query.Condition.or;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.query.Condition.field;
+import static com.dropchop.recyclone.base.api.model.query.Condition.or;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 22. 01. 22.

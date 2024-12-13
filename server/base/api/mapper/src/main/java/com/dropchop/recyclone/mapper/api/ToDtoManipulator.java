@@ -1,9 +1,7 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
-import com.dropchop.recyclone.mapper.api.MappingContext;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Model;
 import org.mapstruct.*;
 
 /**

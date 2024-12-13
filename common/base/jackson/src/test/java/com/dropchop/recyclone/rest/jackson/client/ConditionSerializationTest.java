@@ -1,14 +1,14 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.query.condition.And;
-import com.dropchop.recyclone.model.api.query.Condition;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import static com.dropchop.recyclone.model.api.query.Condition.*;
-import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
-import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
+import static com.dropchop.recyclone.base.api.model.query.Condition.*;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.gteLt;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 

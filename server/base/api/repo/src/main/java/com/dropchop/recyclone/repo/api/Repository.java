@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.api;
 
-import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.base.api.model.base.Model;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 02. 22.

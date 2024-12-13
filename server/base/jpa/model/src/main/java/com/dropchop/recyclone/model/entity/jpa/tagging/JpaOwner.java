@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
+import com.dropchop.recyclone.base.api.model.tagging.Owner;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @DiscriminatorValue("Owner")
 @SuppressWarnings("unused")
 public class JpaOwner extends JpaNamedTag
-  implements com.dropchop.recyclone.model.api.tagging.Owner<JpaTag, JpaTitleDescriptionTranslation> {
+  implements Owner<JpaTag, JpaTitleDescriptionTranslation> {
   public JpaOwner(@NonNull String name) {
     super(name);
   }

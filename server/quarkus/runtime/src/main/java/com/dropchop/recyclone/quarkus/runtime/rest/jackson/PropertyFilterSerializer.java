@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.filtering.FieldFilter;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.api.rest.Result;
-import com.dropchop.recyclone.model.api.rest.ResultStats;
-import com.dropchop.recyclone.model.api.rest.ResultStatus;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.filtering.FieldFilter;
+import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
+import com.dropchop.recyclone.base.api.model.rest.Result;
+import com.dropchop.recyclone.base.api.model.rest.ResultStats;
+import com.dropchop.recyclone.base.api.model.rest.ResultStatus;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;

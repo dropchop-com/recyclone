@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.aspect;
 
-import com.dropchop.recyclone.model.api.aspect.TimebasedUuidWeaver;
+import com.dropchop.recyclone.base.api.model.aspect.TimebasedUuidWeaver;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 
@@ -15,8 +15,8 @@ import java.util.UUID;
 public class TimebasedUuidWeaverImpl implements TimebasedUuidWeaver {
 
   @After(value = "set(java.time.ZonedDateTime com.dropchop.recyclone.model.entity.es..created) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.state.HasCreated) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV1) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.state.HasCreated) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasUuidV1) " +
       "&& target(oModel) && args(created)",
     argNames = "oModel,created")
   public void changeClassWithCreated(Object oModel, ZonedDateTime created) {
@@ -24,8 +24,8 @@ public class TimebasedUuidWeaverImpl implements TimebasedUuidWeaver {
   }
 
   @After(value = "set(java.util.UUID com.dropchop.recyclone.model.entity.es..uuid) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.state.HasCreated) " +
-      "&& this(com.dropchop.recyclone.model.api.marker.HasUuidV1) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.state.HasCreated) " +
+      "&& this(com.dropchop.recyclone.base.api.model.marker.HasUuidV1) " +
       "&& target(oModel) && args(uuid)",
     argNames = "oModel,uuid")
   public void changeClassWithUuid(Object oModel, UUID uuid) {

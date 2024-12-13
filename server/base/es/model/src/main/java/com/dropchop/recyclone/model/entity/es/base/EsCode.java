@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.base;
 
-import com.dropchop.recyclone.model.api.marker.HasCode;
+import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import lombok.*;
 
 import java.util.Objects;

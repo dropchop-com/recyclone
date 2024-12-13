@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ParamsSelector;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;

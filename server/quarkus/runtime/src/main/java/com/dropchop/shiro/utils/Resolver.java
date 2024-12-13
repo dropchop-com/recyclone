@@ -1,6 +1,6 @@
 package com.dropchop.shiro.utils;
 
-import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.model.dto.security.PermissionInstance;
 
 import java.util.*;
@@ -10,9 +10,11 @@ import java.util.stream.Collectors;
 /**
  * Resolve permissions for subject or subjects of subject, thus allowing permission hierarchy (parent - child)
  */
+@SuppressWarnings("unused")
 public interface Resolver {
 
-  <M extends Model> void resolve(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier, List<List<? extends PermissionInstance>> targetList);
+  <M extends Model> void resolve(Class<M> subject, UUID identifier, Class<M> subSubject, UUID subSubjectIdentifier,
+                                 List<List<? extends PermissionInstance>> targetList);
 
 
   /**
@@ -30,7 +32,10 @@ public interface Resolver {
     }
     if (allowedOnly) {
       //filter allowed only permissions
-      return resolvedPermissions.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(Collectors.toList());
+      return resolvedPermissions.entrySet().stream()
+          .filter(Map.Entry::getValue)
+          .map(Map.Entry::getKey)
+          .collect(Collectors.toList());
     }
     return new ArrayList<>(resolvedPermissions.keySet());
   }

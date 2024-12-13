@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.invoke;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext;
 import io.quarkus.arc.DefaultBean;
 import io.quarkus.arc.Unremovable;
 import jakarta.annotation.Priority;
@@ -15,7 +15,7 @@ import jakarta.enterprise.context.RequestScoped;
 @Priority(200)
 @RequestScoped
 @SuppressWarnings("unused")
-public class ParamsExecContextContainer implements com.dropchop.recyclone.model.api.invoke.ParamsExecContextContainer {
+public class ParamsExecContextContainer implements com.dropchop.recyclone.base.api.model.invoke.ParamsExecContextContainer {
 
   private ParamsExecContext<?> execContext;
 

@@ -1,19 +1,19 @@
 package com.dropchop.recyclone.mapper.api;
 
-import com.dropchop.recyclone.model.api.filtering.*;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
-import com.dropchop.recyclone.model.api.localization.TitleTranslation;
-import com.dropchop.recyclone.model.api.localization.Translation;
-import com.dropchop.recyclone.model.api.marker.HasTitle;
-import com.dropchop.recyclone.model.api.marker.HasTranslation;
-import com.dropchop.recyclone.model.api.marker.HasTranslationInlined;
-import com.dropchop.recyclone.model.api.utils.Objects;
+import com.dropchop.recyclone.base.api.model.filtering.*;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.localization.TitleTranslation;
+import com.dropchop.recyclone.base.api.model.localization.Translation;
+import com.dropchop.recyclone.base.api.model.marker.HasTitle;
+import com.dropchop.recyclone.base.api.model.marker.HasTranslation;
+import com.dropchop.recyclone.base.api.model.marker.HasTranslationInlined;
+import com.dropchop.recyclone.base.api.model.utils.Objects;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.TargetPropertyName;
 
-import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
+import static com.dropchop.recyclone.base.api.model.filtering.PathSegment.ROOT_OBJECT;
 
 /**
  * MappingContext that can filter (include/exclude) object graph paths based on REST client parameters.

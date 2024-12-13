@@ -24,7 +24,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 )
 @SuppressWarnings("unused")
 public class Owner extends NamedTag
-  implements com.dropchop.recyclone.model.api.tagging.Owner<Tag, TitleDescriptionTranslation> {
+  implements com.dropchop.recyclone.base.api.model.tagging.Owner<Tag, TitleDescriptionTranslation> {
 
   public Owner(@NonNull String name) {
     super(name);

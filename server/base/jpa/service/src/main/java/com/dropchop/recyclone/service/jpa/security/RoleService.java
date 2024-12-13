@@ -2,12 +2,12 @@ package com.dropchop.recyclone.service.jpa.security;
 
 import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.model.dto.invoke.RoleParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.security.Role;
@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 
 /**

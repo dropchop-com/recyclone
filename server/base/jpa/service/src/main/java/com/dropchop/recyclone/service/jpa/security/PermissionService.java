@@ -9,11 +9,10 @@ import com.dropchop.recyclone.service.api.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.mapstruct.Mapper;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 
 /**
@@ -22,6 +21,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
+@SuppressWarnings("unused")
 public class PermissionService extends CrudServiceImpl<Permission, JpaPermission, UUID>
   implements com.dropchop.recyclone.service.api.security.PermissionService {
 

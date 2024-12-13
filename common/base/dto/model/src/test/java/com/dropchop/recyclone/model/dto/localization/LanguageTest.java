@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.localization;
 
-import com.dropchop.recyclone.model.api.rest.Constants;
+import com.dropchop.recyclone.base.api.model.rest.Constants;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.ResultFilter;
 import com.dropchop.recyclone.model.dto.invoke.ResultFilter.ContentFilter;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import static com.dropchop.recyclone.model.api.localization.Language.Variant.nonstandard;
+import static com.dropchop.recyclone.base.api.model.localization.Language.Variant.nonstandard;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

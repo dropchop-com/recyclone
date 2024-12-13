@@ -1,17 +1,17 @@
 package com.dropchop.recyclone.quarkus.runtime.invoke;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ParamsExecContext;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_ID;
 
 @ApplicationScoped
 @SuppressWarnings("CdiInjectionPointsInspection")

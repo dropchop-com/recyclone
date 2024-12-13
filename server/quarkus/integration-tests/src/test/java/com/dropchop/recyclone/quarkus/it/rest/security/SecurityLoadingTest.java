@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
 
-import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.*;
-import com.dropchop.recyclone.model.api.rest.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.*;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.*;
 import static com.dropchop.recyclone.quarkus.it.rest.security.SecurityLoadingTest.Data.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;

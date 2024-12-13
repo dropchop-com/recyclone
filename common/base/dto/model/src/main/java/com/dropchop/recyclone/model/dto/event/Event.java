@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.event;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
 public class Event extends DtoId
-    implements com.dropchop.recyclone.model.api.event.Event<EventDetail, EventItem, EventTrace> {
+    implements com.dropchop.recyclone.base.api.model.event.Event<EventDetail, EventItem, EventTrace> {
 
   private String application;
   private String type;

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto;
 
-import com.dropchop.recyclone.model.api.attr.AttributeDate;
+import com.dropchop.recyclone.base.api.model.attr.AttributeDate;
 import org.junit.jupiter.api.Test;
 
 import java.time.format.DateTimeFormatter;
@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AttributeDateTest {
 
+  @SuppressWarnings("unused")
   @Test
-  void parseFromIsoString() throws Exception {
-
+  void parseFromIsoString() {
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
       .appendPattern("yyyy-MM-dd HH:mm:ss")
       .appendFraction(ChronoField.MILLI_OF_SECOND, 2, 3, true) // min 2 max 3

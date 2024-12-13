@@ -12,7 +12,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
-public class TitleTranslation implements com.dropchop.recyclone.model.api.localization.TitleTranslation {
+public class TitleTranslation implements com.dropchop.recyclone.base.api.model.localization.TitleTranslation {
 
   @NonNull
   private String lang;

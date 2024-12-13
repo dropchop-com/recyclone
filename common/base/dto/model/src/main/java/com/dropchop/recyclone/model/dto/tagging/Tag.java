@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.tagging;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,7 +30,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 )
 @SuppressWarnings("LombokGetterMayBeUsed")
 public class Tag
-  extends DtoId implements com.dropchop.recyclone.model.api.tagging.Tag<Tag, TitleDescriptionTranslation> {
+  extends DtoId implements com.dropchop.recyclone.base.api.model.tagging.Tag<Tag, TitleDescriptionTranslation> {
 
   private final String type = this.getClass().getSimpleName();
 

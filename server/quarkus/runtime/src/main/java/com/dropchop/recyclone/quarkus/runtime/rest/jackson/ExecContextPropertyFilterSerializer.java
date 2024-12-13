@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;

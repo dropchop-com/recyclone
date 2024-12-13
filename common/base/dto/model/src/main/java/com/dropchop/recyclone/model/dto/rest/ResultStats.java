@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.rest;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-public class ResultStats implements com.dropchop.recyclone.model.api.rest.ResultStats {
+public class ResultStats implements com.dropchop.recyclone.base.api.model.rest.ResultStats {
   @EqualsAndHashCode.Exclude
   private Set<Attribute<?>> attributes;
 }

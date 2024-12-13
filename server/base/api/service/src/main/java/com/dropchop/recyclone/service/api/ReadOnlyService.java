@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.api;
 
-import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.model.dto.rest.Result;
 
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 08. 22.
  */
+@SuppressWarnings("unused")
 public interface ReadOnlyService<D extends Dto> extends CrudService<D> {
   @Override
   default Result<D> create(List<D> dtos) {

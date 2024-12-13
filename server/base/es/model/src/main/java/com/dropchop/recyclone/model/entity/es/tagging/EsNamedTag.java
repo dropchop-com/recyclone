@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.tagging;
 
-import com.dropchop.recyclone.model.api.tagging.NamedTag;
+import com.dropchop.recyclone.base.api.model.tagging.NamedTag;
 import com.dropchop.recyclone.model.entity.es.localization.EsTitleDescriptionTranslation;
 import lombok.*;
 

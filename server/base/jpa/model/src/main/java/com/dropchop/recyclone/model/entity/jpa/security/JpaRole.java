@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
-import com.dropchop.recyclone.model.api.security.Role;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.api.model.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.base.JpaCode;
 import com.dropchop.recyclone.model.entity.jpa.base.JpaTitleDescriptionTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;

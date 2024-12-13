@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

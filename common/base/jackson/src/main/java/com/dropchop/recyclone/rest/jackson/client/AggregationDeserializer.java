@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.query.Aggregation;
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
-import com.dropchop.recyclone.model.api.query.aggregation.DateHistogram;
+import com.dropchop.recyclone.base.api.model.query.Aggregation;
+import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.api.model.query.aggregation.DateHistogram;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;

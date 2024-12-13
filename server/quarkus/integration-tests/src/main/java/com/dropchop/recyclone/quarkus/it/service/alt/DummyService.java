@@ -2,8 +2,8 @@ package com.dropchop.recyclone.quarkus.it.service.alt;
 
 import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;

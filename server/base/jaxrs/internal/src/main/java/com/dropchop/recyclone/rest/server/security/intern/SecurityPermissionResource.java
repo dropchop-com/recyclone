@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.server.security.intern;
 
-import com.dropchop.recyclone.model.api.rest.ResultCode;
+import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.model.dto.rest.ResultStatus;

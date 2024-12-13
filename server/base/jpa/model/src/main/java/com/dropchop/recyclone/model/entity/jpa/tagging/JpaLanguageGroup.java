@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
+import com.dropchop.recyclone.base.api.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @DiscriminatorValue("LanguageGroup")
 @SuppressWarnings("unused")
 public class JpaLanguageGroup extends JpaNamedTag
-  implements com.dropchop.recyclone.model.api.tagging.LanguageGroup<JpaTag, JpaTitleDescriptionTranslation>{
+  implements LanguageGroup<JpaTag, JpaTitleDescriptionTranslation> {
 
   public JpaLanguageGroup(@NonNull String name) {
     super(name);

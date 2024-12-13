@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.api.security;
 
-import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.base.api.model.base.Model;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import lombok.extern.slf4j.Slf4j;

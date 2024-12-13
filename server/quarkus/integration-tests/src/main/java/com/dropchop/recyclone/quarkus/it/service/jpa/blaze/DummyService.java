@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContext;
-import com.dropchop.recyclone.model.api.invoke.CommonExecContextContainer;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 
 /**

@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.FilteringDtoContext;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.UserToDtoMapper;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.model.dto.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
 import com.dropchop.recyclone.model.dto.security.RoleNode;
@@ -22,7 +22,7 @@ import lombok.Getter;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 @Getter
 @ApplicationScoped

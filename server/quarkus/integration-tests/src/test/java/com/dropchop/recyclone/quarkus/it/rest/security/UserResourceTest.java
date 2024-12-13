@@ -4,7 +4,7 @@ import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.security.LoginAccount;
 import com.dropchop.recyclone.model.dto.security.TokenAccount;
 import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.model.api.rest.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;

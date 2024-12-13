@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.entity.jpa.localization;
 
-import com.dropchop.recyclone.model.api.localization.TitleTranslation;
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.localization.TitleTranslation;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
 import lombok.*;
 
@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 @Embeddable
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SuppressWarnings("unused")
 public class JpaTitleTranslation
   implements HasJpaLanguage, TitleTranslation, HasCreated, HasModified {
 

@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.model.dto.security;
 
-import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -19,7 +18,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
-public class RoleNodePermissionTemplate extends RoleNodePermission implements com.dropchop.recyclone.model.api.security.RoleNodePermissionTemplate<
+public class RoleNodePermissionTemplate extends RoleNodePermission implements com.dropchop.recyclone.base.api.model.security.RoleNodePermissionTemplate<
         Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
 
    private String target;

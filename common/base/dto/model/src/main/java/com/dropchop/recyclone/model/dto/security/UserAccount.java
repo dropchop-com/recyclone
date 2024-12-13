@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.model.dto.security;
 
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.model.dto.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -30,9 +30,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   property = "type"
 )
 public class UserAccount extends DtoId
-  implements com.dropchop.recyclone.model.api.security.UserAccount,
+  implements com.dropchop.recyclone.base.api.model.security.UserAccount,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon {
 
+  @Getter
   private final String type = this.getClass().getSimpleName();
 
   private String title;
@@ -42,10 +43,6 @@ public class UserAccount extends DtoId
   private ZonedDateTime modified;
 
   private ZonedDateTime deactivated;
-
-  public String getType() {
-    return this.type;
-  }
 
   public void setType(String type) {
   }

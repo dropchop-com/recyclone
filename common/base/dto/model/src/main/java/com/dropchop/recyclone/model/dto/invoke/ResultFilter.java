@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -19,10 +19,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 public class ResultFilter
-  implements com.dropchop.recyclone.model.api.invoke.ResultFilter<
-  ResultFilter.ContentFilter,
-  ResultFilter.LanguageFilter
-  > {
+  implements com.dropchop.recyclone.base.api.model.invoke.ResultFilter<
+    ResultFilter.ContentFilter,
+    ResultFilter.LanguageFilter
+    > {
 
   @Getter
   @Setter
@@ -30,7 +30,7 @@ public class ResultFilter
   @AllArgsConstructor
   @JsonInclude(NON_NULL)
   public static class ContentFilter
-    implements Dto, com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter {
+    implements Dto, com.dropchop.recyclone.base.api.model.invoke.ResultFilter.ContentFilter {
 
     @JsonInclude(NON_EMPTY)
     private List<String> includes = new ArrayList<>();
@@ -84,7 +84,7 @@ public class ResultFilter
   @AllArgsConstructor
   @JsonInclude(NON_NULL)
   public static class LanguageFilter
-    implements Dto, com.dropchop.recyclone.model.api.invoke.ResultFilter.LanguageFilter {
+    implements Dto, com.dropchop.recyclone.base.api.model.invoke.ResultFilter.LanguageFilter {
     private String search;
     private String translation;
 

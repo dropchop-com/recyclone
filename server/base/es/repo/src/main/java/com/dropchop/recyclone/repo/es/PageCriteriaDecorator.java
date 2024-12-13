@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.repo.es;
 
-import com.dropchop.recyclone.model.api.invoke.CommonParams;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter;
-import com.dropchop.recyclone.model.api.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
-import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.ext.WriterInterceptor;
@@ -12,7 +12,7 @@ import org.slf4j.MDC;
 
 import java.io.IOException;
 
-import static com.dropchop.recyclone.model.api.invoke.ExecContext.*;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 05. 24.

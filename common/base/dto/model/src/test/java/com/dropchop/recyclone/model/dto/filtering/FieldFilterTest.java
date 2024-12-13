@@ -1,17 +1,17 @@
 package com.dropchop.recyclone.model.dto.filtering;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.api.attr.AttributeDate;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.attr.AttributeValueList;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.filtering.CollectionPathSegment;
-import com.dropchop.recyclone.model.api.filtering.FieldFilter;
-import com.dropchop.recyclone.model.api.filtering.PathSegment;
-import com.dropchop.recyclone.model.api.filtering.PropertyPathSegment;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
+import com.dropchop.recyclone.base.api.model.attr.AttributeDate;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.attr.AttributeValueList;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.filtering.CollectionPathSegment;
+import com.dropchop.recyclone.base.api.model.filtering.FieldFilter;
+import com.dropchop.recyclone.base.api.model.filtering.PathSegment;
+import com.dropchop.recyclone.base.api.model.filtering.PropertyPathSegment;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.localization.Language;
 import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
@@ -446,7 +446,7 @@ class FieldFilterTest {
     params.filter()
       .content()
       .treeLevel(2)
-      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE);
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE);
     Map<String, PathSegment> paths = walkAndDive(params, sl);
     List<String> filteredAndVisited = paths.keySet()
       .stream()
@@ -466,7 +466,7 @@ class FieldFilterTest {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(2)
-      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE)
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE)
     ;
 
     Map<String, PathSegment> paths = walkAndDive(params, sl);
@@ -491,7 +491,7 @@ class FieldFilterTest {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(2)
-      .detailLevel(Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS)
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS)
     ;
 
     Map<String, PathSegment> paths = walkAndDive(params, sl);
@@ -532,7 +532,7 @@ class FieldFilterTest {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(1)
-      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE)
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE)
     ;
     Map<String, PathSegment> paths = walkAndDive(params, sl);
     List<String> filteredAndVisited = paths.keySet()
@@ -564,7 +564,7 @@ class FieldFilterTest {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(1)
-      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE)
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE)
     ;
     Map<String, PathSegment> paths = walkAndDive(params, sl);
     List<String> filteredAndVisited = paths.keySet()
@@ -599,7 +599,7 @@ class FieldFilterTest {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(1)
-      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS)
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS)
     ;
     Map<String, PathSegment> paths = walkAndDive(params, sl);
     List<String> filteredAndVisited = paths.keySet()
@@ -639,12 +639,12 @@ class FieldFilterTest {
     CodeParams params = new CodeParams();
     params.filter().content()
       .treeLevel(1)
-      .detailLevel(Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS)
+      .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS)
     ;
     Domain domain = new Domain();
-    domain.setCode(com.dropchop.recyclone.model.api.security.Constants.Domains.Localization.LANGUAGE);
+    domain.setCode(Constants.Domains.Localization.LANGUAGE);
     Action action = new Action();
-    action.setCode(com.dropchop.recyclone.model.api.security.Constants.Actions.ALL);
+    action.setCode(Constants.Actions.ALL);
     Permission permission = new Permission();
     permission.setUuid("28c9e87d-befe-4c70-b582-c176653d917c");
     permission.setAction(action);

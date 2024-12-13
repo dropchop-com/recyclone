@@ -14,11 +14,11 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 public class TypeParams extends IdentifierParams
-  implements com.dropchop.recyclone.model.api.invoke.TypeParams<
-  ResultFilter,
-  ResultFilter.ContentFilter,
-  ResultFilter.LanguageFilter,
-  ResultFilterDefaults> {
+  implements com.dropchop.recyclone.base.api.model.invoke.TypeParams<
+    ResultFilter,
+    ResultFilter.ContentFilter,
+    ResultFilter.LanguageFilter,
+    ResultFilterDefaults> {
 
   @Singular
   private List<String> types = new ArrayList<>();

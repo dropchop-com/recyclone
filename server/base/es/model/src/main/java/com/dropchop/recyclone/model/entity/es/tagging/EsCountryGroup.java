@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.tagging;
 
+import com.dropchop.recyclone.base.api.model.tagging.CountryGroup;
 import com.dropchop.recyclone.model.entity.es.localization.EsTitleDescriptionTranslation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EsCountryGroup extends EsNamedTag
-  implements com.dropchop.recyclone.model.api.tagging.CountryGroup<EsTag, EsTitleDescriptionTranslation> {
+@SuppressWarnings("unused")
+public class EsCountryGroup extends EsNamedTag implements CountryGroup<EsTag, EsTitleDescriptionTranslation> {
   public EsCountryGroup(@NonNull String name) {
     super(name);
   }

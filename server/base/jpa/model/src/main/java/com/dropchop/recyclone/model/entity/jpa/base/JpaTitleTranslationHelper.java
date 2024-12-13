@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.base;
 
-import com.dropchop.recyclone.model.api.localization.TitleTranslationHelper;
+import com.dropchop.recyclone.base.api.model.localization.TitleTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleTranslation;
 
 /**

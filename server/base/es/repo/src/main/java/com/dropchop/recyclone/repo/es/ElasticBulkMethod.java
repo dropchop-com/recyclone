@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.repo.es;
 
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.client.Response;
@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.base.Model.identifier;
+import static com.dropchop.recyclone.base.api.model.base.Model.identifier;
 
 public class ElasticBulkMethod {
 

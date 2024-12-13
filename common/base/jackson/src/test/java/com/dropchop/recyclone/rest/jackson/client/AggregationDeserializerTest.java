@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
-import com.dropchop.recyclone.model.api.query.Aggregation.Wrapper;
+import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 
 public class AggregationDeserializerTest {
 

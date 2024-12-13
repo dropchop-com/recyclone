@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.localization;
 
-import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 @Embeddable
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SuppressWarnings("unused")
 public class JpaTitleDescriptionTranslation
   implements TitleDescriptionTranslation {
 

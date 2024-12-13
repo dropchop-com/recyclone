@@ -2,17 +2,17 @@ package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasId;
-import com.dropchop.recyclone.model.api.marker.HasUuid;
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.utils.ProfileTimer;
-import com.dropchop.recyclone.model.api.utils.Strings;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.marker.HasCode;
+import com.dropchop.recyclone.base.api.model.marker.HasId;
+import com.dropchop.recyclone.base.api.model.marker.HasUuid;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
+import com.dropchop.recyclone.base.api.model.utils.Strings;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
@@ -39,9 +39,9 @@ import org.elasticsearch.client.RestClient;
 import java.io.IOException;
 import java.util.*;
 
-import static com.dropchop.recyclone.model.api.query.Condition.and;
-import static com.dropchop.recyclone.model.api.query.Condition.field;
-import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
+import static com.dropchop.recyclone.base.api.model.query.Condition.and;
+import static com.dropchop.recyclone.base.api.model.query.Condition.field;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.

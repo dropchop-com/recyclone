@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.model.entity.jpa.security;
 
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
-import com.dropchop.recyclone.model.api.security.Domain;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.api.model.security.Domain;
 import com.dropchop.recyclone.model.entity.jpa.base.JpaCode;
 import com.dropchop.recyclone.model.entity.jpa.base.JpaTitleDescriptionTranslationHelper;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
@@ -27,6 +27,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_domain")
+@SuppressWarnings("unused")
 public class JpaDomain extends JpaCode
   implements Domain<JpaTitleDescriptionTranslation, JpaAction>, JpaTitleDescriptionTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasJpaLanguage {

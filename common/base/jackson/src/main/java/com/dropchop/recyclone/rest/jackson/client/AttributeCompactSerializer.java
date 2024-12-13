@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.attr.AttributeToRemove;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.attr.AttributeToRemove;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.extern.slf4j.Slf4j;
 

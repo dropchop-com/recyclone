@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.localization;
 
-import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslation;
 import lombok.*;
 
 import java.time.ZonedDateTime;
@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SuppressWarnings("unused")
 public class EsTitleDescriptionTranslation
   implements TitleDescriptionTranslation {
 

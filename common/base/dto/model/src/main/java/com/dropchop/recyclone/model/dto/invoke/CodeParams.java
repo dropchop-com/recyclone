@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.base.State;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.base.State;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
 import com.dropchop.recyclone.model.dto.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.model.dto.invoke.ResultFilter.LanguageFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,11 +21,11 @@ import java.util.Set;
 @SuperBuilder
 @RequiredArgsConstructor
 public class CodeParams extends Params
-  implements com.dropchop.recyclone.model.api.invoke.CodeParams<
-  ResultFilter,
-  ContentFilter,
-  LanguageFilter,
-  ResultFilterDefaults> {
+  implements com.dropchop.recyclone.base.api.model.invoke.CodeParams<
+    ResultFilter,
+    ContentFilter,
+    LanguageFilter,
+    ResultFilterDefaults> {
 
   public static class Defaults extends ResultFilterDefaults {
     @Override

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.attr;
 
-import com.dropchop.recyclone.model.api.attr.*;
+import com.dropchop.recyclone.base.api.model.attr.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.marshall;
-import static com.dropchop.recyclone.model.api.attr.AttributeMarshaller.unmarshall;
+import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.marshall;
+import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.unmarshall;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
@@ -79,20 +79,14 @@ public class EsAttribute<X> implements Attribute<X> {
     esAttribute.setName(attribute.getName());
     esAttribute.setValue(attribute.getValue());
     esAttribute.setStrValue(marshall(attribute));
-    if (attribute instanceof AttributeString) {
-      esAttribute.setType(Type.str);
-    } else if (attribute instanceof AttributeBool) {
-      esAttribute.setType(Type.bool);
-    } else if (attribute instanceof AttributeDate) {
-      esAttribute.setType(Type.date);
-    } else if (attribute instanceof AttributeDecimal) {
-      esAttribute.setType(Type.num);
-    } else if (attribute instanceof AttributeSet) {
-      esAttribute.setType(Type.set);
-    } else if (attribute instanceof AttributeValueList<?>) {
-      esAttribute.setType(Type.list);
-    } else {
-      throw new UnsupportedOperationException("Unsupported Attribute to JpaAttribute conversion");
+    switch (attribute) {
+      case AttributeString ignored -> esAttribute.setType(Type.str);
+      case AttributeBool ignored -> esAttribute.setType(Type.bool);
+      case AttributeDate ignored -> esAttribute.setType(Type.date);
+      case AttributeDecimal ignored -> esAttribute.setType(Type.num);
+      case AttributeSet ignored -> esAttribute.setType(Type.set);
+      case AttributeValueList<?> ignored -> esAttribute.setType(Type.list);
+      default -> throw new UnsupportedOperationException("Unsupported Attribute to JpaAttribute conversion");
     }
 
     return esAttribute;

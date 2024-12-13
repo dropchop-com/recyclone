@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.common;
 
-import com.dropchop.recyclone.model.api.common.Person;
+import com.dropchop.recyclone.base.api.model.common.Person;
 import com.dropchop.recyclone.model.entity.jpa.base.JpaUuid;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;

@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.rest.tagging;
 
-import com.dropchop.recyclone.model.api.attr.*;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.attr.*;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.model.api.rest.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;

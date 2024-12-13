@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.model.dto.invoke;
 
-import com.dropchop.recyclone.model.api.invoke.ExecContext.Listener;
-import com.dropchop.recyclone.model.api.invoke.Params;
-import com.dropchop.recyclone.model.api.utils.Uuid;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext.Listener;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @SuppressWarnings({"unused", "LombokSetterMayBeUsed"})
 public class ParamsExecContext<ECL extends Listener>
-  implements com.dropchop.recyclone.model.api.invoke.ParamsExecContext<ECL> {
+  implements com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext<ECL> {
 
   @NonNull
   @Getter
@@ -62,7 +62,7 @@ public class ParamsExecContext<ECL extends Listener>
   }
 
   public ParamsExecContext<ECL> listener(ECL listener) {
-    com.dropchop.recyclone.model.api.invoke.ParamsExecContext.super.listener(listener);
+    com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext.super.listener(listener);
     return this;
   }
 

@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.dropchop.recyclone.model.dto.invoke.TypeParams;
 
 import java.util.List;

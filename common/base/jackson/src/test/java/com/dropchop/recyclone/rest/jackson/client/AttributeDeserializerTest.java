@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.jackson.client;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.marker.HasAttributes;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

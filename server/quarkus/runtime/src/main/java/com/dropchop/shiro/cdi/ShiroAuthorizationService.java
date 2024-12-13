@@ -1,9 +1,9 @@
 package com.dropchop.shiro.cdi;
 
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.security.Constants;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;
 import com.dropchop.shiro.filter.RequestFilter;
 import com.dropchop.shiro.filter.ResponseFilter;
@@ -34,8 +34,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.dropchop.recyclone.model.api.invoke.ErrorCode.authentication_error;
-import static com.dropchop.recyclone.model.api.invoke.ErrorCode.authorization_error;
+import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authentication_error;
+import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authorization_error;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 06. 22.
@@ -142,8 +142,8 @@ public class ShiroAuthorizationService implements AuthorizationService {
       execContext.setRequiredPermissions(Arrays.asList(requiredPermissions));
       execContext.setRequiredPermissionsOp(
           requiredPermissionsOp == Logical.AND ?
-              com.dropchop.recyclone.model.api.security.annotations.Logical.AND :
-              com.dropchop.recyclone.model.api.security.annotations.Logical.OR
+              com.dropchop.recyclone.base.api.model.security.annotations.Logical.AND :
+              com.dropchop.recyclone.base.api.model.security.annotations.Logical.OR
       );
     }
   }

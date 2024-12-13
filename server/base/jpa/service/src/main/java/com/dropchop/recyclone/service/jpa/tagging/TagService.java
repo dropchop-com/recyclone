@@ -12,7 +12,7 @@ import lombok.Getter;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 
 /**
@@ -23,6 +23,7 @@ import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.R
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
+@SuppressWarnings("unused")
 public class TagService extends CrudServiceImpl<Tag, JpaTag, UUID>
   implements com.dropchop.recyclone.service.api.tagging.TagService {
 

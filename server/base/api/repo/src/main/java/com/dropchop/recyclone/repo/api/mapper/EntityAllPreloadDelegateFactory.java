@@ -2,13 +2,14 @@ package com.dropchop.recyclone.repo.api.mapper;
 
 import com.dropchop.recyclone.mapper.api.EntityFactoryListener;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.
  */
+@SuppressWarnings("unused")
 public class EntityAllPreloadDelegateFactory<D extends Dto, E extends Entity, ID>
   extends EntityAllPreloadDelegate<D, E, ID>
   implements EntityFactoryListener<D, E> {

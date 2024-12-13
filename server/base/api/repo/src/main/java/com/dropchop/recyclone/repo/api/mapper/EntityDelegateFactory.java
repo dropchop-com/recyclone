@@ -2,8 +2,8 @@ package com.dropchop.recyclone.repo.api.mapper;
 
 import com.dropchop.recyclone.mapper.api.EntityFactoryListener;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 
 /**

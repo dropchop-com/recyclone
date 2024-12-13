@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.quarkus.it.service.api;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.api.attr.AttributeDate;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.attr.AttributeValueList;
-import com.dropchop.recyclone.model.api.rest.Constants;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
+import com.dropchop.recyclone.base.api.model.attr.AttributeDate;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.attr.AttributeValueList;
+import com.dropchop.recyclone.base.api.model.rest.Constants;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.model.dto.invoke.DefaultExecContext;
 import com.dropchop.recyclone.model.dto.localization.Language;

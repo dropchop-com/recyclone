@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.model.entity.jpa.tagging;
 
-import com.dropchop.recyclone.model.api.utils.Uuid;
+import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.model.entity.es.tagging;
 
+import com.dropchop.recyclone.base.api.model.tagging.Owner;
 import com.dropchop.recyclone.model.entity.es.localization.EsTitleDescriptionTranslation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @SuppressWarnings("unused")
 public class EsOwner extends EsNamedTag
-  implements com.dropchop.recyclone.model.api.tagging.Owner<EsTag, EsTitleDescriptionTranslation> {
+  implements Owner<EsTag, EsTitleDescriptionTranslation> {
   public EsOwner(@NonNull String name) {
     super(name);
   }

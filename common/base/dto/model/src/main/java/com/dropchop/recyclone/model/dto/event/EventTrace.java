@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
-public class EventTrace extends DtoId implements com.dropchop.recyclone.model.api.event.EventTrace {
+public class EventTrace extends DtoId implements com.dropchop.recyclone.base.api.model.event.EventTrace {
 
   private String group;
   private String context;

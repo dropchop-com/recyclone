@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.service.api;
 
+import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.mapper.api.MappingContext;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.invoke.*;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter.ContentFilter;
-import com.dropchop.recyclone.model.api.rest.Constants.ContentDetail;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter.ContentFilter;
+import com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail;
 import com.dropchop.recyclone.model.dto.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringMapperProvider;

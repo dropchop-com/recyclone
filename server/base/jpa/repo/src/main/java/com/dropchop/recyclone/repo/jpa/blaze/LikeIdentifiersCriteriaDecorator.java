@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.repo.jpa.blaze;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.api.invoke.CodeParams;
-import com.dropchop.recyclone.model.api.invoke.IdentifierParams;
-import com.dropchop.recyclone.model.api.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.api.model.invoke.IdentifierParams;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
 
 import java.util.List;
 import java.util.UUID;
