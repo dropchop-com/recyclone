@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class TagResource extends ClassicReadByIdResource<Tag, TagParams> implements
-    com.dropchop.recyclone.rest.api.tagging.TagResource<Tag> {
+    com.dropchop.recyclone.base.api.jaxrs.tagging.TagResource<Tag> {
 
   @Inject
   TagService service;

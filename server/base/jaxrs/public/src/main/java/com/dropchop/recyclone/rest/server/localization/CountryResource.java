@@ -18,7 +18,7 @@ import java.util.List;
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class CountryResource extends ClassicReadByCodeResource<Country, CodeParams> implements
-    com.dropchop.recyclone.rest.api.localization.CountryResource {
+    com.dropchop.recyclone.base.api.jaxrs.localization.CountryResource {
 
   @Inject
   CountryService service;

@@ -18,7 +18,7 @@ import java.util.List;
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class LanguageResource extends ClassicReadByCodeResource<Language, CodeParams> implements
-    com.dropchop.recyclone.rest.api.localization.LanguageResource {
+    com.dropchop.recyclone.base.api.jaxrs.localization.LanguageResource {
 
   @Inject
   LanguageService service;
