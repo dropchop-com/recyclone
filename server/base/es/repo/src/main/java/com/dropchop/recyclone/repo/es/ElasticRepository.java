@@ -14,6 +14,7 @@ import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.ProfileTimer;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.repo.api.ElasticBulkMethod;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
@@ -48,7 +49,7 @@ import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID> {
+public abstract class ElasticRepository<E extends Model, ID> implements ElasticCrudRepository<E, ID>, ElasticBulkMethod {
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -90,7 +91,8 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     return getRepositoryExecContext().totalCount(mappingContext);
   }
 
-  protected String getIndexName() {
+  @Override
+  public <S> String getIndexName(S entity) {
     String simpleName = getRootClass().getSimpleName();
     if (simpleName.startsWith("Es")) {
       simpleName = simpleName.substring(2);
@@ -98,7 +100,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     return Strings.toSnakeCase(simpleName);
   }
 
-  protected <S extends E> List<S> executeBulkRequest(Collection<S> entities, ElasticBulkMethod method) {
+  protected <S extends E> List<S> executeBulkRequest(Collection<S> entities, ElasticBulkMethodImpl method) {
     if (entities == null || entities.isEmpty()) {
       return Collections.emptyList();
     }
@@ -124,9 +126,14 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
 
   @Override
   public <S extends E> List<S> save(Collection<S> entities) {
-    ElasticBulkMethod saveBulkMethod = new ElasticBulkMethod(
-      ElasticBulkMethod.MethodType.INDEX,
-      getIndexName());
+    ElasticBulkMethodImpl saveBulkMethod = new ElasticBulkMethodImpl(
+      ElasticBulkMethodImpl.MethodType.INDEX,
+      getIndexName(null)) {
+      @Override
+      protected <S> String getIndexOuterName(S entity) {
+        return getIndexName(entity);
+      }
+    };
     return executeBulkRequest(entities, saveBulkMethod);
   }
 
@@ -158,7 +165,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     for (X id : ids) {
       bulkRequestBody
         .append("{ \"delete\" : { \"_index\" : \"")
-        .append(getIndexName())
+        .append(getIndexName(null))
         .append("\", \"_id\" : \"")
         .append(id.toString())
         .append("\" } }\n");
@@ -198,10 +205,14 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
 
   @Override
   public <S extends E> List<S> delete(Collection<S> entities) {
-    ElasticBulkMethod elasticDeleteMethod = new ElasticBulkMethod(
-      ElasticBulkMethod.MethodType.DELETE,
-      getIndexName()
-    );
+    ElasticBulkMethodImpl elasticDeleteMethod = new ElasticBulkMethodImpl(
+      ElasticBulkMethodImpl.MethodType.DELETE,
+      getIndexName(null)) {
+      @Override
+      protected <S> String getIndexOuterName(S entity) {
+        return getIndexName(entity);
+      }
+    };
 
     return executeBulkRequest(entities, elasticDeleteMethod);
   }
@@ -228,7 +239,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     }
 
     try {
-      Request request = new Request("POST", "/" + getIndexName() + "/_delete_by_query");
+      Request request = new Request("POST", "/" + getIndexName(null) + "/_delete_by_query");
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
       if (response.getStatusLine().getStatusCode() == 200) {
@@ -340,7 +351,7 @@ public abstract class ElasticRepository<E extends Model, ID> implements ElasticC
     }
     Class<E> cls = getRootClass();
     try {
-      Request request = new Request("GET", "/" + getIndexName() + "/_search");
+      Request request = new Request("GET", "/" + getIndexName(null) + "/_search");
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
       if (response.getStatusLine().getStatusCode() == 200) {

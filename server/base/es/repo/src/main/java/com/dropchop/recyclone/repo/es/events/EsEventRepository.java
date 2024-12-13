@@ -28,4 +28,9 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
 
   @Inject
   ElasticQueryMapper elasticQueryMapper;
+
+  @Override
+  public <S> String getIndexName(S entity) {
+    return super.getIndexName(entity);
+  }
 }

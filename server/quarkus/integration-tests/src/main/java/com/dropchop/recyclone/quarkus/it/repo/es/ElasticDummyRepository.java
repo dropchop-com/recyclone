@@ -41,4 +41,9 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
   protected RestClient getElasticsearchClient() {
     return elasticsearchClient;
   }
+
+  @Override
+  public <S> String getIndexName(S entity) {
+    return super.getIndexName(entity);
+  }
 }

@@ -17,17 +17,16 @@ import java.util.Set;
 
 import static com.dropchop.recyclone.model.api.base.Model.identifier;
 
-public class ElasticBulkMethod {
+public abstract class ElasticBulkMethodImpl {
+  protected abstract <S> String getIndexOuterName(S entity);
 
   public enum MethodType {
     INDEX, DELETE, UPDATE
   }
 
   private final MethodType methodType;
-  private final String index;
-  public ElasticBulkMethod(MethodType methodType, String index) {
+  public ElasticBulkMethodImpl(MethodType methodType, String index) {
     this.methodType = methodType;
-    this.index = index;
   }
 
   public <S extends Model> StringBuilder buildBulkRequest(
@@ -41,7 +40,7 @@ public class ElasticBulkMethod {
           .append("{ \"")
           .append(methodType.name().toLowerCase())
           .append("\" : { \"_index\" : \"")
-          .append(index)
+          .append(getIndexOuterName(entity))
           .append("\", \"_id\" : \"")
           .append(identifier(entity))
           .append("\" } }\n");
