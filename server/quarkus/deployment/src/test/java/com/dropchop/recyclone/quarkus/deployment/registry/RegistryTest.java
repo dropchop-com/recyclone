@@ -13,8 +13,8 @@ import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
-import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapper;
-import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapperImpl;
 import io.quarkus.test.QuarkusUnitTest;
 import jakarta.inject.Inject;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -36,8 +36,8 @@ public class RegistryTest {
             .addClasses(
                 UserAccountToDtoMapper.class,
                 UserAccountToDtoMapperImpl.class,
-                com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapper.class,
-                com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapperImpl.class,
+                com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper.class,
+                com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapperImpl.class,
                 TagToDtoMapper.class,
                 TagToDtoMapperImpl.class,
                 TestShiroEnvironmentProvider.class

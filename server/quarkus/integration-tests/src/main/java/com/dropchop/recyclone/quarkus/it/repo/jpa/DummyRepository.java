@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa;
 
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
-import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
+import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 

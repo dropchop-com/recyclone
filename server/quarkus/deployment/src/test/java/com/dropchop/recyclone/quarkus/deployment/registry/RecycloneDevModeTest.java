@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
-import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapper;
-import com.dropchop.recyclone.mapper.jpa.security.UserAccountToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapperImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
