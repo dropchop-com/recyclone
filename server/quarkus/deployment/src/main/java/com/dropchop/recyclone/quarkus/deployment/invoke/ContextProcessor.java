@@ -32,7 +32,7 @@ public class ContextProcessor {
   );
 
   private static final DotName DEFAULT_EXEC_CTX = DotName.createSimple(
-      "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext"
+      "com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext"
   );
 
   private static final DotName CTX_PARAMS_IFACE = DotName.createSimple(

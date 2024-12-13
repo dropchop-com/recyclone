@@ -2,9 +2,9 @@ package com.dropchop.recyclone.rest.server.security.intern;
 
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
-import com.dropchop.recyclone.model.dto.invoke.UserParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
 import com.dropchop.recyclone.service.api.security.UserService;
 import jakarta.enterprise.context.RequestScoped;

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleNodePermissionMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.RoleNodePermissionRepository;

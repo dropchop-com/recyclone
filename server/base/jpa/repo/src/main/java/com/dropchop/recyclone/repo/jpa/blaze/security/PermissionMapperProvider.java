@@ -2,7 +2,7 @@ package com.dropchop.recyclone.repo.jpa.blaze.security;
 
 import com.dropchop.recyclone.mapper.jpa.security.PermissionToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.PermissionToJpaMapper;
-import com.dropchop.recyclone.model.dto.security.Permission;
+import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,6 +16,7 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
+@SuppressWarnings("unused")
 public class PermissionMapperProvider extends RecycloneMapperProvider<Permission, JpaPermission, UUID> {
 
   @Inject

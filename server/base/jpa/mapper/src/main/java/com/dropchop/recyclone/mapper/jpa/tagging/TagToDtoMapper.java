@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.mapper.jpa.tagging;
 
-import com.dropchop.recyclone.model.dto.tagging.CountryGroup;
-import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
-import com.dropchop.recyclone.model.dto.tagging.Owner;
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.tagging.CountryGroup;
+import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
+import com.dropchop.recyclone.base.dto.model.tagging.Owner;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.*;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaOwner;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;

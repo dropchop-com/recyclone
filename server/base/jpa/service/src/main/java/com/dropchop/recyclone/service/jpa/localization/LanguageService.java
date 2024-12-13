@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
-import com.dropchop.recyclone.model.dto.localization.Language;
+import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;

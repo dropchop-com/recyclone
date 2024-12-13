@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.service.api.security;
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.RoleParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.Role;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.service.api.CrudService;
 
 /**

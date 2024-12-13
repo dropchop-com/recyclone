@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.rest.server.events.intern;
 
 import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.model.dto.event.Event;
-import com.dropchop.recyclone.model.dto.invoke.EventParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.dto.model.event.Event;
+import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
 import com.dropchop.recyclone.service.api.RecycloneType;
 import com.dropchop.recyclone.service.api.events.EventService;

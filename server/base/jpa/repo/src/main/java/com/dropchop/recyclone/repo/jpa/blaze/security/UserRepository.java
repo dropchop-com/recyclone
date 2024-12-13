@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security;
 
 
-import com.dropchop.recyclone.model.dto.invoke.UserParams;
+import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeExecContext;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeRepository;
@@ -27,7 +27,7 @@ public class UserRepository extends BlazeRepository<JpaUser, UUID> {
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByLoginNameDecorator());
     List<JpaUser> userList = this.find(blazeExecContext);
-    return userList.isEmpty() ? null : userList.get(0);
+    return userList.isEmpty() ? null : userList.getFirst();
   }
 
 
@@ -38,6 +38,6 @@ public class UserRepository extends BlazeRepository<JpaUser, UUID> {
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByTokenDecorator());
     List<JpaUser> userList = this.find(blazeExecContext);
-    return userList.isEmpty() ? null : userList.get(0);
+    return userList.isEmpty() ? null : userList.getFirst();
   }
 }

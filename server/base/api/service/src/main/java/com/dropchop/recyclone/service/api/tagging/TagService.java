@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.api.tagging;
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.service.api.CrudService;
 
 /**

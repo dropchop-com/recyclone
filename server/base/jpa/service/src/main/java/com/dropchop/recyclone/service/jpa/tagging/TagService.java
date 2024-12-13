@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.tagging;
 
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.tagging.TagRepository;

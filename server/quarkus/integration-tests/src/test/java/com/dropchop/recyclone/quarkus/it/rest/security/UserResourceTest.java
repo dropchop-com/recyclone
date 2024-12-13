@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
-import com.dropchop.recyclone.model.dto.localization.Language;
-import com.dropchop.recyclone.model.dto.security.LoginAccount;
-import com.dropchop.recyclone.model.dto.security.TokenAccount;
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.dto.model.localization.Language;
+import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
+import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;

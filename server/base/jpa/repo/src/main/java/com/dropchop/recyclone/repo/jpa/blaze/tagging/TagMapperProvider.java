@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
 import com.dropchop.recyclone.repo.api.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
@@ -19,7 +19,7 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
 public class TagMapperProvider extends RecycloneMapperProvider<Tag, JpaTag, UUID> {
 
   @Inject

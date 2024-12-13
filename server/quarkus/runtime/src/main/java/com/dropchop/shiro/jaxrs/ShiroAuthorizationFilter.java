@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;

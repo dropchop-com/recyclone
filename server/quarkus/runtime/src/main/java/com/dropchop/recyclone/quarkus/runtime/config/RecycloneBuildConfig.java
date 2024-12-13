@@ -31,13 +31,13 @@ public interface RecycloneBuildConfig {
     /**
      * Default Params class implementation to be instantiated if can not be determined from code or annotations.
      */
-    @WithDefault("com.dropchop.recyclone.model.dto.invoke.Params")
+    @WithDefault("com.dropchop.recyclone.base.dto.model.invoke.Params")
     String defaultParams();
 
     /**
      * Default ExecContext class implementation to be instantiated if can not be determined from code or annotations.
      */
-    @WithDefault("com.dropchop.recyclone.model.dto.invoke.DefaultExecContext")
+    @WithDefault("com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext")
     String defaultExecContext();
 
     /**

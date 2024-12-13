@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.base.dto.model.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
 import com.dropchop.recyclone.repo.jpa.blaze.security.ActionMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.ActionRepository;

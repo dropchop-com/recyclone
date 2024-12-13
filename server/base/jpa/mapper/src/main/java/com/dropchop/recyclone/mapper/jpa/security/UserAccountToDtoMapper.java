@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.mapper.jpa.security;
 
 import com.dropchop.recyclone.mapper.api.DtoPolymorphicFactory;
-import com.dropchop.recyclone.model.dto.security.LoginAccount;
-import com.dropchop.recyclone.model.dto.security.TokenAccount;
-import com.dropchop.recyclone.model.dto.security.UserAccount;
+import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
+import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
+import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaLoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUserAccount;

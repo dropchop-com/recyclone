@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;

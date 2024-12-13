@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.base.api.model.rest.Constants;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;

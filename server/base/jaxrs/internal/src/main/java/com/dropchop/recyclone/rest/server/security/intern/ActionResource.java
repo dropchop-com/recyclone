@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.rest.server.security.intern;
 
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.Action;
 import com.dropchop.recyclone.rest.server.ClassicRestByCodeResource;
 import com.dropchop.recyclone.service.api.security.ActionService;
 import jakarta.enterprise.context.RequestScoped;

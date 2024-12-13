@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.model.dto;
 
-import com.dropchop.recyclone.model.dto.base.DtoCode;
+import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import lombok.Getter;
 import lombok.Setter;
 

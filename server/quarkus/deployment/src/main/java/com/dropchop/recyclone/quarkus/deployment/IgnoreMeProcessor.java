@@ -144,7 +144,7 @@ public class IgnoreMeProcessor {
    * Example:
    * \@Tag(name = Constants.Tags.TEST)
    * \@Tag(name = Tags.DynamicContext.INTERNAL)
-   * \@Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
+   * \@Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "invoke.com.dropchop.recyclone.base.dto.model.CodeParams")
    * This doesn't work, although it is correctly done...
    */
   //@BuildStep

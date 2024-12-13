@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.rest.server.security.intern;
 
-import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
 import com.dropchop.recyclone.service.api.security.RoleNodePermissionService;
 import jakarta.enterprise.context.RequestScoped;

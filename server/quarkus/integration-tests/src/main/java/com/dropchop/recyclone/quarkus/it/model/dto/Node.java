@@ -2,10 +2,10 @@ package com.dropchop.recyclone.quarkus.it.model.dto;
 
 import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.marker.HasTags;
-import com.dropchop.recyclone.model.dto.base.DtoCode;
-import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.base.DtoCode;
+import com.dropchop.recyclone.base.dto.model.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.dto.model.localization.TitleTranslation;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

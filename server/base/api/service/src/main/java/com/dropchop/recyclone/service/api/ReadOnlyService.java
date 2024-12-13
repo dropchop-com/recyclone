@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.api;
 
 import com.dropchop.recyclone.base.api.model.base.Dto;
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 
 import java.util.List;
 

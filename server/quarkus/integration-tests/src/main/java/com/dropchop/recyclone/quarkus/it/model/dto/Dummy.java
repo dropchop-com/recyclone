@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
-import com.dropchop.recyclone.model.dto.base.DtoCode;
+import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

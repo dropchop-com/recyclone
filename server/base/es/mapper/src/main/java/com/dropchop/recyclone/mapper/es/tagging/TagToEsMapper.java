@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.mapper.es.tagging;
 
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.model.entity.es.tagging.EsTag;
 import com.dropchop.recyclone.mapper.api.EntityFactoryInvoker;
 import com.dropchop.recyclone.mapper.api.ToEntityMapper;

@@ -1,7 +1,7 @@
 package com.dropchop.shiro.utils;
 
 import com.dropchop.recyclone.base.api.model.base.Model;
-import com.dropchop.recyclone.model.dto.security.PermissionInstance;
+import com.dropchop.recyclone.base.dto.model.security.PermissionInstance;
 
 import java.util.*;
 import java.util.stream.Collectors;

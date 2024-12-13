@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.service.api.security;
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
-import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.security.Permission;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.service.api.Service;
 
 import java.util.Collection;

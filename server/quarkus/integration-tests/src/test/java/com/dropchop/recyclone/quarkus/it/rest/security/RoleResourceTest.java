@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
-import com.dropchop.recyclone.model.dto.base.DtoId;
-import com.dropchop.recyclone.model.dto.invoke.RoleParams;
-import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.dto.security.Role;
+import com.dropchop.recyclone.base.dto.model.base.DtoId;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleParams;
+import com.dropchop.recyclone.base.dto.model.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;

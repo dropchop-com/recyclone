@@ -8,9 +8,9 @@ import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.RoleParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.Role;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
@@ -37,6 +37,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
  */
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
   implements com.dropchop.recyclone.service.api.security.RoleService {
 

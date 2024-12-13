@@ -1,9 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
-import com.dropchop.recyclone.model.dto.security.*;
+import com.dropchop.recyclone.base.dto.model.security.*;
 import com.google.common.base.Strings;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 

@@ -2,8 +2,8 @@ package com.dropchop.recyclone.quarkus.it.rest.security;
 
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
-import com.dropchop.recyclone.model.dto.security.*;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
+import com.dropchop.recyclone.base.dto.model.security.*;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;

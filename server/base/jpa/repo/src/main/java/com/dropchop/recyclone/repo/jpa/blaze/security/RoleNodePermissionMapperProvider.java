@@ -5,12 +5,9 @@ import com.dropchop.recyclone.mapper.api.AfterToEntityListener;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodePermissionToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.RoleNodePermissionToJpaMapper;
-import com.dropchop.recyclone.base.api.model.base.Dto;
-import com.dropchop.recyclone.base.api.model.base.Entity;
-import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermissionTemplate;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermissionTemplate;
 import com.dropchop.recyclone.repo.api.mapper.EntityPolymorphicCreateFactory;
@@ -26,7 +23,7 @@ import java.util.UUID;
  */
 @Getter
 @ApplicationScoped
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
 public class RoleNodePermissionMapperProvider extends RecycloneMapperProvider<RoleNodePermission, JpaRoleNodePermission, UUID> {
 
   @Inject

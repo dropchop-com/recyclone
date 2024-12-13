@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.rest.server.tagging.intern;
 
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.rest.server.ClassicModifyResource;
 import com.dropchop.recyclone.service.api.tagging.TagService;
 import jakarta.enterprise.context.RequestScoped;

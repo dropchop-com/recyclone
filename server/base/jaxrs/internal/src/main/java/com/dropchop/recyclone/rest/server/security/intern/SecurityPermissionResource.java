@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.rest.server.security.intern;
 
 import com.dropchop.recyclone.base.api.model.rest.ResultCode;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.rest.ResultStatus;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.ResultStatus;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.rest.server.ClassicRestResource;
 import com.dropchop.recyclone.service.api.security.SecurityLoadingService;
 import jakarta.enterprise.context.RequestScoped;

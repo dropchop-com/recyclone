@@ -13,7 +13,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.model.utils.Strings;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;

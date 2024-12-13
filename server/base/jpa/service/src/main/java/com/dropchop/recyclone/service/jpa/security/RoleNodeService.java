@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.model.dto.security.RoleNode;
+import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
 import com.dropchop.recyclone.repo.jpa.blaze.security.*;
 import com.dropchop.recyclone.service.api.CrudServiceImpl;

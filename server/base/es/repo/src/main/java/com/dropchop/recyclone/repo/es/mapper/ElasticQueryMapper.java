@@ -10,7 +10,7 @@ import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 

@@ -3,9 +3,9 @@ package com.dropchop.recyclone.rest.api.internal.security;
 
 import com.dropchop.recyclone.base.api.model.rest.Constants;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresAuthentication;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

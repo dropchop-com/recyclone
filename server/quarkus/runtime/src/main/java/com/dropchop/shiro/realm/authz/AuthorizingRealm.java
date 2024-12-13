@@ -1,8 +1,8 @@
 package com.dropchop.shiro.realm.authz;
 
-import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
-import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.security.Permission;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.service.api.security.SecurityLoadingService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

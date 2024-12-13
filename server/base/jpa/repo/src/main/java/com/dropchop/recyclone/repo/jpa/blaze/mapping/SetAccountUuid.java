@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.BeforeToEntityListener;
 import com.dropchop.recyclone.mapper.api.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.base.Model;
-import com.dropchop.recyclone.model.dto.security.UserAccount;
+import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 
 import java.util.UUID;
 

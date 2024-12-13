@@ -127,7 +127,7 @@ public class FilteringDtoContext extends MappingContext {
       Translation defaultTrans = ((HasTranslation<?>) target).getTranslation(defaultLang);
       if (swap instanceof TitleTranslation) {
         if (defaultTrans == null) {
-          com.dropchop.recyclone.model.dto.localization.TitleTranslation trans = new com.dropchop.recyclone.model.dto.localization.TitleTranslation();
+          com.dropchop.recyclone.base.dto.model.localization.TitleTranslation trans = new com.dropchop.recyclone.base.dto.model.localization.TitleTranslation();
           if (target instanceof HasTitle) {
             trans.setTitle(((HasTitle) target).getTitle());
             ((HasTitle) target).setTitle(((TitleTranslation) swap).getTitle());

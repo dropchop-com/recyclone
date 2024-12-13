@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.mapper.jpa.security;
 
-import com.dropchop.recyclone.model.dto.security.Role;
+import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
 import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
 import com.dropchop.recyclone.mapper.api.ToDtoMapper;

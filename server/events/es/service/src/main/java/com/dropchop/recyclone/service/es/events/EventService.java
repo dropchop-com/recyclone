@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.es.events;
 
-import com.dropchop.recyclone.model.dto.event.Event;
+import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.model.entity.es.events.EsEvent;
 import com.dropchop.recyclone.repo.es.events.EsEventMapperProvider;
 import com.dropchop.recyclone.repo.es.events.EsEventRepository;

@@ -2,7 +2,7 @@ package com.dropchop.recyclone.repo.jpa.blaze.localization;
 
 import com.dropchop.recyclone.mapper.jpa.localization.CountryToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.localization.CountryToJpaMapper;
-import com.dropchop.recyclone.model.dto.localization.Country;
+import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,6 +14,7 @@ import lombok.Getter;
  */
 @Getter
 @ApplicationScoped
+@SuppressWarnings("unused")
 public class CountryMapperProvider extends RecycloneMapperProvider<Country, JpaCountry, String> {
 
   @Inject

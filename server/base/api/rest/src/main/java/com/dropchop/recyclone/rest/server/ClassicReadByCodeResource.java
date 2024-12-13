@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.rest.server;
 
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 
 import java.util.List;
 

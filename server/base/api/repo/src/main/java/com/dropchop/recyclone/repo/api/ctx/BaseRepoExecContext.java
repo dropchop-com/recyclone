@@ -3,7 +3,7 @@ package com.dropchop.recyclone.repo.api.ctx;
 import com.dropchop.recyclone.mapper.api.RepositoryExecContextListener;
 import com.dropchop.recyclone.mapper.api.TotalCountExecContextListener;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
-import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
+import com.dropchop.recyclone.base.dto.model.invoke.ParamsExecContext;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 16. 09. 22.

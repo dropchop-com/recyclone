@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.localization;
 
-import com.dropchop.recyclone.model.dto.localization.Country;
+import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;

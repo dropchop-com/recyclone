@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;

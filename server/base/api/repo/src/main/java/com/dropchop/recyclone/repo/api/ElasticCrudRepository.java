@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.repo.api;
 
 import com.dropchop.recyclone.base.api.model.base.Model;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;
 
 import java.util.List;

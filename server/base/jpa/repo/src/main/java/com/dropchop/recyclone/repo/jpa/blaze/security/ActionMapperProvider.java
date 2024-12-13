@@ -2,7 +2,7 @@ package com.dropchop.recyclone.repo.jpa.blaze.security;
 
 import com.dropchop.recyclone.mapper.jpa.security.ActionToDtoMapper;
 import com.dropchop.recyclone.mapper.jpa.security.ActionToJpaMapper;
-import com.dropchop.recyclone.model.dto.security.Action;
+import com.dropchop.recyclone.base.dto.model.security.Action;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
 import com.dropchop.recyclone.repo.jpa.blaze.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,6 +14,7 @@ import lombok.Getter;
  */
 @Getter
 @ApplicationScoped
+@SuppressWarnings("unused")
 public class ActionMapperProvider extends RecycloneMapperProvider<Action, JpaAction, String> {
 
   @Inject

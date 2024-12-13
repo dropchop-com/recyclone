@@ -1,18 +1,19 @@
 package com.dropchop.recyclone.quarkus.it.rest.events;
 
 import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.model.dto.event.Event;
-import com.dropchop.recyclone.model.dto.event.EventDetail;
-import com.dropchop.recyclone.model.dto.event.EventItem;
-import com.dropchop.recyclone.model.dto.event.EventTrace;
-import com.dropchop.recyclone.model.dto.invoke.EventParams;
+import com.dropchop.recyclone.base.dto.model.event.Event;
+import com.dropchop.recyclone.base.dto.model.event.EventDetail;
+import com.dropchop.recyclone.base.dto.model.event.EventItem;
+import com.dropchop.recyclone.base.dto.model.event.EventTrace;
+import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import static com.dropchop.recyclone.base.api.model.query.Condition.field;
 import static com.dropchop.recyclone.base.api.model.query.Condition.or;
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -30,6 +32,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventsResourceTest {
+
+  @Inject
+  ObjectMapper mapper;
+
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+    );
+  }
 
   public static String EVENT_ID = UUID.randomUUID().toString();
   public static String EVENT_DETAIL_ID = UUID.randomUUID().toString();

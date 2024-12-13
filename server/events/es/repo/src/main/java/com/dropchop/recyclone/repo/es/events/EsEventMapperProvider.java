@@ -4,7 +4,7 @@ import com.dropchop.recyclone.mapper.api.MapToEntityMapper;
 import com.dropchop.recyclone.mapper.es.events.EventMapToEntityMapper;
 import com.dropchop.recyclone.mapper.es.events.EventToDtoMapper;
 import com.dropchop.recyclone.mapper.es.events.EventToEsMapper;
-import com.dropchop.recyclone.model.dto.event.Event;
+import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.model.entity.es.events.EsEvent;
 import com.dropchop.recyclone.repo.api.FilteringElasticMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;

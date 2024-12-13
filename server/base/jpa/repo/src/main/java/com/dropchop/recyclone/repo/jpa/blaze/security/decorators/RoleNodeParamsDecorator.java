@@ -1,10 +1,8 @@
 package com.dropchop.recyclone.repo.jpa.blaze.security.decorators;
 
 import com.blazebit.persistence.CriteriaBuilder;
-import com.dropchop.recyclone.model.dto.invoke.IdentifierParams;
-import com.dropchop.recyclone.model.dto.invoke.Params;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
+import com.dropchop.recyclone.base.dto.model.invoke.Params;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.repo.api.utils.SearchFields;
 import com.dropchop.recyclone.repo.jpa.blaze.BlazeCriteriaDecorator;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,7 @@ public class RoleNodeParamsDecorator extends BlazeCriteriaDecorator {
     if (params instanceof RoleNodeParams roleNodeParams) {
       if (!roleNodeParams.getIdentifiers().isEmpty()) {
         cb.where(alias + DELIM + SearchFields.Common.UUID)
-          .eq(UUID.fromString(roleNodeParams.getIdentifiers().get(0)));
+          .eq(UUID.fromString(roleNodeParams.getIdentifiers().getFirst()));
       } else {
         String target = roleNodeParams.getTarget();
         String targetId = roleNodeParams.getTargetId();

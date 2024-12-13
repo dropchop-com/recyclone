@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.service.api.security;
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.security.Domain;
+import com.dropchop.recyclone.base.dto.model.security.Domain;
 import com.dropchop.recyclone.service.api.CrudService;
 
 /**

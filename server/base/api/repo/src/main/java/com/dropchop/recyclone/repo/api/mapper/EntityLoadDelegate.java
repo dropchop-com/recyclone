@@ -6,8 +6,8 @@ import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
-import com.dropchop.recyclone.model.dto.base.DtoCode;
-import com.dropchop.recyclone.model.dto.base.DtoId;
+import com.dropchop.recyclone.base.dto.model.base.DtoCode;
+import com.dropchop.recyclone.base.dto.model.base.DtoId;
 import com.dropchop.recyclone.repo.api.ReadRepository;
 
 import java.util.HashSet;

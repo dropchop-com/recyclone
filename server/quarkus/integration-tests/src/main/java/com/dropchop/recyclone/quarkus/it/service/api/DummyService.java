@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.quarkus.it.service.api;
 
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.service.api.CrudService;

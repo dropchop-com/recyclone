@@ -9,7 +9,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasLanguageCode;
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.dto.localization.Language;
+import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
 import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
 import com.dropchop.recyclone.repo.api.mapper.EntityAllPreloadDelegate;

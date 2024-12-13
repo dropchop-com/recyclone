@@ -7,7 +7,7 @@ import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail;
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.repo.api.CrudRepository;
 import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
 import com.dropchop.recyclone.service.api.security.AuthorizationService;

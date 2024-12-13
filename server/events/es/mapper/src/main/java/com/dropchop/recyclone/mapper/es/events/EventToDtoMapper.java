@@ -3,7 +3,7 @@ package com.dropchop.recyclone.mapper.es.events;
 import com.dropchop.recyclone.mapper.api.DtoPolymorphicFactory;
 import com.dropchop.recyclone.mapper.api.ToDtoManipulator;
 import com.dropchop.recyclone.mapper.api.ToDtoMapper;
-import com.dropchop.recyclone.model.dto.event.Event;
+import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.model.entity.es.events.EsEvent;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;

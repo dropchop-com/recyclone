@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.app;
 
-import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

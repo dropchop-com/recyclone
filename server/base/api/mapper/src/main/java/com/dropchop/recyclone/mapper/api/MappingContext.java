@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.DataExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
 import com.dropchop.recyclone.base.api.model.security.annotations.Logical;
-import com.dropchop.recyclone.model.dto.invoke.ParamsExecContext;
+import com.dropchop.recyclone.base.dto.model.invoke.ParamsExecContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

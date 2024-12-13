@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.service.jpa.security;
 
-import com.dropchop.recyclone.model.dto.security.Permission;
+import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionMapperProvider;
 import com.dropchop.recyclone.repo.jpa.blaze.security.PermissionRepository;

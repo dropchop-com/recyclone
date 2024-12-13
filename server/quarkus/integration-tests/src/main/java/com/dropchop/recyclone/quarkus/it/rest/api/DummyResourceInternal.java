@@ -2,9 +2,9 @@ package com.dropchop.recyclone.quarkus.it.rest.api;
 
 import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;

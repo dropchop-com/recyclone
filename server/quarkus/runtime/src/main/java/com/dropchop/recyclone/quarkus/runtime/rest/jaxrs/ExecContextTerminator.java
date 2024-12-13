@@ -2,7 +2,7 @@ package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
 import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.ext.WriterInterceptor;
 import jakarta.ws.rs.ext.WriterInterceptorContext;
