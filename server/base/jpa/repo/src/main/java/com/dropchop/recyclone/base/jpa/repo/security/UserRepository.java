@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.jpa.repo.security;
 
 
 import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.repo.BlazeExecContext;
 import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
 import com.dropchop.recyclone.base.jpa.repo.security.decorators.SearchByLoginNameDecorator;

@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.mapping.SetAccountUser;

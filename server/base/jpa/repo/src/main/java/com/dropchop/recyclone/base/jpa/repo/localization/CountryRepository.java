@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.jpa.repo.localization;
 
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
 import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;

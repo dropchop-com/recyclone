@@ -2,7 +2,7 @@ package com.dropchop.recyclone.quarkus.it.app;
 
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
-import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
+import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;

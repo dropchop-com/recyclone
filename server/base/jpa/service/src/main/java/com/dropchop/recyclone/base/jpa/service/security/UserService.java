@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.repo.security.UserMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;

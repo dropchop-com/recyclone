@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.mapper.tagging;
 
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
+import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import org.mapstruct.*;

@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
 import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
 import org.mapstruct.Builder;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;

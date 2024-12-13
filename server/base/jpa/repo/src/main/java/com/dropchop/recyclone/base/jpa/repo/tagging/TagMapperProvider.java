@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
-import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
+import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;

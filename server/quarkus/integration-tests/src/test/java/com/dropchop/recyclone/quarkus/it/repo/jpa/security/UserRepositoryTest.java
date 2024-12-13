@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.security;
 
 
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaLoginAccount;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
+import com.dropchop.recyclone.base.jpa.model.security.JpaTokenAccount;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.api.repo.TransactionHelper;
 import com.dropchop.recyclone.base.jpa.repo.localization.CountryRepository;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageRepository;

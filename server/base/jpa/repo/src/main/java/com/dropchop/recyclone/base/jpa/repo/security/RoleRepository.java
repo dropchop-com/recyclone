@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.jpa.repo.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRole;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRole;
 import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;

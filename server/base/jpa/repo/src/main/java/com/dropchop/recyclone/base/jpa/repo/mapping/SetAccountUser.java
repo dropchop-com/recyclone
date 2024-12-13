@@ -4,8 +4,8 @@ import com.dropchop.recyclone.base.api.mapper.AfterToEntityListener;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.base.Model;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUserAccount;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 
 import java.util.Set;
 

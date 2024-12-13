@@ -80,9 +80,13 @@ quarkus:
       - com.dropchop.recyclone.base.api.model.marker
       - com.dropchop.recyclone.base.api.model.localization
       - com.dropchop.recyclone.base.api.model.security
-      - com.dropchop.recyclone.model.entity.jpa
-      - com.dropchop.recyclone.model.entity.jpa.localization
-      - com.dropchop.recyclone.model.entity.jpa.security
+      - com.dropchop.recyclone.base.jpa.model.base
+      - com.dropchop.recyclone.base.jpa.model.attr
+      - com.dropchop.recyclone.base.jpa.model.marker
+      - com.dropchop.recyclone.base.jpa.model.common
+      - com.dropchop.recyclone.base.jpa.model.localization
+      - com.dropchop.recyclone.base.jpa.model.security
+      - com.dropchop.recyclone.base.jpa.model.tagging
       - com.dropchop.recyclone.quarkus.it.model.entity.jpa
 
   recyclone:

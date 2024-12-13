@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.service.localization;
 
 import com.dropchop.recyclone.base.dto.model.localization.Language;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;

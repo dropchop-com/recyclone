@@ -8,8 +8,8 @@ import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToJpaMa
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermissionTemplate;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermission;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermissionTemplate;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.localization;
 
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
 import com.dropchop.recyclone.base.api.repo.TransactionHelper;
 import com.dropchop.recyclone.base.jpa.repo.localization.CountryRepository;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageRepository;

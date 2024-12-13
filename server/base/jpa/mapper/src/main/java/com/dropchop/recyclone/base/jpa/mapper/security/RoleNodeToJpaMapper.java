@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.jpa.mapper.security;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
 import org.mapstruct.*;
 
 /**

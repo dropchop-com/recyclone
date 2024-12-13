@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.jpa.repo.security;
 import com.dropchop.recyclone.base.jpa.mapper.security.PermissionToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.PermissionToJpaMapper;
 import com.dropchop.recyclone.base.dto.model.security.Permission;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
+import com.dropchop.recyclone.base.jpa.model.security.JpaPermission;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

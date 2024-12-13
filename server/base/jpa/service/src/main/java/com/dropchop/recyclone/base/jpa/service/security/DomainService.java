@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.dto.model.security.Domain;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaDomain;
+import com.dropchop.recyclone.base.jpa.model.security.JpaDomain;
 import com.dropchop.recyclone.base.jpa.repo.security.DomainMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.DomainRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;

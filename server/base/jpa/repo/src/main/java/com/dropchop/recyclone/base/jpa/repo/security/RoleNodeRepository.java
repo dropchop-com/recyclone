@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.jpa.repo.security;
 
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
 import com.dropchop.recyclone.base.jpa.repo.LikeIdentifiersCriteriaDecorator;

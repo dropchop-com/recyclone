@@ -5,8 +5,8 @@ import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermission;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNodePermissionTemplate;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermission;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermissionTemplate;
 import org.mapstruct.*;
 
 /**

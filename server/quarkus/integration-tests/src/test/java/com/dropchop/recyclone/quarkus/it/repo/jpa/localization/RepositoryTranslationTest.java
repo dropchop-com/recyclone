@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.localization;
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaTitleDescriptionTranslation;
+import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import com.dropchop.recyclone.base.jpa.repo.security.ActionRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

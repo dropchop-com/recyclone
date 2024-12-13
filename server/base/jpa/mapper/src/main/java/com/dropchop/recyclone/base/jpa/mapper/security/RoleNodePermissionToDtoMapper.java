@@ -6,7 +6,8 @@ import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
 import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
-import com.dropchop.recyclone.model.entity.jpa.security.*;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermission;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermissionTemplate;
 import org.mapstruct.*;
 
 /**

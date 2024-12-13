@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.dto.model.security.Permission;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
+import com.dropchop.recyclone.base.jpa.model.security.JpaPermission;
 import com.dropchop.recyclone.base.jpa.repo.security.PermissionMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.PermissionRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;

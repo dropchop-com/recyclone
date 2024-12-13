@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.jpa.repo.tagging;
 
-import com.dropchop.recyclone.model.entity.jpa.tagging.JpaTag;
+import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
 import com.dropchop.recyclone.base.jpa.repo.LikeTypeCriteriaDecorator;

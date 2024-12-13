@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.dto.model.security.Action;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
+import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import com.dropchop.recyclone.base.jpa.repo.security.ActionMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.ActionRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;

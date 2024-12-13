@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.jpa.service.security;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeRepository;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;

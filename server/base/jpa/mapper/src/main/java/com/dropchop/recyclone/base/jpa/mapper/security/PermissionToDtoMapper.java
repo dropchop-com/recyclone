@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
 import com.dropchop.recyclone.base.dto.model.security.Permission;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaPermission;
+import com.dropchop.recyclone.base.jpa.model.security.JpaPermission;
 import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
 import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import org.mapstruct.Builder;

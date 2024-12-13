@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.tagging;
 
 import com.dropchop.recyclone.base.api.model.attr.*;
-import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
+import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.base.jpa.repo.tagging.TagRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

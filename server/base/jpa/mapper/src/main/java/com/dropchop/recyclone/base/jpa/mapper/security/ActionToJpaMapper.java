@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
 import com.dropchop.recyclone.base.dto.model.security.Action;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaAction;
+import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import org.mapstruct.*;
