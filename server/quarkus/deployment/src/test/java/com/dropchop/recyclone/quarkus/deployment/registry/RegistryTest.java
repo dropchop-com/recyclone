@@ -5,7 +5,9 @@ import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
-import com.dropchop.recyclone.model.entity.es.tagging.EsLanguageGroup;
+import com.dropchop.recyclone.base.es.mapper.tagging.TagToDtoMapper;
+import com.dropchop.recyclone.base.es.mapper.tagging.TagToDtoMapperImpl;
+import com.dropchop.recyclone.base.es.model.tagging.EsLanguageGroup;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaLoginAccount;
 import com.dropchop.recyclone.model.entity.jpa.security.JpaTokenAccount;
 import com.dropchop.recyclone.model.entity.jpa.tagging.JpaLanguageGroup;
@@ -36,8 +38,8 @@ public class RegistryTest {
                 UserAccountToDtoMapperImpl.class,
                 com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapper.class,
                 com.dropchop.recyclone.mapper.jpa.tagging.TagToDtoMapperImpl.class,
-                com.dropchop.recyclone.mapper.es.tagging.TagToDtoMapper.class,
-                com.dropchop.recyclone.mapper.es.tagging.TagToDtoMapperImpl.class,
+                TagToDtoMapper.class,
+                TagToDtoMapperImpl.class,
                 TestShiroEnvironmentProvider.class
             )
         );

@@ -1,43 +1,47 @@
-package com.dropchop.recyclone.quarkus.it.model.entity.es;
+package com.dropchop.recyclone.base.es.model.localization;
 
+import com.dropchop.recyclone.base.api.model.localization.Country;
+import com.dropchop.recyclone.base.api.model.marker.HasTags;
 import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
 import com.dropchop.recyclone.base.es.model.base.EsCode;
-import com.dropchop.recyclone.base.es.model.base.EsTitleDescriptionTranslationHelper;
-import com.dropchop.recyclone.base.es.model.localization.EsLanguage;
-import com.dropchop.recyclone.base.es.model.localization.EsTitleDescriptionTranslation;
+import com.dropchop.recyclone.base.es.model.base.EsTitleTranslationHelper;
 import com.dropchop.recyclone.base.es.model.marker.HasEsLanguage;
-import com.dropchop.recyclone.quarkus.it.model.api.Dummy;
+import com.dropchop.recyclone.base.es.model.tagging.EsTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 6. 12. 24.
+ * Country with ISO 3166 2-letter code.
+ *
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @SuppressWarnings("unused")
-public class EsDummy extends EsCode
-    implements Dummy<EsTitleDescriptionTranslation>, EsTitleDescriptionTranslationHelper,
-    HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasEsLanguage {
+public class EsCountry extends EsCode
+  implements Country<EsTitleTranslation>, EsTitleTranslationHelper,
+  HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasEsLanguage,
+  HasTags<EsTag, EsTitleDescriptionTranslation> {
 
   private String title;
-
-  private String description;
 
   private String lang;
 
   private EsLanguage language;
 
-  private Set<EsTitleDescriptionTranslation> translations;
+  private Set<EsTitleTranslation> translations;
+
+  private List<EsTag> tags;
 
   private ZonedDateTime created;
 
@@ -45,7 +49,7 @@ public class EsDummy extends EsCode
 
   private ZonedDateTime deactivated;
 
-  public EsDummy(@NonNull String code) {
+  public EsCountry(@NonNull String code) {
     super(code);
   }
 }

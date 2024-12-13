@@ -1,20 +1,25 @@
-package com.dropchop.recyclone.quarkus.it.repo.es;
+package com.dropchop.recyclone.base.es.repo.events;
 
-import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
+import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RestClient;
 
-@Slf4j
+import java.util.UUID;
+
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
+ */
 @Getter
 @ApplicationScoped
-@SuppressWarnings("unused")
-public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
+@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
+public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
+
+  Class<EsEvent> rootClass = EsEvent.class;
 
   @Inject
   ObjectMapper objectMapper;
@@ -24,6 +29,4 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
 
   @Inject
   ElasticQueryMapper elasticQueryMapper;
-
-  Class<EsDummy> rootClass = EsDummy.class;
 }

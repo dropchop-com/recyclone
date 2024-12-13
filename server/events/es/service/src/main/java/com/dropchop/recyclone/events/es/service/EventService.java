@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.events.es.service;
 
 import com.dropchop.recyclone.base.dto.model.event.Event;
-import com.dropchop.recyclone.model.entity.es.events.EsEvent;
-import com.dropchop.recyclone.repo.es.events.EsEventMapperProvider;
-import com.dropchop.recyclone.repo.es.events.EsEventRepository;
+import com.dropchop.recyclone.base.es.model.events.EsEvent;
+import com.dropchop.recyclone.base.es.repo.events.EsEventMapperProvider;
+import com.dropchop.recyclone.base.es.repo.events.EsEventRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
