@@ -14,7 +14,6 @@ import com.dropchop.recyclone.model.api.marker.state.HasCreated;
 import com.dropchop.recyclone.model.api.utils.ProfileTimer;
 import com.dropchop.recyclone.model.api.utils.Strings;
 import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-import com.dropchop.recyclone.repo.api.ElasticBulkMethod;
 import com.dropchop.recyclone.repo.api.ElasticCrudRepository;
 import com.dropchop.recyclone.repo.api.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.repo.api.ctx.RepositoryExecContext;

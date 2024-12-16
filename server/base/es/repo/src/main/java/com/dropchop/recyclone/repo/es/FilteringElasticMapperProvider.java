@@ -1,7 +1,8 @@
-package com.dropchop.recyclone.repo.api;
+package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.model.api.base.Dto;
 import com.dropchop.recyclone.model.api.base.Entity;
+import com.dropchop.recyclone.repo.api.FilteringMapperProvider;
 
 /**
  * @author Samo Pritrznik <samo.pritrznik@dropchop.com> on 28. 11. 24

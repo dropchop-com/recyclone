@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.repo.api;
+package com.dropchop.recyclone.repo.es;
 
 import com.dropchop.recyclone.mapper.api.MapToEntityMapper;
 
