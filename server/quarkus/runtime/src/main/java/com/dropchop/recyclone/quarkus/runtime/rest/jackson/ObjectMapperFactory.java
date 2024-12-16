@@ -1,13 +1,13 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.model.api.query.Condition;
-import com.dropchop.recyclone.model.api.query.aggregation.AggregationList;
-import com.dropchop.recyclone.rest.jackson.client.AggregationDeserializer;
-import com.dropchop.recyclone.rest.jackson.client.AttributeCompactSerializer;
-import com.dropchop.recyclone.rest.jackson.client.AttributeDeserializer;
-import com.dropchop.recyclone.rest.jackson.client.ConditionDeserializer;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.jackson.AggregationDeserializer;
+import com.dropchop.recyclone.base.jackson.AttributeCompactSerializer;
+import com.dropchop.recyclone.base.jackson.AttributeDeserializer;
+import com.dropchop.recyclone.base.jackson.ConditionDeserializer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

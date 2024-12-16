@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.model.entity.jpa;
 
-import com.dropchop.recyclone.model.entity.jpa.base.JpaCode;
+import com.dropchop.recyclone.base.jpa.model.base.JpaCode;
 import lombok.Getter;
 import lombok.Setter;
 

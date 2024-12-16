@@ -28,15 +28,15 @@ public class ContextProcessor {
   private final static Logger log = LoggerFactory.getLogger(ContextProcessor.class);
 
   private static final DotName EXEC_CTX_IFACE = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.ExecContext"
+      "com.dropchop.recyclone.base.api.model.invoke.ExecContext"
   );
 
   private static final DotName DEFAULT_EXEC_CTX = DotName.createSimple(
-      "com.dropchop.recyclone.model.dto.invoke.DefaultExecContext"
+      "com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext"
   );
 
   private static final DotName CTX_PARAMS_IFACE = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.Params"
+      "com.dropchop.recyclone.base.api.model.invoke.Params"
   );
 
   private static boolean checkInterface(ClassInfo classInfo, DotName target, IndexView index,

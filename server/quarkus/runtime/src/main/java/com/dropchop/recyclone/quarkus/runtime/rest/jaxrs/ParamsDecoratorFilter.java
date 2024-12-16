@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.*;
-import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.invoke.ResultFilter.LanguageFilter;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.invoke.*;
+import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter.LanguageFilter;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import jakarta.ws.rs.ConstrainedTo;
@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.Params.Header;
-import static com.dropchop.recyclone.model.api.rest.Constants.Params.Query;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Params.Header;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Params.Query;
 
 /**
  * Fills Params object obtained from ExecContext with request parameters
@@ -70,7 +70,7 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
       List<String> tmp = map.get(headerName);
       if (tmp != null && !tmp.isEmpty()) {
         if (tmp.size() == 1) {// simple array serialization https://swagger.io/docs/specification/serialization/
-          String valueStr = tmp.get(0);
+          String valueStr = tmp.getFirst();
           return Arrays.asList(valueStr.split(",", -1));
         }
         return tmp;
@@ -94,7 +94,7 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
       map = requestContext.getHeaders();
       List<String> values = map.get(headerName);
       if (values != null && !values.isEmpty()) {
-        return values.get(0);
+        return values.getFirst();
       }
     }
 

@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.rest.server.tagging;
 
-import com.dropchop.recyclone.model.dto.invoke.TagParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.tagging.Tag;
+import com.dropchop.recyclone.base.dto.model.invoke.TagParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.rest.server.ClassicReadByIdResource;
-import com.dropchop.recyclone.service.api.tagging.TagService;
+import com.dropchop.recyclone.base.api.service.tagging.TagService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
 public class TagResource extends ClassicReadByIdResource<Tag, TagParams> implements
-    com.dropchop.recyclone.rest.api.tagging.TagResource<Tag> {
+    com.dropchop.recyclone.base.api.jaxrs.tagging.TagResource<Tag> {
 
   @Inject
   TagService service;

@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.invoke.DataExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.ExecContextContainer;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.base.api.model.invoke.DataExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import jakarta.ws.rs.ConstrainedTo;
@@ -69,7 +69,7 @@ public class DtoDataInterceptor implements ReaderInterceptor {
     if (execContext instanceof DataExecContext<?, ?> dataExecContext) {
       if (o != null && List.class.isAssignableFrom(o.getClass())) {
         if (((List<?>) o).iterator().hasNext()) {
-          Object item = ((List<?>) o).iterator().next();
+          Object item = ((List<?>) o).getFirst();
           if (item instanceof Dto) {
             //noinspection unchecked,rawtypes
             dataExecContext.setData((List) o);

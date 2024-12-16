@@ -6,7 +6,7 @@ import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFi
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.selectors.ServiceSelector;
-import com.dropchop.recyclone.service.api.Service;
+import com.dropchop.recyclone.base.api.service.Service;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
@@ -167,7 +167,7 @@ class RecycloneProcessor {
   }
 
   private final DotName ANNO_NAMED = DotName.createSimple(
-      "com.dropchop.recyclone.service.api.RecycloneType"
+      "com.dropchop.recyclone.base.api.service.RecycloneType"
   );
 
 

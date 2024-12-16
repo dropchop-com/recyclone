@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.model.dto.invoke;
 
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 
 import java.util.List;
 

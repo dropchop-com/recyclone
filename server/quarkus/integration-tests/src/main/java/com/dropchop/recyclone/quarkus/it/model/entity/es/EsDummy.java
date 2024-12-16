@@ -1,14 +1,14 @@
 package com.dropchop.recyclone.quarkus.it.model.entity.es;
 
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
-import com.dropchop.recyclone.model.entity.es.base.EsCode;
-import com.dropchop.recyclone.model.entity.es.base.EsTitleDescriptionTranslationHelper;
-import com.dropchop.recyclone.model.entity.es.localization.EsLanguage;
-import com.dropchop.recyclone.model.entity.es.localization.EsTitleDescriptionTranslation;
-import com.dropchop.recyclone.model.entity.es.marker.HasEsLanguage;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.es.model.base.EsCode;
+import com.dropchop.recyclone.base.es.model.base.EsTitleDescriptionTranslationHelper;
+import com.dropchop.recyclone.base.es.model.localization.EsLanguage;
+import com.dropchop.recyclone.base.es.model.localization.EsTitleDescriptionTranslation;
+import com.dropchop.recyclone.base.es.model.marker.HasEsLanguage;
 import com.dropchop.recyclone.quarkus.it.model.api.Dummy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

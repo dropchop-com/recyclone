@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
@@ -31,13 +31,13 @@ public interface RecycloneBuildConfig {
     /**
      * Default Params class implementation to be instantiated if can not be determined from code or annotations.
      */
-    @WithDefault("com.dropchop.recyclone.model.dto.invoke.Params")
+    @WithDefault("com.dropchop.recyclone.base.dto.model.invoke.Params")
     String defaultParams();
 
     /**
      * Default ExecContext class implementation to be instantiated if can not be determined from code or annotations.
      */
-    @WithDefault("com.dropchop.recyclone.model.dto.invoke.DefaultExecContext")
+    @WithDefault("com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext")
     String defaultExecContext();
 
     /**
@@ -186,14 +186,14 @@ public interface RecycloneBuildConfig {
         String match();
 
         /**
-         * Dependency target <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+         * Dependency target <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
          */
         @WithDefault("<same-as-dependant>")
         String targetQualifier();
 
         /**
          * Fallback for the dependency
-         * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+         * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
          */
         @WithDefault(RECYCLONE_DEFAULT)
         String fallbackQualifier();
@@ -213,14 +213,14 @@ public interface RecycloneBuildConfig {
 
       /**
        * Target's injection point default
-       * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+       * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
        */
       @WithDefault("<same-as-dependant>")
       String targetQualifier();
 
       /**
        * Fallback for the target's injection point default
-       * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+       * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
        */
       @WithDefault(RECYCLONE_DEFAULT)
       String fallbackQualifier();
@@ -233,14 +233,14 @@ public interface RecycloneBuildConfig {
 
     /**
      * Target's injection point default
-     * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+     * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
      */
     @WithDefault("<same-as-dependant>")
     String targetQualifier();
 
     /**
      * Fallback for the target's injection point default
-     * <code>com.dropchop.recyclone.service.api.RecycloneType</code> qualifier value.
+     * <code>com.dropchop.recyclone.base.api.service.RecycloneType</code> qualifier value.
      */
     @WithDefault(RECYCLONE_DEFAULT)
     String fallbackQualifier();

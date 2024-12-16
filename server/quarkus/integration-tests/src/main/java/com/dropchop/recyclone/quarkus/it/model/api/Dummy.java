@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.it.model.api;
 
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.api.marker.HasCode;
-import com.dropchop.recyclone.model.api.marker.HasTitleDescriptionTranslation;
-import com.dropchop.recyclone.model.api.marker.HasTranslationInlinedTitleDescription;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.api.model.marker.HasCode;
+import com.dropchop.recyclone.base.api.model.marker.HasTitleDescriptionTranslation;
+import com.dropchop.recyclone.base.api.model.marker.HasTranslationInlinedTitleDescription;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.

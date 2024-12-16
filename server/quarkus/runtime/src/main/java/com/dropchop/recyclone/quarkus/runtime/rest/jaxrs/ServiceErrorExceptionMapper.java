@@ -1,13 +1,13 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.invoke.ErrorCode;
-import com.dropchop.recyclone.model.api.invoke.ServiceException;
-import com.dropchop.recyclone.model.api.invoke.StatusMessage;
-import com.dropchop.recyclone.model.api.rest.ResultCode;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.rest.ResultStatus;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
+import com.dropchop.recyclone.base.api.model.rest.ResultCode;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.ResultStatus;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.ConstrainedTo;
@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_ID;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 12. 21.
@@ -92,10 +92,10 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
     if (statusMessages.size() > 1) {
       status.setDetails(statusMessages);
     } else if (statusMessages.size() == 1) {
-      status.setMessage(statusMessages.get(0));
+      status.setMessage(statusMessages.getFirst());
     }
     if (!statusMessages.isEmpty()) {
-      StatusMessage statusMessage = statusMessages.get(0);
+      StatusMessage statusMessage = statusMessages.getFirst();
       injectRequestId(statusMessage);
     }
     status.setCode(ResultCode.error);

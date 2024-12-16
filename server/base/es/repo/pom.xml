@@ -20,11 +20,21 @@
   </properties>
 
   <dependencies>
+    <!-- general -->
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-client</artifactId>
     </dependency>
 
+    <!-- recyclone -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-api-model</artifactId>
@@ -49,21 +59,8 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-es-mapper</artifactId>
     </dependency>
-    <dependency>
-      <groupId>jakarta.enterprise</groupId>
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
+
+    <!-- test -->
     <dependency>
       <groupId>org.skyscreamer</groupId>
       <artifactId>jsonassert</artifactId>
@@ -88,18 +85,5 @@
       <artifactId>jackson-module-parameter-names</artifactId>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.elasticsearch.client</groupId>
-          <artifactId>elasticsearch-rest-client</artifactId>
-          <version>8.15.0</version>
-          <scope>compile</scope>
-      </dependency>
-    <dependency>
-      <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-core-api-jakarta</artifactId>
-      <version>1.6.12</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
-
 </project>

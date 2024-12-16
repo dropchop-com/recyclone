@@ -1,8 +1,8 @@
 package com.dropchop.shiro.utils;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.base.Entity;
-import com.dropchop.recyclone.model.api.base.Model;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.base.Model;
 
 import java.util.*;
 
@@ -16,6 +16,7 @@ import java.util.*;
  * User dto and EUser entity represent the same subject in security (ie: "user"). So when searching for subject permissions,
  * one can use either dto or entity type to get correct permission data out of data sources.
  */
+@SuppressWarnings("unused")
 abstract public class SubjectMapper {
 
   /**
@@ -31,7 +32,6 @@ abstract public class SubjectMapper {
 
   /**
    * Takes parameter map and splits them into two maps.
-   * @param map
    */
   protected void setMap(Map<Class<? extends Model>, String> map) {
     if (map == null || map.isEmpty()) return;
@@ -59,6 +59,7 @@ abstract public class SubjectMapper {
    * @param subject representation.
    * @return Entity type.
    */
+  @SuppressWarnings("unchecked")
   public Class<? extends Entity> toEntity(String subject) {
     return (Class<? extends Entity>)this.fromSubject(subject, false);
   }
@@ -69,6 +70,7 @@ abstract public class SubjectMapper {
    * @param subject representation.
    * @return Dto type.
    */
+  @SuppressWarnings("unchecked")
   public Class<? extends Dto> toDto(String subject) {
     return (Class<? extends Dto>)this.fromSubject(subject, false);
   }
@@ -81,6 +83,7 @@ abstract public class SubjectMapper {
    * @param asDto boolean to get Dto type instead of Entity type if defined.
    * @return type of Model.
    */
+  @SuppressWarnings("SameParameterValue")
   protected Class<? extends Model> fromSubject(String subject, boolean asDto) {
     if (subject == null || subject.isEmpty()) return null;
     Set<Class<? extends Model>> classes = this.valueMap.get(subject);
@@ -96,14 +99,17 @@ abstract public class SubjectMapper {
 
   /**
    * Implement this method to define mappings.
-   *
    * Example:
+   * <pre>
+   * {@code
    *   public void init() {
    *     this.setMap(Map.ofEntries(
    *         Map.entry(User.class, "User"),
    *         Map.entry(EUser.class, "User")
    *     ));
    *   }
+   * }
+   * </pre>
    */
   abstract protected void init();
 }

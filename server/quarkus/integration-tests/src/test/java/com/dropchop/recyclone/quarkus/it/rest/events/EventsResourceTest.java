@@ -1,26 +1,28 @@
 package com.dropchop.recyclone.quarkus.it.rest.events;
 
-import com.dropchop.recyclone.model.api.query.Condition;
-import com.dropchop.recyclone.model.dto.event.Event;
-import com.dropchop.recyclone.model.dto.event.EventDetail;
-import com.dropchop.recyclone.model.dto.event.EventItem;
-import com.dropchop.recyclone.model.dto.event.EventTrace;
-import com.dropchop.recyclone.model.dto.invoke.EventParams;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.dto.model.event.Event;
+import com.dropchop.recyclone.base.dto.model.event.EventDetail;
+import com.dropchop.recyclone.base.dto.model.event.EventItem;
+import com.dropchop.recyclone.base.dto.model.event.EventTrace;
+import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.query.Condition.field;
-import static com.dropchop.recyclone.model.api.query.Condition.or;
+import static com.dropchop.recyclone.base.api.model.query.Condition.field;
+import static com.dropchop.recyclone.base.api.model.query.Condition.or;
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -30,6 +32,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventsResourceTest {
+
+  @Inject
+  ObjectMapper mapper;
+
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+    );
+  }
 
   public static String EVENT_ID = UUID.randomUUID().toString();
   public static String EVENT_DETAIL_ID = UUID.randomUUID().toString();
@@ -44,23 +56,18 @@ public class EventsResourceTest {
     String ACTION = "action";
     String DATA = "data";
     String UNIT = "unit";
-    String ATTRIBUTE_STR = "attribute_string";
-    String ATTRIBUTE_NUM = "attribute_num";
-    String ATTRIBUTE_BOOL = "attribute_num";
-    String ATTRIBUTE_LIST = "attribute_list";
   }
-
 
   private void validate(List<Event> events) {
     assertEquals(1, events.size());
-    Event rspEvent = events.get(0);
+    Event rspEvent = events.getFirst();
     assertEquals(EVENT_ID, rspEvent.getId());
     assertNotNull(rspEvent.getCreated());
     assertEquals(Strings.APPLICATION, rspEvent.getApplication());
     assertEquals(Strings.TYPE, rspEvent.getType());
     assertEquals(Strings.ACTION, rspEvent.getAction());
     assertEquals(Strings.DATA, rspEvent.getData());
-    assertEquals(rspEvent.getValue(), rspEvent.getValue());
+    //assertEquals(rspEvent.getValue(), rspEvent.getValue());
     assertEquals(Strings.UNIT, rspEvent.getUnit());
     assertNotNull(rspEvent.getSource());
     assertNotNull(rspEvent.getSource().getSubject());
@@ -111,7 +118,6 @@ public class EventsResourceTest {
     assertEquals(true, rspEvent.getAttributeValue(Strings.ATTRIBUTE_BOOL));*/
 
   }
-
 
   @Test
   @Order(10)
@@ -169,13 +175,12 @@ public class EventsResourceTest {
     this.validate(events);
   }
 
-
   @Test
   @Order(20)
   public void search() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException ignored) {}
 
     Condition c = or(
       field("uuid", EVENT_ID)
@@ -200,16 +205,14 @@ public class EventsResourceTest {
         .body().jsonPath().getList(".", Event.class);
 
     this.validate(events);
-
   }
-
 
   @Test
   @Order(25)
   public void get() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException ignored) {}
 
     List<Event> events = given()
         .log().all()
@@ -227,8 +230,6 @@ public class EventsResourceTest {
     this.validate(events);
 
   }
-
-
 
   @Test
   @Order(30)
@@ -255,7 +256,7 @@ public class EventsResourceTest {
 
     try {
       Thread.sleep(5000);
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException ignored) {}
 
     events = given()
       .log().all()
@@ -274,6 +275,4 @@ public class EventsResourceTest {
 
     assertEquals(0, events.size());
   }
-
-
 }

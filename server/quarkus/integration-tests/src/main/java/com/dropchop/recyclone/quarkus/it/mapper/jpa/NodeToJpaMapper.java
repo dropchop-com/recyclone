@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.it.mapper.jpa;
 
-import com.dropchop.recyclone.model.api.attr.Attribute;
-import com.dropchop.recyclone.model.entity.jpa.attr.JpaAttribute;
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
+import com.dropchop.recyclone.base.jpa.model.attr.JpaAttribute;
 import com.dropchop.recyclone.quarkus.it.model.dto.Node;
 import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaNode;
-import com.dropchop.recyclone.mapper.api.ToEntityMapper;
+import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

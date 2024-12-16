@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.localization;
 
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;

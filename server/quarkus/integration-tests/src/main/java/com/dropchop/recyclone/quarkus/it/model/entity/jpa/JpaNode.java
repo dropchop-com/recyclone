@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.quarkus.it.model.entity.jpa;
 
 import com.dropchop.recyclone.quarkus.it.model.api.Node;
-import com.dropchop.recyclone.model.entity.jpa.attr.JpaAttribute;
-import com.dropchop.recyclone.model.entity.jpa.base.JpaCode;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleTranslation;
-import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaAttributes;
+import com.dropchop.recyclone.base.jpa.model.attr.JpaAttribute;
+import com.dropchop.recyclone.base.jpa.model.base.JpaCode;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaTitleTranslation;
+import com.dropchop.recyclone.base.jpa.model.marker.HasJpaAttributes;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

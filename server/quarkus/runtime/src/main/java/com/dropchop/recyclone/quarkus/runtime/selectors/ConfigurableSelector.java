@@ -2,8 +2,8 @@ package com.dropchop.recyclone.quarkus.runtime.selectors;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.utils.ClassNameMatcher;
-import com.dropchop.recyclone.service.api.RecycloneType;
-import com.dropchop.recyclone.service.api.RecycloneTypeLiteral;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.service.RecycloneTypeLiteral;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Named;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dropchop.recyclone.model.api.marker.Constants.Implementation.SAME_AS_DEPENDANT;
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.SAME_AS_DEPENDANT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 24.

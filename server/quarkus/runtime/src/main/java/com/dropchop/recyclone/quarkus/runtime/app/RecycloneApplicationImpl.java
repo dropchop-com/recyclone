@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.app;
 
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
  */
 @ApplicationScoped
 @RegisterForReflection
-@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
+@SuppressWarnings({"unused"})
 public class RecycloneApplicationImpl implements RecycloneApplication {
 
   private final JsonSerializationTypeConfig jsonSerializationTypeConfig;

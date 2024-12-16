@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.quarkus.it.repo.jpa.attribute;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaCountry;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
-import com.dropchop.recyclone.model.entity.jpa.security.JpaUser;
-import com.dropchop.recyclone.repo.jpa.blaze.localization.CountryRepository;
-import com.dropchop.recyclone.repo.jpa.blaze.localization.LanguageRepository;
-import com.dropchop.recyclone.repo.jpa.blaze.security.UserRepository;
+import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
+import com.dropchop.recyclone.base.jpa.repo.localization.CountryRepository;
+import com.dropchop.recyclone.base.jpa.repo.localization.LanguageRepository;
+import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

@@ -1,19 +1,19 @@
 package com.dropchop.recyclone.quarkus.it.rest.api;
 
-import com.dropchop.recyclone.model.api.security.Constants.Actions;
-import com.dropchop.recyclone.model.api.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
-import com.dropchop.recyclone.model.dto.rest.Result;
+import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
+import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.rest.api.DynamicExecContext;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import jakarta.ws.rs.*;
 
 import java.util.List;
 
-import static com.dropchop.recyclone.model.api.security.Constants.PERM_DELIM;
+import static com.dropchop.recyclone.base.api.model.security.Constants.PERM_DELIM;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 01. 22.

@@ -20,14 +20,7 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
+    <!-- general -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -48,24 +41,18 @@
       <artifactId>jackson-module-parameter-names</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <!-- recyclone -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-api-model</artifactId>
     </dependency>
 
+    <!-- test -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-dto-model</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-    </dependency>
-    <!--suppress VulnerableLibrariesLocal -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
     </dependency>
     <dependency>
       <groupId>org.skyscreamer</groupId>

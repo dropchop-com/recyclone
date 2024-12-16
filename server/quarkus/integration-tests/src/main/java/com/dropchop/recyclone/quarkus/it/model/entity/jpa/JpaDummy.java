@@ -1,14 +1,14 @@
 package com.dropchop.recyclone.quarkus.it.model.entity.jpa;
 
-import com.dropchop.recyclone.model.api.marker.state.HasCreated;
-import com.dropchop.recyclone.model.api.marker.state.HasDeactivated;
-import com.dropchop.recyclone.model.api.marker.state.HasModified;
-import com.dropchop.recyclone.model.api.marker.state.HasStateInlinedCommon;
-import com.dropchop.recyclone.model.entity.jpa.base.JpaCode;
-import com.dropchop.recyclone.model.entity.jpa.base.JpaTitleDescriptionTranslationHelper;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaLanguage;
-import com.dropchop.recyclone.model.entity.jpa.localization.JpaTitleDescriptionTranslation;
-import com.dropchop.recyclone.model.entity.jpa.marker.HasJpaLanguage;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
+import com.dropchop.recyclone.base.api.model.marker.state.HasStateInlinedCommon;
+import com.dropchop.recyclone.base.jpa.model.base.JpaCode;
+import com.dropchop.recyclone.base.jpa.model.base.JpaTitleDescriptionTranslationHelper;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaTitleDescriptionTranslation;
+import com.dropchop.recyclone.base.jpa.model.marker.HasJpaLanguage;
 import com.dropchop.recyclone.quarkus.it.model.api.Dummy;
 import jakarta.persistence.*;
 import lombok.Getter;

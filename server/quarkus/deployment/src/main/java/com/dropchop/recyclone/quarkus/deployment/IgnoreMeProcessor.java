@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment;
 /*
-import com.dropchop.recyclone.model.api.rest.Constants.Tags;
+import rest.com.dropchop.recyclone.base.api.model.Constants.Tags;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.builditem.BytecodeTransformerBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
@@ -68,13 +68,13 @@ public class IgnoreMeProcessor {
   );
 
   private static final DotName ANNO_VALUE = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.CommonParams"
+      "invoke.com.dropchop.recyclone.base.api.model.CommonParams"
   );
   private static final DotName ANNO_DATA_CLASS = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.base.Dto"
+      "base.com.dropchop.recyclone.base.api.model.Dto"
   );
   private static final DotName ANNO_EXEC_CTX_CLASS = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.ExecContext"
+      "invoke.com.dropchop.recyclone.base.api.model.ExecContext"
   );
   private static final boolean ANNO_INTERNAL = false;
 
@@ -144,7 +144,7 @@ public class IgnoreMeProcessor {
    * Example:
    * \@Tag(name = Constants.Tags.TEST)
    * \@Tag(name = Tags.DynamicContext.INTERNAL)
-   * \@Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "com.dropchop.recyclone.model.dto.invoke.CodeParams")
+   * \@Tag(name = Tags.DYNAMIC_PARAMS + Tags.DYNAMIC_DELIM + "invoke.com.dropchop.recyclone.base.dto.model.CodeParams")
    * This doesn't work, although it is correctly done...
    */
   //@BuildStep
@@ -299,7 +299,7 @@ public class IgnoreMeProcessor {
 //                      avTag.visit("name", "test");
 //                      avTag.visitEnd();
 //                      avTag = mv.visitAnnotation(TAG_ANNOTATION_DESCRIPTOR, true);
-//                      avTag.visit("name", "dyn-params:com.dropchop.recyclone.model.api.invoke.CodeParams");
+//                      avTag.visit("name", "dyn-params:invoke.com.dropchop.recyclone.base.api.model.CodeParams");
 //                      avTag.visitEnd();*/
 //                    }
 //                    mv.visitEnd();

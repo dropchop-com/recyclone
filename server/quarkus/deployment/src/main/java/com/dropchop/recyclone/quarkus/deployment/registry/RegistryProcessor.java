@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
-import com.dropchop.recyclone.model.api.filtering.JsonSerializationTypeConfig;
-import com.dropchop.recyclone.model.api.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.quarkus.runtime.registry.RegistryRecorder;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -33,7 +33,7 @@ public class RegistryProcessor {
   );
 
   private final DotName ENTITY_INTERFACE = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.base.Entity"
+      "com.dropchop.recyclone.base.api.model.base.Entity"
   );
 
   private void processMappingAnnotation(AnnotationInstance annotation, Map<String, String> mappingClasses) {

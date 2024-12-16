@@ -20,6 +20,7 @@
   </properties>
 
   <dependencies>
+    <!-- general -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
@@ -32,6 +33,7 @@
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -58,6 +60,7 @@
       <artifactId>shiro-core</artifactId>
     </dependency>
 
+    <!-- recyclone -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-dto-model</artifactId>

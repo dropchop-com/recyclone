@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.attr.AttributeValueList;
-import com.dropchop.recyclone.model.api.base.Model;
-import com.dropchop.recyclone.model.api.filtering.CollectionPathSegment;
-import com.dropchop.recyclone.model.api.filtering.FieldFilter;
-import com.dropchop.recyclone.model.api.filtering.FilteringState;
-import com.dropchop.recyclone.model.api.filtering.PathSegment;
+import com.dropchop.recyclone.base.api.model.attr.AttributeValueList;
+import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.filtering.CollectionPathSegment;
+import com.dropchop.recyclone.base.api.model.filtering.FieldFilter;
+import com.dropchop.recyclone.base.api.model.filtering.FilteringState;
+import com.dropchop.recyclone.base.api.model.filtering.PathSegment;
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.SerializableString;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 
-import static com.dropchop.recyclone.model.api.filtering.PathSegment.ROOT_OBJECT;
+import static com.dropchop.recyclone.base.api.model.filtering.PathSegment.ROOT_OBJECT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 08. 22.

@@ -118,7 +118,7 @@
     <microprofile-config-api.version>3.0.3</microprofile-config-api.version>
 
     <!-- elasticsearch low level rest client -->
-    <elasticsearch.rest-client.version>3.12.3</elasticsearch.rest-client.version>
+    <elasticsearch-rest-client.version>8.15.3</elasticsearch-rest-client.version>
   </properties>
 
   <dependencyManagement>
@@ -223,6 +223,16 @@
         <artifactId>blaze-persistence-integration-quarkus-3</artifactId>
         <version>${blaze-persistence.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>elasticsearch-rest-client</artifactId>
+        <version>${elasticsearch-rest-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-elasticsearch-rest-client</artifactId>
+        <version>${quarkus.platform.version}</version>
+      </dependency>
 
       <!-- frontend common/client API -->
       <dependency>
@@ -323,9 +333,41 @@
         <artifactId>recyclone-base-es-repo</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- backend Elasticsearch Events impl -->
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
-        <artifactId>recyclone-base-es-service</artifactId>
+        <artifactId>recyclone-events-es-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-events-es-mapper</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-events-es-repo</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-events-api-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-events-es-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-events-api-jaxrs-internal</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-events-jaxrs-internal</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -353,13 +395,6 @@
         <artifactId>jsonassert</artifactId>
         <version>${jsonassert.version}</version>
         <scope>test</scope>
-      </dependency>
-
-      <!-- Elasticsearch dependencies -->
-      <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-elasticsearch-rest-client</artifactId>
-        <version>${elasticsearch.rest-client.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

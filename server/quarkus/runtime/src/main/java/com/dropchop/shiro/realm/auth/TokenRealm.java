@@ -1,8 +1,8 @@
 package com.dropchop.shiro.realm.auth;
 
-import com.dropchop.recyclone.model.dto.security.TokenAccount;
-import com.dropchop.recyclone.model.dto.security.User;
-import com.dropchop.recyclone.model.dto.security.UserAccount;
+import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
+import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.slf4j.Logger;

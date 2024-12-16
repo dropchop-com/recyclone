@@ -18,27 +18,4 @@
     <maven.javadoc.skip>false</maven.javadoc.skip>
     <maven.source.skip>false</maven.source.skip>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.ws.rs</groupId>
-      <artifactId>jakarta.ws.rs-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-base-dto-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.dropchop.recyclone</groupId>
-      <artifactId>recyclone-base-api-jaxrs</artifactId>
-    </dependency>
-  </dependencies>
 </project>

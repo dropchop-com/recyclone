@@ -1,22 +1,22 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.model.api.attr.AttributeBool;
-import com.dropchop.recyclone.model.api.attr.AttributeDate;
-import com.dropchop.recyclone.model.api.attr.AttributeString;
-import com.dropchop.recyclone.model.api.attr.AttributeValueList;
-import com.dropchop.recyclone.model.api.rest.ResultCode;
-import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.api.utils.Iso8601;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.localization.Language;
-import com.dropchop.recyclone.model.dto.localization.TitleDescriptionTranslation;
-import com.dropchop.recyclone.model.dto.localization.TitleTranslation;
-import com.dropchop.recyclone.model.dto.rest.Result;
-import com.dropchop.recyclone.model.dto.rest.ResultStatus;
-import com.dropchop.recyclone.model.dto.security.Action;
-import com.dropchop.recyclone.model.dto.security.Domain;
-import com.dropchop.recyclone.model.dto.security.Permission;
-import com.dropchop.recyclone.model.dto.tagging.LanguageGroup;
+import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
+import com.dropchop.recyclone.base.api.model.attr.AttributeDate;
+import com.dropchop.recyclone.base.api.model.attr.AttributeString;
+import com.dropchop.recyclone.base.api.model.attr.AttributeValueList;
+import com.dropchop.recyclone.base.api.model.rest.ResultCode;
+import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.localization.Language;
+import com.dropchop.recyclone.base.dto.model.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.dto.model.localization.TitleTranslation;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.dto.model.rest.ResultStatus;
+import com.dropchop.recyclone.base.dto.model.security.Action;
+import com.dropchop.recyclone.base.dto.model.security.Domain;
+import com.dropchop.recyclone.base.dto.model.security.Permission;
+import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -294,7 +294,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(2)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.ALL_OBJS_IDCODE);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -322,7 +322,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(2)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
   ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -355,7 +355,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(2)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -404,7 +404,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(1)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -446,7 +446,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(1)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -491,7 +491,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(1)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();
@@ -542,7 +542,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter()
         .content()
         .treeLevel(1)
-        .detailLevel(com.dropchop.recyclone.model.api.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
+        .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
     ObjectMapper mapper = producer.createObjectMapper();

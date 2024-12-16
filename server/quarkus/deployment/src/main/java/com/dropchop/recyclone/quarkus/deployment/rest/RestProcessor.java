@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment.rest;
 
-import com.dropchop.recyclone.model.api.utils.Strings;
+import com.dropchop.recyclone.base.api.model.utils.Strings;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.*;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ContentTypeFilter;
@@ -29,8 +29,8 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.PUBLIC_SEGMENT;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.PUBLIC_SEGMENT;
 import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 /**
@@ -41,7 +41,7 @@ public class RestProcessor {
   private static final Logger log = Logger.getLogger("com.dropchop.recyclone.quarkus");
 
   private static final DotName DYN_CTX_ANNO = DotName.createSimple(
-      "com.dropchop.recyclone.rest.api.DynamicExecContext"
+      "com.dropchop.recyclone.base.api.model.rest.DynamicExecContext"
   );
 
   private static final DotName PATH_ANNOTATION = DotName.createSimple(
@@ -69,15 +69,15 @@ public class RestProcessor {
   );
 
   private static final DotName ANNO_VALUE = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.CommonParams"
+      "com.dropchop.recyclone.base.api.model.invoke.CommonParams"
   );
 
   private static final DotName ANNO_DATA_CLASS = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.base.Dto"
+      "com.dropchop.recyclone.base.api.model.base.Dto"
   );
 
   private static final DotName ANNO_EXEC_CTX_CLASS = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.CommonExecContext"
+      "com.dropchop.recyclone.base.api.model.invoke.CommonExecContext"
   );
 
   private static final DotName REQ_SCOPED_ANNOTATION = DotName.createSimple(
@@ -89,7 +89,7 @@ public class RestProcessor {
   );
 
   private static final DotName CTX_PARAMS_IFACE = DotName.createSimple(
-      "com.dropchop.recyclone.model.api.invoke.Params"
+      "com.dropchop.recyclone.base.api.model.invoke.Params"
   );
 
   private static final boolean ANNO_INTERNAL = false;

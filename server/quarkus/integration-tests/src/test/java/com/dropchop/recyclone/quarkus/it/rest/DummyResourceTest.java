@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.quarkus.it.rest;
 
-import com.dropchop.recyclone.model.api.utils.Iso8601;
-import com.dropchop.recyclone.model.dto.invoke.CodeParams;
-import com.dropchop.recyclone.model.dto.invoke.QueryParams;
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -16,10 +16,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static com.dropchop.recyclone.model.api.query.Aggregation.Wrapper.*;
-import static com.dropchop.recyclone.model.api.query.Condition.*;
-import static com.dropchop.recyclone.model.api.query.ConditionOperator.gteLt;
-import static com.dropchop.recyclone.model.api.query.ConditionOperator.in;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
+import static com.dropchop.recyclone.base.api.model.query.Condition.*;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.gteLt;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 import static io.restassured.RestAssured.given;
 
 /**

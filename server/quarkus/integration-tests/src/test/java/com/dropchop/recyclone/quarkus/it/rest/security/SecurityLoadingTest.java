@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
 
-import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodeParams;
-import com.dropchop.recyclone.model.dto.security.*;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.security.*;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.*;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.*;
 import static com.dropchop.recyclone.quarkus.it.rest.security.SecurityLoadingTest.Data.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SecurityLoadingTest {
 
   interface Data {
-
     //security entities
     String DOMAIN_PROJECTS = "organization.projects";
 
@@ -60,7 +59,6 @@ public class SecurityLoadingTest {
 
     //template organization unit
     String ORG_UNIT_TEMPLATE_ROLE_NODE_ID = UUID.randomUUID().toString();
-
   }
 
   @Inject
@@ -73,20 +71,17 @@ public class SecurityLoadingTest {
         ));
   }
 
-
-
-  private Domain prepDomain() {
-
+  private static Domain getDomain() {
     Action view = new Action();
     view.setCode(Constants.Actions.VIEW);
 
-    Action create = new Action();;
+    Action create = new Action();
     create.setCode(Constants.Actions.CREATE);
 
-    Action update = new Action();;
+    Action update = new Action();
     update.setCode(Constants.Actions.UPDATE);
 
-    Action delete = new Action();;
+    Action delete = new Action();
     delete.setCode(Constants.Actions.DELETE);
 
     Domain domain = new Domain();
@@ -94,6 +89,11 @@ public class SecurityLoadingTest {
     domain.setLang("en");
     domain.setTitle(DOMAIN_PROJECTS);
     domain.setActions(Set.of(view, create, update, delete));
+    return domain;
+  }
+
+  private Domain prepDomain() {
+    Domain domain = getDomain();
 
     List<Domain> domainsResult = given()
       .contentType(ContentType.JSON)
@@ -108,12 +108,11 @@ public class SecurityLoadingTest {
       .extract()
       .body().jsonPath().getList(".", Domain.class);
     assertEquals(1, domainsResult.size());
-    Domain resultDomain = domainsResult.get(0);
+    Domain resultDomain = domainsResult.getFirst();
     assertEquals(4, resultDomain.getActions().size());
 
     return resultDomain;
   }
-
 
   private List<Permission> getPermissions() {
     Permission permissionView = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_PROJECTS, Constants.Actions.VIEW);
@@ -124,7 +123,6 @@ public class SecurityLoadingTest {
   }
 
   private List<Permission> prepPermissions() {
-
     Permission permissionView = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_PROJECTS, Constants.Actions.VIEW);
     Permission permissionCreate = SecurityHelper.permissionOf(PERMISSION2, DOMAIN_PROJECTS, Constants.Actions.CREATE);
     Permission permissionUpdate = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_PROJECTS, Constants.Actions.UPDATE);
@@ -149,15 +147,6 @@ public class SecurityLoadingTest {
     return permissions;
   }
 
-
-  private List<RoleNodePermission> prepRoleNodePermissions(RoleNode node, List<Permission> permissions, String target, String targetId,  boolean asTemplate) {
-    return permissions.stream()
-      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, target, targetId, true, node, asTemplate))
-      .toList();
-  }
-
-
-
   /**
    * Creates role nodes for organization and organization unit targets
    * Adds template permissions both targets.
@@ -175,8 +164,8 @@ public class SecurityLoadingTest {
         ORG_TEMPLATE_ROLE_NODE_ID, ORG_ENTITY, null, null,null,null
     );
     //organization template permissions
-    List<RoleNodePermission> roleNodeOrgPermissions = this.prepRoleNodePermissions(
-        roleNodeOrgTemplate, permissions, ORG_ENTITY, null, true
+    List<RoleNodePermissionTemplate> roleNodeOrgPermissions = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermissionTemplate.class, roleNodeOrgTemplate, permissions, ORG_ENTITY, null
     );
 
     //template node for organization units
@@ -184,7 +173,9 @@ public class SecurityLoadingTest {
         ORG_UNIT_TEMPLATE_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, null, null, null
     );
     //organization unit template permissions
-    List<RoleNodePermission> roleNodeOrgUnitPermissions = this.prepRoleNodePermissions(roleNodeOrgUnitTemplate, permissions, ORG_UNIT_ENTITY, null, true);
+    List<RoleNodePermissionTemplate> roleNodeOrgUnitPermissions = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermissionTemplate.class, roleNodeOrgUnitTemplate, permissions, ORG_UNIT_ENTITY, null
+    );
 
     //store templates for org role node
     List<RoleNode> resultOrg = given()
@@ -201,7 +192,7 @@ public class SecurityLoadingTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, resultOrg.size());
-    RoleNode respRoleOrg = resultOrg.get(0);
+    RoleNode respRoleOrg = resultOrg.getFirst();
     assertEquals(roleNodeOrgTemplate, respRoleOrg);
     assertEquals(roleNodeOrgTemplate.getUuid(), respRoleOrg.getUuid());
     assertEquals(roleNodeOrgTemplate.getEntity(), respRoleOrg.getEntity());
@@ -237,7 +228,7 @@ public class SecurityLoadingTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, resultOrgUnit.size());
-    RoleNode respOrgUnit = resultOrgUnit.get(0);
+    RoleNode respOrgUnit = resultOrgUnit.getFirst();
     assertEquals(roleNodeOrgUnitTemplate, respOrgUnit);
     assertEquals(roleNodeOrgUnitTemplate.getUuid(), respOrgUnit.getUuid());
     assertEquals(roleNodeOrgUnitTemplate.getEntity(), respOrgUnit.getEntity());
@@ -305,23 +296,23 @@ public class SecurityLoadingTest {
     }
   }
 
-
   /**
    * Creates role nodes for organization and organization unit instances.
    * Creates template permission (DELETE with allowed = false) for organization unit on organization instance role node
    * Loads permissions for organization unit and checks if resolved organization unit DELETE permission is not allowed.
-   *
    * Test data prepare by previous test.
    */
   @Test
   @Order(20)
   public void testLoadFirstLevelPermissionTemplates() {
     //role node for organization instance
-    RoleNode organizationRoleNode =
-        SecurityHelper.roleNodeOf(ORG_ROLE_NODE_ID, ORG_ENTITY, null, ORG_ENTITY, ORG_ENTITY_ID, 0);
+    RoleNode organizationRoleNode = SecurityHelper.roleNodeOf(
+        ORG_ROLE_NODE_ID, ORG_ENTITY, null, ORG_ENTITY, ORG_ENTITY_ID, 0
+    );
     //role node for organization unit instance
-    RoleNode organizationUnitRoleNode =
-        SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0);
+    RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
+        ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0
+    );
     organizationUnitRoleNode.setParent(organizationRoleNode); //connect to parent node !!!
     //store both nodes
     List<RoleNode> resultOrg = given()
@@ -352,18 +343,23 @@ public class SecurityLoadingTest {
         .extract()
         .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, resultOrg.size());
-    assertEquals(ORG_ROLE_NODE_ID, resultOrg.get(0).getParent().getUuid().toString());
+    assertEquals(ORG_ROLE_NODE_ID, resultOrg.getFirst().getParent().getUuid().toString());
 
 
     //add template permissions for org unit to organization
     List<Permission> permissions = this.getPermissions();
-    List<RoleNodePermission> roleNodeOrgUnitPermissions =
-        this.prepRoleNodePermissions(organizationRoleNode, permissions, ORG_UNIT_ENTITY, null, true);
+    List<RoleNodePermissionTemplate> roleNodeOrgUnitPermissions = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermissionTemplate.class, organizationRoleNode, permissions, ORG_UNIT_ENTITY, null
+    );
 
     //take one permission (DELETE) and change allowed state to override org unit defaults
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     RoleNodePermission deletePermission = roleNodeOrgUnitPermissions.stream()
-        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
-        .map((RoleNodePermission p) -> {p.setAllowed(false); return p;}).findFirst().get();
+        .filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE)
+        ).peek(
+            p -> p.setAllowed(false)
+        ).findFirst().get();
 
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
         .log().all()
@@ -407,26 +403,31 @@ public class SecurityLoadingTest {
     assertEquals(4, orgUnitCombinedPermissions.size());
 
     //check if DELETE permission is not allowed as set by ORG template for ORG UNIT
-    assertFalse(orgUnitCombinedPermissions.stream()
-      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE)).findFirst().get().getAllowed());
-
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE)
+        ).findFirst().get().getAllowed()
+    );
   }
 
 
   @Test
   @Order(30)
   public void testLoadAndCheckPermissionInstanceForEntity() {
-    RoleNode organizationUnitRoleNode =
-      SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0);
+    RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
+        ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0
+    );
 
     List<Permission> permissions = this.getPermissions();
-    List<RoleNodePermission> roleNodeOrgUnitPermissions =
-      this.prepRoleNodePermissions(organizationUnitRoleNode, permissions, null, null, false);
+    List<RoleNodePermission> roleNodeOrgUnitPermissions = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermission.class, organizationUnitRoleNode, permissions, null, null
+    );
 
     List<RoleNodePermission> roleNodeOrgUnitInstancePermissions = roleNodeOrgUnitPermissions.stream()
       .filter(p-> !p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
       .filter(p-> !p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
-      .map(p -> {p.setAllowed(false); return p;})
+      .peek(p -> p.setAllowed(false))
       .toList();
 
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
@@ -470,34 +471,44 @@ public class SecurityLoadingTest {
     assertEquals(4, orgUnitCombinedPermissions.size());
 
     //check permissions states
-    assertTrue(orgUnitCombinedPermissions.stream()
-      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
-      .findFirst().get().getAllowed());
-
-    assertFalse(orgUnitCombinedPermissions.stream()
-      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
-      .findFirst().get().getAllowed());
-
-    assertFalse(orgUnitCombinedPermissions.stream()
-      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.CREATE))
-      .findFirst().get().getAllowed());
-
-    assertFalse(orgUnitCombinedPermissions.stream()
-      .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.UPDATE))
-      .findFirst().get().getAllowed());
-
+    //noinspection OptionalGetWithoutIsPresent
+    assertTrue(
+        orgUnitCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW)
+        ).findFirst().get().getAllowed()
+    );
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE)
+        ).findFirst().get().getAllowed()
+    );
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.CREATE)
+        ).findFirst().get().getAllowed()
+    );
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.UPDATE)
+        ).findFirst().get().getAllowed()
+    );
   }
 
 
   @Test
   @Order(40)
   public void testLoadAndCheckPermissionOFSecondLevelInstanceForEntity() {
-    RoleNode organizationUnitRoleNode =
-        SecurityHelper.roleNodeOf(ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0);
+    RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
+        ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0
+    );
 
     //Create role node for user on organization unit
-    RoleNode organizationUnitUserRoleNode =
-        SecurityHelper.roleNodeOf(USER_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, USER_ENTITY, USER_ENTITY_ID, 1);
+    RoleNode organizationUnitUserRoleNode = SecurityHelper.roleNodeOf(
+        USER_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, USER_ENTITY, USER_ENTITY_ID, 1
+    );
     organizationUnitUserRoleNode.setParent(organizationUnitRoleNode); //connect to parent node !!!
 
     List<RoleNode> resultOrg = given()
@@ -516,13 +527,16 @@ public class SecurityLoadingTest {
     assertEquals(1, resultOrg.size());
 
     List<Permission> permissions = this.getPermissions();
-    List<RoleNodePermission> roleNodeOrgUnitUserPermissions =
-        this.prepRoleNodePermissions(organizationUnitRoleNode, permissions, null, null, false);
+    List<RoleNodePermission> roleNodeOrgUnitUserPermissions = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermission.class, organizationUnitRoleNode, permissions, null, null
+    );
 
     List<RoleNodePermission> roleNodeOrgUnitInstancePermissions = roleNodeOrgUnitUserPermissions.stream()
-        .filter(p-> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
-        .map(p -> {p.setAllowed(false); return p;})
-        .toList();
+        .filter(
+            p-> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW)
+        ).peek(
+            p -> p.setAllowed(false)
+        ).toList();
 
     //Store role node permissions for user of organization unit
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
@@ -566,23 +580,29 @@ public class SecurityLoadingTest {
     assertEquals(4, orgUnitUserCombinedPermissions.size());
 
     //check permissions states
-    assertFalse(orgUnitUserCombinedPermissions.stream()
-        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW))
-        .findFirst().get().getAllowed());
-
-    assertFalse(orgUnitUserCombinedPermissions.stream()
-        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE))
-        .findFirst().get().getAllowed());
-
-    assertFalse(orgUnitUserCombinedPermissions.stream()
-        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.CREATE))
-        .findFirst().get().getAllowed());
-
-    assertFalse(orgUnitUserCombinedPermissions.stream()
-        .filter(p -> p.getPermission().getAction().getCode().equals(Constants.Actions.UPDATE))
-        .findFirst().get().getAllowed());
-
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitUserCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.VIEW)
+        ).findFirst().get().getAllowed()
+    );
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitUserCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.DELETE)
+        ).findFirst().get().getAllowed()
+    );
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitUserCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.CREATE)
+        ).findFirst().get().getAllowed()
+    );
+    //noinspection OptionalGetWithoutIsPresent
+    assertFalse(
+        orgUnitUserCombinedPermissions.stream().filter(
+            p -> p.getPermission().getAction().getCode().equals(Constants.Actions.UPDATE)
+        ).findFirst().get().getAllowed()
+    );
   }
-
-
 }

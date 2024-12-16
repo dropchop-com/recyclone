@@ -1,10 +1,10 @@
 package com.dropchop.shiro.jaxrs;
 
-import com.dropchop.recyclone.model.api.base.Dto;
-import com.dropchop.recyclone.model.api.invoke.Constants.InternalContextVariables;
-import com.dropchop.recyclone.model.api.invoke.ExecContext;
-import com.dropchop.recyclone.model.api.invoke.SecurityExecContext;
-import com.dropchop.recyclone.model.dto.security.User;
+import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_ID;
-import static com.dropchop.recyclone.model.api.invoke.ExecContext.MDC_PERSON_NAME;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_PERSON_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_PERSON_NAME;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.

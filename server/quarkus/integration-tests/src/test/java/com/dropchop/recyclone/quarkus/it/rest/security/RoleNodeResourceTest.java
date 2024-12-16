@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.quarkus.it.rest.security;
 
 
-import com.dropchop.recyclone.model.api.security.Constants;
-import com.dropchop.recyclone.model.dto.invoke.RoleNodePermissionParams;
-import com.dropchop.recyclone.model.dto.security.*;
-import com.dropchop.recyclone.rest.api.MediaType;
+import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
+import com.dropchop.recyclone.base.dto.model.security.*;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.INTERNAL_SEGMENT;
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.SEARCH_SEGMENT;
-import static com.dropchop.recyclone.model.api.rest.Constants.Paths.Security.*;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.INTERNAL_SEGMENT;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.SEARCH_SEGMENT;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,19 +61,17 @@ public class RoleNodeResourceTest {
         ));
   }
 
-
-  private Domain prepDomain() {
-
+  private static Domain getDomain() {
     Action view = new Action();
     view.setCode(Constants.Actions.VIEW);
 
-    Action create = new Action();;
+    Action create = new Action();
     create.setCode(Constants.Actions.CREATE);
 
-    Action update = new Action();;
+    Action update = new Action();
     update.setCode(Constants.Actions.UPDATE);
 
-    Action delete = new Action();;
+    Action delete = new Action();
     delete.setCode(Constants.Actions.DELETE);
 
     Domain domain = new Domain();
@@ -81,6 +79,11 @@ public class RoleNodeResourceTest {
     domain.setLang("en");
     domain.setTitle(DOMAIN_ACCOUNT);
     domain.setActions(Set.of(view, create, update, delete));
+    return domain;
+  }
+
+  private Domain prepDomain() {
+    Domain domain = getDomain();
 
     List<Domain> domainsResult = given()
       .contentType(ContentType.JSON)
@@ -95,13 +98,11 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList(".", Domain.class);
     assertEquals(1, domainsResult.size());
-    Domain resultDomain = domainsResult.get(0);
+    Domain resultDomain = domainsResult.getFirst();
     assertEquals(4, resultDomain.getActions().size());
 
     return resultDomain;
   }
-
-
 
   private List<Permission> getPermissions() {
     Permission permissionView = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
@@ -111,11 +112,8 @@ public class RoleNodeResourceTest {
     return List.of(permissionView, permissionCreate, permissionUpdate, permissionDelete);
   }
 
-
   private List<Permission> prepPermissions() {
-
     List<Permission> permissions = this.getPermissions();
-
     List<Permission> permissionsResult = given()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -129,10 +127,8 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", Permission.class);
     assertEquals(permissions.size(), permissionsResult.size());
-
     return permissions;
   }
-
 
   private RoleNode prepRoleNode1() {
     RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
@@ -150,9 +146,8 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, result.size());
-    return result.get(0);
+    return result.getFirst();
   }
-
 
   private RoleNode getRoleNode2() {
     List<RoleNode> result = given()
@@ -166,20 +161,8 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, result.size());
-    return result.get(0);
+    return result.getFirst();
   }
-
-
-  private  <P extends RoleNodePermission> List<P> prepRoleNodePermissions(RoleNode node,
-                                                                          List<Permission> permissions,
-                                                                          String target,
-                                                                          String targetId,
-                                                                          boolean asTemplate) {
-    return (List<P>) permissions.stream()
-      .map(p -> SecurityHelper.roleNodePermissionOf(UUID.randomUUID().toString(), p, target, targetId, true, node, asTemplate))
-      .toList();
-  }
-
 
   @Test
   @Order(10)
@@ -199,7 +182,7 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, result.size());
-    RoleNode respRole = result.get(0);
+    RoleNode respRole = result.getFirst();
     assertEquals(roleNode, respRole);
     assertEquals(roleNode.getUuid(), respRole.getUuid());
     assertEquals(roleNode.getEntity(), respRole.getEntity());
@@ -220,7 +203,7 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, result.size());
-    respRole = result.get(0);
+    respRole = result.getFirst();
     assertEquals(roleNode, respRole);
     assertEquals(roleNode.getUuid(), respRole.getUuid());
     assertEquals(roleNode.getEntity(), respRole.getEntity());
@@ -240,7 +223,7 @@ public class RoleNodeResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
-    RoleNode respRole = result.get(0);
+    RoleNode respRole = result.getFirst();
     assertEquals(UUID1, respRole.getUuid().toString());
     assertEquals(ENTITY1, respRole.getTarget());
     assertEquals(ENTITY1, respRole.getEntity());
@@ -264,7 +247,7 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, result.size());
-    RoleNode respRoleUpdated = result.get(0);
+    RoleNode respRoleUpdated = result.getFirst();
     assertEquals(respRole.getUuid(), respRoleUpdated.getUuid());
     assertEquals(respRole.getTarget(), respRoleUpdated.getTarget());
     assertEquals(respRole.getEntity(), respRoleUpdated.getEntity());
@@ -280,13 +263,12 @@ public class RoleNodeResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
-    respRole = result.get(0);
+    respRole = result.getFirst();
     assertEquals(UUID1, respRole.getUuid().toString());
     assertEquals(ENTITY2, respRole.getTarget());
     assertEquals(ENTITY2, respRole.getEntity());
     assertEquals(ENTITY2_ID, respRole.getEntityId());
   }
-
 
   @Test
   @Order(30)
@@ -307,7 +289,6 @@ public class RoleNodeResourceTest {
       .then()
       .statusCode(200);
 
-
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -324,15 +305,17 @@ public class RoleNodeResourceTest {
   @Test
   @Order(40)
   public void addPermissionToRoleNode() {
-
     this.prepDomain();
     List<Permission> permissions = this.prepPermissions();
     RoleNode roleNode1 = this.prepRoleNode1();
     RoleNode roleNode2 = this.getRoleNode2();
 
-    List<RoleNodePermission> roleNodePermissions1 = this.prepRoleNodePermissions(roleNode1, permissions, null, null, false);
-    List<RoleNodePermission> roleNodePermissions2 = this.prepRoleNodePermissions(roleNode2, List.of(permissions.get(0)),  null, null,false);
-
+    List<RoleNodePermission> roleNodePermissions1 = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermission.class, roleNode1, permissions, null, null
+    );
+    List<RoleNodePermission> roleNodePermissions2 = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermission.class, roleNode2, List.of(permissions.getFirst()),  null, null
+    );
 
     //store all permissions on role node
     List<RoleNodePermission> result = given()
@@ -350,7 +333,6 @@ public class RoleNodeResourceTest {
       .body().jsonPath().getList("data", RoleNodePermission.class);
     assertEquals(4, result.size());
 
-
     //store one permissions on role node
     result = given()
       .log().all()
@@ -366,15 +348,11 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNodePermission.class);
     assertEquals(1, result.size());
-
-
   }
-
 
   @Test
   @Order(50)
   public void getRoleNodePermissions() {
-
     RoleNodePermissionParams params = new RoleNodePermissionParams();
     params.setRoleNodeId(UUID1);
 
@@ -411,7 +389,6 @@ public class RoleNodeResourceTest {
     assertEquals(1, result.size());
   }
 
-
   @Test
   @Order(60)
   public void addTemplatePermissionToRoleNode() {
@@ -431,14 +408,15 @@ public class RoleNodeResourceTest {
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, result.size());
-    RoleNode respRole = result.get(0);
+    RoleNode respRole = result.getFirst();
     assertEquals(roleNodeTpl, respRole);
     assertEquals(roleNodeTpl.getUuid(), respRole.getUuid());
     assertEquals(roleNodeTpl.getTarget(), respRole.getTarget());
     assertEquals(roleNodeTpl.getEntity(), respRole.getEntity());
 
-    List<RoleNodePermissionTemplate> roleNodePermissions1 = this.prepRoleNodePermissions(roleNodeTpl,
-      this.getPermissions(), TPL_TARGET_NAME, null, true);
+    List<RoleNodePermissionTemplate> roleNodePermissions1 = SecurityHelper.prepRoleNodePermissions(
+        RoleNodePermissionTemplate.class, roleNodeTpl, this.getPermissions(), TPL_TARGET_NAME, null
+    );
 
     //store all permissions on role node
     List<RoleNodePermissionTemplate> tplPermissionResult = given()
@@ -469,15 +447,10 @@ public class RoleNodeResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList("data", RoleNode.class);
-    RoleNode tplNode = resultTplNode.get(0);
+    RoleNode tplNode = resultTplNode.getFirst();
     for (RoleNodePermission p : tplNode.getRoleNodePermissions()) {
       assertInstanceOf(RoleNodePermissionTemplate.class, p);
       assertNotNull(((RoleNodePermissionTemplate)p).getTarget());
     }
   }
-
 }
-
-
-
-
