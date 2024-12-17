@@ -10,10 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.client.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static com.dropchop.recyclone.base.api.model.base.Model.identifier;
 
@@ -33,6 +33,11 @@ public abstract class ElasticBulkMethodImpl {
     Collection<S> entities,
     StringBuilder bulkRequestBody,
     ObjectMapper objectMapper) {
+
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S");
+    df.setTimeZone(TimeZone.getTimeZone("UTC"));
+    objectMapper.setDateFormat(df);
+    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S");
 
     try {
       for (S entity : entities) {
