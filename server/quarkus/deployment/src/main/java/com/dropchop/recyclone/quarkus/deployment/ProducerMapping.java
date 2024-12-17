@@ -30,4 +30,14 @@ public class ProducerMapping {
   public Class<?> getRootIface() {
     return rootIface;
   }
+
+  @Override
+  public String toString() {
+    return "ProducerMapping{" +
+        "ifaceClass='" + ifaceClass + '\'' +
+        ", implClass='" + implClass + '\'' +
+        ", selectorClass=" + selectorClass +
+        ", rootIface=" + rootIface +
+        '}';
+  }
 }

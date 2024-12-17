@@ -15,7 +15,8 @@ import jakarta.enterprise.context.RequestScoped;
 @Priority(100)
 @RequestScoped
 @SuppressWarnings("unused")
-public class CommonExecContextContainer implements com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer {
+public class CommonExecContextContainer
+    implements com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer {
 
   private CommonExecContext<?, ?> execContext;
 
