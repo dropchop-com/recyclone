@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.jaxrs.localization.internal;
 
 import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.rest.server.ClassicModifyResource;
+import com.dropchop.recyclone.base.api.rest.ClassicModifyResource;
 import com.dropchop.recyclone.base.api.service.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

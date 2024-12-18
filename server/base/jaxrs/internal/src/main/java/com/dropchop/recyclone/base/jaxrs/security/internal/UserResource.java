@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
+import com.dropchop.recyclone.base.api.rest.ClassicRestByIdResource;
 import com.dropchop.recyclone.base.api.service.security.UserService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

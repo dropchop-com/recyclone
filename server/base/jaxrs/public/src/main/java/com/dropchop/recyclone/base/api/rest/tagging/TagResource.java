@@ -1,9 +1,9 @@
-package com.dropchop.recyclone.rest.server.tagging;
+package com.dropchop.recyclone.base.api.rest.tagging;
 
 import com.dropchop.recyclone.base.dto.model.invoke.TagParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
-import com.dropchop.recyclone.rest.server.ClassicReadByIdResource;
+import com.dropchop.recyclone.base.api.rest.ClassicReadByIdResource;
 import com.dropchop.recyclone.base.api.service.tagging.TagService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
