@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.jpa.service.localization;
 
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageRepository;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -27,4 +28,7 @@ public class LanguageService extends CrudServiceImpl<Language, JpaLanguage, Stri
 
   @Inject
   LanguageMapperProvider mapperProvider;
+
+  @Inject
+  CommonExecContext<Language, ?> executionContext;
 }

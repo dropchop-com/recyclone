@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment.invoke;
 
 import com.dropchop.recyclone.quarkus.deployment.rest.RestMappingBuildItem;
+import com.dropchop.recyclone.quarkus.deployment.utils.JandexTypeBoundsChecker;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
@@ -132,11 +133,15 @@ public class ContextProcessor {
         prio = 1000;
       }
       contextMappings.add(new ContextMapping(contextClass, dataClass, prio));
+      log.debug(
+          "Requesting injection point producer [{}-with-{}] for rest method [{}#{}] implementation.",
+          contextClass, dataClass, restClass.getApiClass(), restMethod.getName()
+      );
     }
 
     paramsPriority.put(buildConfig.rest().defaultParams(), 1);
     paramsBuildProducer.produce(new ParamsBuildItem(paramsPriority));
-    contextMappings.add(new ContextMapping(buildConfig.rest().defaultExecContext(), null, 2));
+    //contextMappings.add(new ContextMapping(buildConfig.rest().defaultExecContext(), null, 2));
     contextBuildProducer.produce(new ContextsBuildItem(contextMappings));
   }
 
@@ -222,9 +227,11 @@ public class ContextProcessor {
       );
     }
     for(ContextMapping mapping : contextsBuildItem.getContextMappings()) {
-      ClassInfo ctxImpl = index.getClassByName(mapping.contextClass);
+      ClassInfo execContexClassInfo = index.getClassByName(mapping.contextClass);
+      ClassInfo dataClassInfo = index.getClassByName(mapping.dataClass);
+      boolean passTypeParam = JandexTypeBoundsChecker.isWithinBounds(execContexClassInfo, dataClassInfo, index);
       this.generateProducer(
-          generatedBeans, ctxImpl, mapping.dataClass, mapping.priority
+          generatedBeans, execContexClassInfo, passTypeParam ? mapping.dataClass : null, mapping.priority
       );
     }
   }

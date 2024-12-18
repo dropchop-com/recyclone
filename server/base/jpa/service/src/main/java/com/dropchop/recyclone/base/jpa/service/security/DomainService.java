@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.security.Domain;
 import com.dropchop.recyclone.base.jpa.model.security.JpaDomain;
 import com.dropchop.recyclone.base.jpa.repo.security.DomainMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.DomainRepository;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -27,4 +28,7 @@ public class DomainService extends CrudServiceImpl<Domain, JpaDomain, String>
 
   @Inject
   DomainMapperProvider mapperProvider;
+
+  @Inject
+  CommonExecContext<Domain, ?> executionContext;
 }

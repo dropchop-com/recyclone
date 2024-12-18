@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.repo.security.UserMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -26,4 +27,7 @@ public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
 
   @Inject
   UserMapperProvider mapperProvider;
+
+  @Inject
+  CommonExecContext<User, ?> executionContext;
 }
