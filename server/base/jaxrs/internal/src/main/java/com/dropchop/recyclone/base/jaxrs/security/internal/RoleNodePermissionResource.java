@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.jaxrs.security.internal;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
-import com.dropchop.recyclone.rest.server.ClassicRestByIdResource;
+import com.dropchop.recyclone.base.api.rest.ClassicRestByIdResource;
 import com.dropchop.recyclone.base.api.service.security.RoleNodePermissionService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

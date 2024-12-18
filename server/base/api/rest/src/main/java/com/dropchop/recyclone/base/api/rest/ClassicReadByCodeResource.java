@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.rest.server;
+package com.dropchop.recyclone.base.api.rest;
 
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 

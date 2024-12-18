@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.jaxrs.security.internal;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.Domain;
-import com.dropchop.recyclone.rest.server.ClassicRestByCodeResource;
+import com.dropchop.recyclone.base.api.rest.ClassicRestByCodeResource;
 import com.dropchop.recyclone.base.api.service.security.DomainService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
