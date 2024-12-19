@@ -133,7 +133,7 @@ public class ContextProcessor {
         prio = 1000;
       }
       contextMappings.add(new ContextMapping(contextClass, dataClass, prio));
-      log.debug(
+      log.trace(
           "Requesting injection point producer [{}-with-{}] for rest method [{}#{}] implementation.",
           contextClass, dataClass, restClass.getApiClass(), restMethod.getName()
       );
