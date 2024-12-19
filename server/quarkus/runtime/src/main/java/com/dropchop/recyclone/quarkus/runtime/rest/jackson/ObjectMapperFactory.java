@@ -4,10 +4,7 @@ import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
-import com.dropchop.recyclone.base.jackson.AggregationDeserializer;
-import com.dropchop.recyclone.base.jackson.AttributeCompactSerializer;
-import com.dropchop.recyclone.base.jackson.AttributeDeserializer;
-import com.dropchop.recyclone.base.jackson.ConditionDeserializer;
+import com.dropchop.recyclone.base.jackson.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -22,6 +19,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.ZonedDateTime;
 
 /**
  * CDI Capable ObjectMapperFactory extension.
@@ -94,6 +93,12 @@ public class ObjectMapperFactory {
     mapper.registerModule(new Jdk8Module());
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new ParameterNamesModule());
+
+    SimpleModule module1 = new SimpleModule();
+    module1.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer());
+    mapper.registerModule(module1);
+    mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false);
+
     if (serializationTypeConfig != null) {
       serializationTypeConfig.getSubTypeMap().forEach(
           (key, value) -> {
