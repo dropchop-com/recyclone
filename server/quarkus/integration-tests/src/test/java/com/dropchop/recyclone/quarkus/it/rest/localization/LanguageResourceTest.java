@@ -57,7 +57,7 @@ public class LanguageResourceTest {
   public void languageRestByCodeEndpointApiKey() {
     given()
       //.log().all()
-      .header("X-API-Key", "admintoken1")
+      .header("X-My-API-Key", "admintoken1")
       .when()
       .get("/api/public/localization/language/sl")
       .then()
@@ -71,7 +71,7 @@ public class LanguageResourceTest {
     given()
       //.log().all()
       .when()
-      .get("/api/public/localization/language/sl?api_key=admintoken1")
+      .get("/api/public/localization/language/sl?X-My-API-Key=admintoken1")
       .then()
       .statusCode(200)
       .body("[0].code", equalTo("sl"));

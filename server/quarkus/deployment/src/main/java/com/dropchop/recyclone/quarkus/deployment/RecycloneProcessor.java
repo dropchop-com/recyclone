@@ -7,6 +7,7 @@ import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.selectors.ServiceSelector;
 import com.dropchop.recyclone.base.api.service.Service;
+import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
@@ -154,6 +155,13 @@ class RecycloneProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ExecContextPropertyFilterSerializerModifier.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ApiKeyHttpAuthenticationFilter.class)
             .setUnremovable()
             .build()
     );

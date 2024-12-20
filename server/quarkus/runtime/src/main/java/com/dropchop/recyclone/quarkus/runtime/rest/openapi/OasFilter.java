@@ -12,6 +12,7 @@ import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
+import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
 import io.smallrye.openapi.api.models.OperationImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
@@ -99,30 +100,50 @@ public class OasFilter implements OASFilter {
       openAPI.setSecurity(securityRequirements);
     }
     for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
-      String name = entry.getKey();
       SecurityRequirement securityRequirement = OASFactory.createSecurityRequirement();
-      securityRequirement.addScheme(name);
       securityRequirements.add(securityRequirement);
       Rest.Security restSecurity = entry.getValue();
 
       Components components = openAPI.getComponents();
       if (components != null && restSecurity != null) {
         SecurityScheme securityScheme = OASFactory.createSecurityScheme();
-        if (restSecurity.type().isPresent()) {
-          if (restSecurity.type().get().equalsIgnoreCase("http")) {
+        String name = entry.getKey();
+        switch (name) {
+          case "token" -> {
             securityScheme.setType(SecurityScheme.Type.HTTP);
-          } else if (restSecurity.type().get().equalsIgnoreCase("apikey")) {
-            securityScheme.setType(SecurityScheme.Type.APIKEY);
-            restSecurity.apiKeyName().ifPresent(securityScheme::setName);
+            securityScheme.setScheme("bearer");
           }
-        }
-        if (restSecurity.in().isPresent()) {
-          if (restSecurity.type().get().equalsIgnoreCase("query")) {
-            securityScheme.setIn(SecurityScheme.In.QUERY);
-          } else if (restSecurity.type().get().equalsIgnoreCase("cookie")) {
-            securityScheme.setIn(SecurityScheme.In.COOKIE);
-          } else if (restSecurity.type().get().equalsIgnoreCase("header")) {
-            securityScheme.setIn(SecurityScheme.In.HEADER);
+          case "basic-auth" -> {
+            securityScheme.setType(SecurityScheme.Type.HTTP);
+            securityScheme.setScheme("basic");
+          }
+          case "api-key" -> {
+            securityScheme.setType(SecurityScheme.Type.APIKEY);
+            if (restSecurity.in().isPresent()) {
+              if (restSecurity.in().get().equalsIgnoreCase("query")) {
+                securityScheme.setIn(SecurityScheme.In.QUERY);
+              } else if (restSecurity.in().get().equalsIgnoreCase("cookie")) {
+                securityScheme.setIn(SecurityScheme.In.COOKIE);
+              } else if (restSecurity.in().get().equalsIgnoreCase("header")) {
+                securityScheme.setIn(SecurityScheme.In.COOKIE);
+
+                securityScheme.setIn(SecurityScheme.In.HEADER);
+              }
+            } else {
+              securityScheme.setIn(
+                SecurityScheme.In.valueOf((ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC))
+              );
+            }
+            if (restSecurity.apiKeyName().isPresent()) {
+              securityScheme.name(restSecurity.apiKeyName().get());
+            } else {
+              securityScheme.name(ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_NAME);
+            }
+          }
+          case "jwt" -> {
+            securityScheme.setType(SecurityScheme.Type.HTTP);
+            securityScheme.setScheme("bearer");
+            securityScheme.setBearerFormat("JWT");
           }
         }
 

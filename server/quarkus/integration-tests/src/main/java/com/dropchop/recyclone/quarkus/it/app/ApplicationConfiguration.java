@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_HEADER;
-
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 22.
  */
@@ -47,6 +45,9 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   RestMapping restMapping;
+
+  @Inject
+  ApiKeyHttpAuthenticationFilter apiKeyHttpAuthenticationFilter;
 
   /**
    * ObjectMapper customization/extension point. Add own polymorphic mappings here.
@@ -98,7 +99,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   @Produces
   public List<ShiroFilter> getFilters() {
     List<ShiroFilter> filters = new ArrayList<>(super.getFilters());
-    filters.add(new ApiKeyHttpAuthenticationFilter(DEFAULT_API_KEY_HEADER, "api_key"));
+    filters.add(apiKeyHttpAuthenticationFilter);
     return filters;
   }
 }

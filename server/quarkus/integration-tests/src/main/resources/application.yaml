@@ -103,20 +103,11 @@ quarkus:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
       security:
-        ApiKey:
-          type: http
-          scheme: bearer
-        BasicAuth:
-          type: http
-          scheme: basic
-        ApiKeyAuth:
-          type: apiKey
-          in: header
-          api-key-name: apiKeyName
-        JWT:
-          type: http
-          scheme: bearer
-          bearer-format: JWT
+        token:
+        basic-auth:
+        api-key:
+          name: X-My-API-Key
+        jwt:
       includes:
         - "com.dropchop.recyclone.quarkus.it.rest.api.*"
         - "*.localization.*"
