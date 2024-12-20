@@ -129,7 +129,8 @@ public interface RecycloneBuildConfig {
       /**
        * REST OpenAPI security item apiKeyName if type is apiKey.
        */
-      Optional<String> apiKeyName();
+      //Optional<String> apiKeyName();
+      Optional<String> name();
       /**
        * REST OpenAPI security item bearerFormat if scheme is bearer.
        */

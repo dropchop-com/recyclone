@@ -129,11 +129,11 @@ public class OasFilter implements OASFilter {
               }
             } else {
               securityScheme.setIn(
-                SecurityScheme.In.valueOf((ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC))
+                SecurityScheme.In.valueOf(ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC.toUpperCase())
               );
             }
-            if (restSecurity.apiKeyName().isPresent()) {
-              securityScheme.name(restSecurity.apiKeyName().get());
+            if (restSecurity.name().isPresent()) {
+              securityScheme.name(restSecurity.name().get());
             } else {
               securityScheme.name(ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_NAME);
             }
