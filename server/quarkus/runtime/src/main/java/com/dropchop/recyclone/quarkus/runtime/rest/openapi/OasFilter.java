@@ -125,8 +125,6 @@ public class OasFilter implements OASFilter {
               } else if (restSecurity.in().get().equalsIgnoreCase("cookie")) {
                 securityScheme.setIn(SecurityScheme.In.COOKIE);
               } else if (restSecurity.in().get().equalsIgnoreCase("header")) {
-                securityScheme.setIn(SecurityScheme.In.COOKIE);
-
                 securityScheme.setIn(SecurityScheme.In.HEADER);
               }
             } else {
