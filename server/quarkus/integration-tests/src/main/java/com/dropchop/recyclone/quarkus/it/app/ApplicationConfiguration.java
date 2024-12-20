@@ -3,10 +3,11 @@ package com.dropchop.recyclone.quarkus.it.app;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
+import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
-import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
 import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
@@ -47,7 +48,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   RestMapping restMapping;
 
   @Inject
-  ApiKeyHttpAuthenticationFilter apiKeyHttpAuthenticationFilter;
+  RecycloneBuildConfig recycloneConfig;
 
   /**
    * ObjectMapper customization/extension point. Add own polymorphic mappings here.
@@ -98,8 +99,9 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
 
   @Produces
   public List<ShiroFilter> getFilters() {
+    String apiKeyName = Rest.Security.getApiKeyIfPresent(recycloneConfig.rest().security());
     List<ShiroFilter> filters = new ArrayList<>(super.getFilters());
-    filters.add(apiKeyHttpAuthenticationFilter);
+    filters.add(new ApiKeyHttpAuthenticationFilter(apiKeyName, apiKeyName != null ? apiKeyName.toLowerCase() : null));
     return filters;
   }
 }

@@ -71,7 +71,7 @@ public class LanguageResourceTest {
     given()
       //.log().all()
       .when()
-      .get("/api/public/localization/language/sl?X-My-API-Key=admintoken1")
+      .get("/api/public/localization/language/sl?x-my-api-key=admintoken1")
       .then()
       .statusCode(200)
       .body("[0].code", equalTo("sl"));
