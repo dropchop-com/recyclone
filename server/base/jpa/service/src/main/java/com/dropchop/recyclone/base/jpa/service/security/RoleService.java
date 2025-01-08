@@ -3,27 +3,27 @@ package com.dropchop.recyclone.base.jpa.service.security;
 import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
-import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.JoinEntityHelper;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.base.jpa.model.security.JpaPermission;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRole;
-import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.PermissionRepository;
 import com.dropchop.recyclone.base.jpa.repo.security.RoleMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.RoleRepository;
-import com.dropchop.recyclone.base.api.service.JoinEntityHelper;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
-import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Set;
@@ -35,9 +35,10 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
  */
+@Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-@SuppressWarnings("CdiInjectionPointsInspection")
+@SuppressWarnings({"CdiInjectionPointsInspection", "unused"})
 public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
   implements com.dropchop.recyclone.base.api.service.security.RoleService {
 
@@ -51,20 +52,10 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
   PermissionRepository permissionRepository;
 
   @Inject
-  CommonExecContextContainer execContextContainer;
+  CommonExecContext<Role, ?> executionContext;
 
   @Inject
   AuthorizationService authorizationService;
-
-  @Override
-  public RoleRepository getRepository() {
-    return repository;
-  }
-
-  @Override
-  public FilteringMapperProvider<Role, JpaRole, String> getMapperProvider() {
-    return mapperProvider;
-  }
 
   @Transactional
   public Result<Role> addPermissions(RoleParams params) {
@@ -72,7 +63,7 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
     if (contentFilter != null && contentFilter.getTreeLevel() < 4) {
       contentFilter.setTreeLevel(4);
     }
-    MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
+    MappingContext mapContext = new FilteringDtoContext().of(executionContext);
     Collection<JpaRole> roles = getRepository().find(repository.getRepositoryExecContext());
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
       new JoinEntityHelper<>(
@@ -80,7 +71,7 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
       );
     helper.join(
       toJoin -> params.getPermissionUuids(),
-      helper.new ViewPermitter<>(execContextContainer.get()),
+      helper.new ViewPermitter<>(executionContext),
       (entity, join) -> entity.getPermissions().addAll(join)
     );
     save(roles);
@@ -93,7 +84,7 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
     if (contentFilter != null && contentFilter.getTreeLevel() < 4) {
       contentFilter.setTreeLevel(4);
     }
-    MappingContext mapContext = new FilteringDtoContext().of(execContextContainer.get());
+    MappingContext mapContext = new FilteringDtoContext().of(executionContext);
     Collection<JpaRole> roles = getRepository().find(getRepository().getRepositoryExecContext());
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
         new JoinEntityHelper<>(
@@ -101,7 +92,7 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
         );
     helper.join(
       toJoin -> params.getPermissionUuids(),
-      helper.new ViewPermitter<>(execContextContainer.get()),
+      helper.new ViewPermitter<>(executionContext),
       (entity, join) -> {
         Set<JpaPermission> permissions = entity.getPermissions();
         for (JpaPermission permission : join) {

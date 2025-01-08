@@ -5,6 +5,8 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -13,8 +15,6 @@ import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -33,7 +33,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
 public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
@@ -48,6 +48,9 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
 
   @Inject
   CommonExecContextContainer ctxContainer;
+
+  @Inject
+  CommonExecContext<Dummy, ?> executionContext;
 
   @Inject
   ObjectMapper objectMapper;

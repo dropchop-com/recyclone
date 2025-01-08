@@ -28,27 +28,22 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  CommonExecContextContainer ctxContainer;
-
-  @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
   AuthorizationService authorizationService;
-
 
   public abstract CrudRepository<E, ID> getRepository();
 
   public abstract FilteringMapperProvider<D, E, ID> getMapperProvider();
 
+  public abstract CommonExecContext<D, ?> getExecutionContext();
 
   protected void checkDtoPermissions(List<D> dtos) {
     for (D dto : dtos) {
-      if (!authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(dto.identifier()))) {
+      if (!authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(dto.identifier()))) {
         throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
           Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
       }
     }
   }
-
 
   @Override
   @Transactional
@@ -58,7 +53,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     MappingContext mapContext = mapperProvider.getMappingContextForRead();
     List<E> entities = repository.find(repository.getRepositoryExecContext(mapContext));
     entities = entities.stream().filter(
-      e -> authorizationService.isPermitted(ctxContainer.get().getSecurityDomainAction(e.identifier()))
+      e -> authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()))
     ).collect(Collectors.toList());
 
     @SuppressWarnings("UnnecessaryLocalVariable")
@@ -68,7 +63,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
 
 
   protected boolean shouldRefreshAfterSave() {
-    Params params = ctxContainer.get().getParams();
+    Params params = getExecutionContext().getParams();
     String cDetail = null;
     Integer cLevel = null;
     if (params instanceof CommonParams<?, ?, ?, ?> commonParams) {

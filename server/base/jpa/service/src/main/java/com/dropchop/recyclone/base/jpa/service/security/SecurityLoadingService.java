@@ -2,22 +2,22 @@ package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
-import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
-import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeRepository;
 import com.dropchop.recyclone.base.jpa.repo.security.UserMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
-import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
-import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
-import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -45,7 +45,6 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   @Inject
   RoleNodeMapperProvider roleNodeMapperProvider;
 
-
   /**
    * Loads role node for provided parameters.
    * NOTE: Parameters must define only 1 role node. Combination target/entity should be unique per role node.
@@ -69,7 +68,6 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return roleNodeToDtoMapper.toDto(jpaRoleNodes.getFirst(), mapContext);
   }
 
-
   /**
    * Loads role node for provided uuid.
    *
@@ -83,7 +81,6 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     JpaRoleNode loadedParentRoleNode = this.roleNodeRepository.findById(uuid);
     return roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
   }
-
 
   /**
    * Maps loaded jsa user to dto with user accounts.
@@ -102,12 +99,10 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return userToDtoMapper.toDto(user, mapContext);
   }
 
-
   @Override
   public User loadUserByToken(String token) {
     return this.mapToUser(this.userRepository.findByToken(token));
   }
-
 
   @Override
   public User loadUserByUsername(String loginName) {

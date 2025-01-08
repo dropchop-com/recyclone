@@ -3,10 +3,11 @@ package com.dropchop.recyclone.quarkus.it.app;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
+import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
-import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
 import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
@@ -23,8 +24,6 @@ import org.apache.shiro.realm.Realm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_HEADER;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 22.
@@ -47,6 +46,9 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   RestMapping restMapping;
+
+  @Inject
+  RecycloneBuildConfig recycloneConfig;
 
   /**
    * ObjectMapper customization/extension point. Add own polymorphic mappings here.
@@ -97,8 +99,9 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
 
   @Produces
   public List<ShiroFilter> getFilters() {
+    String apiKeyName = Rest.Security.getApiKeyIfPresent(recycloneConfig.rest().security());
     List<ShiroFilter> filters = new ArrayList<>(super.getFilters());
-    filters.add(new ApiKeyHttpAuthenticationFilter(DEFAULT_API_KEY_HEADER, "api_key"));
+    filters.add(new ApiKeyHttpAuthenticationFilter(apiKeyName, apiKeyName != null ? apiKeyName.toLowerCase() : null));
     return filters;
   }
 }

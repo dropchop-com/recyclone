@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Collection;
 
 /**
@@ -37,5 +39,46 @@ public class Objects {
         return null;
       }
     }
+  }
+
+  public static boolean isSubtypeOrImplements(Class<?> subclass, Class<?> superclassOrInterface) {
+    // Check direct equality
+    if (subclass.equals(superclassOrInterface)) {
+      return true;
+    }
+
+    // Check superclass hierarchy
+    Class<?> superClass = subclass.getSuperclass();
+    if (superClass != null && isSubtypeOrImplements(superClass, superclassOrInterface)) {
+      return true;
+    }
+
+    // Check implemented interfaces
+    for (Class<?> interfaceClass : subclass.getInterfaces()) {
+      if (isSubtypeOrImplements(interfaceClass, superclassOrInterface)) {
+        return true;
+      }
+    }
+
+    return false; // No relationship found
+  }
+
+
+  public static boolean isWithinBounds(Class<?> genericClass, Class<?> otherClass) {
+    // Get type parameters of the generic class
+    TypeVariable<?>[] typeParameters = genericClass.getTypeParameters();
+
+    for (TypeVariable<?> typeParameter : typeParameters) {
+      // Inspect bounds of each type parameter
+      for (Type bound : typeParameter.getBounds()) {
+        // Check if the otherClass matches or is assignable to this bound
+        if (bound instanceof Class<?> boundClass) {
+          if (isSubtypeOrImplements(otherClass, boundClass)) {
+            return true; // Match found
+          }
+        }
+      }
+    }
+    return false; // No match found
   }
 }

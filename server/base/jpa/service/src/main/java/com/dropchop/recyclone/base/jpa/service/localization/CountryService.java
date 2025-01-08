@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.jpa.service.localization;
 
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
 import com.dropchop.recyclone.base.jpa.repo.localization.CountryMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.localization.CountryRepository;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -27,4 +28,7 @@ public class CountryService extends CrudServiceImpl<Country, JpaCountry, String>
 
   @Inject
   CountryMapperProvider mapperProvider;
+
+  @Inject
+  CommonExecContext<Country, ?> executionContext;
 }

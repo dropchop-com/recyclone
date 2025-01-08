@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.base.api.model.utils.Objects.isWithinBounds;
 
 @ApplicationScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
@@ -33,6 +36,8 @@ public class ExecContextBinder {
 
   @Inject
   ParamsSelector paramsSelector;
+
+  private final ConcurrentHashMap<String, Boolean> boundsMapCache = new ConcurrentHashMap<>();
 
   public void bind(ExecContext<?> execContext, Params params) {
     if (params != null && execContext != null) {
@@ -63,7 +68,13 @@ public class ExecContextBinder {
   public ExecContext<?> bind(Class<? extends ExecContext<?>> execContextClass,
                              Class<? extends Dto> dataClass,
                              Class<? extends Params> paramsClass) {
-    ExecContext<?> execContext = execContextSelector.select(execContextClass, dataClass);
+    String key = execContextClass.getName() + "::" + dataClass.getName();
+    boolean hasParameterWithinDataClass = boundsMapCache.computeIfAbsent(
+        key, s -> isWithinBounds(execContextClass, dataClass)
+    );
+    ExecContext<?> execContext = execContextSelector.select(
+        execContextClass, hasParameterWithinDataClass ? dataClass : null
+    );
     if (paramsClass != null) {
       Params params = paramsSelector.select(paramsClass);
       bind(execContext, params);

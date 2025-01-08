@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.jpa.service.tagging;
 
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.jpa.repo.tagging.TagMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.tagging.TagRepository;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -32,4 +33,7 @@ public class TagService extends CrudServiceImpl<Tag, JpaTag, UUID>
 
   @Inject
   TagMapperProvider mapperProvider;
+
+  @Inject
+  CommonExecContext<Tag, ?> executionContext;
 }

@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused")
 public class ApiKeyHttpAuthenticationFilter extends BearerHttpAuthenticationFilter {
 
-  public static final String DEFAULT_API_KEY_HEADER = "X-API-Key";
+  public static final String DEFAULT_API_KEY_NAME = "X-API-Key";
+  public static final String DEFAULT_API_KEY_LOC = "header";
 
   private static final Logger log = LoggerFactory.getLogger(ApiKeyHttpAuthenticationFilter.class);
 
@@ -18,7 +19,7 @@ public class ApiKeyHttpAuthenticationFilter extends BearerHttpAuthenticationFilt
   private final String queryParamKey;
 
   public ApiKeyHttpAuthenticationFilter(String headerKey, String queryParamKey) {
-    this.headerKey = headerKey == null || headerKey.isBlank() ? DEFAULT_API_KEY_HEADER : headerKey;
+    this.headerKey = headerKey == null || headerKey.isBlank() ? DEFAULT_API_KEY_NAME : headerKey;
     this.queryParamKey = queryParamKey;
     setAuthcScheme(this.headerKey);
     setAuthzScheme("");

@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
-import com.dropchop.recyclone.base.dto.model.security.RoleNode;
-import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeMapperProvider;
-import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeRepository;
-import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.dto.model.security.RoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeMapperProvider;
+import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -31,4 +32,6 @@ public class RoleNodeService extends CrudServiceImpl<RoleNode, JpaRoleNode, UUID
   @Inject
   RoleNodeRepository repository;
 
+  @Inject
+  CommonExecContext<RoleNode, ?> executionContext;
 }

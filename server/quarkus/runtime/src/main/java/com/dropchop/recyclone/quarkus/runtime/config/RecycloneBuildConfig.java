@@ -1,13 +1,14 @@
 package com.dropchop.recyclone.quarkus.runtime.config;
 
 import io.quarkus.runtime.annotations.*;
-import io.smallrye.config.*;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.Mechanism.API_KEY;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
@@ -102,20 +103,58 @@ public interface RecycloneBuildConfig {
       }
     }
 
+
     /**
      * Additional security configuration.
      */
     @ConfigDocSection
     @ConfigDocMapKey("security-name")
-    Map<String, Security> security();
+    //@WithKeys(SecurityKeysProvider.class)
+    List<Security> security();
 
     /**
      * REST OpenAPI security item configuration.
      */
     @ConfigGroup
     interface Security {
+
+      static String getApiKeyIfPresent(List<Security> mechanisms) {
+        if (!mechanisms.isEmpty()) {
+          for (Rest.Security security : mechanisms) {
+            if (security.mechanism() == API_KEY) {
+              if (security.apiKeyName().isPresent()) {
+                return security.apiKeyName().get();
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+      enum Mechanism {
+        BEARER_TOKEN("bearer-token"),
+        BASIC_AUTH("basic-auth"),
+        API_KEY("api-key"),
+        JWT("jwt");
+
+        private final String value;
+
+        Mechanism(String value) {
+          this.value = value;
+        }
+
+        @Override
+        public String toString() {
+          return String.valueOf(value);
+        }
+      }
+
       /**
-       * REST OpenAPI security item type (apiKey, http, oauth2).
+       * REST OpenAPI security item enabled.
+       */
+      Mechanism mechanism();
+      /**
+       * REST OpenAPI security item type (bearer-token, basic-auth, jwt).
        */
       Optional<String> type();
       /**

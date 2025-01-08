@@ -9,9 +9,11 @@ import com.dropchop.recyclone.base.api.model.rest.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.Mechanism;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
+import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
 import io.smallrye.openapi.api.models.OperationImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
@@ -81,54 +83,69 @@ public class OasFilter implements OASFilter {
     return info;
   }
 
-  private List<SecurityRequirement> createSecurityRequirements(Map<String, Rest.Security> security) {
+  private List<SecurityRequirement> createSecurityRequirements(List<Rest.Security> security) {
     List<SecurityRequirement> securityRequirements = new ArrayList<>(security.size());
-    for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
-      String name = entry.getKey();
+    for (Rest.Security entry : security) {
       SecurityRequirement securityRequirement = OASFactory.createSecurityRequirement();
-      securityRequirement.addScheme(name);
+      securityRequirement.addScheme(entry.mechanism().toString());
       securityRequirements.add(securityRequirement);
     }
     return securityRequirements;
   }
 
-  private void createSecurity(OpenAPI openAPI, Map<String, Rest.Security> security) {
+  private void createSecurity(OpenAPI openAPI, List<Rest.Security> security) {
     List<SecurityRequirement> securityRequirements = openAPI.getSecurity();
     if (securityRequirements == null) {
       securityRequirements = new ArrayList<>(security.size());
       openAPI.setSecurity(securityRequirements);
     }
-    for (Map.Entry<String, Rest.Security> entry : security.entrySet()) {
-      String name = entry.getKey();
+    for (Rest.Security restSecurity : security) {
       SecurityRequirement securityRequirement = OASFactory.createSecurityRequirement();
-      securityRequirement.addScheme(name);
       securityRequirements.add(securityRequirement);
-      Rest.Security restSecurity = entry.getValue();
 
       Components components = openAPI.getComponents();
       if (components != null && restSecurity != null) {
         SecurityScheme securityScheme = OASFactory.createSecurityScheme();
-        if (restSecurity.type().isPresent()) {
-          if (restSecurity.type().get().equalsIgnoreCase("http")) {
+        Mechanism mechanism = restSecurity.mechanism();
+        switch (mechanism) {
+          case BEARER_TOKEN -> {
             securityScheme.setType(SecurityScheme.Type.HTTP);
-          } else if (restSecurity.type().get().equalsIgnoreCase("apikey")) {
-            securityScheme.setType(SecurityScheme.Type.APIKEY);
-            restSecurity.apiKeyName().ifPresent(securityScheme::setName);
+            securityScheme.setScheme("bearer");
           }
-        }
-        if (restSecurity.in().isPresent()) {
-          if (restSecurity.type().get().equalsIgnoreCase("query")) {
-            securityScheme.setIn(SecurityScheme.In.QUERY);
-          } else if (restSecurity.type().get().equalsIgnoreCase("cookie")) {
-            securityScheme.setIn(SecurityScheme.In.COOKIE);
-          } else if (restSecurity.type().get().equalsIgnoreCase("header")) {
-            securityScheme.setIn(SecurityScheme.In.HEADER);
+          case BASIC_AUTH -> {
+            securityScheme.setType(SecurityScheme.Type.HTTP);
+            securityScheme.setScheme("basic");
+          }
+          case API_KEY -> {
+            securityScheme.setType(SecurityScheme.Type.APIKEY);
+            if (restSecurity.in().isPresent()) {
+              if (restSecurity.in().get().equalsIgnoreCase("query")) {
+                securityScheme.setIn(SecurityScheme.In.QUERY);
+              } else if (restSecurity.in().get().equalsIgnoreCase("cookie")) {
+                securityScheme.setIn(SecurityScheme.In.COOKIE);
+              } else if (restSecurity.in().get().equalsIgnoreCase("header")) {
+                securityScheme.setIn(SecurityScheme.In.HEADER);
+              }
+            } else {
+              securityScheme.setIn(
+                SecurityScheme.In.valueOf((ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC.toUpperCase()))
+              );
+            }
+            if (restSecurity.apiKeyName().isPresent()) {
+              securityScheme.name(restSecurity.apiKeyName().get());
+            } else {
+              securityScheme.name(ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_NAME);
+            }
+          }
+          case JWT -> {
+            securityScheme.setType(SecurityScheme.Type.HTTP);
+            securityScheme.setScheme("bearer");
+            securityScheme.setBearerFormat("JWT");
           }
         }
 
         restSecurity.scheme().ifPresent(securityScheme::setScheme);
-        restSecurity.bearerFormat().ifPresent(securityScheme::setBearerFormat);
-        components.addSecurityScheme(name, securityScheme);
+        components.addSecurityScheme(mechanism.toString(), securityScheme);
       }
     }
   }
@@ -214,7 +231,7 @@ public class OasFilter implements OASFilter {
       }
     }
 
-    Map<String, Rest.Security> security = this.buildConfig.rest().security();
+    List<Rest.Security> security = this.buildConfig.rest().security();
     if (!security.isEmpty()) {
       this.createSecurity(openAPI, security);
     }
@@ -373,7 +390,7 @@ public class OasFilter implements OASFilter {
     if (!(operation instanceof OperationImpl op)) {
       return operation;
     }
-    Map<String, Rest.Security> security = this.buildConfig.rest().security();
+    List<Rest.Security> security = this.buildConfig.rest().security();
     if (!security.isEmpty()) {
       List<SecurityRequirement> securityRequirements = createSecurityRequirements(security);
       op.setSecurity(securityRequirements);

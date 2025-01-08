@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.dto.model.security.Action;
 import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import com.dropchop.recyclone.base.jpa.repo.security.ActionMapperProvider;
@@ -28,4 +29,7 @@ public class ActionService extends CrudServiceImpl<Action, JpaAction, String>
 
   @Inject
   ActionMapperProvider mapperProvider;
+
+  @Inject
+  CommonExecContext<Action, ?> executionContext;
 }
