@@ -21,6 +21,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 
@@ -30,11 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.aggs;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.max;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.*;
+import com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 9. 12. 24.
@@ -792,8 +796,166 @@ public class EventsResourceTest {
   @Order(90)
   public void complexQuery3()
   {
-      int a = 5;
-      int b = 10;
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException ignored) {}
+
+    EventParams params = EventParams.builder().condition(
+         or(
+                 and(
+                         field("application", "Baucheck-backend"),
+                         field("type", "Backend"),
+                         field("action", "FETCH_DATA")
+                 )
+         ).or(
+                 and(
+                         field("application", "Lupitpole-frontend"),
+                         field("type", "frontend"),
+                         field("action", "SUBMIT_FORM_FRONTEND")
+                 )
+         )
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events =  given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(2, events.size());
+
+  }
+
+  @Test
+  @Order(95)
+  public void complexQuery4()
+  {
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException ignored) {}
+
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    or(
+                            and(
+                                    field("application", "Baucheck-backend"),
+                                    field("type", "Backend"),
+                                    field("action", "FETCH_DATA")
+                            )
+                    ).or(
+                            and(
+                                    field("application", "Lupitpole-frontend"),
+                                    field("type", "frontend"),
+                                    field("action", "SUBMIT_FORM_FRONTEND")
+                            )
+                    ),
+                    and(
+                            field("cause.created",
+                                    gtLt(
+                                            startDate,
+                                            endDate
+                                    )
+                            )
+                    )
+
+            )
+
+
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events =  given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(1, events.size());
+
+  }
+
+  @Test
+  @Order(100)
+  public void aggregationQuery()
+  {
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException ignored) {}
+
+
+    ZonedDateTime startDate = Iso8601.fromIso("2023-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2027-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+           and(
+                   or(
+                           field(
+                                   "created",
+                                   gteLt(
+                                           startDate,
+                                           endDate
+                                   )
+                           )
+                   )
+           )
+    ).aggregation(
+          aggs(
+                  max(
+                          "max_value",
+                          "value"
+                  )
+          )
+    ).build();
+
+    //params.tryGetResultFilter().setSize(100);
+    //params.tryGetResultFilter().getContent().setTreeLevel(5);
+    //params.tryGetResultFilter().getContent().getDetailLevel();
+    params.getAvailableFields();
+
+    Response response =  given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search")
+            .then()
+            .statusCode(200)
+            .extract()
+            .response();
+
+    Double maxValue = -5.0;
+    System.out.println(response.prettyPrint());
+
+    assertNotNull(maxValue, "Max value aggregations should not be null");;
+    assertTrue(maxValue > 0, "Max value should be greater than 0");
+
   }
 
 }
