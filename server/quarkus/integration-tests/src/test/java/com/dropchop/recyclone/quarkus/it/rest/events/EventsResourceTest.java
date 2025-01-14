@@ -329,6 +329,9 @@ public class EventsResourceTest {
       Thread.sleep(3000);
     } catch (InterruptedException ignored) {}
 
+    /*
+    * Search by specific trace uuid
+    * */
     EventParams params = EventParams.builder().condition(
             and(field("trace.uuid", EVENT_TRACE_ID))
     ).build();
@@ -363,7 +366,9 @@ public class EventsResourceTest {
   @Order(45)
   public void searchAllEventsWithoutSpecificTraceId()
   {
-
+    /*
+    * Find all events except the one with this specific EVENT_TRACE_ID
+    * */
     EventParams params =  EventParams.builder().condition(
             not(field("trace.uuid", EVENT_TRACE_ID))
     ).build();
@@ -394,6 +399,10 @@ public class EventsResourceTest {
   public void searchEventsBySpecificId()
   {
 
+    /*
+    * Find events:
+    *  by uuid
+    * */
     EventParams params = EventParams.builder().condition(
             and(field("uuid", "6b829aac-06d2-4cbc-9721-d6d24a3628dd"))
     ).build();
@@ -425,6 +434,12 @@ public class EventsResourceTest {
   public void searchEventsByOrOperator()
   {
 
+    /*
+    * Find events:
+    * where uuid is EVENT_TRACE_ID
+    * or
+    * unit field has a value of "Mock_Unit"
+    * */
     EventParams params = EventParams.builder().condition(
          or(
                  field("trace.uuid", EVENT_TRACE_ID),
@@ -466,6 +481,10 @@ public class EventsResourceTest {
   @Order(60)
   public void searchEventsWithMultipleFilters() {
 
+    /*
+    * Find events:
+    * between dates and uuid must be EVENT_TRACE_ID
+    * */
     EventParams params = EventParams.builder().condition(
             and(
                 field(
@@ -506,6 +525,10 @@ public class EventsResourceTest {
   public void searchEventsByDateRange()
   {
 
+    /*
+    * Find events:
+    * between dates
+    * */
     EventParams params = EventParams.builder().condition(
             and(
                     field(
@@ -541,12 +564,16 @@ public class EventsResourceTest {
 
   @Test
   @Order(70)
-  public void searchEventsByDateRangeEqualy()
+  public void searchEventsByDateRange2()
   {
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T12:12:15.20");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
 
+    /*
+    * Find events:
+    * between dates
+    * */
     EventParams params = EventParams.builder().condition(
             and(
                     field(
@@ -593,12 +620,17 @@ public class EventsResourceTest {
 
   @Test
   @Order(75)
-  public void searchEventsByDateRangeEqualy2()
+  public void searchEventsByDateRange3()
   {
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
+    /*
+    * Find events:
+    * where created is between both date values
+    * same as before just with different dates
+    * */
     EventParams params = EventParams.builder().condition(
             and(
                     field(
@@ -651,6 +683,14 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
+    /*
+    * Find all events:
+    * type must be either "Backend" or "frontend"
+    * and
+    * value in [1.0, 2.0]
+    * and
+    * either between the date or trace.group must have "Some group value"
+    * */
     EventParams params = EventParams.builder().condition(
           and(
              or(
@@ -710,6 +750,14 @@ public class EventsResourceTest {
     ZonedDateTime endDate2 = Iso8601.fromIso("2024-06-17T00:00:00.000");
 
 
+    /*
+    * Find all the events:
+    * that container either of the field value (target.created or trace.group..)
+    * and
+    * type field must be either "frontend" or "Backend"
+    * and
+    * value field must be in: 1.0, 2.0, 3.0
+    * */
     EventParams params = EventParams.builder().condition(
             and(
                     or(
@@ -773,6 +821,10 @@ public class EventsResourceTest {
   public void complexQuery3()
   {
 
+    /*
+    * Find every record that contains either ("Baucheck-backend", "Backend", "FETCH_DATA")
+    * or ("Lupitpole-frontend", "frontend", "SUBMIT_FORM_FRONTEND")
+    * */
     EventParams params = EventParams.builder().condition(
          or(
                  and(
@@ -818,6 +870,13 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
 
+    /*
+    * Description:
+    * Find all the events that:
+    * were created between startDate and endDate or:
+    * event contains particular value combination:
+    * ("Baucheck-backend", "Backend", "FETCH_DATA") or ("Lupitpole-frontend", "frontend", "SUBMIT_FORM_FRONTEND")
+    * */
     EventParams params = EventParams.builder().condition(
             and(
                     or(
@@ -867,5 +926,67 @@ public class EventsResourceTest {
     assertEquals(1, events.size());
 
   }
+
+  @Test
+  @Order(100)
+  public void complexQuery5()
+  {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+
+    /*
+    * Description:
+    * find events that:
+    * were not created between startDate and EndDate and the uuid should not be ... or
+    * event should contain FETCH_DATA in the action field
+    * */
+    EventParams params = EventParams.builder().condition(
+      or(
+              and(
+                      not(
+                              field(
+                                      "created",
+                                      gteLte(
+                                              startDate,
+                                              endDate
+                                      )
+                              )
+                      ),
+                      not(
+                              field(
+                                      "uuid",
+                                      "4794b019-9750-44f4-a3c9-33516c6bfc50"
+                              )
+                      )
+              ),
+              field(
+                          "action", "FETCH_DATA"
+              )
+      )
+
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(2, events.size());
+  }
+
+
 
 }
