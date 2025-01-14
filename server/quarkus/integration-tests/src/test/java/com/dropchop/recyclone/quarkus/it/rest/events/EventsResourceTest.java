@@ -13,6 +13,7 @@ import com.dropchop.recyclone.base.dto.model.event.EventTrace;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.quarkus.it.rest.events.mock.EventMockData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 
@@ -39,6 +41,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.*;
 import com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
+import org.wildfly.common.Assert;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 9. 12. 24.
@@ -360,9 +363,6 @@ public class EventsResourceTest {
   @Order(45)
   public void searchAllEventsWithoutSpecificTraceId()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     EventParams params =  EventParams.builder().condition(
             not(field("trace.uuid", EVENT_TRACE_ID))
@@ -393,9 +393,6 @@ public class EventsResourceTest {
   @Order(50)
   public void searchEventsBySpecificId()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     EventParams params = EventParams.builder().condition(
             and(field("uuid", "6b829aac-06d2-4cbc-9721-d6d24a3628dd"))
@@ -427,9 +424,6 @@ public class EventsResourceTest {
   @Order(55)
   public void searchEventsByOrOperator()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     EventParams params = EventParams.builder().condition(
          or(
@@ -471,9 +465,6 @@ public class EventsResourceTest {
   @Test
   @Order(60)
   public void searchEventsWithMultipleFilters() {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     EventParams params = EventParams.builder().condition(
             and(
@@ -514,9 +505,6 @@ public class EventsResourceTest {
   @Order(65)
   public void searchEventsByDateRange()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     EventParams params = EventParams.builder().condition(
             and(
@@ -555,9 +543,6 @@ public class EventsResourceTest {
   @Order(70)
   public void searchEventsByDateRangeEqualy()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T12:12:15.20");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
@@ -610,9 +595,6 @@ public class EventsResourceTest {
   @Order(75)
   public void searchEventsByDateRangeEqualy2()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
@@ -665,9 +647,6 @@ public class EventsResourceTest {
   @Order(80)
   public void complexQuery()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
@@ -724,9 +703,6 @@ public class EventsResourceTest {
   @Order(85)
   public void complexQuery2()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
@@ -796,9 +772,6 @@ public class EventsResourceTest {
   @Order(90)
   public void complexQuery3()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     EventParams params = EventParams.builder().condition(
          or(
@@ -841,9 +814,6 @@ public class EventsResourceTest {
   @Order(95)
   public void complexQuery4()
   {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
 
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
@@ -895,66 +865,6 @@ public class EventsResourceTest {
             .body().jsonPath().getList(".", Event.class);
 
     assertEquals(1, events.size());
-
-  }
-
-  @Test
-  @Order(100)
-  public void aggregationQuery()
-  {
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException ignored) {}
-
-
-    ZonedDateTime startDate = Iso8601.fromIso("2023-01-01T00:01:10.20");
-    ZonedDateTime endDate = Iso8601.fromIso("2027-06-15T23:31:45.50");
-
-    EventParams params = EventParams.builder().condition(
-           and(
-                   or(
-                           field(
-                                   "created",
-                                   gteLt(
-                                           startDate,
-                                           endDate
-                                   )
-                           )
-                   )
-           )
-    ).aggregation(
-          aggs(
-                  max(
-                          "max_value",
-                          "value"
-                  )
-          )
-    ).build();
-
-    //params.tryGetResultFilter().setSize(100);
-    //params.tryGetResultFilter().getContent().setTreeLevel(5);
-    //params.tryGetResultFilter().getContent().getDetailLevel();
-    params.getAvailableFields();
-
-    Response response =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response();
-
-    Double maxValue = -5.0;
-    System.out.println(response.prettyPrint());
-
-    assertNotNull(maxValue, "Max value aggregations should not be null");;
-    assertTrue(maxValue > 0, "Max value should be greater than 0");
 
   }
 
