@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
+import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.client.Response;
@@ -18,7 +19,7 @@ import java.util.Set;
 import static com.dropchop.recyclone.base.api.model.base.Model.identifier;
 
 public abstract class ElasticBulkMethodImpl {
-  protected abstract <S> String getIndexOuterName(S entity);
+  protected abstract <S extends EsEntity> String getIndexOuterName(S entity);
 
   public enum MethodType {
     INDEX, DELETE, UPDATE
@@ -26,11 +27,11 @@ public abstract class ElasticBulkMethodImpl {
 
   private final MethodType methodType;
 
-  public ElasticBulkMethodImpl(MethodType methodType, String index) {
+  public ElasticBulkMethodImpl(MethodType methodType) {
     this.methodType = methodType;
   }
 
-  public <S extends Model> StringBuilder buildBulkRequest(
+  public <S extends EsEntity> StringBuilder buildBulkRequest(
     Collection<S> entities,
     StringBuilder bulkRequestBody,
     ObjectMapper objectMapper) {
