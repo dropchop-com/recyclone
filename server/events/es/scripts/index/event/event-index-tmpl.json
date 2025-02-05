@@ -1,0 +1,7 @@
+{
+  "index_patterns": [
+    "recyclone_event-20*"
+  ],
+  "priority": 20000,
+  "composed_of": ["recyclone_event_index_mapping_1", "recyclone_event_index_field_mapping_1", "recyclone_event_index_settings_1"]
+}

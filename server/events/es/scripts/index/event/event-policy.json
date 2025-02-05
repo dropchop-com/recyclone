@@ -1,0 +1,15 @@
+{
+  "policy": {
+    "_meta": {
+      "description": "Used for recyclone events"
+    },
+    "phases": {
+      "delete": {
+        "min_age": "365d",
+        "actions": {
+          "delete": {}
+        }
+      }
+    }
+  }
+}
