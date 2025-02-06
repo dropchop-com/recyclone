@@ -310,12 +310,18 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   private QueryNodeObject buildQueryObject(QueryParams params,
                                            QueryNodeObject sortOrder,
                                            List<Object> searchAfterValues) {
-    int size = params.tryGetResultFilter().size();
+
+    int sizeOfPagination = getElasticIndexConfig().getSizeOfPagination();
+    int maxSize = params.tryGetResultFilter().size();
     int from = params.tryGetResultFilter().from();
 
     ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
     QueryNodeObject initialQueryObject = esQueryMapper.mapToString(params);
-    initialQueryObject.put("size", Math.min(size, 10000));
+
+    int effectiveSize = maxSize > 0
+      ? Math.min(maxSize, 10000)
+      : Math.min(sizeOfPagination, 10000);
+    initialQueryObject.put("size", effectiveSize);
 
     if (searchAfterValues == null) {
       initialQueryObject.put("from", from);
@@ -492,10 +498,12 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       );
     }
 
+    int maxSize = params.tryGetResultFilter().getSize();
+
     boolean hasMoreHits = true;
     QueryParams queryParams = context.getParams();
     List<S> results = new ArrayList<>();
-    while (hasMoreHits) {
+    while (hasMoreHits && results.size() < maxSize) {
       try {
         QueryNodeObject queryObject = buildQueryObject(queryParams, sortOrder, searchAfterValues);
         Container<Hit<S>> last = new Container<>();
