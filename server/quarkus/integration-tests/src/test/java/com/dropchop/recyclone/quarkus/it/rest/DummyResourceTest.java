@@ -109,43 +109,6 @@ public class DummyResourceTest {
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
-  @Test
-  @Order(40)
-  public void deleteById() {
-    CodeParams params1 = CodeParams.builder().code("dummy_code1").build();
-
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
-      .body(params1)
-      .when()
-      .delete("/api/internal/test/dummy/deleteById")
-      .then()
-      .statusCode(200)
-      .log().all();
-  }
-
-  @Test
-  @Order(30)
-  public void deleteByQuery() {
-    QueryParams s = QueryParams.builder().condition(
-      field("lang", "si")
-    ).build();
-
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
-      .body(s)
-      .when()
-      .delete("/api/internal/test/dummy/deleteByQuery")
-      .then()
-      .statusCode(200)
-      .log().all();
-  }
   /*
   @Test
   @Order(30)
@@ -357,7 +320,7 @@ public class DummyResourceTest {
   */
 
   @Test
-  @Order(30)
+  @Order(50)
   public void dummyQueryTest() {
     QueryParams params = QueryParams.builder().condition(
       and(
@@ -501,6 +464,7 @@ public class DummyResourceTest {
   }
 
   @Test
+  @Order(50)
   public void delete() {
     Dummy dummy1 = new Dummy();
     dummy1.setTitle("Introduction to Java");
@@ -554,5 +518,45 @@ public class DummyResourceTest {
       .then()
       .statusCode(200)
       .log().all();
+  }
+
+
+
+  @Test
+  @Order(60)
+  public void deleteById() {
+    CodeParams params1 = CodeParams.builder().code("dummy_code1").build();
+
+    given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .auth().preemptive().basic("editor1", "password")
+        .body(params1)
+        .when()
+        .delete("/api/internal/test/dummy/deleteById")
+        .then()
+        .statusCode(200)
+        .log().all();
+  }
+
+  @Test
+  @Order(70)
+  public void deleteByQuery() {
+    QueryParams s = QueryParams.builder().condition(
+        field("lang", "si")
+    ).build();
+
+    given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .auth().preemptive().basic("editor1", "password")
+        .body(s)
+        .when()
+        .delete("/api/internal/test/dummy/deleteByQuery")
+        .then()
+        .statusCode(200)
+        .log().all();
   }
 }
