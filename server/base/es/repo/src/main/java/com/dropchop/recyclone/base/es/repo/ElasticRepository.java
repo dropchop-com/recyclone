@@ -119,7 +119,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     } catch (ServiceException | IOException e) {
       throw new ServiceException(
           ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
-          Set.of(new AttributeString("error", e.getMessage()))
+          Set.of(new AttributeString("error", e.getMessage())),
+          e
       );
     }
   }
@@ -193,7 +194,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       throw new ServiceException(
           ErrorCode.data_error,
           "Failed to delete entities by ID",
-          Set.of(new AttributeString("error", e.getMessage()))
+          Set.of(new AttributeString("error", e.getMessage())),
+          e
       );
     }
   }
@@ -266,7 +268,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     } catch (IOException e) {
       throw new ServiceException(
           ErrorCode.internal_error, "Unable to execute delete query",
-          Set.of(new AttributeString("delete query", query)), e
+          Set.of(new AttributeString("delete query", query)),
+          e
       );
     }
   }
@@ -397,7 +400,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     } catch (IOException e) {
       throw new ServiceException(
           ErrorCode.internal_error, "Unable to execute query",
-          Set.of(new AttributeString("query", query)), e
+          Set.of(new AttributeString("query", query)),
+          e
       );
     }
   }
@@ -518,12 +522,14 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       } catch (ServiceException e) {
         throw new ServiceException(
             ErrorCode.data_error, "Failed to execute search query.",
-            Set.of(new AttributeString("errorMessage", e.getMessage())), e
+            Set.of(new AttributeString("errorMessage", e.getMessage())),
+            e
         );
       } catch (Exception e) {
         throw new ServiceException(
             ErrorCode.internal_error, "Unexpected error occurred during search execution.",
-            Set.of(new AttributeString("errorMessage", e.getMessage())), e
+            Set.of(new AttributeString("errorMessage", e.getMessage())),
+            e
         );
       }
     }
