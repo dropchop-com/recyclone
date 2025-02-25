@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
+import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
@@ -24,6 +25,9 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
 
   @Inject
   ElasticQueryMapper elasticQueryMapper;
+
+  @Inject
+  ElasticIndexConfig elasticIndexConfig;
 
   Class<EsDummy> rootClass = EsDummy.class;
 }

@@ -141,8 +141,8 @@ class ParamsPropertyFilterSerializerModifierTest {
             "code":"sl",
             "title":"Slovene",
             "lang":"en",
-            "created":"2022-08-27T00:00:00Z",
-            "modified":"2022-08-27T00:00:00Z"
+            "created":"2022-08-27T00:00:00.000Z",
+            "modified":"2022-08-27T00:00:00.000Z"
          }
       ]
       """;
@@ -180,13 +180,13 @@ class ParamsPropertyFilterSerializerModifierTest {
                   "type":"LanguageGroup",
                   "title":"Indo-European",
                   "lang":"en",
-                  "created":"2022-08-27T00:00:00Z",
-                  "modified":"2022-08-27T00:00:00Z",
+                  "created":"2022-08-27T00:00:00.000Z",
+                  "modified":"2022-08-27T00:00:00.000Z",
                   "name":"indo_european"
                }
             ],
-            "created":"2022-08-27T00:00:00Z",
-            "modified":"2022-08-27T00:00:00Z"
+            "created":"2022-08-27T00:00:00.000Z",
+            "modified":"2022-08-27T00:00:00.000Z"
          }
       ]
       """;
@@ -230,13 +230,13 @@ class ParamsPropertyFilterSerializerModifierTest {
                         "title":"Indoevropski"
                      }
                   ],
-                  "created":"2022-08-27T00:00:00Z",
-                  "modified":"2022-08-27T00:00:00Z",
+                  "created":"2022-08-27T00:00:00.000Z",
+                  "modified":"2022-08-27T00:00:00.000Z",
                   "name":"indo_european"
                }
             ],
-            "created":"2022-08-27T00:00:00Z",
-            "modified":"2022-08-27T00:00:00Z"
+            "created":"2022-08-27T00:00:00.000Z",
+            "modified":"2022-08-27T00:00:00.000Z"
          }
       ]
       """;
@@ -432,8 +432,8 @@ class ParamsPropertyFilterSerializerModifierTest {
                   "type": "LanguageGroup"
                }
             ],
-            "created":"2022-08-27T00:00:00Z",
-            "modified":"2022-08-27T00:00:00Z"
+            "created":"2022-08-27T00:00:00.000Z",
+            "modified":"2022-08-27T00:00:00.000Z"
          }
       ]
       """;
@@ -477,8 +477,8 @@ class ParamsPropertyFilterSerializerModifierTest {
                   "name":"indo_european"
                }
             ],
-            "created":"2022-08-27T00:00:00Z",
-            "modified":"2022-08-27T00:00:00Z"
+            "created":"2022-08-27T00:00:00.000Z",
+            "modified":"2022-08-27T00:00:00.000Z"
          }
       ]
       """;
@@ -528,8 +528,8 @@ class ParamsPropertyFilterSerializerModifierTest {
                 "name":"indo_european"
              }
           ],
-          "created":"2022-08-27T00:00:00Z",
-          "modified":"2022-08-27T00:00:00Z"
+          "created":"2022-08-27T00:00:00.000Z",
+          "modified":"2022-08-27T00:00:00.000Z"
         }
       ]
       """;
@@ -587,8 +587,8 @@ class ParamsPropertyFilterSerializerModifierTest {
                     "type": "LanguageGroup"
                  }
               ],
-              "created":"2022-08-27T00:00:00Z",
-              "modified":"2022-08-27T00:00:00Z"
+              "created":"2022-08-27T00:00:00.000Z",
+              "modified":"2022-08-27T00:00:00.000Z"
            }
         ]
      }

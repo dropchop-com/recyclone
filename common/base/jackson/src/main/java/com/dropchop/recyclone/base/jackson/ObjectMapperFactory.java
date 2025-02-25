@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.api.model.attr.Attribute;
-import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
+import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +14,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.ZonedDateTime;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 06. 22.
  */
@@ -23,7 +25,7 @@ public class ObjectMapperFactory {
   private final JsonSerializationTypeConfig serializationTypeConfig;
 
   public ObjectMapperFactory(JsonSerializationTypeConfig polymorphicRegistry) {
-   this.serializationTypeConfig = polymorphicRegistry;
+    this.serializationTypeConfig = polymorphicRegistry;
   }
 
   public ObjectMapperFactory() {
@@ -45,6 +47,12 @@ public class ObjectMapperFactory {
     mapper.registerModule(new Jdk8Module());
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new ParameterNamesModule());
+
+    SimpleModule module1 = new SimpleModule();
+    module1.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer());
+    mapper.registerModule(module1);
+    mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false);
+
     if (serializationTypeConfig != null) {
 
       serializationTypeConfig.getSubTypeMap().forEach(
