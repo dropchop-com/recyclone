@@ -16,7 +16,6 @@ import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
-import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
@@ -65,7 +64,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return cls.getSimpleName().toLowerCase();
   }
 
-  public abstract <S extends ElasticIndexConfig> S getElasticIndexConfig();
+  public abstract com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig getElasticIndexConfig();
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
@@ -102,13 +101,12 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     ObjectMapper objectMapper = getObjectMapper();
 
     bulkRequestBody = method.buildBulkRequest(entities, bulkRequestBody, objectMapper);
-    ElasticIndexConfig indexConfig = getElasticIndexConfig();
 
     StringBuilder endpoint = new StringBuilder();
     endpoint.append("/_bulk");
 
-    if(indexConfig.getIngestPipeline() != null) {
-      endpoint.append("?pipeline=").append(indexConfig.getIngestPipeline());
+    if(getElasticIndexConfig().getIngestPipeline() != null) {
+      endpoint.append("?pipeline=").append(getElasticIndexConfig().getIngestPipeline());
     }
 
     Request request = new Request("POST", endpoint.toString());

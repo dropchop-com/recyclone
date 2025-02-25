@@ -2,7 +2,6 @@ package com.dropchop.recyclone.base.es.repo.events;
 
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
-import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,6 +31,6 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
   ElasticQueryMapper elasticQueryMapper;
 
   @Inject
-  ElasticIndexConfig elasticIndexConfig;
+  EsEventIndexConfig elasticIndexConfig;
 
 }

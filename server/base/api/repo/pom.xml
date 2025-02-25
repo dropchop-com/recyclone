@@ -35,5 +35,9 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-api-mapper</artifactId>
     </dependency>
+      <dependency>
+          <groupId>com.dropchop.recyclone</groupId>
+          <artifactId>recyclone-base-es-model</artifactId>
+      </dependency>
   </dependencies>
 </project>
