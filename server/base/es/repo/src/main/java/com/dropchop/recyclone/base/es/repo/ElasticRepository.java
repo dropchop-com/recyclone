@@ -65,6 +65,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return cls.getSimpleName().toLowerCase();
   }
 
+  public abstract <S extends ElasticIndexConfig> S getElasticIndexConfig();
+
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
       new PageCriteriaDecorator()
