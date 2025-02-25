@@ -16,10 +16,6 @@ public class ElasticIndexConfig implements com.dropchop.recyclone.base.api.repo.
   private Integer sizeOfPagination = 10000;
 
   public <E extends EsEntity> String getIndexName(E entity) {
-    String simpleName = entity.getClass().getSimpleName();
-    if (simpleName.startsWith("Es")) {
-      simpleName = simpleName.substring(2);
-    }
-    return Strings.toSnakeCase(simpleName);
+    return getDefaultIndexName(entity.getClass());
   }
 }

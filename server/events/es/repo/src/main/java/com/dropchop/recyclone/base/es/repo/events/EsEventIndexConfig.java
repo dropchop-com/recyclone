@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.events;
 
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,16 +15,16 @@ public class EsEventIndexConfig implements ElasticIndexConfig {
 
   @Override
   public String getIngestPipeline() {
-    return "event-ingest";
+    return null;
   }
 
   @Override
   public Integer getSizeOfPagination() {
-    return 100;
+    return 10000;
   }
 
   @Override
   public <E extends EsEntity> String getIndexName(E entity) {
-    return entity.getClass().getSimpleName();
+    return getMonthBasedIndexName((HasCreated) entity);
   }
 }
