@@ -123,7 +123,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     } catch (ServiceException | IOException e) {
       throw new ServiceException(
         ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
-        Set.of(new AttributeString("error", e.getMessage()))
+        Set.of(new AttributeString("error", e.getMessage())), e
       );
     }
   }
