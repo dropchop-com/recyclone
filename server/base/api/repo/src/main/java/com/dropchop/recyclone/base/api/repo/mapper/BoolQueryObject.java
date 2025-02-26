@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.es.repo.mapper;
+package com.dropchop.recyclone.base.api.repo.mapper;
 
 import lombok.Getter;
 

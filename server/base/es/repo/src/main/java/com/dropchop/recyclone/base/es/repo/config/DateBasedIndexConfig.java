@@ -1,15 +1,15 @@
-package com.dropchop.recyclone.base.es.repo.events;
+package com.dropchop.recyclone.base.es.repo.config;
 
-import com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @ApplicationScoped
-public class EsEventIndexConfig implements DateBasedIndexConfig {
+public class DateBasedIndexConfig implements com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig {
   private String ingestPipeline = null;
   private Integer sizeOfPagination = 10000;
 }

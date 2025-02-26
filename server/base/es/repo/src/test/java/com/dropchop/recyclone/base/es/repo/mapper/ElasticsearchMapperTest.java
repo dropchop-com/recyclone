@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.repo.mapper;
 
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import org.json.JSONException;
