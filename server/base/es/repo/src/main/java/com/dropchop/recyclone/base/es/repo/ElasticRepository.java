@@ -440,77 +440,81 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   }
 
   private Request buildRequest(QueryNodeObject query) {
-    if(getElasticIndexConfig() instanceof DateBasedIndexConfig) {
-      StringBuilder builder = new StringBuilder();
-
-      List<String> indices = setDatesForIndices(query);
-
-      for(String s : indices) {
-        builder.append(s);
-        builder.append(",");
-      }
-      return new Request("GET","/" + builder + "/_search");
-    } else if(getElasticIndexConfig() instanceof DefaultIndexConfig) {
-      return new Request("GET",
-        "/" + getElasticIndexConfig().getRootClassName(this.getRootClass()) + "/_search");
+    if (getElasticIndexConfig() instanceof DateBasedIndexConfig) {
+      return buildDateBasedRequest((DateBasedIndexConfig) getElasticIndexConfig());
+    } else if (getElasticIndexConfig() instanceof DefaultIndexConfig) {
+      return buildDefaultRequest((DefaultIndexConfig) getElasticIndexConfig());
     } else {
       throw new ServiceException(
         ErrorCode.internal_error,
-        "No ElasticIndexConfig found for class ElasticRepository!"
+        "No valid ElasticIndexConfig found for class ElasticRepository!"
       );
     }
   }
 
+  private Request buildDateBasedRequest(DateBasedIndexConfig dateConfig) {
+    if (dateConfig.getAlias() != null) {
+      String alias = dateConfig.getAlias();
+      log.debug("Using alias [{}] as set in ElasticIndexConfig", alias);
+      return new Request("GET", "/" + alias + "/_search");
+    } else {
+      List<String> indexNames = dateConfig.getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
+      String indexName = String.join(",", indexNames);
+      log.debug("Alias was not set in ElasticIndexConfig, using current time to calculate index [{}]", indexName);
+      return new Request("GET", "/" + indexName + "/_search");
+    }
+  }
+
+  private Request buildDefaultRequest(DefaultIndexConfig defaultIndexConfig) {
+    if (defaultIndexConfig.getAlias() != null) {
+      String alias = defaultIndexConfig.getAlias();
+      log.debug("Using alias [{}] as set in ElasticIndexConfig", alias);
+      return new Request("GET", "/" + alias + "/_search");
+    } else {
+      String indexName = getElasticIndexConfig().getRootClassName(this.getRootClass());
+      log.debug("Using default index configuration with index name [{}]", indexName);
+      return new Request("GET", "/" + indexName + "/_search");
+    }
+  }
+
+  //TODO: Think about correct implementation of this...
   @Override
   public List<String> setDatesForIndices(QueryNodeObject query) {
-    if (query.containsKey("created")) {
-      if (query.get("created") instanceof ZonedDateTime) {
-        return ((DateBasedIndexConfig) getElasticIndexConfig())
-          .getMonthBasedIndexName((ZonedDateTime) query.get("created"), getRootClass());
-      } else {
-        throw new ServiceException(
-          ErrorCode.internal_error,
-          "Wrong type was given from QueryNodeObject in ElasticRepository, " +
-            "expected ZonedDateTime, got " + query.get("created").getClass()
-        );
-      }
-    } else if (query.containsKey("uuid")) {
-      if (query.get("uuid") instanceof UUID) {
-        try {
-          UUID uuid = (UUID) query.get("uuid");
+    UUID uuid = query.getNestedValue(UUID.class, "uuid");
+    ZonedDateTime created = query.getNestedValue(ZonedDateTime.class, "created");
 
-          if (uuid.version() != 1) {
-            throw new ServiceException(
-              ErrorCode.internal_error,
-              "UUID must be version 1 (time-based) for timestamp extraction"
-            );
-          }
-
-          long uuidTimestamp = uuid.timestamp();
-
-          final long EPOCH_DIFF = 12219292800L * 1_000_000_000L;
-          long unixMillis = ((uuidTimestamp * 100) - EPOCH_DIFF) / 1_000_000L;
-
-          ZonedDateTime creationDate = Instant.ofEpochMilli(unixMillis)
-            .atZone(ZoneId.systemDefault());
-
-          return ((DateBasedIndexConfig) getElasticIndexConfig())
-            .getMonthBasedIndexName(creationDate, getRootClass());
-
-        } catch (ServiceException e) {
-          throw e;
-        } catch (Exception e) {
+    if (created != null) {
+      return ((DateBasedIndexConfig) getElasticIndexConfig())
+        .getMonthBasedIndexName(created, getRootClass());
+    } else if (uuid != null) {
+      try {
+        if (uuid.version() != 1) {
           throw new ServiceException(
             ErrorCode.internal_error,
-            "Failed to extract timestamp from UUID: " + e.getMessage(),
-            e
+            "UUID must be version 1 (time-based) for timestamp extraction"
           );
         }
-      } else {
+
+        long uuidTimestamp = uuid.timestamp();
+
+        final long EPOCH_DIFF = 12219292800L * 1_000_000_000L;
+        long unixMillis = ((uuidTimestamp * 100) - EPOCH_DIFF) / 1_000_000L;
+
+        ZonedDateTime creationDate = Instant.ofEpochMilli(unixMillis)
+          .atZone(ZoneId.systemDefault());
+
+        return ((DateBasedIndexConfig) getElasticIndexConfig())
+          .getMonthBasedIndexName(creationDate, getRootClass());
+
+      } catch (ServiceException e) {
+        log.warn("UUID must be version 1 (time-based) for timestamp extraction");
+        return ((DateBasedIndexConfig) getElasticIndexConfig())
+          .getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
+      } catch (Exception e) {
         throw new ServiceException(
           ErrorCode.internal_error,
-          "Wrong type was given from QueryNodeObject in ElasticRepository, " +
-            "expected UUID, got " + query.get("uuid").getClass()
+          "Failed to extract timestamp from UUID: " + e.getMessage(),
+          e
         );
       }
     } else {

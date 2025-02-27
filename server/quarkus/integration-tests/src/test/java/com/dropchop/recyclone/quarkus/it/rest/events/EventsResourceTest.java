@@ -19,8 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.base.api.model.query.Condition.field;
-import static com.dropchop.recyclone.base.api.model.query.Condition.or;
+import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -183,7 +182,10 @@ public class EventsResourceTest {
     } catch (InterruptedException ignored) {}
 
     Condition c = or(
-      field("uuid", EVENT_ID)
+      field("uuid", EVENT_ID),
+      and(
+        field("created", ZonedDateTime.now())
+      )
     );
 
     EventParams params = EventParams.builder().condition(c).build();

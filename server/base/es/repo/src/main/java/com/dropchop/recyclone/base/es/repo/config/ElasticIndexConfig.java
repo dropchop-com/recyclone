@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ElasticIndexConfig implements com.dropchop.recyclone.base.api.repo.config.DefaultIndexConfig {
   private String ingestPipeline = null;
+  private String alias = null;
   private Integer sizeOfPagination = 10000;
 }

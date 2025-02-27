@@ -11,5 +11,6 @@ import lombok.ToString;
 @ApplicationScoped
 public class DateBasedIndexConfig implements com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig {
   private String ingestPipeline = null;
+  private String alias = null;
   private Integer sizeOfPagination = 10000;
 }

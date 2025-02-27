@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.es.model.base.EsEntity;
 
 public interface ElasticIndexConfig {
   String getIngestPipeline();
+  String getAlias();
   Integer getSizeOfPagination();
 
   default <S extends EsEntity> String getIndexName(S entity) {

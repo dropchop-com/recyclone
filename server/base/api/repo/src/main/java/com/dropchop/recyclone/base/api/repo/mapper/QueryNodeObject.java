@@ -2,10 +2,7 @@ package com.dropchop.recyclone.base.api.repo.mapper;
 
 import lombok.NonNull;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -150,5 +147,51 @@ public class QueryNodeObject extends QueryNode implements IQueryNodeObject {
   public Object merge(String key, @NonNull Object value,
                       @NonNull BiFunction<? super Object, ? super Object, ?> remappingFunction) {
     return delegate.merge(key, value, remappingFunction);
+  }
+
+  private Object getNestedValue(String keys) {
+    return getNestedValue(this, keys);
+  }
+
+  private static Object getNestedValue(QueryNodeObject node, String targetKey) {
+    if (node == null) return null;
+
+    if (node.containsKey(targetKey)) {
+      if(node.get(targetKey) instanceof QueryNodeObject) {
+        return ((QueryNodeObject)node.get(targetKey)).values().iterator().next();
+      }
+      return node.get(targetKey);
+    }
+
+    for (Object value : node.values()) {
+      if (value instanceof QueryNodeObject) {
+        Object result = getNestedValue((QueryNodeObject) value, targetKey);
+        if (result != null) return result;
+      } else if (value instanceof QueryNodeList) {
+        for (Object item : (QueryNodeList) value) {
+          if (item instanceof QueryNodeObject) {
+            Object result = getNestedValue((QueryNodeObject) item, targetKey);
+            if (result != null) return result;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+
+  @SuppressWarnings("unchecked")
+  public <T> T getNestedValue(Class<T> type, String keys) {
+    Object value = getNestedValue(keys);
+    if(type.equals(UUID.class)) {
+      if(value instanceof String) {
+        return (T) UUID.fromString((String) value);
+      } else if(value != null) {
+        return null;
+      }
+
+      return null;
+    }
+    return type.isInstance(value) ? (T) value : null;
   }
 }
