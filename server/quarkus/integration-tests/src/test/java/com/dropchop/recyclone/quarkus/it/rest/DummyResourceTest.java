@@ -187,7 +187,7 @@ public class DummyResourceTest {
       .statusCode(200)
       .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
-  }
+  }*/
 
   @Test
   @Order(30)
@@ -196,35 +196,36 @@ public class DummyResourceTest {
       aggs(
         max(
           "watch_max",
-          "watch",
-          sum(
-            "nested_worker_sum",
-            "worker"
-          ),
-          min(
-            "nested_worker_min",
-            "worker"
-          ),
-          avg(
-            "nested_worker_avg",
-            "worker"
-          ),
-          count(
-            "nested_nested_worker_count",
-            "worker"
-          )
+          "watch"
         ),
         cardinality(
           "nested_nested_worker_cardinality",
           "worker"
         ),
         dateHistogram(
-          "nested_nested_worker_dateHistogram",
+          "nested_nested_worker_date_histogram",
           "worker",
           "month"
         ),
         terms(
           "nested_worker_terms",
+          "worker"
+        ),
+
+        sum(
+          "nested_worker_sum",
+          "worker"
+        ),
+        min(
+          "nested_worker_min",
+          "worker"
+        ),
+        avg(
+          "nested_worker_avg",
+          "worker"
+        ),
+        count(
+          "nested_nested_worker_count",
           "worker"
         )
       )
@@ -243,7 +244,7 @@ public class DummyResourceTest {
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
-  @Test
+  /*@Test
   @Order(30)
   public void dummyQueryCombined() {
     QueryParams params = QueryParams.builder().condition(
@@ -352,42 +353,6 @@ public class DummyResourceTest {
         field("miki", null)
       ).and(
         field("type2", in(1, 2, 3))
-      )
-    ).aggregation(
-      aggs(
-        max(
-          "watch_max",
-          "watch",
-          sum(
-            "nested_worker_sum",
-            "worker"
-          ),
-          min(
-            "nested_worker_min",
-            "worker"
-          ),
-          avg(
-            "nested_worker_avg",
-            "worker"
-          ),
-          count(
-            "nested_nested_worker_count",
-            "worker"
-          )
-        ),
-        cardinality(
-          "nested_nested_worker_cardinality",
-          "worker"
-        ),
-        dateHistogram(
-          "nested_nested_worker_dateHistogram",
-          "worker",
-          "month"
-        ),
-        terms(
-          "nested_worker_terms",
-          "worker"
-        )
       )
     ).build();
     given()

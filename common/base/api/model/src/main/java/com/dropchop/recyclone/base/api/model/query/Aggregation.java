@@ -53,28 +53,28 @@ public interface Aggregation {
     return aggs.stream().map(Wrapper::new).collect(Collectors.toCollection(AggregationList::new));
   }
 
-  static Max max(String name, String field, Aggregation... aggs) {
-    return new Max(name, field, aggs);
+  static Max max(String name, String field) {
+    return new Max(name, field);
   }
 
-  static Min min(String name, String field, Aggregation... subAggregations) {
-    return new Min(name, field, subAggregations);
+  static Min min(String name, String field) {
+    return new Min(name, field);
   }
 
-  static Sum sum(String name, String field, Aggregation... subAggregations) {
-    return new Sum(name, field, subAggregations);
+  static Sum sum(String name, String field) {
+    return new Sum(name, field);
   }
 
-  static Count count(String name, String field, Aggregation... subAggregations) {
-    return new Count(name, field, subAggregations);
+  static Count count(String name, String field) {
+    return new Count(name, field);
   }
 
-  static Avg avg(String name, String field, Aggregation... subAggregations) {
-    return new Avg(name, field, subAggregations);
+  static Avg avg(String name, String field) {
+    return new Avg(name, field);
   }
 
-  static Cardinality cardinality(String name, String field, Aggregation... subAggregations) {
-    return new Cardinality(name, field, subAggregations);
+  static Cardinality cardinality(String name, String field) {
+    return new Cardinality(name, field);
   }
 
   static DateHistogram dateHistogram(String name, String field, String calendar_interval, Aggregation... subAggregations) {
@@ -185,34 +185,28 @@ public interface Aggregation {
       return aggs.stream().map(Wrapper::new).collect(Collectors.toCollection(AggregationList::new));
     }
 
-    public static Max max(String name, String field, Aggregation... aggs) {
-      return new Max(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+    public static Max max(String name, String field) {
+      return new Max(name, field);
     }
 
-    public static Min min(String name, String field, Aggregation... aggs) {
-      return new Min(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+    public static Min min(String name, String field) {
+      return new Min(name, field);
     }
 
-    public static Sum sum(String name, String field, Aggregation... aggs) {
-      return new Sum(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+    public static Sum sum(String name, String field) {
+      return new Sum(name, field);
     }
 
-    public static Count count(String name, String field, Aggregation... aggs) {
-      return new Count(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+    public static Count count(String name, String field) {
+      return new Count(name, field);
     }
 
-    public static Avg avg(String name, String field, Aggregation... aggs) {
-      return new Avg(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+    public static Avg avg(String name, String field) {
+      return new Avg(name, field);
     }
 
-    public static Cardinality cardinality(String name, String field, Aggregation... aggs) {
-      return new Cardinality(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+    public static Cardinality cardinality(String name, String field) {
+      return new Cardinality(name, field);
     }
 
     public static DateHistogram dateHistogram(String name, String field, String calendarInterval, Aggregation... aggs) {

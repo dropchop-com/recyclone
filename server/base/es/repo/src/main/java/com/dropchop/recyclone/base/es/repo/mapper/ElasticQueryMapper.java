@@ -1,11 +1,8 @@
 package com.dropchop.recyclone.base.es.repo.mapper;
 
 import com.dropchop.recyclone.base.api.model.query.*;
+import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
-import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
-import com.dropchop.recyclone.base.api.model.query.aggregation.BaseAggregation;
-import com.dropchop.recyclone.base.api.model.query.aggregation.Count;
-import com.dropchop.recyclone.base.api.model.query.aggregation.DateHistogram;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
@@ -36,13 +33,19 @@ public class ElasticQueryMapper {
     if(params.getCondition() != null) {
       QueryNodeObject conditions = mapCondition(params.getCondition(), null);
       bool.put("bool",conditions);
+      end.put("query", bool);
     }
 
-    end.put("query", bool);
-
     if(params.getAggregation() != null) {
-      QueryNodeObject aggregations = mapAggregation(params.getAggregation());
-      end.putAll(aggregations);
+      QueryNodeObject aggregations = new QueryNodeObject();
+      for(Aggregation agg : params.getAggregation()) {
+        if(agg instanceof Aggregation.Wrapper) {
+          aggregations.put(agg.getName(), mapAggregation(((Aggregation.Wrapper) agg).iterator().next()));
+        } else {
+          aggregations.put(agg.getName(), mapAggregation(agg));
+        }
+      }
+      end.put("aggs", aggregations);
     }
 
     return end;
@@ -131,72 +134,67 @@ public class ElasticQueryMapper {
     return operatorNode;
   }
 
-  protected QueryNodeObject mapAggregation(AggregationList aggList) {
-    QueryNodeObject query = new QueryNodeObject();
-    QueryNodeObject aggsList = new QueryNodeObject();
+  public QueryNodeObject mapAggregation(Aggregation aggregation) {
+    QueryNodeObject node = new QueryNodeObject();
 
-    for (Aggregation aggregation : aggList) {
-      QueryNodeObject aggregationObject = mapAggregationStep(aggregation);
-      if (aggregationObject != null) {
-        aggsList.putAll(aggregationObject);
-      }
+    if (aggregation instanceof Terms terms) {
+      QueryNodeObject termsNode = new QueryNodeObject();
+      termsNode.put("field", terms.getField());
+
+      node.put("terms", termsNode);
+    }
+    else if (aggregation instanceof DateHistogram dh) {
+      QueryNodeObject dhNode = new QueryNodeObject();
+      dhNode.put("field", dh.getField());
+      dhNode.put("calendar_interval", dh.getCalendar_interval());
+
+      node.put("date_histogram", dhNode);
+    }
+    else if (aggregation instanceof Avg) {
+      QueryNodeObject avg = new QueryNodeObject();
+      avg.put("field", aggregation.getField());
+      node.put("avg", avg);
+    }
+    else if (aggregation instanceof Count) {
+      QueryNodeObject count = new QueryNodeObject();
+      count.put("field", aggregation.getField());
+      node.put("value_count", count);
+    }
+    else if (aggregation instanceof Max) {
+      QueryNodeObject max = new QueryNodeObject();
+      max.put("field", aggregation.getField());
+      node.put("max", max);
+    }
+    else if (aggregation instanceof Min) {
+      QueryNodeObject min = new QueryNodeObject();
+      min.put("field", aggregation.getField());
+      node.put("min", min);
+    }
+    else if (aggregation instanceof Sum) {
+      QueryNodeObject sum = new QueryNodeObject();
+      sum.put("field", aggregation.getField());
+      node.put("sum", sum);
+    }
+    else if(aggregation instanceof Cardinality) {
+      QueryNodeObject cardinality = new QueryNodeObject();
+      cardinality.put("field", aggregation.getField());
+      node.put("cardinality", cardinality);
     }
 
-    query.put("aggs", aggsList);
-    return query;
-  }
-
-  protected QueryNodeObject mapAggregationStep(Aggregation agg) {
-    if (agg instanceof Aggregation.Wrapper) {
-      Aggregation baseAggregation = ((Aggregation.Wrapper) agg).iterator().next();
-      QueryNodeObject subQuery = new QueryNodeObject();
-      QueryNodeObject field = new QueryNodeObject();
-      QueryNodeObject endQuery = new QueryNodeObject();
-
-      String aggregationType = setCorrectAggregationType(baseAggregation);
-
-      field.put("field", baseAggregation.getField());
-
-      if(baseAggregation instanceof DateHistogram) {
-        QueryNodeObject calendarInterval = new QueryNodeObject();
-        calendarInterval.put("calendar_interval", ((DateHistogram) baseAggregation).getCalendar_interval());
-        field.putAll(calendarInterval);
-      }
-
-      subQuery.put(aggregationType, field);
-      endQuery.put(baseAggregation.getName(), subQuery);
-
-      if (baseAggregation instanceof BaseAggregation) {
-        Iterator<Aggregation> aggregationIterator = ((BaseAggregation) baseAggregation).iterator();
-        if (aggregationIterator.hasNext()) {
-          QueryNodeObject subAggs = new QueryNodeObject();
-          while (aggregationIterator.hasNext()) {
-            Aggregation subAgg = aggregationIterator.next();
-            QueryNodeObject subAggObject = mapAggregationStep(subAgg);
-            if (subAggObject != null) {
-              subAggs.putAll(subAggObject);
-            }
+    if (aggregation instanceof BaseAggregation) {
+      if(((BaseAggregation) aggregation).getAggs() != null) {
+        QueryNodeObject subAggs = new QueryNodeObject();
+        for (Aggregation sub : ((BaseAggregation) aggregation).getAggs()) {
+          if(sub instanceof Aggregation.Wrapper) {
+            subAggs.put(sub.getName(), mapAggregation(((Aggregation.Wrapper) sub).iterator().next()));
+          } else {
+            subAggs.put(sub.getName(), mapAggregation(sub));
           }
-
-          subQuery.put("aggs", subAggs);
         }
+        node.put("aggs", subAggs);
       }
-
-      return endQuery;
     }
 
-    return null;
-  }
-
-  protected String setCorrectAggregationType(Aggregation aggregation) {
-    String className = aggregation.getClass().getSimpleName().toLowerCase();
-
-    if(aggregation instanceof Count) {
-      className = "value_count";
-    } else if(aggregation instanceof DateHistogram) {
-      className = "date_histogram";
-    }
-
-    return className;
+    return node;
   }
 }

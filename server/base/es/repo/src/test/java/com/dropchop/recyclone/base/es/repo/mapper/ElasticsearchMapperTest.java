@@ -4,18 +4,15 @@ import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
-import org.json.JSONException;
-import org.junit.jupiter.api.Test;
-
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.sum;
-import static com.dropchop.recyclone.base.api.model.query.Condition.*;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.json.JSONException;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
+import static com.dropchop.recyclone.base.api.model.query.Condition.*;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 
 public class ElasticsearchMapperTest {
 
@@ -235,23 +232,7 @@ public class ElasticsearchMapperTest {
       aggs(
         max(
           "watch_max",
-          "watch",
-          sum(
-            "nested_worker_sum",
-            "worker"
-          ),
-          min(
-            "nested_worker_min",
-            "worker"
-          ),
-          avg(
-            "nested_worker_avg",
-            "worker"
-          ),
-          count(
-            "nested_nested_worker_count",
-            "worker"
-          )
+          "watch"
         ),
         cardinality(
           "nested_nested_worker_cardinality",
@@ -264,164 +245,161 @@ public class ElasticsearchMapperTest {
         ),
         terms(
           "nested_worker_terms",
-          "worker"
+          "worker",
+          min(
+            "neste_min",
+            "worker"
+          )
         )
       )
     ).build();
 
     String correctJson = """
     
-      {
-           "query": {
-             "bool": {
-               "must": [
-                 {
-                   "bool": {
-                     "should": [
-                       {
-                         "range": {
-                           "updated": {
-                             "gte": "2024-09-19T10:12:01.123+02",
-                             "lt": "2024-09-20T11:00:01.123+02"
+        {
+             "query": {
+               "bool": {
+                 "must": [
+                   {
+                     "bool": {
+                       "should": [
+                         {
+                           "range": {
+                             "updated": {
+                               "gte": "2024-09-19T10:12:01.123+02",
+                               "lt": "2024-09-20T11:00:01.123+02"
+                             }
                            }
-                         }
-                       },
-                       {
-                         "bool": {
-                           "must": [
-                             {
-                               "terms": {
-                                 "neki": [
-                                   "one",
-                                   "two",
-                                   "three"
-                                 ]
-                               }
-                             },
-                             {
-                               "range": {
-                                 "created": {
-                                   "lt": "2024-09-19T10:12:01.123+02"
+                         },
+                         {
+                           "bool": {
+                             "must": [
+                               {
+                                 "terms": {
+                                   "neki": [
+                                     "one",
+                                     "two",
+                                     "three"
+                                   ]
+                                 }
+                               },
+                               {
+                                 "range": {
+                                   "created": {
+                                     "lt": "2024-09-19T10:12:01.123+02"
+                                   }
                                  }
                                }
-                             }
-                           ]
-                         }
-                       },
-                       {
-                         "range": {
-                           "modified": {
-                             "gte": "2024-09-19T10:12:01.123+02",
-                             "lte": "2024-09-19T10:12:01.123+02"
+                             ]
                            }
-                         }
-                       },
-                       {
-                         "bool": {
-                           "must_not": {
-                             "terms": {
-                               "uuid": [
-                                 "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db",
-                                 "c456c510-3939-4e2a-98d1-3d02c5d2c609"
-                               ]
+                         },
+                         {
+                           "range": {
+                             "modified": {
+                               "gte": "2024-09-19T10:12:01.123+02",
+                               "lte": "2024-09-19T10:12:01.123+02"
                              }
                            }
+                         },
+                         {
+                           "bool": {
+                             "must_not": {
+                               "terms": {
+                                 "uuid": [
+                                   "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db",
+                                   "c456c510-3939-4e2a-98d1-3d02c5d2c609"
+                                 ]
+                               }
+                             }
+                           }
+                         }
+                       ],
+                       "minimum_should_match": 1
+                     }
+                   },
+                   {
+                     "terms": {
+                       "type": [
+                         1,
+                         2,
+                         3
+                       ]
+                     }
+                   },
+                   {
+                     "range": {
+                       "created": {
+                         "gte": "2024-09-19T10:12:01.123+02",
+                         "lte": "2024-09-19T10:12:01.123+02"
+                       }
+                     }
+                   },
+                   {
+                     "bool": {
+                       "must_not": {
+                         "exists": {
+                           "field": "miki"
                          }
                        }
-                     ],
-                     "minimum_should_match": 1
-                   }
-                 },
-                 {
-                   "terms": {
-                     "type": [
-                       1,
-                       2,
-                       3
-                     ]
-                   }
-                 },
-                 {
-                   "range": {
-                     "created": {
-                       "gte": "2024-09-19T10:12:01.123+02",
-                       "lte": "2024-09-19T10:12:01.123+02"
+                     }
+                   },
+                   {
+                     "terms": {
+                       "type2": [
+                         1,
+                         2,
+                         3
+                       ]
+                     }
+                   },
+                   {
+                     "term": {
+                       "type4": "type8"
                      }
                    }
-                 },
-                 {
-                   "bool": {
-                     "must_not": {
-                       "exists": {
-                         "field": "miki"
-                       }
-                     }
-                   }
-                 },
-                 {
-                   "terms": {
-                     "type2": [
-                       1,
-                       2,
-                       3
-                     ]
-                   }
-                 },
-                 {
-                   "term": {
-                     "type4": "type8"
-                   }
-                 }
-               ]
-             }
-           },
-           "aggs": {
-             "watch_max": {
-               "max": {
-                 "field": "watch"
-               },
-               "aggs": {
-                 "nested_worker_sum": {
-                   "sum": {
-                     "field": "worker"
-                   }
-                 },
-                 "nested_worker_min": {
-                   "min": {
-                     "field": "worker"
-                   }
-                 },
-                 "nested_worker_avg": {
-                   "avg": {
-                     "field": "worker"
-                   }
-                 },
-                 "nested_nested_worker_count": {
-                   "value_count": {
-                     "field": "worker"
-                   }
-                 }
+                 ]
                }
              },
-             "nested_nested_worker_cardinality": {
-               "cardinality": {
-                 "field": "worker"
-               }
-             },
-             "nested_nested_worker_dateHistogram": {
-               "date_histogram": {
-                 "field": "worker",
-                 "calendar_interval": "month"
-               }
-             },
-             "nested_worker_terms": {
-               "terms": {
-                 "field": "worker"
-               }
-             }
+             "aggs": {
+                      "nested_nested_worker_cardinality": {
+                          "aggs": {
+                          },
+                          "cardinality": {
+                              "field": "worker"
+                          }
+                      },
+                      "nested_nested_worker_dateHistogram": {
+                          "aggs": {
+                          },
+                          "date_histogram": {
+                              "calendar_interval": "month",
+                              "field": "worker"
+                          }
+                      },
+                      "nested_worker_terms": {
+                          "aggs": {
+                              "neste_min": {
+                                  "aggs": {
+                                  },
+                                  "min": {
+                                      "field": "worker"
+                                  }
+                              }
+                          },
+                          "terms": {
+                              "field": "worker"
+                          }
+                      },
+                      "watch_max": {
+                          "aggs": {
+                          },
+                          "max": {
+                              "field": "watch"
+                          }
+                      }
+                  }
            }
-         }
-    """;
+      """;
 
     ElasticQueryMapper es = new ElasticQueryMapper();
 

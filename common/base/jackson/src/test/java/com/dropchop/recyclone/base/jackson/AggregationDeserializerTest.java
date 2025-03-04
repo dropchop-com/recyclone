@@ -15,23 +15,7 @@ public class AggregationDeserializerTest {
     AggregationList a = Wrapper.aggs(
       max(
         "watch_max",
-        "watch",
-        sum(
-          "nested_worker_sum",
-          "worker"
-        ),
-        min(
-          "nested_worker_min",
-          "worker"
-        ),
-        avg(
-          "nested_worker_avg",
-          "worker"
-        ),
-        count(
-          "nested_nested_worker_count",
-          "worker"
-        )
+        "watch"
       ),
       cardinality(
         "nested_nested_worker_cardinality",
@@ -56,36 +40,7 @@ public class AggregationDeserializerTest {
         [
          {
            "$max": {
-             "aggs": [
-               {
-                 "$sum": {
-                   "aggs": [],
-                   "name": "nested_worker_sum",
-                   "field": "worker"
-                 }
-               },
-               {
-                 "$min": {
-                   "aggs": [],
-                   "name": "nested_worker_min",
-                   "field": "worker"
-                 }
-               },
-               {
-                 "$avg": {
-                   "aggs": [],
-                   "name": "nested_worker_avg",
-                   "field": "worker"
-                 }
-               },
-               {
-                 "$count": {
-                   "aggs": [],
-                   "name": "nested_nested_worker_count",
-                   "field": "worker"
-                 }
-               }
-             ],
+             "aggs": [],
              "name": "watch_max",
              "field": "watch"
            }
@@ -122,12 +77,7 @@ public class AggregationDeserializerTest {
     AggregationList a = aggs(
       max(
         "price_max",
-        "price",
-        dateHistogram(
-          "price_histogram",
-          "price",
-          "month"
-        )
+        "price"
       )
     );
 
@@ -148,12 +98,7 @@ public class AggregationDeserializerTest {
     AggregationList a = aggs(
       max(
         "price_max",
-        "price",
-        dateHistogram(
-          "price_histogram",
-          "price",
-          "month"
-        )
+        "price"
       ),
       min(
         "price_min",
@@ -178,40 +123,19 @@ public class AggregationDeserializerTest {
     AggregationList a = aggs(
       max(
         "price_max",
-        "price",
-        dateHistogram(
-          "price_histogram",
-          "price",
-          "month"
-        ),
-        count(
-          "price_count",
-          "price"
-        ),
-        avg(
-          "price_avg",
-          "price",
-          cardinality(
-            "price_cardinality",
-            "price",
-            terms(
-              "price_terms",
-              "price"
-            )
-          )
-        )
+        "price"
       ),
       min(
         "price_min",
+        "price"
+      ),
+      dateHistogram(
+        "price_histogram",
         "price",
-        dateHistogram(
-          "price_histogram",
-          "price",
-          "seconds",
-          sum(
-            "price_sum",
-            "price"
-          )
+        "seconds",
+        sum(
+          "price_sum",
+          "price"
         )
       )
     );
