@@ -40,14 +40,12 @@ public class AggregationDeserializerTest {
         [
          {
            "$max": {
-             "aggs": [],
              "name": "watch_max",
              "field": "watch"
            }
          },
          {
            "$cardinality": {
-             "aggs": [],
              "name": "nested_nested_worker_cardinality",
              "field": "worker"
            }

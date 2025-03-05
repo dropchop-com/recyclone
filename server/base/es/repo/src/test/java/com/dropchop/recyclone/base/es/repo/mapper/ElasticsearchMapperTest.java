@@ -361,16 +361,17 @@ public class ElasticsearchMapperTest {
                }
              },
              "aggs": {
+                      "watch_max": {
+                          "max": {
+                              "field": "watch"
+                          }
+                      },
                       "nested_nested_worker_cardinality": {
-                          "aggs": {
-                          },
                           "cardinality": {
                               "field": "worker"
                           }
                       },
                       "nested_nested_worker_dateHistogram": {
-                          "aggs": {
-                          },
                           "date_histogram": {
                               "calendar_interval": "month",
                               "field": "worker"
@@ -379,8 +380,6 @@ public class ElasticsearchMapperTest {
                       "nested_worker_terms": {
                           "aggs": {
                               "neste_min": {
-                                  "aggs": {
-                                  },
                                   "min": {
                                       "field": "worker"
                                   }
@@ -388,13 +387,6 @@ public class ElasticsearchMapperTest {
                           },
                           "terms": {
                               "field": "worker"
-                          }
-                      },
-                      "watch_max": {
-                          "aggs": {
-                          },
-                          "max": {
-                              "field": "watch"
                           }
                       }
                   }

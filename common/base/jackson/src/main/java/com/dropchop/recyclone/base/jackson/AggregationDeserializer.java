@@ -58,7 +58,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
       AggregationList aggregations = new AggregationList();
 
-      if(!aggs.isEmpty()) {
+      if(aggs != null && !aggs.isEmpty()) {
         for(JsonNode obType : aggs ) {
           aggregations.add(deserializeStep(obType.fields().next()));
         }

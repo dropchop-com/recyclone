@@ -156,7 +156,7 @@ public interface Aggregation {
       for (Aggregation agg : aggs) {
         Wrapper wrapped = new Wrapper(agg);
         result.add(wrapped);
-        if (agg instanceof BaseAggregation b) {
+        if (agg instanceof BucketAggregation b) {
           b.setAggs(wrap(b.getAggs() != null ? b.getAggs() : new AggregationList()));
         }
       }

@@ -181,10 +181,10 @@ public class ElasticQueryMapper {
       node.put("cardinality", cardinality);
     }
 
-    if (aggregation instanceof BaseAggregation) {
-      if(((BaseAggregation) aggregation).getAggs() != null) {
+    if (aggregation instanceof BucketAggregation bucket) {
+      if(bucket.getAggs() != null && !bucket.getAggs().isEmpty()) {
         QueryNodeObject subAggs = new QueryNodeObject();
-        for (Aggregation sub : ((BaseAggregation) aggregation).getAggs()) {
+        for (Aggregation sub : bucket.getAggs()) {
           if(sub instanceof Aggregation.Wrapper) {
             subAggs.put(sub.getName(), mapAggregation(((Aggregation.Wrapper) sub).iterator().next()));
           } else {

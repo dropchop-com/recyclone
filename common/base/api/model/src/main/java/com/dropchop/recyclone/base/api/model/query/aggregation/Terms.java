@@ -3,7 +3,8 @@ package com.dropchop.recyclone.base.api.model.query.aggregation;
 import com.dropchop.recyclone.base.api.model.query.Aggregation;
 
 @SuppressWarnings("unused")
-public class Terms extends BaseAggregation {
+public class Terms extends BucketAggregation {
+
   public Terms(String name, String field, Aggregation... aggs) {
     super(name, field, aggs);
   }

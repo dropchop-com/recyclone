@@ -9,7 +9,7 @@ import java.util.Arrays;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public class DateHistogram extends BaseAggregation implements Aggregation {
+public class DateHistogram extends BucketAggregation {
   private String calendar_interval;
 
   public DateHistogram(String name, String field, String calendar_interval, Aggregation... aggs) {

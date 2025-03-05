@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -14,6 +15,9 @@ public class ElasticSearchResult<T> {
 
   @JsonProperty("hits")
   private Hits<T> hits;
+
+  @JsonProperty("aggregations")
+  private Map<String, Object> aggregations;
 
   @Setter
   @Getter

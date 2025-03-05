@@ -8,10 +8,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -192,7 +189,7 @@ public class DummyResourceTest {
   @Test
   @Order(30)
   public void dummyQueryTestAggregations() {
-    QueryParams params = QueryParams.builder().aggregation(
+    /*QueryParams params = QueryParams.builder().aggregation(
       aggs(
         max(
           "watch_max",
@@ -211,7 +208,6 @@ public class DummyResourceTest {
           "nested_worker_terms",
           "worker"
         ),
-
         sum(
           "nested_worker_sum",
           "worker"
@@ -227,6 +223,59 @@ public class DummyResourceTest {
         count(
           "nested_nested_worker_count",
           "worker"
+        )
+      )
+    ).build();*/
+    Dummy dummy1 = new Dummy();
+    dummy1.setTitle("Introduction to Java");
+    dummy1.setDescription("A comprehensive guide to Java programming.");
+    dummy1.setLang("en");
+    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
+    dummy1.setModified(ZonedDateTime.now());
+    dummy1.setDeactivated(null);
+    dummy1.setCode("dummy_code23");
+
+    Dummy dummy2 = new Dummy();
+    dummy2.setTitle("Advanced Python Techniques");
+    dummy2.setDescription("Explore advanced concepts in Python programming.");
+    dummy2.setLang("en");
+    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
+    dummy2.setModified(ZonedDateTime.now().minusDays(5));
+    dummy2.setDeactivated(null);
+    dummy2.setCode("dummy_code24");
+
+    Dummy dummy3 = new Dummy();
+    dummy3.setTitle("Introduction to Machine Learning");
+    dummy3.setDescription("An introductory course to machine learning and its applications.");
+    dummy3.setLang("si");
+    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
+    dummy3.setModified(ZonedDateTime.now().minusDays(10));
+    dummy3.setDeactivated(null);
+    dummy3.setCode("dummy_code35");
+
+    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("editor1", "password")
+      .body(dummies)
+      .when()
+      .post("/api/internal/test/dummy")
+      .then()
+      .statusCode(200)
+      .log().all();
+
+    QueryParams params = QueryParams.builder().aggregation(
+      aggs(
+        terms(
+          "languages",
+          "lang",
+          count(
+            "number",
+            "lang"
+          )
         )
       )
     ).build();
