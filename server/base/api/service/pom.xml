@@ -45,5 +45,9 @@
       <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-api-repo</artifactId>
     </dependency>
+      <dependency>
+          <groupId>com.dropchop.recyclone</groupId>
+          <artifactId>recyclone-base-es-repo</artifactId>
+      </dependency>
   </dependencies>
 </project>

@@ -16,15 +16,16 @@ import com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig;
 import com.dropchop.recyclone.base.api.repo.config.DefaultIndexConfig;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
+import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Container;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Hit;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -372,7 +373,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   }
 
   private <X> void executeQuery(QueryNodeObject queryObject, boolean skipParsing,
-                                Collection<QueryResultListener<X>> listeners) {
+                                Collection<RepositoryExecContextListener> listeners) {
     ProfileTimer timer = new ProfileTimer();
     ObjectMapper objectMapper = getObjectMapper();
     String query;
@@ -407,11 +408,24 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
           );
         }
         int count = 0;
+
         for (Hit<X> hit : searchResult.getHits().getHits()) {
           count++;
-          for (QueryResultListener<X> listener : listeners) {
-            listener.onResult(hit);
+          for (RepositoryExecContextListener listener : listeners) {
+            if(listener instanceof QueryResultListener queryResultListener) {
+              queryResultListener.onResult(hit);
+            }
           }
+        }
+
+        if (searchResult.getAggregations() != null) {
+          searchResult.getAggregations().forEach((name, agg) ->
+            listeners.stream()
+              .filter(AggregationResultListener.class::isInstance)
+              .forEach(listener ->
+                ((AggregationResultListener) listener).onAggregation(name, agg)
+              )
+          );
         }
         log.debug("Executed query [{}] with [{}] result size in [{}]ms.", query, count, timer.stop());
       } else if (response.getStatusLine().getStatusCode() == 404) {
@@ -605,6 +619,9 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
     RepositoryExecContextListener listener = context.getListeners().stream()
       .filter(l -> l instanceof MapResultListener).findFirst().orElse(null);
+
+    RepositoryExecContextListener aggregationListener = context.getListeners().stream()
+      .filter(l -> l instanceof AggregationResultListener).findFirst().orElse(null);
     if (listener == null && elasticContext.isSkipObjectParsing()) {
       throw new ServiceException(
         ErrorCode.internal_error,
@@ -626,12 +643,22 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
             (QueryResultListener<S>) last::setHit
           ));
         } else {
-          executeQuery(queryObject, false, List.of(
-            (QueryResultListener<S>) hit -> {
-              results.add(hit.getSource());
-              last.setHit(hit);
-            }
-          ));
+          if (aggregationListener != null) {
+            executeQuery(queryObject, false, List.of(
+              (QueryResultListener<S>) hit -> {
+                results.add(hit.getSource());
+                last.setHit(hit);
+              },
+              aggregationListener
+            ));
+          } else {
+            executeQuery(queryObject, false, List.of(
+              (QueryResultListener<S>) hit -> {
+                results.add(hit.getSource());
+                last.setHit(hit);
+              }
+            ));
+          }
         }
         if (last.isEmpty()) {
           hasMoreHits = false;

@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
+import com.dropchop.recyclone.base.api.service.ElasticCrudServiceImpl;
 import com.dropchop.recyclone.base.api.service.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
@@ -35,7 +35,7 @@ import java.util.List;
 @ApplicationScoped
 @RecycloneType("alter")
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
-public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
+public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String>
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
   @Inject
