@@ -36,7 +36,8 @@ public interface Aggregation {
       "avg", Avg.class,
       "terms", Terms.class,
       "cardinality", Cardinality.class,
-      "dateHistogram", DateHistogram.class
+      "dateHistogram", DateHistogram.class,
+      "stats", Stats.class
     );
   }
 
@@ -55,6 +56,10 @@ public interface Aggregation {
 
   static Max max(String name, String field) {
     return new Max(name, field);
+  }
+
+  static Stats stats(String name, String field) {
+    return new Stats(name, field);
   }
 
   static Min min(String name, String field) {
@@ -83,6 +88,10 @@ public interface Aggregation {
 
   static Terms terms(String name, String field, Aggregation... subAggregations) {
     return new Terms(name, field, subAggregations);
+  }
+
+  static Terms terms(String name, String field, Integer size, Aggregation... subAggregations) {
+    return new Terms(name, field, size, subAggregations);
   }
 
   String getName();
@@ -189,6 +198,10 @@ public interface Aggregation {
       return new Max(name, field);
     }
 
+    public static Stats stats(String name, String field) {
+      return new Stats(name, field);
+    }
+
     public static Min min(String name, String field) {
       return new Min(name, field);
     }
@@ -219,6 +232,11 @@ public interface Aggregation {
     public static Terms terms(String name, String field, Aggregation... aggs) {
       return new Terms(name, field, Arrays.stream(aggs).map(Wrapper::new)
           .collect(Collectors.toCollection(AggregationList::new)));
+    }
+
+    public static Terms terms(String name, String field, Integer size, Aggregation... aggs) {
+      return new Terms(name, field, size, Arrays.stream(aggs).map(Wrapper::new)
+        .collect(Collectors.toCollection(AggregationList::new)));
     }
   }
 }

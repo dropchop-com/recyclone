@@ -141,6 +141,10 @@ public class ElasticQueryMapper {
       QueryNodeObject termsNode = new QueryNodeObject();
       termsNode.put("field", terms.getField());
 
+      if(terms.getSize() != null) {
+        termsNode.put("size", terms.getSize());
+      }
+
       node.put("terms", termsNode);
     }
     else if (aggregation instanceof DateHistogram dh) {
@@ -179,6 +183,11 @@ public class ElasticQueryMapper {
       QueryNodeObject cardinality = new QueryNodeObject();
       cardinality.put("field", aggregation.getField());
       node.put("cardinality", cardinality);
+    }
+    else if(aggregation instanceof Stats) {
+      QueryNodeObject stats = new QueryNodeObject();
+      stats.put("field", aggregation.getField());
+      node.put("stats", stats);
     }
 
     if (aggregation instanceof BucketAggregation bucket) {
