@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.jackson;
 import com.dropchop.recyclone.base.api.model.query.Aggregation;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.query.aggregation.DateHistogram;
+import com.dropchop.recyclone.base.api.model.query.aggregation.Terms;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -31,6 +32,16 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
           return new DateHistogram(name, field, interval);
         }
         return new DateHistogram(name, field, interval, subAggregations);
+      } else if(cClass.equals(Terms.class)) {
+        JsonNode sizeNode = entry.getValue().get("size");
+
+        if(sizeNode != null) {
+          Integer size = sizeNode.asInt();
+          if(subAggregations.isEmpty()) {
+            return new Terms(name, field, size);
+          }
+          return new Terms(name, field, size, subAggregations);
+        }
       }
 
       if(subAggregations.isEmpty()) {

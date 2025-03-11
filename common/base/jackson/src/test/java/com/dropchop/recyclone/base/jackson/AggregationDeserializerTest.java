@@ -28,7 +28,8 @@ public class AggregationDeserializerTest {
       ),
       terms(
         "nested_worker_terms",
-        "worker"
+        "worker",
+        10
       )
     );
 
@@ -62,7 +63,8 @@ public class AggregationDeserializerTest {
            "$terms": {
              "aggs": [],
              "name": "nested_worker_terms",
-             "field": "worker"
+             "field": "worker",
+             "size": 10
            }
          }
        ]""";
@@ -101,6 +103,11 @@ public class AggregationDeserializerTest {
       min(
         "price_min",
         "price"
+      ),
+      terms(
+        "nested_worker_terms",
+        "worker",
+        10
       )
     );
 
