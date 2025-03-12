@@ -5,15 +5,20 @@ SCRIPT=$(readlink -f $0)
 # Directory of an absolute path to this script
 SCRIPTPATH=`dirname $SCRIPT`
 ES_HOST=http://localhost:9200
-INDICES=("dummy")
 ROLES_USERS=( )
-EVENT_ITEMS=(
-  "_ingest/pipeline/event_index_ingest_pipeline"
-  "_component_template/event_index_mapping_1"
-  "_component_template/event_index_field_mapping_1"
-  "_component_template/event_index_settings_1"
-  "_index_template/event_index"
-  "_ilm/policy/event_index_policy"
+INDICES_FOR_INSERTION=("dummy")
+
+declare -A EVENT_ITEMS=(
+  ["_ingest/pipeline/event_index_ingest_pipeline"]="event-ingest-pipeline"
+  ["_component_template/event_index_mapping_1"]="event-comp-tmpl-index-mapping"
+  ["_component_template/event_index_field_mapping_1"]="event-comp-tmpl-field-mapping"
+  ["_component_template/event_index_settings_1"]="event-comp-tmpl-settings"
+  ["_ilm/policy/event_index_policy"]="event-policy"
+)
+
+declare -A INDICES=(
+  ["dummy"]="dummy-index-tpl"
+  ["event_index"]="event-index-tmpl"
 )
 
 ES_AUTH=""
@@ -22,7 +27,6 @@ if [[ ! -z "${ELASTIC_PASSWORD}" ]]; then
   ES_AUTH="-u elastic:${ELASTIC_PASSWORD}"
 fi
 
-printf "\ntu sem\n"
 # Wait for cluster to be healthy
 until curl ${ES_AUTH} -s "${ES_HOST}/_cluster/health" | grep -q '"status":"green"'; do
     sleep 1
@@ -53,28 +57,35 @@ for user_role in "${ROLES_USERS[@]}"; do
   fi
 done
 
+for es_path in "${!EVENT_ITEMS[@]}"; do
+    endpoint="${EVENT_ITEMS[$es_path]}"
+    if ! check_item "${es_path}"; then
+        resource_file="${SCRIPTPATH}/event/${endpoint//_/-}.json"
+
+        curl ${ES_AUTH} -X PUT "${ES_HOST}/${es_path}" \
+            -H 'Content-Type: application/json' \
+            -d @"${resource_file}"
+    fi
+
+    until check_item "${es_path}"; do
+        sleep 2
+    done
+done
+
 # Index template initialization commands
-for index in "${INDICES[@]}"; do
-  if ! check_item "_index_template/${index}_index_tpl"; then
-    curl ${ES_AUTH} -X PUT "${ES_HOST}/_index_template/${index}_index_tpl" -H 'Content-Type: application/json' \
-      -d @${SCRIPTPATH}/${index}-index-tpl.json
-  fi
-done
+for template_name in "${!INDICES[@]}"; do
+  resource_file="${SCRIPTPATH}/${INDICES[$template_name]}.json"
+  es_path="_index_template/${template_name}"
 
-for item in "${EVENT_ITEMS[@]}"; do
-  if ! check_item "${item}"; then
-    resource_type=$(cut -d'/' -f2 <<<"${item}")
-    resource_file="${SCRIPTPATH}/event/event-${resource_type#*_}.json"
-
-    curl ${ES_AUTH} -X PUT "${ES_HOST}/${item}" \
+  if ! check_item "$es_path"; then
+    curl ${ES_AUTH} -X PUT "${ES_HOST}/${es_path}" \
       -H 'Content-Type: application/json' \
-      -d @"${resource_file}"
+      -d "@${resource_file}"
   fi
 done
-
 
 # Index initialization commands
-for index in "${INDICES[@]}"; do
+for index in "${INDICES_FOR_INSERTION[@]}"; do
   if ! check_item "${index}"; then
     curl ${ES_AUTH} -X PUT "${ES_HOST}/${index}?pretty"
   fi

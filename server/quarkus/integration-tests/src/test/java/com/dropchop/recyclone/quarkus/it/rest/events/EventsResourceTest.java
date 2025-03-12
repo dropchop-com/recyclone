@@ -16,15 +16,9 @@ import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
-import java.util.Base64;
 import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
@@ -36,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 9. 12. 24.
  */
-@Slf4j
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventsResourceTest {
@@ -47,126 +40,12 @@ public class EventsResourceTest {
   @Inject
   EventMockData eventMockData;
 
-  private static final HttpClient httpClient = HttpClient.newHttpClient();
-
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
       objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
     );
   }
-
-  /*@BeforeAll
-  public static void setupElasticsearch() throws Exception {
-    String esProtocol = System.getenv().getOrDefault("ES_PROTOCOL", "http");
-    String esHost = System.getenv().getOrDefault("ES_HOST", "localhost");
-    String esPort = System.getenv().getOrDefault("ES_PORT", "9200");
-    String authHeader = "Basic " + Base64.getEncoder().encodeToString(
-      (System.getenv("ES_USER") + ":" + System.getenv("ES_PASSWORD")).getBytes()
-    );
-
-    tearDownElasticsearch();
-
-    log.info("Setting up event-ingest-pipeline.json");
-    sendElasticsearchRequest(
-      esProtocol, esHost, esPort,
-      "_ingest/pipeline/event_index_ingest_pipeline",
-      readResource("index/events/event-ingest-pipeline.json"),
-      authHeader
-    );
-
-    log.info("Setting up event-ingest-pipeline.json");
-    sendElasticsearchRequest(
-      esProtocol, esHost, esPort,
-      "_component_template/event_index_mapping_1",
-      readResource("index/events/event-comp-tmpl-index-mapping.json"),
-      authHeader
-    );
-
-    log.info("Setting up event-ingest-pipeline.json");
-    sendElasticsearchRequest(
-      esProtocol, esHost, esPort,
-      "_component_template/event_index_field_mapping_1",
-      readResource("index/events/event-comp-tmpl-field-mapping.json"),
-      authHeader
-    );
-
-    log.info("Setting up event-ingest-pipeline.json");
-    sendElasticsearchRequest(
-      esProtocol, esHost, esPort,
-      "_component_template/event_index_settings_1",
-      readResource("index/events/event-comp-tmpl-settings.json"),
-      authHeader
-    );
-
-    log.info("Setting up event-ingest-pipeline.json");
-    sendElasticsearchRequest(
-      esProtocol, esHost, esPort,
-      "_index_template/event_index",
-      readResource("index/events/event-index-tmpl.json"),
-      authHeader
-    );
-
-    log.info("Setting up event-ingest-pipeline.json");
-    sendElasticsearchRequest(
-      esProtocol, esHost, esPort,
-      "_ilm/policy/event_index_policy",
-      readResource("index/events/event-policy.json"),
-      authHeader
-    );
-  }
-
-  public static void tearDownElasticsearch() throws Exception {
-    String esProtocol = System.getenv().getOrDefault("ES_PROTOCOL", "http");
-    String esHost = System.getenv().getOrDefault("ES_HOST", "localhost");
-    String esPort = System.getenv().getOrDefault("ES_PORT", "9200");
-    String authHeader = "Basic " + Base64.getEncoder().encodeToString(
-      (System.getenv("ES_USER") + ":" + System.getenv("ES_PASSWORD")).getBytes()
-    );
-
-    HttpRequest deleteRequest = HttpRequest.newBuilder()
-      .uri(URI.create(String.format("%s://%s:%s/event", esProtocol, esHost, esPort)))
-      .header("Authorization", authHeader)
-      .DELETE()
-      .build();
-
-    HttpResponse<String> response = httpClient.send(
-      deleteRequest, HttpResponse.BodyHandlers.ofString()
-    );
-
-  }
-
-
-  private static void sendElasticsearchRequest(String protocol, String host, String port,
-                                               String endpoint, String jsonBody,
-                                               String auth) throws Exception {
-    String url = String.format("%s://%s:%s/%s", protocol, host, port, endpoint);
-
-    HttpRequest request = HttpRequest.newBuilder()
-      .uri(URI.create(url))
-      .header("Content-Type", "application/json")
-      //.header("Authorization", auth)
-      .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
-      .build();
-
-    HttpResponse<String> response = httpClient.send(
-      request, HttpResponse.BodyHandlers.ofString()
-    );
-
-    if (response.statusCode() >= 400) {
-      throw new RuntimeException("Elasticsearch setup failed for " + endpoint +
-        ": " + response.body());
-    }
-  }
-
-  private static String readResource(String fileName) throws Exception {
-    return new String(
-      Thread.currentThread()
-        .getContextClassLoader()
-        .getResourceAsStream(fileName)
-        .readAllBytes()
-    );
-  }*/
 
   public static String EVENT_ID = "feea39e2-aea0-4395-8be3-dd42ca42f03c";
   public static String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
