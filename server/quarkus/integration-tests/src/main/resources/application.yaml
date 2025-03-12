@@ -68,7 +68,7 @@ quarkus:
       image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test
       distribution: elastic
       enabled: true
-      port: 9300
+      port: 9200
 
   hibernate-orm:
     database:

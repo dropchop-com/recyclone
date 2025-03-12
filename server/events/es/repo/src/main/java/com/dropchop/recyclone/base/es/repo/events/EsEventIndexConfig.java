@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @ApplicationScoped
 public class EsEventIndexConfig implements DateBasedIndexConfig {
-  private String ingestPipeline = null;
+  private String ingestPipeline = "event_index_ingest_pipeline";
   private Integer sizeOfPagination = 10000;
-  private String alias = null;
+  private String alias = "event";
 }

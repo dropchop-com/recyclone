@@ -1,52 +1,42 @@
 package com.dropchop.recyclone.quarkus.it.rest.events;
 
 import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
-import com.dropchop.recyclone.base.api.model.query.Field;
-import com.dropchop.recyclone.base.api.model.query.Query;
-import com.dropchop.recyclone.base.api.model.query.condition.Not;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.dto.model.event.EventDetail;
 import com.dropchop.recyclone.base.dto.model.event.EventItem;
 import com.dropchop.recyclone.base.dto.model.event.EventTrace;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
-import com.dropchop.recyclone.base.api.model.rest.MediaType;
-import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult;
 import com.dropchop.recyclone.quarkus.it.rest.events.mock.EventMockData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.time.ZoneId;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
 
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.aggs;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.max;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
-import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.*;
-import com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
-import org.wildfly.common.Assert;
 
 /**
  * @author Armando Ota <armando.ota@dropchop.com> on 9. 12. 24.
  */
+@Slf4j
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventsResourceTest {
@@ -57,14 +47,128 @@ public class EventsResourceTest {
   @Inject
   EventMockData eventMockData;
 
+  private static final HttpClient httpClient = HttpClient.newHttpClient();
+
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+      objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
     );
   }
 
-  public static String EVENT_ID =  "feea39e2-aea0-4395-8be3-dd42ca42f03c";
+  /*@BeforeAll
+  public static void setupElasticsearch() throws Exception {
+    String esProtocol = System.getenv().getOrDefault("ES_PROTOCOL", "http");
+    String esHost = System.getenv().getOrDefault("ES_HOST", "localhost");
+    String esPort = System.getenv().getOrDefault("ES_PORT", "9200");
+    String authHeader = "Basic " + Base64.getEncoder().encodeToString(
+      (System.getenv("ES_USER") + ":" + System.getenv("ES_PASSWORD")).getBytes()
+    );
+
+    tearDownElasticsearch();
+
+    log.info("Setting up event-ingest-pipeline.json");
+    sendElasticsearchRequest(
+      esProtocol, esHost, esPort,
+      "_ingest/pipeline/event_index_ingest_pipeline",
+      readResource("index/events/event-ingest-pipeline.json"),
+      authHeader
+    );
+
+    log.info("Setting up event-ingest-pipeline.json");
+    sendElasticsearchRequest(
+      esProtocol, esHost, esPort,
+      "_component_template/event_index_mapping_1",
+      readResource("index/events/event-comp-tmpl-index-mapping.json"),
+      authHeader
+    );
+
+    log.info("Setting up event-ingest-pipeline.json");
+    sendElasticsearchRequest(
+      esProtocol, esHost, esPort,
+      "_component_template/event_index_field_mapping_1",
+      readResource("index/events/event-comp-tmpl-field-mapping.json"),
+      authHeader
+    );
+
+    log.info("Setting up event-ingest-pipeline.json");
+    sendElasticsearchRequest(
+      esProtocol, esHost, esPort,
+      "_component_template/event_index_settings_1",
+      readResource("index/events/event-comp-tmpl-settings.json"),
+      authHeader
+    );
+
+    log.info("Setting up event-ingest-pipeline.json");
+    sendElasticsearchRequest(
+      esProtocol, esHost, esPort,
+      "_index_template/event_index",
+      readResource("index/events/event-index-tmpl.json"),
+      authHeader
+    );
+
+    log.info("Setting up event-ingest-pipeline.json");
+    sendElasticsearchRequest(
+      esProtocol, esHost, esPort,
+      "_ilm/policy/event_index_policy",
+      readResource("index/events/event-policy.json"),
+      authHeader
+    );
+  }
+
+  public static void tearDownElasticsearch() throws Exception {
+    String esProtocol = System.getenv().getOrDefault("ES_PROTOCOL", "http");
+    String esHost = System.getenv().getOrDefault("ES_HOST", "localhost");
+    String esPort = System.getenv().getOrDefault("ES_PORT", "9200");
+    String authHeader = "Basic " + Base64.getEncoder().encodeToString(
+      (System.getenv("ES_USER") + ":" + System.getenv("ES_PASSWORD")).getBytes()
+    );
+
+    HttpRequest deleteRequest = HttpRequest.newBuilder()
+      .uri(URI.create(String.format("%s://%s:%s/event", esProtocol, esHost, esPort)))
+      .header("Authorization", authHeader)
+      .DELETE()
+      .build();
+
+    HttpResponse<String> response = httpClient.send(
+      deleteRequest, HttpResponse.BodyHandlers.ofString()
+    );
+
+  }
+
+
+  private static void sendElasticsearchRequest(String protocol, String host, String port,
+                                               String endpoint, String jsonBody,
+                                               String auth) throws Exception {
+    String url = String.format("%s://%s:%s/%s", protocol, host, port, endpoint);
+
+    HttpRequest request = HttpRequest.newBuilder()
+      .uri(URI.create(url))
+      .header("Content-Type", "application/json")
+      //.header("Authorization", auth)
+      .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
+      .build();
+
+    HttpResponse<String> response = httpClient.send(
+      request, HttpResponse.BodyHandlers.ofString()
+    );
+
+    if (response.statusCode() >= 400) {
+      throw new RuntimeException("Elasticsearch setup failed for " + endpoint +
+        ": " + response.body());
+    }
+  }
+
+  private static String readResource(String fileName) throws Exception {
+    return new String(
+      Thread.currentThread()
+        .getContextClassLoader()
+        .getResourceAsStream(fileName)
+        .readAllBytes()
+    );
+  }*/
+
+  public static String EVENT_ID = "feea39e2-aea0-4395-8be3-dd42ca42f03c";
   public static String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
   public static String EVENT_TRACE_ID = "6df37bd3-073f-45f2-9f00-65022f2b4019";
 
@@ -181,18 +285,18 @@ public class EventsResourceTest {
     event.addAttribute(new AttributeBool(Strings.ATTRIBUTE_BOOL, true));*/
 
     List<Event> events = given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("admin1", "password")
-        .and()
-        .body(List.of(event))
-        .when()
-        .post("/api/internal/events/?c_level=5")
-        .then()
-        .statusCode(200)
-        .extract()
-        .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(event))
+      .when()
+      .post("/api/internal/events/?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
     this.validate(events);
   }
 
@@ -201,7 +305,8 @@ public class EventsResourceTest {
   public void search() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException ignored) {}
+    } catch (InterruptedException ignored) {
+    }
 
     Condition c = or(
       field("uuid", EVENT_ID),
@@ -215,18 +320,18 @@ public class EventsResourceTest {
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("admin1", "password")
-        .and()
-        .body(params)
-        .when()
-        .post("/api/internal/events/search")
-        .then()
-        .statusCode(200)
-        .extract()
-        .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     this.validate(events);
   }
@@ -236,20 +341,21 @@ public class EventsResourceTest {
   public void get() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException ignored) {}
+    } catch (InterruptedException ignored) {
+    }
 
     List<Event> events = given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("admin1", "password")
-        .and()
-        .when()
-        .get("/api/internal/events/" + EVENT_ID + "?c_level=5" )
-        .then()
-        .statusCode(200)
-        .extract()
-        .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/events/" + EVENT_ID + "?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     this.validate(events);
 
@@ -263,24 +369,25 @@ public class EventsResourceTest {
     event.setId(EVENT_ID);
 
     List<Event> events = given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("admin1", "password")
-        .and()
-        .body(List.of(event))
-        .when()
-        .delete("/api/internal/events/?c_level=5")
-        .then()
-        .statusCode(200)
-        .extract()
-        .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(event))
+      .when()
+      .delete("/api/internal/events/?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(1, events.size());
 
     try {
       Thread.sleep(5000);
-    } catch (InterruptedException ignored) {}
+    } catch (InterruptedException ignored) {
+    }
 
     events = given()
       .log().all()
@@ -308,18 +415,18 @@ public class EventsResourceTest {
 
     //same as before just for multiple events
     given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(events)
-            .when()
-            .post("/api/internal/events/?c_level=5")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(events)
+      .when()
+      .post("/api/internal/events/?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(4, events.size());
 
@@ -327,17 +434,17 @@ public class EventsResourceTest {
 
   @Test
   @Order(40)
-  public void searchBySpecificTraceId()
-  {
+  public void searchBySpecificTraceId() {
     try {
       Thread.sleep(3000);
-    } catch (InterruptedException ignored) {}
+    } catch (InterruptedException ignored) {
+    }
 
     /*
-    * Search by specific trace uuid
-    * */
+     * Search by specific trace uuid
+     * */
     EventParams params = EventParams.builder().condition(
-            and(field("trace.uuid", EVENT_TRACE_ID))
+      and(field("trace.uuid", EVENT_TRACE_ID))
     ).build();
 
     //Field field = field("trace.id", EVENT_TRACE_ID);
@@ -348,51 +455,50 @@ public class EventsResourceTest {
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
-            //this.validate(events);
+    //this.validate(events);
     assertEquals(EVENT_TRACE_ID, events.get(0).getTrace().getId());
     assertEquals(3, events.size());
   }
 
   @Test
   @Order(45)
-  public void searchAllEventsWithoutSpecificTraceId()
-  {
+  public void searchAllEventsWithoutSpecificTraceId() {
     /*
-    * Find all events except the one with this specific EVENT_TRACE_ID
-    * */
-    EventParams params =  EventParams.builder().condition(
-            not(field("trace.uuid", EVENT_TRACE_ID))
+     * Find all events except the one with this specific EVENT_TRACE_ID
+     * */
+    EventParams params = EventParams.builder().condition(
+      not(field("trace.uuid", EVENT_TRACE_ID))
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
-    List<Event> events =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+    List<Event> events = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertNotEquals(EVENT_TRACE_ID, events.get(0).getTrace().getId());
     assertEquals(1, events.size());
@@ -400,33 +506,32 @@ public class EventsResourceTest {
 
   @Test
   @Order(50)
-  public void searchEventsBySpecificId()
-  {
+  public void searchEventsBySpecificId() {
 
     /*
-    * Find events:
-    *  by uuid
-    * */
+     * Find events:
+     *  by uuid
+     * */
     EventParams params = EventParams.builder().condition(
-            and(field("uuid", "6b829aac-06d2-4cbc-9721-d6d24a3628dd"))
+      and(field("uuid", "6b829aac-06d2-4cbc-9721-d6d24a3628dd"))
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
-    List<Event> events =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+    List<Event> events = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals("6b829aac-06d2-4cbc-9721-d6d24a3628dd", events.get(0).getId());
     assertEquals(1, events.size());
@@ -435,44 +540,43 @@ public class EventsResourceTest {
 
   @Test
   @Order(55)
-  public void searchEventsByOrOperator()
-  {
+  public void searchEventsByOrOperator() {
 
     /*
-    * Find events:
-    * where uuid is EVENT_TRACE_ID
-    * or
-    * unit field has a value of "Mock_Unit"
-    * */
+     * Find events:
+     * where uuid is EVENT_TRACE_ID
+     * or
+     * unit field has a value of "Mock_Unit"
+     * */
     EventParams params = EventParams.builder().condition(
-         or(
-                 field("trace.uuid", EVENT_TRACE_ID),
-                 field("unit", "Mock_Unit") //isnt actually used until we implement MATCH type search
-         )
+      or(
+        field("trace.uuid", EVENT_TRACE_ID),
+        field("unit", "Mock_Unit") //isnt actually used until we implement MATCH type search
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertFalse(events.isEmpty());
 
     for (Event event : events) {
       boolean matchesCondition = EVENT_TRACE_ID.equals(event.getTrace().getId()) ||
-              "Mock_Unit".equals(event.getUnit());
+        "Mock_Unit".equals(event.getUnit());
 
       assertTrue(matchesCondition, String.format("Event did not match any condition: %s", event));
     }
@@ -486,39 +590,39 @@ public class EventsResourceTest {
   public void searchEventsWithMultipleFilters() {
 
     /*
-    * Find events:
-    * between dates and uuid must be EVENT_TRACE_ID
-    * */
+     * Find events:
+     * between dates and uuid must be EVENT_TRACE_ID
+     * */
     EventParams params = EventParams.builder().condition(
-            and(
-                field(
-                   "created",
-                        gteLt(
-                                Iso8601.fromIso("2023-01-01T12:12:12.12"),
-                                Iso8601.fromIso("2027-01-01T12:12:12.12")
-                        )
-                ),
-                field("trace.uuid", EVENT_TRACE_ID)
-                //field("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
-            )
+      and(
+        field(
+          "created",
+          gteLt(
+            Iso8601.fromIso("2023-01-01T12:12:12.12"),
+            Iso8601.fromIso("2027-01-01T12:12:12.12")
+          )
+        ),
+        field("trace.uuid", EVENT_TRACE_ID)
+        //field("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(3, events.size());
 
@@ -526,41 +630,40 @@ public class EventsResourceTest {
 
   @Test
   @Order(65)
-  public void searchEventsByDateRange()
-  {
+  public void searchEventsByDateRange() {
 
     /*
-    * Find events:
-    * between dates
-    * */
+     * Find events:
+     * between dates
+     * */
     EventParams params = EventParams.builder().condition(
-            and(
-                    field(
-                            "created",
-                            gteLt(
-                                    Iso8601.fromIso("2023-01-01T12:12:12.12"),
-                                    Iso8601.fromIso("2030-01-01T12:12:12.12")
-                            )
-                    )
-            )
+      and(
+        field(
+          "created",
+          gteLt(
+            Iso8601.fromIso("2023-01-01T12:12:12.12"),
+            Iso8601.fromIso("2030-01-01T12:12:12.12")
+          )
+        )
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(4, events.size());
 
@@ -568,55 +671,54 @@ public class EventsResourceTest {
 
   @Test
   @Order(70)
-  public void searchEventsByDateRange2()
-  {
+  public void searchEventsByDateRange2() {
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T12:12:15.20");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
 
     /*
-    * Find events:
-    * between dates
-    * */
+     * Find events:
+     * between dates
+     * */
     EventParams params = EventParams.builder().condition(
-            and(
-                    field(
-                            "created",
-                            gtLt(
-                                    /*
-                                    * Hour dependend (check event object to see the comparison)
-                                    * */
-                                    startDate,
-                                    endDate
-                            )
-                    )
-            )
+      and(
+        field(
+          "created",
+          gtLt(
+            /*
+             * Hour dependend (check event object to see the comparison)
+             * */
+            startDate,
+            endDate
+          )
+        )
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(3, events.size());
 
     for (Event event : events) {
       ZonedDateTime createdDate = event.getCreated();
       assertTrue(
-              createdDate.isAfter(startDate) && createdDate.isBefore(endDate),
-              "Event date is out of range: " + createdDate
+        createdDate.isAfter(startDate) && createdDate.isBefore(endDate),
+        "Event date is out of range: " + createdDate
       );
     }
 
@@ -624,56 +726,55 @@ public class EventsResourceTest {
 
   @Test
   @Order(75)
-  public void searchEventsByDateRange3()
-  {
+  public void searchEventsByDateRange3() {
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
     /*
-    * Find events:
-    * where created is between both date values
-    * same as before just with different dates
-    * */
+     * Find events:
+     * where created is between both date values
+     * same as before just with different dates
+     * */
     EventParams params = EventParams.builder().condition(
-            and(
-                    field(
-                            "created",
-                            gtLt(
-                                    /*
-                                     * Hour dependend (check event object to see the comparison)
-                                     * */
-                                    startDate,
-                                    endDate
-                            )
-                    )
-            )
+      and(
+        field(
+          "created",
+          gtLt(
+            /*
+             * Hour dependend (check event object to see the comparison)
+             * */
+            startDate,
+            endDate
+          )
+        )
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(2, events.size());
 
     for (Event event : events) {
       ZonedDateTime createdDate = event.getCreated();
       assertTrue(
-              createdDate.isAfter(startDate) && createdDate.isBefore(endDate),
-              "Event date is out of range: " + createdDate
+        createdDate.isAfter(startDate) && createdDate.isBefore(endDate),
+        "Event date is out of range: " + createdDate
       );
     }
 
@@ -681,72 +782,70 @@ public class EventsResourceTest {
 
   @Test
   @Order(80)
-  public void complexQuery()
-  {
+  public void complexQuery() {
 
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
     /*
-    * Find all events:
-    * type must be either "Backend" or "frontend"
-    * and
-    * value in [1.0, 2.0]
-    * and
-    * either between the date or trace.group must have "Some group value"
-    * */
+     * Find all events:
+     * type must be either "Backend" or "frontend"
+     * and
+     * value in [1.0, 2.0]
+     * and
+     * either between the date or trace.group must have "Some group value"
+     * */
     EventParams params = EventParams.builder().condition(
-          and(
-             or(
-                field(
-                   "target.created",
-                   gteLt(
-                           startDate,
-                           endDate
-                   )
-                ),
-                 field(
-                         "trace.group",
-                         "Some group"
-                 )
-             )
-          ).and(
-                 field("type", in("Backend", "frontend"))
-          ).and(
-                 field("value", in(1.0, 2.0))
+      and(
+        or(
+          field(
+            "target.created",
+            gteLt(
+              startDate,
+              endDate
+            )
+          ),
+          field(
+            "trace.group",
+            "Some group"
           )
+        )
+      ).and(
+        field("type", in("Backend", "frontend"))
+      ).and(
+        field("value", in(1.0, 2.0))
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
-    List<Event> events =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+    List<Event> events = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(2, events.size());
 
     for (Event event : events) {
       assertTrue((event.getValue() == 1.0 || event.getValue() == 2.0) &&
-              event.getType().equals("Backend") || event.getType().equals("frontend"));
+        event.getType().equals("Backend") || event.getType().equals("frontend"));
     }
 
   }
 
   @Test
   @Order(85)
-  public void complexQuery2()
-  {
+  public void complexQuery2() {
 
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
@@ -755,66 +854,66 @@ public class EventsResourceTest {
 
 
     /*
-    * Find all the events:
-    * that container either of the field value (target.created or trace.group..)
-    * and
-    * type field must be either "frontend" or "Backend"
-    * and
-    * value field must be in: 1.0, 2.0, 3.0
-    * */
+     * Find all the events:
+     * that container either of the field value (target.created or trace.group..)
+     * and
+     * type field must be either "frontend" or "Backend"
+     * and
+     * value field must be in: 1.0, 2.0, 3.0
+     * */
     EventParams params = EventParams.builder().condition(
-            and(
-                    or(
-                            field(
-                                    "target.created",
-                                    gteLt(
-                                            startDate,
-                                            endDate
-                                    )
-                            ),
-                            field(
-                                    "trace.group",
-                                    "Some group"
-                            ),
-                            field(
-                                    "uuid", "4794b019-9750-44f4-a3c9-33516c6bfc50"
-                            ),
-                            /*
-                            * Not gonna work because "match" search is not implemented yet
-                            *
-                            *field("target.subject.name", "Target_Subject2"),
-                            */
-                            field(
-                                    "target.created",
-                                    gteLt(
-                                      startDate2,
-                                      endDate2
-                                    )
-                            )
-                    )
-            ).and(
-                    field("type", in("Backend", "frontend"))
-            ).and(
-                    field("value", in(1.0, 2.0, 3.0))
+      and(
+        or(
+          field(
+            "target.created",
+            gteLt(
+              startDate,
+              endDate
             )
+          ),
+          field(
+            "trace.group",
+            "Some group"
+          ),
+          field(
+            "uuid", "4794b019-9750-44f4-a3c9-33516c6bfc50"
+          ),
+          /*
+           * Not gonna work because "match" search is not implemented yet
+           *
+           *field("target.subject.name", "Target_Subject2"),
+           */
+          field(
+            "target.created",
+            gteLt(
+              startDate2,
+              endDate2
+            )
+          )
+        )
+      ).and(
+        field("type", in("Backend", "frontend"))
+      ).and(
+        field("value", in(1.0, 2.0, 3.0))
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
-    List<Event> events =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+    List<Event> events = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(3, events.size());
 
@@ -822,45 +921,44 @@ public class EventsResourceTest {
 
   @Test
   @Order(90)
-  public void complexQuery3()
-  {
+  public void complexQuery3() {
 
     /*
-    * Find every record that contains either ("Baucheck-backend", "Backend", "FETCH_DATA")
-    * or ("Lupitpole-frontend", "frontend", "SUBMIT_FORM_FRONTEND")
-    * */
+     * Find every record that contains either ("Baucheck-backend", "Backend", "FETCH_DATA")
+     * or ("Lupitpole-frontend", "frontend", "SUBMIT_FORM_FRONTEND")
+     * */
     EventParams params = EventParams.builder().condition(
-         or(
-                 and(
-                         field("application", "Baucheck-backend"),
-                         field("type", "Backend"),
-                         field("action", "FETCH_DATA")
-                 )
-         ).or(
-                 and(
-                         field("application", "Lupitpole-frontend"),
-                         field("type", "frontend"),
-                         field("action", "SUBMIT_FORM_FRONTEND")
-                 )
-         )
+      or(
+        and(
+          field("application", "Baucheck-backend"),
+          field("type", "Backend"),
+          field("action", "FETCH_DATA")
+        )
+      ).or(
+        and(
+          field("application", "Lupitpole-frontend"),
+          field("type", "frontend"),
+          field("action", "SUBMIT_FORM_FRONTEND")
+        )
+      )
     ).build();
 
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
-    List<Event> events =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+    List<Event> events = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(2, events.size());
 
@@ -868,44 +966,43 @@ public class EventsResourceTest {
 
   @Test
   @Order(95)
-  public void complexQuery4()
-  {
+  public void complexQuery4() {
 
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
 
     /*
-    * Description:
-    * Find all the events that:
-    * were created between startDate and endDate or:
-    * event contains particular value combination:
-    * ("Baucheck-backend", "Backend", "FETCH_DATA") or ("Lupitpole-frontend", "frontend", "SUBMIT_FORM_FRONTEND")
-    * */
+     * Description:
+     * Find all the events that:
+     * were created between startDate and endDate or:
+     * event contains particular value combination:
+     * ("Baucheck-backend", "Backend", "FETCH_DATA") or ("Lupitpole-frontend", "frontend", "SUBMIT_FORM_FRONTEND")
+     * */
     EventParams params = EventParams.builder().condition(
-            and(
-                    or(
-                            and(
-                                    field("application", "Baucheck-backend"),
-                                    field("type", "Backend"),
-                                    field("action", "FETCH_DATA")
-                            )
-                    ).or(
-                            and(
-                                    field("application", "Lupitpole-frontend"),
-                                    field("type", "frontend"),
-                                    field("action", "SUBMIT_FORM_FRONTEND")
-                            )
-                    ),
-                    and(
-                            field("cause.created",
-                                    gtLt(
-                                            startDate,
-                                            endDate
-                                    )
-                            )
-                    )
-
+      and(
+        or(
+          and(
+            field("application", "Baucheck-backend"),
+            field("type", "Backend"),
+            field("action", "FETCH_DATA")
+          )
+        ).or(
+          and(
+            field("application", "Lupitpole-frontend"),
+            field("type", "frontend"),
+            field("action", "SUBMIT_FORM_FRONTEND")
+          )
+        ),
+        and(
+          field("cause.created",
+            gtLt(
+              startDate,
+              endDate
             )
+          )
+        )
+
+      )
 
 
     ).build();
@@ -913,19 +1010,19 @@ public class EventsResourceTest {
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
-    List<Event> events =  given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+    List<Event> events = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(1, events.size());
 
@@ -933,40 +1030,39 @@ public class EventsResourceTest {
 
   @Test
   @Order(100)
-  public void complexQuery5()
-  {
+  public void complexQuery5() {
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
 
 
     /*
-    * Description:
-    * find events that:
-    * were not created between startDate and EndDate and the uuid should not be ... or
-    * event should contain FETCH_DATA in the action field
-    * */
+     * Description:
+     * find events that:
+     * were not created between startDate and EndDate and the uuid should not be ... or
+     * event should contain FETCH_DATA in the action field
+     * */
     EventParams params = EventParams.builder().condition(
       or(
-              and(
-                      not(
-                              field(
-                                      "created",
-                                      gteLte(
-                                              startDate,
-                                              endDate
-                                      )
-                              )
-                      ),
-                      not(
-                              field(
-                                      "uuid",
-                                      "4794b019-9750-44f4-a3c9-33516c6bfc50"
-                              )
-                      )
-              ),
-              field(
-                          "action", "FETCH_DATA"
+        and(
+          not(
+            field(
+              "created",
+              gteLte(
+                startDate,
+                endDate
               )
+            )
+          ),
+          not(
+            field(
+              "uuid",
+              "4794b019-9750-44f4-a3c9-33516c6bfc50"
+            )
+          )
+        ),
+        field(
+          "action", "FETCH_DATA"
+        )
       )
 
     ).build();
@@ -975,22 +1071,21 @@ public class EventsResourceTest {
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
-            .log().all()
-            .contentType(ContentType.JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .auth().preemptive().basic("admin1", "password")
-            .and()
-            .body(params)
-            .when()
-            .post("/api/internal/events/search")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body().jsonPath().getList(".", Event.class);
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(params)
+      .when()
+      .post("/api/internal/events/search")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList(".", Event.class);
 
     assertEquals(2, events.size());
   }
-
 
 
 }

@@ -5,8 +5,16 @@ SCRIPT=$(readlink -f $0)
 # Directory of an absolute path to this script
 SCRIPTPATH=`dirname $SCRIPT`
 ES_HOST=http://localhost:9200
-INDICES=("dummy" "event")
+INDICES=("dummy")
 ROLES_USERS=( )
+EVENT_ITEMS=(
+  "_ingest/pipeline/event_index_ingest_pipeline"
+  "_component_template/event_index_mapping_1"
+  "_component_template/event_index_field_mapping_1"
+  "_component_template/event_index_settings_1"
+  "_index_template/event_index"
+  "_ilm/policy/event_index_policy"
+)
 
 ES_AUTH=""
 if [[ ! -z "${ELASTIC_PASSWORD}" ]]; then
@@ -14,6 +22,7 @@ if [[ ! -z "${ELASTIC_PASSWORD}" ]]; then
   ES_AUTH="-u elastic:${ELASTIC_PASSWORD}"
 fi
 
+printf "\ntu sem\n"
 # Wait for cluster to be healthy
 until curl ${ES_AUTH} -s "${ES_HOST}/_cluster/health" | grep -q '"status":"green"'; do
     sleep 1
@@ -51,6 +60,18 @@ for index in "${INDICES[@]}"; do
       -d @${SCRIPTPATH}/${index}-index-tpl.json
   fi
 done
+
+for item in "${EVENT_ITEMS[@]}"; do
+  if ! check_item "${item}"; then
+    resource_type=$(cut -d'/' -f2 <<<"${item}")
+    resource_file="${SCRIPTPATH}/event/event-${resource_type#*_}.json"
+
+    curl ${ES_AUTH} -X PUT "${ES_HOST}/${item}" \
+      -H 'Content-Type: application/json' \
+      -d @"${resource_file}"
+  fi
+done
+
 
 # Index initialization commands
 for index in "${INDICES[@]}"; do

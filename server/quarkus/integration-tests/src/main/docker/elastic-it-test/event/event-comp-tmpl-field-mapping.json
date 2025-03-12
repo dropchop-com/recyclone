@@ -1,0 +1,810 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "uuid": {
+          "type": "keyword"
+        },
+        "application": {
+          "type": "keyword"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "action": {
+          "type": "keyword"
+        },
+        "data": {
+          "type": "text",
+          "index_prefixes": {
+            "min_chars": 2,
+            "max_chars": 10
+          }
+        },
+        "unit": {
+          "type": "keyword"
+        },
+        "created": {
+          "type": "date"
+        },
+        "source": {
+          "type": "object",
+          "dynamic": false,
+          "properties": {
+            "source": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "object": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "service": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "context": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "created": {
+              "type": "date"
+            }
+          }
+        },
+        "target": {
+          "type": "object",
+          "dynamic": false,
+          "properties": {
+            "source": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "object": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "service": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "context": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "created": {
+              "type": "date"
+            }
+          }
+        },
+        "cause": {
+          "type": "object",
+          "dynamic": false,
+          "properties": {
+            "source": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "object": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "service": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "context": {
+              "type": "object",
+              "dynamic": false,
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "parent": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "child": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        },
+                        "parent": {
+                          "type": "object",
+                          "dynamic": false,
+                          "properties": {
+                            "name": {
+                              "type": "keyword"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "child": {
+                  "type": "object",
+                  "dynamic": false,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    },
+                    "parent": {
+                      "type": "object",
+                      "dynamic": false,
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "created": {
+              "type": "date"
+            }
+          }
+        },
+        "trace": {
+          "type": "object",
+          "dynamic": false,
+          "properties": {
+            "group": {
+              "type": "keyword"
+            },
+            "context": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}

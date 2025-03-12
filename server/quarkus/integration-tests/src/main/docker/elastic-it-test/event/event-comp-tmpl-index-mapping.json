@@ -1,0 +1,18 @@
+{
+  "template" : {
+    "aliases": {
+      "event": {}
+    },
+    "settings" : {
+      "index": {
+        "default_pipeline": "event_index_ingest_pipeline",
+        "mapping": {
+          "total_fields.limit": 2000
+        }
+      }
+    },
+    "mappings" : {
+      "_source" : { "enabled" : true }
+    }
+  }
+}
