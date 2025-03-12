@@ -14,4 +14,9 @@ RUN chmod +x /init-script.sh
 ENTRYPOINT ["/init-script.sh"]
 CMD ["/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
 
+# for development run:
+# docker build --progress plain -t tmp-elastic .
+# docker run -e "discovery.type=single-node" -e "xpack.security.enabled=false" tmp-elastic
+#
+
 USER 1000:0
