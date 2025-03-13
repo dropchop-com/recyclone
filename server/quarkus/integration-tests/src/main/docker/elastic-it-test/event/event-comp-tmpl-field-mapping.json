@@ -801,6 +801,9 @@
             },
             "context": {
               "type": "keyword"
+            },
+            "uuid": {
+              "type": "keyword"
             }
           }
         }
