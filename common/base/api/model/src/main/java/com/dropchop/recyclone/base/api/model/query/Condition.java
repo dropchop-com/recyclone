@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.api.model.query;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.Wildcard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,15 +17,16 @@ public interface Condition {
 
   static Map<String, Class<? extends Condition>> supported() {
     return Map.of(
-        "and", And.class,
-        "or", Or.class,
-        "not", Not.class,
-        "field", Field.class,
-        "conditionedField", ConditionedField.class
+      "and", And.class,
+      "or", Or.class,
+      "not", Not.class,
+      "field", Field.class,
+      "conditionedField", ConditionedField.class,
+      "wildcard", Wildcard.class
     );
   }
 
-  static And and(Condition ... conditions) {
+  static And and(Condition... conditions) {
     return new And(new ArrayList<>(Arrays.asList(conditions)));
   }
 
@@ -32,7 +34,7 @@ public interface Condition {
     return new And(conditions);
   }
 
-  static Or or(Condition ... conditions) {
+  static Or or(Condition... conditions) {
     return new Or(new ArrayList<>(Arrays.asList(conditions)));
   }
 
@@ -50,5 +52,21 @@ public interface Condition {
 
   static <T> Field<T> field(String name, T value) {
     return new Field<>(name, value);
+  }
+
+  static <T> Wildcard<T> wildcard(T name, T value) {
+    return new Wildcard<>(name, value);
+  }
+
+  static <T> Wildcard<T> wildcard(T name, T value, Boolean caseInsensitive) {
+    return new Wildcard<>(name, value, caseInsensitive);
+  }
+
+  static <T> Wildcard<T> wildcard(T name, T value, Float boost) {
+    return new Wildcard<>(name, value, boost);
+  }
+
+  static <T> Wildcard<T> wildcard(T name, T value, Boolean caseInsensitive, Float boost) {
+    return new Wildcard<>(name, value, caseInsensitive, boost);
   }
 }

@@ -8,7 +8,10 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -483,6 +486,72 @@ public class DummyResourceTest {
   }
 
   @Test
+  @Order(40)
+  public void testWildcardSearch() {
+    Dummy dummy1 = new Dummy();
+    dummy1.setTitle("Introduction to Java");
+    dummy1.setDescription("A comprehensive guide to Java programming.");
+    dummy1.setLang("en");
+    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
+    dummy1.setModified(ZonedDateTime.now());
+    dummy1.setDeactivated(null);
+    dummy1.setCode("dummy_code45");
+
+    Dummy dummy2 = new Dummy();
+    dummy2.setTitle("Advanced Python Techniques");
+    dummy2.setDescription("Explore advanced concepts in Python programming.");
+    dummy2.setLang("en");
+    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
+    dummy2.setModified(ZonedDateTime.now().minusDays(5));
+    dummy2.setDeactivated(null);
+    dummy2.setCode("dummy_code46");
+
+    Dummy dummy3 = new Dummy();
+    dummy3.setTitle("Introduction to Machine Learning");
+    dummy3.setDescription("An introductory course to machine learning and its applications.");
+    dummy3.setLang("si");
+    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
+    dummy3.setModified(ZonedDateTime.now().minusDays(10));
+    dummy3.setDeactivated(null);
+    dummy3.setCode("dummy_code47");
+
+    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("editor1", "password")
+      .body(dummies)
+      .when()
+      .post("/api/internal/test/dummy")
+      .then()
+      .statusCode(200)
+      .log().all();
+
+    QueryParams s = QueryParams.builder().condition(
+      or(
+        wildcard("description", "*comprehensive guide*", true, 1.2f),
+        wildcard("description", "*concepts in*")
+      )
+    ).build();
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(s)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+
+    log.info("Wildcard query: {}", s.getCondition());
+  }
+
+  @Test
   @Order(50)
   public void delete() {
     Dummy dummy1 = new Dummy();
@@ -540,42 +609,41 @@ public class DummyResourceTest {
   }
 
 
-
   @Test
   @Order(60)
   public void deleteById() {
     CodeParams params1 = CodeParams.builder().code("dummy_code1").build();
 
     given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("editor1", "password")
-        .body(params1)
-        .when()
-        .delete("/api/internal/test/dummy/deleteById")
-        .then()
-        .statusCode(200)
-        .log().all();
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("editor1", "password")
+      .body(params1)
+      .when()
+      .delete("/api/internal/test/dummy/deleteById")
+      .then()
+      .statusCode(200)
+      .log().all();
   }
 
   @Test
   @Order(70)
   public void deleteByQuery() {
     QueryParams s = QueryParams.builder().condition(
-        field("lang", "si")
+      field("lang", "si")
     ).build();
 
     given()
-        .log().all()
-        .contentType(ContentType.JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .auth().preemptive().basic("editor1", "password")
-        .body(s)
-        .when()
-        .delete("/api/internal/test/dummy/deleteByQuery")
-        .then()
-        .statusCode(200)
-        .log().all();
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("editor1", "password")
+      .body(s)
+      .when()
+      .delete("/api/internal/test/dummy/deleteByQuery")
+      .then()
+      .statusCode(200)
+      .log().all();
   }
 }

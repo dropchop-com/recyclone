@@ -2,11 +2,11 @@ package com.dropchop.recyclone.base.es.repo.mapper;
 
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
-import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.api.repo.mapper.BoolQueryObject;
 import com.dropchop.recyclone.base.api.repo.mapper.OperatorNodeObject;
 import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
@@ -99,6 +99,24 @@ public class ElasticQueryMapper {
       }
 
       return queryWrapper;
+    } else if (condition instanceof Wildcard<?> wildcard) {
+      QueryNodeObject wildcardObject = new QueryNodeObject();
+      QueryNodeObject nameObject = new QueryNodeObject();
+      QueryNodeObject valueObject = new QueryNodeObject();
+      valueObject.put("value", wildcard.getValue());
+      QueryNodeObject boostObject = new QueryNodeObject();
+      boostObject.put("boost", wildcard.getBoost());
+      QueryNodeObject caseObject = new QueryNodeObject();
+      caseObject.put("case_insensitive", wildcard.getCaseInsensitive());
+
+      QueryNodeObject paramsObject = new QueryNodeObject();
+      paramsObject.putAll(valueObject);
+      paramsObject.putAll(boostObject);
+      paramsObject.putAll(caseObject);
+
+      nameObject.put(wildcard.getName().toString(), paramsObject);
+      wildcardObject.put("wildcard", nameObject);
+      return wildcardObject;
     }
 
     return previousCondition;

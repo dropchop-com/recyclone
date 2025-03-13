@@ -4,10 +4,10 @@ import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
 import com.dropchop.recyclone.base.api.model.query.ConditionedField;
 import com.dropchop.recyclone.base.api.model.query.Field;
-import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -151,6 +151,29 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           String cname = valueNode.fieldNames().next();
           Condition v = parseCondition(cname, valueNode.get(cname));
           return new Not(v);
+        } else if(Wildcard.class.equals(cClass)) {
+          if(!valueNode.isObject() || valueNode.isEmpty() || valueNode.size() != 4) {
+            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
+          }
+
+          try {
+            String conditionName = valueNode.get("name").asText();
+            String conditionValue = valueNode.get("value").asText();
+            boolean caseInsensitive = valueNode.has("caseInsensitive")
+              ? valueNode.get("caseInsensitive").asBoolean()
+              : false;
+
+            float boost = valueNode.has("boost")
+              ? (float) valueNode.get("boost").asDouble()
+              : 1.0f;
+
+            return new Wildcard<>(conditionName, conditionValue, caseInsensitive, boost);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+              "Invalid Wildcard format at [%s]: %s".formatted(name, e.getMessage()),
+              e
+            );
+          }
         } else {
           throw new UnsupportedOperationException("Missing condition implementation for [" + name + "]!");
         }
