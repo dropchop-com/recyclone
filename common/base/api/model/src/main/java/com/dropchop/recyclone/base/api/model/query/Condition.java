@@ -3,7 +3,8 @@ package com.dropchop.recyclone.base.api.model.query;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
-import com.dropchop.recyclone.base.api.model.query.operator.Wildcard;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,8 @@ public interface Condition {
       "not", Not.class,
       "field", Field.class,
       "conditionedField", ConditionedField.class,
-      "wildcard", Wildcard.class
+      "wildcard", Wildcard.class,
+      "phrase", Phrase.class
     );
   }
 
@@ -68,5 +70,21 @@ public interface Condition {
 
   static <T> Wildcard<T> wildcard(T name, T value, Boolean caseInsensitive, Float boost) {
     return new Wildcard<>(name, value, caseInsensitive, boost);
+  }
+
+  static <T> Phrase<T> phrase(T name, T value) {
+    return new Phrase<>(name, value);
+  }
+
+  static <T> Phrase<T> phrase(T name, T value, Integer slop) {
+    return new Phrase<>(name, value, slop);
+  }
+
+  static <T> Phrase<T> phrase(T name, T value, String analyzer) {
+    return new Phrase<>(name, value, analyzer);
+  }
+
+  static <T> Phrase<T> phrase(T name, T value, String analyzer, Integer slop) {
+    return new Phrase<>(name, value, analyzer, slop);
   }
 }

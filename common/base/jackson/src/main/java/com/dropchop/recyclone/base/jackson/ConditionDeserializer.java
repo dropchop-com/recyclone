@@ -7,6 +7,8 @@ import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -171,6 +173,29 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
               "Invalid Wildcard format at [%s]: %s".formatted(name, e.getMessage()),
+              e
+            );
+          }
+        } else if(Phrase.class.equals(cClass)) {
+          if(!valueNode.isObject() || valueNode.isEmpty()) {
+            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
+          }
+
+          try {
+            String conditionName = valueNode.get("name").asText();
+            String conditionValue = valueNode.get("value").asText();
+            String analyzer = valueNode.has("analyzer")
+              ? String.valueOf(valueNode.get("analyzer"))
+              : null;
+
+            Integer slop = valueNode.has("slop")
+              ? valueNode.get("slop").asInt()
+              : null;
+
+            return new Phrase<>(conditionName, conditionValue, analyzer, slop);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+              "Invalid Phrase format at [%s]: %s".formatted(name, e.getMessage()),
               e
             );
           }

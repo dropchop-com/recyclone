@@ -531,8 +531,34 @@ public class DummyResourceTest {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        wildcard("description", "*comprehensive guide*", true, 1.2f),
-        wildcard("description", "*concepts in*")
+        wildcard("description", "comprehensive", true, 1.2f),
+        wildcard("description", "concepts")
+      )
+    ).build();
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(s)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+
+    log.info("Wildcard query: {}", s.getCondition());
+  }
+
+  @Test
+  @Order(40)
+  public void testMatchPhraseSearch() {
+
+    QueryParams s = QueryParams.builder().condition(
+      or(
+        phrase("description", "comprehensive guide", 2),
+        phrase("description", "concepts in ")
       )
     ).build();
 

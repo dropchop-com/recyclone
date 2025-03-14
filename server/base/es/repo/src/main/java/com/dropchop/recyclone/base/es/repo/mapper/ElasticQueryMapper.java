@@ -2,11 +2,10 @@ package com.dropchop.recyclone.base.es.repo.mapper;
 
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
-import com.dropchop.recyclone.base.api.model.query.condition.And;
-import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
-import com.dropchop.recyclone.base.api.model.query.condition.Not;
-import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
 import com.dropchop.recyclone.base.api.repo.mapper.BoolQueryObject;
 import com.dropchop.recyclone.base.api.repo.mapper.OperatorNodeObject;
 import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
@@ -117,6 +116,30 @@ public class ElasticQueryMapper {
       nameObject.put(wildcard.getName().toString(), paramsObject);
       wildcardObject.put("wildcard", nameObject);
       return wildcardObject;
+    } else if (condition instanceof Phrase<?> phrase) {
+      QueryNodeObject phraseObject = new QueryNodeObject();
+      QueryNodeObject nameObject = new QueryNodeObject();
+      QueryNodeObject paramsObject = new QueryNodeObject();
+      QueryNodeObject valueObject = new QueryNodeObject();
+
+      valueObject.put("query", phrase.getValue());
+      paramsObject.putAll(valueObject);
+
+      if(phrase.getAnalyzer() != null) {
+        QueryNodeObject anaObject = new QueryNodeObject();
+        anaObject.put("analyzer", phrase.getAnalyzer());
+        paramsObject.putAll(anaObject);
+      }
+
+      if(phrase.getSlop() != 0) {
+        QueryNodeObject caseObject = new QueryNodeObject();
+        caseObject.put("slop", phrase.getSlop());
+        paramsObject.putAll(caseObject);
+      }
+
+      nameObject.put(phrase.getName().toString(), paramsObject);
+      phraseObject.put("match_phrase", nameObject);
+      return phraseObject;
     }
 
     return previousCondition;

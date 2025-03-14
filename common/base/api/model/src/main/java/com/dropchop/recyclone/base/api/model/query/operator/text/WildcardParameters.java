@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.model.query.operator;
+package com.dropchop.recyclone.base.api.model.query.operator.text;
 
 
 import com.dropchop.recyclone.base.api.model.query.Condition;
