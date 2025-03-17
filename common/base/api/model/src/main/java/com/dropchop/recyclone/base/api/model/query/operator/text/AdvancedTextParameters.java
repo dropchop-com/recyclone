@@ -6,39 +6,39 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PhraseParameters<T> implements Condition {
+public class AdvancedTextParameters<T> implements Condition {
   private T name;
   private T value;
 
   // Optional parameters
-  private String analyzer = null;
-  private Integer slop;
+  private Integer slop = 0;
+  private Boolean inOrder = false;
 
-  public PhraseParameters() {
+  public AdvancedTextParameters() {
 
   }
 
-  public PhraseParameters(T name, T value) {
+  public AdvancedTextParameters(T name, T value) {
     this.name = name;
     this.value = value;
   }
 
-  public PhraseParameters(T name, T value, String analyzer) {
+  public AdvancedTextParameters(T name, T value, Boolean inOrder) {
     this.name = name;
     this.value = value;
-    this.analyzer = analyzer;
+    this.inOrder = inOrder;
   }
 
-  public PhraseParameters(T name, T value, Integer slop) {
+  public AdvancedTextParameters(T name, T value, Integer slop) {
     this.name = name;
     this.value = value;
     this.slop = slop;
   }
 
-  public PhraseParameters(T name, T value, String analyzer, Integer slop) {
+  public AdvancedTextParameters(T name, T value, Boolean inOrder, Integer slop) {
     this.name = name;
     this.value = value;
-    this.analyzer = analyzer;
+    this.inOrder = inOrder;
     this.slop = slop;
   }
 }

@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
+import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
 import com.dropchop.recyclone.base.api.repo.mapper.BoolQueryObject;
@@ -125,7 +126,8 @@ public class ElasticQueryMapper {
       valueObject.put("query", phrase.getValue());
       paramsObject.putAll(valueObject);
 
-      if(phrase.getAnalyzer() != null) {
+      //Cant seem to figure out how phrase.getAnalyzer() returns "null" instead of null
+      if(!phrase.getAnalyzer().equals("null")) {
         QueryNodeObject anaObject = new QueryNodeObject();
         anaObject.put("analyzer", phrase.getAnalyzer());
         paramsObject.putAll(anaObject);
@@ -140,6 +142,13 @@ public class ElasticQueryMapper {
       nameObject.put(phrase.getName().toString(), paramsObject);
       phraseObject.put("match_phrase", nameObject);
       return phraseObject;
+    } else if(condition instanceof AdvancedText<?> advancedText) {
+      return new AdvancedTextProcessor(
+        (String) advancedText.getName(),
+        (String) advancedText.getValue(),
+        advancedText.getInOrder(),
+        advancedText.getSlop()
+      ).process();
     }
 
     return previousCondition;

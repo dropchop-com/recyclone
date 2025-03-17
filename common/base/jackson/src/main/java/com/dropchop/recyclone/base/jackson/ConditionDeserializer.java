@@ -7,6 +7,7 @@ import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
@@ -184,18 +185,42 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           try {
             String conditionName = valueNode.get("name").asText();
             String conditionValue = valueNode.get("value").asText();
-            String analyzer = valueNode.has("analyzer")
-              ? String.valueOf(valueNode.get("analyzer"))
+
+            Integer slop = valueNode.has("slop")
+              ? valueNode.get("slop").asInt()
+              : null;
+
+            if(valueNode.get("analyzer") == null) {
+              return new Phrase<>(conditionName, conditionValue, slop);
+            }
+
+            return new Phrase<>(conditionName, conditionValue, String.valueOf(valueNode.get("analyzer")), slop);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+              "Invalid Phrase format at [%s]: %s".formatted(name, e.getMessage()),
+              e
+            );
+          }
+        } else if(AdvancedText.class.equals(cClass)) {
+          if(!valueNode.isObject() || valueNode.isEmpty()) {
+            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
+          }
+
+          try {
+            String conditionName = valueNode.get("name").asText();
+            String conditionValue = valueNode.get("value").asText();
+            Boolean inOrder = valueNode.has("inOrder")
+              ? Boolean.valueOf(valueNode.get("inOrder").asText())
               : null;
 
             Integer slop = valueNode.has("slop")
               ? valueNode.get("slop").asInt()
               : null;
 
-            return new Phrase<>(conditionName, conditionValue, analyzer, slop);
+            return new AdvancedText<>(conditionName, conditionValue, inOrder, slop);
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-              "Invalid Phrase format at [%s]: %s".formatted(name, e.getMessage()),
+              "Invalid AdvancedText format at [%s]: %s".formatted(name, e.getMessage()),
               e
             );
           }

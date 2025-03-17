@@ -578,6 +578,33 @@ public class DummyResourceTest {
   }
 
   @Test
+  @Order(40)
+  public void testAdvancedTextWithPhraseAndWildcard() {
+
+    QueryParams s = QueryParams.builder().condition(
+      or(
+        phrase("description", "comprehensive guide", 2),
+        wildcard("description", "con*epts"),
+        advancedText("description", "\"conc*pts with phras*\"")
+      )
+    ).build();
+
+    given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .auth().preemptive().basic("user1", "password")
+      .body(s)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .log().all();
+
+    log.info("Wildcard query: {}", s.getCondition());
+  }
+
+  @Test
   @Order(50)
   public void delete() {
     Dummy dummy1 = new Dummy();

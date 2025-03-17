@@ -439,4 +439,125 @@ public class ElasticsearchMapperTest {
 
     QueryNodeObject correct = es.mapToString(params);
   }
+
+  @Test
+  public void processAdvancedText() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().condition(
+      and(
+        advancedText("text", "\"krem* proti gubam\"", true)
+      )
+    ).build();
+
+    String correctJson =
+      """
+      {
+        "query": {
+          "bool": {
+            "must": {
+              "span_near": {
+                "in_order": true,
+                "clauses": [
+                  {
+                    "span_multi": {
+                      "match": {
+                        "prefix": {
+                          "text": {
+                            "value": "krem"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "span_term": {
+                      "text": {
+                        "value": "proti"
+                      }
+                    }
+                  },
+                  {
+                    "span_term": {
+                      "text": {
+                        "value": "gubam"
+                      }
+                    }
+                  }
+                ],
+                "slop": 0
+              }
+            }
+          }
+        }
+      }
+      """;
+
+    ElasticQueryMapper es = new ElasticQueryMapper();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.mapToString(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
+
+  @Test
+  public void processAdvancedSearchTestWithWildcard() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().condition(
+      and(
+        advancedText("text", "\"kr*m* pr*ti gubam\"", true)
+      )
+    ).build();
+
+    String correctJson =
+      """
+      
+        {
+        "query" : {
+          "bool" : {
+            "must" : {
+              "span_near" : {
+                "clauses" : [ {
+                  "span_multi" : {
+                    "match" : {
+                      "wildcard" : {
+                        "text" : {
+                          "value" : "kr*m*"
+                        }
+                      }
+                    }
+                  }
+                }, {
+                  "span_multi" : {
+                    "match" : {
+                      "wildcard" : {
+                        "text" : {
+                          "value" : "pr*ti"
+                        }
+                      }
+                    }
+                  }
+                }, {
+                  "span_term" : {
+                    "text" : {
+                      "value" : "gubam"
+                    }
+                  }
+                } ],
+                "in_order" : true,
+                "slop" : 0
+              }
+            }
+          }
+        }
+      }
+      """;
+
+    ElasticQueryMapper es = new ElasticQueryMapper();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.mapToString(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
 }

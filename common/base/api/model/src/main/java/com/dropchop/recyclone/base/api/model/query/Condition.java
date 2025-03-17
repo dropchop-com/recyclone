@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.api.model.query;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
  */
+@SuppressWarnings("unused")
 public interface Condition {
 
   static Map<String, Class<? extends Condition>> supported() {
@@ -24,7 +26,8 @@ public interface Condition {
       "field", Field.class,
       "conditionedField", ConditionedField.class,
       "wildcard", Wildcard.class,
-      "phrase", Phrase.class
+      "phrase", Phrase.class,
+      "advancedText", AdvancedText.class
     );
   }
 
@@ -86,5 +89,21 @@ public interface Condition {
 
   static <T> Phrase<T> phrase(T name, T value, String analyzer, Integer slop) {
     return new Phrase<>(name, value, analyzer, slop);
+  }
+
+  static <T> AdvancedText<T> advancedText(T name, T value) {
+    return new AdvancedText<>(name, value);
+  }
+
+  static <T> AdvancedText<T> advancedText(T name, T value, Integer slop) {
+    return new AdvancedText<>(name, value, slop);
+  }
+
+  static <T> AdvancedText<T> advancedText(T name, T value, Boolean inOrder) {
+    return new AdvancedText<>(name, value, inOrder);
+  }
+
+  static <T> AdvancedText<T> advancedText(T name, T value, Boolean inOrder, Integer slop) {
+    return new AdvancedText<>(name, value, inOrder, slop);
   }
 }
