@@ -127,7 +127,7 @@ public class ElasticQueryMapper {
       paramsObject.putAll(valueObject);
 
       //Cant seem to figure out how phrase.getAnalyzer() returns "null" instead of null
-      if(!phrase.getAnalyzer().equals("null")) {
+      if(phrase.getAnalyzer() != null && !"null".equals(phrase.getAnalyzer())) {
         QueryNodeObject anaObject = new QueryNodeObject();
         anaObject.put("analyzer", phrase.getAnalyzer());
         paramsObject.putAll(anaObject);

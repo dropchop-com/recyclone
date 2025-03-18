@@ -12,7 +12,7 @@ public class PhraseParameters<T> implements Condition {
 
   // Optional parameters
   private String analyzer = null;
-  private Integer slop;
+  private Integer slop = 0;
 
   public PhraseParameters() {
 
