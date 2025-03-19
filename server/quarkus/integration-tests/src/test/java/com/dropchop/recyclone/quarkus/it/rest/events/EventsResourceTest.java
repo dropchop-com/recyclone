@@ -20,6 +20,7 @@ import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
@@ -128,11 +129,13 @@ public class EventsResourceTest {
   public void create() {
 
     EventDetail detail = new EventDetail();
+    detail.setId(UUID.randomUUID().toString());
     detail.setCreated(ZonedDateTime.now());
     detail.setId(EVENT_DETAIL_ID);
     detail.setName(Strings.EVENT_DETAIL);
 
     EventItem eventItem = new EventItem();
+    eventItem.setId(UUID.randomUUID().toString());
     eventItem.setCreated(ZonedDateTime.now());
     eventItem.setSubject(detail);
     eventItem.setObject(detail);
@@ -268,6 +271,15 @@ public class EventsResourceTest {
     } catch (InterruptedException ignored) {
     }
 
+    Condition c = or(
+        field("uuid", EVENT_ID)
+    );
+
+    EventParams params = EventParams.builder().condition(c).build();
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+
     events = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -275,7 +287,7 @@ public class EventsResourceTest {
       .header("Authorization", "Bearer editortoken1")
       .auth().preemptive().basic("admin1", "password")
       .and()
-      .body(List.of(event))
+      .body(params)
       .when()
       .post("/api/internal/events/search?c_level=5")
       .then()
