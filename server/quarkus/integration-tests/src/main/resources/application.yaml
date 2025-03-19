@@ -65,7 +65,7 @@ quarkus:
     #  max-size: 16
   elasticsearch:
     devservices:
-      image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test
+      image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test:250314-102055-0926
       distribution: elastic
       enabled: true
       port: 9200
