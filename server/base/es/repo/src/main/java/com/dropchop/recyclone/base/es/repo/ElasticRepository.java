@@ -19,6 +19,7 @@ import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
+import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
@@ -58,7 +59,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
-  ExecContextContainer ctxContainer;
+  protected ExecContextContainer ctxContainer;
 
   public abstract ElasticQueryMapper getElasticQueryMapper();
 
@@ -70,7 +71,9 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return cls.getSimpleName().toLowerCase();
   }
 
-  public abstract com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig getElasticIndexConfig();
+  public com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig getElasticIndexConfig() {
+    return new ElasticIndexConfig();
+  }
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
     return List.of(
