@@ -23,7 +23,7 @@ fi
 
 echo "Preparing elasticsearch for recyclone_event index"
 echo "Adding ingest pipeline"
-curl -X PUT "$ES_PROTOCOL://$ES_HOST:$ES_PORT/_ingest/pipeline/recyclone_event_index_ingest_pipeline" $AUTH -H 'Content-Type: application/json' -d @event-ingest-pipeline.json
+curl -X PUT "$ES_PROTOCOL://$ES_HOST:$ES_PORT/_ingest/pipeline/recyclone_event_ingest_pipeline" $AUTH -H 'Content-Type: application/json' -d @event-ingest-pipeline.json
 echo
 echo "Adding mapping"
 curl -X PUT "$ES_PROTOCOL://$ES_HOST:$ES_PORT/_component_template/recyclone_event_index_mapping_1" $AUTH -H 'Content-Type: application/json' -d @event-comp-tmpl-index-mapping.json

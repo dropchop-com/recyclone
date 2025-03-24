@@ -1,5 +1,6 @@
 #!/bin/bash
 
-/init-index.sh &
+# uncomment this if needed
+# /init-index.sh &
 
 exec env "$@"

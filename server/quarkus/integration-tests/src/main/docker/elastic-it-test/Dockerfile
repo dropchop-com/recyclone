@@ -2,10 +2,6 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:8.15.3
 
 USER 0:0
 
-COPY dummy-index-tpl.json /dummy-index-tpl.json
-COPY event-index-tmpl.json /event-index-tmpl.json
-COPY event/event-*.json /event/
-
 COPY init-index.sh /init-index.sh
 COPY init-script.sh /init-script.sh
 

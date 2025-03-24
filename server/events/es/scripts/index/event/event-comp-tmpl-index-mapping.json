@@ -5,7 +5,7 @@
     },
     "settings" : {
       "index": {
-        "default_pipeline": "recyclone_event_index_ingest_pipeline",
+        "default_pipeline": "recyclone_event_ingest_pipeline",
         "mapping": {
           "total_fields.limit": 2000
         }

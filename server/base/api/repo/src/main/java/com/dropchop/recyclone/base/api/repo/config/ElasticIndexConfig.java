@@ -19,13 +19,4 @@ public interface ElasticIndexConfig {
     }
     return Strings.toSnakeCase(simpleName);
   }
-
-  default String getRootClassName(Class<?> clazz) {
-    String simpleName = clazz.getSimpleName();
-    if (simpleName.startsWith("Es")) {
-      simpleName = simpleName.substring(2);
-    }
-    return Strings.toSnakeCase(simpleName);
-  }
-
 }

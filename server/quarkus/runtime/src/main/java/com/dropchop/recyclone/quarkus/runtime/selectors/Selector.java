@@ -21,13 +21,14 @@ public interface Selector<X> {
     Type type = new ParameterizedTypeImpl(rawClass);
 
     // Getting the Instance
-    InstanceHandle<P> instanceHandle = container.instance(type);
-    if (!instanceHandle.isAvailable()) {
-      return null;
-    }
+    try (InstanceHandle<P> instanceHandle = container.instance(type)) {
+      if (!instanceHandle.isAvailable()) {
+        return null;
+      }
 
-    // If instance exists, return; else return null
-    return instanceHandle.get();
+      // If instance exists, return; else return null
+      return instanceHandle.get();
+    }
   }
 
   default <P extends X> P selectOrThrow(Class<P> rawClass) {

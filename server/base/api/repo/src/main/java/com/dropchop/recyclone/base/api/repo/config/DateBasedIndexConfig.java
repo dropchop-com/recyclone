@@ -7,7 +7,7 @@ import java.util.List;
 public interface DateBasedIndexConfig extends ElasticIndexConfig {
 
   default List<String> getMonthBasedIndexName(ZonedDateTime from, ZonedDateTime to, Class<?> root) {
-    String entityName = getRootClassName(root);
+    String entityName = getIndexName(root);
     List<String> monthBasedIndexName = new ArrayList<>();
 
     while(from.isBefore(to)) {

@@ -18,7 +18,7 @@ declare -A EVENT_ITEMS=(
 
 declare -A INDICES=(
   ["dummy"]="dummy-index-tpl"
-  ["event_index"]="event-index-tmpl"
+  ["event_index"]="event-index-tpl"
 )
 
 ES_AUTH=""

@@ -63,12 +63,12 @@ quarkus:
     #jdbc:
     #  url: jdbc:postgresql://localhost:5432/recyclone_test
     #  max-size: 16
+
   elasticsearch:
     devservices:
-      image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test:250314-102055-0926
+      image-name: ghcr.io/dropchop-com/recyclone/elastic-it-test:250321-173649-0565
       distribution: elastic
       enabled: true
-      port: 9200
 
   hibernate-orm:
     database:

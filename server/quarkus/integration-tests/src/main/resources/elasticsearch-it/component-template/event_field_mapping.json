@@ -1,6 +1,7 @@
 {
   "template": {
     "mappings": {
+      "_source" : { "enabled" : true },
       "properties": {
         "uuid": {
           "type": "keyword"
