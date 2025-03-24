@@ -100,7 +100,7 @@ public class ElasticsearchInitializer {
   );
 
   private void loadTemplateResources() throws IOException {
-    ClassLoader classLoader = getClass().getClassLoader();
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     for (Templates templates : templatesList) {
       Enumeration<URL> resources = classLoader.getResources(templates.resourcePath);
       while (resources.hasMoreElements()) {
