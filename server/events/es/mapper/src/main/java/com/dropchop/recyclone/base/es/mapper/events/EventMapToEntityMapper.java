@@ -82,12 +82,10 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   default EsEventItem mapToEsEventItem(Object value) {
     if (value instanceof Map<?, ?> valueMap) {
       EsEventItem esEventItem = new EsEventItem();
-      esEventItem.setUuid(String.valueOf(valueMap.get("uuid")));
       esEventItem.setService(this.mapToEsEventDetail(valueMap.get("service")));
       esEventItem.setObject(this.mapToEsEventDetail(valueMap.get("object")));
       esEventItem.setContext(this.mapToEsEventDetail(valueMap.get("context")));
       esEventItem.setSubject(this.mapToEsEventDetail(valueMap.get("subject")));
-      esEventItem.setCreated(this.mapToZonedDateTime(valueMap.get("created")));
       return esEventItem;
     }
     return null;
@@ -96,7 +94,7 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   default EsEventTrace mapToEsEventTrace(Object value) {
     if (value instanceof Map<?, ?> valueMap) {
       EsEventTrace esEventTrace = new EsEventTrace();
-      esEventTrace.setUuid(String.valueOf(valueMap.get("uuid")));
+      esEventTrace.setName(String.valueOf(valueMap.get("name")));
       esEventTrace.setContext(String.valueOf(valueMap.get("context")));
       esEventTrace.setGroup(String.valueOf(valueMap.get("group")));
       return esEventTrace;
@@ -107,11 +105,12 @@ public interface EventMapToEntityMapper extends MapToEntityMapper<EsEvent> {
   default EsEventDetail mapToEsEventDetail(Object value) {
     if (value instanceof Map<?, ?> valueMap) {
       EsEventDetail esEventDetail = new EsEventDetail();
-      esEventDetail.setUuid(String.valueOf(valueMap.get("uuid")));
+      esEventDetail.setId(String.valueOf(valueMap.get("id")));
+      esEventDetail.setDescriptor(String.valueOf(valueMap.get("descriptor")));
       esEventDetail.setName(String.valueOf(valueMap.get("name")));
+      esEventDetail.setValue(String.valueOf(valueMap.get("value")));
       esEventDetail.setParent(this.mapToEsEventDetail(valueMap.get("parent")));
       esEventDetail.setChild(this.mapToEsEventDetail(valueMap.get("child")));
-      esEventDetail.setCreated(this.mapToZonedDateTime(valueMap.get("created")));
       return esEventDetail;
     }
     return null;

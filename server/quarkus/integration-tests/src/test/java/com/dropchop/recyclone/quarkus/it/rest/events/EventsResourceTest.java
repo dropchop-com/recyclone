@@ -50,7 +50,7 @@ public class EventsResourceTest {
 
   public static String EVENT_ID = "feea39e2-aea0-4395-8be3-dd42ca42f03c";
   public static String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
-  public static String EVENT_TRACE_ID = "6df37bd3-073f-45f2-9f00-65022f2b4019";
+  public static String EVENT_TRACE_NAME = "some_test_flow";
 
   interface Strings {
     String EVENT_DETAIL = "event_detail";
@@ -76,44 +76,33 @@ public class EventsResourceTest {
     assertEquals(Strings.UNIT, rspEvent.getUnit());
     assertNotNull(rspEvent.getSource());
     assertNotNull(rspEvent.getSource().getSubject());
-    assertNotNull(rspEvent.getSource().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getSubject().getName());
     assertNotNull(rspEvent.getSource().getObject());
-    assertNotNull(rspEvent.getSource().getObject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getObject().getName());
     assertNotNull(rspEvent.getSource().getService());
-    assertNotNull(rspEvent.getSource().getService().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getService().getName());
     assertNotNull(rspEvent.getSource().getContext());
-    assertNotNull(rspEvent.getSource().getContext().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getContext().getName());
     assertNotNull(rspEvent.getCause());
     assertNotNull(rspEvent.getCause().getSubject());
-    assertNotNull(rspEvent.getCause().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getSubject().getName());
     assertNotNull(rspEvent.getCause().getObject());
-    assertNotNull(rspEvent.getCause().getObject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getObject().getName());
     assertNotNull(rspEvent.getCause().getService());
-    assertNotNull(rspEvent.getCause().getService().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getService().getName());
     assertNotNull(rspEvent.getCause().getContext());
-    assertNotNull(rspEvent.getCause().getContext().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getContext().getName());
     assertNotNull(rspEvent.getTarget());
     assertNotNull(rspEvent.getTarget().getSubject());
-    assertNotNull(rspEvent.getTarget().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getSubject().getName());
     assertNotNull(rspEvent.getTarget().getObject());
-    assertNotNull(rspEvent.getTarget().getObject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getObject().getName());
     assertNotNull(rspEvent.getTarget().getService());
-    assertNotNull(rspEvent.getTarget().getService().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getService().getName());
     assertNotNull(rspEvent.getTarget().getContext());
-    assertNotNull(rspEvent.getTarget().getContext().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getContext().getName());
     assertNotNull(rspEvent.getTrace());
+    assertEquals(EVENT_TRACE_NAME, rspEvent.getTrace().getName());
     assertEquals(Strings.CONTEXT, rspEvent.getTrace().getContext());
     assertEquals(Strings.GROUP, rspEvent.getTrace().getGroup());
 
@@ -130,20 +119,17 @@ public class EventsResourceTest {
 
     EventDetail detail = new EventDetail();
     detail.setId(UUID.randomUUID().toString());
-    detail.setCreated(ZonedDateTime.now());
     detail.setId(EVENT_DETAIL_ID);
     detail.setName(Strings.EVENT_DETAIL);
 
     EventItem eventItem = new EventItem();
-    eventItem.setId(UUID.randomUUID().toString());
-    eventItem.setCreated(ZonedDateTime.now());
     eventItem.setSubject(detail);
     eventItem.setObject(detail);
     eventItem.setService(detail);
     eventItem.setContext(detail);
 
     EventTrace eventTrace = new EventTrace();
-    eventTrace.setId(EVENT_TRACE_ID);
+    eventTrace.setName(EVENT_TRACE_NAME);
     eventTrace.setContext(Strings.CONTEXT);
     eventTrace.setGroup(Strings.GROUP);
 
@@ -335,7 +321,7 @@ public class EventsResourceTest {
      * Search by specific trace uuid
      * */
     EventParams params = EventParams.builder().condition(
-      and(field("trace.uuid", EVENT_TRACE_ID))
+      and(field("trace.uuid", EVENT_TRACE_NAME))
     ).build();
 
     //Field field = field("trace.id", EVENT_TRACE_ID);
@@ -360,7 +346,7 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     //this.validate(events);
-    assertEquals(EVENT_TRACE_ID, events.get(0).getTrace().getId());
+    assertEquals(EVENT_TRACE_NAME, events.get(0).getTrace().getName());
     assertEquals(3, events.size());
   }
 
@@ -371,7 +357,7 @@ public class EventsResourceTest {
      * Find all events except the one with this specific EVENT_TRACE_ID
      * */
     EventParams params = EventParams.builder().condition(
-      not(field("trace.uuid", EVENT_TRACE_ID))
+      not(field("trace.uuid", EVENT_TRACE_NAME))
     ).build();
 
     params.tryGetResultFilter().setSize(100);
@@ -391,7 +377,7 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertNotEquals(EVENT_TRACE_ID, events.get(0).getTrace().getId());
+    assertNotEquals(EVENT_TRACE_NAME, events.get(0).getTrace().getName());
     assertEquals(1, events.size());
   }
 
@@ -441,7 +427,7 @@ public class EventsResourceTest {
      * */
     EventParams params = EventParams.builder().condition(
       or(
-        field("trace.uuid", EVENT_TRACE_ID),
+        field("trace.uuid", EVENT_TRACE_NAME),
         field("unit", "Mock_Unit") //isnt actually used until we implement MATCH type search
       )
     ).build();
@@ -466,7 +452,7 @@ public class EventsResourceTest {
     assertFalse(events.isEmpty());
 
     for (Event event : events) {
-      boolean matchesCondition = EVENT_TRACE_ID.equals(event.getTrace().getId()) ||
+      boolean matchesCondition = EVENT_TRACE_NAME.equals(event.getTrace().getName()) ||
         "Mock_Unit".equals(event.getUnit());
 
       assertTrue(matchesCondition, String.format("Event did not match any condition: %s", event));
@@ -493,7 +479,7 @@ public class EventsResourceTest {
             Iso8601.fromIso("2027-01-01T12:12:12.12")
           )
         ),
-        field("trace.uuid", EVENT_TRACE_ID)
+        field("trace.name", EVENT_TRACE_NAME)
         //field("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
       )
     ).build();
@@ -690,7 +676,7 @@ public class EventsResourceTest {
       and(
         or(
           field(
-            "target.created",
+            "created",
             gteLt(
               startDate,
               endDate
@@ -756,7 +742,7 @@ public class EventsResourceTest {
       and(
         or(
           field(
-            "target.created",
+            "created",
             gteLt(
               startDate,
               endDate
@@ -775,7 +761,7 @@ public class EventsResourceTest {
            *field("target.subject.name", "Target_Subject2"),
            */
           field(
-            "target.created",
+            "created",
             gteLt(
               startDate2,
               endDate2

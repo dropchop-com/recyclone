@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.model.events;
 
 import com.dropchop.recyclone.base.api.model.event.EventDetail;
+import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.dropchop.recyclone.base.es.model.base.EsUuid;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +15,13 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EsEventDetail extends EsUuid implements EventDetail<EsEventDetail> {
+public class EsEventDetail implements EventDetail<EsEventDetail>, EsEntity {
 
+  private String id;
+  private String descriptor;
   private String name;
+  private String value;
   private EsEventDetail parent;
   private EsEventDetail child;
-  private ZonedDateTime created;
+
 }
