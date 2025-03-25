@@ -32,8 +32,11 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
   @Inject
   ElasticQueryMapper elasticQueryMapper;
 
-  @Inject
-  EsEventIndexConfig elasticIndexConfig;
+  EsEventIndexConfig elasticIndexConfig = EsEventIndexConfig.builder()
+      .rootClass(EsEvent.class)
+      .ingestPipeline("event_ingest_pipeline")
+      .dateFormat("yyyy-MM-01")
+      .build();
 
   /*TODO: CHECK CORRECT FLOW OF THIS*/
   /*This override works only if the elasticIndexConfig is using Date Base Index Configuration*/

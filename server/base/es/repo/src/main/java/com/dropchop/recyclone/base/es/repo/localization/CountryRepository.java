@@ -2,7 +2,6 @@ package com.dropchop.recyclone.base.es.repo.localization;
 
 import com.dropchop.recyclone.base.es.model.localization.EsCountry;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
-import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,11 +29,6 @@ public class CountryRepository extends ElasticRepository<EsCountry, String> {
 
   @Override
   public RestClient getElasticsearchClient() {
-    return null;
-  }
-
-  @Override
-  public ElasticIndexConfig getElasticIndexConfig() {
     return null;
   }
 }

@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
-import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
-import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
+import com.dropchop.recyclone.base.api.repo.config.DefaultIndexConfig;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
+import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,8 +26,10 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
   @Inject
   ElasticQueryMapper elasticQueryMapper;
 
-  @Inject
-  ElasticIndexConfig elasticIndexConfig;
+  DefaultIndexConfig elasticIndexConfig = DefaultIndexConfig
+      .builder()
+      .rootClass(EsDummy.class)
+      .build();
 
   Class<EsDummy> rootClass = EsDummy.class;
 }

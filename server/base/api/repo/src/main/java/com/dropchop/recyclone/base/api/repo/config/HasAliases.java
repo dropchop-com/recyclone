@@ -1,0 +1,11 @@
+package com.dropchop.recyclone.base.api.repo.config;
+
+import java.util.Collection;
+
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3/25/25.
+ */
+@SuppressWarnings("unused")
+public interface HasAliases {
+  Collection<String> getAliases();
+}

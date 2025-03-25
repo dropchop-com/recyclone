@@ -14,9 +14,7 @@ import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.ElasticCrudRepository;
-import com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig;
-import com.dropchop.recyclone.base.api.repo.config.DefaultIndexConfig;
-import com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig;
+import com.dropchop.recyclone.base.api.repo.config.*;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
@@ -42,9 +40,6 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.and;
@@ -56,8 +51,11 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class ElasticRepository<E extends EsEntity, ID> implements ElasticCrudRepository<E, ID>,
-  ElasticBulkMethod {
+public abstract class ElasticRepository<E extends EsEntity, ID> implements ElasticCrudRepository<E, ID> {
+
+  private static final String HTTP_POST = "POST";
+  private static final String ENDPOINT_SEARCH = "/_search";
+  private static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -74,7 +72,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   }
 
   public ElasticIndexConfig getElasticIndexConfig() {
-    return new com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig();
+    return DefaultIndexConfig.builder().rootClass(getRootClass()).build();
   }
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
@@ -103,62 +101,29 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return getRepositoryExecContext().totalCount(mappingContext);
   }
 
-  protected <S extends E> List<S> executeBulkRequest(Collection<S> entities, ElasticBulkMethodImpl method) {
-    if (entities == null || entities.isEmpty()) {
-      return Collections.emptyList();
-    }
-
-    StringBuilder bulkRequestBody = new StringBuilder();
-    ObjectMapper objectMapper = getObjectMapper();
-
-    bulkRequestBody = method.buildBulkRequest(entities, bulkRequestBody, objectMapper);
-
-    StringBuilder endpoint = new StringBuilder();
-    endpoint.append("/_bulk");
-
-    if(getElasticIndexConfig().getIngestPipeline() != null) {
-      endpoint.append("?pipeline=").append(getElasticIndexConfig().getIngestPipeline());
-    }
-
-    Request request = new Request("POST", endpoint.toString());
-    request.setJsonEntity(bulkRequestBody.toString());
-
+  private <S extends E> List<S> invokeBulkRequest(BulkRequestBuilder bulkRequestBuilder, Collection<S> entities) {
+    ObjectMapper mapper = getObjectMapper();
+    BulkResponseParser responseParser = new BulkResponseParser(mapper);
+    Request request = bulkRequestBuilder.bulkRequest(entities);
+    Response response;
     try {
-      Response response = getElasticsearchClient().performRequest(request);
-      return method.checkSuccessfulResponse(entities, response, objectMapper);
+      response = getElasticsearchClient().performRequest(request);
     } catch (ServiceException | IOException e) {
       throw new ServiceException(
-        ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
-        Set.of(new AttributeString("error", e.getMessage())), e
+          ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
+          Set.of(new AttributeString("error", e.getMessage())), e
       );
     }
+    return responseParser.parseResponse(entities, response);
   }
 
   @Override
   public <S extends E> List<S> save(Collection<S> entities) {
-    ElasticBulkMethodImpl saveBulkMethod = new ElasticBulkMethodImpl(ElasticBulkMethodImpl.MethodType.INDEX) {
-
-      @Override
-      protected <P extends EsEntity> String getIndexOuterName(P entity) {
-        ElasticIndexConfig config = getElasticIndexConfig();
-        if(config instanceof DateBasedIndexConfig dateBasedIndexConfig) {
-          if(entity instanceof HasCreated hasCreated && hasCreated.getCreated() != null) {
-            return dateBasedIndexConfig.getMonthBasedIndexName(
-                hasCreated.getCreated(), entity.getClass()
-            ).getFirst();
-          } else {
-            throw new ServiceException(
-              ErrorCode.internal_error,
-              "No Created field found for entity " + entity.getClass() +
-                " but the requested implementation is using DateBasedIndexConfig"
-            );
-          }
-        } else {
-          return getElasticIndexConfig().getIndexName(entity);
-        }
-      }
-    };
-    return executeBulkRequest(entities, saveBulkMethod);
+    ObjectMapper mapper = getObjectMapper();
+    BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
+        BulkRequestBuilder.MethodType.INDEX, mapper, getElasticIndexConfig()
+    );
+    return invokeBulkRequest(bulkRequestBuilder, entities);
   }
 
   @Override
@@ -177,18 +142,19 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   @Override
   public <X extends ID> int deleteById(Collection<X> ids) {
-    if (ids == null || ids.isEmpty()) {
+    /*if (ids == null || ids.isEmpty()) {
       return 0;
     }
 
     Class<E> rootClass = getRootClass();
     StringBuilder bulkRequestBody = new StringBuilder();
     ObjectMapper objectMapper = getObjectMapper();
-
+    ElasticIndexConfig indexConfig = getElasticIndexConfig();
+    String defaultAlias = indexConfig.getDefaultAlias();
     for (X id : ids) {
       bulkRequestBody
         .append("{ \"delete\" : { \"_index\" : \"")
-        .append(getElasticIndexConfig().getIndexName(rootClass))
+        .append(indexConfig.getIndexName(rootClass))
         .append("\", \"_id\" : \"")
         .append(id.toString())
         .append("\" } }\n");
@@ -218,7 +184,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         "Failed to delete entities by ID",
         Set.of(new AttributeString("error", e.getMessage()))
       );
-    }
+    }*/
+    return 0;
   }
 
   @Override
@@ -228,29 +195,11 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   @Override
   public <S extends E> List<S> delete(Collection<S> entities) {
-    ElasticBulkMethodImpl elasticDeleteMethod = new ElasticBulkMethodImpl(ElasticBulkMethodImpl.MethodType.DELETE) {
-      @Override
-      protected <P extends EsEntity> String getIndexOuterName(P entity) {
-        ElasticIndexConfig config = getElasticIndexConfig();
-        if(config instanceof DateBasedIndexConfig dateBasedIndexConfig) {
-          if(entity instanceof HasCreated hasCreated && hasCreated.getCreated() != null) {
-            return dateBasedIndexConfig.getMonthBasedIndexName(
-                hasCreated.getCreated(), entity.getClass()
-            ).getFirst();
-          } else {
-            throw new ServiceException(
-              ErrorCode.internal_error,
-              "No Created field found for entity " + entity.getClass() +
-                " but the requested implementation is using DateBasedIndexConfig"
-            );
-          }
-        } else {
-          return config.getIndexName(entity);
-        }
-      }
-    };
-
-    return executeBulkRequest(entities, elasticDeleteMethod);
+    ObjectMapper mapper = getObjectMapper();
+    BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
+        BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
+    );
+    return invokeBulkRequest(bulkRequestBuilder, entities);
   }
 
   @Override
@@ -273,10 +222,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     try {
-      Request request = new Request(
-          "POST",
-          "/" + getElasticIndexConfig().getIndexName(this.getRootClass()) + "/_delete_by_query"
-      );
+      Request request = this.buildRequestForSearch(queryObject, ENDPOINT_DELETE_BY_QUERY);
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
       if (response.getStatusLine().getStatusCode() == 200) {
@@ -394,7 +340,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
     Class<E> cls = getRootClass();
     try {
-      Request request = buildRequest(queryObject);
+      Request request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
 
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
@@ -461,48 +407,28 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
   }
 
-  private Request buildRequest(QueryNodeObject query) {
-    if (getElasticIndexConfig() instanceof DateBasedIndexConfig) {
-      return buildDateBasedRequest((DateBasedIndexConfig) getElasticIndexConfig());
-    } else if (getElasticIndexConfig() instanceof DefaultIndexConfig) {
-      return buildDefaultRequest((DefaultIndexConfig) getElasticIndexConfig());
-    } else {
-      throw new ServiceException(
-        ErrorCode.internal_error,
-        "No valid ElasticIndexConfig found for class ElasticRepository!"
-      );
+  private Request buildRequestForSearch(QueryNodeObject query, String endpoint) {
+    ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
+    String indexName;
+    if (indexConfig instanceof HasQueryBasedReadIndex hasQueryBasedReadIndex) {
+      indexName = hasQueryBasedReadIndex.getReadIndexName(query);
+      return new Request(HTTP_POST, "/" + indexName + "/_search");
     }
-  }
-
-  private Request buildDateBasedRequest(DateBasedIndexConfig dateConfig) {
-    if (dateConfig.getAlias() != null) {
-      String alias = dateConfig.getAlias();
-      log.debug("Using alias [{}] as set in ElasticIndexConfig", alias);
-      return new Request("GET", "/" + alias + "/_search");
-    } else {
-      List<String> indexNames = dateConfig.getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
-      String indexName = String.join(",", indexNames);
-      log.debug("Alias was not set in ElasticIndexConfig, using current time to calculate index [{}]", indexName);
-      return new Request("GET", "/" + indexName + "/_search");
+    if (indexConfig instanceof HasRootAlias hasRootAlias) {
+      indexName = hasRootAlias.getRootAlias();
+      return new Request(HTTP_POST, "/" + indexName + "/_search");
     }
-  }
-
-  private Request buildDefaultRequest(DefaultIndexConfig defaultIndexConfig) {
-    if (defaultIndexConfig.getAlias() != null) {
-      String alias = defaultIndexConfig.getAlias();
-      log.debug("Using alias [{}] as set in ElasticIndexConfig", alias);
-      return new Request("GET", "/" + alias + "/_search");
-    } else {
-      String indexName = getElasticIndexConfig().getIndexName(this.getRootClass());
-      log.debug("Using default index configuration with index name [{}]", indexName);
-      return new Request("GET", "/" + indexName + "/_search");
+    if (indexConfig instanceof HasStaticReadIndex hasStaticReadIndex) {
+      indexName = hasStaticReadIndex.getReadIndex();
+      return new Request(HTTP_POST, "/" + indexName + "/_search");
     }
+    throw new ServiceException(ErrorCode.internal_error, "No valid index config found!");
   }
 
   //TODO: Think about correct implementation of this...
   @Override
   public List<String> setDatesForIndices(QueryNodeObject query) {
-    UUID uuid = query.getNestedValue(UUID.class, "uuid");
+    /*UUID uuid = query.getNestedValue(UUID.class, "uuid");
     ZonedDateTime created = query.getNestedValue(ZonedDateTime.class, "created");
 
     if (created != null) {
@@ -543,7 +469,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       log.warn("No date specification found in query, using current time in ElasticRepository");
       return ((DateBasedIndexConfig) getElasticIndexConfig())
         .getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
-    }
+    }*/
+    return List.of();
   }
 
   @Override
