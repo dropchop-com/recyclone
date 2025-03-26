@@ -19,12 +19,26 @@ public class ServiceException extends RuntimeException {
 
   private List<StatusMessage> statusMessages = new ArrayList<>();
 
+  private static String constructMessage(StatusMessage message, Throwable cause) {
+    String prefix = ServiceException.class.getSimpleName() + ": ";
+
+    if (message.getText() != null) {
+      return prefix + message.getText();
+    } else if (cause != null) {
+      return prefix + cause.getMessage();
+    }
+
+    return prefix + "Unknown error";
+  }
+
   public ServiceException(StatusMessage statusMessage) {
+    super(constructMessage(statusMessage, null));
     this.statusMessages.add(statusMessage);
   }
 
   public ServiceException(StatusMessage statusMessage, Throwable cause) {
-    super(cause);
+    super(constructMessage(statusMessage, cause), cause);
+
     Set<Attribute<?>> details = statusMessage.getDetails();
     Set<Attribute<?>> copy = new LinkedHashSet<>();
     if (details == null) {
