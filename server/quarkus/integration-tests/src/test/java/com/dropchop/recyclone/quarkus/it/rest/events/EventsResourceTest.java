@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.it.rest.events;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.dto.model.event.EventDetail;
 import com.dropchop.recyclone.base.dto.model.event.EventItem;
@@ -48,7 +49,7 @@ public class EventsResourceTest {
     );
   }
 
-  public static String EVENT_ID = "feea39e2-aea0-4395-8be3-dd42ca42f03c";
+  public static String EVENT_ID = Uuid.getTimeBased().toString();
   public static String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
   public static String EVENT_TRACE_ID = "6df37bd3-073f-45f2-9f00-65022f2b4019";
 
@@ -360,7 +361,7 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     //this.validate(events);
-    assertEquals(EVENT_TRACE_ID, events.get(0).getTrace().getId());
+    assertEquals(EVENT_TRACE_ID, events.getFirst().getTrace().getId());
     assertEquals(3, events.size());
   }
 
@@ -391,7 +392,7 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertNotEquals(EVENT_TRACE_ID, events.get(0).getTrace().getId());
+    assertNotEquals(EVENT_TRACE_ID, events.getFirst().getTrace().getId());
     assertEquals(1, events.size());
   }
 
@@ -424,7 +425,7 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertEquals("6b829aac-06d2-4cbc-9721-d6d24a3628dd", events.get(0).getId());
+    assertEquals("6b829aac-06d2-4cbc-9721-d6d24a3628dd", events.getFirst().getId());
     assertEquals(1, events.size());
 
   }
@@ -472,7 +473,7 @@ public class EventsResourceTest {
       assertTrue(matchesCondition, String.format("Event did not match any condition: %s", event));
     }
 
-    assertEquals("Mock_Unit", events.get(0).getUnit());
+    assertEquals("Mock_Unit", events.getFirst().getUnit());
 
   }
 

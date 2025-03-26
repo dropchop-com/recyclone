@@ -82,6 +82,7 @@ public class DateBasedIndexConfig extends IngestPipelineIndexConfig
     return indexPrefix + this.indexPostfix.apply(dateTime);
   }
 
+  @SuppressWarnings("unused")
   protected ZonedDateTime getDateTimeFromQuery(QueryNodeObject query) {
     UUID uuid = query.getNestedValue(UUID.class, "uuid");
     if (uuid != null) {
@@ -108,14 +109,15 @@ public class DateBasedIndexConfig extends IngestPipelineIndexConfig
       );
       return null;
     }
+    return getRootAlias();
 
     //TODO: support intervals ...
-    ZonedDateTime dateTime = this.getDateTimeFromQuery(query);
+    /*ZonedDateTime dateTime = this.getDateTimeFromQuery(query);
     if (dateTime == null) { // null value warn ignore intentional
       return getRootAlias();
     }
 
     String indexPrefix = this.getDefaultIndexName();
-    return indexPrefix + this.indexPostfix.apply(dateTime);
+    return indexPrefix + this.indexPostfix.apply(dateTime);*/
   }
 }
