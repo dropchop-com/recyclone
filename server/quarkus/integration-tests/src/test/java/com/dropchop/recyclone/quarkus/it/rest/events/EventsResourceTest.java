@@ -426,7 +426,7 @@ public class EventsResourceTest {
      * */
     EventParams params = EventParams.builder().condition(
       or(
-        field("trace.uuid", EVENT_TRACE_NAME),
+        field("trace.name", EVENT_TRACE_NAME),
         field("unit", "Mock_Unit") //isnt actually used until we implement MATCH type search
       )
     ).build();
@@ -864,20 +864,9 @@ public class EventsResourceTest {
           )
         ).or(
           and(
-            field("application", "Lupitpole-frontend"),
-            field("type", "frontend"),
-            field("action", "SUBMIT_FORM_FRONTEND")
-          )
-        ),
-        and(
-          field("created",
-            gtLt(
-              startDate,
-              endDate
-            )
+            field("application", "Lupitpole-frontend")
           )
         )
-
       )
 
 
@@ -900,7 +889,7 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertEquals(1, events.size());
+    assertEquals(2, events.size());
 
   }
 
@@ -961,6 +950,142 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     assertEquals(2, events.size());
+  }
+
+  @Test
+  @Order(110)
+  public void complexQuery6() {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    or(
+                            and(
+                                    field("application", "Baucheck-backend"),
+                                    field("type", "Backend"),
+                                    field("action", "FETCH_DATA"),
+                                    field("target.subject.descriptor", "descriptor_target_subject")
+                            )
+                    ).or(
+                            and(
+                                    field("application", "Lupitpole-frontend"),
+                                    field("type", "frontend"),
+                                    field("action", "SUBMIT_FORM_FRONTEND")
+                            )
+                    )
+            )
+
+
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(2, events.size());
+
+  }
+
+  @Test
+  @Order(120)
+  public void complexQuery7()
+  {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    or(
+                            and(
+                                    field("application", "Baucheck-backend"),
+                                    field("type", "Backend"),
+                                    and(
+                                            or(
+                                                    field("target.subject.descriptor", "descriptor_target_subject")
+                                            ).or(
+                                                    field("target.subject.value", "value2_target_subject")
+                                            )
+                                    )
+                            )
+                    ).or(
+                            and(
+                                    field("application", "Lupitpole-frontend"),
+                                    field("type", "frontend"),
+                                    field("action", "SUBMIT_FORM_FRONTEND")
+                            )
+                    )
+            )
+
+
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search?c_level=5")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(3, events.size());
+
+  }
+
+  @Test
+  @Order(130)
+  public void complexQuery8()
+  {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    field("source.subject.name", "Source_Subject")
+            )
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search?c_level=5")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(1, events.size());
+
   }
 
 

@@ -30,22 +30,22 @@ public class EventMockData {
         ZonedDateTime created = ZonedDateTime.of(2024,1,1,0,1,15, 20, ZoneId.of("UTC"));
 
         EventItem source = createMockEventItem(
-                createMockEventDetailSubject("d7e5ad61-0a9d-4493-ad73-a3e9a9d42999",null, "Source_Subject", null, null, null),
-                createMockEventDetailObject("96fa1d85-c1c1-4f06-b7d7-858ef70002b3",null ,"Source_Object", null, null ,null),
-                createMockEventDetailService("c3b12126-7bf5-4ce1-955c-db73df6e5bd6",null ,"Source_Service", null, null ,null),
-                createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3",null ,"Source_Context", null, null ,null)
+                createMockEventDetailSubject("d7e5ad61-0a9d-4493-ad73-a3e9a9d42999","descriptor_source_subject", "Source_Subject", null, null, null),
+                createMockEventDetailObject("96fa1d85-c1c1-4f06-b7d7-858ef70002b3","descriptor_source_object" ,"Source_Object", null, null ,null),
+                createMockEventDetailService("c3b12126-7bf5-4ce1-955c-db73df6e5bd6","descriptor_source_service" ,"Source_Service", null, null ,null),
+                createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3","descriptor_source_context" ,"Source_Context", null, null ,null)
         );
         EventItem target = createMockEventItem(
-                createMockEventDetailSubject("d7e5ad61-0a9d-4493-ad73-a3e9a9d42999",null ,"Target_Subject", null, null ,null),
-                createMockEventDetailObject("96fa1d85-c1c1-4f06-b7d7-858ef70002b3",null ,"Target_Object", null, null ,null),
-                createMockEventDetailService("c3b12126-7bf5-4ce1-955c-db73df6e5bd6",null ,"Target_Service", null, null ,null),
-                createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3",null ,"Target_Context", null, null ,null)
+                createMockEventDetailSubject("d7e5ad61-0a9d-4493-ad73-a3e9a9d42999","descriptor_target_subject" ,"Target_Subject", null, null ,null),
+                createMockEventDetailObject("96fa1d85-c1c1-4f06-b7d7-858ef70002b3","descriptor_target_object" ,"Target_Object", null, null ,null),
+                createMockEventDetailService("c3b12126-7bf5-4ce1-955c-db73df6e5bd6","descriptor_target_service","Target_Service", null, null ,null),
+                createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3","descriptor_target_context","Target_Context", null, null ,null)
         );
         EventItem cause = createMockEventItem(
-                createMockEventDetailSubject("d7e5ad61-0a9d-4493-ad73-a3e9a9d42999",null ,"Cause_Subject", null, null ,null),
-                createMockEventDetailObject("96fa1d85-c1c1-4f06-b7d7-858ef70002b3",null ,"Cause_Object", null, null ,null),
-                createMockEventDetailService("c3b12126-7bf5-4ce1-955c-db73df6e5bd6",null ,"Cause_Service", null, null ,null),
-                createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3",null ,"Cause_Context", null, null ,null)
+                createMockEventDetailSubject("d7e5ad61-0a9d-4493-ad73-a3e9a9d42999","descriptor_cause_subject","Cause_Subject", null, null ,null),
+                createMockEventDetailObject("96fa1d85-c1c1-4f06-b7d7-858ef70002b3","descriptor_cause_object","Cause_Object", null, null ,null),
+                createMockEventDetailService("c3b12126-7bf5-4ce1-955c-db73df6e5bd6","descriptor_cause_service" ,"Cause_Service", null, null ,null),
+                createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3","descriptor_cause_context" ,"Cause_Context", null, null ,null)
         );
 
         EventTrace trace = createMockEventTrace(EVENT_TRACE_NAME,"Mock_Group", "Mock_Context");
@@ -68,22 +68,22 @@ public class EventMockData {
         ZonedDateTime created2 = ZonedDateTime.of(2024, 6, 15, 12, 30, 45, 0, ZoneId.of("UTC"));
 
         EventItem source2 = createMockEventItem(
-                createMockEventDetailSubject("9579ba79-282e-4d24-b2a6-6b7c23cdc9a1",null, "Source_Subject2", null, null ,null),
-                createMockEventDetailObject("e445b717-6cad-4218-aefb-ca2b4ecf6cd4",null, "Source_Object2", null, null ,null),
-                createMockEventDetailService("a4714d43-f459-4f32-b0f4-1b09fc345c6e",null, "Source_Service2", null, null ,null),
-                createMockEventDetailContext("5e5aad1a-6b53-4311-81cf-82e7a5b5dda1",null, "Source_Context2", null, null ,null)
+                createMockEventDetailSubject("9579ba79-282e-4d24-b2a6-6b7c23cdc9a1",null, "Source_Subject2", "value2_source_subject", null ,null),
+                createMockEventDetailObject("e445b717-6cad-4218-aefb-ca2b4ecf6cd4",null, "Source_Object2", "value2_source_object", null ,null),
+                createMockEventDetailService("a4714d43-f459-4f32-b0f4-1b09fc345c6e",null, "Source_Service2", "value2_source_service", null ,null),
+                createMockEventDetailContext("5e5aad1a-6b53-4311-81cf-82e7a5b5dda1",null, "Source_Context2", "value2_source_context", null ,null)
         );
         EventItem target2 = createMockEventItem(
-                createMockEventDetailSubject("ee76f4b4-33a0-4e86-8605-334ee48e2df9",null, "Target_Subject2", null, null ,null),
-                createMockEventDetailObject("e9db69e0-42a0-4b3c-9d2e-00ff47b88288",null, "Target_Object2", null, null ,null),
-                createMockEventDetailService("01101d6a-1c81-4b73-a0ec-d58d38bbdc7f",null, "Target_Service2", null, null ,null),
-                createMockEventDetailContext("e3a17276-aa58-46c5-be7c-5888dd1ba13e",null, "Target_Context2", null, null ,null)
+                createMockEventDetailSubject("ee76f4b4-33a0-4e86-8605-334ee48e2df9",null, "Target_Subject2", "value2_target_subject", null ,null),
+                createMockEventDetailObject("e9db69e0-42a0-4b3c-9d2e-00ff47b88288",null, "Target_Object2", "value2_target_object", null ,null),
+                createMockEventDetailService("01101d6a-1c81-4b73-a0ec-d58d38bbdc7f",null, "Target_Service2", "value2_target_service", null ,null),
+                createMockEventDetailContext("e3a17276-aa58-46c5-be7c-5888dd1ba13e",null, "Target_Context2", "value2_target_context", null ,null)
         );
         EventItem cause2 = createMockEventItem(
-                createMockEventDetailSubject("ce5e1c87-06fd-49bd-8012-09d4f9544aad",null, "Cause_Subject2", null, null ,null),
-                createMockEventDetailObject("858e731e-c98d-45f8-8a11-b794b7fadbf5",null, "Cause_Object2", null, null ,null),
-                createMockEventDetailService("0bbd008a-fda5-49f5-9cfc-e87cf37c6c3e",null, "Cause_Service2", null, null ,null),
-                createMockEventDetailContext("d0644ca7-80fb-4560-af63-8b1e93e5e1d3",null, "Cause_Context2", null, null ,null)
+                createMockEventDetailSubject("ce5e1c87-06fd-49bd-8012-09d4f9544aad",null, "Cause_Subject2", "value2_cause_subject", null ,null),
+                createMockEventDetailObject("858e731e-c98d-45f8-8a11-b794b7fadbf5",null, "Cause_Object2", "value2_cause_object", null ,null),
+                createMockEventDetailService("0bbd008a-fda5-49f5-9cfc-e87cf37c6c3e",null, "Cause_Service2", "value2_cause_service", null ,null),
+                createMockEventDetailContext("d0644ca7-80fb-4560-af63-8b1e93e5e1d3",null, "Cause_Context2", "value2_cause_context", null ,null)
         );
 
 
