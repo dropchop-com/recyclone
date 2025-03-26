@@ -145,7 +145,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
     ObjectMapper mapper = getObjectMapper();
     BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
-        BulkRequestBuilder.MethodType.INDEX, mapper, getElasticIndexConfig()
+        BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
     );
     Response response = invokeBulkRequest(bulkRequestBuilder, ids);
     BulkResponseParser responseParser = new BulkResponseParser(mapper);

@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
-import com.dropchop.recyclone.base.api.repo.config.DefaultIndexConfig;
+import com.dropchop.recyclone.base.api.repo.config.ClassStaticIndexConfig;
+import com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
@@ -17,6 +18,13 @@ import org.elasticsearch.client.RestClient;
 @SuppressWarnings("unused")
 public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
 
+  private final Class<EsDummy> rootClass = EsDummy.class;
+
+  private final ElasticIndexConfig elasticIndexConfig = ClassStaticIndexConfig
+      .builder()
+      .rootClass(getRootClass())
+      .build();
+
   @Inject
   ObjectMapper objectMapper;
 
@@ -25,11 +33,4 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
 
   @Inject
   ElasticQueryMapper elasticQueryMapper;
-
-  DefaultIndexConfig elasticIndexConfig = DefaultIndexConfig
-      .builder()
-      .rootClass(EsDummy.class)
-      .build();
-
-  Class<EsDummy> rootClass = EsDummy.class;
 }

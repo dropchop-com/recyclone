@@ -57,7 +57,6 @@ public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String
   @Inject
   ObjectMapper objectMapper;
 
-
   @Override
   public Result<Dummy> search() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();

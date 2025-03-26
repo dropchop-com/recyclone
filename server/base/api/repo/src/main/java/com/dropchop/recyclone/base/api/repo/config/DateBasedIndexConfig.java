@@ -18,8 +18,8 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Slf4j
-@SuperBuilder(toBuilder = true)
-public class DateBasedIndexConfig extends DefaultIndexConfig
+@SuperBuilder
+public class DateBasedIndexConfig extends IngestPipelineIndexConfig
     implements HasEntityBasedWriteIndex, HasQueryBasedReadIndex {
 
   public interface PostfixGenerator extends Function<ZonedDateTime, String> {}
