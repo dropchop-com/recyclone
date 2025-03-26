@@ -3,9 +3,7 @@ package com.dropchop.recyclone.base.es.repo;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
-import com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig;
-import com.dropchop.recyclone.base.api.repo.config.HasIngestPipeline;
-import com.dropchop.recyclone.base.api.repo.config.HasRootAlias;
+import com.dropchop.recyclone.base.api.repo.config.*;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -17,6 +15,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.dropchop.recyclone.base.api.model.base.Model.identifier;
+import static com.dropchop.recyclone.base.es.repo.BulkRequestBuilder.MethodType.INDEX;
+import static com.dropchop.recyclone.base.es.repo.BulkRequestBuilder.MethodType.UPDATE;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3/25/25.
@@ -36,39 +36,77 @@ public class BulkRequestBuilder {
   private final ObjectMapper objectMapper;
   private final ElasticIndexConfig indexConfig;
 
-  public <S extends EsEntity> StringBuilder buildBody(Collection<S> entities, StringBuilder bulkRequestBody) {
-    try {
-      //TODO: get index name from index config
-      String indexName = "";
-      for (S entity : entities) {
+  public StringBuilder buildBody(Collection<?> entities, StringBuilder bulkRequestBody) {
+
+      String indexName = null;
+      ElasticIndexConfig indexConfig = getIndexConfig();
+      HasEntityBasedWriteIndex computeName = null;
+      if (!(indexConfig instanceof HasIngestPipeline)) {
+        if (indexConfig instanceof HasStaticWriteIndex hasStaticWriteIndex) {
+          indexName = hasStaticWriteIndex.getWriteIndex();
+        } else if (indexConfig instanceof HasEntityBasedWriteIndex hasEntityBasedWriteIndex) {
+          computeName = hasEntityBasedWriteIndex;
+        }
+      }
+
+      for (Object obj : entities) {
+        String id;
+        String value = null;
+        if (obj instanceof EsEntity entity) {
+          id = identifier(entity);
+          if (computeName != null) {
+            indexName = computeName.getWriteIndex(entity);
+          }
+          try {
+            value = objectMapper.writeValueAsString(entity);
+          } catch (IOException e) {
+            throw new ServiceException(
+                ErrorCode.data_error, "Failed to serialize entity to JSON",
+                Set.of(
+                    new AttributeString("id", String.valueOf(id)),
+                    new AttributeString("error", e.getMessage())
+                )
+            );
+          }
+        } else {
+          if (INDEX.equals(methodType) || UPDATE.equals(methodType)) {
+            throw new ServiceException(
+                ErrorCode.internal_error,
+                "Bulk index or update makes no sense if you passed IDs as parameters!"
+            );
+          }
+          id = String.valueOf(obj);
+        }
+
         bulkRequestBody
             .append("{ \"")
             .append(methodType.name().toLowerCase())
-            .append("\" : { ")
-            .append("\"_index\" : \"")
-            .append(indexName)
-            .append("\",")
+            .append("\" : { ");
+        if (indexName != null) {
+          bulkRequestBody
+              .append("\"_index\" : \"")
+              .append(indexName)
+              .append("\",");
+        }
+        bulkRequestBody
             .append("\"_id\" : \"")
-            .append(identifier(entity))
+            .append(id)
             .append("\" } }\n");
 
-        if (methodType.equals(MethodType.INDEX) || methodType.equals(MethodType.UPDATE)) {
+        if (value != null && (INDEX.equals(methodType) || UPDATE.equals(methodType))) {
           bulkRequestBody
-              .append(objectMapper.writeValueAsString(entity))
+              .append(value)
               .append("\n");
         }
       }
 
       return bulkRequestBody;
-    } catch (IOException e) {
-      throw new ServiceException(
-          ErrorCode.data_error, "Failed to serialize entity to JSON",
-          Set.of(new AttributeString("error", e.getMessage()))
-      );
-    }
   }
 
-  public <S extends EsEntity> Request bulkRequest(Collection<S> entities) {
+  /**
+   * Build bulk request based on collection of IDs or collection of entities.
+   */
+  public Request bulkRequest(Collection<?> entities) {
     StringBuilder bulkRequestBody = new StringBuilder();
     StringBuilder endpoint = new StringBuilder();
     if (indexConfig instanceof HasRootAlias hasRootAlias) {
@@ -87,4 +125,51 @@ public class BulkRequestBuilder {
     request.setJsonEntity(bulkRequestBody.toString());
     return request;
   }
+
+  /*public <X extends ID> int deleteById(Collection<X> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return 0;
+    }
+
+    Class<E> rootClass = getRootClass();
+    StringBuilder bulkRequestBody = new StringBuilder();
+    ObjectMapper objectMapper = getObjectMapper();
+    ElasticIndexConfig indexConfig = getElasticIndexConfig();
+    String defaultAlias = indexConfig.getDefaultAlias();
+    for (X id : ids) {
+      bulkRequestBody
+        .append("{ \"delete\" : { \"_index\" : \"")
+        .append(indexConfig.getIndexName(rootClass))
+        .append("\", \"_id\" : \"")
+        .append(id.toString())
+        .append("\" } }\n");
+    }
+
+    Request request = new Request("POST", "/_bulk");
+    request.setJsonEntity(bulkRequestBody.toString());
+
+    try {
+      Response response = getElasticsearchClient().performRequest(request);
+      JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
+
+      int deletedCount = 0;
+      if (responseBody.has("items")) {
+        for (JsonNode item : responseBody.get("items")) {
+          JsonNode deleteResult = item.get("delete");
+          if (deleteResult != null && "deleted".equals(deleteResult.get("result").asText())) {
+            deletedCount++;
+          }
+        }
+      }
+
+      return deletedCount;
+    } catch (IOException e) {
+      throw new ServiceException(
+        ErrorCode.data_error,
+        "Failed to delete entities by ID",
+        Set.of(new AttributeString("error", e.getMessage()))
+      );
+    }
+    return 0;
+  }*/
 }

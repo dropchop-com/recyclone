@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.base.es.repo.events;
 
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
@@ -10,8 +9,9 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import org.elasticsearch.client.RestClient;
 
-import java.util.List;
 import java.util.UUID;
+
+import static com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig.MONTH_FORMATTER;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
@@ -21,7 +21,7 @@ import java.util.UUID;
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
 public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
 
-  Class<EsEvent> rootClass = EsEvent.class;
+  private final Class<EsEvent> rootClass = EsEvent.class;
 
   @Inject
   ObjectMapper objectMapper;
@@ -32,20 +32,10 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
   @Inject
   ElasticQueryMapper elasticQueryMapper;
 
-  EsEventIndexConfig elasticIndexConfig = EsEventIndexConfig.builder()
-      .rootClass(EsEvent.class)
+  EsEventIndexConfig elasticIndexConfig = EsEventIndexConfig
+      .builder()
+      .rootClass(getRootClass())
       .ingestPipeline("event_ingest_pipeline")
-      .dateFormat("yyyy-MM-01")
+      .indexPostfix(MONTH_FORMATTER::format)
       .build();
-
-  /*TODO: CHECK CORRECT FLOW OF THIS*/
-  /*This override works only if the elasticIndexConfig is using Date Base Index Configuration*/
-  @Override
-  public List<String> setDatesForIndices(QueryNodeObject query) {
-    /*?if(elasticIndexConfig instanceof DateBasedIndexConfig) {
-      ((DateBasedIndexConfig) elasticIndexConfig).getMonthBasedIndexName(ZonedDateTime.now(), rootClass);
-    }*/
-    return super.setDatesForIndices(query);
-  }
-
 }

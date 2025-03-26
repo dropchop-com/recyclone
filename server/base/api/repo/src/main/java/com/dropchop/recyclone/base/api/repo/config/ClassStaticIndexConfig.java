@@ -7,9 +7,14 @@ import lombok.experimental.SuperBuilder;
  */
 @SuperBuilder
 @SuppressWarnings("unused")
-public class ClassStaticIndexConfig extends DefaultIndexConfig implements HasStaticWriteIndex {
+public class ClassStaticIndexConfig extends DefaultIndexConfig implements HasStaticWriteIndex, HasStaticReadIndex {
   @Override
   public String getWriteIndex() {
+    return getDefaultIndexName();
+  }
+
+  @Override
+  public String getReadIndex() {
     return getDefaultIndexName();
   }
 }

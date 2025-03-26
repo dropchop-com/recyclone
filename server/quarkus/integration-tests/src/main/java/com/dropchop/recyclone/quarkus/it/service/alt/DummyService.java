@@ -75,10 +75,9 @@ public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String
     QueryParams queryParams = context.getParams();
 
     List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
-
-    MappingContext map = new FilteringDtoContext().of(ctxContainer.get());
+    MappingContext map = new MappingContext().of(ctxContainer.get());
     RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext();
-    List<EsDummy> entities = elasticRepository.search(queryParams, ctx);
+    List<EsDummy> entities = elasticRepository.search(ctx);
     MappingContext mapCtx = new FilteringDtoContext().of(ctxContainer.get());
     List<Dummy> dtos = mapperProvider.getToEsDtoMapper().toDtos(entities, mapCtx);
 

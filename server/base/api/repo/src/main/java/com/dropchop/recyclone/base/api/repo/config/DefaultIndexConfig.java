@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @SuperBuilder
-public class DefaultIndexConfig implements ElasticIndexConfig, HasIngestPipeline, HasRootAlias, HasAliases, HasPrefix {
+public class DefaultIndexConfig
+    implements ElasticIndexConfig, HasIngestPipeline, HasRootAlias, HasAliases, HasPrefix, HasClassBasedDefaultSort {
 
   private final Class<?> rootClass;
   private final String ingestPipeline;

@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
-import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
@@ -23,10 +22,10 @@ public class BulkResponseParser {
 
   private final ObjectMapper objectMapper;
 
-  public <S extends Model> List<S> parseResponse(Collection<S> entities, Response response) {
-    List<S> successfullyProcessedEntities = new ArrayList<>();
+  public <S> List<S> parseResponse(Collection<S> entitiesOrIds, Response response) {
+    List<S> successfullyProcessedObjects = new ArrayList<>();
     List<StatusMessage> errorMessages = new ArrayList<>();
-    List<S> entitiesToProcess = new ArrayList<>(entities);
+    List<S> entitiesToProcess = new ArrayList<>(entitiesOrIds);
     if (response.getStatusLine().getStatusCode() != 200) {
       throw new ServiceException(
           ErrorCode.internal_error,
@@ -53,7 +52,7 @@ public class BulkResponseParser {
         String result = opResult.get("result").asText();
         boolean isSuccess = "created".equals(result) || "updated".equals(result) || "deleted".equals(result);
         if (isSuccess) {
-          successfullyProcessedEntities.add(entitiesToProcess.get(i));
+          successfullyProcessedObjects.add(entitiesToProcess.get(i));
         } else {
           String error = opResult.has("error") ? opResult.get("error").toString() : "Unknown error";
           int statusCode = opResult.has("status") ? opResult.get("status").asInt() : -1;
@@ -69,8 +68,8 @@ public class BulkResponseParser {
       }
     }
 
-    if (entities.equals(successfullyProcessedEntities)) {
-      return successfullyProcessedEntities;
+    if (entitiesOrIds.equals(successfullyProcessedObjects)) {
+      return successfullyProcessedObjects;
     } else {
       throw new ServiceException(errorMessages);
     }
