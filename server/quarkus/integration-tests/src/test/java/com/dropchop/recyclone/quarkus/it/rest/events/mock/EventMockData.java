@@ -15,7 +15,8 @@ import java.util.UUID;
 @Mock
 public class EventMockData {
 
-    public static String EVENT_TRACE_ID = "6df37bd3-073f-45f2-9f00-65022f2b4019";
+    public static String EVENT_TRACE_NAME = "some_test_flow";
+    public static String EVENT_TRACE_NAME2 = "some_test_flow_2";
 
     public List<Event> createMockEvents()
     {
@@ -47,7 +48,7 @@ public class EventMockData {
                 createMockEventDetailContext("f8dea019-a47e-4652-b3f1-69f7ebd610b3",null ,"Cause_Context", null, null ,null)
         );
 
-        EventTrace trace = createMockEventTrace(EVENT_TRACE_ID,"Mock_Group", "Mock_Context");
+        EventTrace trace = createMockEventTrace(EVENT_TRACE_NAME,"Mock_Group", "Mock_Context");
 
         event.setSource(source);
         event.setTarget(target);
@@ -160,7 +161,7 @@ public class EventMockData {
                 createMockEventDetailService("f37f308f-5649-4f85-a9c8-e89c850a2e2a",null, "Cause_Service4", null, null, null),
                 createMockEventDetailContext("1e17af47-2875-4766-bb77-73e340ded8b8",null, "Cause_Context4", null, null, null)
         );
-        EventTrace trace2 = createMockEventTrace("b4aa882d-399a-4e49-a42b-c47fbab66167", "Some group", "Some context");
+        EventTrace trace2 = createMockEventTrace(EVENT_TRACE_NAME2, "Some group", "Some context");
 
         event4.setSource(source4);
         event4.setTarget(target4);

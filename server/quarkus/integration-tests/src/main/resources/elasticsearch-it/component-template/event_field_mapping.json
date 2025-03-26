@@ -803,7 +803,7 @@
             "context": {
               "type": "keyword"
             },
-            "uuid": {
+            "name": {
               "type": "keyword"
             }
           }
