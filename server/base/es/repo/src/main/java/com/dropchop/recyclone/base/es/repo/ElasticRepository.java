@@ -10,7 +10,6 @@ import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
-import com.dropchop.recyclone.base.api.repo.ElasticCrudRepository;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
