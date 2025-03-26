@@ -78,6 +78,16 @@ public abstract class ElasticBulkMethodImpl {
     JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
     if (responseBody.has("items")) {
       int i = 0;
+
+      if(responseBody.has("errors")) {
+        if(responseBody.get("errors").asBoolean()) {
+          throw new ServiceException(
+            ErrorCode.internal_error,
+            "Bulk request failed with response: " + responseBody.get("items").toString()
+          );
+        }
+      }
+
       for (JsonNode item : responseBody.get("items")) {
         // Check the type of operation (index, delete, etc.)
         JsonNode opResult = item.get("index") != null ? item.get("index") :
