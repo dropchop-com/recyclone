@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.repo.config;
+package com.dropchop.recyclone.base.es.repo.config;
 
 public interface ElasticIndexConfig extends ClassIndexConfig {
   default Integer getSizeOfPagination() {

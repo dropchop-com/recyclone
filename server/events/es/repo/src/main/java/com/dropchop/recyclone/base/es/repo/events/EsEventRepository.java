@@ -11,7 +11,7 @@ import org.elasticsearch.client.RestClient;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig.MONTH_FORMATTER;
+import static com.dropchop.recyclone.base.es.repo.config.DateBasedIndexConfig.MONTH_FORMATTER;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.

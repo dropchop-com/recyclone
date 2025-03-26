@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.repo.config;
+package com.dropchop.recyclone.base.es.repo.config;
 
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;

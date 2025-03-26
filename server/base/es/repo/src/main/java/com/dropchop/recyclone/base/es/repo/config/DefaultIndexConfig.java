@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.repo.config;
+package com.dropchop.recyclone.base.es.repo.config;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;

@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
-import com.dropchop.recyclone.base.api.repo.config.ClassStaticIndexConfig;
-import com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig;
+import com.dropchop.recyclone.base.es.repo.config.ClassStaticIndexConfig;
+import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
