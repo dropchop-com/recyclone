@@ -189,7 +189,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     }
     //Load role node.
     RoleNode loadedRoleNode = this.loadRoleNode(roleNodeParams);
-    if (this.isInstanceRoleNode(loadedRoleNode) && loadedRoleNode.getParent() == null) {
+    if (!this.isInstanceRoleNode(loadedRoleNode) && loadedRoleNode.getParent() == null) {
       //return what we have for root node
       return loadedRoleNode.getRoleNodePermissions();
     }
