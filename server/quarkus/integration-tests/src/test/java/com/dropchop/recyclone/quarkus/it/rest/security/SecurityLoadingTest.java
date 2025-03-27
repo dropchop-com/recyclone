@@ -412,9 +412,40 @@ public class SecurityLoadingTest {
   }
 
 
+
+
   @Test
   @Order(30)
-  public void testLoadAndCheckPermissionInstanceForEntity() {
+  public void testLoadAndCheckPermissionInstanceForOrgEntity() {
+
+    //load permissions for org
+    RoleNodeParams params = new RoleNodeParams();
+    params.setEntity(ORG_ENTITY);
+    params.setEntityId(ORG_ENTITY_ID);
+    params.getFilter().getContent().setTreeLevel(4);
+
+    List<RoleNodePermission> orgPermissions = given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(params)
+        .when()
+        .post("/api" + INTERNAL_SEGMENT + PERMISSIONS + PERMISSIONS_LIST_SEGMENT )
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList("data", RoleNodePermission.class);
+
+    assertEquals(4, orgPermissions.size());
+
+  }
+
+
+  @Test
+  @Order(35)
+  public void testLoadAndCheckPermissionInstanceForOrgUnitEntity() {
     RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
         ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0
     );
@@ -605,4 +636,5 @@ public class SecurityLoadingTest {
         ).findFirst().get().getAllowed()
     );
   }
+
 }
