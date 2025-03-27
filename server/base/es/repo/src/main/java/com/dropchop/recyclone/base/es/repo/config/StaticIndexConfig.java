@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @SuppressWarnings("unused")
 public class StaticIndexConfig
-    implements ClassIndexConfig, HasRootAlias, HasStaticReadIndex, HasStaticWriteIndex {
+    implements ElasticIndexConfig, ClassIndexConfig, HasRootAlias, HasStaticReadIndex, HasStaticWriteIndex {
 
   private final Class<?> rootClass;
   private final String indexName;
