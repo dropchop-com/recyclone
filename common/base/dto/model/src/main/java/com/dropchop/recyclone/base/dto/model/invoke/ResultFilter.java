@@ -123,7 +123,19 @@ public class ResultFilter
   }
 
   public ResultFilter lang(LanguageFilter languageFilter) {
-    this.lang = languageFilter;
+    this.setLang(languageFilter);
+    return this;
+  }
+
+  @Override
+  public ResultFilter size(int size) {
+    this.setSize(size);
+    return this;
+  }
+
+  @Override
+  public ResultFilter from(int from) {
+    this.setFrom(size);
     return this;
   }
 

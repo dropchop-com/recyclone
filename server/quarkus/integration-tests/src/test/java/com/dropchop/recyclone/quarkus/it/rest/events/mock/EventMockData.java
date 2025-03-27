@@ -10,15 +10,14 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+@SuppressWarnings("unused")
 @Mock
 public class EventMockData {
 
     public static String EVENT_TRACE_ID = "6df37bd3-073f-45f2-9f00-65022f2b4019";
 
-    public List<Event> createMockEvents()
-    {
+    public List<Event> createMockEvents() {
         List<Event> mockEvents = new ArrayList<>();
         Event event = new Event();
         event.setId("4794b019-9750-44f4-a3c9-33516c6bfc50");
@@ -212,7 +211,8 @@ public class EventMockData {
         return mockEvents;
     }
 
-    private EventDetail createMockEventDetail(String id,String name, EventDetail parent, EventDetail child, ZonedDateTime created) {
+    private EventDetail createMockEventDetail(String id, String name, EventDetail parent, EventDetail child,
+                                              ZonedDateTime created) {
         EventDetail detail = new EventDetail();
 
         detail.setId(id);
@@ -225,8 +225,8 @@ public class EventMockData {
 
     }
 
-    private EventItem createMockEventItem(String id,String type, EventDetail subject, EventDetail object, EventDetail service, EventDetail context, ZonedDateTime created)
-    {
+    private EventItem createMockEventItem(String id, String type, EventDetail subject, EventDetail object,
+                                          EventDetail service, EventDetail context, ZonedDateTime created) {
         EventItem item = new EventItem();
         item.setId(id);
         item.setSubject(subject);
@@ -238,8 +238,7 @@ public class EventMockData {
         return item;
     }
 
-    private EventTrace createMockEventTrace(String id,String group, String context)
-    {
+    private EventTrace createMockEventTrace(String id,String group, String context) {
         EventTrace trace = new EventTrace();
         trace.setId(id);
         trace.setGroup(group);
@@ -247,22 +246,27 @@ public class EventMockData {
         return trace;
     }
 
-    private EventDetail createMockEventDetailSubject(String id,String name, EventDetail parent, EventDetail child, ZonedDateTime created) {
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailSubject(String id,String name, EventDetail parent,
+                                                     EventDetail child, ZonedDateTime created) {
         return createMockEventDetail(id,name, parent, child, created);
     }
 
-    private EventDetail createMockEventDetailObject(String id,String name, EventDetail parent, EventDetail child, ZonedDateTime created)
-    {
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailObject(String id,String name, EventDetail parent,
+                                                    EventDetail child, ZonedDateTime created) {
         return createMockEventDetail(id,name, parent, child, created);
     }
 
-    private EventDetail createMockEventDetailService(String id,String name, EventDetail parent, EventDetail child, ZonedDateTime created)
-    {
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailService(String id, String name, EventDetail parent,
+                                                     EventDetail child, ZonedDateTime created) {
         return createMockEventDetail(id,name, parent, child,created);
     }
 
-    private EventDetail createMockEventDetailContext(String id,String name, EventDetail parent, EventDetail child, ZonedDateTime created)
-    {
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailContext(String id,String name, EventDetail parent,
+                                                     EventDetail child, ZonedDateTime created) {
         return createMockEventDetail(id,name, parent, child, created);
     }
 }

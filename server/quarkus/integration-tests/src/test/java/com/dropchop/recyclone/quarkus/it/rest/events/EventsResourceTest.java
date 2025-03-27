@@ -4,12 +4,15 @@ import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
+import com.dropchop.recyclone.base.dto.model.base.DtoId;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.dto.model.event.EventDetail;
 import com.dropchop.recyclone.base.dto.model.event.EventItem;
 import com.dropchop.recyclone.base.dto.model.event.EventTrace;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
+import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
 import com.dropchop.recyclone.quarkus.it.rest.events.mock.EventMockData;
+import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -18,6 +21,7 @@ import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +45,9 @@ public class EventsResourceTest {
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   EventMockData eventMockData;
+
+  @Inject
+  ElasticSearchTestHelper testHelper;
 
   @BeforeEach
   public void setUp() {
@@ -131,7 +138,10 @@ public class EventsResourceTest {
 
   @Test
   @Order(10)
-  public void create() {
+  @Tag("create")
+  @Tag("delete")
+  @Tag("delete")
+  public void create() throws IOException {
 
     EventDetail detail = new EventDetail();
     detail.setId(UUID.randomUUID().toString());
@@ -185,16 +195,12 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
     this.validateNonNested(events);
+    testHelper.waitForObject("/event/_search",  EVENT_ID);
   }
 
   @Test
   @Order(20)
   public void search() {
-    try {
-      Thread.sleep(3000);
-    } catch (InterruptedException ignored) {
-    }
-
     Condition c = or(
       field("uuid", EVENT_ID),
       and(
@@ -202,9 +208,15 @@ public class EventsResourceTest {
       )
     );
 
-    EventParams params = EventParams.builder().condition(c).build();
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams
+        .builder()
+        .filter(
+            new ResultFilter()
+                .content(new ResultFilter.ContentFilter().treeLevel(5))
+                .size(100)
+        )
+        .condition(c)
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -226,11 +238,6 @@ public class EventsResourceTest {
   @Test
   @Order(25)
   public void get() {
-    try {
-      Thread.sleep(3000);
-    } catch (InterruptedException ignored) {
-    }
-
     List<Event> events = given()
       .log().all()
       .contentType(ContentType.JSON)
@@ -250,8 +257,8 @@ public class EventsResourceTest {
 
   @Test
   @Order(30)
-  public void delete() {
-
+  @Tag("delete")
+  public void delete() throws IOException {
     Event event = new Event();
     event.setId(EVENT_ID);
 
@@ -270,11 +277,8 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     assertEquals(1, events.size());
+    testHelper.waitForObjects("/event/_search", EVENT_ID, 0);
 
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException ignored) {
-    }
 
     Condition c = or(
         field("uuid", EVENT_ID)
@@ -305,7 +309,21 @@ public class EventsResourceTest {
 
   @Test
   @Order(35)
-  public void createMultiple() {
+  @Tag("createMultiple")
+  @Tag("searchBySpecificTraceId")
+  @Tag("searchAllEventsWithoutSpecificTraceId")
+  @Tag("searchEventsBySpecificId")
+  @Tag("searchEventsByTraceIdOrUnitString")
+  @Tag("searchEventsInPeriodWithTraceId")
+  @Tag("searchEventsByDateRange")
+  @Tag("searchEventsByDateRange2")
+  @Tag("searchEventsByDateRange3")
+  @Tag("complexQuery")
+  @Tag("complexQuery2")
+  @Tag("complexQuery3")
+  @Tag("complexQuery4")
+  @Tag("complexQuery5")
+  public void createMultiple() throws IOException {
     //List<Event> events = createMockEventsForTraceTest();
     List<Event> events = eventMockData.createMockEvents();
 
@@ -325,28 +343,20 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     assertEquals(4, events.size());
-
+    List<String> eIds = events.stream().map(DtoId::getId).toList();
+    testHelper.waitForObjects("/event/_search", eIds, 4);
   }
 
   @Test
   @Order(40)
+  @Tag("searchBySpecificTraceId")
   public void searchBySpecificTraceId() {
-    try {
-      Thread.sleep(3000);
-    } catch (InterruptedException ignored) {
-    }
-
-    /*
-     * Search by specific trace uuid
-     * */
     EventParams params = EventParams.builder().condition(
       and(field("trace.uuid", EVENT_TRACE_ID))
     ).build();
 
     //Field field = field("trace.id", EVENT_TRACE_ID);
     //Condition c = and(field);
-
-
     params.tryGetResultFilter().setSize(100);
     params.tryGetResultFilter().getContent().setTreeLevel(5);
 
@@ -371,10 +381,8 @@ public class EventsResourceTest {
 
   @Test
   @Order(45)
+  @Tag("searchAllEventsWithoutSpecificTraceId")
   public void searchAllEventsWithoutSpecificTraceId() {
-    /*
-     * Find all events except the one with this specific EVENT_TRACE_ID
-     * */
     EventParams params = EventParams.builder().condition(
       not(field("trace.uuid", EVENT_TRACE_ID))
     ).build();
@@ -402,12 +410,8 @@ public class EventsResourceTest {
 
   @Test
   @Order(50)
+  @Tag("searchEventsBySpecificId")
   public void searchEventsBySpecificId() {
-
-    /*
-     * Find events:
-     *  by uuid
-     * */
     EventParams params = EventParams.builder().condition(
       and(field("uuid", "6b829aac-06d2-4cbc-9721-d6d24a3628dd"))
     ).build();
@@ -431,19 +435,12 @@ public class EventsResourceTest {
 
     assertEquals("6b829aac-06d2-4cbc-9721-d6d24a3628dd", events.getFirst().getId());
     assertEquals(1, events.size());
-
   }
 
   @Test
   @Order(55)
-  public void searchEventsByOrOperator() {
-
-    /*
-     * Find events:
-     * where uuid is EVENT_TRACE_ID
-     * or
-     * unit field has a value of "Mock_Unit"
-     * */
+  @Tag("searchEventsByTraceIdOrUnitString")
+  public void searchEventsByTraceIdOrUnitString() {
     EventParams params = EventParams.builder().condition(
       or(
         field("trace.uuid", EVENT_TRACE_ID),
@@ -478,17 +475,12 @@ public class EventsResourceTest {
     }
 
     assertEquals("Mock_Unit", events.getFirst().getUnit());
-
   }
 
   @Test
   @Order(60)
-  public void searchEventsWithMultipleFilters() {
-
-    /*
-     * Find events:
-     * between dates and uuid must be EVENT_TRACE_ID
-     * */
+  @Tag("searchEventsInPeriodWithTraceId")
+  public void searchEventsInPeriodWithTraceId() {
     EventParams params = EventParams.builder().condition(
       and(
         field(
@@ -526,12 +518,8 @@ public class EventsResourceTest {
 
   @Test
   @Order(65)
+  @Tag("searchEventsByDateRange")
   public void searchEventsByDateRange() {
-
-    /*
-     * Find events:
-     * between dates
-     * */
     EventParams params = EventParams.builder().condition(
       and(
         field(
@@ -560,30 +548,20 @@ public class EventsResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList(".", Event.class);
-
     assertEquals(4, events.size());
-
   }
 
   @Test
   @Order(70)
+  @Tag("searchEventsByDateRange2")
   public void searchEventsByDateRange2() {
-
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T12:12:15.20");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
-
-    /*
-     * Find events:
-     * between dates
-     * */
     EventParams params = EventParams.builder().condition(
       and(
         field(
           "created",
           gtLt(
-            /*
-             * Hour dependend (check event object to see the comparison)
-             * */
             startDate,
             endDate
           )
@@ -617,29 +595,19 @@ public class EventsResourceTest {
         "Event date is out of range: " + createdDate
       );
     }
-
   }
 
   @Test
   @Order(75)
+  @Tag("searchEventsByDateRange3")
   public void searchEventsByDateRange3() {
-
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
-
-    /*
-     * Find events:
-     * where created is between both date values
-     * same as before just with different dates
-     * */
     EventParams params = EventParams.builder().condition(
       and(
         field(
           "created",
           gtLt(
-            /*
-             * Hour dependend (check event object to see the comparison)
-             * */
             startDate,
             endDate
           )
@@ -678,8 +646,8 @@ public class EventsResourceTest {
 
   @Test
   @Order(80)
+  @Tag("complexQuery")
   public void complexQuery() {
-
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
@@ -741,14 +709,12 @@ public class EventsResourceTest {
 
   @Test
   @Order(85)
+  @Tag("complexQuery2")
   public void complexQuery2() {
-
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
     ZonedDateTime startDate2 = Iso8601.fromIso("2024-06-14T00:00:00.000");
     ZonedDateTime endDate2 = Iso8601.fromIso("2024-06-17T00:00:00.000");
-
-
     /*
      * Find all the events:
      * that container either of the field value (target.created or trace.group..)
@@ -817,6 +783,7 @@ public class EventsResourceTest {
 
   @Test
   @Order(90)
+  @Tag("complexQuery3")
   public void complexQuery3() {
 
     /*
@@ -862,6 +829,7 @@ public class EventsResourceTest {
 
   @Test
   @Order(95)
+  @Tag("complexQuery4")
   public void complexQuery4() {
 
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
@@ -926,6 +894,7 @@ public class EventsResourceTest {
 
   @Test
   @Order(100)
+  @Tag("complexQuery5")
   public void complexQuery5() {
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
