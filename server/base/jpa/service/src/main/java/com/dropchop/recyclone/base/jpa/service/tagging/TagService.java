@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.jpa.service.tagging;
 
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.jpa.repo.tagging.TagMapperProvider;

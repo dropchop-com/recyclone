@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.api.service.ElasticCrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;

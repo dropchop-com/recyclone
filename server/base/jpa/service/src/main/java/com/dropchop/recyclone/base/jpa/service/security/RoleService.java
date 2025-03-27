@@ -10,7 +10,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.api.service.JoinEntityHelper;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;

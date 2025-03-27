@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.jpa.service.localization;
 
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
 import com.dropchop.recyclone.base.jpa.repo.localization.CountryMapperProvider;

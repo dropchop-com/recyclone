@@ -262,6 +262,11 @@
       <!-- backend API -->
       <dependency>
         <groupId>com.dropchop.recyclone</groupId>
+        <artifactId>recyclone-base-api-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dropchop.recyclone</groupId>
         <artifactId>recyclone-base-api-mapper</artifactId>
         <version>${project.version}</version>
       </dependency>

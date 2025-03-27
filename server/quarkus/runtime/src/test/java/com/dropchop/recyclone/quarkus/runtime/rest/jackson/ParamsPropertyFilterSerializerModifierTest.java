@@ -132,7 +132,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter().content().treeLevel(1);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -155,7 +155,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter().content().treeLevel(2);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -199,7 +199,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter().content().treeLevel(3);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -249,7 +249,7 @@ class ParamsPropertyFilterSerializerModifierTest {
     params.filter().content().treeLevel(3);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     Domain domain = new Domain();
     domain.setCode(Constants.Domains.Localization.LANGUAGE);
@@ -297,7 +297,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -325,7 +325,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE);
 
   ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -358,7 +358,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.ALL_OBJS_IDCODE_TITLE_TRANS);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -407,7 +407,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -449,7 +449,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -494,7 +494,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE_TITLE_TRANS);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     String json = mapper.writeValueAsString(List.of(sl));
     String expected = """
@@ -545,7 +545,7 @@ class ParamsPropertyFilterSerializerModifierTest {
         .detailLevel(com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail.NESTED_OBJS_IDCODE);
 
     ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
-    ObjectMapper mapper = producer.createObjectMapper();
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
 
     ResultStatus status = new ResultStatus();
     status.setCode(ResultCode.success);

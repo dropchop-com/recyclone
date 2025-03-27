@@ -43,6 +43,10 @@
     </dependency>
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-base-api-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-api-repo</artifactId>
     </dependency>
       <dependency>

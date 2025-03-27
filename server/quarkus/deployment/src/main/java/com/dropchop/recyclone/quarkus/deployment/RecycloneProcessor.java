@@ -76,6 +76,9 @@ class RecycloneProcessor {
         new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-jaxrs-internal")
     );
     indexDependency.produce(
+        new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-common")
+    );
+    indexDependency.produce(
         new IndexDependencyBuildItem("com.dropchop.recyclone", "recyclone-base-api-mapper")
     );
     indexDependency.produce(
@@ -175,7 +178,7 @@ class RecycloneProcessor {
   }
 
   private final DotName ANNO_NAMED = DotName.createSimple(
-      "com.dropchop.recyclone.base.api.service.RecycloneType"
+      "com.dropchop.recyclone.base.api.common.RecycloneType"
   );
 
 

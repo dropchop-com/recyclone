@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.it.app;
 
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
@@ -24,6 +25,8 @@ import org.apache.shiro.realm.Realm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 22.
@@ -50,14 +53,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   @Inject
   RecycloneBuildConfig recycloneConfig;
 
-  /**
-   * ObjectMapper customization/extension point. Add own polymorphic mappings here.
-   * This is needed because of polymorphism if you want to use existing To[XY]TagMapper.
-   * If provide your own To[XY]MyCustomTagMapper then you (probably) don't need this.
-   */
-  @Produces
-  @ApplicationScoped
-  ObjectMapper getObjectMapper() {
+  private void configureMappers() {
     // this is just for demo
     RecycloneBuildConfig buildConfig = application.getBuildConfig();
 
@@ -67,7 +63,26 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
     //mapping is already there collected from the @SubclassMapping annotation of the TagToDtoMapper,
     //but we add it again here just for demonstration
     mapperConfig.addBidiMapping(LanguageGroup.class, JpaLanguageGroup.class);
-    return objectMapperFactory.createObjectMapper();
+  }
+
+  /**
+   * ObjectMapper customization/extension point. Add own polymorphic mappings here.
+   * This is needed because of polymorphism if you want to use existing To[XY]TagMapper.
+   * If provide your own To[XY]MyCustomTagMapper then you (probably) don't need this.
+   */
+  @Produces
+  @ApplicationScoped
+  ObjectMapper getDefaultObjectMapper() {
+    configureMappers();
+    return objectMapperFactory.createFilteringObjectMapper();
+  }
+
+  @Produces
+  @ApplicationScoped
+  @RecycloneType(RECYCLONE_DEFAULT)
+  ObjectMapper getInternalObjectMapper() {
+    configureMappers();
+    return objectMapperFactory.createNonFilteringObjectMapper();
   }
 
   @Produces

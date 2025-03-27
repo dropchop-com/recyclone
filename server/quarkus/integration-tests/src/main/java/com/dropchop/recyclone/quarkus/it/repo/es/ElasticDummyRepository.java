@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.repo.config.ClassStaticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
@@ -11,6 +12,8 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RestClient;
+
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 @Slf4j
 @Getter
@@ -26,6 +29,7 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
       .build();
 
   @Inject
+  @RecycloneType(RECYCLONE_DEFAULT)
   ObjectMapper objectMapper;
 
   @Inject

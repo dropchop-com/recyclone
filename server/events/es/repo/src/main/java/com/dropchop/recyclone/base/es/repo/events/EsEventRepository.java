@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.events;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
@@ -11,6 +12,7 @@ import org.elasticsearch.client.RestClient;
 
 import java.util.UUID;
 
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 import static com.dropchop.recyclone.base.es.repo.config.DateBasedIndexConfig.MONTH_FORMATTER;
 
 /**
@@ -24,6 +26,7 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
   private final Class<EsEvent> rootClass = EsEvent.class;
 
   @Inject
+  @RecycloneType(RECYCLONE_DEFAULT)
   ObjectMapper objectMapper;
 
   @Inject

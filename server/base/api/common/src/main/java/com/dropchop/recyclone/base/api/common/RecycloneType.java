@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.service;
+package com.dropchop.recyclone.base.api.common;
 
 import jakarta.inject.Qualifier;
 

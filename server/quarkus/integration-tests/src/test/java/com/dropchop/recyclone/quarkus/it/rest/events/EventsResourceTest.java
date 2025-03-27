@@ -10,7 +10,6 @@ import com.dropchop.recyclone.base.dto.model.event.EventItem;
 import com.dropchop.recyclone.base.dto.model.event.EventTrace;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
 import com.dropchop.recyclone.quarkus.it.rest.events.mock.EventMockData;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -40,6 +39,7 @@ public class EventsResourceTest {
   ObjectMapper mapper;
 
   @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
   EventMockData eventMockData;
 
   @BeforeEach
@@ -64,8 +64,7 @@ public class EventsResourceTest {
     String UNIT = "unit";
   }
 
-  private void validate(List<Event> events) {
-    //assertEquals(1, events.size());
+  private void validateNonNested(List<Event> events) {
     Event rspEvent = events.getFirst();
     assertEquals(EVENT_ID, rspEvent.getId());
     assertNotNull(rspEvent.getCreated());
@@ -75,6 +74,11 @@ public class EventsResourceTest {
     assertEquals(Strings.DATA, rspEvent.getData());
     //assertEquals(rspEvent.getValue(), rspEvent.getValue());
     assertEquals(Strings.UNIT, rspEvent.getUnit());
+  }
+
+  private void validate(List<Event> events) {
+    validateNonNested(events);
+    Event rspEvent = events.getFirst();
     assertNotNull(rspEvent.getSource());
     assertNotNull(rspEvent.getSource().getSubject());
     assertNotNull(rspEvent.getSource().getSubject().getCreated());
@@ -175,12 +179,12 @@ public class EventsResourceTest {
       .and()
       .body(List.of(event))
       .when()
-      .post("/api/internal/events/?c_level=5")
+      .post("/api/internal/events")
       .then()
       .statusCode(200)
       .extract()
       .body().jsonPath().getList(".", Event.class);
-    this.validate(events);
+    this.validateNonNested(events);
   }
 
   @Test
@@ -301,7 +305,7 @@ public class EventsResourceTest {
 
   @Test
   @Order(35)
-  public void createMultiple() throws JsonProcessingException {
+  public void createMultiple() {
     //List<Event> events = createMockEventsForTraceTest();
     List<Event> events = eventMockData.createMockEvents();
 
