@@ -1,15 +1,20 @@
-package com.dropchop.recyclone.quarkus.it.rest;
+package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.rest.dummy.mock.DummyMockData;
+import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -18,6 +23,7 @@ import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -28,6 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DummyResourceTest {
 
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  DummyMockData dummyMockData;
+
+  @Inject
+  ElasticSearchTestHelper testHelper;
+
   @Test
   @Order(5)
   @Tag("create")
@@ -37,49 +50,26 @@ public class DummyResourceTest {
   @Tag("dummyQueryTest")
   @Tag("deleteById")
   @Tag("deleteByQuery")
-  public void create() {
-    Dummy dummy1 = new Dummy();
-    dummy1.setTitle("Introduction to Java");
-    dummy1.setDescription("A comprehensive guide to Java programming.");
-    dummy1.setLang("en");
-    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
-    dummy1.setModified(ZonedDateTime.now());
-    dummy1.setDeactivated(null);
-    dummy1.setCode("dummy_code1");
-
-    Dummy dummy2 = new Dummy();
-    dummy2.setTitle("Advanced Python Techniques");
-    dummy2.setDescription("Explore advanced concepts in Python programming.");
-    dummy2.setLang("en");
-    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
-    dummy2.setModified(ZonedDateTime.now().minusDays(5));
-    dummy2.setDeactivated(null);
-    dummy2.setCode("dummy_code2");
-
-    Dummy dummy3 = new Dummy();
-    dummy3.setTitle("Introduction to Machine Learning");
-    dummy3.setDescription("An introductory course to machine learning and its applications.");
-    dummy3.setLang("si");
-    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
-    dummy3.setModified(ZonedDateTime.now().minusDays(10));
-    dummy3.setDeactivated(null);
-    dummy3.setCode("dummy_code3");
-
-    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
+  public void create() throws IOException {
+    List<Dummy> dummies = this.dummyMockData.createMockDummies();
 
     given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
+      .auth().preemptive().basic("admin1", "password")
+      .and()
       .body(dummies)
       .when()
-      .post("/api/internal/test/dummy")
+      .post("/api/internal/test/dummy/")
       .then()
       .statusCode(200)
-      .log().all();
+      .extract()
+      .body().jsonPath().getList(".", Dummy.class);
 
-    assertTrue(true);
+    assertEquals(8, dummies.size());
+    List<String> eCodes = dummies.stream().map(DtoCode::getCode).toList();
+    testHelper.waitForObjects("/dummy/_search", eCodes, 8);
   }
 
   @Test
@@ -124,44 +114,6 @@ public class DummyResourceTest {
   @Order(30)
   @Tag("dummyQueryTestAggregations")
   public void dummyQueryTestAggregations() {
-    /*QueryParams params = QueryParams.builder().aggregation(
-      aggs(
-        max(
-          "watch_max",
-          "watch"
-        ),
-        cardinality(
-          "nested_nested_worker_cardinality",
-          "worker"
-        ),
-        dateHistogram(
-          "nested_nested_worker_date_histogram",
-          "worker",
-          "month"
-        ),
-        terms(
-          "nested_worker_terms",
-          "worker"
-        ),
-        sum(
-          "nested_worker_sum",
-          "worker"
-        ),
-        min(
-          "nested_worker_min",
-          "worker"
-        ),
-        avg(
-          "nested_worker_avg",
-          "worker"
-        ),
-        count(
-          "nested_nested_worker_count",
-          "worker"
-        )
-      )
-    ).build();*/
-
     QueryParams params = QueryParams.builder().aggregation(
       aggs(
         terms(
@@ -187,87 +139,6 @@ public class DummyResourceTest {
       .log().all();
     //.body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
-
-  /*@Test
-  @Order(30)
-  public void dummyQueryCombined() {
-    QueryParams params = QueryParams.builder().condition(
-      and(
-        or(
-          field(
-            "updated",
-            gteLt(
-              Iso8601.fromIso("2024-09-19T10:12:01.123"),
-              Iso8601.fromIso("2024-09-20T11:00:01.123")
-            )
-          ),
-          and(
-            field("neki", in("one", "two", "three"))
-          ),
-          field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
-          not(
-            field(
-              "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
-            )
-          )
-        ),
-        field("type", in(1, 2, 3)),
-        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
-        field("miki", null)
-      ).and(
-        field("type2", in(1, 2, 3))
-      )
-    ).aggregation(
-      aggs(
-        max(
-          "watch_max",
-          "watch",
-          sum(
-            "nested_worker_sum",
-            "worker"
-          ),
-          min(
-            "nested_worker_min",
-            "worker"
-          ),
-          avg(
-            "nested_worker_avg",
-            "worker"
-          ),
-          count(
-            "nested_nested_worker_count",
-            "worker"
-          )
-        ),
-        cardinality(
-          "nested_nested_worker_cardinality",
-          "worker"
-        ),
-        dateHistogram(
-          "nested_nested_worker_dateHistogram",
-          "worker",
-          "month"
-        ),
-        terms(
-          "nested_worker_terms",
-          "worker"
-        )
-      )
-    ).build();
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
-      .body(params)
-      .when()
-      .post("/api/public/test/dummy/query")
-      .then()
-      .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
-  }
-  */
 
   @Test
   @Order(50)
