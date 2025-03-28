@@ -40,6 +40,7 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
     return service.search();
   }
 
+  //TODO: Refactor CodeParams or CrudService API
   @Override
   public Result<Dummy> search(CodeParams params) {
     return service.search();
@@ -47,11 +48,11 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
 
   @Override
   public Result<Dummy> query(DummyQueryParams params) {
-    return service.query();
+    return service.search();
   }
 
   @Override
   public List<Dummy> queryRest(DummyQueryParams params) {
-    return service.query().getData();
+    return service.search().getData();
   }
 }

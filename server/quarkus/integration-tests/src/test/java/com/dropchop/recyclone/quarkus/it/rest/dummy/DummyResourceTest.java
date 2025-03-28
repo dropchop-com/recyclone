@@ -17,20 +17,22 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.gteLt;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
+import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.
  */
 @Slf4j
 @QuarkusTest
+@SuppressWarnings("unchecked")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DummyResourceTest {
 
@@ -44,8 +46,8 @@ public class DummyResourceTest {
   @Test
   @Order(5)
   @Tag("create")
-  @Tag("dummyRestGet")
-  @Tag("dummySearch")
+  @Tag("searchByCode")
+  @Tag("searchByTitleTranslation")
   @Tag("dummyQueryTestAggregations")
   @Tag("dummyQueryTest")
   @Tag("deleteById")
@@ -74,40 +76,64 @@ public class DummyResourceTest {
 
   @Test
   @Order(10)
-  @Tag("dummyRestGet")
-  public void dummyRestGet() {
-    given()
+  @Tag("searchByCode")
+  public void searchByCode() {
+    QueryParams params = QueryParams.builder().condition(
+      or(
+        field("code", "sad15s1a21sa21a51a"),
+        field("code", "asdlasdadsa4dsds4d"),
+        field("code", "4d5as45s1ds4d5ss8sd6s")
+      )
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Dummy> dummies = given()
       .log().all()
-      //.accept(MediaType.APPLICATION_JSON)
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic("editor1", "password")
+      .and()
+      .body(params)
       .when()
-      .get("/api/public/test/dummy")
+      .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+      .extract()
+      .body().jsonPath().getList(".", Dummy.class);
 
-    assertTrue(true);
+    assertEquals(3, dummies.size());
   }
 
 
   @Test
   @Order(20)
-  @Tag("dummySearch")
-  public void dummySearch() {
-    CodeParams params = CodeParams.builder().code("dummy_code1").build();
-    given()
+  @Tag("searchByTitleTranslation")
+  public void searchByTitleTranslation() {
+    QueryParams params = QueryParams.builder().condition(
+      and(
+        field("translations.lang", "de")
+      )
+    ).build();
+
+    List<Dummy> dummies = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("editor1", "password")
+      .and()
       .body(params)
       .when()
-      .post("/api/public/test/dummy/search")
+      .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+      .extract()
+      .body().jsonPath().getList(".", Dummy.class);
+
+    assertEquals("4d5as45s1ds4d5ss8sd6s", dummies.getFirst().getCode());
+    assertEquals("de", dummies.getFirst().getTranslations().iterator().next().getLang());
+    assertEquals(1, dummies.size());
   }
 
   @Test
@@ -126,18 +152,22 @@ public class DummyResourceTest {
         )
       )
     ).build();
-    given()
-      .log().all()
+
+    Map<Object, Object> response = given()
       .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .accept(APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
       .body(params)
       .when()
       .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+      .extract()
+      .body()
+      .jsonPath()
+      .getMap("aggregations");
+
+    assertEquals(8, ((List<?>) ((Map<Object, Object>)response.get("languages")).get("buckets")).size());
   }
 
   @Test
