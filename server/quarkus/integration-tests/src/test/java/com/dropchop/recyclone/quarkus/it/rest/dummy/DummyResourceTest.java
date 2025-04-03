@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
-import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
@@ -21,8 +20,6 @@ import java.util.Map;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.gteLt;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,7 +46,9 @@ public class DummyResourceTest {
   @Tag("searchByCode")
   @Tag("searchByTitleTranslation")
   @Tag("dummyQueryTestAggregations")
-  @Tag("dummyQueryTest")
+  @Tag("testWildcardSearch")
+  @Tag("testMatchPhraseSearch")
+  @Tag("testAdvancedTextSearch")
   @Tag("deleteById")
   @Tag("deleteByQuery")
   public void create() throws IOException {
@@ -167,52 +166,7 @@ public class DummyResourceTest {
       .jsonPath()
       .getMap("aggregations");
 
-    assertEquals(8, ((List<?>) ((Map<Object, Object>)response.get("languages")).get("buckets")).size());
-  }
-
-  @Test
-  @Order(50)
-  @Tag("dummyQueryTest")
-  public void dummyQueryTest() {
-    QueryParams params = QueryParams.builder().condition(
-      and(
-        or(
-          field(
-            "updated",
-            gteLt(
-              Iso8601.fromIso("2024-09-19T10:12:01.123"),
-              Iso8601.fromIso("2024-09-20T11:00:01.123")
-            )
-          ),
-          and(
-            field("neki", in("one", "two", "three"))
-          ),
-          field("modified", Iso8601.fromIso("2024-09-19T10:12:01.123")),
-          not(
-            field(
-              "uuid", in("6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609")
-            )
-          )
-        ),
-        field("type", in(1, 2, 3)),
-        field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
-        field("miki", null)
-      ).and(
-        field("type2", in(1, 2, 3))
-      )
-    ).build();
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
-      .body(params)
-      .when()
-      .post("/api/public/test/dummy/query")
-      .then()
-      .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+    assertEquals(8, ((List<?>) ((Map<Object, Object>) response.get("languages")).get("buckets")).size());
   }
 
   @Test
@@ -220,32 +174,10 @@ public class DummyResourceTest {
   @Tag("dummySearchNullTest")
   public void dummySearchNullTest() {
     QueryParams params = QueryParams.builder().condition(
-      field("languages.name", "si")
+      field("languages.name", "ru")
     ).build();
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
-      .body(params)
-      .when()
-      .post("/api/public/test/dummy/query")
-      .then()
-      .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
-  }
 
-  @Test
-  @Order(30)
-  public void dummySearchOneDummyTest() {
-    QueryParams params = QueryParams.builder().condition(
-      and(
-        field("code", "JAVA101"),
-        field("lang", "en")
-      )
-    ).build();
-    given()
+    List<Dummy> dummies = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -255,83 +187,25 @@ public class DummyResourceTest {
       .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
-  }
+      .extract()
+      .body()
+      .jsonPath()
+      .getList(".", Dummy.class);
 
-  @Test
-  @Order(30)
-  public void dummySearchMultipleDummyTest() {
-    QueryParams params = QueryParams.builder().condition(
-      field("lang", "en")
-    ).build();
-    params.tryGetResultFilter().setSize(1);
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
-      .body(params)
-      .when()
-      .post("/api/public/test/dummy/query")
-      .then()
-      .statusCode(200)
-      .log().all();
-    //.body("[0].code", equalTo("sl")).extract().asPrettyString();
+    assertEquals(0, dummies.size());
   }
 
   @Test
   @Order(40)
+  @Tag("testWildcardSearch")
   public void testWildcardSearch() {
-    Dummy dummy1 = new Dummy();
-    dummy1.setTitle("Introduction to Java");
-    dummy1.setDescription("A comprehensive guide to Java programming.");
-    dummy1.setLang("en");
-    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
-    dummy1.setModified(ZonedDateTime.now());
-    dummy1.setDeactivated(null);
-    dummy1.setCode("dummy_code45");
-
-    Dummy dummy2 = new Dummy();
-    dummy2.setTitle("Advanced Python Techniques");
-    dummy2.setDescription("Explore advanced concepts in Python programming.");
-    dummy2.setLang("en");
-    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
-    dummy2.setModified(ZonedDateTime.now().minusDays(5));
-    dummy2.setDeactivated(null);
-    dummy2.setCode("dummy_code46");
-
-    Dummy dummy3 = new Dummy();
-    dummy3.setTitle("Introduction to Machine Learning");
-    dummy3.setDescription("An introductory course to machine learning and its applications.");
-    dummy3.setLang("si");
-    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
-    dummy3.setModified(ZonedDateTime.now().minusDays(10));
-    dummy3.setDeactivated(null);
-    dummy3.setCode("dummy_code47");
-
-    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
-
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
-      .body(dummies)
-      .when()
-      .post("/api/internal/test/dummy")
-      .then()
-      .statusCode(200)
-      .log().all();
-
     QueryParams s = QueryParams.builder().condition(
       or(
-        wildcard("description", "comprehensive", true, 1.2f),
-        wildcard("description", "concepts")
+        wildcard("description", "Descrip*", true, 1.2f)
       )
     ).build();
 
-    given()
+    List<Dummy> dummies = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -341,23 +215,26 @@ public class DummyResourceTest {
       .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
+      .extract()
+      .body()
+      .jsonPath()
+      .getList(".", Dummy.class);
 
-    log.info("Wildcard query: {}", s.getCondition());
+    assertEquals(2, dummies.size());
   }
 
   @Test
   @Order(40)
+  @Tag("testMatchPhraseSearch")
   public void testMatchPhraseSearch() {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        phrase("description", "comprehensive guide", 2),
-        phrase("description", "concepts in ")
+        phrase("description", "Description 1", 2)
       )
     ).build();
 
-    given()
+    List<Dummy> dummies = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -367,24 +244,26 @@ public class DummyResourceTest {
       .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
+      .extract()
+      .body()
+      .jsonPath()
+      .getList(".", Dummy.class);
 
-    log.info("Wildcard query: {}", s.getCondition());
+    assertEquals(1, dummies.size());
   }
 
   @Test
   @Order(40)
-  public void testAdvancedTextWithPhraseAndWildcard() {
+  @Tag("testAdvancedTextSearch")
+  public void testAdvancedTextSearch() {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        phrase("description", "comprehensive guide", 2),
-        wildcard("description", "con*epts"),
-        advancedText("description", "\"conc*pts with phras*\"")
+        advancedText("description", "\"Desc* 6\"")
       )
     ).build();
 
-    given()
+    List<Dummy> dummies = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -394,9 +273,12 @@ public class DummyResourceTest {
       .post("/api/public/test/dummy/query")
       .then()
       .statusCode(200)
-      .log().all();
+      .extract()
+      .body()
+      .jsonPath()
+      .getList(".", Dummy.class);
 
-    log.info("Wildcard query: {}", s.getCondition());
+    assertEquals(1, dummies.size());
   }
 
   @Test
