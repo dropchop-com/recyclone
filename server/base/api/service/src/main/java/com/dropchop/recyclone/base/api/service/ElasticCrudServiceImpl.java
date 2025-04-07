@@ -2,12 +2,17 @@ package com.dropchop.recyclone.base.api.service;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Dto;
-import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.CrudRepository;
 import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
+import com.dropchop.recyclone.base.es.model.base.EsEntity;
+import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class ElasticCrudServiceImpl<D extends Dto, E extends Entity, ID> extends CrudServiceImpl<D, E, ID> {
+public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, ID> extends CrudServiceImpl<D, E, ID> {
 
   @Override
   @Transactional
@@ -53,4 +58,23 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends Entity, ID
     return result;
   }
 
+  @Transactional
+  public Integer deleteById() {
+    CommonExecContext<D, ?> context = getExecutionContext();
+    CodeParams codeParams = context.getParams();
+    List<ID> ids = (List<ID>) codeParams.getCodes();
+    return getRepository().deleteById(ids);
+  }
+
+  @Transactional
+  public Integer deleteByQuery() {
+    RepositoryExecContext<E> context = getRepository().getRepositoryExecContext();
+    if(getRepository() instanceof ElasticRepository<?,?>) {
+      return ((ElasticRepository<E, ID>)getRepository()).deleteByQuery(context);
+    }
+    throw new ServiceException(
+      ErrorCode.internal_error,
+      "Only ElasticRepository has deleteByQuery!"
+    );
+  }
 }

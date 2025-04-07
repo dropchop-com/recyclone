@@ -8,7 +8,6 @@ import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyMapperProvider;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
-import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -19,7 +18,8 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @ApplicationScoped
 @RecycloneType(RECYCLONE_ES_DEFAULT)
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
-public class ElasticDummyService extends ElasticCrudServiceImpl<Dummy, EsDummy, String> implements DummyService {
+public class ElasticDummyService extends ElasticCrudServiceImpl<Dummy, EsDummy, String>
+  implements com.dropchop.recyclone.quarkus.it.service.api.ElasticDummyService {
 
   @Inject
   ElasticDummyRepository repository;
@@ -29,16 +29,6 @@ public class ElasticDummyService extends ElasticCrudServiceImpl<Dummy, EsDummy, 
 
   @Inject
   CommonExecContext<Dummy, ?> executionContext;
-
-  @Override
-  public int delete() {
-    return 0;
-  }
-
-  @Override
-  public int deleteByQuery() {
-    return 0;
-  }
 
   @Override
   public Result<Dummy> query() {

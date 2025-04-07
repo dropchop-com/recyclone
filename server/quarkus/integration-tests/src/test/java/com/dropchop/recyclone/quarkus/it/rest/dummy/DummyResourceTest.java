@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -201,7 +200,7 @@ public class DummyResourceTest {
   public void testWildcardSearch() {
     QueryParams s = QueryParams.builder().condition(
       or(
-        wildcard("description", "Descrip*", true, 1.2f)
+        wildcard("title", "Title", true, 1.2f)
       )
     ).build();
 
@@ -220,7 +219,7 @@ public class DummyResourceTest {
       .jsonPath()
       .getList(".", Dummy.class);
 
-    assertEquals(2, dummies.size());
+    assertEquals(6, dummies.size());
   }
 
   @Test
@@ -230,7 +229,7 @@ public class DummyResourceTest {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        phrase("description", "Description 1", 2)
+        phrase("title", "Title 1", 2)
       )
     ).build();
 
@@ -259,7 +258,7 @@ public class DummyResourceTest {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        advancedText("description", "\"Desc* 6\"")
+        advancedText("title", "\"Tit*l*\"")
       )
     ).build();
 
@@ -278,74 +277,16 @@ public class DummyResourceTest {
       .jsonPath()
       .getList(".", Dummy.class);
 
-    assertEquals(1, dummies.size());
+    assertEquals(3, dummies.size());
   }
-
-  @Test
-  @Order(50)
-  public void delete() {
-    Dummy dummy1 = new Dummy();
-    dummy1.setTitle("Introduction to Java");
-    dummy1.setDescription("A comprehensive guide to Java programming.");
-    dummy1.setLang("en");
-    dummy1.setCreated(ZonedDateTime.now().minusDays(10));
-    dummy1.setModified(ZonedDateTime.now());
-    dummy1.setDeactivated(null);
-    dummy1.setCode("dummy_delete_code1");
-
-    Dummy dummy2 = new Dummy();
-    dummy2.setTitle("Advanced Python Techniques");
-    dummy2.setDescription("Explore advanced concepts in Python programming.");
-    dummy2.setLang("en");
-    dummy2.setCreated(ZonedDateTime.now().minusDays(20));
-    dummy2.setModified(ZonedDateTime.now().minusDays(5));
-    dummy2.setDeactivated(null);
-    dummy2.setCode("dummy_delete_code2");
-
-    Dummy dummy3 = new Dummy();
-    dummy3.setTitle("Introduction to Machine Learning");
-    dummy3.setDescription("An introductory course to machine learning and its applications.");
-    dummy3.setLang("es");
-    dummy3.setCreated(ZonedDateTime.now().minusMonths(2));
-    dummy3.setModified(ZonedDateTime.now().minusDays(10));
-    dummy3.setDeactivated(null);
-    dummy3.setCode("dummy_delete_code3");
-
-    List<Dummy> dummies = List.of(dummy1, dummy2, dummy3);
-
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
-      .body(dummies)
-      .when()
-      .post("/api/internal/test/dummy")
-      .then()
-      .statusCode(200)
-      .log().all();
-
-    given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
-      .body(dummies)
-      .when()
-      .delete("/api/internal/test/dummy")
-      .then()
-      .statusCode(200)
-      .log().all();
-  }
-
 
   @Test
   @Order(60)
   @Tag("deleteById")
-  public void deleteById() {
-    CodeParams params1 = CodeParams.builder().code("dummy_code1").build();
+  public void deleteById() throws IOException {
+    CodeParams params1 = CodeParams.builder().code("sad15s1a21sa21a51a").build();
 
-    given()
+    Integer number_of_deleted = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -355,18 +296,24 @@ public class DummyResourceTest {
       .delete("/api/internal/test/dummy/deleteById")
       .then()
       .statusCode(200)
-      .log().all();
+      .extract()
+      .body()
+      .jsonPath()
+      .getInt(".");
+
+    assertEquals(1, number_of_deleted);
+    testHelper.waitForObjects("/dummy/_search", List.of("sad15s1a21sa21a51a"), 0);
   }
 
   @Test
   @Order(70)
   @Tag("deleteByQuery")
-  public void deleteByQuery() {
+  public void deleteByQuery() throws IOException {
     QueryParams s = QueryParams.builder().condition(
-      field("code", "dummy_code2")
+      field("code", "4d5as45s1ds4d5ss8sd6s")
     ).build();
 
-    given()
+    Integer number_of_deleted = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -376,6 +323,12 @@ public class DummyResourceTest {
       .delete("/api/internal/test/dummy/deleteByQuery")
       .then()
       .statusCode(200)
-      .log().all();
+      .extract()
+      .body()
+      .jsonPath()
+      .getInt(".");
+
+    assertEquals(1, number_of_deleted);
+    testHelper.waitForObjects("/dummy/_search", List.of("4d5as45s1ds4d5ss8sd6s"), 0);
   }
 }

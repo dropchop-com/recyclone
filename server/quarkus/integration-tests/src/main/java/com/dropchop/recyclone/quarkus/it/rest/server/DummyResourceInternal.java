@@ -1,12 +1,15 @@
 package com.dropchop.recyclone.quarkus.it.rest.server;
 
 import com.dropchop.recyclone.base.api.common.RecycloneType;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
 import com.dropchop.recyclone.base.api.rest.ClassicModifyResource;
+import com.dropchop.recyclone.quarkus.it.service.api.ElasticDummyService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
@@ -42,11 +45,23 @@ public class DummyResourceInternal extends ClassicModifyResource<Dummy> implemen
 
   @Override
   public int deleteById(CodeParams codeParams) {
-    return service.delete();
+    if(service instanceof ElasticDummyService) {
+      return ((ElasticDummyService) service).deleteById();
+    }
+    throw new ServiceException(
+      ErrorCode.internal_error,
+      "Only ElasticService has deleteByQuery!"
+    );
   }
 
   @Override
   public int deleteByQuery(QueryParams codeParams) {
-    return service.deleteByQuery();
+    if(service instanceof ElasticDummyService) {
+      return ((ElasticDummyService) service).deleteByQuery();
+    }
+    throw new ServiceException(
+      ErrorCode.internal_error,
+      "Only ElasticRepository has deleteByQuery!"
+    );
   }
 }
