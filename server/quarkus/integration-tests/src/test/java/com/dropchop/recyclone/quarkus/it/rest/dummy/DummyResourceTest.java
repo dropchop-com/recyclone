@@ -200,7 +200,7 @@ public class DummyResourceTest {
   public void testWildcardSearch() {
     QueryParams s = QueryParams.builder().condition(
       or(
-        wildcard("title", "Title", true, 1.2f)
+        wildcard("title", "Dum*", true, 1.2f)
       )
     ).build();
 
@@ -219,7 +219,7 @@ public class DummyResourceTest {
       .jsonPath()
       .getList(".", Dummy.class);
 
-    assertEquals(6, dummies.size());
+    assertEquals(8, dummies.size());
   }
 
   @Test
@@ -229,7 +229,7 @@ public class DummyResourceTest {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        phrase("title", "Title 1", 2)
+        phrase("title", "Dummy 3", 2)
       )
     ).build();
 
@@ -258,7 +258,7 @@ public class DummyResourceTest {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        advancedText("title", "\"Tit*l*\"")
+        advancedText("title", "\"dum* 5\"")
       )
     ).build();
 
@@ -277,7 +277,7 @@ public class DummyResourceTest {
       .jsonPath()
       .getList(".", Dummy.class);
 
-    assertEquals(3, dummies.size());
+    assertEquals(1, dummies.size());
   }
 
   @Test
