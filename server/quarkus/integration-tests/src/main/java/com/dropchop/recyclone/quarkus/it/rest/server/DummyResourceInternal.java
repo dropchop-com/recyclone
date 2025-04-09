@@ -49,8 +49,8 @@ public class DummyResourceInternal extends ClassicModifyResource<Dummy> implemen
       return ((ElasticDummyService) service).deleteById();
     }
     throw new ServiceException(
-      ErrorCode.internal_error,
-      "Only ElasticService has deleteByQuery!"
+        ErrorCode.internal_error,
+        "Service implementation is missing deleteById method!"
     );
   }
 
@@ -60,8 +60,8 @@ public class DummyResourceInternal extends ClassicModifyResource<Dummy> implemen
       return ((ElasticDummyService) service).deleteByQuery();
     }
     throw new ServiceException(
-      ErrorCode.internal_error,
-      "Only ElasticRepository has deleteByQuery!"
+        ErrorCode.internal_error,
+        "Service implementation is missing deleteByQuery method!"
     );
   }
 }
