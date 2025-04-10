@@ -24,4 +24,10 @@ public class StaticIndexConfig
   public String getWriteIndex() {
     return this.indexName;
   }
+
+
+  @Override
+  public String getDefaultIndexName() {
+    return this.indexName;
+  }
 }
