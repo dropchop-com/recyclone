@@ -9,10 +9,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @SuppressWarnings("unused")
-public class StaticIndexConfig
-    implements ElasticIndexConfig, ClassIndexConfig, HasRootAlias, HasStaticReadIndex, HasStaticWriteIndex {
+public class SimplestIndexConfig
+    implements ElasticIndexConfig, HasStaticReadIndex, HasStaticWriteIndex {
 
-  private final Class<?> rootClass;
   private final String indexName;
 
   @Override
@@ -22,12 +21,6 @@ public class StaticIndexConfig
 
   @Override
   public String getWriteIndex() {
-    return this.indexName;
-  }
-
-
-  @Override
-  public String getDefaultIndexName() {
     return this.indexName;
   }
 }

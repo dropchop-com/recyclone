@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.api.model.utils.Strings;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3/25/25.
  */
 @SuppressWarnings("unused")
-public interface ClassIndexConfig {
+public interface ClassIndexConfig extends HasRootAlias{
 
   Class<?> getRootClass();
 
@@ -28,5 +28,9 @@ public interface ClassIndexConfig {
       prefix = hasPrefix.getPrefix();
     }
     return computeClassIndexName(getRootClass(), prefix);
+  }
+
+  default String getRootAlias() {
+    return getDefaultIndexName();
   }
 }
