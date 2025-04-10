@@ -4,7 +4,7 @@ import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.repo.config.ClassStaticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -36,5 +36,5 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String> {
   RestClient elasticsearchClient;
 
   @Inject
-  ElasticQueryMapper elasticQueryMapper;
+  ElasticQueryBuilder elasticQueryBuilder;
 }

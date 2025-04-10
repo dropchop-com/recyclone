@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 

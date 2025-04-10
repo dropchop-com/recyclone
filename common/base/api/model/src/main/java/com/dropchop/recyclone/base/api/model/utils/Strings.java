@@ -62,6 +62,21 @@ public interface Strings {
   }
 
 
+  static boolean hasUpperCaseChar(String str) {
+    if (str == null || str.isEmpty()) {
+      return false; // Handle null or empty strings
+    }
+
+    for (char c : str.toCharArray()) {
+      if (Character.isUpperCase(c)) {
+        return true; // Return true as soon as an uppercase character is found
+      }
+    }
+
+    return false; // Return false if no uppercase character is found
+  }
+
+
   static String jsonEscape(String s, String enclose) {
     if (enclose == null) {
       enclose = "";

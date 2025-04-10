@@ -6,14 +6,23 @@
   "template" : {
     "settings": {
       "number_of_shards": 1,
-      "number_of_replicas": 0
+      "number_of_replicas": 0,
+      "analysis": {
+        "analyzer": {
+          "case_sensitive_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": []
+          }
+        }
+      }
     },
     "mappings": {
       "_source": { "enabled": true },
       "properties": {
         "code": { "type": "keyword"},
-        "title": { "type": "text"},
-        "description": { "type": "text"},
+        "title": { "type": "text", "analyzer": "case_sensitive_analyzer"},
+        "description": { "type": "text", "analyzer": "case_sensitive_analyzer"},
         "lang": {"type": "keyword"},
         "created": {"type": "date"},
         "modified": {"type": "date"},

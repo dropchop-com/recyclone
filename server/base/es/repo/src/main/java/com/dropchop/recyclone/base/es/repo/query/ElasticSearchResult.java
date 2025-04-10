@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.es.repo.mapper;
+package com.dropchop.recyclone.base.es.repo.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

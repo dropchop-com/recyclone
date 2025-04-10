@@ -12,17 +12,17 @@ import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Container;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Hit;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Container;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Hit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,7 +57,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   @SuppressWarnings("CdiInjectionPointsInspection")
   protected ExecContextContainer ctxContainer;
 
-  public abstract ElasticQueryMapper getElasticQueryMapper();
+  public abstract ElasticQueryBuilder getElasticQueryBuilder();
 
   public abstract ObjectMapper getObjectMapper();
 
@@ -193,7 +193,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   @Override
   public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
     QueryParams params = context.getParams();
-    QueryNodeObject queryObject = getElasticQueryMapper().mapToString(params);
+    QueryNodeObject queryObject = getElasticQueryBuilder().build(params);
     String query;
 
     try {
@@ -273,9 +273,9 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     int maxSize = queryParams.tryGetResultFilter().size();
     int from = queryParams.tryGetResultFilter().from();
 
-    ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
+    ElasticQueryBuilder esQueryMapper = new ElasticQueryBuilder();
 
-    QueryNodeObject initialQueryObject = esQueryMapper.mapToString(queryParams);
+    QueryNodeObject initialQueryObject = esQueryMapper.build(queryParams);
     int effectiveSize = maxSize > 0
       ? Math.min(maxSize, 10000)
       : Math.min(sizeOfPagination, 10000);
@@ -294,7 +294,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return initialQueryObject;
   }
 
-  private <X> void executeQuery(QueryNodeObject queryObject, boolean skipParsing,
+  private <X> long executeQuery(QueryNodeObject queryObject, boolean skipParsing,
                                 Collection<RepositoryExecContextListener> listeners) {
     ProfileTimer timer = new ProfileTimer();
     ObjectMapper objectMapper = getObjectMapper();
@@ -307,9 +307,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     Class<E> cls = getRootClass();
     try {
       Request request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
-
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
+      int queryId = query.hashCode();
+      log.debug("Received response for query [{}][{}] in [{}]ms.", queryId, query, timer.stop());
       if (response.getStatusLine().getStatusCode() == 200) {
         String responseBody = EntityUtils.toString(response.getEntity());
         ElasticSearchResult<X> searchResult;
@@ -325,6 +326,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
           );
         }
         int count = 0;
+        log.debug("Parsed query [{}] with [{}] result size in [{}]ms.", queryId, count, timer.stop());
 
         for (Hit<X> hit : searchResult.getHits().getHits()) {
           count++;
@@ -338,15 +340,18 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         }
 
         if (searchResult.getAggregations() != null) {
-          searchResult.getAggregations().forEach((name, agg) ->
-            listeners.stream()
-              .filter(AggregationResultListener.class::isInstance)
-              .forEach(listener ->
-                ((AggregationResultListener) listener).onAggregation(name, agg)
-              )
-          );
+          for (Map.Entry<String, Object> entry : searchResult.getAggregations().entrySet()) {
+            String name = entry.getKey();
+            Object agg = entry.getValue();
+            for (RepositoryExecContextListener listener : listeners) {
+              if (listener instanceof AggregationResultListener) {
+                ((AggregationResultListener) listener).onAggregation(name, agg);
+              }
+            }
+          }
         }
-        log.debug("Executed query [{}] with [{}] result size in [{}]ms.", query, count, timer.stop());
+        log.debug("Executed query [{}] with [{}] result size in [{}]ms.", queryId, count, timer.stop());
+        return count;
       } else if (response.getStatusLine().getStatusCode() == 404) {
         throw new ServiceException(
           ErrorCode.data_missing_error, "Missing data for query",
@@ -406,16 +411,16 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     QueryParams queryParams = context.getParams();
-    int maxSize = queryParams.tryGetResultFilter().getSize();
+    int requestSize = queryParams.tryGetResultFilter().getSize();
+    int maxSize = getElasticIndexConfig().getSizeOfPagination();
 
-    boolean hasMoreHits = true;
     List<S> results = new ArrayList<>();
 
     List<Object> searchAfterValues = null;
-    while (hasMoreHits && results.size() < maxSize) {
+    while (true) {
       try {
         QueryNodeObject queryObject = buildQueryObject(queryParams, searchAfterValues);
-        Container<Hit<S>> last = new Container<>();
+        Container<Hit<S>> last = new Container<>(); // we use container since variable must be final
         if (((ElasticExecContext<S>) context).isSkipObjectParsing() && listener != null) {
           executeQuery(queryObject, true, List.of(
             (QueryResultListener<S>) last::setHit
@@ -438,8 +443,11 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
             ));
           }
         }
-        if (last.isEmpty()) {
-          hasMoreHits = false;
+        if (last.isEmpty() || results.size() < requestSize || requestSize == 0) {
+          // break when last hit is not present (in the last hit we have searchAfterValues to continue)
+          // or break when result size is smaller that requested limit (search exhausted)
+          // or request size is 0
+          break;
         } else {
           searchAfterValues = last.getHit().getSort();
         }

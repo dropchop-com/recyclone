@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.repo.mapper;
+package com.dropchop.recyclone.base.es.model.query;
 
 import lombok.Getter;
 
@@ -6,10 +6,10 @@ import lombok.Getter;
 @SuppressWarnings("unused")
 public class SpanNearObject extends QueryNodeObject {
   private final IQueryNodeList clauses;
-  private final boolean inOrder;
-  private final int slop;
+  private final Integer slop;
+  private final Boolean inOrder;
 
-  public SpanNearObject(IQueryNode parent, boolean inOrder, int slop) {
+  public SpanNearObject(IQueryNode parent, Integer slop, Boolean inOrder) {
     super(parent);
     this.clauses = new QueryNodeList(this);
     this.inOrder = inOrder;

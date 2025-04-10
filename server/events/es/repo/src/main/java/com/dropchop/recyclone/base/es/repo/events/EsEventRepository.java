@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.es.repo.events;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -33,7 +33,7 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
   RestClient elasticsearchClient;
 
   @Inject
-  ElasticQueryMapper elasticQueryMapper;
+  ElasticQueryBuilder elasticQueryBuilder;
 
   EsEventIndexConfig elasticIndexConfig = EsEventIndexConfig
       .builder()

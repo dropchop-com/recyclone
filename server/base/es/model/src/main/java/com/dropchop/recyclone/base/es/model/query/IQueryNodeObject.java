@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.repo.mapper;
+package com.dropchop.recyclone.base.es.model.query;
 
 import java.util.Map;
 

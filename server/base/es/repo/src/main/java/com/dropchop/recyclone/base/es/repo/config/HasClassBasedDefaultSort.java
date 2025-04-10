@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3/26/25.

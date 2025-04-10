@@ -1,49 +1,41 @@
 package com.dropchop.recyclone.base.api.model.query.operator.text;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @Setter
 @SuppressWarnings("unused")
-@JsonIgnoreProperties({"name", "value", "caseInsensitive", "boost"})
-public class Wildcard<T> extends WildcardParameters<T> {
+public class Wildcard extends Text {
+
+  @JsonInclude(NON_NULL)
+  private Boolean caseInsensitive;
+
+  @JsonInclude(NON_NULL)
+  private Float boost;
 
   public Wildcard() {
   }
 
-  public Wildcard(T name, T value) {
-    super(name, value);
+  public Wildcard(String value) {
+    super(value);
   }
 
-  public Wildcard(T name, T value, Boolean caseInsensitive) {
-    super(name, value, caseInsensitive);
+  public Wildcard(String value, Boolean caseInsensitive) {
+    this(value);
+    this.caseInsensitive = caseInsensitive;
   }
 
-  public Wildcard(T name, T value, Float boost) {
-    super(name, value, boost);
+  public Wildcard(String value, Float boost) {
+    super(value);
+    this.boost = boost;
   }
 
-  public Wildcard(T name, T value, Boolean caseSensitive, Float boost) {
-    super(name, value, caseSensitive, boost);
-  }
-
-  public WildcardParameters<T> get$wildcard() {
-    return new WildcardParameters<>(
-      super.getName(),
-      super.getValue(),
-      super.getCaseInsensitive(),
-      super.getBoost()
-    );
-  }
-
-  public void set$wildcard(WildcardParameters<T> wildcard) {
-    if (wildcard != null) {
-      setName(wildcard.getName());
-      setValue(wildcard.getValue());
-      setCaseInsensitive(wildcard.getCaseInsensitive());
-      setBoost(wildcard.getBoost());
-    }
+  public Wildcard(String value, Boolean caseSensitive, Float boost) {
+    this(value, caseSensitive);
+    this.boost = boost;
   }
 }

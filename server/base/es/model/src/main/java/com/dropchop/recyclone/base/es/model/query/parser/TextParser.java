@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.es.repo.mapper.parser;
+package com.dropchop.recyclone.base.es.model.query.parser;
 
 import java.util.ArrayList;
 import java.util.List;

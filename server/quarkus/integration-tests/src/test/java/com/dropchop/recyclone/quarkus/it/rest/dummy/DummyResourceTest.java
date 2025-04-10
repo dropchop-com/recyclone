@@ -258,7 +258,7 @@ public class DummyResourceTest {
 
     QueryParams s = QueryParams.builder().condition(
       or(
-        advancedText("title", "\"dum* 5\"")
+        advancedText("title", "\"Dum* 5\"")
       )
     ).build();
 

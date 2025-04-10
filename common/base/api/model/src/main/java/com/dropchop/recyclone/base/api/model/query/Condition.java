@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.api.model.query;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
@@ -24,10 +25,7 @@ public interface Condition {
       "or", Or.class,
       "not", Not.class,
       "field", Field.class,
-      "conditionedField", ConditionedField.class,
-      "wildcard", Wildcard.class,
-      "phrase", Phrase.class,
-      "advancedText", AdvancedText.class
+      "conditionedField", ConditionedField.class
     );
   }
 
@@ -59,51 +57,55 @@ public interface Condition {
     return new Field<>(name, value);
   }
 
-  static <T> Wildcard<T> wildcard(T name, T value) {
-    return new Wildcard<>(name, value);
+  static ConditionedField advancedText(String name, String value) {
+    return new ConditionedField(name, new Match<>(new AdvancedText(value)));
   }
 
-  static <T> Wildcard<T> wildcard(T name, T value, Boolean caseInsensitive) {
-    return new Wildcard<>(name, value, caseInsensitive);
+  static ConditionedField advancedText(String name, String value, Integer slop) {
+    return new ConditionedField(name, new Match<>(new AdvancedText(value, slop)));
   }
 
-  static <T> Wildcard<T> wildcard(T name, T value, Float boost) {
-    return new Wildcard<>(name, value, boost);
+  static ConditionedField advancedText(String name, String value, Boolean caseInsensitive) {
+    return new ConditionedField(name, new Match<>(new AdvancedText(value, caseInsensitive)));
   }
 
-  static <T> Wildcard<T> wildcard(T name, T value, Boolean caseInsensitive, Float boost) {
-    return new Wildcard<>(name, value, caseInsensitive, boost);
+  static ConditionedField advancedText(String name, String value, Boolean caseInsensitive, Integer slop) {
+    return new ConditionedField(name, new Match<>(new AdvancedText(value, caseInsensitive, slop)));
   }
 
-  static <T> Phrase<T> phrase(T name, T value) {
-    return new Phrase<>(name, value);
+  static ConditionedField advancedText(String name, String value, Boolean caseInsensitive, Integer slop, Boolean inOrder) {
+    return new ConditionedField(name, new Match<>(new AdvancedText(value, caseInsensitive, slop, inOrder)));
   }
 
-  static <T> Phrase<T> phrase(T name, T value, Integer slop) {
-    return new Phrase<>(name, value, slop);
+  static ConditionedField phrase(String name, String value) {
+    return new ConditionedField(name, new Match<>(new Phrase(value)));
   }
 
-  static <T> Phrase<T> phrase(T name, T value, String analyzer) {
-    return new Phrase<>(name, value, analyzer);
+  static ConditionedField phrase(String name, String value, Integer slop) {
+    return new ConditionedField(name, new Match<>(new Phrase(value, slop)));
   }
 
-  static <T> Phrase<T> phrase(T name, T value, String analyzer, Integer slop) {
-    return new Phrase<>(name, value, analyzer, slop);
+  static ConditionedField phrase(String name, String value, String analyzer) {
+    return new ConditionedField(name, new Match<>(new Phrase(value, analyzer)));
   }
 
-  static <T> AdvancedText<T> advancedText(T name, T value) {
-    return new AdvancedText<>(name, value);
+  static ConditionedField phrase(String name, String value, String analyzer, Integer slop) {
+    return new ConditionedField(name, new Match<>(new Phrase(value, analyzer, slop)));
   }
 
-  static <T> AdvancedText<T> advancedText(T name, T value, Integer slop) {
-    return new AdvancedText<>(name, value, slop);
+  static ConditionedField wildcard(String name, String value) {
+    return new ConditionedField(name, new Match<>(new Wildcard(value)));
   }
 
-  static <T> AdvancedText<T> advancedText(T name, T value, Boolean inOrder) {
-    return new AdvancedText<>(name, value, inOrder);
+  static ConditionedField wildcard(String name, String value, Boolean caseInsensitive) {
+    return new ConditionedField(name, new Match<>(new Wildcard(value, caseInsensitive)));
   }
 
-  static <T> AdvancedText<T> advancedText(T name, T value, Boolean inOrder, Integer slop) {
-    return new AdvancedText<>(name, value, inOrder, slop);
+  static ConditionedField wildcard(String name, String value, Float boost) {
+    return new ConditionedField(name, new Match<>(new Wildcard(value, boost)));
+  }
+
+  static ConditionedField wildcard(String name, String value, Boolean caseInsensitive, Float boost) {
+    return new ConditionedField(name, new Match<>(new Wildcard(value, caseInsensitive, boost)));
   }
 }

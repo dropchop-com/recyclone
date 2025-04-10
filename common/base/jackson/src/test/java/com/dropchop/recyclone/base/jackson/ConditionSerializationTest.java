@@ -56,6 +56,40 @@ public class ConditionSerializationTest {
   }
 
   @Test
+  void testPhraseProcessing() throws Exception {
+    Condition c = and(
+        phrase("text", "krem proti gubam")
+    );
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+    // write original
+    String jsonOutput1 = mapper.writeValueAsString(c);
+    // parse original to duplicate
+    Condition x = mapper.readValue(jsonOutput1, And.class);
+    // write duplicate
+    String jsonOutput2 = mapper.writeValueAsString(x);
+    // compare
+    assertEquals(jsonOutput1, jsonOutput2);
+  }
+
+  @Test
+  void testWildcardProcessing() throws Exception {
+    Condition c = and(
+        wildcard("text", "krem*")
+    );
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+    // write original
+    String jsonOutput1 = mapper.writeValueAsString(c);
+    // parse original to duplicate
+    Condition x = mapper.readValue(jsonOutput1, And.class);
+    // write duplicate
+    String jsonOutput2 = mapper.writeValueAsString(x);
+    // compare
+    assertEquals(jsonOutput1, jsonOutput2);
+  }
+
+  @Test
   void testAdvancedTextProcessing() throws Exception {
     Condition c = and(
       advancedText("text", "\"krem* proti gubam\"")

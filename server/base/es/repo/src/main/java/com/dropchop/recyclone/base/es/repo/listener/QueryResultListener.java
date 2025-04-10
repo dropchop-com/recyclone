@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.es.repo.listener;
 
 import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Hit;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Hit;
 
 /**
  * @author Samo Pritrznik <samo.pritrznik@dropchop.com> on 5. 12. 24

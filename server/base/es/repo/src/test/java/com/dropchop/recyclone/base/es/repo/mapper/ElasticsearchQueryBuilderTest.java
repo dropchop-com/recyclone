@@ -1,8 +1,9 @@
 package com.dropchop.recyclone.base.es.repo.mapper;
 
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,7 @@ import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 
-public class ElasticsearchMapperTest {
+public class ElasticsearchQueryBuilderTest {
 
   /*@Test
   public void testConditionMapper() throws JsonProcessingException, JSONException {
@@ -393,11 +394,11 @@ public class ElasticsearchMapperTest {
            }
       """;
 
-    ElasticQueryMapper es = new ElasticQueryMapper();
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
 
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.mapToString(params);
+    QueryNodeObject correct = es.build(params);
 
     String json = ob.writeValueAsString(correct);
 
@@ -407,7 +408,7 @@ public class ElasticsearchMapperTest {
   @Test
   @SuppressWarnings("unused")
   public void debugConditionMustNotExist() {
-    ElasticQueryMapper es = new ElasticQueryMapper();
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
 
     QueryParams params = QueryParams.builder().condition(
       and(
@@ -437,14 +438,14 @@ public class ElasticsearchMapperTest {
       )
     ).build();
 
-    QueryNodeObject correct = es.mapToString(params);
+    QueryNodeObject correct = es.build(params);
   }
 
   @Test
   public void processAdvancedText() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
       and(
-        advancedText("text", "\"krem* proti gubam\"", true)
+        advancedText("text", "\"krem* proti gubam\"", null, 1, false)
       )
     ).build();
 
@@ -455,7 +456,7 @@ public class ElasticsearchMapperTest {
           "bool": {
             "must": {
               "span_near": {
-                "in_order": true,
+                "in_order": false,
                 "clauses": [
                   {
                     "span_multi": {
@@ -483,7 +484,7 @@ public class ElasticsearchMapperTest {
                     }
                   }
                 ],
-                "slop": 0
+                "slop": 1
               }
             }
           }
@@ -491,10 +492,10 @@ public class ElasticsearchMapperTest {
       }
       """;
 
-    ElasticQueryMapper es = new ElasticQueryMapper();
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.mapToString(params);
+    QueryNodeObject correct = es.build(params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -509,53 +510,109 @@ public class ElasticsearchMapperTest {
     ).build();
 
     String correctJson =
-      """
-      
+        """
         {
-        "query" : {
-          "bool" : {
-            "must" : {
-              "span_near" : {
-                "clauses" : [ {
-                  "span_multi" : {
-                    "match" : {
-                      "wildcard" : {
-                        "text" : {
-                          "value" : "kr*m*"
+          "query" : {
+            "bool" : {
+              "must" : {
+                "span_near" : {
+                  "clauses" : [ {
+                    "span_multi" : {
+                      "match" : {
+                        "wildcard" : {
+                          "case_insensitive": true,
+                          "text" : {
+                            "value" : "kr*m*"
+                          }
                         }
                       }
                     }
-                  }
-                }, {
-                  "span_multi" : {
-                    "match" : {
-                      "wildcard" : {
-                        "text" : {
-                          "value" : "pr*ti"
+                  }, {
+                    "span_multi" : {
+                      "match" : {
+                        "wildcard" : {
+                          "case_insensitive": true,
+                          "text" : {
+                            "value" : "pr*ti"
+                          }
                         }
                       }
                     }
-                  }
-                }, {
-                  "span_term" : {
-                    "text" : {
-                      "value" : "gubam"
+                  }, {
+                    "span_term" : {
+                      "case_insensitive": true,
+                      "text" : {
+                        "value" : "gubam"
+                      }
                     }
-                  }
-                } ],
-                "in_order" : true,
-                "slop" : 0
+                  } ],
+                  "in_order" : true,
+                  "slop" : 0
+                }
               }
             }
           }
         }
-      }
-      """;
+        """;
 
-    ElasticQueryMapper es = new ElasticQueryMapper();
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.mapToString(params);
+    QueryNodeObject correct = es.build(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
+
+  @Test
+  public void processAdvancedTextAutoCase() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().condition(
+        and(
+            advancedText("text", "\"Nivea krem*\"")
+        )
+    ).build();
+
+    String correctJson =
+        """
+        {
+          "query": {
+            "bool": {
+              "must": {
+                "span_near": {
+                  "in_order": true,
+                  "clauses": [
+                    {
+                      "span_term": {
+                        "case_insensitive": false,
+                        "text": {
+                          "value": "Nivea"
+                        }
+                      }
+                    },
+                    {
+                      "span_multi": {
+                        "match": {
+                          "prefix": {
+                            "text": {
+                              "value": "krem"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "slop": 0
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);

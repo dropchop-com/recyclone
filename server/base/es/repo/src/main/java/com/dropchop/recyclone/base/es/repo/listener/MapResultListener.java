@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.listener;
 
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Hit;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Hit;
 
 import java.util.Map;
 

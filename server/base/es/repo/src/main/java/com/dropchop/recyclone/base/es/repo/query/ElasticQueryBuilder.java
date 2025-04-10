@@ -1,16 +1,16 @@
-package com.dropchop.recyclone.base.es.repo.mapper;
+package com.dropchop.recyclone.base.es.repo.query;
 
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
-import com.dropchop.recyclone.base.api.model.query.condition.*;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
+import com.dropchop.recyclone.base.api.model.query.condition.Not;
+import com.dropchop.recyclone.base.api.model.query.condition.Or;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
-import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
-import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
-import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
-import com.dropchop.recyclone.base.api.repo.mapper.BoolQueryObject;
-import com.dropchop.recyclone.base.api.repo.mapper.OperatorNodeObject;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.es.model.query.BoolQueryObject;
+import com.dropchop.recyclone.base.es.model.query.OperatorNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,38 +20,12 @@ import java.util.Iterator;
 @Slf4j
 @ApplicationScoped
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
-public class ElasticQueryMapper {
+public class ElasticQueryBuilder {
 
-  public ElasticQueryMapper() {
-
+  public ElasticQueryBuilder() {
   }
 
-  public QueryNodeObject mapToString(QueryParams params) {
-    QueryNodeObject bool = new QueryNodeObject();
-    QueryNodeObject end = new QueryNodeObject();
-
-    if(params.getCondition() != null) {
-      QueryNodeObject conditions = mapCondition(params.getCondition(), null);
-      bool.put("bool",conditions);
-      end.put("query", bool);
-    }
-
-    if(params.getAggregation() != null) {
-      QueryNodeObject aggregations = new QueryNodeObject();
-      for(Aggregation agg : params.getAggregation()) {
-        if(agg instanceof Aggregation.Wrapper) {
-          aggregations.put(agg.getName(), mapAggregation(((Aggregation.Wrapper) agg).iterator().next()));
-        } else {
-          aggregations.put(agg.getName(), mapAggregation(agg));
-        }
-      }
-      end.put("aggs", aggregations);
-    }
-
-    return end;
-  }
-
-  protected QueryNodeObject mapCondition(Condition condition, BoolQueryObject previousCondition) {
+  protected QueryNodeObject mapCondition(Condition condition, BoolQueryObject parentCondition) {
     if (condition instanceof LogicalCondition logicalCondition) {
       BoolQueryObject query = new BoolQueryObject();
 
@@ -89,68 +63,22 @@ public class ElasticQueryMapper {
 
       QueryNodeObject mustWrapper = new QueryNodeObject();
       QueryNodeObject query = new QueryNodeObject();
-      QueryNodeObject queryWrapper = new QueryNodeObject();
+      QueryNodeObject termWrapper = new QueryNodeObject();
       query.put(field.getName(), field.iterator().next());
-      queryWrapper.put("term", query);
-      mustWrapper.put("must", queryWrapper);
+      termWrapper.put("term", query);
+      mustWrapper.put("must", termWrapper);
 
-      if(previousCondition == null) {
+      if(parentCondition == null) {
         return mustWrapper;
       }
 
-      return queryWrapper;
-    } else if (condition instanceof Wildcard<?> wildcard) {
-      QueryNodeObject wildcardObject = new QueryNodeObject();
-      QueryNodeObject nameObject = new QueryNodeObject();
-      QueryNodeObject valueObject = new QueryNodeObject();
-      valueObject.put("value", wildcard.getValue());
-      QueryNodeObject boostObject = new QueryNodeObject();
-      boostObject.put("boost", wildcard.getBoost());
-      QueryNodeObject caseObject = new QueryNodeObject();
-      caseObject.put("case_insensitive", wildcard.getCaseInsensitive());
-
-      QueryNodeObject paramsObject = new QueryNodeObject();
-      paramsObject.putAll(valueObject);
-      paramsObject.putAll(boostObject);
-      paramsObject.putAll(caseObject);
-
-      nameObject.put(wildcard.getName().toString(), paramsObject);
-      wildcardObject.put("wildcard", nameObject);
-      return wildcardObject;
-    } else if (condition instanceof Phrase<?> phrase) {
-      QueryNodeObject phraseObject = new QueryNodeObject();
-      QueryNodeObject nameObject = new QueryNodeObject();
-      QueryNodeObject paramsObject = new QueryNodeObject();
-      QueryNodeObject valueObject = new QueryNodeObject();
-
-      valueObject.put("query", phrase.getValue());
-      paramsObject.putAll(valueObject);
-
-      //Cant seem to figure out how phrase.getAnalyzer() returns "null" instead of null
-      if(phrase.getAnalyzer() != null && !"null".equals(phrase.getAnalyzer())) {
-        QueryNodeObject anaObject = new QueryNodeObject();
-        anaObject.put("analyzer", phrase.getAnalyzer());
-        paramsObject.putAll(anaObject);
-      }
-
-      if(phrase.getSlop() != 0) {
-        QueryNodeObject caseObject = new QueryNodeObject();
-        caseObject.put("slop", phrase.getSlop());
-        paramsObject.putAll(caseObject);
-      }
-
-      nameObject.put(phrase.getName().toString(), paramsObject);
-      phraseObject.put("match_phrase", nameObject);
-      return phraseObject;
-    } else if(condition instanceof AdvancedText<?> advancedText) {
-      return new AdvancedTextProcessor(
-        (String) advancedText.getName(),
-        (String) advancedText.getValue(),
-        advancedText.getInOrder(),
-        advancedText.getSlop()
-      ).process();
+      return termWrapper;
     }
 
+    return parentCondition;
+  }
+
+  protected QueryNodeObject mapTextCondition(Match<?> textMatch, BoolQueryObject previousCondition) {
     return previousCondition;
   }
 
@@ -175,6 +103,8 @@ public class ElasticQueryMapper {
       operatorNode.addClosedOpenInterval(field, interval.get$gte(), interval.get$lt());
     } else if (operator instanceof OpenClosedInterval<?> interval) {
       operatorNode.addOpenClosedInterval(field, interval.get$gt(), interval.get$lte());
+    } else if (operator instanceof Match<?> textMatch) {
+      operatorNode.addTextSearch(field, textMatch);
     } else if (operator == null) {
       operatorNode.addNullSearch(field);
     } else {
@@ -184,7 +114,32 @@ public class ElasticQueryMapper {
     return operatorNode;
   }
 
-  public QueryNodeObject mapAggregation(Aggregation aggregation) {
+  public QueryNodeObject build(QueryParams params) {
+    QueryNodeObject bool = new QueryNodeObject();
+    QueryNodeObject end = new QueryNodeObject();
+
+    if(params.getCondition() != null) {
+      QueryNodeObject conditions = mapCondition(params.getCondition(), null);
+      bool.put("bool",conditions);
+      end.put("query", bool);
+    }
+
+    if(params.getAggregation() != null) {
+      QueryNodeObject aggregations = new QueryNodeObject();
+      for(Aggregation agg : params.getAggregation()) {
+        if(agg instanceof Aggregation.Wrapper) {
+          aggregations.put(agg.getName(), buildAggregation(((Aggregation.Wrapper) agg).iterator().next()));
+        } else {
+          aggregations.put(agg.getName(), buildAggregation(agg));
+        }
+      }
+      end.put("aggs", aggregations);
+    }
+
+    return end;
+  }
+
+  public QueryNodeObject buildAggregation(Aggregation aggregation) {
     QueryNodeObject node = new QueryNodeObject();
 
     if (aggregation instanceof Terms terms) {
@@ -245,9 +200,9 @@ public class ElasticQueryMapper {
         QueryNodeObject subAggs = new QueryNodeObject();
         for (Aggregation sub : bucket.getAggs()) {
           if(sub instanceof Aggregation.Wrapper) {
-            subAggs.put(sub.getName(), mapAggregation(((Aggregation.Wrapper) sub).iterator().next()));
+            subAggs.put(sub.getName(), buildAggregation(((Aggregation.Wrapper) sub).iterator().next()));
           } else {
-            subAggs.put(sub.getName(), mapAggregation(sub));
+            subAggs.put(sub.getName(), buildAggregation(sub));
           }
         }
         node.put("aggs", subAggs);
