@@ -94,7 +94,7 @@ class QueryNodeList extends QueryNode implements IQueryNodeList {
   }
 
   @Override
-  public void replaceAll(UnaryOperator<Object> operator) {
+  public void replaceAll(@NonNull UnaryOperator<Object> operator) {
     delegate.replaceAll(operator);
   }
 
@@ -165,22 +165,22 @@ class QueryNodeList extends QueryNode implements IQueryNodeList {
   }
 
   @Override
-  public Spliterator<Object> spliterator() {
+  public @NonNull Spliterator<Object> spliterator() {
     return delegate.spliterator();
   }
 
   @Override
-  public boolean removeIf(Predicate<? super Object> filter) {
+  public boolean removeIf(@NonNull Predicate<? super Object> filter) {
     return delegate.removeIf(filter);
   }
 
   @Override
-  public Stream<Object> stream() {
+  public @NonNull Stream<Object> stream() {
     return delegate.stream();
   }
 
   @Override
-  public Stream<Object> parallelStream() {
+  public @NonNull Stream<Object> parallelStream() {
     return delegate.parallelStream();
   }
 
