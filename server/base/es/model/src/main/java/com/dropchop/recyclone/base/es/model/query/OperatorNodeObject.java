@@ -88,17 +88,22 @@ public class OperatorNodeObject extends QueryNodeObject {
       //QueryNodeObject wildcardObject = new QueryNodeObject();
       QueryNodeObject nameObject = new QueryNodeObject();
       QueryNodeObject valueObject = new QueryNodeObject();
-      valueObject.put("value", wildcard.getValue());
-      QueryNodeObject boostObject = new QueryNodeObject();
-      boostObject.put("boost", wildcard.getBoost());
-      QueryNodeObject caseObject = new QueryNodeObject();
-      caseObject.put("case_insensitive", wildcard.getCaseInsensitive());
-
       QueryNodeObject paramsObject = new QueryNodeObject();
-      paramsObject.putAll(valueObject);
-      paramsObject.putAll(boostObject);
-      paramsObject.putAll(caseObject);
+      valueObject.put("value", wildcard.getValue());
 
+      if (wildcard.getBoost() != null) {
+        QueryNodeObject boostObject = new QueryNodeObject();
+        boostObject.put("boost", wildcard.getBoost());
+        paramsObject.putAll(boostObject);
+      }
+
+      if (wildcard.getCaseInsensitive() != null) {
+        QueryNodeObject caseObject = new QueryNodeObject();
+        caseObject.put("case_insensitive", wildcard.getCaseInsensitive());
+        paramsObject.putAll(caseObject);
+      }
+
+      paramsObject.putAll(valueObject);
       nameObject.put(field, paramsObject);
       this.put("wildcard", nameObject);
     } else if (text instanceof Phrase phrase) {
@@ -116,7 +121,7 @@ public class OperatorNodeObject extends QueryNodeObject {
         paramsObject.putAll(anaObject);
       }
 
-      if(phrase.getSlop() != 0) {
+      if (phrase.getSlop() != null) {
         QueryNodeObject caseObject = new QueryNodeObject();
         caseObject.put("slop", phrase.getSlop());
         paramsObject.putAll(caseObject);
