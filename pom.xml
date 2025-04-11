@@ -62,14 +62,14 @@
     <clean-plugin.version>3.3.2</clean-plugin.version>
     <resources-plugin.version>3.3.1</resources-plugin.version>
     <source-plugin.version>3.3.1</source-plugin.version>
-    <compiler-plugin.version>3.13.0</compiler-plugin.version>
+    <compiler-plugin.version>3.14.0</compiler-plugin.version>
     <surefire-plugin.version>3.2.5</surefire-plugin.version>
     <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
     <jar-plugin.version>3.4.1</jar-plugin.version>
     <gpg-plugin.version>3.2.4</gpg-plugin.version>
     <install-plugin.version>3.1.2</install-plugin.version>
     <deploy-plugin.version>3.1.2</deploy-plugin.version>
-    <release-plugin.version>3.0.1</release-plugin.version>
+    <release-plugin.version>3.1.1</release-plugin.version>
     <flatten-plugin.version>1.6.0</flatten-plugin.version>
     <site-plugin.version>3.12.1</site-plugin.version>
     <project-info-reports-plugin.version>3.5.0</project-info-reports-plugin.version>
@@ -91,21 +91,21 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <slf4j.version>2.0.16</slf4j.version>
-    <logback.version>1.5.12</logback.version>
-    <aspectj.version>1.9.22.1</aspectj.version>
-    <lombok.version>1.18.34</lombok.version>
+    <slf4j.version>2.0.17</slf4j.version>
+    <logback.version>1.5.18</logback.version>
+    <aspectj.version>1.9.23</aspectj.version>
+    <lombok.version>1.18.38</lombok.version>
     <jackson.version>2.18.2</jackson.version>
     <apache.shiro.version>2.0.2</apache.shiro.version>
     <mapstruct.version>1.6.3</mapstruct.version>
-    <blaze-persistence.version>1.6.14</blaze-persistence.version>
-    <testcontainers.version>1.20.4</testcontainers.version>
+    <blaze-persistence.version>1.6.15</blaze-persistence.version>
+    <testcontainers.version>1.20.6</testcontainers.version>
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.17.3</quarkus.platform.version>
+    <quarkus.platform.version>3.21.2</quarkus.platform.version>
 
-    <junit.version>5.10.5</junit.version>
+    <junit.version>5.12.1</junit.version>
     <jsonassert.version>1.5.3</jsonassert.version>
 
     <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
@@ -116,7 +116,7 @@
     <microprofile-config-api.version>3.0.3</microprofile-config-api.version>
 
     <!-- elasticsearch low level rest client -->
-    <elasticsearch-rest-client.version>8.15.3</elasticsearch-rest-client.version>
+    <elasticsearch-rest-client.version>8.17.4</elasticsearch-rest-client.version>
   </properties>
 
   <dependencyManagement>
@@ -217,9 +217,11 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.blazebit</groupId>
-        <artifactId>blaze-persistence-integration-quarkus-3</artifactId>
-        <version>${blaze-persistence.version}</version>
+        <groupId>${quarkus.platform.group-id}</groupId>
+        <artifactId>quarkus-blaze-persistence-bom</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.elasticsearch.client</groupId>
