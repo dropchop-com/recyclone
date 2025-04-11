@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-core-api-jakarta</artifactId>
+      <artifactId>blaze-persistence-integration-hibernate-6.2</artifactId>
     </dependency>
 
     <!-- recyclone -->
