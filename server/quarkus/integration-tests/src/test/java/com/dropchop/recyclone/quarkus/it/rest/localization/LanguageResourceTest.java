@@ -249,6 +249,8 @@ public class LanguageResourceTest {
 
   @Test
   @Order(90)
+  @org.junit.jupiter.api.Tag("languagesPostEndpoint")
+  @org.junit.jupiter.api.Tag("languagesDeleteEndpoint")
   public void languagesPostEndpoint() {
     Language language = new Language("bs");
     language.setTitle("en", "Bosnian");
@@ -274,6 +276,7 @@ public class LanguageResourceTest {
 
   @Test
   @Order(100)
+  @org.junit.jupiter.api.Tag("languagesDeleteEndpoint")
   public void languagesDeleteEndpoint() {
     List<Language> languages = given()
       //.log().all()

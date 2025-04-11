@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
 import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticsearchInitializer;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.IsNormal;
@@ -34,6 +35,13 @@ public class ElasticsearchInitializerProcessor {
             AdditionalBeanBuildItem
                 .builder()
                 .addBeanClasses(ElasticsearchInitializer.class)
+                .setUnremovable()
+                .build()
+        );
+        additionalBeanBuildItemProducer.produce(
+            AdditionalBeanBuildItem
+                .builder()
+                .addBeanClasses(ElasticSearchTestHelper.class)
                 .setUnremovable()
                 .build()
         );

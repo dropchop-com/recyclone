@@ -81,10 +81,80 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
         );
       }
     } else {
-      JsonNode valueNode = fields.get(cNames.getFirst());
+      String operatorName = cNames.getFirst();
+      JsonNode valueNode = fields.get(operatorName);
       if (Eq.class.equals(cClasses.getFirst())) {
         Object value1 = ValueParser.parse(valueNode);
         return new ConditionedField(name, new Eq<>(value1));
+      } else if (Match.class.equals(cClasses.getFirst())) {
+        if(!valueNode.isObject() || valueNode.isEmpty()) {
+          throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
+        }
+        if (operatorName.endsWith("match")) {
+          try {
+            String conditionValue = valueNode.get("value").asText();
+            Boolean caseInsensitive = valueNode.has("caseInsensitive")
+                ? valueNode.get("caseInsensitive").asBoolean()
+                : null;
+
+            Integer slop = valueNode.has("slop")
+                ? valueNode.get("slop").asInt()
+                : null;
+
+            Boolean inOrder = valueNode.has("inOrder")
+                ? valueNode.get("inOrder").asBoolean()
+                : null;
+
+            return new ConditionedField(
+                name, new Match<>(new AdvancedText(conditionValue, caseInsensitive, slop, inOrder))
+            );
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Invalid [%s] format at [%s]: %s".formatted(AdvancedText.class.getSimpleName(), name, e.getMessage()),
+                e
+            );
+          }
+        } else if (operatorName.endsWith("matchPhrase")) {
+          try {
+            String conditionValue = valueNode.get("value").asText();
+            String analyzer = valueNode.has("analyzer")
+                ? valueNode.get("analyzer").asText()
+                : null;
+
+            Integer slop = valueNode.has("slop")
+                ? valueNode.get("slop").asInt()
+                : null;
+
+            return new ConditionedField(name, new Match<>(new Phrase(conditionValue, analyzer, slop)));
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Invalid [%s] format at [%s]: %s".formatted(Phrase.class.getSimpleName(), name, e.getMessage()),
+                e
+            );
+          }
+        } else if (operatorName.endsWith("matchWildcard")) {
+          try {
+            String conditionValue = valueNode.get("value").asText();
+            Boolean caseInsensitive = valueNode.has("caseInsensitive")
+                ? valueNode.get("caseInsensitive").asBoolean()
+                : null;
+
+            Float boost = valueNode.has("boost")
+                ? Double.valueOf(valueNode.get("boost").asDouble()).floatValue()
+                : null;
+
+            return new ConditionedField(name, new Match<>(new Wildcard(conditionValue, caseInsensitive, boost)));
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Invalid [%s] format at [%s]: %s".formatted(Wildcard.class.getSimpleName(), name, e.getMessage()),
+                e
+            );
+          }
+        } else {
+          throw new IllegalArgumentException(
+              "Invalid Match text format at [%s]".formatted(name)
+          );
+        }
       } else if (In.class.equals(cClasses.getFirst())) {
         List<Object> tmp = new ArrayList<>(valueNode.size());
         for (int i = 0; i < valueNode.size(); i++) {
@@ -154,76 +224,6 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           String cname = valueNode.fieldNames().next();
           Condition v = parseCondition(cname, valueNode.get(cname));
           return new Not(v);
-        } else if(Wildcard.class.equals(cClass)) {
-          if(!valueNode.isObject() || valueNode.isEmpty() || valueNode.size() != 4) {
-            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
-          }
-
-          try {
-            String conditionName = valueNode.get("name").asText();
-            String conditionValue = valueNode.get("value").asText();
-            boolean caseInsensitive = valueNode.has("caseInsensitive")
-              ? valueNode.get("caseInsensitive").asBoolean()
-              : false;
-
-            float boost = valueNode.has("boost")
-              ? (float) valueNode.get("boost").asDouble()
-              : 1.0f;
-
-            return new Wildcard<>(conditionName, conditionValue, caseInsensitive, boost);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-              "Invalid Wildcard format at [%s]: %s".formatted(name, e.getMessage()),
-              e
-            );
-          }
-        } else if(Phrase.class.equals(cClass)) {
-          if(!valueNode.isObject() || valueNode.isEmpty()) {
-            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
-          }
-
-          try {
-            String conditionName = valueNode.get("name").asText();
-            String conditionValue = valueNode.get("value").asText();
-
-            Integer slop = valueNode.has("slop")
-              ? valueNode.get("slop").asInt()
-              : null;
-
-            if(valueNode.get("analyzer") == null) {
-              return new Phrase<>(conditionName, conditionValue, slop);
-            }
-
-            return new Phrase<>(conditionName, conditionValue, String.valueOf(valueNode.get("analyzer")), slop);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-              "Invalid Phrase format at [%s]: %s".formatted(name, e.getMessage()),
-              e
-            );
-          }
-        } else if(AdvancedText.class.equals(cClass)) {
-          if(!valueNode.isObject() || valueNode.isEmpty()) {
-            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
-          }
-
-          try {
-            String conditionName = valueNode.get("name").asText();
-            String conditionValue = valueNode.get("value").asText();
-            Boolean inOrder = valueNode.has("inOrder")
-              ? Boolean.valueOf(valueNode.get("inOrder").asText())
-              : null;
-
-            Integer slop = valueNode.has("slop")
-              ? valueNode.get("slop").asInt()
-              : null;
-
-            return new AdvancedText<>(conditionName, conditionValue, inOrder, slop);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-              "Invalid AdvancedText format at [%s]: %s".formatted(name, e.getMessage()),
-              e
-            );
-          }
         } else {
           throw new UnsupportedOperationException("Missing condition implementation for [" + name + "]!");
         }

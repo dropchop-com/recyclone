@@ -42,17 +42,17 @@ public class PermissionResource extends ClassicRestByIdResource<Permission, Iden
   }
 
   @Override
-  public Result<Permission> create(List<Permission> roles) {
-    return service.create(roles);
+  public Result<Permission> create(List<Permission> permissions) {
+    return service.create(permissions);
   }
 
   @Override
-  public Result<Permission> delete(List<Permission> roles) {
-    return service.delete(roles);
+  public Result<Permission> delete(List<Permission> permissions) {
+    return service.delete(permissions);
   }
 
   @Override
-  public Result<Permission> update(List<Permission> roles) {
-    return service.update(roles);
+  public Result<Permission> update(List<Permission> permissions) {
+    return service.update(permissions);
   }
 }

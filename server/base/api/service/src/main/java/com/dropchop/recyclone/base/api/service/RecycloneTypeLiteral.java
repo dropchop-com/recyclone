@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.api.service;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import jakarta.enterprise.util.AnnotationLiteral;
 
 import java.io.Serial;

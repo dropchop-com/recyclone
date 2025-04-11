@@ -69,6 +69,8 @@ public class TagResourceTest {
 
   @Test
   @Order(20)
+  @Tag("create")
+  @Tag("removeAttribute")
   public void create() {
     //LanguageGroup languageGroupSlavic = new LanguageGroup();
     //languageGroupSlavic.setName("slavic");
@@ -132,6 +134,7 @@ public class TagResourceTest {
 
   @Test
   @Order(30)
+  @Tag("removeAttribute")
   public void removeAttribute() {
     LanguageGroup languageGroupSSlavic = new LanguageGroup();
     languageGroupSSlavic.setName("southern_slavic");

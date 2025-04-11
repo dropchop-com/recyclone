@@ -10,16 +10,15 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+@SuppressWarnings("unused")
 @Mock
 public class EventMockData {
 
     public static String EVENT_TRACE_NAME = "some_test_flow";
     public static String EVENT_TRACE_NAME2 = "some_test_flow_2";
 
-    public List<Event> createMockEvents()
-    {
+    public List<Event> createMockEvents() {
         List<Event> mockEvents = new ArrayList<>();
         Event event = new Event();
         event.setId("4794b019-9750-44f4-a3c9-33516c6bfc50");
@@ -176,7 +175,8 @@ public class EventMockData {
         return mockEvents;
     }
 
-    private EventDetail createMockEventDetail(String id, String descriptor, String name, String value, EventDetail parent, EventDetail child) {
+    private EventDetail createMockEventDetail(String id, String name, EventDetail parent, EventDetail child,
+                                              ZonedDateTime created) {
         EventDetail detail = new EventDetail();
         detail.setId(id);
         detail.setDescriptor(descriptor);
@@ -189,8 +189,8 @@ public class EventMockData {
 
     }
 
-    private EventItem createMockEventItem(EventDetail subject, EventDetail object, EventDetail service, EventDetail context)
-    {
+    private EventItem createMockEventItem(String id, String type, EventDetail subject, EventDetail object,
+                                          EventDetail service, EventDetail context, ZonedDateTime created) {
         EventItem item = new EventItem();
         item.setSubject(subject);
         item.setObject(object);
@@ -200,8 +200,7 @@ public class EventMockData {
         return item;
     }
 
-    private EventTrace createMockEventTrace(String name,String group, String context)
-    {
+    private EventTrace createMockEventTrace(String name,String group, String context) {
         EventTrace trace = new EventTrace();
         trace.setName(name);
         trace.setGroup(group);
@@ -209,22 +208,27 @@ public class EventMockData {
         return trace;
     }
 
-    private EventDetail createMockEventDetailSubject(String id, String descriptor, String name, String value,EventDetail parent, EventDetail child) {
-        return createMockEventDetail(id, descriptor, name, value, parent, child);
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailSubject(String id,String name, EventDetail parent,
+                                                     EventDetail child, ZonedDateTime created) {
+        return createMockEventDetail(id,name, parent, child, created);
     }
 
-    private EventDetail createMockEventDetailObject(String id, String descriptor, String name, String value,EventDetail parent, EventDetail child)
-    {
-        return createMockEventDetail(id, descriptor, name, value, parent, child);
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailObject(String id,String name, EventDetail parent,
+                                                    EventDetail child, ZonedDateTime created) {
+        return createMockEventDetail(id,name, parent, child, created);
     }
 
-    private EventDetail createMockEventDetailService(String id, String descriptor, String name, String value,EventDetail parent, EventDetail child)
-    {
-        return createMockEventDetail(id, descriptor, name, value, parent, child);
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailService(String id, String name, EventDetail parent,
+                                                     EventDetail child, ZonedDateTime created) {
+        return createMockEventDetail(id,name, parent, child,created);
     }
 
-    private EventDetail createMockEventDetailContext(String id, String descriptor, String name, String value,EventDetail parent, EventDetail child)
-    {
-        return createMockEventDetail(id, descriptor, name, value, parent, child);
+    @SuppressWarnings("SameParameterValue")
+    private EventDetail createMockEventDetailContext(String id,String name, EventDetail parent,
+                                                     EventDetail child, ZonedDateTime created) {
+        return createMockEventDetail(id,name, parent, child, created);
     }
 }

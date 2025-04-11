@@ -1,49 +1,41 @@
 package com.dropchop.recyclone.base.api.model.query.operator.text;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @Setter
 @SuppressWarnings("unused")
-@JsonIgnoreProperties({"name", "value", "analyzer", "slop"})
-public class Phrase<T> extends PhraseParameters<T> {
+public class Phrase extends Text {
+
+  @JsonInclude(NON_NULL)
+  private String analyzer = null;
+
+  @JsonInclude(NON_NULL)
+  private Integer slop = null;
 
   public Phrase() {
   }
 
-  public Phrase(T name, T value) {
-    super(name, value);
+  public Phrase(String value) {
+    super(value);
   }
 
-  public Phrase(T name, T value, Integer slop) {
-    super(name, value, slop);
+  public Phrase(String value, Integer slop) {
+    super(value);
+    this.slop = slop;
   }
 
-  public Phrase(T name, T value, String analyzer) {
-    super(name, value, analyzer);
+  public Phrase(String value, String analyzer) {
+    this(value);
+    this.analyzer = analyzer;
   }
 
-  public Phrase(T name, T value, String analyzer, Integer slop) {
-    super(name, value, analyzer, slop);
-  }
-
-  public PhraseParameters<T> get$phrase() {
-    return new PhraseParameters<>(
-      super.getName(),
-      super.getValue(),
-      super.getAnalyzer(),
-      super.getSlop()
-    );
-  }
-
-  public void set$phrase(PhraseParameters<T> phrase) {
-    if (phrase != null) {
-      setName(phrase.getName());
-      setValue(phrase.getValue());
-      setAnalyzer(phrase.getAnalyzer());
-      setSlop(phrase.getSlop());
-    }
+  public Phrase(String value, String analyzer, Integer slop) {
+    this(value, analyzer);
+    this.slop = slop;
   }
 }

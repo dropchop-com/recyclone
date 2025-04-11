@@ -20,6 +20,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.ZonedDateTime;
 
 /**
@@ -64,23 +65,44 @@ public class ObjectMapperFactory {
     this(null, null, null);
   }
 
-  public ObjectMapper createObjectMapper() {
-    ObjectMapper mapper = new ObjectMapper();
+  public <M extends ObjectMapper> M createObjectMapper(Class<M> mClass) {
+    M mapper;
+    try {
+      mapper = mClass.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.disable(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL);
 
     SimpleModule module;
     if (this.serializerModifier != null) {
-      module = new SimpleModule();
-      module.setSerializerModifier(this.serializerModifier);
-      mapper.registerModule(module);
+      if (serializerModifier instanceof ExecContextPropertyFilterSerializerModifier) {
+        if (mapper instanceof FilteringObjectMapper) {
+          module = new SimpleModule();
+          module.setSerializerModifier(this.serializerModifier);
+          mapper.registerModule(module);
+        }
+      } else {
+        module = new SimpleModule();
+        module.setSerializerModifier(this.serializerModifier);
+        mapper.registerModule(module);
+      }
     }
 
     if (this.deserializerModifier != null) {
-      module = new SimpleModule();
-      module.setDeserializerModifier(this.deserializerModifier);
-      mapper.registerModule(module);
+      if (this.deserializerModifier instanceof ParamsFactoryDeserializerModifier) {
+        if (mapper instanceof FilteringObjectMapper) {
+          module = new SimpleModule();
+          module.setDeserializerModifier(this.deserializerModifier);
+          mapper.registerModule(module);
+        }
+      } else {
+        module = new SimpleModule();
+        module.setDeserializerModifier(this.deserializerModifier);
+        mapper.registerModule(module);
+      }
     }
 
     module = new SimpleModule();
@@ -111,5 +133,13 @@ public class ObjectMapperFactory {
       log.debug("Missing polymorphic registry while creating JSON mapper!");
     }
     return mapper;
+  }
+
+  public ObjectMapper createFilteringObjectMapper() {
+    return createObjectMapper(FilteringObjectMapper.class);
+  }
+
+  public ObjectMapper createNonFilteringObjectMapper() {
+    return createObjectMapper(DefaultObjectMapper.class);
   }
 }

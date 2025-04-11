@@ -14,17 +14,20 @@ import java.util.Map;
 public interface ConditionOperator {
 
   static Map<String, Class<? extends ConditionOperator>> supported() {
-    return Map.of(
-        "eq", Eq.class,
-        "lt", Lt.class,
-        "gt", Gt.class,
-        "lte", Lte.class,
-        "gte", Gte.class,
-        "in", In.class,
-        "gtelt", ClosedOpenInterval.class,
-        "gtlt", OpenInterval.class,
-        "gtelte", ClosedInterval.class,
-        "gtlte", OpenClosedInterval.class
+    return Map.ofEntries(
+        Map.entry("eq", Eq.class),
+        Map.entry("lt", Lt.class),
+        Map.entry("gt", Gt.class),
+        Map.entry("lte", Lte.class),
+        Map.entry("gte", Gte.class),
+        Map.entry("in", In.class),
+        Map.entry("gtelt", ClosedOpenInterval.class),
+        Map.entry("gtlt", OpenInterval.class),
+        Map.entry("gtelte", ClosedInterval.class),
+        Map.entry("gtlte", OpenClosedInterval.class),
+        Map.entry("match", Match.class),
+        Map.entry("matchPhrase", Match.class),
+        Map.entry("matchWildcard", Match.class)
     );
   }
 

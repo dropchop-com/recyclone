@@ -2,33 +2,27 @@ package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
+import com.dropchop.recyclone.base.api.model.attr.AttributeDecimal;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
-import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
-import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
-import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
-import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
-import com.dropchop.recyclone.base.api.repo.ElasticCrudRepository;
-import com.dropchop.recyclone.base.api.repo.config.DateBasedIndexConfig;
-import com.dropchop.recyclone.base.api.repo.config.DefaultIndexConfig;
-import com.dropchop.recyclone.base.api.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.base.api.repo.mapper.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
+import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Container;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticSearchResult.Hit;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Container;
+import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Hit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,9 +36,6 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.and;
@@ -56,14 +47,17 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class ElasticRepository<E extends EsEntity, ID> implements ElasticCrudRepository<E, ID>,
-  ElasticBulkMethod {
+public abstract class ElasticRepository<E extends EsEntity, ID> implements ElasticCrudRepository<E, ID> {
+
+  private static final String HTTP_POST = "POST";
+  private static final String ENDPOINT_SEARCH = "/_search";
+  private static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   protected ExecContextContainer ctxContainer;
 
-  public abstract ElasticQueryMapper getElasticQueryMapper();
+  public abstract ElasticQueryBuilder getElasticQueryBuilder();
 
   public abstract ObjectMapper getObjectMapper();
 
@@ -74,7 +68,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   }
 
   public ElasticIndexConfig getElasticIndexConfig() {
-    return new com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig();
+    return DefaultIndexConfig.builder().rootClass(getRootClass()).build();
   }
 
   protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
@@ -84,7 +78,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   }
 
   @Override
-  public RepositoryExecContext<E> getRepositoryExecContext() {
+  public ElasticExecContext<E> getRepositoryExecContext() {
     ElasticExecContext<E> context = new ElasticExecContext<E>().of(ctxContainer.get());
     String alias = getClassAlias(this.getRootClass());
     for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
@@ -103,62 +97,30 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return getRepositoryExecContext().totalCount(mappingContext);
   }
 
-  protected <S extends E> List<S> executeBulkRequest(Collection<S> entities, ElasticBulkMethodImpl method) {
-    if (entities == null || entities.isEmpty()) {
-      return Collections.emptyList();
-    }
-
-    StringBuilder bulkRequestBody = new StringBuilder();
-    ObjectMapper objectMapper = getObjectMapper();
-
-    bulkRequestBody = method.buildBulkRequest(entities, bulkRequestBody, objectMapper);
-
-    StringBuilder endpoint = new StringBuilder();
-    endpoint.append("/_bulk");
-
-    if(getElasticIndexConfig().getIngestPipeline() != null) {
-      endpoint.append("?pipeline=").append(getElasticIndexConfig().getIngestPipeline());
-    }
-
-    Request request = new Request("POST", endpoint.toString());
-    request.setJsonEntity(bulkRequestBody.toString());
-
+  private Response invokeBulkRequest(BulkRequestBuilder bulkRequestBuilder, Collection<?> entities) {
+    ObjectMapper mapper = getObjectMapper();
+    Request request = bulkRequestBuilder.bulkRequest(entities);
+    Response response;
     try {
-      Response response = getElasticsearchClient().performRequest(request);
-      return method.checkSuccessfulResponse(entities, response, objectMapper);
+      response = getElasticsearchClient().performRequest(request);
     } catch (ServiceException | IOException e) {
       throw new ServiceException(
-        ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
-        Set.of(new AttributeString("error", e.getMessage())), e
+          ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
+          Set.of(new AttributeString("error", e.getMessage())), e
       );
     }
+    return response;
   }
 
   @Override
   public <S extends E> List<S> save(Collection<S> entities) {
-    ElasticBulkMethodImpl saveBulkMethod = new ElasticBulkMethodImpl(ElasticBulkMethodImpl.MethodType.INDEX) {
-
-      @Override
-      protected <P extends EsEntity> String getIndexOuterName(P entity) {
-        ElasticIndexConfig config = getElasticIndexConfig();
-        if(config instanceof DateBasedIndexConfig dateBasedIndexConfig) {
-          if(entity instanceof HasCreated hasCreated && hasCreated.getCreated() != null) {
-            return dateBasedIndexConfig.getMonthBasedIndexName(
-                hasCreated.getCreated(), entity.getClass()
-            ).getFirst();
-          } else {
-            throw new ServiceException(
-              ErrorCode.internal_error,
-              "No Created field found for entity " + entity.getClass() +
-                " but the requested implementation is using DateBasedIndexConfig"
-            );
-          }
-        } else {
-          return getElasticIndexConfig().getIndexName(entity);
-        }
-      }
-    };
-    return executeBulkRequest(entities, saveBulkMethod);
+    ObjectMapper mapper = getObjectMapper();
+    BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
+        BulkRequestBuilder.MethodType.INDEX, mapper, getElasticIndexConfig()
+    );
+    Response response = invokeBulkRequest(bulkRequestBuilder, entities);
+    BulkResponseParser responseParser = new BulkResponseParser(mapper);
+    return responseParser.parseResponse(entities, response);
   }
 
   @Override
@@ -180,45 +142,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     if (ids == null || ids.isEmpty()) {
       return 0;
     }
-
-    Class<E> rootClass = getRootClass();
-    StringBuilder bulkRequestBody = new StringBuilder();
-    ObjectMapper objectMapper = getObjectMapper();
-
-    for (X id : ids) {
-      bulkRequestBody
-        .append("{ \"delete\" : { \"_index\" : \"")
-        .append(getElasticIndexConfig().getIndexName(rootClass))
-        .append("\", \"_id\" : \"")
-        .append(id.toString())
-        .append("\" } }\n");
-    }
-
-    Request request = new Request("POST", "/_bulk");
-    request.setJsonEntity(bulkRequestBody.toString());
-
-    try {
-      Response response = getElasticsearchClient().performRequest(request);
-      JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
-
-      int deletedCount = 0;
-      if (responseBody.has("items")) {
-        for (JsonNode item : responseBody.get("items")) {
-          JsonNode deleteResult = item.get("delete");
-          if (deleteResult != null && "deleted".equals(deleteResult.get("result").asText())) {
-            deletedCount++;
-          }
-        }
-      }
-
-      return deletedCount;
-    } catch (IOException e) {
-      throw new ServiceException(
-        ErrorCode.data_error,
-        "Failed to delete entities by ID",
-        Set.of(new AttributeString("error", e.getMessage()))
-      );
-    }
+    ObjectMapper mapper = getObjectMapper();
+    BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
+        BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
+    );
+    Response response = invokeBulkRequest(bulkRequestBuilder, ids);
+    BulkResponseParser responseParser = new BulkResponseParser(mapper);
+    return responseParser.parseResponse(ids, response).size();
   }
 
   @Override
@@ -228,29 +158,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   @Override
   public <S extends E> List<S> delete(Collection<S> entities) {
-    ElasticBulkMethodImpl elasticDeleteMethod = new ElasticBulkMethodImpl(ElasticBulkMethodImpl.MethodType.DELETE) {
-      @Override
-      protected <P extends EsEntity> String getIndexOuterName(P entity) {
-        ElasticIndexConfig config = getElasticIndexConfig();
-        if(config instanceof DateBasedIndexConfig dateBasedIndexConfig) {
-          if(entity instanceof HasCreated hasCreated && hasCreated.getCreated() != null) {
-            return dateBasedIndexConfig.getMonthBasedIndexName(
-                hasCreated.getCreated(), entity.getClass()
-            ).getFirst();
-          } else {
-            throw new ServiceException(
-              ErrorCode.internal_error,
-              "No Created field found for entity " + entity.getClass() +
-                " but the requested implementation is using DateBasedIndexConfig"
-            );
-          }
-        } else {
-          return config.getIndexName(entity);
-        }
-      }
-    };
-
-    return executeBulkRequest(entities, elasticDeleteMethod);
+    ObjectMapper mapper = getObjectMapper();
+    BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
+        BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
+    );
+    Response response = invokeBulkRequest(bulkRequestBuilder, entities);
+    BulkResponseParser responseParser = new BulkResponseParser(mapper);
+    return responseParser.parseResponse(entities, response);
   }
 
   @Override
@@ -258,10 +172,28 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return delete(List.of(entity)).getFirst();
   }
 
+  protected Request buildRequestForSearch(QueryNodeObject query, String endpoint) {
+    ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
+    String indexName;
+    if (indexConfig instanceof HasQueryBasedReadIndex hasQueryBasedReadIndex) {
+      indexName = hasQueryBasedReadIndex.getReadIndexName(query);
+      return new Request(HTTP_POST, "/" + indexName + endpoint);
+    }
+    if (indexConfig instanceof HasRootAlias hasRootAlias) {
+      indexName = hasRootAlias.getRootAlias();
+      return new Request(HTTP_POST, "/" + indexName + endpoint);
+    }
+    if (indexConfig instanceof HasStaticReadIndex hasStaticReadIndex) {
+      indexName = hasStaticReadIndex.getReadIndex();
+      return new Request(HTTP_POST, "/" + indexName + endpoint);
+    }
+    throw new ServiceException(ErrorCode.internal_error, "No valid index config found!");
+  }
+
   @Override
   public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
     QueryParams params = context.getParams();
-    QueryNodeObject queryObject = getElasticQueryMapper().mapToString(params);
+    QueryNodeObject queryObject = getElasticQueryBuilder().build(params);
     String query;
 
     try {
@@ -273,10 +205,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     try {
-      Request request = new Request(
-          "POST",
-          "/" + getElasticIndexConfig().getIndexName(this.getRootClass()) + "/_delete_by_query"
-      );
+      Request request = this.buildRequestForSearch(queryObject, ENDPOINT_DELETE_BY_QUERY);
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
       if (response.getStatusLine().getStatusCode() == 200) {
@@ -295,7 +224,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         throw new ServiceException(
           ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
           Set.of(
-            new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+            new AttributeDecimal("status", response.getStatusLine().getStatusCode()),
             new AttributeString("query", query)
           )
         );
@@ -309,7 +238,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
   }
 
-  private QueryNodeObject buildSortOrder(List<String> sortList, Class<?> rootClass) {
+  protected QueryNodeObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig) {
     QueryNodeObject sortOrder = new QueryNodeObject();
     if (!sortList.isEmpty()) {
       List<QueryNodeObject> sortEntries = sortList.stream()
@@ -320,44 +249,33 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         })
         .toList();
       sortOrder.put("sort", sortEntries);
-    } else {
-      QueryNodeObject defaultSort = new QueryNodeObject();
-      if (HasCreated.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("created", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if (HasModified.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("modified", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if (HasPublished.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("published", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if (HasUuid.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("uuid", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if (HasCode.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("code", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else if (HasId.class.isAssignableFrom(rootClass)) {
-        defaultSort.put("is", "desc");
-        sortOrder.put("sort", defaultSort);
-      } else {
-        throw new ServiceException(ErrorCode.internal_error, "No Id or Code set to sort by; for Es deep pagination!");
+      return sortOrder;
+    } else if (indexConfig instanceof HasClassBasedDefaultSort hasClassBasedDefaultSort) {
+      QueryNodeObject defaultSort = hasClassBasedDefaultSort.getSortOrder();
+      if (defaultSort == null) {
+        throw new ServiceException(
+            ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
+        );
       }
+      sortOrder.put("sort", defaultSort);
+      return sortOrder;
     }
-    return sortOrder;
+    return null;
   }
 
-  private QueryNodeObject buildQueryObject(QueryParams params,
-                                           QueryNodeObject sortOrder,
-                                           List<Object> searchAfterValues) {
+  protected <S extends E> QueryNodeObject buildQueryObject(QueryParams queryParams, List<Object> searchAfterValues) {
+    ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
+    QueryNodeObject sortOrder = buildSortOrder(
+        queryParams.tryGetResultFilter().sort(), indexConfig
+    );
 
-    int sizeOfPagination = getElasticIndexConfig().getSizeOfPagination();
-    int maxSize = params.tryGetResultFilter().size();
-    int from = params.tryGetResultFilter().from();
+    int sizeOfPagination = indexConfig.getSizeOfPagination();
+    int maxSize = queryParams.tryGetResultFilter().size();
+    int from = queryParams.tryGetResultFilter().from();
 
-    ElasticQueryMapper esQueryMapper = new ElasticQueryMapper();
-    QueryNodeObject initialQueryObject = esQueryMapper.mapToString(params);
+    ElasticQueryBuilder esQueryMapper = new ElasticQueryBuilder();
 
+    QueryNodeObject initialQueryObject = esQueryMapper.build(queryParams);
     int effectiveSize = maxSize > 0
       ? Math.min(maxSize, 10000)
       : Math.min(sizeOfPagination, 10000);
@@ -376,13 +294,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return initialQueryObject;
   }
 
-  @Override
-  public <S extends E, X extends ID> S findById(X id) {
-    List<S> entities = findById(List.of(id));
-    return entities.isEmpty() ? null : entities.getFirst();
-  }
-
-  private <X> void executeQuery(QueryNodeObject queryObject, boolean skipParsing,
+  private <X> long executeQuery(QueryNodeObject queryObject, boolean skipParsing,
                                 Collection<RepositoryExecContextListener> listeners) {
     ProfileTimer timer = new ProfileTimer();
     ObjectMapper objectMapper = getObjectMapper();
@@ -394,17 +306,17 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
     Class<E> cls = getRootClass();
     try {
-      Request request = buildRequest(queryObject);
-
+      Request request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
+      int queryId = query.hashCode();
+      log.debug("Received response for query [{}][{}] in [{}]ms.", queryId, query, timer.stop());
       if (response.getStatusLine().getStatusCode() == 200) {
         String responseBody = EntityUtils.toString(response.getEntity());
         ElasticSearchResult<X> searchResult;
         if (skipParsing) {
           searchResult = objectMapper.readValue(
-            responseBody, new TypeReference<>() {
-            }
+              responseBody, new TypeReference<>() {}
           );
         } else {
           searchResult = objectMapper.readValue(
@@ -414,6 +326,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
           );
         }
         int count = 0;
+        log.debug("Parsed query [{}] with [{}] result size in [{}]ms.", queryId, count, timer.stop());
 
         for (Hit<X> hit : searchResult.getHits().getHits()) {
           count++;
@@ -427,15 +340,18 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         }
 
         if (searchResult.getAggregations() != null) {
-          searchResult.getAggregations().forEach((name, agg) ->
-            listeners.stream()
-              .filter(AggregationResultListener.class::isInstance)
-              .forEach(listener ->
-                ((AggregationResultListener) listener).onAggregation(name, agg)
-              )
-          );
+          for (Map.Entry<String, Object> entry : searchResult.getAggregations().entrySet()) {
+            String name = entry.getKey();
+            Object agg = entry.getValue();
+            for (RepositoryExecContextListener listener : listeners) {
+              if (listener instanceof AggregationResultListener) {
+                ((AggregationResultListener) listener).onAggregation(name, agg);
+              }
+            }
+          }
         }
-        log.debug("Executed query [{}] with [{}] result size in [{}]ms.", query, count, timer.stop());
+        log.debug("Executed query [{}] with [{}] result size in [{}]ms.", queryId, count, timer.stop());
+        return count;
       } else if (response.getStatusLine().getStatusCode() == 404) {
         throw new ServiceException(
           ErrorCode.data_missing_error, "Missing data for query",
@@ -461,142 +377,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
   }
 
-  private Request buildRequest(QueryNodeObject query) {
-    if (getElasticIndexConfig() instanceof DateBasedIndexConfig) {
-      return buildDateBasedRequest((DateBasedIndexConfig) getElasticIndexConfig());
-    } else if (getElasticIndexConfig() instanceof DefaultIndexConfig) {
-      return buildDefaultRequest((DefaultIndexConfig) getElasticIndexConfig());
-    } else {
-      throw new ServiceException(
-        ErrorCode.internal_error,
-        "No valid ElasticIndexConfig found for class ElasticRepository!"
-      );
-    }
-  }
-
-  private Request buildDateBasedRequest(DateBasedIndexConfig dateConfig) {
-    if (dateConfig.getAlias() != null) {
-      String alias = dateConfig.getAlias();
-      log.debug("Using alias [{}] as set in ElasticIndexConfig", alias);
-      return new Request("GET", "/" + alias + "/_search");
-    } else {
-      List<String> indexNames = dateConfig.getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
-      String indexName = String.join(",", indexNames);
-      log.debug("Alias was not set in ElasticIndexConfig, using current time to calculate index [{}]", indexName);
-      return new Request("GET", "/" + indexName + "/_search");
-    }
-  }
-
-  private Request buildDefaultRequest(DefaultIndexConfig defaultIndexConfig) {
-    if (defaultIndexConfig.getAlias() != null) {
-      String alias = defaultIndexConfig.getAlias();
-      log.debug("Using alias [{}] as set in ElasticIndexConfig", alias);
-      return new Request("GET", "/" + alias + "/_search");
-    } else {
-      String indexName = getElasticIndexConfig().getIndexName(this.getRootClass());
-      log.debug("Using default index configuration with index name [{}]", indexName);
-      return new Request("GET", "/" + indexName + "/_search");
-    }
-  }
-
-  //TODO: Think about correct implementation of this...
-  @Override
-  public List<String> setDatesForIndices(QueryNodeObject query) {
-    UUID uuid = query.getNestedValue(UUID.class, "uuid");
-    ZonedDateTime created = query.getNestedValue(ZonedDateTime.class, "created");
-
-    if (created != null) {
-      return ((DateBasedIndexConfig) getElasticIndexConfig())
-        .getMonthBasedIndexName(created, getRootClass());
-    } else if (uuid != null) {
-      try {
-        if (uuid.version() != 1) {
-          throw new ServiceException(
-            ErrorCode.internal_error,
-            "UUID must be version 1 (time-based) for timestamp extraction"
-          );
-        }
-
-        long uuidTimestamp = uuid.timestamp();
-
-        final long EPOCH_DIFF = 12219292800L * 1_000_000_000L;
-        long unixMillis = ((uuidTimestamp * 100) - EPOCH_DIFF) / 1_000_000L;
-
-        ZonedDateTime creationDate = Instant.ofEpochMilli(unixMillis)
-          .atZone(ZoneId.systemDefault());
-
-        return ((DateBasedIndexConfig) getElasticIndexConfig())
-          .getMonthBasedIndexName(creationDate, getRootClass());
-
-      } catch (ServiceException e) {
-        log.warn("UUID must be version 1 (time-based) for timestamp extraction");
-        return ((DateBasedIndexConfig) getElasticIndexConfig())
-          .getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
-      } catch (Exception e) {
-        throw new ServiceException(
-          ErrorCode.internal_error,
-          "Failed to extract timestamp from UUID: " + e.getMessage(),
-          e
-        );
-      }
-    } else {
-      log.warn("No date specification found in query, using current time in ElasticRepository");
-      return ((DateBasedIndexConfig) getElasticIndexConfig())
-        .getMonthBasedIndexName(ZonedDateTime.now(), getRootClass());
-    }
-  }
-
-  @Override
-  public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
-    Collection<String> strIds = ids.stream().map(Object::toString).toList();
-    Class<E> cls = getRootClass();
-    QueryParams params = new QueryParams();
-    QueryNodeObject queryObject;
-    if (!ids.isEmpty()) {
-      if (HasCode.class.isAssignableFrom(cls)) {
-        params.condition(and(field("code", in(strIds))));
-      } else if (HasUuid.class.isAssignableFrom(cls)) {
-        params.condition(and(field("uuid", in(strIds))));
-      }
-    }
-    queryObject = buildQueryObject(params, null, null);
-    List<S> results = new ArrayList<>();
-    executeQuery(queryObject, false, List.of(
-      (QueryResultListener<S>) result -> results.add(result.getSource())
-    ));
-    return results;
-  }
-
-  @Override
-  public <S extends E> List<S> find(RepositoryExecContext<S> context) {
-    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
-      throw new ServiceException(
-        ErrorCode.parameter_validation_error,
-        "Invalid context: Expected ElasticExecContext but received " + context.getClass()
-      );
-    }
-    //TODO: any params can be used here with the correct criteria decorators
-    //      this impl is false
-    return this.search((QueryParams) elasticContext.getParams(), elasticContext);
-  }
-
-  @Override
-  public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
-    throw new ServiceException(
-      ErrorCode.internal_error,
-      "Unimplemented"
-    );
-  }
-
-  @Override
-  public <S extends E> List<S> find() {
-    throw new ServiceException(
-      ErrorCode.internal_error,
-      "Unimplemented"
-    );
-  }
-
-
   private void applyDecorators(RepositoryExecContext<?> context) {
     context.getListeners().stream()
       .filter(listener -> listener instanceof CriteriaDecorator)
@@ -608,8 +388,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return hits.isEmpty() ? null : hits.getLast().getSort();
   }
 
-  @Override
-  public <S extends E> List<S> search(QueryParams params, RepositoryExecContext<S> context) {
+  public <S extends E> List<S> search(RepositoryExecContext<S> context) {
     if (!(context instanceof ElasticExecContext<S> elasticContext)) {
       throw new ServiceException(
         ErrorCode.parameter_validation_error,
@@ -618,11 +397,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     applyDecorators(context);
-
-    List<Object> searchAfterValues = null;
-    QueryNodeObject sortOrder = buildSortOrder(
-      context.getParams().tryGetResultFilter().sort(), elasticContext.getRootClass()
-    );
 
     RepositoryExecContextListener listener = context.getListeners().stream()
       .filter(l -> l instanceof MapResultListener).findFirst().orElse(null);
@@ -636,15 +410,17 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       );
     }
 
-    int maxSize = params.tryGetResultFilter().getSize();
-
-    boolean hasMoreHits = true;
     QueryParams queryParams = context.getParams();
+    int requestSize = queryParams.tryGetResultFilter().getSize();
+    int maxSize = getElasticIndexConfig().getSizeOfPagination();
+
     List<S> results = new ArrayList<>();
-    while (hasMoreHits && results.size() < maxSize) {
+
+    List<Object> searchAfterValues = null;
+    while (true) {
       try {
-        QueryNodeObject queryObject = buildQueryObject(queryParams, sortOrder, searchAfterValues);
-        Container<Hit<S>> last = new Container<>();
+        QueryNodeObject queryObject = buildQueryObject(queryParams, searchAfterValues);
+        Container<Hit<S>> last = new Container<>(); // we use container since variable must be final
         if (((ElasticExecContext<S>) context).isSkipObjectParsing() && listener != null) {
           executeQuery(queryObject, true, List.of(
             (QueryResultListener<S>) last::setHit
@@ -667,8 +443,11 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
             ));
           }
         }
-        if (last.isEmpty()) {
-          hasMoreHits = false;
+        if (last.isEmpty() || results.size() < requestSize || requestSize == 0) {
+          // break when last hit is not present (in the last hit we have searchAfterValues to continue)
+          // or break when result size is smaller that requested limit (search exhausted)
+          // or request size is 0
+          break;
         } else {
           searchAfterValues = last.getHit().getSort();
         }
@@ -686,5 +465,59 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     return results;
+  }
+
+  @Override
+  public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
+    Collection<String> strIds = ids.stream().map(Object::toString).toList();
+    Class<E> cls = getRootClass();
+    QueryParams params = new QueryParams();
+    QueryNodeObject queryObject;
+    if (!ids.isEmpty()) {
+      if (HasCode.class.isAssignableFrom(cls)) {
+        params.condition(and(field("code", in(strIds))));
+      } else if (HasUuid.class.isAssignableFrom(cls)) {
+        params.condition(and(field("uuid", in(strIds))));
+      }
+    }
+    queryObject = buildQueryObject(params, null);
+    List<S> results = new ArrayList<>();
+    executeQuery(queryObject, false, List.of(
+        (QueryResultListener<S>) result -> results.add(result.getSource())
+    ));
+    return results;
+  }
+
+  @Override
+  public <S extends E, X extends ID> S findById(X id) {
+    List<S> entities = findById(List.of(id));
+    return entities.isEmpty() ? null : entities.getFirst();
+  }
+
+  @Override
+  public <S extends E> List<S> find(RepositoryExecContext<S> context) {
+    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
+      throw new ServiceException(
+          ErrorCode.parameter_validation_error,
+          "Invalid context: Expected ElasticExecContext but received " + context.getClass()
+      );
+    }
+    return this.search(elasticContext);
+  }
+
+  @Override
+  public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
+    throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unimplemented"
+    );
+  }
+
+  @Override
+  public <S extends E> List<S> find() {
+    throw new ServiceException(
+        ErrorCode.internal_error,
+        "Unimplemented"
+    );
   }
 }

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.rest.server;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -11,6 +12,8 @@ import jakarta.inject.Inject;
 
 import java.util.List;
 
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 01. 22.
  */
@@ -20,6 +23,7 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
     com.dropchop.recyclone.quarkus.it.rest.api.DummyResource {
 
   @Inject
+  @RecycloneType(RECYCLONE_ES_DEFAULT)
   DummyService service;
 
   @Inject
@@ -36,6 +40,7 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
     return service.search();
   }
 
+  //TODO: Refactor CodeParams or CrudService API
   @Override
   public Result<Dummy> search(CodeParams params) {
     return service.search();
@@ -43,11 +48,11 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
 
   @Override
   public Result<Dummy> query(DummyQueryParams params) {
-    return service.query();
+    return service.search();
   }
 
   @Override
   public List<Dummy> queryRest(DummyQueryParams params) {
-    return service.query().getData();
+    return service.search().getData();
   }
 }

@@ -1,40 +1,34 @@
 package com.dropchop.recyclone.base.es.repo.localization;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.model.localization.EsCountry;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
-import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
-import com.dropchop.recyclone.base.es.repo.mapper.ElasticQueryMapper;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.Getter;
 import org.elasticsearch.client.RestClient;
+
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 18. 09. 24.
  */
 @Getter
 @ApplicationScoped
+@SuppressWarnings("CdiInjectionPointsInspection")
 public class CountryRepository extends ElasticRepository<EsCountry, String> {
 
   Class<EsCountry> rootClass = EsCountry.class;
 
-  @Override
-  public ElasticQueryMapper getElasticQueryMapper() {
-    return null;
-  }
+  @Inject
+  @RecycloneType(RECYCLONE_DEFAULT)
+  ObjectMapper objectMapper;
 
-  @Override
-  public ObjectMapper getObjectMapper() {
-    return null;
-  }
+  @Inject
+  RestClient elasticsearchClient;
 
-  @Override
-  public RestClient getElasticsearchClient() {
-    return null;
-  }
-
-  @Override
-  public ElasticIndexConfig getElasticIndexConfig() {
-    return null;
-  }
+  @Inject
+  ElasticQueryBuilder elasticQueryBuilder;
 }

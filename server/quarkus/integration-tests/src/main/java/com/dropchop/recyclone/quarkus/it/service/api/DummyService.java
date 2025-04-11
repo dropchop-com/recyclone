@@ -13,7 +13,4 @@ public interface DummyService extends CrudService<Dummy>, QueryService<Dummy> {
   default String getSecurityDomain() {
     return Constants.Domains.Test.DUMMY;
   }
-
-  int delete();
-  int deleteByQuery();
 }

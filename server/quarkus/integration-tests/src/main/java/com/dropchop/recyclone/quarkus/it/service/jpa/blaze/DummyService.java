@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -84,15 +84,5 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
     List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
     elasticRepository.delete(entities);
     return result;
-  }
-
-  @Override
-  public int delete() {
-    return 0;
-  }
-
-  @Override
-  public int deleteByQuery() {
-    return 0;
   }
 }

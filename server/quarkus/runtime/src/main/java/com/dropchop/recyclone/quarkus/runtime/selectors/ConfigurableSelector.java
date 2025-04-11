@@ -2,7 +2,7 @@ package com.dropchop.recyclone.quarkus.runtime.selectors;
 
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.utils.ClassNameMatcher;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.service.RecycloneTypeLiteral;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.InjectionPoint;

@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.es.mapper.events.EventToDtoMapper;
 import com.dropchop.recyclone.base.es.mapper.events.EventToEsMapper;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
-import com.dropchop.recyclone.base.api.repo.FilteringElasticMapperProvider;
+import com.dropchop.recyclone.base.es.repo.FilteringElasticMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;

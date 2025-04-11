@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.api.rest.ClassicRestByIdResource;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.events.api.service.EventService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

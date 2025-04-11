@@ -10,7 +10,7 @@ public class SecurityHelper {
 
   public static RoleNode roleNodeOf(String uuid, String entity, String entityUuid, Integer maxParentLevelInstsance) {
     RoleNode roleNode = new RoleNode();
-    roleNode.setUuid(uuid);
+    roleNode.setId(uuid);
     roleNode.setTarget(entity);
     roleNode.setEntity(entity);
     roleNode.setEntityId(entityUuid);
@@ -25,7 +25,7 @@ public class SecurityHelper {
                                     String entityUuid,
                                     Integer maxParentLevelInstsance) {
     RoleNode roleNode = new RoleNode();
-    roleNode.setUuid(uuid);
+    roleNode.setId(uuid);
     roleNode.setTarget(target);
     roleNode.setTargetId(targetId);
     roleNode.setEntity(entity);
@@ -42,7 +42,7 @@ public class SecurityHelper {
     action.setCode(actionCode);
 
     Permission permission = new Permission();
-    permission.setUuid(uuid);
+    permission.setId(uuid);
     permission.setDomain(domain);
     permission.setAction(action);
     permission.setTitle("Permit " + actionCode + " actions on " + domainCode);
@@ -60,7 +60,7 @@ public class SecurityHelper {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    roleNodePermission.setUuid(Strings.isNullOrEmpty(uuid) ? UUID.randomUUID().toString() : uuid);
+    roleNodePermission.setId(Strings.isNullOrEmpty(uuid) ? UUID.randomUUID().toString() : uuid);
     roleNodePermission.setRoleNode(parent);
     roleNodePermission.setPermission(permission);
     roleNodePermission.setAllowed(allowed);

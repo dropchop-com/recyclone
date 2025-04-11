@@ -10,8 +10,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 09. 22.
  */
 @SuppressWarnings("unused")
-public class
-PropertyFilterSerializerModifier extends BeanSerializerModifier {
+public class PropertyFilterSerializerModifier extends BeanSerializerModifier {
 
   private final FieldFilter filter;
 

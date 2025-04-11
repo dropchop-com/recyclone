@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.security.Domain;
 import com.dropchop.recyclone.base.jpa.model.security.JpaDomain;
 import com.dropchop.recyclone.base.jpa.repo.security.DomainMapperProvider;

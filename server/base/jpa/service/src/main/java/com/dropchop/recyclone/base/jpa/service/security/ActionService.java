@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import com.dropchop.recyclone.base.jpa.repo.security.ActionMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.ActionRepository;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;

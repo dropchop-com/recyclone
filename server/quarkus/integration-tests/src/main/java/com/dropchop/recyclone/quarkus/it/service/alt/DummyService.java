@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.quarkus.it.service.alt;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.base.api.service.ElasticCrudServiceImpl;
-import com.dropchop.recyclone.base.api.service.RecycloneType;
+import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
@@ -35,7 +35,7 @@ import java.util.List;
 @ApplicationScoped
 @RecycloneType("alter")
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
-public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String>
+public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
   @Inject
@@ -57,7 +57,6 @@ public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String
   @Inject
   ObjectMapper objectMapper;
 
-
   @Override
   public Result<Dummy> search() {
     CommonExecContext<Dummy, ?> context = ctxContainer.get();
@@ -75,10 +74,9 @@ public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String
     QueryParams queryParams = context.getParams();
 
     List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
-
-    MappingContext map = new FilteringDtoContext().of(ctxContainer.get());
+    MappingContext map = new MappingContext().of(ctxContainer.get());
     RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext();
-    List<EsDummy> entities = elasticRepository.search(queryParams, ctx);
+    List<EsDummy> entities = elasticRepository.search(ctx);
     MappingContext mapCtx = new FilteringDtoContext().of(ctxContainer.get());
     List<Dummy> dtos = mapperProvider.getToEsDtoMapper().toDtos(entities, mapCtx);
 
@@ -95,19 +93,4 @@ public class DummyService extends ElasticCrudServiceImpl<Dummy, JpaDummy, String
     return result;
   }
 
-  @Override
-  @Transactional
-  public int delete() {
-    CommonExecContext<Dummy, ?> context = ctxContainer.get();
-    CodeParams codeParams = context.getParams();
-    List<String> codes = codeParams.getCodes();
-    return elasticRepository.deleteById(codes);
-  }
-
-  @Override
-  @Transactional
-  public int deleteByQuery() {
-    RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext();
-    return elasticRepository.deleteByQuery(ctx);
-  }
 }
