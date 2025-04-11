@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.event;
 
+import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.dto.model.base.DtoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -17,8 +18,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @JsonInclude(NON_NULL)
-public class EventTrace extends DtoId implements com.dropchop.recyclone.base.api.model.event.EventTrace {
+public class EventTrace implements com.dropchop.recyclone.base.api.model.event.EventTrace, Dto {
 
+  private String name;
   private String group;
   private String context;
 

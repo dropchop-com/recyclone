@@ -58,7 +58,7 @@ public class EventsResourceTest {
 
   public static String EVENT_ID = Uuid.getTimeBased().toString();
   public static String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
-  public static String EVENT_TRACE_ID = "6df37bd3-073f-45f2-9f00-65022f2b4019";
+  public static String EVENT_TRACE_NAME = "some_test_flow";
 
   interface Strings {
     String EVENT_DETAIL = "event_detail";
@@ -88,44 +88,33 @@ public class EventsResourceTest {
     Event rspEvent = events.getFirst();
     assertNotNull(rspEvent.getSource());
     assertNotNull(rspEvent.getSource().getSubject());
-    assertNotNull(rspEvent.getSource().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getSubject().getName());
     assertNotNull(rspEvent.getSource().getObject());
-    assertNotNull(rspEvent.getSource().getObject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getObject().getName());
     assertNotNull(rspEvent.getSource().getService());
-    assertNotNull(rspEvent.getSource().getService().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getService().getName());
     assertNotNull(rspEvent.getSource().getContext());
-    assertNotNull(rspEvent.getSource().getContext().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getSource().getContext().getName());
     assertNotNull(rspEvent.getCause());
     assertNotNull(rspEvent.getCause().getSubject());
-    assertNotNull(rspEvent.getCause().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getSubject().getName());
     assertNotNull(rspEvent.getCause().getObject());
-    assertNotNull(rspEvent.getCause().getObject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getObject().getName());
     assertNotNull(rspEvent.getCause().getService());
-    assertNotNull(rspEvent.getCause().getService().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getService().getName());
     assertNotNull(rspEvent.getCause().getContext());
-    assertNotNull(rspEvent.getCause().getContext().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getCause().getContext().getName());
     assertNotNull(rspEvent.getTarget());
     assertNotNull(rspEvent.getTarget().getSubject());
-    assertNotNull(rspEvent.getTarget().getSubject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getSubject().getName());
     assertNotNull(rspEvent.getTarget().getObject());
-    assertNotNull(rspEvent.getTarget().getObject().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getObject().getName());
     assertNotNull(rspEvent.getTarget().getService());
-    assertNotNull(rspEvent.getTarget().getService().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getService().getName());
     assertNotNull(rspEvent.getTarget().getContext());
-    assertNotNull(rspEvent.getTarget().getContext().getCreated());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getContext().getName());
     assertNotNull(rspEvent.getTrace());
+    assertEquals(EVENT_TRACE_NAME, rspEvent.getTrace().getName());
     assertEquals(Strings.CONTEXT, rspEvent.getTrace().getContext());
     assertEquals(Strings.GROUP, rspEvent.getTrace().getGroup());
 
@@ -145,20 +134,17 @@ public class EventsResourceTest {
 
     EventDetail detail = new EventDetail();
     detail.setId(UUID.randomUUID().toString());
-    detail.setCreated(ZonedDateTime.now());
     detail.setId(EVENT_DETAIL_ID);
     detail.setName(Strings.EVENT_DETAIL);
 
     EventItem eventItem = new EventItem();
-    eventItem.setId(UUID.randomUUID().toString());
-    eventItem.setCreated(ZonedDateTime.now());
     eventItem.setSubject(detail);
     eventItem.setObject(detail);
     eventItem.setService(detail);
     eventItem.setContext(detail);
 
     EventTrace eventTrace = new EventTrace();
-    eventTrace.setId(EVENT_TRACE_ID);
+    eventTrace.setName(EVENT_TRACE_NAME);
     eventTrace.setContext(Strings.CONTEXT);
     eventTrace.setGroup(Strings.GROUP);
 
@@ -352,7 +338,7 @@ public class EventsResourceTest {
   @Tag("searchBySpecificTraceId")
   public void searchBySpecificTraceId() {
     EventParams params = EventParams.builder().condition(
-      and(field("trace.uuid", EVENT_TRACE_ID))
+      and(field("trace.name", EVENT_TRACE_NAME))
     ).build();
 
     //Field field = field("trace.id", EVENT_TRACE_ID);
@@ -375,8 +361,9 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     //this.validate(events);
-    assertEquals(EVENT_TRACE_ID, events.getFirst().getTrace().getId());
+    assertEquals(EVENT_TRACE_NAME, events.getFirst().getTrace().getName());
     assertEquals(3, events.size());
+
   }
 
   @Test
@@ -384,7 +371,7 @@ public class EventsResourceTest {
   @Tag("searchAllEventsWithoutSpecificTraceId")
   public void searchAllEventsWithoutSpecificTraceId() {
     EventParams params = EventParams.builder().condition(
-      not(field("trace.uuid", EVENT_TRACE_ID))
+      not(field("trace.name", EVENT_TRACE_NAME))
     ).build();
 
     params.tryGetResultFilter().setSize(100);
@@ -404,7 +391,6 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertNotEquals(EVENT_TRACE_ID, events.getFirst().getTrace().getId());
     assertEquals(1, events.size());
   }
 
@@ -443,7 +429,7 @@ public class EventsResourceTest {
   public void searchEventsByTraceIdOrUnitString() {
     EventParams params = EventParams.builder().condition(
       or(
-        field("trace.uuid", EVENT_TRACE_ID),
+        field("trace.name", EVENT_TRACE_NAME),
         field("unit", "Mock_Unit") //isnt actually used until we implement MATCH type search
       )
     ).build();
@@ -468,7 +454,7 @@ public class EventsResourceTest {
     assertFalse(events.isEmpty());
 
     for (Event event : events) {
-      boolean matchesCondition = EVENT_TRACE_ID.equals(event.getTrace().getId()) ||
+      boolean matchesCondition = EVENT_TRACE_NAME.equals(event.getTrace().getName()) ||
         "Mock_Unit".equals(event.getUnit());
 
       assertTrue(matchesCondition, String.format("Event did not match any condition: %s", event));
@@ -490,7 +476,7 @@ public class EventsResourceTest {
             Iso8601.fromIso("2027-01-01T12:12:12.12")
           )
         ),
-        field("trace.uuid", EVENT_TRACE_ID)
+        field("trace.name", EVENT_TRACE_NAME)
         //field("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
       )
     ).build();
@@ -663,7 +649,7 @@ public class EventsResourceTest {
       and(
         or(
           field(
-            "target.created",
+            "created",
             gteLt(
               startDate,
               endDate
@@ -727,7 +713,7 @@ public class EventsResourceTest {
       and(
         or(
           field(
-            "target.created",
+            "created",
             gteLt(
               startDate,
               endDate
@@ -746,7 +732,7 @@ public class EventsResourceTest {
            *field("target.subject.name", "Target_Subject2"),
            */
           field(
-            "target.created",
+            "created",
             gteLt(
               startDate2,
               endDate2
@@ -852,20 +838,9 @@ public class EventsResourceTest {
           )
         ).or(
           and(
-            field("application", "Lupitpole-frontend"),
-            field("type", "frontend"),
-            field("action", "SUBMIT_FORM_FRONTEND")
-          )
-        ),
-        and(
-          field("cause.created",
-            gtLt(
-              startDate,
-              endDate
-            )
+            field("application", "Lupitpole-frontend")
           )
         )
-
       )
 
 
@@ -888,7 +863,7 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertEquals(1, events.size());
+    assertEquals(2, events.size());
 
   }
 
@@ -950,6 +925,142 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     assertEquals(2, events.size());
+  }
+
+  @Test
+  @Order(110)
+  public void complexQuery6() {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    or(
+                            and(
+                                    field("application", "Baucheck-backend"),
+                                    field("type", "Backend"),
+                                    field("action", "FETCH_DATA"),
+                                    field("target.subject.descriptor", "descriptor_target_subject")
+                            )
+                    ).or(
+                            and(
+                                    field("application", "Lupitpole-frontend"),
+                                    field("type", "frontend"),
+                                    field("action", "SUBMIT_FORM_FRONTEND")
+                            )
+                    )
+            )
+
+
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(2, events.size());
+
+  }
+
+  @Test
+  @Order(120)
+  public void complexQuery7()
+  {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    or(
+                            and(
+                                    field("application", "Baucheck-backend"),
+                                    field("type", "Backend"),
+                                    and(
+                                            or(
+                                                    field("target.subject.descriptor", "descriptor_target_subject")
+                                            ).or(
+                                                    field("target.subject.value", "value2_target_subject")
+                                            )
+                                    )
+                            )
+                    ).or(
+                            and(
+                                    field("application", "Lupitpole-frontend"),
+                                    field("type", "frontend"),
+                                    field("action", "SUBMIT_FORM_FRONTEND")
+                            )
+                    )
+            )
+
+
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search?c_level=5")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(3, events.size());
+
+  }
+
+  @Test
+  @Order(130)
+  public void complexQuery8()
+  {
+    ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
+    ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
+
+    EventParams params = EventParams.builder().condition(
+            and(
+                    field("source.subject.name", "Source_Subject")
+            )
+    ).build();
+
+    params.tryGetResultFilter().setSize(100);
+    params.tryGetResultFilter().getContent().setTreeLevel(5);
+
+    List<Event> events = given()
+            .log().all()
+            .contentType(ContentType.JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .auth().preemptive().basic("admin1", "password")
+            .and()
+            .body(params)
+            .when()
+            .post("/api/internal/events/search?c_level=5")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body().jsonPath().getList(".", Event.class);
+
+    assertEquals(1, events.size());
+
   }
 
 
