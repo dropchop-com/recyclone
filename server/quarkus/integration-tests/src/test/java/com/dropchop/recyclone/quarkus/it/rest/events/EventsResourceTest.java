@@ -361,7 +361,7 @@ public class EventsResourceTest {
       .body().jsonPath().getList(".", Event.class);
 
     //this.validate(events);
-    assertEquals(EVENT_TRACE_ID, events.getFirst().getTrace().getName());
+    assertEquals(EVENT_TRACE_NAME, events.getFirst().getTrace().getName());
     assertEquals(3, events.size());
 
   }
