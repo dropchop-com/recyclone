@@ -1,0 +1,76 @@
+{ "index" : { "_index" : "languages", "_id" : "1" } }
+{ "code": "en", "title": "English", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "languages", "_id" : "2" } }
+{ "code": "sl", "title": "Slovene", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "languages", "_id" : "3" } }
+{ "code": "sl-nonstandard", "title": "Slovene (non standard)", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "languages", "_id" : "4" } }
+{ "code": "hr", "title": "Croatian", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "languages", "_id" : "5" } }
+{ "code": "sr", "title": "Serbian", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "languages", "_id" : "6" } }
+{ "code": "sr-Cyrl", "title": "Serbian (Cyrillic)", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "languages", "_id" : "7" } }
+{ "code": "sr-Cyrl-ME", "title": "Montenegro Serbian (Cyrillic)", "lang": "en", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "language_translations", "_id" : "1" } }
+{ "fk_language_code": "en", "title": "Angleščina", "lang": "sl", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "language_translations", "_id" : "2" } }
+{ "fk_language_code": "sl", "title": "Slovenščina", "lang": "sl", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "tags", "_id" : "1" } }
+{ "uuid": "c73847a8-836a-3ad3-b4f8-4a331248088d", "title": "Slavic", "lang": "en", "type": "LanguageGroup", "name": "slavic", "created": "now", "modified": "now", "deactivated": "now" }
+
+{ "index" : { "_index" : "tag_translations", "_id" : "1" } }
+{ "fk_tag_uuid": "c73847a8-836a-3ad3-b4f8-4a331248088d", "title": "Slovanski Jezik", "lang": "sl", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "tag_translations", "_id" : "2" } }
+{ "fk_tag_uuid": "c73847a8-836a-3ad3-b4f8-4a331248088d", "title": "Slovanski Jezik", "lang": "hr", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "language_tags", "_id" : "1" } }
+{ "fk_language_code": "sl", "fk_tag_uuid": "c73847a8-836a-3ad3-b4f8-4a331248088d", "idx": 0 }
+
+{ "index" : { "_index" : "security_actions", "_id" : "1" } }
+{ "code": "*", "title": "All", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_actions", "_id" : "2" } }
+{ "code": "view", "title": "View", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_actions", "_id" : "3" } }
+{ "code": "create", "title": "Create", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_actions", "_id" : "4" } }
+{ "code": "delete", "title": "Delete", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_actions", "_id" : "5" } }
+{ "code": "update", "title": "Update", "lang": "en", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "security_action_translations", "_id" : "1" } }
+{ "fk_security_action_code": "*", "title": "Vse", "lang": "sl", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_action_translations", "_id" : "2" } }
+{ "fk_security_action_code": "view", "title": "Ogled", "lang": "sl", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_action_translations", "_id" : "3" } }
+{ "fk_security_action_code": "create", "title": "Ustvarjanje", "lang": "sl", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_action_translations", "_id" : "4" } }
+{ "fk_security_action_code": "delete", "title": "Brisanje", "lang": "sl", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_action_translations", "_id" : "5" } }
+{ "fk_security_action_code": "update", "title": "Spreminjanje", "lang": "sl", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "security_domains", "_id" : "1" } }
+{ "code": "*", "title": "All", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_domains", "_id" : "2" } }
+{ "code": "localization.language", "title": "Localization/Languages", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_domains", "_id" : "3" } }
+{ "code": "localization.country", "title": "Localization/Countries", "lang": "en", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "security_permissions", "_id" : "1" } }
+{ "uuid": "03965584-7609-44b4-8cf4-b54a3ac9e472", "fk_security_domain_code": "*", "fk_security_action_code": "*", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "security_roles", "_id" : "1" } }
+{ "code": "admin", "title": "Administrator", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_roles", "_id" : "2" } }
+{ "code": "staff", "title": "Staff", "lang": "en", "created": "now", "modified": "now" }
+{ "index" : { "_index" : "security_roles", "_id" : "3" } }
+{ "code": "user", "title": "User", "lang": "en", "created": "now", "modified": "now" }
+
+{ "index" : { "_index" : "security_role_permissions", "_id" : "1" } }
+{ "fk_security_role_code": "admin", "fk_security_permission_uuid": "03965584-7609-44b4-8cf4-b54a3ac9e472" }
+{ "index" : { "_index" : "security_role_permissions", "_id" : "2" } }
+{ "fk_security_role_code": "staff", "fk_security_permission_uuid": "f321134e-d383-45c7-bbbf-befc44f41d0c" }
+{ "index" : { "_index" : "security_role_permissions", "_id" : "3" } }
+{ "fk_security_role_code": "user", "fk_security_permission_uuid": "0edf37b1-8b7c-4d81-9f17-05f683f54570" }
