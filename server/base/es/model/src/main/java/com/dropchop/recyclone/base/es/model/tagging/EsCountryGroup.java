@@ -14,7 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @SuppressWarnings("unused")
-public class EsCountryGroup extends EsNamedTag implements CountryGroup<EsTag, EsTitleDescriptionTranslation> {
+public class EsCountryGroup extends EsNamedTag
+    implements CountryGroup<EsTag, EsTitleDescriptionTranslation> {
   public EsCountryGroup(@NonNull String name) {
     super(name);
   }

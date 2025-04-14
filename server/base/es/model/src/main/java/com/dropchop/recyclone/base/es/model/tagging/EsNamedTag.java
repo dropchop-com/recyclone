@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class EsNamedTag extends EsTag
-  implements NamedTag<EsTag, EsTitleDescriptionTranslation> {
+    implements NamedTag<EsTag, EsTitleDescriptionTranslation> {
 
   @NonNull
   private String name;
