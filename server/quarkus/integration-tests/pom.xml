@@ -206,7 +206,6 @@
           <execution>
             <goals>
               <goal>build</goal>
-              <goal>generate-code</goal>
               <goal>native-image-agent</goal>
             </goals>
           </execution>

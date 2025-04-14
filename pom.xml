@@ -63,7 +63,7 @@
     <resources-plugin.version>3.3.1</resources-plugin.version>
     <source-plugin.version>3.3.1</source-plugin.version>
     <compiler-plugin.version>3.14.0</compiler-plugin.version>
-    <surefire-plugin.version>3.2.5</surefire-plugin.version>
+    <surefire-plugin.version>3.5.2</surefire-plugin.version>
     <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
     <jar-plugin.version>3.4.1</jar-plugin.version>
     <gpg-plugin.version>3.2.4</gpg-plugin.version>
