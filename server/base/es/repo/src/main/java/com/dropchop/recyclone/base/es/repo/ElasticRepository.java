@@ -294,6 +294,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return initialQueryObject;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   private <X> long executeQuery(QueryNodeObject queryObject, boolean skipParsing,
                                 Collection<RepositoryExecContextListener> listeners) {
     ProfileTimer timer = new ProfileTimer();

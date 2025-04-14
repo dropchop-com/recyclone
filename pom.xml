@@ -569,10 +569,7 @@
           <version>${antrun-plugin.version}</version>
         </plugin>
 
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${resources-plugin.version}</version>
-        </plugin>
+
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${surefire-plugin.version}</version>
@@ -611,6 +608,33 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${resources-plugin.version}</version>
+          <configuration>
+            <escapeString>\</escapeString>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>p12</nonFilteredFileExtension>
+              <nonFilteredFileExtension>gif</nonFilteredFileExtension>
+              <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+              <nonFilteredFileExtension>png</nonFilteredFileExtension>
+              <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+              <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+              <nonFilteredFileExtension>mp3</nonFilteredFileExtension>
+              <nonFilteredFileExtension>mp4</nonFilteredFileExtension>
+              <nonFilteredFileExtension>wmv</nonFilteredFileExtension>
+              <nonFilteredFileExtension>avi</nonFilteredFileExtension>
+              <nonFilteredFileExtension>v1</nonFilteredFileExtension>
+              <nonFilteredFileExtension>v2</nonFilteredFileExtension>
+              <nonFilteredFileExtension>jsonl</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+            <outputDirectory/>
+            <supportMultiLineFiltering>true</supportMultiLineFiltering>
+            <encoding>UTF-8</encoding>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

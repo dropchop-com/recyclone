@@ -1,17 +1,14 @@
 package com.dropchop.recyclone.base.es.repo.events;
 
-import com.dropchop.recyclone.base.api.mapper.MapToEntityMapper;
-import com.dropchop.recyclone.base.es.mapper.events.EventMapToEntityMapper;
+import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
+import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.es.mapper.events.EventToDtoMapper;
 import com.dropchop.recyclone.base.es.mapper.events.EventToEsMapper;
-import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
-import com.dropchop.recyclone.base.es.repo.FilteringElasticMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -20,8 +17,7 @@ import java.util.UUID;
 @Getter
 @ApplicationScoped
 @SuppressWarnings({"unused"})
-public class EsEventMapperProvider extends FilteringElasticMapperProvider<Event, EsEvent, UUID>
-    implements MapToEntityMapper<EsEvent> {
+public class EsEventMapperProvider extends FilteringMapperProvider<Event, EsEvent, UUID> {
 
   @Inject
   EsEventRepository repository;
@@ -31,12 +27,4 @@ public class EsEventMapperProvider extends FilteringElasticMapperProvider<Event,
 
   @Inject
   EventToEsMapper toEntityMapper;
-
-  @Inject
-  EventMapToEntityMapper mapToEntityMapper;
-
-  @Override
-  public EsEvent fromMap(Map<String, Object> result) {
-    return null;
-  }
 }
