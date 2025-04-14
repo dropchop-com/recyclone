@@ -188,15 +188,27 @@ public class ElasticsearchInitializer {
 
   private void applyData(Template template, String baseUrl) throws IOException {
     List<String> lines = Arrays.asList(template.template.split("\n"));
-    int chunkSize = 2500;
+    if (lines.size() <= 1) {
+      log.warn("Invalid template format [{}]", template.templatePath);
+      return;
+    }
+    boolean bulkFormat = lines
+        .getFirst()
+        .replace("\\s+", "")
+        .toLowerCase()
+        .startsWith("{\"index\":");
+
+    //lazy heuristics i.e. 2500 chunkSize can fail if docs are big
+    //(default is 100 mb fro http.max_content_length in your elasticsearch.yml)
+    //bulk format has command + \n + content sequence so we need to stop at an odd index
+    int chunkSize = 2499;
     int chunkIdx = 0;
     int maxChunkIdx = lines.size() / chunkSize;
     for (int i = 0; i < lines.size(); i += chunkSize) {
       List<String> chunk = lines.subList(i, Math.min(i + chunkSize, lines.size()));
-      String bulkRequestBody;
-      if (template.templatePath.endsWith(".json")) {
+      StringBuilder bulkBody = new StringBuilder();
+      if (!bulkFormat) {
         // why would it be simple? this is an elastic dump file with index doc per line
-        StringBuilder bulkBody = new StringBuilder();
         for (String line : chunk) {
           String indexName = extractFieldValue("_index", line);
           String id = extractFieldValue("_id", line);
@@ -210,15 +222,19 @@ public class ElasticsearchInitializer {
           bulkBody.append(sourceString);
           bulkBody.append("\n");
         }
-        bulkRequestBody = bulkBody.toString();
       } else {
-        // assuming the proper bulk format
-        bulkRequestBody = String.join("\n", chunk);
+        for (String line : chunk) {
+          if (line.isBlank()) {
+            continue;
+          }
+          bulkBody.append(line);
+          bulkBody.append("\n");
+        }
       }
       if (chunkIdx == maxChunkIdx) { // last chunk
-        apply(baseUrl + "?refresh=wait_for", bulkRequestBody, "POST");
+        apply(baseUrl + "?refresh=wait_for", bulkBody.toString(), "POST");
       } else {
-        apply(baseUrl, bulkRequestBody, "POST");
+        apply(baseUrl, bulkBody.toString(), "POST");
       }
       log.debug("Applied data [{}][{}]", template.name, chunkIdx);
       chunkIdx++;
