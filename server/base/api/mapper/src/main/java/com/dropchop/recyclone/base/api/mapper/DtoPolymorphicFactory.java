@@ -36,7 +36,7 @@ public class DtoPolymorphicFactory {
       Collection<Class<?>> tmp = mapperSubTypeConfig.mapsTo(model.getClass());
       if (tmp != null && !tmp.isEmpty()) {
         Class<?> dtoCls = tmp.iterator().next();
-        log.debug("Will instantiate dto [{}] instead of [{}] for model class [{}] from polymorphic registry.",
+        log.trace("Will instantiate dto [{}] instead of [{}] for model class [{}] from polymorphic registry.",
             dtoCls, type, model.getClass());
         type = (Class<D>) dtoCls;
       }
