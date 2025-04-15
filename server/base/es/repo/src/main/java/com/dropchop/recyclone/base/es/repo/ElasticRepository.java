@@ -444,7 +444,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
             ));
           }
         }
-        if (last.isEmpty() || results.size() < requestSize || requestSize == 0) {
+        if (last.isEmpty() || results.size() <= requestSize || requestSize == 0) {
           // break when last hit is not present (in the last hit we have searchAfterValues to continue)
           // or break when result size is smaller that requested limit (search exhausted)
           // or request size is 0
