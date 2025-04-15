@@ -1,36 +1,28 @@
 package com.dropchop.recyclone.base.es.model.localization;
 
 import com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslation;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-import java.time.ZonedDateTime;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonInclude(NON_NULL)
 @SuppressWarnings("unused")
-public class EsTitleDescriptionTranslation
+public class EsTitleDescriptionTranslation extends EsTitleTranslation
   implements TitleDescriptionTranslation {
 
-  @NonNull
-  @EqualsAndHashCode.Include
-  private String lang;
-
-  private EsLanguage language;
-
-  @NonNull
-  private String title;
+  public EsTitleDescriptionTranslation(@NonNull String lang, @NonNull String title) {
+    super(lang, title);
+  }
 
   private String description;
-
-  private ZonedDateTime created;
-
-  private ZonedDateTime modified;
-
-  transient Boolean base;
 }
