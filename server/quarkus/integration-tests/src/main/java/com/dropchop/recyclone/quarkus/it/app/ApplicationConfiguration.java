@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.quarkus.it.app;
 
-import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
-import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
-import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.quarkus.it.model.dto.DummyTag;
+import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummyTag;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplication;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest;
@@ -60,9 +60,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
     // this is just for demo
     Map<String, RestClass> restClassMap = restMapping.getApiClasses();
 
-    //mapping is already there collected from the @SubclassMapping annotation of the TagToDtoMapper,
-    //but we add it again here just for demonstration
-    mapperConfig.addBidiMapping(LanguageGroup.class, JpaLanguageGroup.class);
+    mapperConfig.addBidiMapping(DummyTag.class, JpaDummyTag.class);
   }
 
   /**
@@ -72,7 +70,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
    */
   @Produces
   @ApplicationScoped
-  ObjectMapper getDefaultObjectMapper() {
+  ObjectMapper getOutputObjectMapper() {
     configureMappers();
     return objectMapperFactory.createFilteringObjectMapper();
   }

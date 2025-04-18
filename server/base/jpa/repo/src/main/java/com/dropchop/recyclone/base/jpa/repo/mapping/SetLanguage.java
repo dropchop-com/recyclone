@@ -8,6 +8,7 @@ import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasLanguageCode;
+import com.dropchop.recyclone.base.api.model.marker.HasOptionalTranslation;
 import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
@@ -43,15 +44,18 @@ public class SetLanguage
       return;
     }
     if (Constants.Actions.CREATE.equals(context.getSecurityAction())) { // for other actions it has no sense
-      if (entity instanceof HasLanguageCode && entity instanceof HasJpaLanguage) {
-        String code = ((HasLanguageCode) entity).getLang();
+      if (entity instanceof HasLanguageCode hasLanguageCode && entity instanceof HasJpaLanguage hasJpaLanguage) {
+        String code = hasLanguageCode.getLang();
         if (code == null) {
+          if (entity instanceof HasOptionalTranslation) {
+            return;
+          }
           throw new ServiceException(ErrorCode.internal_error, "Missing language code in lang field for DTO!",
             Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
         }
         JpaLanguage lang = this.findById(new Language(code));
         if (lang != null) {
-          ((HasJpaLanguage) entity).setLanguage(lang);
+          hasJpaLanguage.setLanguage(lang);
         }
       }
     }

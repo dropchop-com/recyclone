@@ -2,8 +2,10 @@ package com.dropchop.recyclone.quarkus.it.rest.tagging;
 
 import com.dropchop.recyclone.base.api.model.attr.*;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
+import com.dropchop.recyclone.quarkus.it.model.dto.DummyTag;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -65,6 +67,40 @@ public class TagResourceTest {
       .body("status.message.text", equalTo("Missing language code in lang field for DTO!"))
       .body("data", empty())
       .extract().asPrettyString();
+  }
+
+  @Test
+  @Order(15)
+  public void createNoErrorMissingLang() {
+    DummyTag dummyTag1 = new DummyTag();
+    dummyTag1.setName("dumdum");
+    assertEquals(
+        Uuid.getNameBasedV3(DummyTag.class.getSimpleName() + '.' + dummyTag1.getName()).toString(),
+        dummyTag1.getUuid().toString()
+    );
+
+    DummyTag dummyTag2 = new DummyTag();
+    dummyTag2.setName("limo_driver");
+    assertEquals(
+        Uuid.getNameBasedV3(DummyTag.class.getSimpleName() + '.' + dummyTag2.getName()).toString(),
+        dummyTag2.getUuid().toString()
+    );
+
+    List<DummyTag> result = given()
+        //.log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        //.header("Authorization", "Bearer editortoken1")
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(List.of(dummyTag1, dummyTag2))
+        .when()
+        .post("/api/internal/tagging/tag")
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList("data", DummyTag.class);
+    assertEquals(2, result.size());
   }
 
   @Test
