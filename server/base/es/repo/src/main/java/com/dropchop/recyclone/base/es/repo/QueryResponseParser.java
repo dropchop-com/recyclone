@@ -12,10 +12,7 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.dropchop.recyclone.base.es.repo.listener.QueryResultListener.Progress;
 
@@ -67,8 +64,15 @@ public class QueryResponseParser {
     int hitCount = 0;
     while (parser.nextToken() == JsonToken.START_OBJECT) {
       hitCount++;
+      String prevField = null;
       while (parser.nextToken() != JsonToken.END_OBJECT) {
         String hitField = parser.currentName();
+        if (hitField == null) {
+          continue;
+        }
+        if (prevField != null && prevField.equals(hitField)) {
+          continue;
+        }
         parser.nextToken();
         switch (hitField) {
           case "_source":
@@ -96,9 +100,46 @@ public class QueryResponseParser {
           default:
             parser.skipChildren();
         }
+        prevField = hitField;
       }
     }
-    metaData.setTotalHits(hitCount);
+    metaData.setHits(hitCount);
+  }
+
+  private Map<String, Object> parseAggregationContents(JsonParser parser) throws IOException {
+    Map<String, Object> aggMap = new LinkedHashMap<>();
+    parser.nextToken(); // START_OBJECT
+
+    while (parser.nextToken() != JsonToken.END_OBJECT) {
+      String field = parser.currentName();
+      parser.nextToken();
+
+      if (parser.currentToken().isStructStart()) {
+        aggMap.put(field, mapper.readValue(parser, new TypeReference<Map<String, Object>>() {}));
+      } else {
+        aggMap.put(field, mapper.readValue(parser, Object.class));
+      }
+    }
+
+    return aggMap;
+  }
+
+  private void parseAggregations(JsonParser parser,
+                                 List<AggregationResultListener> aggListeners) throws IOException {
+    if (aggListeners == null || aggListeners.isEmpty()) {
+      return;
+    }
+    parser.nextToken(); // Move to START_OBJECT
+
+    while (parser.nextToken() == JsonToken.FIELD_NAME) {
+      String aggName = parser.currentName();
+      Map<String, Object> aggData = mapper.readValue(parser,
+          new TypeReference<>() {});
+      parser.nextToken(); // START_OBJECT
+      for (AggregationResultListener listener : aggListeners) {
+        listener.onAggregation(aggName, aggData.get(aggName));
+      }
+    }
   }
 
   public <T> SearchResultMetadata parse(InputStream responseStream, Class<T> sourceType,
@@ -108,9 +149,18 @@ public class QueryResponseParser {
     SearchResultMetadata metadata = new SearchResultMetadata();
     try (JsonParser parser = mapper.getFactory().createParser(responseStream)) {
       // Parse root level fields
-      while (parser.nextToken() != JsonToken.END_OBJECT) {
+      do {
+        JsonToken token = parser.nextToken();
+        if (token == null) {
+          break;
+        }
+        if (token == JsonToken.END_OBJECT) {
+          continue;
+        }
         String field = parser.currentName();
-        if (field == null) continue;
+        if (field == null) {
+          continue;
+        }
 
         switch (field) {
           case "took":
@@ -139,16 +189,14 @@ public class QueryResponseParser {
             }
             break;
 
-          case "aggs":
-            parser.nextToken();
-            mapper.readValue(parser, new TypeReference<Map<String, Object>>() {});
-
+          case "aggregations":
+            parseAggregations(parser, aggListeners);
             break;
 
           default:
             parser.skipChildren();
         }
-      }
+      } while (true);
     }
 
     return metadata;
