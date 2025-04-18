@@ -15,19 +15,16 @@ import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
+import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
-import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult;
-import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Container;
 import com.dropchop.recyclone.base.es.repo.query.ElasticSearchResult.Hit;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
@@ -238,6 +235,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
   }
 
+  protected boolean useSearchAfterMode(QueryParams queryParams) {
+    int requestSize = queryParams.tryGetResultFilter().getSize();
+    int requestFrom = queryParams.tryGetResultFilter().getFrom();
+    int maxSize = getElasticIndexConfig().getSizeOfPagination();
+    return requestSize + requestFrom >= maxSize;  // we would overflow allowed maximum
+  }
+
   protected QueryNodeObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig) {
     QueryNodeObject sortOrder = new QueryNodeObject();
     if (!sortList.isEmpty()) {
@@ -263,39 +267,114 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return null;
   }
 
-  protected <S extends E> QueryNodeObject buildQueryObject(QueryParams queryParams, List<Object> searchAfterValues) {
+  protected <S extends E> QueryNodeObject buildQueryObject(QueryParams queryParams,
+                                                           List<?> searchAfterValues,
+                                                           boolean useSearchAfterMode) {
     ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
     QueryNodeObject sortOrder = buildSortOrder(
         queryParams.tryGetResultFilter().sort(), indexConfig
     );
 
     int sizeOfPagination = indexConfig.getSizeOfPagination();
-    int maxSize = queryParams.tryGetResultFilter().size();
+    int size = queryParams.tryGetResultFilter().size();
     int from = queryParams.tryGetResultFilter().from();
 
     ElasticQueryBuilder esQueryMapper = new ElasticQueryBuilder();
 
     QueryNodeObject initialQueryObject = esQueryMapper.build(queryParams);
-    int effectiveSize = maxSize > 0
-      ? Math.min(maxSize, 10000)
-      : Math.min(sizeOfPagination, 10000);
-    initialQueryObject.put("size", effectiveSize);
-
-    if (searchAfterValues == null) {
+    if (useSearchAfterMode) {
+      if (sortOrder == null) {
+        throw new ServiceException(ErrorCode.internal_error, "Sort must be defined when using search after mode!");
+      }
+      if (searchAfterValues != null) {
+        initialQueryObject.put("search_after", searchAfterValues);
+      }
+    } else {
       initialQueryObject.put("from", from);
+      initialQueryObject.put("size", size);
     }
+
     if (sortOrder != null) {
       initialQueryObject.putAll(sortOrder);
-    }
-    if (searchAfterValues != null) {
-      initialQueryObject.put("search_after", searchAfterValues);
     }
 
     return initialQueryObject;
   }
 
+  protected <X> SearchResultMetadata executeSearch(QueryNodeObject queryObject,
+                                                   Class<X> resultClass,
+                                                   Collection<RepositoryExecContextListener> listeners,
+                                                   boolean searchAfterMode) {
+    ProfileTimer timer = new ProfileTimer();
+    ObjectMapper objectMapper = getObjectMapper();
+    String query;
+    try {
+      query = objectMapper.writeValueAsString(queryObject);
+    } catch (IOException e) {
+      throw new ServiceException(ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e);
+    }
+    //Class<E> cls = getRootClass();
+    try {
+      Request request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
+      request.setJsonEntity(query);
+      Response response = getElasticsearchClient().performRequest(request);
+      int queryId = query.hashCode();
+      log.debug("Received response for query [{}][{}] in [{}]ms.", queryId, query, timer.stop());
+      if (response.getStatusLine().getStatusCode() == 200) {
+        QueryResponseParser parser = new QueryResponseParser(objectMapper, searchAfterMode);
+        boolean skipParsing = Map.class.isAssignableFrom(resultClass);
+
+        List<QueryResultListener<X>> queryListeners = new ArrayList<>();
+        for (RepositoryExecContextListener listener : listeners) {
+          if (listener instanceof QueryResultListener<?> queryResultListener) {
+            //noinspection unchecked
+            queryListeners.add((QueryResultListener<X>) queryResultListener);
+          }
+        }
+
+        List<AggregationResultListener> aggListeners = new ArrayList<>();
+        for (RepositoryExecContextListener listener : listeners) {
+          if (listener instanceof AggregationResultListener queryResultListener) {
+            aggListeners.add(queryResultListener);
+          }
+        }
+
+        SearchResultMetadata searchResultMetadata;
+        searchResultMetadata = parser.parse(
+            response.getEntity().getContent(),
+            resultClass,
+            queryListeners,
+            aggListeners
+        );
+        return searchResultMetadata;
+      } else if (response.getStatusLine().getStatusCode() == 404) {
+        throw new ServiceException(
+            ErrorCode.data_missing_error, "Missing data for query",
+            Set.of(
+                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+                new AttributeString("query", query)
+            )
+        );
+      } else {
+        throw new ServiceException(
+            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+            Set.of(
+                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+                new AttributeString("query", query)
+            )
+        );
+      }
+    } catch (IOException e) {
+      throw new ServiceException(
+          ErrorCode.internal_error, "Unable to execute query",
+          Set.of(new AttributeString("query", query)), e
+      );
+    }
+  }
+
+  /*
   @SuppressWarnings("UnusedReturnValue")
-  private <X> long executeQuery(QueryNodeObject queryObject, boolean skipParsing,
+  private <X> long executeQuery(QueryNodeObject queryObject, boolean skipParsing, boolean searchAfterMode,
                                 Collection<RepositoryExecContextListener> listeners) {
     ProfileTimer timer = new ProfileTimer();
     ObjectMapper objectMapper = getObjectMapper();
@@ -377,6 +456,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       );
     }
   }
+  */
 
   private void applyDecorators(RepositoryExecContext<?> context) {
     context.getListeners().stream()
@@ -411,46 +491,39 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       );
     }
 
+    Class<S> cls = elasticContext.getRootClass();
+
     QueryParams queryParams = context.getParams();
     int requestSize = queryParams.tryGetResultFilter().getSize();
-    int maxSize = getElasticIndexConfig().getSizeOfPagination();
+    int requestFrom = queryParams.tryGetResultFilter().getFrom();
+    boolean searchAfterMode = this.useSearchAfterMode(queryParams);
 
     List<S> results = new ArrayList<>();
-
-    List<Object> searchAfterValues = null;
+    List<?> searchAfterValues = null;
+    long totalCount = 0;
     while (true) {
       try {
-        QueryNodeObject queryObject = buildQueryObject(queryParams, searchAfterValues);
-        Container<Hit<S>> last = new Container<>(); // we use container since variable must be final
-        if (((ElasticExecContext<S>) context).isSkipObjectParsing() && listener != null) {
-          executeQuery(queryObject, true, List.of(
-            (QueryResultListener<S>) last::setHit
-          ));
-        } else {
-          if (aggregationListener != null) {
-            executeQuery(queryObject, false, List.of(
-              (QueryResultListener<S>) hit -> {
-                results.add(hit.getSource());
-                last.setHit(hit);
-              },
-              aggregationListener
-            ));
-          } else {
-            executeQuery(queryObject, false, List.of(
-              (QueryResultListener<S>) hit -> {
-                results.add(hit.getSource());
-                last.setHit(hit);
-              }
-            ));
+        long count;  // some of the requests never fill results (usually huge requests with limited fields)
+        QueryNodeObject queryObject = buildQueryObject(
+            queryParams, searchAfterValues, searchAfterMode
+        );
+        SearchResultMetadata metadata = this.executeSearch(
+            queryObject, cls, context.getListeners(), searchAfterMode
+        );
+        count = metadata.getHits();
+        totalCount += count;
+        if (searchAfterMode) {  // search after mode is active
+          if (metadata.getLastSortValues().isEmpty()) {  // last hit was not set we must exit
+            break;
           }
-        }
-        if (last.isEmpty() || results.size() <= requestSize || requestSize == 0) {
-          // break when last hit is not present (in the last hit we have searchAfterValues to continue)
-          // or break when result size is smaller that requested limit (search exhausted)
-          // or request size is 0
-          break;
-        } else {
-          searchAfterValues = last.getHit().getSort();
+          if (totalCount >= requestSize) {
+            break;
+          }
+          searchAfterValues = metadata.getLastSortValues();
+        } else { // classical i.e. normal search mode
+          if (count <= requestSize || requestSize == 0) {  // no more hits will be returned
+            break;
+          }
         }
       } catch (ServiceException e) {
         throw new ServiceException(
@@ -481,11 +554,18 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         params.condition(and(field("uuid", in(strIds))));
       }
     }
-    queryObject = buildQueryObject(params, null);
+    boolean searchAfterMode = false;
+    queryObject = buildQueryObject(params, null, searchAfterMode);
     List<S> results = new ArrayList<>();
-    executeQuery(queryObject, false, List.of(
-        (QueryResultListener<S>) result -> results.add(result.getSource())
-    ));
+    SearchResultMetadata metadata = this.executeSearch(
+        queryObject,
+        cls,
+        List.of((QueryResultListener<S>) result -> {
+          results.add(result);
+          return QueryResultListener.Progress.CONTINUE;
+        }),
+        searchAfterMode
+    );
     return results;
   }
 
