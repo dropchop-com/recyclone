@@ -2,13 +2,17 @@ package com.dropchop.recyclone.base.dto.model.invoke;
 
 import com.dropchop.recyclone.base.api.model.base.State;
 import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,4 +46,8 @@ public class TagParams extends TypeParams {
   public ResultFilterDefaults getFilterDefaults() {
     return new Defaults();
   }
+
+  @Singular
+  private List<Tag> tags = new ArrayList<>();
+
 }
