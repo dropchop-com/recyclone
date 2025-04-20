@@ -3,6 +3,8 @@ package com.dropchop.recyclone.quarkus.it.rest.dummy;
 import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.rest.dummy.mock.DummyMockData;
 import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
@@ -76,16 +78,22 @@ public class DummyResourceTest {
   @Order(10)
   @Tag("searchByCode")
   public void searchByCode() {
-    QueryParams params = QueryParams.builder().condition(
-      or(
-        field("code", "sad15s1a21sa21a51a"),
-        field("code", "asdlasdadsa4dsds4d"),
-        field("code", "4d5as45s1ds4d5ss8sd6s")
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    QueryParams params = QueryParams.builder()
+        .condition(
+          or(
+            field("code", "sad15s1a21sa21a51a"),
+            field("code", "asdlasdadsa4dsds4d"),
+            field("code", "4d5as45s1ds4d5ss8sd6s")
+          )
+        )
+        .filter(
+            new ResultFilter()
+                .size(100)
+                .content(
+                    new ContentFilter().treeLevel(5)
+                )
+        )
+        .build();
 
     List<Dummy> dummies = given()
       .log().all()

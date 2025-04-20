@@ -9,8 +9,7 @@ import com.dropchop.recyclone.base.jpa.repo.BlazeCriteriaDecorator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SearchByTokenDecorator extends BlazeCriteriaDecorator {
-
+public class SearchByTokenDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

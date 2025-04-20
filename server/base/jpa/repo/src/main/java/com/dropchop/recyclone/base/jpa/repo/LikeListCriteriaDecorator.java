@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
-public abstract class LikeListCriteriaDecorator extends BlazeCriteriaDecorator {
+public abstract class LikeListCriteriaDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   protected void decorateWithListOfStringsAsLike(List<String> strings, String colName) {
     if (strings.isEmpty()) {
@@ -29,7 +29,9 @@ public abstract class LikeListCriteriaDecorator extends BlazeCriteriaDecorator {
     } else {
       WhereOrBuilder<? extends CriteriaBuilder<?>> wob = cb.whereOr();
       for (String s : strings) {
-        wob.where(colName).like().value(s.replace("*", "%").replace("?", "_")).noEscape();
+        wob.where(colName).like().value(
+            s.replace("*", "%").replace("?", "_")
+        ).noEscape();
       }
       wob.endOr();
     }

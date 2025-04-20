@@ -8,7 +8,7 @@ import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class PageCriteriaDecorator extends ElasticCriteriaDecorator {
+public class PageCriteriaDecorator<E> extends ElasticCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

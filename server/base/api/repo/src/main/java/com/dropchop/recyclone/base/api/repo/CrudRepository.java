@@ -13,8 +13,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface CrudRepository<E extends Model, ID> extends ReadRepository<E, ID> {
 
-  RepositoryExecContext<E> getRepositoryExecContext();
-  RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext);
+  <S extends E> RepositoryExecContext<S> getRepositoryExecContext();
+  <S extends E> RepositoryExecContext<S> getRepositoryExecContext(MappingContext mappingContext);
 
   <S extends E> List<S> save(Collection<S> entities);
   <S extends E> S save(S entity);

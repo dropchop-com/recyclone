@@ -1,63 +1,40 @@
 package com.dropchop.recyclone.base.es.repo;
 
-import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
-import com.dropchop.recyclone.base.api.mapper.TotalCountExecContextListener;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
-import com.dropchop.recyclone.base.dto.model.invoke.ParamsExecContext;
-import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
-import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import lombok.*;
+import com.dropchop.recyclone.base.api.repo.ctx.BaseRepoExecContext;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
-public class ElasticExecContext<E> extends ParamsExecContext<RepositoryExecContextListener>
-  implements RepositoryExecContext<E> {
+@SuppressWarnings("UnusedReturnValue")
+public class ElasticExecContext<E> extends BaseRepoExecContext<E> {
 
-  @NonNull
-  private Class<E> rootClass;
+  QueryNodeObject query;
+  ElasticIndexConfig indexConfig;
 
-  @NonNull
-  private String rootAlias;
-
-  private boolean skipObjectParsing;
-
-  public void init(Class<E> rootClass, String rootAlias) {
-    this.rootClass = rootClass;
-    this.rootAlias = rootAlias;
-
-    for (RepositoryExecContextListener decorator : listeners()) {
-      if (decorator instanceof ElasticCriteriaDecorator elasticCriteriaDecorator) {
-        elasticCriteriaDecorator.init(this);
-      }
-    }
+  public ElasticExecContext(@NonNull Class<E> rootClass, @NonNull String rootAlias) {
+    super(rootClass, rootAlias);
   }
 
-  @Override
+  public void init(ElasticIndexConfig indexConfig, QueryNodeObject query) {
+    this.setIndexConfig(indexConfig);
+    this.setQuery(query);
+    super.bindListeners();
+  }
+
+  @Override // Overrides just for proper chaining.
   public ElasticExecContext<E> of(ExecContext<?> sourceContext) {
     super.of(sourceContext);
     return this;
   }
 
-  @Override
-  public ElasticExecContext<E> listener(RepositoryExecContextListener listener) {
-    if (listener == null) {
-      return this;
-    }
-    super.listener(listener);
-    return this;
-  }
-
-  @Override
-  public ElasticExecContext<E> totalCount(TotalCountExecContextListener listener) {
-    RepositoryExecContext.super.totalCount(listener);
-    return this;
-  }
-
-  @Override
-  public ElasticExecContext<E> decorateWith(CriteriaDecorator listener) {
-    RepositoryExecContext.super.decorateWith(listener);
-    return this;
+  public ElasticExecContext<E> decorateWith(ElasticCriteriaDecorator<E> decorator) {
+    return (ElasticExecContext<E>) super.decorateWith(decorator);
   }
 }

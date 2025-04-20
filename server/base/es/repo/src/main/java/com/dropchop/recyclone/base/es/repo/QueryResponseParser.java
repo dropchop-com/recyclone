@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
+import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -33,6 +34,9 @@ public class QueryResponseParser {
     private List<?> lastSortValues = new ArrayList<>();
   }
 
+  private static final class ListTypeRef extends TypeReference<List<?>> {}
+  private static final class MapTypeRef extends TypeReference<Map<String, ?>> {}
+
   private final ObjectMapper mapper;
   private final boolean searchAfterMode;
 
@@ -57,13 +61,26 @@ public class QueryResponseParser {
     this(objectMapper, false);
   }
 
+  private <T> boolean invokeListeners(List<QueryResultListener<T>> listeners, T source) {
+    if (source == null) {
+      return false;
+    }
+    boolean stop = true;
+    for (QueryResultListener<T> listener : listeners) {
+      if (listener.onResult(source) != Progress.STOP) {
+        stop = false;
+      }
+    }
+    return !stop;
+  }
+
   private <T> void parseHitsArray(SearchResultMetadata metaData, JsonParser parser, Class<T> sourceType,
-                                  List<QueryResultListener<T>> hitListeners) throws IOException {
+                                  List<QueryResultListener<T>> objectListeners,
+                                  List<QueryResultListener<Map<String, ?>>> mapListeners) throws IOException {
     parser.nextToken(); // START_ARRAY
-    boolean continueParsing = hitListeners != null && !hitListeners.isEmpty();
+    boolean continueParsing = !objectListeners.isEmpty() || !mapListeners.isEmpty();
     int hitCount = 0;
     while (parser.nextToken() == JsonToken.START_OBJECT) {
-      hitCount++;
       String prevField = null;
       while (parser.nextToken() != JsonToken.END_OBJECT) {
         String hitField = parser.currentName();
@@ -77,22 +94,23 @@ public class QueryResponseParser {
         switch (hitField) {
           case "_source":
             if (continueParsing) {
-              T source = mapper.readValue(parser, sourceType);
-              if (source != null) {
-                boolean stop = true;
-                for (QueryResultListener<T> listener : hitListeners) {
-                  if (listener.onResult(source) != Progress.STOP) {
-                    stop = false;
-                  }
-                }
-                continueParsing = !stop;
+              boolean stop = true;
+              if (!mapListeners.isEmpty()) {
+                Map<String, ?> source = mapper.readValue(parser, new MapTypeRef());
+                continueParsing = invokeListeners(mapListeners, source);
               }
+              if (!objectListeners.isEmpty()) {
+                T source = mapper.readValue(parser, sourceType);
+                continueParsing = invokeListeners(objectListeners, source);
+              }
+              hitCount++;
+              break;
             }
             break;
 
           case "sort":
             if (this.searchAfterMode) {
-              List<?> sortValues = mapper.readValue(parser, new TypeReference<>() {});
+              List<?> sortValues = mapper.readValue(parser, new ListTypeRef());
               metaData.setLastSortValues(Objects.requireNonNullElse(sortValues, new ArrayList<>()));
             }
             break;
@@ -136,8 +154,10 @@ public class QueryResponseParser {
       Map<String, Object> aggData = mapper.readValue(parser,
           new TypeReference<>() {});
       parser.nextToken(); // START_OBJECT
-      for (AggregationResultListener listener : aggListeners) {
-        listener.onAggregation(aggName, aggData.get(aggName));
+      if (aggData != null && !aggData.isEmpty()) {
+        for (AggregationResultListener listener : aggListeners) {
+          listener.onAggregation(aggName, aggData.get(aggName));
+        }
       }
     }
   }
@@ -146,6 +166,15 @@ public class QueryResponseParser {
                                         List<QueryResultListener<T>> hitListeners,
                                         List<AggregationResultListener> aggListeners)
       throws IOException {
+    List<QueryResultListener<T>> objectListeners = new ArrayList<>();
+    List<QueryResultListener<Map<String, ?>>> mapListeners = new ArrayList<>();
+    for (QueryResultListener<T> listener : hitListeners) {
+      if (listener instanceof MapResultListener) {
+        mapListeners.add((MapResultListener) listener);
+      } else {
+        objectListeners.add(listener);
+      }
+    }
     SearchResultMetadata metadata = new SearchResultMetadata();
     try (JsonParser parser = mapper.getFactory().createParser(responseStream)) {
       // Parse root level fields
@@ -182,7 +211,7 @@ public class QueryResponseParser {
                   }
                 }
               } else if ("hits".equals(parser.currentName())) {
-                parseHitsArray(metadata, parser, sourceType, hitListeners);
+                parseHitsArray(metadata, parser, sourceType, objectListeners, mapListeners);
               } else {
                 parser.skipChildren();
               }

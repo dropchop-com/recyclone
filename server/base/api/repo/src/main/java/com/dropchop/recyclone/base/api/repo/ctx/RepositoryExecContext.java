@@ -7,7 +7,9 @@ import com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 11. 03. 22.
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface RepositoryExecContext<E> extends ParamsExecContext<RepositoryExecContextListener> {
+
   @Override
   default RepositoryExecContext<E> listener(RepositoryExecContextListener listener) {
     ParamsExecContext.super.listener(listener);
@@ -19,7 +21,7 @@ public interface RepositoryExecContext<E> extends ParamsExecContext<RepositoryEx
     return this;
   }
 
-  default RepositoryExecContext<E> decorateWith(CriteriaDecorator listener) {
+  default <R extends RepositoryExecContext<E>> RepositoryExecContext<E> decorateWith(CriteriaDecorator<E, R> listener) {
     ParamsExecContext.super.listener(listener);
     return this;
   }

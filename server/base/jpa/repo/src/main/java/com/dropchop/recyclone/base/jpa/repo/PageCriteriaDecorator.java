@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 @Slf4j
-public class PageCriteriaDecorator extends BlazeCriteriaDecorator {
+public class PageCriteriaDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

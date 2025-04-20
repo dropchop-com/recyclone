@@ -17,7 +17,5 @@ public interface ReadRepository<E extends Model, ID> extends Repository<E> {
 
   <S extends E> List<S> find(RepositoryExecContext<S> context);
 
-  <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context);
-
   <S extends E> List<S> find();
 }

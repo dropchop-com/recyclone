@@ -10,8 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.UUID;
 
 @Slf4j
-public class RoleNodeParamsDecorator extends BlazeCriteriaDecorator {
-
+public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

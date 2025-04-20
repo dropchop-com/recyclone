@@ -45,18 +45,15 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
   public Result<D> search() {
     ProfileTimer timer = new ProfileTimer();
 
-    log.debug("Searching for articles");
     CrudRepository<E, ID> repository = getRepository();
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
     MappingContext mapContext = mapperProvider.getMappingContextForRead();
-
 
     // Create aggregation collector
     HashMap<String, Object> aggregations = new LinkedHashMap<>();
 
     RepositoryExecContext<E> context = repository.getRepositoryExecContext(mapContext);
     context.listener((AggregationResultListener) aggregations::put);
-
 
     List<E> entities = repository.find(context);
     log.debug("Found {} entities in [{}]ms", entities.size(), timer.mark());

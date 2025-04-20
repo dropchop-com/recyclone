@@ -10,8 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.UUID;
 
 @Slf4j
-public class RoleNodePermissionParamsDecorator extends BlazeCriteriaDecorator {
-
+public class RoleNodePermissionParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   @Override
   public void decorate() {
@@ -23,6 +22,5 @@ public class RoleNodePermissionParamsDecorator extends BlazeCriteriaDecorator {
       cb.where(alias + DELIM + "roleNode" + DELIM + SearchFields.Common.UUID)
         .eq(UUID.fromString(roleNodePermissionParamsDecorator.getRoleNodeId()));
     }
-
   }
 }

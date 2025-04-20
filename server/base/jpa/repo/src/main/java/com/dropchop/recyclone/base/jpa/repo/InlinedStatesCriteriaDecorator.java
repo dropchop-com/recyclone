@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
 @Slf4j
-public class InlinedStatesCriteriaDecorator extends BlazeCriteriaDecorator {
+public class InlinedStatesCriteriaDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

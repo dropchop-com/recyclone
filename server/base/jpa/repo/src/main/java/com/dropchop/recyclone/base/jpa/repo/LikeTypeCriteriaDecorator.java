@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 18. 07. 22.
  */
-public class LikeTypeCriteriaDecorator extends LikeListCriteriaDecorator {
+public class LikeTypeCriteriaDecorator<E> extends LikeListCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

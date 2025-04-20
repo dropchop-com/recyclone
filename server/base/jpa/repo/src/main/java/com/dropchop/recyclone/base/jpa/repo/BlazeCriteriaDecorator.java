@@ -13,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public abstract class BlazeCriteriaDecorator implements CriteriaDecorator {
+public abstract class BlazeCriteriaDecorator<E> implements CriteriaDecorator<E, BlazeExecContext<E>> {
 
   public static final String DELIM = ".";
 
   private BlazeExecContext<?> context;
 
-  public void init(BlazeExecContext<?> executionContext) {
+  public void init(BlazeExecContext<E> executionContext) {
     this.context = executionContext;
   }
 

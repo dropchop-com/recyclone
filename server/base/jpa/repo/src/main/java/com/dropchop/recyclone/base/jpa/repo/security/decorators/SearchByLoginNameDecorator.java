@@ -7,8 +7,7 @@ import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
 import com.dropchop.recyclone.base.api.repo.utils.SearchFields;
 import com.dropchop.recyclone.base.jpa.repo.BlazeCriteriaDecorator;
 
-
-public class SearchByLoginNameDecorator extends BlazeCriteriaDecorator {
+public class SearchByLoginNameDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

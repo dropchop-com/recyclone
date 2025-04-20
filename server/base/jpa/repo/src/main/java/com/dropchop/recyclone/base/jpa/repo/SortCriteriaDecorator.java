@@ -12,16 +12,16 @@ import java.util.List;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public class SortCriteriaDecorator extends BlazeCriteriaDecorator {
+public class SortCriteriaDecorator<E> extends BlazeCriteriaDecorator<E> {
 
   private boolean nullsFirst = false;
 
-  public SortCriteriaDecorator nullsFirst() {
+  public SortCriteriaDecorator<E> nullsFirst() {
     this.nullsFirst = true;
     return this;
   }
 
-  public SortCriteriaDecorator nullsLast() {
+  public SortCriteriaDecorator<E> nullsLast() {
     this.nullsFirst = false;
     return this;
   }

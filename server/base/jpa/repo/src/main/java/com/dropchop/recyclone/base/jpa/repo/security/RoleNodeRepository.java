@@ -1,11 +1,7 @@
 package com.dropchop.recyclone.base.jpa.repo.security;
 
 import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
-import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
-import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
-import com.dropchop.recyclone.base.jpa.repo.LikeIdentifiersCriteriaDecorator;
-import com.dropchop.recyclone.base.jpa.repo.PageCriteriaDecorator;
-import com.dropchop.recyclone.base.jpa.repo.SortCriteriaDecorator;
+import com.dropchop.recyclone.base.jpa.repo.*;
 import com.dropchop.recyclone.base.jpa.repo.security.decorators.RoleNodeParamsDecorator;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
@@ -23,14 +19,12 @@ public class RoleNodeRepository extends BlazeRepository<JpaRoleNode, UUID> {
 
   Class<JpaRoleNode> rootClass = JpaRoleNode.class;
 
-
-  protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
+  protected <S extends JpaRoleNode> Collection<BlazeCriteriaDecorator<S>> getCommonCriteriaDecorators() {
     return List.of(
-      new LikeIdentifiersCriteriaDecorator(),
-      new SortCriteriaDecorator(),
-      new PageCriteriaDecorator(),
-      new RoleNodeParamsDecorator()
+      new LikeIdentifiersCriteriaDecorator<>(),
+      new SortCriteriaDecorator<>(),
+      new PageCriteriaDecorator<>(),
+      new RoleNodeParamsDecorator<>()
     );
   }
-
 }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 03. 22.
  */
-public class LikeIdentifiersCriteriaDecorator extends LikeListCriteriaDecorator {
+public class LikeIdentifiersCriteriaDecorator<E> extends LikeListCriteriaDecorator<E> {
 
   @Override
   public void decorate() {

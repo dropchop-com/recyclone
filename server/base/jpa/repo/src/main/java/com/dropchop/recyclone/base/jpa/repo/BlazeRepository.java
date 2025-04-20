@@ -8,8 +8,10 @@ import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
 import com.dropchop.recyclone.base.api.mapper.TotalCountExecContextListener;
 import com.dropchop.recyclone.base.api.model.base.Model;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
@@ -47,27 +49,39 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     return cls.getSimpleName().toLowerCase();
   }
 
-  protected Collection<CriteriaDecorator> getCommonCriteriaDecorators() {
+  protected <S extends E> Collection<BlazeCriteriaDecorator<S>> getCommonCriteriaDecorators() {
     return List.of(
-        new LikeIdentifiersCriteriaDecorator(),
-        new InlinedStatesCriteriaDecorator(),
-        new SortCriteriaDecorator(),
-        new PageCriteriaDecorator()
+        new LikeIdentifiersCriteriaDecorator<>(),
+        new InlinedStatesCriteriaDecorator<>(),
+        new SortCriteriaDecorator<>(),
+        new PageCriteriaDecorator<>()
     );
   }
 
+  public <S extends E> BlazeExecContext<S> createRepositoryExecContext() {
+    Class<S> cls = getRootClass();
+    String alias = getClassAlias(cls);
+    ExecContext<?> sourceContext = ctxContainer.get();
+    if (sourceContext != null) {
+      return new BlazeExecContext<>(cls, alias, sourceContext);
+    }
+    return new BlazeExecContext<>(cls, alias);
+  }
+
   @Override
-  public RepositoryExecContext<E> getRepositoryExecContext() {
-    BlazeExecContext<E> context = new BlazeExecContext<E>().of(ctxContainer.get());
-    for (CriteriaDecorator decorator : getCommonCriteriaDecorators()) {
+  public <S extends E> BlazeExecContext<S> getRepositoryExecContext() {
+    BlazeExecContext<S> context = createRepositoryExecContext();
+    Collection<BlazeCriteriaDecorator<S>> decorators = getCommonCriteriaDecorators();
+    for (BlazeCriteriaDecorator<S> decorator : decorators) {
       context.decorateWith(decorator);
     }
     return context;
   }
 
   @Override
-  public RepositoryExecContext<E> getRepositoryExecContext(MappingContext mappingContext) {
-    return getRepositoryExecContext().totalCount(mappingContext);
+  public <S extends E> BlazeExecContext<S> getRepositoryExecContext(MappingContext mappingContext) {
+    BlazeExecContext<S> context = getRepositoryExecContext();
+    return context.totalCount(mappingContext);
   }
 
   public <X extends E> CriteriaBuilder<X> getBuilder(Class<X> cls) {
@@ -99,44 +113,51 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     return cb.getResultList();
   }
 
-  @Override
-  public <S extends E> List<S> find(Class<S> cls, RepositoryExecContext<S> context) {
-    String alias = getClassAlias(cls);
-    CriteriaBuilder<S> cb = getBuilder(cls).from(cls, alias);
+  private static <E extends Model, S extends E> TypedQuery<Long> applyDecorators(RepositoryExecContext<S> context,
+                                                                                 CriteriaBuilder<S> cb) {
     TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();
-    if (context != null) {
-      if (context instanceof BlazeExecContext) {
-        ((BlazeExecContext<S>) context).init(cls, alias, cb);
+    for (RepositoryExecContextListener listener : context.getListeners()) {
+      if (listener instanceof PageCriteriaDecorator) {
+        //get a count query before page-ing;
+        countQuery = cb.getQueryRootCountQuery();
       }
-      for (RepositoryExecContextListener listener : context.getListeners()) {
-        if (listener instanceof PageCriteriaDecorator) {
-          //get count query before page-ing;
-          countQuery = cb.getQueryRootCountQuery();
-        }
-        if (listener instanceof CriteriaDecorator decorator) {
-          decorator.decorate();
-        }
-      }
-      long total = Long.MIN_VALUE;
-      for (ExecContext.Listener listener : context.getListeners()) {
-        if (listener instanceof QueryExecContextListener) {
-          ((QueryExecContextListener) listener).onQueryPrepared(cb.getQueryString());
-        }
-        if (listener instanceof TotalCountExecContextListener) {
-          if (total == Long.MIN_VALUE) {
-            total = countQuery.getSingleResult();
-          }
-          ((TotalCountExecContextListener) listener).onTotalCount(total);
-        }
+      if (listener instanceof CriteriaDecorator<?, ?>) {
+        @SuppressWarnings("unchecked")
+        CriteriaDecorator<E, BlazeExecContext<E>> decorator = (CriteriaDecorator<E, BlazeExecContext<E>>) listener;
+        decorator.decorate();
       }
     }
-    log.debug("Executing find [{}].", cb.getQueryString());
-    return cb.getResultList();
+    return countQuery;
   }
 
   @Override
   public <S extends E> List<S> find(RepositoryExecContext<S> context) {
-    return find(getRootClass(), context);
+    if (!(context instanceof BlazeExecContext<S> blazeExecContext)) {
+      throw new ServiceException(
+          ErrorCode.parameter_validation_error,
+          "Invalid context: Expected " + BlazeExecContext.class + " but received " + context.getClass()
+      );
+    }
+    Class<S> cls = blazeExecContext.getRootClass();
+    String alias = blazeExecContext.getRootAlias();
+    CriteriaBuilder<S> cb = getBuilder(cls).from(cls, alias);
+    blazeExecContext.init(cb);
+
+    TypedQuery<Long> countQuery = applyDecorators(context, cb);
+    long total = Long.MIN_VALUE;
+    for (ExecContext.Listener listener : context.getListeners()) {
+      if (listener instanceof QueryExecContextListener) {
+        ((QueryExecContextListener) listener).onQueryPrepared(cb.getQueryString());
+      }
+      if (listener instanceof TotalCountExecContextListener) {
+        if (total == Long.MIN_VALUE) {
+          total = countQuery.getSingleResult();
+        }
+        ((TotalCountExecContextListener) listener).onTotalCount(total);
+      }
+    }
+    log.debug("Executing find [{}].", cb.getQueryString());
+    return cb.getResultList();
   }
 
   @Override
@@ -149,7 +170,7 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
 
   @Override
   public <S extends E> List<S> find() {
-    return find(null);
+    return find(getRepositoryExecContext());
   }
 
   @Override

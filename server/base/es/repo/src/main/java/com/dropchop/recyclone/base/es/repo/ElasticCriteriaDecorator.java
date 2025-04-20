@@ -10,10 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-public abstract class ElasticCriteriaDecorator implements CriteriaDecorator {
+public abstract class ElasticCriteriaDecorator<E> implements CriteriaDecorator<E, ElasticExecContext<E>> {
   private ElasticExecContext<?> context;
 
-  public void init(ElasticExecContext<?> executionContext) {
+  @Override
+  public void init(ElasticExecContext<E> executionContext) {
     this.context = executionContext;
   }
 
