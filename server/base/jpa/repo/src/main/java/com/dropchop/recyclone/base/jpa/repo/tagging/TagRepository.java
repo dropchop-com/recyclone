@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.jpa.repo.tagging;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.jpa.repo.BlazeCriteriaDecorator;
 import com.dropchop.recyclone.base.jpa.repo.BlazeRepository;
+import com.dropchop.recyclone.base.jpa.repo.ByTagsCriteriaDecorator;
 import com.dropchop.recyclone.base.jpa.repo.LikeTypeCriteriaDecorator;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class TagRepository extends BlazeRepository<JpaTag, UUID> {
   protected <S extends JpaTag> Collection<BlazeCriteriaDecorator<S>> getCommonCriteriaDecorators() {
     ArrayList<BlazeCriteriaDecorator<S>> tagDecorators = new ArrayList<>(super.getCommonCriteriaDecorators());
     tagDecorators.add(new LikeTypeCriteriaDecorator<>());
+    tagDecorators.add(new ByTagsCriteriaDecorator<>());
     return tagDecorators;
   }
 }
