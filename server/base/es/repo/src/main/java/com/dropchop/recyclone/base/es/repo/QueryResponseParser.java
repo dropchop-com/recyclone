@@ -150,13 +150,26 @@ public class QueryResponseParser {
     parser.nextToken(); // Move to START_OBJECT
 
     while (parser.nextToken() == JsonToken.FIELD_NAME) {
-      String aggName = parser.currentName();
+      //String aggName = parser.currentName();
       Map<String, Object> aggData = mapper.readValue(parser,
           new TypeReference<>() {});
       parser.nextToken(); // START_OBJECT
       if (aggData != null && !aggData.isEmpty()) {
-        for (AggregationResultListener listener : aggListeners) {
-          listener.onAggregation(aggName, aggData.get(aggName));
+        for (Map.Entry<String, Object> entry : aggData.entrySet()) {
+          String aggName = entry.getKey();
+          Object aggValue = entry.getValue();
+
+          if (aggName == null || aggValue == null) {
+            continue;
+          }
+
+          if (!(aggValue instanceof Map<?,?>)) {
+            continue;
+          }
+
+          for (AggregationResultListener listener : aggListeners) {
+            listener.onAggregation(aggName, aggValue);
+          }
         }
       }
     }
