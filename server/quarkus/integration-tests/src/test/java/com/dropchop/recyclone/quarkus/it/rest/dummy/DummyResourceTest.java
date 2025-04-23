@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
-import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
@@ -63,15 +62,15 @@ public class DummyResourceTest {
       .and()
       .body(dummies)
       .when()
-      .post("/api/internal/test/dummy/")
+      .post("/api/internal/test/dummy?modify_policy=wait")
       .then()
       .statusCode(200)
       .extract()
       .body().jsonPath().getList(".", Dummy.class);
 
     assertEquals(8, dummies.size());
-    List<String> eCodes = dummies.stream().map(DtoCode::getCode).toList();
-    testHelper.waitForObjects("/dummy/_search", eCodes, 8);
+    //List<String> eCodes = dummies.stream().map(DtoCode::getCode).toList();
+    //testHelper.waitForObjects("/dummy/_search", eCodes, 8);
   }
 
   @Test

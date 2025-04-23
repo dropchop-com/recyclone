@@ -1,10 +1,7 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.openapi;
 
 import com.dropchop.recyclone.base.api.model.base.State;
-import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
-import com.dropchop.recyclone.base.api.model.invoke.Params;
-import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
-import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.rest.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
@@ -333,17 +330,17 @@ public class OasFilter implements OASFilter {
     return createParam(schema, in, Constants.Params.Query.STATE, descr);
   }
 
-  private Parameter createSortParam(Parameter.In in, String descr, String[] sort) {
+  private Parameter createArrOfValuesParam(Parameter.In in, String name, String descr, String[] values) {
     Schema itemSchema = OASFactory.createSchema();
     itemSchema.type(List.of(Schema.SchemaType.STRING));
 
     Schema schema = OASFactory.createSchema();
     schema.type(List.of(Schema.SchemaType.ARRAY));
     schema.items(itemSchema);
-    for (String s : sort) {
+    for (String s : values) {
       itemSchema.addEnumeration(s);
     }
-    return createParam(schema, in, Constants.Params.Query.SORT, descr);
+    return createParam(schema, in, name, descr);
   }
 
   private String splitCamelCase(String s) {
@@ -385,6 +382,27 @@ public class OasFilter implements OASFilter {
     return !restClass.isImplMissingPath() && this.restMapping.isApiMethod(methodRef);
   }
 
+  private void applyModifyPolicy(RestClass restClass, RestMethod method, List<Parameter> newParameters) {
+    String paramClassName = method.getParamClass();
+    if (paramClassName == null) {
+      paramClassName = restClass.getParamClass();
+    }
+    if (paramClassName == null) {
+      return;
+    }
+    Params params = paramsInstanceCache.computeIfAbsent(paramClassName, this::createInstance);
+    if (params != null) {
+      String[] modifyPolicy = params.getAvailableModifyPolicy();
+      if (modifyPolicy != null) {
+        newParameters.add(createArrOfValuesParam(
+            Parameter.In.QUERY, Constants.Params.Query.MODIFY_POLICY,
+            "You can set the modification policies:",
+            modifyPolicy
+        ));
+      }
+    }
+  }
+
   @Override
   public Operation filterOperation(Operation operation) {
     if (!(operation instanceof OperationImpl op)) {
@@ -413,7 +431,18 @@ public class OasFilter implements OASFilter {
       operation.setTags(List.of(method.getSegment()));
     }
 
+    List<Parameter> newParameters = new ArrayList<>();
+    List<Parameter> parameters = operation.getParameters();
+    if (parameters != null) {
+      newParameters.addAll(parameters);
+    }
+
     if ((!"GET".equalsIgnoreCase(method.getVerb()))) {
+      if (RestMethod.Action.READ != method.getAction()) {
+        applyModifyPolicy(restClass, method, newParameters);
+        operation.setParameters(newParameters);
+        return operation;
+      }
       String paramClassName = method.getParamClass();
       if (paramClassName == null) {
         return operation;
@@ -428,7 +457,7 @@ public class OasFilter implements OASFilter {
           String description = operation.getDescription();
           String newSummary = description == null ? "" : description + "<br />";
           operation.setDescription(
-              newSummary + "You can use only the following condition and aggregation fields in query: <br />" +
+              newSummary + "You can use only the following condition and aggregation fields in a query: <br />" +
                   "<b>" + fields + "<b />"
           );
         }
@@ -452,11 +481,6 @@ public class OasFilter implements OASFilter {
 
     ResultFilterDefaults defaults = commonParams.getFilterDefaults();
 
-    List<Parameter> newParameters = new ArrayList<>();
-    List<Parameter> parameters = operation.getParameters();
-    if (parameters != null) {
-      newParameters.addAll(parameters);
-    }
     newParameters.add(createIntParam(
         Parameter.In.QUERY, Constants.Params.Query.FROM,
         "Starting offset of returned data. For example: " + defaults.getFrom(),
@@ -493,8 +517,9 @@ public class OasFilter implements OASFilter {
 
     String[] sortFields = defaults.getAvailableSortFields();
     if (sortFields != null && sortFields.length > 0) {
-      newParameters.add(createSortParam(
+      newParameters.add(createArrOfValuesParam(
           Parameter.In.QUERY,
+          Constants.Params.Query.SORT,
           "Sort result by field name, prefixed with <b>[+/-]</b> for ascending / descending order. " +
               "<br /> If prefix is omitted ascending sort order is assumed",
           sortFields

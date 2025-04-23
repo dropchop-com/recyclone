@@ -195,6 +195,11 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
   }
 
   private void decorate(CommonParams<?, ?, ?, ?> params, ContainerRequestContext requestContext) {
+    List<String> tmp = getStringList(Query.MODIFY_POLICY, Header.MODIFY_POLICY, requestContext);
+    if (tmp != null) {
+      params.setModifyPolicy(tmp);
+    }
+
     ResultFilter<?, ?> resultFilter = params.getFilter();
     if (resultFilter == null) {
       return;
@@ -218,7 +223,7 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
       parseLanguage(params, languageStr);
     }
 
-    List<String> tmp = getStringList(Query.SORT, null, requestContext);
+    tmp = getStringList(Query.SORT, null, requestContext);
     if (tmp != null) {
       resultFilter.setSort(tmp);
     }

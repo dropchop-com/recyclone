@@ -5,9 +5,7 @@ import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
 import com.dropchop.recyclone.base.api.mapper.TotalCountExecContextListener;
 import com.dropchop.recyclone.base.api.model.attr.AttributeDecimal;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
-import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
-import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
-import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
@@ -97,7 +95,25 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   private Response invokeBulkRequest(BulkRequestBuilder bulkRequestBuilder, Collection<?> entities) {
     ObjectMapper mapper = getObjectMapper();
-    Request request = bulkRequestBuilder.bulkRequest(entities);
+    String refresh = null;
+    ExecContext<?> context = ctxContainer.get();
+    if (context != null) {
+      Params params = context.tryGetParams();
+      if (params != null) {
+        List<String> policy = params.getModifyPolicy();
+        if (policy != null && policy.contains(Constants.ModifyPolicy.WAIT_FOR)) {
+          refresh = "wait_for";
+        }
+      }
+    }
+    Request request = bulkRequestBuilder.bulkRequest(entities, refresh);
+    if (refresh != null) {
+      log.debug(
+          "Will wait for operation [{}@{}] to be refreshed.",
+          bulkRequestBuilder.getMethodType(),
+          request.getEndpoint()
+      );
+    }
     Response response;
     try {
       response = getElasticsearchClient().performRequest(request);
@@ -116,6 +132,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
         BulkRequestBuilder.MethodType.INDEX, mapper, getElasticIndexConfig()
     );
+
     Response response = invokeBulkRequest(bulkRequestBuilder, entities);
     BulkResponseParser responseParser = new BulkResponseParser(mapper);
     return responseParser.parseResponse(entities, response);

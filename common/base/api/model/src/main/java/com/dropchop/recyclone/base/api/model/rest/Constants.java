@@ -79,6 +79,7 @@ public interface Constants {
       String CLEVEL = "X-Content-Level";
       String VERSION = "X-Content-Version";
       String LANG = "Accept-Language";
+      String MODIFY_POLICY = "X-Modify-Policy";
     }
 
     interface Query {
@@ -89,6 +90,7 @@ public interface Constants {
       String SIZE = "size";
       String STATE = "state";
       String SORT = "sort";
+      String MODIFY_POLICY = "modify_policy";
     }
   }
 

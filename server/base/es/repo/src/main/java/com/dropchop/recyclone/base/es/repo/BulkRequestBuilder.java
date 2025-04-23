@@ -106,7 +106,7 @@ public class BulkRequestBuilder {
   /**
    * Build bulk request based on collection of IDs or collection of entities.
    */
-  public Request bulkRequest(Collection<?> entities) {
+  public Request bulkRequest(Collection<?> entities, String refresh) {
     StringBuilder bulkRequestBody = new StringBuilder();
     StringBuilder endpoint = new StringBuilder();
     if (indexConfig instanceof HasRootAlias hasRootAlias) {
@@ -114,9 +114,16 @@ public class BulkRequestBuilder {
       endpoint.append(hasRootAlias.getRootAlias());
     }
     endpoint.append(BULK_ENDPOINT);
+    if (refresh != null && !refresh.isBlank()) {
+      endpoint.append("?refresh=").append(refresh);
+    }
 
     if(indexConfig instanceof HasIngestPipeline hasIngestPipeline) {
-      endpoint.append("?pipeline=").append(hasIngestPipeline.getIngestPipeline());
+      if (refresh != null && !refresh.isBlank()) {
+        endpoint.append("&pipeline=").append(hasIngestPipeline.getIngestPipeline());
+      } else {
+        endpoint.append("?pipeline=").append(hasIngestPipeline.getIngestPipeline());
+      }
     }
 
     this.buildBody(entities, bulkRequestBody);

@@ -8,9 +8,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import static com.dropchop.recyclone.base.api.model.invoke.Constants.ModifyPolicy.RELOAD_AFTER;
+import static com.dropchop.recyclone.base.api.model.invoke.Constants.ModifyPolicy.WAIT_FOR;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
@@ -26,6 +30,17 @@ public class Params implements
     CommonParams<ResultFilter, ResultFilter.ContentFilter, ResultFilter.LanguageFilter, ResultFilterDefaults> {
 
   private String requestId;
+
+  @Setter
+  @Builder.Default
+  @JsonInclude(NON_EMPTY)
+  private List<String> modifyPolicy = new ArrayList<>();
+
+  @Override
+  @JsonIgnore
+  public String[] getAvailableModifyPolicy() {
+    return new String[]{WAIT_FOR, RELOAD_AFTER};
+  }
 
   @Builder.Default
   private ResultFilter filter = new ResultFilter();
