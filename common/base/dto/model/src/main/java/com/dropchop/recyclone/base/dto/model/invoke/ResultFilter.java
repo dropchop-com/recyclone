@@ -143,4 +143,12 @@ public class ResultFilter
   public String toString() {
     return this.getClass().getSimpleName();
   }
+
+  public static ResultFilter withSizeAndTreeLevel(int size, int treeLevel) {
+    return new ResultFilter()
+        .size(size)
+        .content(
+            new ContentFilter().treeLevel(treeLevel)
+        );
+  }
 }

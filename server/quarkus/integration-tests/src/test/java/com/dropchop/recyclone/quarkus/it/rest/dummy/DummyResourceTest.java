@@ -3,8 +3,6 @@ package com.dropchop.recyclone.quarkus.it.rest.dummy;
 import com.dropchop.recyclone.base.api.model.invoke.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
-import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
-import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.rest.dummy.mock.DummyMockData;
 import io.quarkus.test.junit.QuarkusTest;
@@ -21,6 +19,7 @@ import java.util.Map;
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.withSizeAndTreeLevel;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -83,11 +82,7 @@ public class DummyResourceTest {
           )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 

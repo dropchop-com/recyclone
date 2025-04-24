@@ -9,8 +9,6 @@ import com.dropchop.recyclone.base.dto.model.event.EventDetail;
 import com.dropchop.recyclone.base.dto.model.event.EventItem;
 import com.dropchop.recyclone.base.dto.model.event.EventTrace;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
-import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
-import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.quarkus.it.rest.events.mock.EventMockData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
@@ -27,6 +25,7 @@ import java.util.UUID;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.withSizeAndTreeLevel;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.*;
@@ -192,9 +191,7 @@ public class EventsResourceTest {
     EventParams params = EventParams
         .builder()
         .filter(
-            new ResultFilter()
-                .content(new ContentFilter().treeLevel(5))
-                .size(100)
+            withSizeAndTreeLevel(100, 5)
         )
         .condition(c)
         .build();
@@ -262,9 +259,10 @@ public class EventsResourceTest {
         .condition(
             or(field("uuid", EVENT_ID))
         )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
         .build();
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     events = given()
       .log().all()
@@ -324,12 +322,14 @@ public class EventsResourceTest {
   @Order(40)
   @Tag("searchBySpecificTraceId")
   public void searchBySpecificTraceId() {
-    EventParams params = EventParams.builder().condition(
-      and(field("trace.name", EVENT_TRACE_NAME))
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams.builder()
+        .condition(
+          and(field("trace.name", EVENT_TRACE_NAME))
+        )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -358,10 +358,10 @@ public class EventsResourceTest {
         .condition(
           not(field("trace.name", EVENT_TRACE_NAME))
         )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
         .build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
       .log().all()
@@ -389,10 +389,10 @@ public class EventsResourceTest {
         .condition(
             and(field("uuid", expectedUuid))
         )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
         .build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
 
     List<Event> events = given()
       .log().all()
@@ -417,15 +417,17 @@ public class EventsResourceTest {
   @Tag("searchEventsByTraceIdOrUnitString")
   public void searchEventsByTraceIdOrUnitString() {
     String expectedUnit = "Mock_Unit";
-    EventParams params = EventParams.builder().condition(
-      or(
-        field("trace.name", EVENT_TRACE_NAME),
-        field("unit", expectedUnit) //isn't actually used until we implement MATCH type search
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams.builder()
+        .condition(
+          or(
+            field("trace.name", EVENT_TRACE_NAME),
+            field("unit", expectedUnit) //isn't actually used until we implement MATCH type search
+          )
+        )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -458,16 +460,18 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2023-01-01T12:12:12.12");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
 
-    EventParams params = EventParams.builder().condition(
-      and(
-          field("created", gteLt(startDate, endDate)),
-          field("trace.name", EVENT_TRACE_NAME),
-          wildcard("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams.builder()
+        .condition(
+          and(
+              field("created", gteLt(startDate, endDate)),
+              field("trace.name", EVENT_TRACE_NAME),
+              wildcard("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
+          )
+        )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -492,14 +496,16 @@ public class EventsResourceTest {
   public void searchEventsByDateRange() {
     ZonedDateTime startDate = Iso8601.fromIso("2023-01-01T12:12:12.12");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
-    EventParams params = EventParams.builder().condition(
-      and(
-        field("created", gteLt(startDate, endDate))
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams.builder()
+        .condition(
+          and(
+            field("created", gteLt(startDate, endDate))
+          )
+        )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -523,14 +529,16 @@ public class EventsResourceTest {
   public void searchEventsByDateRange2() {
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T12:12:15.20");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
-    EventParams params = EventParams.builder().condition(
-      and(
-        field("created", gtLt(startDate, endDate))
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams.builder()
+        .condition(
+          and(
+            field("created", gtLt(startDate, endDate))
+          )
+        )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -563,14 +571,16 @@ public class EventsResourceTest {
   public void searchEventsByDateRange3() {
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
-    EventParams params = EventParams.builder().condition(
-      and(
-        field("created", gtLt(startDate, endDate))
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+    EventParams params = EventParams.builder()
+        .condition(
+          and(
+            field("created", gtLt(startDate, endDate))
+          )
+        )
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -604,21 +614,23 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
-    EventParams params = EventParams.builder().condition(
-      and(
-        or(
-          field("created", gteLt(startDate, endDate)),
-          field("trace.group", "Some group")
+    EventParams params = EventParams.builder()
+        .condition(
+          and(
+            or(
+              field("created", gteLt(startDate, endDate)),
+              field("trace.group", "Some group")
+            )
+          ).and(
+            field("type", in("Backend", "frontend"))
+          ).and(
+            field("value", in(1.0, 2.0))
+          )
         )
-      ).and(
-        field("type", in("Backend", "frontend"))
-      ).and(
-        field("value", in(1.0, 2.0))
-      )
-    ).build();
-
-    params.tryGetResultFilter().setSize(100);
-    params.tryGetResultFilter().getContent().setTreeLevel(5);
+        .filter(
+            withSizeAndTreeLevel(100, 5)
+        )
+        .build();
 
     List<Event> events = given()
       .log().all()
@@ -668,11 +680,7 @@ public class EventsResourceTest {
           )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
@@ -714,11 +722,7 @@ public class EventsResourceTest {
             )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
@@ -760,11 +764,7 @@ public class EventsResourceTest {
             )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
@@ -802,11 +802,7 @@ public class EventsResourceTest {
             )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
@@ -850,11 +846,7 @@ public class EventsResourceTest {
             )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
@@ -903,11 +895,7 @@ public class EventsResourceTest {
             )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
@@ -938,11 +926,7 @@ public class EventsResourceTest {
             )
         )
         .filter(
-            new ResultFilter()
-                .size(100)
-                .content(
-                    new ContentFilter().treeLevel(5)
-                )
+            withSizeAndTreeLevel(100, 5)
         )
         .build();
 
