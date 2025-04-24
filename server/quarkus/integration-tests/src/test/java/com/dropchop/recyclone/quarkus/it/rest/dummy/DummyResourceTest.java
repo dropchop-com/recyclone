@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
+import com.dropchop.recyclone.base.api.model.invoke.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.rest.dummy.mock.DummyMockData;
-import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
@@ -37,18 +37,15 @@ public class DummyResourceTest {
   @SuppressWarnings("CdiInjectionPointsInspection")
   DummyMockData dummyMockData;
 
-  @Inject
-  ElasticSearchTestHelper testHelper;
-
   @Test
   @Order(5)
   @Tag("create")
   @Tag("searchByCode")
   @Tag("searchByTitleTranslation")
-  @Tag("dummyQueryTestAggregations")
-  @Tag("testWildcardSearch")
-  @Tag("testMatchPhraseSearch")
-  @Tag("testAdvancedTextSearch")
+  @Tag("dummyQueryAggregations")
+  @Tag("wildcardSearch")
+  @Tag("matchPhraseSearch")
+  @Tag("advancedTextSearch")
   @Tag("deleteById")
   @Tag("deleteByQuery")
   public void create() throws IOException {
@@ -143,8 +140,8 @@ public class DummyResourceTest {
 
   @Test
   @Order(30)
-  @Tag("dummyQueryTestAggregations")
-  public void dummyQueryTestAggregations() {
+  @Tag("dummyQueryAggregations")
+  public void dummyQueryAggregations() {
     QueryParams params = QueryParams.builder().aggregation(
       aggs(
         terms(
@@ -177,8 +174,8 @@ public class DummyResourceTest {
 
   @Test
   @Order(30)
-  @Tag("dummySearchNullTest")
-  public void dummySearchNullTest() {
+  @Tag("dummySearchNull")
+  public void dummySearchNull() {
     QueryParams params = QueryParams.builder().condition(
       field("languages.name", "ru")
     ).build();
@@ -203,8 +200,8 @@ public class DummyResourceTest {
 
   @Test
   @Order(40)
-  @Tag("testWildcardSearch")
-  public void testWildcardSearch() {
+  @Tag("wildcardSearch")
+  public void wildcardSearch() {
     QueryParams s = QueryParams.builder().condition(
       or(
         wildcard("title", "Dum*", true, 1.2f)
@@ -231,8 +228,8 @@ public class DummyResourceTest {
 
   @Test
   @Order(40)
-  @Tag("testMatchPhraseSearch")
-  public void testMatchPhraseSearch() {
+  @Tag("matchPhraseSearch")
+  public void matchPhraseSearch() {
 
     QueryParams s = QueryParams.builder().condition(
       or(
@@ -260,8 +257,8 @@ public class DummyResourceTest {
 
   @Test
   @Order(40)
-  @Tag("testAdvancedTextSearch")
-  public void testAdvancedTextSearch() {
+  @Tag("advancedTextSearch")
+  public void advancedTextSearch() {
 
     QueryParams s = QueryParams.builder().condition(
       or(
@@ -290,8 +287,11 @@ public class DummyResourceTest {
   @Test
   @Order(60)
   @Tag("deleteById")
-  public void deleteById() throws IOException {
-    CodeParams params1 = CodeParams.builder().code("sad15s1a21sa21a51a").build();
+  public void deleteById() {
+    CodeParams params1 = CodeParams.builder()
+        .modifyPolicy(List.of(Constants.ModifyPolicy.WAIT_FOR))
+        .code("sad15s1a21sa21a51a")
+        .build();
 
     Integer number_of_deleted = given()
       .log().all()
@@ -309,16 +309,19 @@ public class DummyResourceTest {
       .getInt(".");
 
     assertEquals(1, number_of_deleted);
-    testHelper.waitForObjects("/dummy/_search", List.of("sad15s1a21sa21a51a"), 0);
+    //testHelper.waitForObjects("/dummy/_search", List.of("sad15s1a21sa21a51a"), 0);
   }
 
   @Test
   @Order(70)
   @Tag("deleteByQuery")
-  public void deleteByQuery() throws IOException {
-    QueryParams s = QueryParams.builder().condition(
-      field("code", "4d5as45s1ds4d5ss8sd6s")
-    ).build();
+  public void deleteByQuery() {
+    QueryParams s = QueryParams.builder()
+        .modifyPolicy(List.of(Constants.ModifyPolicy.WAIT_FOR))
+        .condition(
+          field("code", "4d5as45s1ds4d5ss8sd6s")
+        )
+        .build();
 
     Integer number_of_deleted = given()
       .log().all()
@@ -336,6 +339,5 @@ public class DummyResourceTest {
       .getInt(".");
 
     assertEquals(1, number_of_deleted);
-    testHelper.waitForObjects("/dummy/_search", List.of("4d5as45s1ds4d5ss8sd6s"), 0);
   }
 }
