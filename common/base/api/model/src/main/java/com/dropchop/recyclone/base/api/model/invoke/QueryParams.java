@@ -23,8 +23,8 @@ public interface QueryParams<
   Condition getCondition();
   void setCondition(Condition condition);
 
-  AggregationList getAggregation();
-  void setAggregation(AggregationList aggregations);
+  AggregationList getAggregate();
+  void setAggregate(AggregationList aggregations);
 
   default Condition condition() {
     return getCondition();

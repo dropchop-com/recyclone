@@ -16,10 +16,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.count;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.terms;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.withSizeAndTreeLevel;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -65,8 +67,6 @@ public class DummyResourceTest {
       .body().jsonPath().getList(".", Dummy.class);
 
     assertEquals(8, dummies.size());
-    //List<String> eCodes = dummies.stream().map(DtoCode::getCode).toList();
-    //testHelper.waitForObjects("/dummy/_search", eCodes, 8);
   }
 
   @Test
@@ -74,16 +74,12 @@ public class DummyResourceTest {
   @Tag("searchByCode")
   public void searchByCode() {
     QueryParams params = QueryParams.builder()
-        .condition(
-          or(
-            field("code", "sad15s1a21sa21a51a"),
-            field("code", "asdlasdadsa4dsds4d"),
-            field("code", "4d5as45s1ds4d5ss8sd6s")
-          )
+        .or(
+          field("code", "sad15s1a21sa21a51a"),
+          field("code", "asdlasdadsa4dsds4d"),
+          field("code", "4d5as45s1ds4d5ss8sd6s")
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Dummy> dummies = given()
@@ -108,11 +104,11 @@ public class DummyResourceTest {
   @Order(20)
   @Tag("searchByTitleTranslation")
   public void searchByTitleTranslation() {
-    QueryParams params = QueryParams.builder().condition(
-      and(
-        field("translations.lang", "de")
-      )
-    ).build();
+    QueryParams params = QueryParams.builder()
+        .and(
+          field("translations.lang", "de")
+        )
+        .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -137,18 +133,13 @@ public class DummyResourceTest {
   @Order(30)
   @Tag("dummyQueryAggregations")
   public void dummyQueryAggregations() {
-    QueryParams params = QueryParams.builder().aggregation(
-      aggs(
-        terms(
-          "languages",
-          "lang",
-          count(
-            "number",
-            "lang"
+    QueryParams params = QueryParams.builder()
+        .aggs(
+          terms("languages", "lang",
+            count("number", "lang")
           )
         )
-      )
-    ).build();
+        .build();
 
     Map<Object, Object> response = given()
       .contentType(ContentType.JSON)
@@ -171,9 +162,9 @@ public class DummyResourceTest {
   @Order(30)
   @Tag("dummySearchNull")
   public void dummySearchNull() {
-    QueryParams params = QueryParams.builder().condition(
-      field("languages.name", "ru")
-    ).build();
+    QueryParams params = QueryParams.builder()
+        .condition(field("languages.name", "ru"))
+        .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -197,11 +188,11 @@ public class DummyResourceTest {
   @Order(40)
   @Tag("wildcardSearch")
   public void wildcardSearch() {
-    QueryParams s = QueryParams.builder().condition(
-      or(
-        wildcard("title", "Dum*", true, 1.2f)
-      )
-    ).build();
+    QueryParams s = QueryParams.builder()
+        .or(
+            wildcard("title", "Dum*", true, 1.2f)
+        )
+        .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -226,11 +217,11 @@ public class DummyResourceTest {
   @Tag("matchPhraseSearch")
   public void matchPhraseSearch() {
 
-    QueryParams s = QueryParams.builder().condition(
-      or(
-        phrase("title", "Dummy 3", 2)
-      )
-    ).build();
+    QueryParams s = QueryParams.builder()
+        .or(
+            phrase("title", "Dummy 3", 2)
+        )
+        .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -255,11 +246,11 @@ public class DummyResourceTest {
   @Tag("advancedTextSearch")
   public void advancedTextSearch() {
 
-    QueryParams s = QueryParams.builder().condition(
-      or(
-        advancedText("title", "\"Dum* 5\"")
-      )
-    ).build();
+    QueryParams s = QueryParams.builder()
+        .or(
+            advancedText("title", "\"Dum* 5\"")
+        )
+        .build();
 
     List<Dummy> dummies = given()
       .log().all()

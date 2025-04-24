@@ -229,7 +229,7 @@ public class ElasticsearchQueryBuilderTest {
         field("type2", in(1, 2, 3)),
         field("type4", "type8")
       )
-    ).aggregation(
+    ).aggregate(
       aggs(
         max(
           "watch_max",

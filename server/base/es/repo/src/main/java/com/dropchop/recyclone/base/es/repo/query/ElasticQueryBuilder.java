@@ -124,9 +124,9 @@ public class ElasticQueryBuilder {
       end.put("query", bool);
     }
 
-    if(params.getAggregation() != null) {
+    if(params.getAggregate() != null) {
       QueryNodeObject aggregations = new QueryNodeObject();
-      for(Aggregation agg : params.getAggregation()) {
+      for(Aggregation agg : params.getAggregate()) {
         if(agg instanceof Aggregation.Wrapper) {
           aggregations.put(agg.getName(), buildAggregation(((Aggregation.Wrapper) agg).iterator().next()));
         } else {

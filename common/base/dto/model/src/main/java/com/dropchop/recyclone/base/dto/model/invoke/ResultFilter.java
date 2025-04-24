@@ -76,6 +76,13 @@ public class ResultFilter
       this.detailLevel = detailLevel;
       return this;
     }
+
+    /**
+     * Syntactic sugar starting point.
+     */
+    public static ContentFilter cf() {
+      return new ContentFilter();
+    }
   }
 
   @Getter
@@ -144,11 +151,10 @@ public class ResultFilter
     return this.getClass().getSimpleName();
   }
 
-  public static ResultFilter withSizeAndTreeLevel(int size, int treeLevel) {
-    return new ResultFilter()
-        .size(size)
-        .content(
-            new ContentFilter().treeLevel(treeLevel)
-        );
+  /**
+   * Syntactic sugar chaining starting point.
+   */
+  public static ResultFilter rf() {
+    return new ResultFilter();
   }
 }

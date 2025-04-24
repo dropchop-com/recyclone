@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.quarkus.it.rest.events;
 
-import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
@@ -25,7 +24,8 @@ import java.util.UUID;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.withSizeAndTreeLevel;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.*;
@@ -181,19 +181,15 @@ public class EventsResourceTest {
   @Test
   @Order(20)
   public void search() {
-    Condition c = or(
-      field("uuid", EVENT_ID),
-      and(
-        field("created", ZonedDateTime.now())
-      )
-    );
-
     EventParams params = EventParams
         .builder()
-        .filter(
-            withSizeAndTreeLevel(100, 5)
+        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .or(
+            field("uuid", EVENT_ID),
+            and(
+                field("created", ZonedDateTime.now())
+            )
         )
-        .condition(c)
         .build();
 
     List<Event> events = given()
@@ -256,12 +252,10 @@ public class EventsResourceTest {
     assertEquals(1, events.size());
 
     EventParams params = EventParams.builder()
-        .condition(
-            or(field("uuid", EVENT_ID))
+        .or(
+            field("uuid", EVENT_ID)
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     events = given()
@@ -323,12 +317,10 @@ public class EventsResourceTest {
   @Tag("searchBySpecificTraceId")
   public void searchBySpecificTraceId() {
     EventParams params = EventParams.builder()
-        .condition(
-          and(field("trace.name", EVENT_TRACE_NAME))
+        .and(
+          field("trace.name", EVENT_TRACE_NAME)
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -355,12 +347,10 @@ public class EventsResourceTest {
   @Tag("searchAllEventsWithoutSpecificTraceId")
   public void searchAllEventsWithoutSpecificTraceId() {
     EventParams params = EventParams.builder()
-        .condition(
-          not(field("trace.name", EVENT_TRACE_NAME))
+        .not(
+          field("trace.name", EVENT_TRACE_NAME)
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -386,12 +376,10 @@ public class EventsResourceTest {
   public void searchEventsBySpecificId() {
     String expectedUuid = "6b829aac-06d2-4cbc-9721-d6d24a3628dd";
     EventParams params = EventParams.builder()
-        .condition(
-            and(field("uuid", expectedUuid))
+        .and(
+            field("uuid", expectedUuid)
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -418,15 +406,11 @@ public class EventsResourceTest {
   public void searchEventsByTraceIdOrUnitString() {
     String expectedUnit = "Mock_Unit";
     EventParams params = EventParams.builder()
-        .condition(
-          or(
+        .or(
             field("trace.name", EVENT_TRACE_NAME),
             field("unit", expectedUnit) //isn't actually used until we implement MATCH type search
-          )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -461,16 +445,12 @@ public class EventsResourceTest {
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
 
     EventParams params = EventParams.builder()
-        .condition(
-          and(
-              field("created", gteLt(startDate, endDate)),
-              field("trace.name", EVENT_TRACE_NAME),
-              wildcard("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
-          )
+        .and(
+            field("created", gteLt(startDate, endDate)),
+            field("trace.name", EVENT_TRACE_NAME),
+            wildcard("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -497,14 +477,10 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2023-01-01T12:12:12.12");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
     EventParams params = EventParams.builder()
-        .condition(
-          and(
+        .and(
             field("created", gteLt(startDate, endDate))
-          )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -530,14 +506,10 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T12:12:15.20");
     ZonedDateTime endDate = Iso8601.fromIso("2030-01-01T12:12:12.12");
     EventParams params = EventParams.builder()
-        .condition(
-          and(
+        .and(
             field("created", gtLt(startDate, endDate))
-          )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -572,14 +544,10 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2024-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
     EventParams params = EventParams.builder()
-        .condition(
-          and(
+        .and(
             field("created", gtLt(startDate, endDate))
-          )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -615,21 +583,15 @@ public class EventsResourceTest {
     ZonedDateTime endDate = Iso8601.fromIso("2024-06-15T23:31:45.50");
 
     EventParams params = EventParams.builder()
-        .condition(
-          and(
+        .and(
             or(
-              field("created", gteLt(startDate, endDate)),
-              field("trace.group", "Some group")
-            )
-          ).and(
-            field("type", in("Backend", "frontend"))
-          ).and(
+                field("created", gteLt(startDate, endDate)),
+                field("trace.group", "Some group")
+            ),
+            field("type", in("Backend", "frontend")),
             field("value", in(1.0, 2.0))
-          )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -664,24 +626,18 @@ public class EventsResourceTest {
     ZonedDateTime endDate2 = Iso8601.fromIso("2024-06-17T00:00:00.000");
 
     EventParams params = EventParams.builder()
-        .condition(
-          and(
+        .and(
             or(
-              field("created", gteLt(startDate, endDate)),
-              field("trace.group", "Some group"),
-              field("uuid", "4794b019-9750-44f4-a3c9-33516c6bfc50"),
-              field("created", gteLt(startDate2, endDate2))
-            )
-          ).and(
-              wildcard("target.subject.name", "Target_Subject*"),
-              field("type", in("Backend", "frontend"))
-          ).and(
-              field("value", in(1.0, 2.0, 3.0))
-          )
+                field("created", gteLt(startDate, endDate)),
+                field("trace.group", "Some group"),
+                field("uuid", "4794b019-9750-44f4-a3c9-33516c6bfc50"),
+                field("created", gteLt(startDate2, endDate2))
+            ),
+            wildcard("target.subject.name", "Target_Subject*"),
+            field("type", in("Backend", "frontend")),
+            field("value", in(1.0, 2.0, 3.0))
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -706,24 +662,19 @@ public class EventsResourceTest {
   @Tag("complexQuery2")
   public void complexQuery2() {
     EventParams params = EventParams.builder()
-        .condition(
-            or(
-              and(
+        .or(
+            and(
                 field("application", "Baucheck-backend"),
                 field("type", "Backend"),
                 field("action", "FETCH_DATA")
-              )
-            ).or(
-              and(
+            ),
+            and(
                 field("application", "Lupitpole-frontend"),
                 field("type", "frontend"),
                 field("action", "SUBMIT_FORM_FRONTEND")
-              )
             )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -748,24 +699,17 @@ public class EventsResourceTest {
   @Tag("complexQuery4")
   public void complexQuery4() {
     EventParams params = EventParams.builder()
-        .condition(
+        .or(
             and(
-              or(
-                and(
-                  field("application", "Baucheck-backend"),
-                  field("type", "Backend"),
-                  field("action", "FETCH_DATA")
-                )
-              ).or(
-                and(
-                  field("application", "Lupitpole-frontend")
-                )
-              )
+                field("application", "Baucheck-backend"),
+                field("type", "Backend"),
+                field("action", "FETCH_DATA")
+            ),
+            and(
+                field("application", "Lupitpole-frontend")
             )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -792,18 +736,14 @@ public class EventsResourceTest {
     ZonedDateTime startDate = Iso8601.fromIso("2025-01-01T00:01:10.20");
     ZonedDateTime endDate = Iso8601.fromIso("2026-06-15T23:31:45.50");
     EventParams params = EventParams.builder()
-        .condition(
-            or(
-              and(
+        .or(
+            and(
                 not(field("created", gteLte(startDate, endDate))),
                 not(field("uuid", "4794b019-9750-44f4-a3c9-33516c6bfc50"))
-              ),
-              field("action", "FETCH_DATA")
-            )
+            ),
+            field("action", "FETCH_DATA")
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -827,27 +767,20 @@ public class EventsResourceTest {
   @Order(110)
   public void complexQuery6() {
     EventParams params = EventParams.builder()
-        .condition(
+        .or(
             and(
-                or(
-                    and(
-                        field("application", "Baucheck-backend"),
-                        field("type", "Backend"),
-                        field("action", "FETCH_DATA"),
-                        field("target.subject.descriptor", "descriptor_target_subject")
-                    )
-                ).or(
-                    and(
-                        field("application", "Lupitpole-frontend"),
-                        field("type", "frontend"),
-                        field("action", "SUBMIT_FORM_FRONTEND")
-                    )
-                )
+                field("application", "Baucheck-backend"),
+                field("type", "Backend"),
+                field("action", "FETCH_DATA"),
+                field("target.subject.descriptor", "descriptor_target_subject")
+            ),
+            and(
+                field("application", "Lupitpole-frontend"),
+                field("type", "frontend"),
+                field("action", "SUBMIT_FORM_FRONTEND")
             )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -871,32 +804,22 @@ public class EventsResourceTest {
   @Order(120)
   public void complexQuery7() {
     EventParams params = EventParams.builder()
-        .condition(
+        .or(
             and(
+                field("application", "Baucheck-backend"),
+                field("type", "Backend"),
                 or(
-                    and(
-                        field("application", "Baucheck-backend"),
-                        field("type", "Backend"),
-                        and(
-                            or(
-                                field("target.subject.descriptor", "descriptor_target_subject")
-                            ).or(
-                                field("target.subject.value", "value2_target_subject")
-                            )
-                        )
-                    )
-                ).or(
-                    and(
-                        field("application", "Lupitpole-frontend"),
-                        field("type", "frontend"),
-                        field("action", "SUBMIT_FORM_FRONTEND")
-                    )
+                    field("target.subject.descriptor", "descriptor_target_subject"),
+                    field("target.subject.value", "value2_target_subject")
                 )
+            ),
+            and(
+                field("application", "Lupitpole-frontend"),
+                field("type", "frontend"),
+                field("action", "SUBMIT_FORM_FRONTEND")
             )
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
@@ -920,14 +843,10 @@ public class EventsResourceTest {
   @Order(130)
   public void complexQuery8() {
     EventParams params = EventParams.builder()
-        .condition(
-            and(
-                field("source.subject.name", "Source_Subject")
-            )
+        .and(
+            field("source.subject.name", "Source_Subject")
         )
-        .filter(
-            withSizeAndTreeLevel(100, 5)
-        )
+        .filter(rf().size(100).content(cf().treeLevel(5)))
         .build();
 
     List<Event> events = given()
