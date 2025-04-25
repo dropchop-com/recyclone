@@ -6,8 +6,8 @@ import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.attr.AttributeValueList;
 import com.dropchop.recyclone.base.api.model.rest.Constants;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
-import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext;
+import com.dropchop.recyclone.base.dto.model.invoke.IdentifierParams;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.dto.model.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.base.dto.model.localization.TitleTranslation;
@@ -15,16 +15,17 @@ import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextBinder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 08. 22.
@@ -123,11 +124,19 @@ public class SerializationTest {
     en.setModified(Iso8601.fromIso("2022-08-27T00:00:00Z"));
   }
 
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+    );
+  }
+
   @Test
   public void testDeepSerialization() throws Exception {
     DefaultExecContext<?> execContext = new DefaultExecContext<>();
-    CodeParams params = new CodeParams();
+    IdentifierParams params = new IdentifierParams();
     params
+      .ids(List.of("code1", "code2"))
       .filter()
       .from(0)
       .size(10)
@@ -140,5 +149,19 @@ public class SerializationTest {
     List<Language> languages = List.of(en, sl);
     String json = mapper.writeValueAsString(languages);
     log.info("Got json {}", json);
+
+    json = mapper.writeValueAsString(execContext);
+    log.info("Got exec context json {}", json);
+
+    json = new ObjectMapper().writeValueAsString(params);
+    log.info("Got params json {}", json);
+
+    params = IdentifierParams.builder()
+        .requestId("reqId")
+        .filter(null)
+        .identifiers(List.of("code1", "code2"))
+        .build();
+    json = new ObjectMapper().writeValueAsString(params);
+    log.info("Got params2 json {}", json);
   }
 }
