@@ -26,6 +26,20 @@ public interface Model extends Serializable, Cloneable {
     return identifier(this);
   }
 
+  static String identifier(Model e, String defaultValue) {
+    return switch (e) {
+      case null -> defaultValue;
+      case HasId hasId -> hasId.getId();
+      case HasCode hasCode -> hasCode.getCode();
+      case HasUuid hasUuid -> hasUuid.getUuid().toString();
+      default -> defaultValue;
+    };
+  }
+
+  default String identifier(String defaultValue) {
+    return identifier(this, defaultValue);
+  }
+
   static String identifierField(Model e) {
     return switch (e) {
       case null -> null;
