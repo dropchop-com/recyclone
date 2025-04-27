@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
-import com.dropchop.recyclone.base.api.model.invoke.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -16,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.dropchop.recyclone.base.api.model.invoke.Constants.ModifyPolicy.WAIT_FOR;
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.count;
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.terms;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
@@ -216,7 +216,6 @@ public class DummyResourceTest {
   @Order(40)
   @Tag("matchPhraseSearch")
   public void matchPhraseSearch() {
-
     QueryParams s = QueryParams.builder()
         .or(
             phrase("title", "Dummy 3", 2)
@@ -245,7 +244,6 @@ public class DummyResourceTest {
   @Order(40)
   @Tag("advancedTextSearch")
   public void advancedTextSearch() {
-
     QueryParams s = QueryParams.builder()
         .or(
             advancedText("title", "\"Dum* 5\"")
@@ -275,7 +273,7 @@ public class DummyResourceTest {
   @Tag("deleteById")
   public void deleteById() {
     CodeParams params1 = CodeParams.builder()
-        .modifyPolicy(List.of(Constants.ModifyPolicy.WAIT_FOR))
+        .modifyPolicy(List.of(WAIT_FOR))
         .code("sad15s1a21sa21a51a")
         .build();
 
@@ -295,7 +293,6 @@ public class DummyResourceTest {
       .getInt(".");
 
     assertEquals(1, number_of_deleted);
-    //testHelper.waitForObjects("/dummy/_search", List.of("sad15s1a21sa21a51a"), 0);
   }
 
   @Test
@@ -303,7 +300,7 @@ public class DummyResourceTest {
   @Tag("deleteByQuery")
   public void deleteByQuery() {
     QueryParams s = QueryParams.builder()
-        .modifyPolicy(List.of(Constants.ModifyPolicy.WAIT_FOR))
+        .modifyPolicy(List.of(WAIT_FOR))
         .condition(
           field("code", "4d5as45s1ds4d5ss8sd6s")
         )

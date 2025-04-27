@@ -120,7 +120,7 @@ public class ElasticQueryBuilder {
 
     if(params.getCondition() != null) {
       QueryNodeObject conditions = mapCondition(params.getCondition(), null);
-      bool.put("bool",conditions);
+      bool.put("bool", conditions);
       end.put("query", bool);
     }
 
