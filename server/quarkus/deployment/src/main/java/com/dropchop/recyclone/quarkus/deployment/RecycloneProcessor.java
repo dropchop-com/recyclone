@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
+import com.dropchop.recyclone.quarkus.runtime.cache.CacheLoaderManager;
 import com.dropchop.recyclone.quarkus.runtime.invoke.*;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFilterSerializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
@@ -175,6 +176,13 @@ class RecycloneProcessor {
             .setUnremovable()
             .build()
     );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(CacheLoaderManager.class)
+            .setUnremovable()
+            .build()
+    );
   }
 
   private final DotName ANNO_NAMED = DotName.createSimple(
@@ -189,7 +197,7 @@ class RecycloneProcessor {
     Set<ClassInfo> handled = new HashSet<>();
     Set<DotName> serviceNames = interfaces.stream().map(ClassInfo::name).collect(Collectors.toSet());
     for(ClassInfo iface : interfaces) {
-      Collection<ClassInfo> candidates = index.getAllKnownImplementors(iface.name());
+      Collection<ClassInfo> candidates = index.getAllKnownImplementations(iface.name());
       if (candidates.isEmpty()) {
         continue;
       }

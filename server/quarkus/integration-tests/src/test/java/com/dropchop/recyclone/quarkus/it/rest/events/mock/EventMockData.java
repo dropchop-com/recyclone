@@ -15,8 +15,8 @@ import java.util.List;
 @SuppressWarnings({"unused", "SameParameterValue"})
 public class EventMockData {
 
-  public static String EVENT_TRACE_NAME = "some_test_flow";
-  public static String EVENT_TRACE_NAME2 = "some_test_flow_2";
+  public static final String EVENT_TRACE_NAME = "some_test_flow";
+  public static final String EVENT_TRACE_NAME2 = "some_test_flow_2";
 
   public List<Event> createMockEvents() {
     List<Event> mockEvents = new ArrayList<>();

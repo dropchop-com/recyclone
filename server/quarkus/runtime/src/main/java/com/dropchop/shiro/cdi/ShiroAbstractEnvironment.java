@@ -41,7 +41,7 @@ public abstract class ShiroAbstractEnvironment {
   @Inject
   protected EventBus eventBus;
 
-  protected boolean sessionManagerDeleteInvalidSessions = true;
+  protected final boolean sessionManagerDeleteInvalidSessions = true;
 
 
   protected SessionsSecurityManager securityManager(Collection<Realm> realms) {

@@ -49,7 +49,7 @@ class FilteringDtoContextTest {
   @Inject
   DomainToDtoMapper domainMapper;
 
-  List<String> availableLangs = List.of("sl", "hr", "sr", "fi", "it", "de", "fr");
+  final List<String> availableLangs = List.of("sl", "hr", "sr", "fi", "it", "de", "fr");
 
   private <M extends Model> M createMockModel(M model, String code, int numTranslations) {
     String title = code != null && !code.isEmpty() ?

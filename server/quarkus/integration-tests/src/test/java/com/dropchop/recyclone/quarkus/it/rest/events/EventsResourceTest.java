@@ -51,9 +51,9 @@ public class EventsResourceTest {
     );
   }
 
-  public static String EVENT_ID = Uuid.getTimeBased().toString();
-  public static String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
-  public static String EVENT_TRACE_NAME = "some_test_flow";
+  public static final String EVENT_ID = Uuid.getTimeBased().toString();
+  public static final String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
+  public static final String EVENT_TRACE_NAME = "some_test_flow";
 
   interface Strings {
     String EVENT_DETAIL = "event_detail";

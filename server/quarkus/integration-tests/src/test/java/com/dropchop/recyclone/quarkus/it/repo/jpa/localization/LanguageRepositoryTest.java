@@ -14,8 +14,8 @@ import java.time.ZonedDateTime;
 @SuppressWarnings("unused")
 public class LanguageRepositoryTest {
 
-  public static String lngEnCode = "en";
-  public static String lngSlCode = "sl";
+  public static final String lngEnCode = "en";
+  public static final String lngSlCode = "sl";
 
 
   public static JpaLanguage generateLanguage(String code) {
