@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.api.model.query;
 
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
+import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -236,6 +237,16 @@ public interface Aggregation {
 
     public static Terms terms(String name, String field, Integer size, Aggregation... aggs) {
       return new Terms(name, field, size, Arrays.stream(aggs).map(Wrapper::new)
+        .collect(Collectors.toCollection(AggregationList::new)));
+    }
+
+    public static Terms terms(String name, String field, Filter filter, Aggregation... aggs) {
+      return new Terms(name, field, filter, Arrays.stream(aggs).map(Wrapper::new)
+        .collect(Collectors.toCollection(AggregationList::new)));
+    }
+
+    public static Terms terms(String name, String field, Integer size, Filter filter, Aggregation... aggs) {
+      return new Terms(name, field, size, filter, Arrays.stream(aggs).map(Wrapper::new)
         .collect(Collectors.toCollection(AggregationList::new)));
     }
   }

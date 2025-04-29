@@ -38,7 +38,8 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
             "Invalid query conditioned field name structure at [" + name + "." + cname + "]!"
         );
       }
-      Class<? extends ConditionOperator> cClass = ConditionOperator.supported().get(cname.substring(1));
+      Class<? extends ConditionOperator> cClass = (Class<? extends ConditionOperator>)
+        ConditionOperator.supported().get(cname.substring(1));
       if (cClass == null) {
         throw new UnsupportedOperationException(
             "Missing condition implementation for [" + name + "." + cname + "]!"
