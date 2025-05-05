@@ -19,6 +19,8 @@ import static com.dropchop.recyclone.base.api.model.invoke.Constants.ModifyPolic
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.count;
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.terms;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.filter;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.includes;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
@@ -49,6 +51,7 @@ public class DummyResourceTest {
   @Tag("advancedTextSearch")
   @Tag("deleteById")
   @Tag("deleteByQuery")
+  @Tag("aggregationsWithFilters")
   public void create() throws IOException {
     List<Dummy> dummies = this.dummyMockData.createMockDummies();
 
@@ -156,6 +159,36 @@ public class DummyResourceTest {
       .getMap("aggregations");
 
     assertEquals(8, ((List<?>) ((Map<Object, Object>) response.get("languages")).get("buckets")).size());
+  }
+
+  @Test
+  @Tag("aggregationsWithFilters")
+  public void aggregationsWithFilters() {
+    QueryParams params = QueryParams.builder().aggs(
+      terms(
+        "languages",
+        "lang",
+        filter(
+          includes(List.of("zh"))
+        )
+      )
+    ).build();
+
+    Map<Object, Object> response = given()
+      .contentType(ContentType.JSON)
+      .accept(APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .body(params)
+      .when()
+      .post("/api/public/test/dummy/query")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body()
+      .jsonPath()
+      .getMap("aggregations");
+
+    assertEquals(1, ((List<?>) ((Map<Object, Object>) response.get("languages")).get("buckets")).size());
   }
 
   @Test

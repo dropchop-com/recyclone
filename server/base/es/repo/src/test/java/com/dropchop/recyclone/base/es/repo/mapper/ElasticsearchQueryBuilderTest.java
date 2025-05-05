@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.base.es.repo.mapper;
 
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
@@ -256,7 +258,7 @@ public class ElasticsearchQueryBuilderTest {
     ).build();
 
     String correctJson = """
-    
+      
         {
              "query": {
                "bool": {
@@ -451,46 +453,46 @@ public class ElasticsearchQueryBuilderTest {
 
     String correctJson =
       """
-      {
-        "query": {
-          "bool": {
-            "must": {
-              "span_near": {
-                "in_order": false,
-                "clauses": [
-                  {
-                    "span_multi": {
-                      "match": {
-                        "prefix": {
-                          "text": {
-                            "value": "krem"
+        {
+          "query": {
+            "bool": {
+              "must": {
+                "span_near": {
+                  "in_order": false,
+                  "clauses": [
+                    {
+                      "span_multi": {
+                        "match": {
+                          "prefix": {
+                            "text": {
+                              "value": "krem"
+                            }
                           }
                         }
                       }
-                    }
-                  },
-                  {
-                    "span_term": {
-                      "text": {
-                        "value": "proti"
+                    },
+                    {
+                      "span_term": {
+                        "text": {
+                          "value": "proti"
+                        }
+                      }
+                    },
+                    {
+                      "span_term": {
+                        "text": {
+                          "value": "gubam"
+                        }
                       }
                     }
-                  },
-                  {
-                    "span_term": {
-                      "text": {
-                        "value": "gubam"
-                      }
-                    }
-                  }
-                ],
-                "slop": 1
+                  ],
+                  "slop": 1
+                }
               }
             }
           }
         }
-      }
-      """;
+        """;
 
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -510,7 +512,7 @@ public class ElasticsearchQueryBuilderTest {
     ).build();
 
     String correctJson =
-        """
+      """
         {
           "query" : {
             "bool" : {
@@ -567,13 +569,13 @@ public class ElasticsearchQueryBuilderTest {
   @Test
   public void processAdvancedTextAutoCase() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
-        and(
-            advancedText("text", "\"Nivea krem*\"")
-        )
+      and(
+        advancedText("text", "\"Nivea krem*\"")
+      )
     ).build();
 
     String correctJson =
-        """
+      """
         {
           "query": {
             "bool": {
@@ -602,6 +604,204 @@ public class ElasticsearchQueryBuilderTest {
                     }
                   ],
                   "slop": 0
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
+
+  @Test
+  public void processElasticIncludeCase() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().aggregate(
+      aggs(
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "seconds",
+          terms(
+            "price_sum",
+            "price",
+            filter(
+              includes(List.of("include_ports"))
+            )
+          )
+        )
+      )
+    ).build();
+
+    String correctJson =
+      """
+        {
+          "aggs" : {
+            "price_histogram" : {
+              "date_histogram" : {
+                "field" : "price",
+                "calendar_interval" : "seconds"
+              },
+              "aggs" : {
+                "price_sum" : {
+                  "terms" : {
+                    "field" : "price",
+                    "include" : [ "include_ports" ]
+                  }
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
+
+  @Test
+  public void processElasticExcludeCase() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().aggregate(
+      aggs(
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "seconds",
+          terms(
+            "price_sum",
+            "price",
+            filter(
+              excludes(List.of("include_ports"))
+            )
+          )
+        )
+      )
+    ).build();
+
+    String correctJson =
+      """
+        {
+          "aggs" : {
+            "price_histogram" : {
+              "date_histogram" : {
+                "field" : "price",
+                "calendar_interval" : "seconds"
+              },
+              "aggs" : {
+                "price_sum" : {
+                  "terms" : {
+                    "field" : "price",
+                    "exclude" : [ "include_ports" ]
+                  }
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
+
+  @Test
+  public void processElasticIncludeExcludeCase() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().aggregate(
+      aggs(
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "seconds",
+          terms(
+            "price_sum",
+            "price",
+            filter(
+              includes(List.of("include_ports")),
+              excludes(List.of("exclude_ports"))
+            )
+          )
+        )
+      )
+    ).build();
+
+    String correctJson =
+      """
+        {
+          "aggs" : {
+            "price_histogram" : {
+              "date_histogram" : {
+                "field" : "price",
+                "calendar_interval" : "seconds"
+              },
+              "aggs" : {
+                "price_sum" : {
+                  "terms" : {
+                    "field" : "price",
+                    "include" : [ "include_ports" ],
+                    "exclude": [ "exclude_ports" ]
+                  }
+                }
+              }
+            }
+          }
+        }
+        """;
+
+    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
+
+  @Test
+  public void processNoFilterElasticCase() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().aggregate(
+      aggs(
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "seconds",
+          terms(
+            "price_sum",
+            "price"
+          )
+        )
+      )
+    ).build();
+
+    String correctJson =
+      """
+        {
+          "aggs" : {
+            "price_histogram" : {
+              "date_histogram" : {
+                "field" : "price",
+                "calendar_interval" : "seconds"
+              },
+              "aggs" : {
+                "price_sum" : {
+                  "terms" : {
+                    "field" : "price"
+                  }
                 }
               }
             }

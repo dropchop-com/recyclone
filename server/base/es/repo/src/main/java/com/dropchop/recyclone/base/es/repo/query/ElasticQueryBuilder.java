@@ -47,15 +47,15 @@ public class ElasticQueryBuilder {
       return mapConditionField(fieldName, operator);
     } else if (condition instanceof Field<?> field) {
 
-      if(field.iterator().next() instanceof ZonedDateTime) {
+      if (field.iterator().next() instanceof ZonedDateTime) {
         OperatorNodeObject operator = new OperatorNodeObject();
-        if(field.iterator().next() instanceof ZonedDateTime date) {
+        if (field.iterator().next() instanceof ZonedDateTime date) {
           operator.addClosedInterval(field.getName(), date, date);
         }
         return operator;
       }
 
-      if(field.iterator().next() == null) {
+      if (field.iterator().next() == null) {
         OperatorNodeObject operator = new OperatorNodeObject();
         operator.addNullSearch(field.getName());
         return operator;
@@ -68,7 +68,7 @@ public class ElasticQueryBuilder {
       termWrapper.put("term", query);
       mustWrapper.put("must", termWrapper);
 
-      if(parentCondition == null) {
+      if (parentCondition == null) {
         return mustWrapper;
       }
 
@@ -118,16 +118,16 @@ public class ElasticQueryBuilder {
     QueryNodeObject bool = new QueryNodeObject();
     QueryNodeObject end = new QueryNodeObject();
 
-    if(params.getCondition() != null) {
+    if (params.getCondition() != null) {
       QueryNodeObject conditions = mapCondition(params.getCondition(), null);
       bool.put("bool", conditions);
       end.put("query", bool);
     }
 
-    if(params.getAggregate() != null) {
+    if (params.getAggregate() != null) {
       QueryNodeObject aggregations = new QueryNodeObject();
-      for(Aggregation agg : params.getAggregate()) {
-        if(agg instanceof Aggregation.Wrapper) {
+      for (Aggregation agg : params.getAggregate()) {
+        if (agg instanceof Aggregation.Wrapper) {
           aggregations.put(agg.getName(), buildAggregation(((Aggregation.Wrapper) agg).iterator().next()));
         } else {
           aggregations.put(agg.getName(), buildAggregation(agg));
@@ -146,60 +146,63 @@ public class ElasticQueryBuilder {
       QueryNodeObject termsNode = new QueryNodeObject();
       termsNode.put("field", terms.getField());
 
-      if(terms.getSize() != null) {
+      if (terms.getSize() != null) {
         termsNode.put("size", terms.getSize());
       }
 
+      if (terms.getFilter() != null) {
+        if (terms.getFilter().getInclude() != null) {
+          termsNode.put("include", terms.getFilter().getInclude().getValue());
+        }
+
+        if (terms.getFilter().getExclude() != null) {
+          termsNode.put("exclude", terms.getFilter().getExclude().getValue());
+        }
+      }
+
+
       node.put("terms", termsNode);
-    }
-    else if (aggregation instanceof DateHistogram dh) {
+    } else if (aggregation instanceof DateHistogram dh) {
       QueryNodeObject dhNode = new QueryNodeObject();
       dhNode.put("field", dh.getField());
       dhNode.put("calendar_interval", dh.getCalendar_interval());
 
       node.put("date_histogram", dhNode);
-    }
-    else if (aggregation instanceof Avg) {
+    } else if (aggregation instanceof Avg) {
       QueryNodeObject avg = new QueryNodeObject();
       avg.put("field", aggregation.getField());
       node.put("avg", avg);
-    }
-    else if (aggregation instanceof Count) {
+    } else if (aggregation instanceof Count) {
       QueryNodeObject count = new QueryNodeObject();
       count.put("field", aggregation.getField());
       node.put("value_count", count);
-    }
-    else if (aggregation instanceof Max) {
+    } else if (aggregation instanceof Max) {
       QueryNodeObject max = new QueryNodeObject();
       max.put("field", aggregation.getField());
       node.put("max", max);
-    }
-    else if (aggregation instanceof Min) {
+    } else if (aggregation instanceof Min) {
       QueryNodeObject min = new QueryNodeObject();
       min.put("field", aggregation.getField());
       node.put("min", min);
-    }
-    else if (aggregation instanceof Sum) {
+    } else if (aggregation instanceof Sum) {
       QueryNodeObject sum = new QueryNodeObject();
       sum.put("field", aggregation.getField());
       node.put("sum", sum);
-    }
-    else if(aggregation instanceof Cardinality) {
+    } else if (aggregation instanceof Cardinality) {
       QueryNodeObject cardinality = new QueryNodeObject();
       cardinality.put("field", aggregation.getField());
       node.put("cardinality", cardinality);
-    }
-    else if(aggregation instanceof Stats) {
+    } else if (aggregation instanceof Stats) {
       QueryNodeObject stats = new QueryNodeObject();
       stats.put("field", aggregation.getField());
       node.put("stats", stats);
     }
 
     if (aggregation instanceof BucketAggregation bucket) {
-      if(bucket.getAggs() != null && !bucket.getAggs().isEmpty()) {
+      if (bucket.getAggs() != null && !bucket.getAggs().isEmpty()) {
         QueryNodeObject subAggs = new QueryNodeObject();
         for (Aggregation sub : bucket.getAggs()) {
-          if(sub instanceof Aggregation.Wrapper) {
+          if (sub instanceof Aggregation.Wrapper) {
             subAggs.put(sub.getName(), buildAggregation(((Aggregation.Wrapper) sub).iterator().next()));
           } else {
             subAggs.put(sub.getName(), buildAggregation(sub));
