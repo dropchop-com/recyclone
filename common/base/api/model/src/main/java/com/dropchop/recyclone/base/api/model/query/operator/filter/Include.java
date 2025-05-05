@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class Include {
-  private List<String> include;
+  private List<String> value;
 }

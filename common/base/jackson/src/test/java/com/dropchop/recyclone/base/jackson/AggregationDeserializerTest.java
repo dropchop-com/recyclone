@@ -6,13 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.filter;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.includes;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.excludes;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 
 public class AggregationDeserializerTest {
 
@@ -163,7 +160,6 @@ public class AggregationDeserializerTest {
   }
 
   @Test
-  @SuppressWarnings("unused")
   public void filterTermsAggregationTest() throws Exception {
     AggregationList a = aggs(
       dateHistogram(
@@ -176,6 +172,95 @@ public class AggregationDeserializerTest {
           filter(
             includes(List.of("include_ports")),
             excludes(List.of("*poms*"))
+          )
+        )
+      )
+    );
+
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+
+    String jsonOutput1 = mapper.writeValueAsString(a);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
+    a1 = Wrapper.wrap(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a1);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
+  }
+
+  @Test
+  public void filterExcludeTermsAggregationTest() throws Exception {
+    AggregationList a = aggs(
+      dateHistogram(
+        "price_histogram",
+        "price",
+        "seconds",
+        terms(
+          "price_sum",
+          "price",
+          filter(
+            excludes(List.of("*poms*"))
+          )
+        )
+      )
+    );
+
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+
+    String jsonOutput1 = mapper.writeValueAsString(a);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
+    a1 = Wrapper.wrap(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a1);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
+  }
+
+  @Test
+  public void filterIncludeTermsAggregationTest() throws Exception {
+    AggregationList a = aggs(
+      dateHistogram(
+        "price_histogram",
+        "price",
+        "seconds",
+        terms(
+          "price_sum",
+          "price",
+          filter(
+            includes(List.of("include_ports"))
+          )
+        )
+      )
+    );
+
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+
+    String jsonOutput1 = mapper.writeValueAsString(a);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
+    a1 = Wrapper.wrap(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a1);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
+  }
+
+  @Test
+  public void noFilterTermsAggregationTest() throws Exception {
+    AggregationList a = aggs(
+      dateHistogram(
+        "price_histogram",
+        "price",
+        "seconds",
+        terms(
+          "price_sum",
+          "price",
+          4500,
+          terms(
+            "terms with",
+            "price",
+            filter(
+              includes(List.of("include_ports"))
+            )
           )
         )
       )

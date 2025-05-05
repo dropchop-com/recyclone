@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class Exclude {
-  private List<String> exclude;
+  private List<String> value;
 }
