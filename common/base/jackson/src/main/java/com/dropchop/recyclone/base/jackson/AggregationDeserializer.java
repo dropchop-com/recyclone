@@ -24,18 +24,13 @@ import java.util.stream.Collectors;
 public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
   List<String> convertToList(String input) {
-    if (input == null || input.isEmpty()) {
-      return Collections.emptyList();
-    }
+    if (input == null || input.isEmpty()) return Collections.emptyList();
 
-    String cleaned = input.replaceAll("[\\[\\]\"']", "").trim();
-
-    if (cleaned.isEmpty()) {
-      return Collections.emptyList();
-    }
-
-    return Arrays.stream(cleaned.split("\\s*,\\s*"))
-      .map(s -> s.replaceAll("^\"|\"$", ""))
+    return Arrays.stream(input
+        .replaceAll("^\\[|]$", "")
+        .replaceAll("\"", "")
+        .trim()
+        .split("\\s*,\\s*"))
       .filter(s -> !s.isEmpty())
       .collect(Collectors.toList());
   }
@@ -49,14 +44,14 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
     try {
       Constructor<? extends Aggregation> constructor;
 
-      if(cClass.equals(DateHistogram.class)) {
+      if (cClass.equals(DateHistogram.class)) {
         String interval = entry.getValue().get("calendar_interval").asText();
 
-        if(subAggregations.isEmpty()) {
+        if (subAggregations.isEmpty()) {
           return new DateHistogram(name, field, interval);
         }
         return new DateHistogram(name, field, interval, subAggregations);
-      } else if(cClass.equals(Terms.class)) {
+      } else if (cClass.equals(Terms.class)) {
         JsonNode sizeNode = entry.getValue().get("size");
         JsonNode filterNode = entry.getValue().get("filter");
 
@@ -100,7 +95,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         return terms;
       }
 
-      if(subAggregations.isEmpty()) {
+      if (subAggregations.isEmpty()) {
         constructor = cClass.getConstructor(String.class, String.class);
         return constructor.newInstance(name, field);
       }
@@ -118,15 +113,15 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
     String type = entry.getKey().substring(1);
     Class<? extends Aggregation> cClass = Aggregation.supported().get(type);
 
-    if(cClass != null) {
+    if (cClass != null) {
       String name = entry.getValue().get("name").asText();
       String field = entry.getValue().get("field").asText();
       JsonNode aggs = entry.getValue().get("aggs");
 
       AggregationList aggregations = new AggregationList();
 
-      if(aggs != null && !aggs.isEmpty()) {
-        for(JsonNode obType : aggs ) {
+      if (aggs != null && !aggs.isEmpty()) {
+        for (JsonNode obType : aggs) {
           aggregations.add(deserializeStep(obType.fields().next()));
         }
       }
@@ -144,7 +139,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
     JsonNode node = codec.readTree(jsonParser);
     AggregationList aggregations = new AggregationList();
 
-    for(JsonNode ob : node) {
+    for (JsonNode ob : node) {
       try {
         aggregations.add(deserializeStep(ob.fields().next()));
       } catch (Exception e) {
