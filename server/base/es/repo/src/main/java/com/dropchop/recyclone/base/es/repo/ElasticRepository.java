@@ -18,6 +18,7 @@ import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetad
 import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
+import com.dropchop.recyclone.base.es.repo.marker.BlockAllDelete;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -151,8 +152,19 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   public <S extends E> void refresh(Collection<S> entities) {
   }
 
+  private void throwDeleteException() {
+    throw new ServiceException(
+      ErrorCode.internal_error,
+      "Delete operations are blocked for repository: " + this.getClass().getSimpleName()
+    );
+  }
+
   @Override
   public <X extends ID> int deleteById(Collection<X> ids) {
+    if (this instanceof BlockAllDelete) {
+      this.throwDeleteException();
+    }
+
     if (ids == null || ids.isEmpty()) {
       return 0;
     }
@@ -172,6 +184,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   @Override
   public <S extends E> List<S> delete(Collection<S> entities) {
+    if (this instanceof BlockAllDelete) {
+      this.throwDeleteException();
+    }
+
     ObjectMapper mapper = getObjectMapper();
     BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
         BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
@@ -206,6 +222,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   @Override
   public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
+    if (this instanceof BlockAllDelete) {
+      this.throwDeleteException();
+    }
+
     QueryParams params = context.getParams();
     QueryNodeObject queryObject = getElasticQueryBuilder().build(params);
     String query;
