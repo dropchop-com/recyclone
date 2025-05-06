@@ -155,7 +155,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   private void throwDeleteException() {
     throw new ServiceException(
       ErrorCode.internal_error,
-      "Delete operations are blocked for repository: " + this.getClass().getSimpleName()
+      "Delete operations are blocked by our implementation for repository: " + this.getClass().getSimpleName()
     );
   }
 
