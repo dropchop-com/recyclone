@@ -1,10 +1,10 @@
-package com.dropchop.recyclone.base.api.rest.localization;
+package com.dropchop.recyclone.base.jaxrs.localization;
 
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
-import com.dropchop.recyclone.base.dto.model.localization.Language;
+import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
-import com.dropchop.recyclone.base.api.service.localization.LanguageService;
+import com.dropchop.recyclone.base.api.service.localization.CountryService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -17,28 +17,28 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class LanguageResource extends ClassicReadByCodeResource<Language, CodeParams> implements
-    com.dropchop.recyclone.base.api.jaxrs.localization.LanguageResource {
+public class CountryResource extends ClassicReadByCodeResource<Country, CodeParams> implements
+    com.dropchop.recyclone.base.api.jaxrs.localization.CountryResource {
 
   @Inject
-  LanguageService service;
+  CountryService service;
 
   @Inject
   CodeParams params;
 
   @Override
-  public Result<Language> get() {
+  public Result<Country> get() {
     return service.search();
   }
 
   @Override
-  public Result<Language> getByCode(String code) {
+  public Result<Country> getByCode(String code) {
     params.setCodes(List.of(code));
     return service.search();
   }
 
   @Override
-  public Result<Language> search(CodeParams parameters) {
+  public Result<Country> search(CodeParams parameters) {
     return service.search();
   }
 }

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.api.rest.tagging;
+package com.dropchop.recyclone.base.jaxrs.tagging;
 
 import com.dropchop.recyclone.base.dto.model.invoke.TagParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
