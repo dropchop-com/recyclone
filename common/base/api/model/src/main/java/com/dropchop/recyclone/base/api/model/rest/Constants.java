@@ -28,10 +28,6 @@ public interface Constants {
     String LOCALIZATION_SEGMENT = "/localization";
     String SECURITY_SEGMENT = "/security";
     String TAGGING_SEGMENT = "/tagging";
-    String ELASTICSEARCH_SEARCH_SEGMENT = "/es_search";
-    String ELASTICSEARCH_SAVE_SEGMENT = "/es_save";
-    String ELASTICSEARCH_DELETE_SEGMENT = "/es_delete";
-    String ELASTICSEARCH_UPDATE_SEGMENT = "/es_update";
 
     String INTERNAL_SEGMENT = "/internal";
     String PUBLIC_SEGMENT = "/public";
@@ -61,6 +57,8 @@ public interface Constants {
       String PERMISSIONS_LIST_SEGMENT = "/list";
       String USER_SEGMENT = "/user";
       String USER = SECURITY_SEGMENT + USER_SEGMENT;
+      String LOGIN_SEGMENT = "/login";
+      String LOGIN = SECURITY_SEGMENT + LOGIN_SEGMENT;
     }
 
     interface Tagging {
