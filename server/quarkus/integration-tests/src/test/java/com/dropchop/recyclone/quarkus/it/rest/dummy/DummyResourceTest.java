@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
+import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -19,8 +20,7 @@ import static com.dropchop.recyclone.base.api.model.invoke.Constants.ModifyPolic
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.count;
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.terms;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.filter;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.includes;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
@@ -109,7 +109,9 @@ public class DummyResourceTest {
   public void searchByTitleTranslation() {
     QueryParams params = QueryParams.builder()
         .and(
-          field("translations.lang", "de")
+          field("translations.lang", "de"),
+          field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")
+          )
         )
         .build();
 

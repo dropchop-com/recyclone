@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.base.es.repo.query;
 
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
@@ -11,11 +13,16 @@ import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.BoolQueryObject;
 import com.dropchop.recyclone.base.es.model.query.OperatorNodeObject;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
+import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @ApplicationScoped
@@ -114,12 +121,77 @@ public class ElasticQueryBuilder {
     return operatorNode;
   }
 
-  public QueryNodeObject build(QueryParams params) {
+  protected void validateRequiredFields(QueryNodeObject query, Set<String> requiredFields, String operationType) {
+    Set<String> rootFields = extractRootFieldNames(query);
+
+    boolean hasRequiredField = rootFields.stream()
+      .anyMatch(requiredFields::contains);
+
+    if (!hasRequiredField) {
+      throw new ServiceException(
+        ErrorCode.internal_error,
+        "Query validation failed: " + operationType + " operations require at least one of these fields " +
+          "at the root level: " + String.join(", ", requiredFields) + "."
+      );
+    }
+  }
+
+  @SuppressWarnings("Java8MapApi")
+  protected Set<String> extractRootFieldNames(QueryNodeObject query) {
+    Set<String> fieldNames = new HashSet<>();
+
+    if (query.containsKey("must")) {
+      extractFieldsFromClause(query.get("must"), fieldNames);
+    } else if (query.containsKey("should")) {
+      extractFieldsFromClause(query.get("should"), fieldNames);
+    } else {
+      extractFieldsFromClause(query, fieldNames);
+    }
+
+    return fieldNames;
+  }
+
+  private void extractFieldsFromClause(Object clause, Set<String> fieldNames) {
+    if (clause instanceof QueryNodeObject) {
+      if (((QueryNodeObject) clause).containsKey("term")) {
+        QueryNodeObject term = (QueryNodeObject) ((QueryNodeObject) clause).get("term");
+        fieldNames.addAll(term.keySet());
+      } else if (((QueryNodeObject) clause).containsKey("terms")) {
+        QueryNodeObject range = (QueryNodeObject) ((QueryNodeObject) clause).get("terms");
+        fieldNames.addAll(range.keySet());
+      } else if (((QueryNodeObject) clause).containsKey("range")) {
+        QueryNodeObject range = (QueryNodeObject) ((QueryNodeObject) clause).get("range");
+        fieldNames.addAll(range.keySet());
+      }
+
+    } else if (clause instanceof List) {
+      for (Object item : (List<?>) clause) {
+        extractFieldsFromClause(item, fieldNames);
+      }
+    }
+  }
+
+  public QueryNodeObject build(QueryParams params, Object repository) {
     QueryNodeObject bool = new QueryNodeObject();
     QueryNodeObject end = new QueryNodeObject();
 
     if (params.getCondition() != null) {
       QueryNodeObject conditions = mapCondition(params.getCondition(), null);
+
+      if (repository instanceof AlwaysPresentSearchFields) {
+        validateRequiredFields(
+          conditions,
+          ((AlwaysPresentSearchFields) repository).anyOf(),
+          "search"
+        );
+      } else if (repository instanceof AlwaysPresentDeleteFields) {
+        validateRequiredFields(
+          conditions,
+          ((AlwaysPresentDeleteFields) repository).anyOf(),
+          "delete"
+        );
+      }
+
       bool.put("bool", conditions);
       end.put("query", bool);
     }

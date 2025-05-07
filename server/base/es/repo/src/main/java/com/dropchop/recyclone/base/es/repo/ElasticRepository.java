@@ -227,7 +227,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     QueryParams params = context.getParams();
-    QueryNodeObject queryObject = getElasticQueryBuilder().build(params);
+    QueryNodeObject queryObject = getElasticQueryBuilder().build(params, this);
     String query;
 
     try {
@@ -316,7 +316,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     int from = queryParams.tryGetResultFilter().from();
 
     ElasticQueryBuilder esQueryMapper = new ElasticQueryBuilder();
-    QueryNodeObject initialQueryObject = esQueryMapper.build(queryParams);
+    QueryNodeObject initialQueryObject = esQueryMapper.build(queryParams, this);
 
     if (useSearchAfterMode) {
       if (sortOrder == null) {

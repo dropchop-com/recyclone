@@ -46,6 +46,6 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String>
 
   @Override
   public Set<String> anyOf() {
-    return Set.of("uuid", "created");
+    return Set.of("created");
   }
 }

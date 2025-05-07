@@ -400,7 +400,7 @@ public class ElasticsearchQueryBuilderTest {
 
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
 
@@ -440,7 +440,7 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
   }
 
   @Test
@@ -497,7 +497,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -560,7 +560,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -614,7 +614,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -664,7 +664,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -714,7 +714,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -766,7 +766,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -812,7 +812,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params);
+    QueryNodeObject correct = es.build(params, null);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
