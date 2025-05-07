@@ -27,11 +27,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @ApplicationScoped
 public class ElasticsearchInitializer {
 
-  private final Logger log = LoggerFactory.getLogger(ElasticsearchInitializer.class);
+  private static final Logger log = LoggerFactory.getLogger(ElasticsearchInitializer.class);
   private static final String baseDir = "elasticsearch-it";
-
-  @Inject
-  RestClient restClient;
 
   private static class Template {
     public final String name;
@@ -80,8 +77,10 @@ public class ElasticsearchInitializer {
   }
 
   private static class IndexTemplate extends Templates {
+    public static final String BASE_URL = "_index_template";
+
     public IndexTemplate() {
-      super(baseDir + "/index-template", "_index_template");
+      super(baseDir + "/index-template", BASE_URL);
     }
   }
 
@@ -90,6 +89,15 @@ public class ElasticsearchInitializer {
       super(baseDir + "/data", "_bulk");
     }
   }
+
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  RestClient restClient;
+
+  private final Template markerTemplate = new Template(
+      ".initialized_marker_template", null,
+      "{ \"index_patterns\": [\".initialized_marker_template\"], \"template\": {} }"
+  );
 
   private final Collection<Templates> templatesList = List.of(
       new IngestPipeline(),
@@ -150,6 +158,10 @@ public class ElasticsearchInitializer {
     }
   }
 
+  private boolean checkInitMarkerTemplateExists() throws IOException {
+    return checkTemplateExists(IndexTemplate.BASE_URL + "/" + markerTemplate.name);
+  }
+
   private void apply(String templateUrl, String templateSource, String method) throws IOException {
     Request request = new Request(method, templateUrl);
     request.setJsonEntity(templateSource);
@@ -158,6 +170,10 @@ public class ElasticsearchInitializer {
 
   private void applyTemplate(String templateUrl, String templateSource) throws IOException {
     apply(templateUrl, templateSource, "PUT");
+  }
+
+  private void applyInitMarkerTemplate() throws IOException {
+    applyTemplate(IndexTemplate.BASE_URL + "/" + markerTemplate.name, markerTemplate.template);
   }
 
   private String extractSource(String doc) {
@@ -274,7 +290,12 @@ public class ElasticsearchInitializer {
       return;
     }
     String profileKey = LaunchMode.current().getDefaultProfile();
+    if (checkInitMarkerTemplateExists()) {
+      log.info("Elasticsearch already initialized, the marker template [{}] exists!", markerTemplate.name);
+      return;
+    }
     loadTemplateResources(profileKey);
     applyMissingTemplates();
+    applyInitMarkerTemplate();
   }
 }
