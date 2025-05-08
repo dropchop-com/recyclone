@@ -16,4 +16,11 @@
     <maven.javadoc.skip>false</maven.javadoc.skip>
     <maven.source.skip>false</maven.source.skip>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+  </dependencies>
 </project>
