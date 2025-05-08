@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RestClient;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
@@ -45,7 +46,7 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String>
   ElasticQueryBuilder elasticQueryBuilder;
 
   @Override
-  public Set<String> anyOf() {
-    return Set.of("created");
+  public Collection<String> anyOf() {
+    return Set.of("created", "code");
   }
 }

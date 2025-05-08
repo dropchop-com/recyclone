@@ -78,16 +78,16 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
           JsonNode includeNode = filterNode.get("include");
           JsonNode excludeNode = filterNode.get("exclude");
 
-          if (!includeNode.isNull() && !excludeNode.isNull()) {
+          if ((includeNode != null && !includeNode.isNull()) && (excludeNode != null && !excludeNode.isNull())) {
             terms.setFilter(
               new Filter(
                 new Include(convertToList(includeNode.get("value").toString())),
                 new Exclude(convertToList(excludeNode.get("value").toString()))
               )
             );
-          } else if (!includeNode.isNull()) {
+          } else if (includeNode != null && !includeNode.isNull()) {
             terms.setFilter(new Filter(new Include(convertToList(includeNode.get("value").toString()))));
-          } else if (!excludeNode.isNull()) {
+          } else if (excludeNode != null && !excludeNode.isNull()) {
             terms.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value").toString()))));
           }
         }

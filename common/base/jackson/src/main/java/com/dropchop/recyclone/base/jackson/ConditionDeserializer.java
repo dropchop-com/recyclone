@@ -25,6 +25,14 @@ import java.util.*;
  */
 public class ConditionDeserializer extends JsonDeserializer<Condition> {
 
+  private Object parseValidate(String name, JsonNode node) throws IOException {
+    Object value = ValueParser.parse(node);
+    if (value == null) {
+      throw new IllegalArgumentException("Invalid query field value at [" + name + "]!");
+    }
+    return value;
+  }
+
   private Condition parseConditionedField(String name, Map<String, JsonNode> fields) throws IOException {
     if (fields.size() != 1 && fields.size() != 2) {
       throw new IllegalArgumentException("Invalid query conditioned field structure at [" + name + "]!");
@@ -57,17 +65,9 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
         Collections.swap(cClasses, 0, cClasses.size() - 1);
       }
       JsonNode valueNode1 = fields.get(cNames.getFirst());
-      Object value1 = ValueParser.parse(valueNode1);
-      if (value1 == null) {
-        throw new IllegalArgumentException("Invalid query field value at [" + name + "." + cNames.getFirst() + "]!");
-      }
+      Object value1 = this.parseValidate(name + "." + cNames.getFirst(), valueNode1);
       JsonNode valueNode2 = fields.get(cNames.getLast());
-      Object value2 = ValueParser.parse(valueNode2);
-      if (value2 == null) {
-        throw new IllegalArgumentException(
-            "Invalid query second field value at [" + name + "." + cNames.getLast() + "]!"
-        );
-      }
+      Object value2 =  this.parseValidate(name + "." + cNames.getLast(), valueNode2);
       if (Gt.class.equals(cClasses.getFirst()) && Lt.class.equals(cClasses.getLast())) {
         return new ConditionedField(name, new OpenInterval<>(value1, value2));
       } else if (Gt.class.equals(cClasses.getFirst()) && Lte.class.equals(cClasses.getLast())) {
@@ -162,6 +162,18 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           tmp.add(ValueParser.parse(valueNode.get(i)));
         }
         return new ConditionedField(name, new In<>(tmp));
+      } else if (Lt.class.equals(cClasses.getFirst())) {
+        Object value = this.parseValidate(name + "." + cNames.getFirst(), valueNode);
+        return new ConditionedField(name, new Lt<>(value));
+      } else if (Lte.class.equals(cClasses.getFirst())) {
+        Object value = this.parseValidate(name + "." + cNames.getFirst(), valueNode);
+        return new ConditionedField(name, new Lte<>(value));
+      } else if (Gt.class.equals(cClasses.getFirst())) {
+        Object value = this.parseValidate(name + "." + cNames.getFirst(), valueNode);
+        return new ConditionedField(name, new Gt<>(value));
+      } else if (Gte.class.equals(cClasses.getFirst())) {
+        Object value = this.parseValidate(name + "." + cNames.getFirst(), valueNode);
+        return new ConditionedField(name, new Gte<>(value));
       } else {
         throw new IllegalArgumentException(
             "Missing condition implementation for conditioned field operator [" + name + "." + cNames.getFirst() + "]!"

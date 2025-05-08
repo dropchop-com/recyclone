@@ -19,10 +19,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @ApplicationScoped
@@ -121,7 +118,7 @@ public class ElasticQueryBuilder {
     return operatorNode;
   }
 
-  protected void validateRequiredFields(QueryNodeObject query, Set<String> requiredFields, String operationType) {
+  protected void validateRequiredFields(QueryNodeObject query, Collection<String> requiredFields, String operationType) {
     Set<String> rootFields = extractRootFieldNames(query);
 
     boolean hasRequiredField = rootFields.stream()
@@ -151,7 +148,7 @@ public class ElasticQueryBuilder {
     return fieldNames;
   }
 
-  private void extractFieldsFromClause(Object clause, Set<String> fieldNames) {
+  private void extractFieldsFromClause(Object clause, Collection<String> fieldNames) {
     if (clause instanceof QueryNodeObject) {
       if (((QueryNodeObject) clause).containsKey("term")) {
         QueryNodeObject term = (QueryNodeObject) ((QueryNodeObject) clause).get("term");

@@ -5,7 +5,10 @@ import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.rest.dummy.mock.DummyMockData;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
@@ -25,6 +28,7 @@ import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_J
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -39,6 +43,16 @@ public class DummyResourceTest {
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   DummyMockData dummyMockData;
+
+  @Inject
+  ObjectMapper mapper;
+
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+      objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+    );
+  }
 
   @Test
   @Order(5)
@@ -77,13 +91,13 @@ public class DummyResourceTest {
   @Tag("searchByCode")
   public void searchByCode() {
     QueryParams params = QueryParams.builder()
-        .or(
-          field("code", "sad15s1a21sa21a51a"),
-          field("code", "asdlasdadsa4dsds4d"),
-          field("code", "4d5as45s1ds4d5ss8sd6s")
-        )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
-        .build();
+      .or(
+        field("code", "sad15s1a21sa21a51a"),
+        field("code", "asdlasdadsa4dsds4d"),
+        field("code", "4d5as45s1ds4d5ss8sd6s")
+      )
+      .filter(rf().size(100).content(cf().treeLevel(5)))
+      .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -108,12 +122,12 @@ public class DummyResourceTest {
   @Tag("searchByTitleTranslation")
   public void searchByTitleTranslation() {
     QueryParams params = QueryParams.builder()
-        .and(
-          field("translations.lang", "de"),
-          field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")
-          )
+      .and(
+        field("translations.lang", "de"),
+        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123"))
         )
-        .build();
+      )
+      .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -138,13 +152,13 @@ public class DummyResourceTest {
   @Order(30)
   @Tag("dummyQueryAggregations")
   public void dummyQueryAggregations() {
-    QueryParams params = QueryParams.builder()
-        .aggs(
-          terms("languages", "lang",
-            count("number", "lang")
-          )
-        )
-        .build();
+    QueryParams params = QueryParams.builder().and(
+      field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+    ).aggs(
+      terms("languages", "lang",
+        count("number", "lang")
+      )
+    ).build();
 
     Map<Object, Object> response = given()
       .contentType(ContentType.JSON)
@@ -166,7 +180,9 @@ public class DummyResourceTest {
   @Test
   @Tag("aggregationsWithFilters")
   public void aggregationsWithFilters() {
-    QueryParams params = QueryParams.builder().aggs(
+    QueryParams params = QueryParams.builder().and(
+      field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+    ).aggs(
       terms(
         "languages",
         "lang",
@@ -198,8 +214,11 @@ public class DummyResourceTest {
   @Tag("dummySearchNull")
   public void dummySearchNull() {
     QueryParams params = QueryParams.builder()
-        .condition(field("languages.name", "ru"))
-        .build();
+      .and(
+        field("languages.name", "ru"),
+        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+      )
+      .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -224,10 +243,11 @@ public class DummyResourceTest {
   @Tag("wildcardSearch")
   public void wildcardSearch() {
     QueryParams s = QueryParams.builder()
-        .or(
-            wildcard("title", "Dum*", true, 1.2f)
-        )
-        .build();
+      .or(
+        wildcard("title", "Dum*", true, 1.2f),
+        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+      )
+      .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -252,10 +272,11 @@ public class DummyResourceTest {
   @Tag("matchPhraseSearch")
   public void matchPhraseSearch() {
     QueryParams s = QueryParams.builder()
-        .or(
-            phrase("title", "Dummy 3", 2)
-        )
-        .build();
+      .and(
+        phrase("title", "Dummy 3", 2),
+        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+      )
+      .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -280,10 +301,11 @@ public class DummyResourceTest {
   @Tag("advancedTextSearch")
   public void advancedTextSearch() {
     QueryParams s = QueryParams.builder()
-        .or(
-            advancedText("title", "\"Dum* 5\"")
-        )
-        .build();
+      .and(
+        advancedText("title", "\"Dum* 5\""),
+        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+      )
+      .build();
 
     List<Dummy> dummies = given()
       .log().all()
@@ -308,9 +330,9 @@ public class DummyResourceTest {
   @Tag("deleteById")
   public void deleteById() {
     CodeParams params1 = CodeParams.builder()
-        .modifyPolicy(List.of(WAIT_FOR))
-        .code("sad15s1a21sa21a51a")
-        .build();
+      .modifyPolicy(List.of(WAIT_FOR))
+      .code("sad15s1a21sa21a51a")
+      .build();
 
     Integer number_of_deleted = given()
       .log().all()
@@ -335,11 +357,11 @@ public class DummyResourceTest {
   @Tag("deleteByQuery")
   public void deleteByQuery() {
     QueryParams s = QueryParams.builder()
-        .modifyPolicy(List.of(WAIT_FOR))
-        .condition(
-          field("code", "4d5as45s1ds4d5ss8sd6s")
-        )
-        .build();
+      .modifyPolicy(List.of(WAIT_FOR))
+      .and(
+        field("code", "4d5as45s1ds4d5ss8sd6s")
+      )
+      .build();
 
     Integer number_of_deleted = given()
       .log().all()

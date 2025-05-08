@@ -7,8 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.gteLt;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
+import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -39,6 +38,11 @@ public class ConditionSerializationTest {
         ),
         field("type", in(1, 2, 3)),
         field("created", Iso8601.fromIso("2024-09-19T10:12:01.123")),
+        field("created", lte(Iso8601.fromIso("2024-09-19T10:12:01.123"))),
+        field("created", gte(Iso8601.fromIso("2024-09-19T10:12:01.123"))),
+        field("created", lt(Iso8601.fromIso("2024-09-19T10:12:01.123"))),
+        field("created", gt(Iso8601.fromIso("2024-09-19T10:12:01.123"))),
+        field("created", eq(Iso8601.fromIso("2024-09-19T10:12:01.123"))),
         field("miki", null)
     ).and(
         field("type2", in(1, 2, 3))

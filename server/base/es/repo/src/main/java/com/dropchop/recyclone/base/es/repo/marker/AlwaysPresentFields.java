@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.base.es.repo.marker;
 
-import java.util.Set;
+import java.util.Collection;
 
 @SuppressWarnings("unused")
 public interface AlwaysPresentFields {
-  Set<String> anyOf();
+  Collection<String> anyOf();
 }
