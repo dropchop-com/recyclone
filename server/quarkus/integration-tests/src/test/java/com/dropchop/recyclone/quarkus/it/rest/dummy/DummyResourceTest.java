@@ -153,7 +153,7 @@ public class DummyResourceTest {
   @Tag("dummyQueryAggregations")
   public void dummyQueryAggregations() {
     QueryParams params = QueryParams.builder().and(
-      field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+     field("created", gte(Iso8601.fromIso("2020-09-19T10:12:01.123")))
     ).aggs(
       terms("languages", "lang",
         count("number", "lang")

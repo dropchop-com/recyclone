@@ -40,9 +40,7 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     );
   }
 
-  @Override
-  @Transactional
-  public Result<D> search() {
+  protected Result<D> search(boolean doAuthorization) {
     ProfileTimer timer = new ProfileTimer();
 
     CrudRepository<E, ID> repository = getRepository();
@@ -59,15 +57,26 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     log.debug("Found {} entities in [{}]ms", entities.size(), timer.mark());
 
     entities = entities.stream()
-      .filter(e -> authorizationService.isPermitted(
-        getExecutionContext().getSecurityDomainAction(e.identifier())
-      ))
+      .filter(
+          e -> {
+            if (!doAuthorization) {
+              return true;
+            } else {
+              return authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()));
+            }
+          })
       .collect(Collectors.toList());
 
     Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
     result.setAggregations(aggregations);
     log.debug("Mapped {} entities in [{}]ms", result.getData().size(), timer.stop());
     return result;
+  }
+
+  @Override
+  @Transactional
+  public Result<D> search() {
+    return search(true);
   }
 
   @Transactional

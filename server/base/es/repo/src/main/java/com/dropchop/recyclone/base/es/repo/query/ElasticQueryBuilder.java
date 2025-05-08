@@ -95,6 +95,8 @@ public class ElasticQueryBuilder {
       operatorNode.addRangeOperator(field, "gt", ((Gt<?>) operator).get$gt());
     } else if (operator instanceof Lt) {
       operatorNode.addRangeOperator(field, "lt", ((Lt<?>) operator).get$lt());
+    } else if (operator instanceof Gte) {
+      operatorNode.addRangeOperator(field, "gte", ((Gte<?>) operator).get$gte());
     } else if (operator instanceof Lte) {
       operatorNode.addRangeOperator(field, "lte", ((Lte<?>) operator).get$lte());
     } else if (operator instanceof In) {

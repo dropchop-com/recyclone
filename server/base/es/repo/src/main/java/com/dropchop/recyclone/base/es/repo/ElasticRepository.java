@@ -457,11 +457,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
             break;
           }
         }
-      } catch (ServiceException e) {
-        throw new ServiceException(
-          ErrorCode.data_error, "Failed to execute search query.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())), e
-        );
       } catch (Exception e) {
         throw new ServiceException(
           ErrorCode.internal_error, "Unexpected error occurred during search execution.",

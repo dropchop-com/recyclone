@@ -57,6 +57,9 @@ public interface ExecContext<ECL extends ExecContext.Listener> extends Model, Ha
 
 
   default ExecContext<ECL> of(ExecContext<?> sourceContext) {
+    if (sourceContext == null) {
+      return this;
+    }
     String id = sourceContext.getId();
     if (id != null) {
       this.setId(id);
