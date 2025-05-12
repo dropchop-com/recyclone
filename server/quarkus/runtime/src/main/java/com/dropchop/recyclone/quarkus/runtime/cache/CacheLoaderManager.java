@@ -79,7 +79,7 @@ public class CacheLoaderManager {
     }
 
     // Invoke a cache loader load with wrapped callback so we can delegate to all interested listeners
-    cacheLoader.load((LoadingListener<I, C>) (context, item) -> {
+    cacheLoader.load((LoadingListener<I, C>) (__, item) -> {
       for (Map.Entry<LifecycleListener<I, C>, C> entry : contexts.entrySet()) {
         LoadingListener<I, C> listener = entry.getKey();
         C loaderContext = entry.getValue();
