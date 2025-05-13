@@ -349,8 +349,9 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       throw new ServiceException(ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e);
     }
     //Class<E> cls = getRootClass();
+    Request request = null;
     try {
-      Request request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
+      request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
       int queryId = query.hashCode();
@@ -383,6 +384,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         );
       }
     } catch (IOException e) {
+      log.error("Error executing search on endpoint {} with query {}", request != null ? request.getEndpoint() : null,  query,  e);
       throw new ServiceException(
           ErrorCode.internal_error, "Unable to execute query",
           Set.of(new AttributeString("query", query)), e
