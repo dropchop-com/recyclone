@@ -159,7 +159,7 @@ public class ElasticQueryBuilder {
       queryContainer.put("query", query);
     } else {
       MatchAllObject matchAll = new MatchAllObject();
-      query.put("matchAll", matchAll);
+      query.put("match_all", matchAll);
       queryContainer.put("query", query);
     }
 

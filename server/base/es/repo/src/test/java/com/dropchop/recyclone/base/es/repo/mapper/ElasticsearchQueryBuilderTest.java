@@ -643,7 +643,7 @@ public class ElasticsearchQueryBuilderTest {
     String correctJson = """
        {
          "query" : {
-           "matchAll" : { }
+           "match_all" : { }
          },
          "aggs" : {
            "price_histogram" : {
@@ -695,7 +695,7 @@ public class ElasticsearchQueryBuilderTest {
     String correctJson = """
       {
         "query" : {
-          "matchAll" : { }
+          "match_all" : { }
         },
         "aggs" : {
           "price_histogram" : {
@@ -748,7 +748,7 @@ public class ElasticsearchQueryBuilderTest {
     String correctJson = """
       {
         "query" : {
-          "matchAll" : { }
+          "match_all" : { }
         },
         "aggs" : {
           "price_histogram" : {
@@ -798,7 +798,7 @@ public class ElasticsearchQueryBuilderTest {
     String correctJson = """
       {
         "query" : {
-          "matchAll" : { }
+          "match_all" : { }
         },
         "aggs" : {
           "price_histogram" : {
