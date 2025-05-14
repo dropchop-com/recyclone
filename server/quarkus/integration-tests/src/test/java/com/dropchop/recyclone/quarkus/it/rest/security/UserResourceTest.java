@@ -92,7 +92,7 @@ public class UserResourceTest {
     assertEquals(user.getLastName(), respUser.getLastName());
   }
 
-  //@Test
+  @Test
   @Order(30)
   @SuppressWarnings("unused")
   public void createUserWithAccounts() {
@@ -144,4 +144,24 @@ public class UserResourceTest {
     assertEquals(user.getLastName(), respUser.getLastName());
     assertEquals(user.getAccounts().size(), respUser.getAccounts().size());
   }
+
+  @Test
+  @Order(40)
+  public void getUserById() {
+    List<User> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/security/user/" + userId.toString())
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+    assertEquals(1, result.size());
+  }
+
+
 }
