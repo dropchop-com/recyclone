@@ -14,4 +14,8 @@ public interface Constants {
     String WAIT_FOR = "wait";
     String RELOAD_AFTER = "reload_after";
   }
+
+  interface Messages {
+    String CACHE_STORAGE_INIT = "cache-storage-init";
+  }
 }

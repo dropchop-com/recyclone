@@ -2,6 +2,7 @@ package com.dropchop.recyclone.quarkus.runtime.elasticsearch;
 
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
+import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -19,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
 
+import static com.dropchop.recyclone.base.api.model.invoke.Constants.Messages.CACHE_STORAGE_INIT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -285,17 +287,23 @@ public class ElasticsearchInitializer {
     }
   }
 
+  @Inject
+  EventBus eventBus;
+
   public void onStart(@Observes StartupEvent event) throws IOException {
     if (!LaunchMode.current().isDevOrTest()) {
+      eventBus.send(CACHE_STORAGE_INIT, "skipped");
       return;
     }
     String profileKey = LaunchMode.current().getDefaultProfile();
     if (checkInitMarkerTemplateExists()) {
       log.info("Elasticsearch already initialized, the marker template [{}] exists!", markerTemplate.name);
+      eventBus.send(CACHE_STORAGE_INIT, "initialized");
       return;
     }
     loadTemplateResources(profileKey);
     applyMissingTemplates();
     applyInitMarkerTemplate();
+    eventBus.send(CACHE_STORAGE_INIT, "initialized");
   }
 }

@@ -83,19 +83,29 @@ public interface CacheLoader<I> {
    * @param <I> the type of items being loaded by the cache loader
    * @param <C> the type of the loading context associated with the loading process
    */
-  interface LifecycleListener<I, C extends LoadingContext> extends LoadingListener<I, C> {
-    C onLoadStart(CacheLoader<I> cacheLoader);
+  interface Listener<I, C extends LoadingContext> extends LoadingListener<I, C> {
 
-    void onLoadEnd(C context);
+    /**
+     * Handles the start of the loading process for the given cache loader.
+     * <br>
+     * This method is responsible for initiating the lifecycle event of starting
+     * the loading process. It allows the implementer to prepare or configure a
+     * specific loading context before the loading begins.
+     *
+     * @param cacheLoader the cache loader associated with the loading process
+     * @return the context associated with the loading process or null if not interested!
+     */
+    C onStart(CacheLoader<?> cacheLoader);
+    void onEnd(C context);
   }
 
   /**
    * Represents a specialized lifecycle listener that extends the functionality
-   * of both {@link AdaptiveLoadingListener} and {@link LifecycleListener}.
+   * of both {@link AdaptiveLoadingListener} and {@link Listener}.
    * This interface provides a combined mechanism for handling lifecycle events
    * and adapting items during the loading process.
    * <br />
-   * The {@code AdaptiveLifecycleListener} facilitates seamless integration of
+   * The {@code AdaptiveListener} facilitates seamless integration of
    * item adaptation with the broader loading lifecycle management, enabling
    * implementers to define transformation rules for loaded items and to
    * manage the start and end of the loading process within a given context.
@@ -105,18 +115,10 @@ public interface CacheLoader<I> {
    * @param <C> the type of the loading context associated with the loading process,
    *            extending {@link LoadingContext}
    */
-  interface AdaptiveLifecycleListener<I, A, C extends LoadingContext> extends
+  @SuppressWarnings("unused")
+  interface AdaptiveListener<I, A, C extends LoadingContext> extends
       AdaptiveLoadingListener<I, A, C>,
-      LifecycleListener<I, C> {
-  }
-
-  /**
-   * Provides an interface for retrieving a {@link LifecycleListener} instance that manages
-   * the lifecycle events of a specific {@link CacheLoader}. Implementations of this interface
-   * allow the dynamic association of a lifecycle listener with a given cache loader.
-   */
-  interface LifecycleListenerProvider {
-    <I, C extends LoadingContext> LifecycleListener<I, C> getListener(CacheLoader<I> cacheLoader);
+      Listener<I, C> {
   }
 
   String getName();

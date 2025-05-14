@@ -484,9 +484,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
           }
         }
       } catch (Exception e) {
+        String msg = e.getMessage() != null ? e.getMessage() : "";
         throw new ServiceException(
           ErrorCode.internal_error, "Unexpected error occurred during search execution.",
-          Set.of(new AttributeString("errorMessage", e.getMessage())), e
+          Set.of(new AttributeString("errorMessage", msg)), e
         );
       }
     }

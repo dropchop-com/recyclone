@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.quarkus.runtime.elasticsearch.DefaultInitializerSignaler;
 import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
 import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticsearchInitializer;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
@@ -26,6 +27,13 @@ public class ElasticsearchInitializerProcessor {
   public void registerInitializer(List<DevServicesResultBuildItem> devservicesElasticsearchBuildItems,
                                   BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
     if (devservicesElasticsearchBuildItems.isEmpty()) {
+      additionalBeanBuildItemProducer.produce(
+          AdditionalBeanBuildItem
+              .builder()
+              .addBeanClasses(DefaultInitializerSignaler.class)
+              .setUnremovable()
+              .build()
+      );
       return;
     }
     for (DevServicesResultBuildItem result : devservicesElasticsearchBuildItems) {

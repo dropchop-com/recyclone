@@ -2,11 +2,11 @@ package com.dropchop.recyclone.quarkus.runtime.cache;
 
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.AdaptiveLoadingListener;
-import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LifecycleListener;
+import com.dropchop.recyclone.base.api.service.caching.CacheLoader.Listener;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LoadingListener;
 import io.quarkus.runtime.ShutdownEvent;
-import io.quarkus.runtime.StartupEvent;
 import io.quarkus.scheduler.Scheduler;
+import io.quarkus.vertx.ConsumeEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.dropchop.recyclone.base.api.model.invoke.Constants.Messages.CACHE_STORAGE_INIT;
 
 /**
  * Manages cache loaders and their lifecycle, providing mechanisms for scheduling and refreshing
@@ -49,7 +51,7 @@ public class CacheLoaderManager {
   Instance<CacheLoader<?>> loaders;
 
   @Inject
-  Instance<CacheLoader.LifecycleListenerProvider> consumerProviders;
+  Instance<CacheLoader.Listener<?, ?>> consumers;
 
   /**
    * Refreshes and reloads the given cache loader while managing its lifecycle events.
@@ -66,40 +68,50 @@ public class CacheLoaderManager {
    * @param cacheLoader  the cache loader whose loading process is to be refreshed
    */
   private <I, A, C extends CacheLoader.LoadingContext> void refreshLoader(CacheLoader<I> cacheLoader) {
-    Map<LifecycleListener<I, C>, C> contexts = new HashMap<>();
-    for (CacheLoader.LifecycleListenerProvider listenerProvider : consumerProviders) {
-      LifecycleListener<I, C> listener = listenerProvider.getListener(cacheLoader);
+    Map<Listener<I, C>, C> contexts = new HashMap<>();
+    for (CacheLoader.Listener<?, ?> listener : consumers) {
       if (listener == null) {
         continue;
       }
-      contexts.put(listener, listener.onLoadStart(cacheLoader));
+      @SuppressWarnings("unchecked")
+      C context = (C) listener.onStart(cacheLoader);
+      if (context != null) {
+        //noinspection unchecked
+        contexts.put((Listener<I, C>) listener, context);
+      }
     }
 
-    // Invoke a cache loader load with wrapped callback so we can delegate to all interested listeners
-    cacheLoader.load((LoadingListener<I, C>) (__, item) -> {
-      for (Map.Entry<LifecycleListener<I, C>, C> entry : contexts.entrySet()) {
-        LoadingListener<I, C> listener = entry.getKey();
-        C loaderContext = entry.getValue();
-        CacheLoader.Adapter<I, A> adapter = cacheLoader.getAdapter();
-        if (listener instanceof AdaptiveLoadingListener && adapter != null) {
-          @SuppressWarnings("PatternVariableCanBeUsed")
-          AdaptiveLoadingListener<I, A, C> adaptiveListener = (AdaptiveLoadingListener<I, A, C>) listener;
-          adaptiveListener.onItem(loaderContext, item, adapter.adapt(item));
-        } else {
-          listener.onItem(entry.getValue(), item);
+    if (!contexts.isEmpty()) {
+      // Invoke a cache loader load with wrapped callback so we can delegate to all interested listeners
+      cacheLoader.load((LoadingListener<I, C>) (__, item) -> {
+        for (Map.Entry<Listener<I, C>, C> entry : contexts.entrySet()) {
+          LoadingListener<I, C> listener = entry.getKey();
+          C loaderContext = entry.getValue();
+          CacheLoader.Adapter<I, A> adapter = cacheLoader.getAdapter();
+          if (listener instanceof AdaptiveLoadingListener && adapter != null) {
+            @SuppressWarnings("PatternVariableCanBeUsed")
+            AdaptiveLoadingListener<I, A, C> adaptiveListener = (AdaptiveLoadingListener<I, A, C>) listener;
+            adaptiveListener.onItem(loaderContext, item, adapter.adapt(item));
+          } else {
+            listener.onItem(entry.getValue(), item);
+          }
         }
+      });
+
+      for (Map.Entry<Listener<I, C>, C> entry : contexts.entrySet()) {
+        Listener<I, C> listener = entry.getKey();
+        listener.onEnd(entry.getValue());
       }
-    });
-    for (Map.Entry<LifecycleListener<I, C>, C> entry : contexts.entrySet()) {
-      LifecycleListener<I, C> listener = entry.getKey();
-      listener.onLoadEnd(entry.getValue());
     }
   }
 
   @Inject
   Scheduler scheduler;
 
-  public void onStart(@Observes StartupEvent event) {
+  @SuppressWarnings("unused")
+  @ConsumeEvent(CACHE_STORAGE_INIT)
+  public void onInitSignal(String message) {
+    log.info("Cache loading initialization start with message [{}={}] ", CACHE_STORAGE_INIT, message);
     executorService = Executors.newThreadPerTaskExecutor(Executors.defaultThreadFactory());
     loaders.forEach( loader -> {
       if (loader == null) {
