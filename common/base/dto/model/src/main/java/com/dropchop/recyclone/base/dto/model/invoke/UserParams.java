@@ -10,7 +10,13 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-public class UserParams extends IdentifierParams {
+public class UserParams extends TagParams {
   private String loginName;
   private String token;
+  private String firstName;
+  private String lastName;
+  private String email;
+
+  private String searchTerm;
+
 }
