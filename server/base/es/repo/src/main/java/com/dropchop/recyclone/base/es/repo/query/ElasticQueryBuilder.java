@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.base.es.repo.query;
 
-import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
-import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
@@ -11,75 +9,106 @@ import com.dropchop.recyclone.base.api.model.query.condition.Or;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.BoolQueryObject;
+import com.dropchop.recyclone.base.es.model.query.MatchAllObject;
 import com.dropchop.recyclone.base.es.model.query.OperatorNodeObject;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
-import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
-import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Slf4j
 @ApplicationScoped
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class ElasticQueryBuilder {
 
+  @Getter
+  public static class ValidationData {
+    private final List<String> rootFields = new ArrayList<>();
+    private Condition rootCondition = null;
+
+    protected void setRootCondition(Condition rootCondition) {
+      if (rootCondition == null) {
+        return;
+      }
+      this.rootCondition = rootCondition;
+    }
+
+    protected void addRootField(String candidateField, Condition parentCondition) {
+      if (this.rootCondition == parentCondition) {
+        this.rootFields.add(candidateField);
+      }
+    }
+  }
+
   public ElasticQueryBuilder() {
   }
 
-  protected QueryNodeObject mapCondition(Condition condition, BoolQueryObject parentCondition) {
+  protected QueryNodeObject mapCondition(ValidationData validationData, Condition condition, Condition parentCond,
+                                         QueryNodeObject parentNodeObject) {
     if (condition instanceof LogicalCondition logicalCondition) {
       BoolQueryObject query = new BoolQueryObject();
+      if ((condition instanceof And || condition instanceof Or) && validationData != null) {
+        validationData.setRootCondition(condition);
+      }
 
       for (Iterator<Condition> it = logicalCondition.iterator(); it.hasNext(); ) {
         Condition subCondition = it.next();
+        BoolQueryObject queryContainer = new BoolQueryObject();
         if (condition instanceof And) {
-          query.must(mapCondition(subCondition, new BoolQueryObject()));
+          query.must(mapCondition(validationData, subCondition, condition, queryContainer));
         } else if (condition instanceof Or) {
-          query.should(mapCondition(subCondition, new BoolQueryObject()));
+          query.should(mapCondition(validationData, subCondition, condition, queryContainer));
         } else if (condition instanceof Not) {
-          query.mustNot(mapCondition(subCondition, new BoolQueryObject()));
+          query.mustNot(mapCondition(validationData, subCondition, condition, queryContainer));
         }
       }
       return query;
     } else if (condition instanceof ConditionedField conditionedField) {
       String fieldName = conditionedField.getName();
       ConditionOperator operator = (ConditionOperator) conditionedField.values().toArray()[0];
-
+      if (validationData != null) {
+        validationData.addRootField(fieldName, parentCond);
+      }
       return mapConditionField(fieldName, operator);
     } else if (condition instanceof Field<?> field) {
-
+      String fieldName = field.getName();
+      if (validationData != null) {
+        validationData.addRootField(fieldName, parentCond);
+      }
       if (field.iterator().next() instanceof ZonedDateTime) {
         OperatorNodeObject operator = new OperatorNodeObject();
         if (field.iterator().next() instanceof ZonedDateTime date) {
-          operator.addClosedInterval(field.getName(), date, date);
+          operator.addClosedInterval(fieldName, date, date);
         }
         return operator;
       }
 
       if (field.iterator().next() == null) {
         OperatorNodeObject operator = new OperatorNodeObject();
-        operator.addNullSearch(field.getName());
+        operator.addNullSearch(fieldName);
         return operator;
       }
 
       QueryNodeObject mustWrapper = new QueryNodeObject();
       QueryNodeObject query = new QueryNodeObject();
       QueryNodeObject termWrapper = new QueryNodeObject();
-      query.put(field.getName(), field.iterator().next());
+      query.put(fieldName, field.iterator().next());
       termWrapper.put("term", query);
       mustWrapper.put("must", termWrapper);
 
-      if (parentCondition == null) {
+      if (parentNodeObject == null) {
         return mustWrapper;
       }
 
       return termWrapper;
     }
 
-    return parentCondition;
+    return parentNodeObject;
   }
 
   protected QueryNodeObject mapTextCondition(Match<?> textMatch, BoolQueryObject previousCondition) {
@@ -120,79 +149,18 @@ public class ElasticQueryBuilder {
     return operatorNode;
   }
 
-  protected void validateRequiredFields(QueryNodeObject query, Collection<String> requiredFields, String operationType) {
-    Set<String> rootFields = extractRootFieldNames(query);
-
-    boolean hasRequiredField = rootFields.stream()
-      .anyMatch(requiredFields::contains);
-
-    if (!hasRequiredField) {
-      throw new ServiceException(
-        ErrorCode.internal_error,
-        "Query validation failed: " + operationType + " operations require at least one of these fields " +
-          "at the root level: " + String.join(", ", requiredFields) + "."
-      );
-    }
-  }
-
-  @SuppressWarnings("Java8MapApi")
-  protected Set<String> extractRootFieldNames(QueryNodeObject query) {
-    Set<String> fieldNames = new HashSet<>();
-
-    if (query.containsKey("must")) {
-      extractFieldsFromClause(query.get("must"), fieldNames);
-    } else if (query.containsKey("should")) {
-      extractFieldsFromClause(query.get("should"), fieldNames);
-    } else {
-      extractFieldsFromClause(query, fieldNames);
-    }
-
-    return fieldNames;
-  }
-
-  private void extractFieldsFromClause(Object clause, Collection<String> fieldNames) {
-    if (clause instanceof QueryNodeObject) {
-      if (((QueryNodeObject) clause).containsKey("term")) {
-        QueryNodeObject term = (QueryNodeObject) ((QueryNodeObject) clause).get("term");
-        fieldNames.addAll(term.keySet());
-      } else if (((QueryNodeObject) clause).containsKey("terms")) {
-        QueryNodeObject range = (QueryNodeObject) ((QueryNodeObject) clause).get("terms");
-        fieldNames.addAll(range.keySet());
-      } else if (((QueryNodeObject) clause).containsKey("range")) {
-        QueryNodeObject range = (QueryNodeObject) ((QueryNodeObject) clause).get("range");
-        fieldNames.addAll(range.keySet());
-      }
-
-    } else if (clause instanceof List) {
-      for (Object item : (List<?>) clause) {
-        extractFieldsFromClause(item, fieldNames);
-      }
-    }
-  }
-
-  public QueryNodeObject build(QueryParams params, Object repository) {
-    QueryNodeObject bool = new QueryNodeObject();
-    QueryNodeObject end = new QueryNodeObject();
+  public QueryNodeObject build(ValidationData validationData, QueryParams params) {
+    QueryNodeObject query = new QueryNodeObject();
+    QueryNodeObject queryContainer = new QueryNodeObject();
 
     if (params.getCondition() != null) {
-      QueryNodeObject conditions = mapCondition(params.getCondition(), null);
-
-      if (repository instanceof AlwaysPresentSearchFields) {
-        validateRequiredFields(
-          conditions,
-          ((AlwaysPresentSearchFields) repository).anyOf(),
-          "search"
-        );
-      } else if (repository instanceof AlwaysPresentDeleteFields) {
-        validateRequiredFields(
-          conditions,
-          ((AlwaysPresentDeleteFields) repository).anyOf(),
-          "delete"
-        );
-      }
-
-      bool.put("bool", conditions);
-      end.put("query", bool);
+      QueryNodeObject conditions = mapCondition(validationData, params.getCondition(), null, null);
+      query.put("bool", conditions);
+      queryContainer.put("query", query);
+    } else {
+      MatchAllObject matchAll = new MatchAllObject();
+      query.put("matchAll", matchAll);
+      queryContainer.put("query", query);
     }
 
     if (params.getAggregate() != null) {
@@ -204,10 +172,10 @@ public class ElasticQueryBuilder {
           aggregations.put(agg.getName(), buildAggregation(agg));
         }
       }
-      end.put("aggs", aggregations);
+      queryContainer.put("aggs", aggregations);
     }
 
-    return end;
+    return queryContainer;
   }
 
   public QueryNodeObject buildAggregation(Aggregation aggregation) {
@@ -230,8 +198,6 @@ public class ElasticQueryBuilder {
           termsNode.put("exclude", terms.getFilter().getExclude().getValue());
         }
       }
-
-
       node.put("terms", termsNode);
     } else if (aggregation instanceof DateHistogram dh) {
       QueryNodeObject dhNode = new QueryNodeObject();

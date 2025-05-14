@@ -124,8 +124,7 @@ public class DummyResourceTest {
     QueryParams params = QueryParams.builder()
       .and(
         field("translations.lang", "de"),
-        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123"))
-        )
+        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
       )
       .build();
 

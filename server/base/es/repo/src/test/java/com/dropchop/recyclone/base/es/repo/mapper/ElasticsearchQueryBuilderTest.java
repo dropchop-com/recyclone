@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder.ValidationData;
 import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -400,7 +401,7 @@ public class ElasticsearchQueryBuilderTest {
 
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
 
@@ -440,7 +441,7 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
   }
 
   @Test
@@ -497,7 +498,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -560,7 +561,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -614,7 +615,7 @@ public class ElasticsearchQueryBuilderTest {
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -639,32 +640,34 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    String correctJson =
-      """
-        {
-          "aggs" : {
-            "price_histogram" : {
-              "date_histogram" : {
-                "field" : "price",
-                "calendar_interval" : "seconds"
-              },
-              "aggs" : {
-                "price_sum" : {
-                  "terms" : {
-                    "field" : "price",
-                    "include" : [ "include_ports" ]
-                  }
-                }
-              }
-            }
-          }
-        }
-        """;
+    String correctJson = """
+       {
+         "query" : {
+           "matchAll" : { }
+         },
+         "aggs" : {
+           "price_histogram" : {
+             "date_histogram" : {
+               "field" : "price",
+               "calendar_interval" : "seconds"
+             },
+             "aggs" : {
+               "price_sum" : {
+                 "terms" : {
+                   "field" : "price",
+                   "include" : [ "include_ports" ]
+                 }
+               }
+             }
+           }
+         }
+       }
+       """;
 
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -689,32 +692,34 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    String correctJson =
-      """
-        {
-          "aggs" : {
-            "price_histogram" : {
-              "date_histogram" : {
-                "field" : "price",
-                "calendar_interval" : "seconds"
-              },
-              "aggs" : {
-                "price_sum" : {
-                  "terms" : {
-                    "field" : "price",
-                    "exclude" : [ "include_ports" ]
-                  }
+    String correctJson = """
+      {
+        "query" : {
+          "matchAll" : { }
+        },
+        "aggs" : {
+          "price_histogram" : {
+            "date_histogram" : {
+              "field" : "price",
+              "calendar_interval" : "seconds"
+            },
+            "aggs" : {
+              "price_sum" : {
+                "terms" : {
+                  "field" : "price",
+                  "exclude" : [ "include_ports" ]
                 }
               }
             }
           }
         }
-        """;
+      }
+      """;
 
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -740,33 +745,35 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    String correctJson =
-      """
-        {
-          "aggs" : {
-            "price_histogram" : {
-              "date_histogram" : {
-                "field" : "price",
-                "calendar_interval" : "seconds"
-              },
-              "aggs" : {
-                "price_sum" : {
-                  "terms" : {
-                    "field" : "price",
-                    "include" : [ "include_ports" ],
-                    "exclude": [ "exclude_ports" ]
-                  }
+    String correctJson = """
+      {
+        "query" : {
+          "matchAll" : { }
+        },
+        "aggs" : {
+          "price_histogram" : {
+            "date_histogram" : {
+              "field" : "price",
+              "calendar_interval" : "seconds"
+            },
+            "aggs" : {
+              "price_sum" : {
+                "terms" : {
+                  "field" : "price",
+                  "include" : [ "include_ports" ],
+                  "exclude": [ "exclude_ports" ]
                 }
               }
             }
           }
         }
-        """;
+      }
+      """;
 
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);
@@ -788,31 +795,33 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    String correctJson =
-      """
-        {
-          "aggs" : {
-            "price_histogram" : {
-              "date_histogram" : {
-                "field" : "price",
-                "calendar_interval" : "seconds"
-              },
-              "aggs" : {
-                "price_sum" : {
-                  "terms" : {
-                    "field" : "price"
-                  }
+    String correctJson = """
+      {
+        "query" : {
+          "matchAll" : { }
+        },
+        "aggs" : {
+          "price_histogram" : {
+            "date_histogram" : {
+              "field" : "price",
+              "calendar_interval" : "seconds"
+            },
+            "aggs" : {
+              "price_sum" : {
+                "terms" : {
+                  "field" : "price"
                 }
               }
             }
           }
         }
-        """;
+      }
+      """;
 
     ElasticQueryBuilder es = new ElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject correct = es.build(params, null);
+    QueryNodeObject correct = es.build(new ValidationData(), params);
 
     String json = ob.writeValueAsString(correct);
     JSONAssert.assertEquals(correctJson, json, true);

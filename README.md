@@ -6,6 +6,7 @@ It provides common model, REST, service and repository semantics with already im
 - localization,
 - security,
 - common parameters
+- JPA and Elasticsearch repositories
 - ...
 
 Designed for JAX-RS CDI environment, so it's best to run with Quarkus.
@@ -20,9 +21,9 @@ mvn clean install
 
 ## Run development mode
 
-```bash
-cd test/quarkus
-./mvnw compile quarkus:dev
+```shell
+cd server/quarkus/integration-tests
+mvn compile quarkus:dev
 
 # navigate to http://localhost:8080/api/spec/ui/
 ```

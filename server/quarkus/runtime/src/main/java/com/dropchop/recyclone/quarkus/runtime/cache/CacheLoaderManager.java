@@ -4,7 +4,6 @@ import com.dropchop.recyclone.base.api.service.caching.CacheLoader;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.AdaptiveLoadingListener;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LifecycleListener;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LoadingListener;
-import io.quarkus.arc.All;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.quarkus.scheduler.Scheduler;
@@ -46,11 +45,9 @@ public class CacheLoaderManager {
 
   private ExecutorService executorService;
 
-  @All
   @Inject
   Instance<CacheLoader<?>> loaders;
 
-  @All
   @Inject
   Instance<CacheLoader.LifecycleListenerProvider> consumerProviders;
 

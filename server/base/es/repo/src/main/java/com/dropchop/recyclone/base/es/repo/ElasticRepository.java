@@ -18,8 +18,11 @@ import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetad
 import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
+import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
+import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import com.dropchop.recyclone.base.es.repo.marker.BlockAllDelete;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder.ValidationData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -220,6 +223,21 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     throw new ServiceException(ErrorCode.internal_error, "No valid index config found!");
   }
 
+  protected void validateRequiredFields(ValidationData validationData, Collection<String> requiredFields) {
+    boolean hasRequiredField = validationData.getRootFields().stream()
+      .anyMatch(requiredFields::contains);
+
+    if (!hasRequiredField) {
+      throw new ServiceException(
+        ErrorCode.internal_error,
+        String.format(
+            "Query validation failed! Operation requires at least one of [%s] fields at the root level!",
+            requiredFields
+        )
+      );
+    }
+  }
+
   @Override
   public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
     if (this instanceof BlockAllDelete) {
@@ -227,9 +245,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     QueryParams params = context.getParams();
-    QueryNodeObject queryObject = getElasticQueryBuilder().build(params, this);
-    String query;
+    ValidationData validationData = new ValidationData();
+    QueryNodeObject queryObject = getElasticQueryBuilder().build(validationData, params);
+    if (this instanceof AlwaysPresentDeleteFields alwaysPresentDeleteFields) {
+      validateRequiredFields(validationData, alwaysPresentDeleteFields.anyOf());
+    }
 
+    String query;
     try {
       query = getObjectMapper().writeValueAsString(queryObject);
     } catch (JsonProcessingException e) {
@@ -304,8 +326,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     return null;
   }
 
-  protected <S extends E> QueryNodeObject buildQueryObject(QueryParams queryParams,
-                                                           boolean useSearchAfterMode) {
+  protected <S extends E> QueryNodeObject buildQueryObject(QueryParams queryParams, boolean useSearchAfterMode) {
     ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
     QueryNodeObject sortOrder = buildSortOrder(
         queryParams.tryGetResultFilter().sort(), indexConfig
@@ -316,8 +337,11 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     int from = queryParams.tryGetResultFilter().from();
 
     ElasticQueryBuilder esQueryMapper = new ElasticQueryBuilder();
-    QueryNodeObject initialQueryObject = esQueryMapper.build(queryParams, this);
-
+    ValidationData validationData = new ValidationData();
+    QueryNodeObject initialQueryObject = esQueryMapper.build(validationData, queryParams);
+    if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
+      validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
+    }
     if (useSearchAfterMode) {
       if (sortOrder == null) {
         throw new ServiceException(ErrorCode.internal_error, "Sort must be defined when using search after mode!");
@@ -384,7 +408,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         );
       }
     } catch (IOException e) {
-      log.error("Error executing search on endpoint {} with query {}", request != null ? request.getEndpoint() : null,  query,  e);
+      log.error("Error executing search on endpoint {} with query {}", request.getEndpoint(),  query,  e);
       throw new ServiceException(
           ErrorCode.internal_error, "Unable to execute query",
           Set.of(new AttributeString("query", query)), e
