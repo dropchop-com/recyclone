@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
+import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
@@ -15,7 +16,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     componentModel = "jakarta-cdi",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true),
-    uses = {ToDtoManipulator.class, UserAccountToDtoMapper.class}
+    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class}
 )
 public interface UserToDtoMapper extends ToDtoMapper<User, JpaUser> {
 }
