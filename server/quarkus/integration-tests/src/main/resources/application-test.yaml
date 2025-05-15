@@ -8,13 +8,15 @@ quarkus:
 
   elasticsearch:
     devservices:
-      port: 35200
+      reuse: false
+      port: 35266
 
   datasource:
     db-kind: postgresql
     username: recyclone
     password: recyclone
     devservices:
+      reuse: false
       port: 35432
       db-name: recyclone_test
 

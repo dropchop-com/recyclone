@@ -1,8 +1,8 @@
 package com.dropchop.recyclone.events.es.service;
 
-import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
-import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
+import com.dropchop.recyclone.base.api.service.ElasticCrudServiceImpl;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.events.EsEventMapperProvider;
@@ -25,7 +25,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @ApplicationScoped
 @RecycloneType(RECYCLONE_ES_DEFAULT)
 @SuppressWarnings("unused")
-public class EventService extends CrudServiceImpl<Event, EsEvent, UUID>
+public class EventService extends ElasticCrudServiceImpl<Event, EsEvent, UUID>
     implements com.dropchop.recyclone.events.api.service.EventService {
 
 

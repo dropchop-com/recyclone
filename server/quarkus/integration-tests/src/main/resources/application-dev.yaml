@@ -16,7 +16,7 @@ quarkus:
 
   elasticsearch:
     devservices:
-      port: 9200
+      port: 39200
 
   hibernate-orm:
     #log:

@@ -138,6 +138,8 @@ public class CacheLoaderManager {
   }
 
   public void onStop(@Observes ShutdownEvent event) {
-    executorService.shutdown();
+    if (executorService != null) {
+      executorService.shutdown();
+    }
   }
 }

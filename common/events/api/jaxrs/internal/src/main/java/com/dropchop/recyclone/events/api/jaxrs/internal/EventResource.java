@@ -1,21 +1,21 @@
 package com.dropchop.recyclone.events.api.jaxrs.internal;
 
 import com.dropchop.recyclone.base.api.model.rest.Constants;
+import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
+import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 import com.dropchop.recyclone.base.api.model.security.Constants.Domains;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
-import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import jakarta.ws.rs.*;
 
 import java.util.List;
 import java.util.UUID;
 
-import static com.dropchop.recyclone.base.api.model.security.Constants.PERM_DELIM;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
+import static com.dropchop.recyclone.base.api.model.security.Constants.PERM_DELIM;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
@@ -75,4 +75,10 @@ public interface EventResource {
   @Path(Constants.Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   List <Event> searchRest(EventParams params);
+
+  @DELETE
+  @Path("/deleteByQuery")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RequiresPermissions(Domains.Events.EVENT + PERM_DELIM + Actions.DELETE)
+  int deleteByQuery(EventParams params);
 }
