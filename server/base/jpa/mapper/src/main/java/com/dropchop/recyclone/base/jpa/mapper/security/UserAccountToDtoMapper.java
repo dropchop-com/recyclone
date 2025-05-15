@@ -14,12 +14,12 @@ import org.mapstruct.*;
 
 @Mapper(
     componentModel = "jakarta-cdi",
-    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    builder = @Builder(disableBuilder = true)
+    builder = @Builder(disableBuilder = true),
+    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class}
 )
 public interface UserAccountToDtoMapper extends ToDtoMapper<UserAccount, JpaUserAccount> {
   @SubclassMapping( source = JpaLoginAccount.class, target = LoginAccount.class)
   @SubclassMapping( source = JpaTokenAccount.class, target = TokenAccount.class)
-  UserAccount toDto(JpaUserAccount tags, @Context MappingContext context);
+  UserAccount toDto(JpaUserAccount entity, @Context MappingContext context);
 }

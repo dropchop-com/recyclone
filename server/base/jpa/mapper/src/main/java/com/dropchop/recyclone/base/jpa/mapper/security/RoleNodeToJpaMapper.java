@@ -13,9 +13,9 @@ import org.mapstruct.*;
   componentModel = "jakarta-cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  uses = EntityFactoryInvoker.class,
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-  builder = @Builder(disableBuilder = true)
+  builder = @Builder(disableBuilder = true),
+  uses = {EntityFactoryInvoker.class}
 )
 public interface RoleNodeToJpaMapper extends ToEntityMapper<RoleNode, JpaRoleNode> {
 }

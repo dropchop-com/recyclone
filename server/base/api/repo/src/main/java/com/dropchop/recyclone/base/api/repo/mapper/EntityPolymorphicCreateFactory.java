@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.api.repo.mapper;
 
+import com.dropchop.recyclone.base.api.mapper.EntityFactoryListener;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.base.Dto;
@@ -8,28 +9,39 @@ import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.base.api.repo.ReadRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 06. 22.
  */
 @Slf4j
-public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>
-    extends EntityDelegateFactory<D, E, ID> {
+public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity>
+    extends EntityDelegate<D, E> implements EntityFactoryListener<D, E> {
 
   private final MapperSubTypeConfig mapperSubTypeConfig;
-  private final Class<?> entityHierarchyRoot;
+  private final Collection<Class<?>> entityHierarchyRoots;
 
-  public EntityPolymorphicCreateFactory(ReadRepository<E, ID> repository,
-                                        MapperSubTypeConfig mapperSubTypeConfig) {
-    super(repository);
+  public <X extends Entity> EntityPolymorphicCreateFactory(MapperSubTypeConfig mapperSubTypeConfig,
+                                                           Collection<Class<X>> rootClasses) {
+    super(rootClasses);
     this.mapperSubTypeConfig = mapperSubTypeConfig;
-    this.entityHierarchyRoot = mapperSubTypeConfig.getEntityRootMarkerFor(repository.getRootClass());
+    this.entityHierarchyRoots = new HashSet<>();
+    for (Class<?> rootClass : rootClasses) {
+      Class<?> entityHierarchyRoot = mapperSubTypeConfig.getEntityRootMarkerFor(rootClass);
+      if (entityHierarchyRoot == null) {
+        throw new RuntimeException("Missing mapped root marker for [" + rootClass + "]");
+      }
+      this.entityHierarchyRoots.add(entityHierarchyRoot);
+    }
     super.forActionOnly(Constants.Actions.CREATE);
+  }
+
+  public EntityPolymorphicCreateFactory(MapperSubTypeConfig mapperSubTypeConfig, Class<E> rootClass) {
+    this(mapperSubTypeConfig, Set.of(rootClass));
   }
 
   @Override
@@ -39,15 +51,20 @@ public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>
       Collection<Class<?>> types = mapperSubTypeConfig.mapsTo(dto.getClass());
       if (types != null && !types.isEmpty()) {
         for (Class<?> type : types) {
-          if (entityHierarchyRoot.isAssignableFrom(type)) {
-            targetType = type;
+          for (Class<?> rootType : entityHierarchyRoots) {
+            if (rootType.isAssignableFrom(type)) {
+              targetType = type;
+              break;
+            }
+          }
+          if (targetType != null) {
             break;
           }
         }
         if (targetType == null) {
           throw new ServiceException(
               ErrorCode.internal_error,
-              String.format("Unable to find appropriate child of [%s] for [%s]!", entityHierarchyRoot, dto.getClass())
+              String.format("Unable to find appropriate child of [%s] for [%s]!", entityHierarchyRoots, dto.getClass())
           );
         }
         log.debug(
@@ -71,7 +88,7 @@ public class EntityPolymorphicCreateFactory<D extends Dto, E extends Entity, ID>
   }
 
   @Override
-  public EntityDelegateFactory<D, E, ID> forActionOnly(String action) {
+  public EntityPolymorphicCreateFactory<D, E> forActionOnly(String action) {
     throw new UnsupportedOperationException("Only for create action is supported!");
   }
 }

@@ -28,8 +28,7 @@ public class EntityFactoryInvoker {
     try {
       for (MappingListener listener : context.listeners()) {
         if (listener instanceof EntityFactoryListener<?, ?>) {
-          Class<E> entityType = ((EntityFactoryListener<D, E>) listener).getEntityType();
-          if (entityType.equals(type)) {
+          if (((EntityFactoryListener<D, E>) listener).supports(type)) {
             E entity = ((EntityFactoryListener<D, E>) listener).create(dto, context);
             if (entity != null) {
               return entity;

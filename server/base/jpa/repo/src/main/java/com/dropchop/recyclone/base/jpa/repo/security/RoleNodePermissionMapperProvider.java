@@ -3,14 +3,14 @@ package com.dropchop.recyclone.base.jpa.repo.security;
 import com.dropchop.recyclone.base.api.mapper.AfterToDtoListener;
 import com.dropchop.recyclone.base.api.mapper.AfterToEntityListener;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
-import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToDtoMapper;
-import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
+import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermission;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermissionTemplate;
-import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -44,7 +44,7 @@ public class RoleNodePermissionMapperProvider extends RecycloneMapperProvider<Ro
     MappingContext context = super.getMappingContextForModify();
     context
         .createWith(
-            new EntityPolymorphicCreateFactory<>(getRepository(), getMapperSubTypeConfig())
+            new EntityPolymorphicCreateFactory<>(getMapperSubTypeConfig(), JpaRoleNodePermission.class)
         ).
         afterMapping(
             (AfterToEntityListener) (model, entity, context1) -> {

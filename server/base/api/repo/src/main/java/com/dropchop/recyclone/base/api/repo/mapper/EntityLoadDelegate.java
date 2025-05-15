@@ -10,44 +10,39 @@ import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.dropchop.recyclone.base.dto.model.base.DtoId;
 import com.dropchop.recyclone.base.api.repo.ReadRepository;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.
  */
 @SuppressWarnings("LombokGetterMayBeUsed")
-public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {
+public abstract class EntityLoadDelegate<D extends Dto, E extends Entity, ID> extends EntityDelegate<D, E> {
   private final ReadRepository<E, ID> repository;
-  private final Set<String> onlyForRegisteredActions = new HashSet<>();
-
-  private boolean failIfMissing = true;
-  private boolean failIfPresent = false;
 
   public EntityLoadDelegate(ReadRepository<E, ID> repository) {
+    super(Set.of(repository.getRootClass()));
     this.repository = repository;
-  }
-
-  public Class<E> getEntityType() {
-    return repository.getRootClass();
   }
 
   public ReadRepository<E, ID> getRepository() {
     return repository;
   }
 
+  @Override
   public EntityLoadDelegate<D, E, ID> forActionOnly(String action) {
-    onlyForRegisteredActions.add(action);
+    super.forActionOnly(action);
     return this;
   }
 
+  @Override
   public EntityLoadDelegate<D, E, ID> failIfMissing(boolean failIfMissing) {
-    this.failIfMissing = failIfMissing;
+    super.failIfMissing(failIfMissing);
     return this;
   }
 
+  @Override
   public EntityLoadDelegate<D, E, ID> failIfPresent(boolean failIfPresent) {
-    this.failIfPresent = failIfPresent;
+    super.failIfPresent(failIfPresent);
     return this;
   }
 
@@ -64,34 +59,36 @@ public class EntityLoadDelegate<D extends Dto, E extends Entity, ID> {
   }
 
   public E load(D dto, MappingContext context) {
-    if (
-      onlyForRegisteredActions.isEmpty() ||
-        onlyForRegisteredActions.contains(context.getSecurityAction())
-    ) {
+    if (this.isForActions(context.getSecurityAction())) {
       String identifier = dto.identifier();
       if ((identifier == null || identifier.isBlank())) {
-        if (failIfMissing) {
-          throw new ServiceException(ErrorCode.data_validation_error, "Missing identifier for DTO!",
-            Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
+        if (this.isFailIfMissing()) {
+          throw new ServiceException(
+              ErrorCode.data_validation_error, "Missing identifier for DTO!",
+              Set.of(new AttributeString(dto.identifierField(), dto.identifier()))
+          );
         }
         return null;
       }
       E entity = findById(dto);
       if (entity == null) {
-        if (failIfMissing) {
-          throw new ServiceException(ErrorCode.data_validation_error, "Missing entity for DTO identifier!",
-            Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
+        if (this.isFailIfMissing()) {
+          throw new ServiceException(
+              ErrorCode.data_validation_error, "Missing entity for DTO identifier!",
+              Set.of(new AttributeString(dto.identifierField(), dto.identifier()))
+          );
         }
         return null;
       }
-      if (failIfPresent) {
-        throw new ServiceException(ErrorCode.data_validation_error, "Entity for DTO identifier is already present!",
-          Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
+      if (this.isFailIfPresent()) {
+        throw new ServiceException(
+            ErrorCode.data_validation_error, "Entity for DTO identifier is already present!",
+            Set.of(new AttributeString(dto.identifierField(), dto.identifier()))
+        );
       }
       return entity;
     }
 
     return null;
   }
-
 }

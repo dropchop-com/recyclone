@@ -13,12 +13,12 @@ import org.mapstruct.*;
  * @author Armando Ota <armando.ota@dropchop.com>
  */
 @Mapper(
-  componentModel = "jakarta-cdi",
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  uses = EntityFactoryInvoker.class,
-  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-  builder = @Builder(disableBuilder = true)
+    componentModel = "jakarta-cdi",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+    builder = @Builder(disableBuilder = true),
+    uses = {EntityFactoryInvoker.class}
 )
 public interface RoleNodePermissionToJpaMapper extends ToEntityMapper<RoleNodePermission, JpaRoleNodePermission> {
   @SubclassMapping( source = RoleNodePermission.class, target =  JpaRoleNodePermission.class)

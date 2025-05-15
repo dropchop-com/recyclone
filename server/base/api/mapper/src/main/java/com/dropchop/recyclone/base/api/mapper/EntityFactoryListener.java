@@ -8,6 +8,6 @@ import com.dropchop.recyclone.base.api.model.base.Entity;
  */
 public interface EntityFactoryListener<D extends Dto, E extends Entity>
   extends FactoryMappingListener {
-  Class<E> getEntityType();
+  <X extends E> boolean supports(Class<X> xClass);
   E create(D dto, MappingContext context);
 }

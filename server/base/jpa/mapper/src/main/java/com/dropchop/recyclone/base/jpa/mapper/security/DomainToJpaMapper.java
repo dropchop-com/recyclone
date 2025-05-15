@@ -10,12 +10,12 @@ import org.mapstruct.*;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 2. 02. 22.
  */
 @Mapper(
-  componentModel = "jakarta-cdi",
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  uses = EntityFactoryInvoker.class,
-  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-  builder = @Builder(disableBuilder = true)
+    componentModel = "jakarta-cdi",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+    builder = @Builder(disableBuilder = true),
+    uses = {EntityFactoryInvoker.class}
 )
 public interface DomainToJpaMapper extends ToEntityMapper<Domain, JpaDomain> {
 

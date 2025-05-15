@@ -1,12 +1,14 @@
 package com.dropchop.recyclone.base.jpa.repo.security;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToJpaMapper;
-import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
-import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.mapping.SetAccountUser;
 import com.dropchop.recyclone.base.jpa.repo.mapping.SetAccountUuid;
@@ -14,6 +16,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -36,12 +40,22 @@ public class UserMapperProvider extends RecycloneMapperProvider<User, JpaUser, U
   @Inject
   MapperSubTypeConfig mapperSubTypeConfig;
 
+  private <X extends Entity> Collection<Class<X>> getSupported() {
+    //noinspection unchecked
+    return Set.of(
+        (Class<X>) JpaUser.class,
+        (Class<X>) JpaUserAccount.class
+    );
+  }
+
   @Override
   public MappingContext getMappingContextForModify() {
     MappingContext context = super.getMappingContextForModify();
     context
         .createWith(
-            new EntityPolymorphicCreateFactory<>(getRepository(), getMapperSubTypeConfig())
+            new EntityPolymorphicCreateFactory<User, JpaUser>(
+                getMapperSubTypeConfig(), getSupported()
+            )
         );
     context.beforeMapping(new SetAccountUuid());
     context.afterMapping(new SetAccountUser());

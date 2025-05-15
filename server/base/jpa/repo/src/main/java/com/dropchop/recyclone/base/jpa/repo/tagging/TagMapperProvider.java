@@ -39,7 +39,7 @@ public class TagMapperProvider extends RecycloneMapperProvider<Tag, JpaTag, UUID
     MappingContext context = super.getMappingContextForModify();
     context
         .createWith(
-            new EntityPolymorphicCreateFactory<>(getRepository(), getMapperSubTypeConfig())
+            new EntityPolymorphicCreateFactory<>(getMapperSubTypeConfig(), JpaTag.class)
         );
     return context;
   }

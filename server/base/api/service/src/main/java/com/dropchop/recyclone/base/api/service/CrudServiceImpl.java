@@ -118,7 +118,9 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     MappingContext mapContext = mapperProvider.getMappingContextForModify();
     List<E> entities = mapperProvider.getToEntityMapper().toEntities(dtos, mapContext);
     save(entities);
-    return mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
+    return result;
   }
 
 

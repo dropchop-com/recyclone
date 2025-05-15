@@ -8,7 +8,7 @@ import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.model.security.Constants;
-import com.dropchop.recyclone.base.api.repo.mapper.EntityDelegateFactory;
+import com.dropchop.recyclone.base.api.repo.mapper.EntityLoadDelegateFactory;
 import jakarta.inject.Inject;
 
 /**
@@ -29,7 +29,7 @@ public abstract class FilteringMapperProvider<D extends Dto, E extends Entity, I
     return new FilteringDtoContext()
         .of(ctxContainer.get())
         .createWith(
-            new EntityDelegateFactory<>(getRepository())
+            new EntityLoadDelegateFactory<>(getRepository())
                 .forActionOnly(Constants.Actions.UPDATE)
                 .forActionOnly(Constants.Actions.DELETE)
         )

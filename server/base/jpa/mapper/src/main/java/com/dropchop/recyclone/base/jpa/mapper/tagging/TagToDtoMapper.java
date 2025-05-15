@@ -19,9 +19,9 @@ import org.mapstruct.*;
  */
 @Mapper(
     componentModel = "jakarta-cdi",
-    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    builder = @Builder(disableBuilder = true)
+    builder = @Builder(disableBuilder = true),
+    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class}
 )
 public interface TagToDtoMapper extends ToDtoMapper<Tag, JpaTag> {
   @SubclassMapping( source = JpaOwner.class, target = Owner.class)
