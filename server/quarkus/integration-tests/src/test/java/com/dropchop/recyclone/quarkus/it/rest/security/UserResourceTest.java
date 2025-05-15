@@ -5,8 +5,12 @@ import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
@@ -15,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -27,8 +32,22 @@ public class UserResourceTest {
   private static final String userId = UUID.randomUUID().toString();
   private static final String userId2 = UUID.randomUUID().toString();
 
+  @Inject
+  ObjectMapper mapper;
+
+  @BeforeEach
+  public void setUp() {
+    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper
+        ));
+  }
+
   @Test
   @Order(10)
+  @Tag("create")
+  @Tag("update")
+  @Tag("createUserWithAccounts")
+  @Tag("getUserById")
   public void create() {
     User user = new User();
     user.setId(userId);
@@ -62,6 +81,7 @@ public class UserResourceTest {
 
   @Test
   @Order(20)
+  @Tag("update")
   public void update() {
     User user = new User();
     user.setId(userId);
@@ -95,6 +115,8 @@ public class UserResourceTest {
   @Test
   @Order(30)
   @SuppressWarnings("unused")
+  @Tag("getUserById")
+  @Tag("createUserWithAccounts")
   public void createUserWithAccounts() {
     User user = new User();
     user.setId(userId2);
@@ -130,7 +152,7 @@ public class UserResourceTest {
       .and()
       .body(List.of(user))
       .when()
-      .post("/api/internal/security/user")
+      .post("/api/internal/security/user?c_level=3")
       .then()
       .statusCode(200)
       .extract()
@@ -147,6 +169,7 @@ public class UserResourceTest {
 
   @Test
   @Order(40)
+  @Tag("getUserById")
   public void getUserById() {
     List<User> result = given()
       .log().all()
@@ -162,6 +185,4 @@ public class UserResourceTest {
       .body().jsonPath().getList("data", User.class);
     assertEquals(1, result.size());
   }
-
-
 }
