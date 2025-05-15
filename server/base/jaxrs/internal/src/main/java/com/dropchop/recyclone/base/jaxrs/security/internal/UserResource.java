@@ -33,27 +33,13 @@ public class UserResource extends ClassicRestByIdResource<User, UserParams> impl
   }
 
   @Override
-  public Result<User> search(UserParams params) {
-    return service.search();
-  }
-
-  @Override
-  public Result<User> getByUuid(UUID id) {
+  public Result<User> getById(UUID id) {
     params.setIdentifiers(List.of(id.toString()));
     return service.search();
   }
 
   @Override
-  public User getByUuidRest(UUID id) {
-    List<User> users = unwrap(getByUuid(id));
-    if (users.isEmpty()) {
-      return null;
-    }
-    return users.getFirst();
-  }
-
-  @Override
-  public Result<User> getById(UUID id) {
+  public Result<User> search(UserParams params) {
     return service.search();
   }
 
