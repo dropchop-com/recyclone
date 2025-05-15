@@ -2,8 +2,13 @@ package com.dropchop.recyclone.base.jpa.mapper.security;
 
 
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
+import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
+import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
 import com.dropchop.recyclone.base.dto.model.security.UserAccount;
+import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
+import com.dropchop.recyclone.base.jpa.model.security.JpaTokenAccount;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import org.mapstruct.*;
 
@@ -16,7 +21,7 @@ import org.mapstruct.*;
   builder = @Builder(disableBuilder = true)
 )
 public interface UserAccountToJpaMapper  extends ToEntityMapper<UserAccount, JpaUserAccount> {
- /* @SubclassMapping( source = LoginAccount.class, target =  JpaLoginAccount.class)
+  @SubclassMapping( source = LoginAccount.class, target = JpaLoginAccount.class)
   @SubclassMapping( source = TokenAccount.class, target = JpaTokenAccount.class)
-  JpaUserAccount toEntity(UserAccount dto, @Context MappingContext context);*/
+  JpaUserAccount toEntity(UserAccount dto, @Context MappingContext context);
 }
