@@ -50,7 +50,7 @@ public class UserResource extends ClassicRestByIdResource<User, UserParams> impl
 
   @Override
   public Result<User> delete(List<User> data) {
-    throw new ServiceException(ErrorCode.process_error, "Users can not be deleted!");
+    return service.delete(data);
   }
 
   @Override
