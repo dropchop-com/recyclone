@@ -55,19 +55,6 @@ quarkus:
   smallrye-openapi:
     path: /api/spec/openapi
     operation-id-strategy: package-class-method
-  datasource:
-    db-kind: postgresql
-    username: recyclone_test
-    password: recyclone_test
-    # uncomment for native image build
-    #jdbc:
-    #  url: jdbc:postgresql://localhost:5432/recyclone_test
-    #  max-size: 16
-
-  elasticsearch:
-    devservices:
-      distribution: elastic
-      enabled: true
 
   hibernate-orm:
     database:

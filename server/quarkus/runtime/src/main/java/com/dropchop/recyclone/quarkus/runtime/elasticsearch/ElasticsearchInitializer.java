@@ -13,12 +13,14 @@ import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.dropchop.recyclone.base.api.model.invoke.Constants.Messages.CACHE_STORAGE_INIT;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -30,7 +32,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class ElasticsearchInitializer {
 
   private static final Logger log = LoggerFactory.getLogger(ElasticsearchInitializer.class);
-  private static final String baseDir = "elasticsearch-it";
 
   private static class Template {
     public final String name;
@@ -62,19 +63,19 @@ public class ElasticsearchInitializer {
 
   private static class IngestPipeline extends Templates {
     public IngestPipeline() {
-      super(baseDir + "/ingest-pipeline", "_ingest/pipeline");
+      super("ingest-pipeline", "_ingest/pipeline");
     }
   }
 
   private static class ComponentTemplate extends Templates {
     public ComponentTemplate() {
-      super(baseDir + "/component-template", "_component_template");
+      super("component-template", "_component_template");
     }
   }
 
   private static class IlmPolicy extends Templates {
     public IlmPolicy() {
-      super(baseDir + "/ilm-policy", "_ilm/policy");
+      super("ilm-policy", "_ilm/policy");
     }
   }
 
@@ -82,13 +83,13 @@ public class ElasticsearchInitializer {
     public static final String BASE_URL = "_index_template";
 
     public IndexTemplate() {
-      super(baseDir + "/index-template", BASE_URL);
+      super("index-template", BASE_URL);
     }
   }
 
   private static class Data extends Templates {
     public Data() {
-      super(baseDir + "/data", "_bulk");
+      super("data", "_bulk");
     }
   }
 
@@ -109,38 +110,41 @@ public class ElasticsearchInitializer {
       new Data()
   );
 
-  private void loadTemplateResources(String profileKey) throws IOException {
-    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+  private void loadTemplateResources(String profileKey, Path initPath) throws IOException {
     for (Templates templates : templatesList) {
-      Enumeration<URL> resources = classLoader.getResources(templates.resourcePath);
-      while (resources.hasMoreElements()) {
-        URL resourceUrl = resources.nextElement();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceUrl.openStream(), UTF_8))) {
-          String resource;
-          log.debug("Reading template folder [{}]", resourceUrl);
-          while ((resource = br.readLine()) != null) {
-            if (resource.startsWith("%") && !resource.startsWith("%" + profileKey + ".")) {
-              log.debug("Skipping profile [{}] template [{}]", profileKey, resource);
-              continue;
-            }
-            String templatePath = templates.resourcePath + "/" + resource;
-            log.debug("Reading template [{}]", resource);
-            try (InputStream is = classLoader.getResourceAsStream(templatePath)) {
-              if (is == null) {
-                log.error("Unable to read null template contents [{}]", templatePath);
-                continue;
+      Path resourcePath = initPath.resolve(templates.resourcePath);
+      if (!Files.exists(resourcePath)) {
+        continue;
+      }
+      if (!Files.isReadable(resourcePath)) {
+        log.warn("Unable to read templates folder [{}]", resourcePath);
+        continue;
+      }
+      try (Stream<Path> paths = Files.list(resourcePath)) {
+        paths.filter(Files::isRegularFile)
+            .filter(Files::isReadable)
+            .forEach(filePath -> {
+              String resource = filePath.getFileName().toString();
+              if (resource.startsWith("%") && !resource.startsWith("%" + profileKey + ".")) {
+                log.debug("Skipping profile [{}] template [{}]", profileKey, resource);
+                return;
               }
-              String text = new String(is.readAllBytes(), UTF_8);
-              Template template = new Template(resource, templatePath, text);
-              templates.templates.add(template);
-            } catch (IOException e) {
-              log.error("Unable to read template [{}]", templatePath, e);
-            }
-            log.info("Read template path [{}]", resource);
-          }
-        } catch (IOException e) {
-          log.error("Unable to read template path [{}]", resourceUrl, e);
-        }
+              try (BufferedReader br = Files.newBufferedReader(filePath, UTF_8)) {
+                int nameCount = filePath.getNameCount();
+                Path lastTwo = nameCount >= 2
+                    ? filePath.subpath(nameCount - 2, nameCount)
+                    : filePath;
+                //log.debug("Reading template [{}]", lastTwo);
+                String text = br.lines().collect(Collectors.joining("\n"));
+                Template template = new Template(resource, filePath.toAbsolutePath().toString(), text);
+                templates.templates.add(template);
+                log.info("Read template path [{}]", lastTwo);
+              } catch (IOException e) {
+                throw new UncheckedIOException(e);
+              }
+            });
+      } catch (UncheckedIOException e) {
+        throw e.getCause();
       }
     }
   }
@@ -287,6 +291,38 @@ public class ElasticsearchInitializer {
     }
   }
 
+  private Path isDockerFolder(Path currentDir) {
+    log.info("Searching for container init folder in [{}]", currentDir);
+    Path dockerFolder = currentDir.resolve(Path.of("docker", "elasticsearch", "init.d"));
+    if (Files.exists(dockerFolder) && Files.isReadable(dockerFolder)) {
+      log.info("Found container init folder [{}]", dockerFolder);
+      return dockerFolder;
+    }
+    dockerFolder = currentDir.resolve(Path.of("src", "main", "docker", "elasticsearch", "init.d"));
+    if (Files.exists(dockerFolder) && Files.isReadable(dockerFolder)) {
+      log.info("Found container init folder [{}]", dockerFolder);
+      return dockerFolder;
+    }
+    return null;
+  }
+
+  private Path searchForDockerFolder(Path runDir) {
+    Path dockerFolder = isDockerFolder(runDir);
+    while (dockerFolder == null) {
+      runDir = runDir.getParent();
+      if (runDir == null) {
+        return null;
+      }
+      Path pom = runDir.resolve(Path.of("pom.xml"));
+      if (Files.exists(pom)) {
+        dockerFolder = isDockerFolder(runDir);
+      } else {
+        break;
+      }
+    }
+    return dockerFolder;
+  }
+
   @Inject
   EventBus eventBus;
 
@@ -295,13 +331,17 @@ public class ElasticsearchInitializer {
       eventBus.send(CACHE_STORAGE_INIT, "skipped");
       return;
     }
+
+    Path path = Paths.get(System.getProperty("user.dir"));
+    Path configPath = searchForDockerFolder(path);
+
     String profileKey = LaunchMode.current().getDefaultProfile();
     if (checkInitMarkerTemplateExists()) {
       log.info("Elasticsearch already initialized, the marker template [{}] exists!", markerTemplate.name);
       eventBus.send(CACHE_STORAGE_INIT, "initialized");
       return;
     }
-    loadTemplateResources(profileKey);
+    loadTemplateResources(profileKey, configPath);
     applyMissingTemplates();
     applyInitMarkerTemplate();
     eventBus.send(CACHE_STORAGE_INIT, "initialized");

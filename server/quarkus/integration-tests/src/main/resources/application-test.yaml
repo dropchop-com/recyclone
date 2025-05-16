@@ -1,4 +1,7 @@
 quarkus:
+  http:
+    port: 24188
+
   log:
     category:
       #"org.apache.shiro":
@@ -6,19 +9,9 @@ quarkus:
       "com.dropchop":
         level: DEBUG
 
-  elasticsearch:
+  compose:
     devservices:
-      reuse: false
-      port: 35266
-
-  datasource:
-    db-kind: postgresql
-    username: recyclone
-    password: recyclone
-    devservices:
-      reuse: false
-      port: 35432
-      db-name: recyclone_test
+      files: src/main/docker/compose-devservices-test.yaml
 
   hibernate-orm:
     #log:
