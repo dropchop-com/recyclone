@@ -15,13 +15,6 @@ quarkus:
       remove-volumes: false
       files: src/main/docker/compose-devservices-dev.yaml
 
-  hibernate-orm:
-    #log:
-    #  sql: true
-    #  bind-parameters: true
-    database:
-      generation: update
-
 dropchop:
 #  service-type:
 #    LanguageService: "rcyn_default"

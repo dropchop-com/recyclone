@@ -12,10 +12,3 @@ quarkus:
   compose:
     devservices:
       files: src/main/docker/compose-devservices-test.yaml
-
-  hibernate-orm:
-    #log:
-    #  sql: true
-    #  bind-parameters: true
-    database:
-      generation: update
