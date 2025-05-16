@@ -13,12 +13,16 @@ import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -334,6 +338,10 @@ public class ElasticsearchInitializer {
 
     Path path = Paths.get(System.getProperty("user.dir"));
     Path configPath = searchForDockerFolder(path);
+    if (configPath == null) {
+      log.info("Unable to find Elasticsearch configuration folder in skipping initialization.");
+      return;
+    }
 
     String profileKey = LaunchMode.current().getDefaultProfile();
     if (checkInitMarkerTemplateExists()) {
