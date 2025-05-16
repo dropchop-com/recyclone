@@ -18,5 +18,4 @@ quarkus:
     #  sql: true
     #  bind-parameters: true
     database:
-      generation: drop-and-create
-    sql-load-script: dev-import.sql
+      generation: update
