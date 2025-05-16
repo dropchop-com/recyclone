@@ -33,6 +33,8 @@ services:
       - net
     volumes:
       - data-pg:/var/lib/postgresql/data
+      - ./postgresql/init.d/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./postgresql/init.d/02-data.sql:/docker-entrypoint-initdb.d/02-data.sql
 
 networks:
   net:
