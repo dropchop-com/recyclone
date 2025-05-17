@@ -1,7 +1,5 @@
 package com.dropchop.recyclone.base.jaxrs.security.internal;
 
-import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
-import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.dto.model.invoke.UserParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.User;
@@ -56,5 +54,28 @@ public class UserResource extends ClassicRestByIdResource<User, UserParams> impl
   @Override
   public Result<User> update(List<User> users) {
     return service.update(users);
+  }
+
+
+  @Override
+  public Result<User> updateAccounts(List<User> users) {
+    return service.updateAccounts(users);
+  }
+
+
+  @Override
+  public List<User> updateAccountsRest(List<User> users) {
+    return unwrap(updateAccounts(users));
+  }
+
+  @Override
+  public Result<User> deleteAccounts(List<User> users) {
+    return service.deleteAccounts(users);
+  }
+
+
+  @Override
+  public List<User> deleteAccountsRest(List<User> users) {
+    return unwrap(deleteAccounts(users));
   }
 }
