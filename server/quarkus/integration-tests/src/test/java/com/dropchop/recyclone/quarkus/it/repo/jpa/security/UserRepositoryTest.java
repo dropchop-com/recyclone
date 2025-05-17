@@ -7,8 +7,10 @@ import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
 import com.dropchop.recyclone.base.jpa.model.security.JpaTokenAccount;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.api.repo.TransactionHelper;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import com.dropchop.recyclone.base.jpa.repo.localization.CountryRepository;
 import com.dropchop.recyclone.base.jpa.repo.localization.LanguageRepository;
+import com.dropchop.recyclone.base.jpa.repo.security.UserAccountRepository;
 import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -16,6 +18,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.CountryRepositoryTest.coUkCode;
@@ -41,10 +44,14 @@ public class UserRepositoryTest {
   CountryRepository countryRepository;
 
   @Inject
-  UserRepository userRespository;
+  UserRepository userRepository;
+
+  @Inject
+  UserAccountRepository userAccountRepository;
 
   @Inject
   TransactionHelper th;
+
 
   @BeforeAll
   @Transactional
@@ -66,33 +73,37 @@ public class UserRepositoryTest {
     user.setLastName("Testic");
     user.setLanguage(lngEn);
     user.setCountry(countryUk);
-    this.userRespository.save(user);
+    this.userRepository.save(user);
   }
+
 
   @AfterAll
   @Transactional
   public void tearDown() {
-    JpaUser user = this.userRespository.findById(USER_UUID);
-    userRespository.delete(user);
+    JpaUser user = this.userRepository.findById(USER_UUID);
+    userRepository.delete(user);
     JpaCountry countryUk = countryRepository.findById(coUkCode);
     countryRepository.delete(countryUk);
   }
 
+
   @Test
   @Order(1)
   public void testStoredUser() {
-    JpaUser user = this.userRespository.findById(USER_UUID);
+    JpaUser user = this.userRepository.findById(USER_UUID);
     assertEquals("Testko", user.getFirstName());
     assertEquals("Testic", user.getLastName());
   }
+
 
   @Test
   @Order(2)
   public void testStoreUserAccounts() {
     th.transact(() -> {
-      JpaUser user = this.userRespository.findById(USER_UUID);
+      JpaUser user = this.userRepository.findById(USER_UUID);
 
       JpaLoginAccount loginAccount = new JpaLoginAccount();
+      loginAccount.setUser(user);
       loginAccount.setUuid(UUID.randomUUID());
       loginAccount.setCreated(ZonedDateTime.now());
       loginAccount.setModified(ZonedDateTime.now());
@@ -101,20 +112,18 @@ public class UserRepositoryTest {
       loginAccount.setTitle("Login account");
 
       JpaTokenAccount tokenAccount = new JpaTokenAccount();
+      tokenAccount.setUser(user);
       tokenAccount.setUuid(UUID.randomUUID());
       tokenAccount.setCreated(ZonedDateTime.now());
       tokenAccount.setModified(ZonedDateTime.now());
       tokenAccount.setToken(TOKEN);
       loginAccount.setTitle("Token account");
-      user.addAccount(loginAccount);
-      user.addAccount(tokenAccount);
 
-      this.userRespository.save(user);
+      this.userAccountRepository.save(List.of(loginAccount, tokenAccount));
 
     });
-
     th.transact(() -> {
-      JpaUser tmpUser = this.userRespository.findById(USER_UUID);
+      JpaUser tmpUser = this.userRepository.findById(USER_UUID);
       assertEquals(2, tmpUser.getAccounts().size());
     });
   }
@@ -123,15 +132,15 @@ public class UserRepositoryTest {
   @Test
   @Order(3)
   public void testFindByLoginName() {
-    JpaUser tmpUser = this.userRespository.findByLoginName(LOGIN_NAME);
-    assertNotNull(tmpUser);
+    JpaUserAccount userAccount = this.userAccountRepository.findByLoginName(LOGIN_NAME);
+    assertNotNull(userAccount.getUser());
   }
 
 
   @Test
   @Order(4)
   public void testFindByToken() {
-    JpaUser tmpUser = this.userRespository.findByToken(TOKEN);
-    assertNotNull(tmpUser);
+    JpaUserAccount userAccount = this.userAccountRepository.findByToken(TOKEN);
+    assertNotNull(userAccount.getUser());
   }
 }

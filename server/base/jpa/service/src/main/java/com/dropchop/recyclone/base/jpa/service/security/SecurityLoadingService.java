@@ -14,10 +14,8 @@ import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeMapperProvider;
-import com.dropchop.recyclone.base.jpa.repo.security.RoleNodeRepository;
-import com.dropchop.recyclone.base.jpa.repo.security.UserMapperProvider;
-import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
+import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
+import com.dropchop.recyclone.base.jpa.repo.security.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -35,6 +33,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
   @Inject
   UserRepository userRepository;
+
+  @Inject
+  UserAccountRepository userAccountRepository;
 
   @Inject
   UserMapperProvider userMapperProvider;
@@ -101,11 +102,15 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
   @Override
   public User loadUserByToken(String token) {
-    return this.mapToUser(this.userRepository.findByToken(token));
+    JpaUserAccount userAccount = userAccountRepository.findByToken(token);
+    if (userAccount == null) {return null;}
+    return this.mapToUser(userAccount.getUser());
   }
 
   @Override
   public User loadUserByUsername(String loginName) {
-    return this.mapToUser(this.userRepository.findByLoginName(loginName));
+    JpaUserAccount userAccount = userAccountRepository.findByLoginName(loginName);
+    if (userAccount == null) {return null;}
+    return this.mapToUser(userAccount.getUser());
   }
 }
