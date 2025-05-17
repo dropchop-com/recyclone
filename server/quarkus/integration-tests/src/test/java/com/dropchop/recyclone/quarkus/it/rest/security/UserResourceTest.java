@@ -21,6 +21,7 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 25. 05. 22.
@@ -48,6 +49,7 @@ public class UserResourceTest {
   @Tag("update")
   @Tag("createUserWithAccounts")
   @Tag("getUserById")
+  @Tag("deleteUserAccount")
   public void create() {
     User user = new User();
     user.setId(userId);
@@ -57,21 +59,30 @@ public class UserResourceTest {
     user.setCreated(ZonedDateTime.now());
     user.setModified(ZonedDateTime.now());
 
+    User user2 = new User();
+    user2.setId(userId2);
+    user2.setLanguage(new Language("en"));
+    user2.setFirstName("test with accounts");
+    user2.setLastName("test with accounts");
+    user2.setModified(ZonedDateTime.now());
+
+
     List<User> result = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
       .and()
-      .body(List.of(user))
+      .body(List.of(user,user2))
       .when()
       .post("/api/internal/security/user")
       .then()
       .statusCode(200)
       .extract()
       .body().jsonPath().getList("data", User.class);
-    assertEquals(1, result.size());
-    User respUser = result.getFirst();
+    assertEquals(2, result.size());
+    User respUser = result.stream().filter((User u) -> u.getId().equals(userId)).findFirst().orElse(null);
+    assertNotNull(respUser);
     assertEquals(user, respUser );
     assertEquals(user.getLanguage(), respUser.getLanguage());
     assertEquals(user.getCountry(), respUser.getCountry());
@@ -115,15 +126,11 @@ public class UserResourceTest {
   @Test
   @Order(30)
   @SuppressWarnings("unused")
-  @Tag("getUserById")
   @Tag("createUserWithAccounts")
+  @Tag("deleteUserAccount")
   public void createUserWithAccounts() {
-    User user = new User();
-    user.setId(userId2);
-    user.setLanguage(new Language("en"));
-    user.setFirstName("test with accounts");
-    user.setLastName("test with accounts");
-    user.setModified(ZonedDateTime.now());
+    User user2 = new User();
+    user2.setId(userId2);
 
     String loginAccountId = UUID.randomUUID().toString();
     String tokenAccountId = UUID.randomUUID().toString();
@@ -131,6 +138,7 @@ public class UserResourceTest {
 
     LoginAccount loginAccount = new LoginAccount();
     loginAccount.setId(loginAccountId);
+    loginAccount.setUser(user2);
     loginAccount.setModified(ZonedDateTime.now());
     loginAccount.setCreated(ZonedDateTime.now());
     loginAccount.setLoginName("test");
@@ -138,11 +146,10 @@ public class UserResourceTest {
 
     TokenAccount tokenAccount = new TokenAccount();
     tokenAccount.setId(tokenAccountId);
+    tokenAccount.setUser(user2);
     tokenAccount.setModified(ZonedDateTime.now());
     tokenAccount.setCreated(ZonedDateTime.now());
     tokenAccount.setToken(token);
-
-    user.setAccounts(Set.of(loginAccount, tokenAccount));
 
     List<User> result = given()
       .log().all()
@@ -150,21 +157,30 @@ public class UserResourceTest {
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
       .and()
-      .body(List.of(user))
+      .body(List.of(tokenAccount, loginAccount))
       .when()
-      .post("/api/internal/security/user?c_level=3")
+      .post("/api/internal/security/user/accounts?c_level=3")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+    assertEquals(2, result.size());
+
+    result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/security/user/" + userId2 + "?c_level=5")
       .then()
       .statusCode(200)
       .extract()
       .body().jsonPath().getList("data", User.class);
     assertEquals(1, result.size());
     User respUser = result.getFirst();
-    assertEquals(user, respUser );
-    assertEquals(user.getLanguage(), respUser.getLanguage());
-    assertEquals(user.getCountry(), respUser.getCountry());
-    assertEquals(user.getFirstName(), respUser.getFirstName());
-    assertEquals(user.getLastName(), respUser.getLastName());
-    assertEquals(user.getAccounts().size(), respUser.getAccounts().size());
+    assertEquals(2, respUser.getAccounts().size());
   }
 
   @Test
@@ -185,4 +201,61 @@ public class UserResourceTest {
       .body().jsonPath().getList("data", User.class);
     assertEquals(1, result.size());
   }
+
+
+  @Test
+  @Order(50)
+  @Tag("deleteUserAccount")
+  public void deleteUserAccount() {
+    List<User> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/security/user/" + userId2+ "?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+    assertEquals(1, result.size());
+    User respUser = result.getFirst();
+    assertEquals(2, respUser.getAccounts().size());
+
+    TokenAccount tokenAccount = new TokenAccount();
+    tokenAccount.setId(respUser.getAccounts().stream().filter(account -> account instanceof TokenAccount).findFirst().get().getId());
+
+    List<User> resultDelete = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(tokenAccount))
+      .when()
+      .delete("/api/internal/security/user/accounts")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+
+    result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/security/user/" + userId2+ "?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+    assertEquals(1, result.size());
+    respUser = result.getFirst();
+    assertEquals(1, respUser.getAccounts().size());
+    assertEquals(LoginAccount.class, respUser.getAccounts().iterator().next().getClass());
+  }
+
 }

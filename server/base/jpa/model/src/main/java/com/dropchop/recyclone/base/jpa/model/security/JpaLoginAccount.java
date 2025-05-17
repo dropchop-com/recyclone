@@ -1,6 +1,11 @@
 package com.dropchop.recyclone.base.jpa.model.security;
 
 import com.dropchop.recyclone.base.api.model.security.LoginAccount;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaTitleDescriptionTranslation;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaTitleTranslation;
+import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -17,7 +22,9 @@ import lombok.Setter;
 @NoArgsConstructor(force = true)
 @Entity
 @DiscriminatorValue("LoginAccount")
-public class JpaLoginAccount extends JpaUserAccount implements LoginAccount {
+public class JpaLoginAccount extends JpaUserAccount
+  implements LoginAccount<JpaUser, JpaUserAccount, JpaTitleDescriptionTranslation, JpaTitleTranslation,
+  JpaAction, JpaDomain, JpaPermission, JpaRole, JpaCountry, JpaLanguage, JpaTag> {
 
   @NonNull
   @Column(name="login_name")

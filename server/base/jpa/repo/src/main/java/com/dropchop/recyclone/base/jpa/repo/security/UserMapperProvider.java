@@ -43,8 +43,7 @@ public class UserMapperProvider extends RecycloneMapperProvider<User, JpaUser, U
   private <X extends Entity> Collection<Class<X>> getSupported() {
     //noinspection unchecked
     return Set.of(
-        (Class<X>) JpaUser.class,
-        (Class<X>) JpaUserAccount.class
+        (Class<X>) JpaUser.class
     );
   }
 
@@ -57,8 +56,8 @@ public class UserMapperProvider extends RecycloneMapperProvider<User, JpaUser, U
                 getMapperSubTypeConfig(), getSupported()
             )
         );
-    context.beforeMapping(new SetAccountUuid());
-    context.afterMapping(new SetAccountUser());
+    /*context.beforeMapping(new SetAccountUuid());
+    context.afterMapping(new SetAccountUser());*/
     return context;
   }
 }

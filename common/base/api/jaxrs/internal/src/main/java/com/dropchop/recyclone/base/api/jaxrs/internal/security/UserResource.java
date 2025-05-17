@@ -74,29 +74,4 @@ public interface UserResource {
   @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.UPDATE)
   List<User> updateRest(List<User> users);
 
-
-  @POST
-  @Path(Paths.Security.UPDATE_ACCOUNT_SEGMENT)
-  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.DELETE)
-  Result<User> updateAccounts(List<User> users);
-
-  @POST
-  @Path(Paths.Security.UPDATE_ACCOUNT_SEGMENT)
-  @Produces(MediaType.APPLICATION_JSON)
-  @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.DELETE)
-  List<User> updateAccountsRest(List<User> users);
-
-
-  @POST
-  @Path(Paths.Security.DELETE_ACCOUNT_SEGMENT)
-  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.DELETE)
-  Result<User> deleteAccounts(List<User> users);
-
-  @POST
-  @Path(Paths.Security.DELETE_ACCOUNT_SEGMENT)
-  @Produces(MediaType.APPLICATION_JSON)
-  @RequiresPermissions(Domains.Security.USER + PERM_DELIM + Actions.DELETE)
-  List<User> deleteAccountsRest(List<User> users);
 }

@@ -56,26 +56,4 @@ public class UserResource extends ClassicRestByIdResource<User, UserParams> impl
     return service.update(users);
   }
 
-
-  @Override
-  public Result<User> updateAccounts(List<User> users) {
-    return service.updateAccounts(users);
-  }
-
-
-  @Override
-  public List<User> updateAccountsRest(List<User> users) {
-    return unwrap(updateAccounts(users));
-  }
-
-  @Override
-  public Result<User> deleteAccounts(List<User> users) {
-    return service.deleteAccounts(users);
-  }
-
-
-  @Override
-  public List<User> deleteAccountsRest(List<User> users) {
-    return unwrap(deleteAccounts(users));
-  }
 }

@@ -86,13 +86,15 @@ public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
       User u = usersMap.get(jpaUser.getUuid());
       List<UUID> accountUuids = u.getAccounts().stream().map((UserAccount ua) -> UUID.fromString(ua.getId())).toList();
 
-      Iterator<JpaUserAccount> iterator = jpaUser.getAccounts().iterator();
-      while(iterator.hasNext()) {
-        JpaUserAccount account = iterator.next();
+      Set<JpaUserAccount> currentAccounts = jpaUser.getAccounts();
+      List<JpaUserAccount> removeAccounts = new ArrayList<>();
+      for (JpaUserAccount account : currentAccounts) {
         if (accountUuids.contains(account.getUuid())) {
-          iterator.remove();
-          jpaUser.setModified(ZonedDateTime.now());
+          removeAccounts.add(account);
         }
+      }
+      if (!removeAccounts.isEmpty()) {
+        currentAccounts.removeAll(removeAccounts);
       }
     }
     this.repository.save(jpaUsers);

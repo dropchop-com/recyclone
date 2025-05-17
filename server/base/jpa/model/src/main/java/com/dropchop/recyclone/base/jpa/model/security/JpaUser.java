@@ -45,7 +45,7 @@ public class JpaUser extends JpaPerson
   @Column(name = "deactivated")
   private ZonedDateTime deactivated;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   Set<JpaUserAccount> accounts = new LinkedHashSet<>();
 
   public void addAccount(JpaUserAccount account) {
