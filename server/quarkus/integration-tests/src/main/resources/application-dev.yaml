@@ -1,4 +1,7 @@
 quarkus:
+  http:
+    port: 24088
+
   log:
     category:
       "org.apache.shiro":
@@ -6,25 +9,11 @@ quarkus:
       "com.dropchop":
         level: DEBUG
 
-  datasource:
-    db-kind: postgresql
-    username: recyclone
-    password: recyclone
+  compose:
     devservices:
-      port: 35432
-      db-name: recyclone_dev
-
-  elasticsearch:
-    devservices:
-      port: 9200
-
-  hibernate-orm:
-    #log:
-    #  sql: true
-    #  bind-parameters: true
-    database:
-      generation: drop-and-create
-    sql-load-script: dev-import.sql
+      ryuk-enabled: false
+      remove-volumes: false
+      files: src/main/docker/compose-devservices-dev.yaml
 
 dropchop:
 #  service-type:

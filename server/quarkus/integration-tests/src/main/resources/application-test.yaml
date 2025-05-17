@@ -1,4 +1,7 @@
 quarkus:
+  http:
+    port: 24188
+
   log:
     category:
       #"org.apache.shiro":
@@ -6,22 +9,6 @@ quarkus:
       "com.dropchop":
         level: DEBUG
 
-  elasticsearch:
+  compose:
     devservices:
-      port: 35200
-
-  datasource:
-    db-kind: postgresql
-    username: recyclone
-    password: recyclone
-    devservices:
-      port: 35432
-      db-name: recyclone_test
-
-  hibernate-orm:
-    #log:
-    #  sql: true
-    #  bind-parameters: true
-    database:
-      generation: drop-and-create
-    sql-load-script: dev-import.sql
+      files: src/main/docker/compose-devservices-test.yaml

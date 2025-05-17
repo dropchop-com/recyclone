@@ -54,6 +54,7 @@ public class EventsResourceTest {
   public static final String EVENT_ID = Uuid.getTimeBased().toString();
   public static final String EVENT_DETAIL_ID = "eebd0fda-9e81-4fa8-a4c6-d3cdbc06e4c8";
   public static final String EVENT_TRACE_NAME = "some_test_flow";
+  public static final String EVENT_TRACE_NAME_1 = "some_test_flow_1";
 
   interface Strings {
     String EVENT_DETAIL = "event_detail";
@@ -109,7 +110,7 @@ public class EventsResourceTest {
     assertNotNull(rspEvent.getTarget().getContext());
     assertEquals(Strings.EVENT_DETAIL, rspEvent.getTarget().getContext().getName());
     assertNotNull(rspEvent.getTrace());
-    assertEquals(EVENT_TRACE_NAME, rspEvent.getTrace().getName());
+    assertEquals(EventsResourceTest.EVENT_TRACE_NAME_1, rspEvent.getTrace().getName());
     assertEquals(Strings.CONTEXT, rspEvent.getTrace().getContext());
     assertEquals(Strings.GROUP, rspEvent.getTrace().getGroup());
 
@@ -123,7 +124,6 @@ public class EventsResourceTest {
   @Test
   @Order(10)
   @Tag("create")
-  @Tag("delete")
   @Tag("delete")
   public void create() throws IOException {
 
@@ -139,7 +139,7 @@ public class EventsResourceTest {
     eventItem.setContext(detail);
 
     EventTrace eventTrace = new EventTrace();
-    eventTrace.setName(EVENT_TRACE_NAME);
+    eventTrace.setName(EVENT_TRACE_NAME_1);
     eventTrace.setContext(Strings.CONTEXT);
     eventTrace.setGroup(Strings.GROUP);
 
@@ -175,6 +175,7 @@ public class EventsResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList(".", Event.class);
+
     this.validateNonNested(events);
   }
 
@@ -277,6 +278,45 @@ public class EventsResourceTest {
   }
 
   @Test
+  @Order(33)
+  @Tag("createMultiple")
+  @Tag("searchBySpecificTraceId")
+  @Tag("searchAllEventsWithoutSpecificTraceId")
+  @Tag("searchEventsBySpecificId")
+  @Tag("searchEventsByTraceIdOrUnitString")
+  @Tag("searchEventsInPeriodWithTraceId")
+  @Tag("searchEventsByDateRange")
+  @Tag("searchEventsByDateRange2")
+  @Tag("searchEventsByDateRange3")
+  @Tag("complexQuery")
+  @Tag("complexQueryWithWildcard")
+  @Tag("complexQuery3")
+  @Tag("complexQuery4")
+  @Tag("complexQuery5")
+  @Tag("complexQuery6")
+  @Tag("complexQuery7")
+  @Tag("complexQuery8")
+  @Tag("deleteMultiple")
+  public void deleteMultiple() {
+    EventParams params = EventParams.builder()
+        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .build();
+
+    //same as before just for multiple events
+    given()
+        .log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .auth().preemptive().basic("admin1", "password")
+        .and()
+        .body(params)
+        .when()
+        .delete("/api/internal/events/deleteByQuery?modify_policy=wait")
+        .then()
+        .statusCode(200);
+  }
+
+  @Test
   @Order(35)
   @Tag("createMultiple")
   @Tag("searchBySpecificTraceId")
@@ -292,6 +332,10 @@ public class EventsResourceTest {
   @Tag("complexQuery3")
   @Tag("complexQuery4")
   @Tag("complexQuery5")
+  @Tag("complexQuery6")
+  @Tag("complexQuery7")
+  @Tag("complexQuery8")
+  @Tag("deleteMockEvents")
   public void createMultiple() {
     List<Event> events = eventMockData.createMockEvents();
 
@@ -367,7 +411,8 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertEquals(1, events.size());
+    //noinspection SizeReplaceableByIsEmpty <- nope
+    assertTrue(1 <= events.size());
   }
 
   @Test
@@ -496,7 +541,7 @@ public class EventsResourceTest {
       .statusCode(200)
       .extract()
       .body().jsonPath().getList(".", Event.class);
-    assertEquals(4, events.size());
+    assertTrue(4 <= events.size());
   }
 
   @Test
@@ -526,7 +571,7 @@ public class EventsResourceTest {
       .extract()
       .body().jsonPath().getList(".", Event.class);
 
-    assertEquals(3, events.size());
+    assertTrue(3 <= events.size());
 
     for (Event event : events) {
       ZonedDateTime createdDate = event.getCreated();

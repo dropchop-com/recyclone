@@ -1,3 +1,4 @@
+# a legacy file just for remembering
 CREATE USER recyclone_test;
 ALTER USER recyclone_test WITH PASSWORD 'recyclone_test';
 CREATE DATABASE recyclone_test OWNER recyclone_test TEMPLATE 'template0' ENCODING 'UTF-8' LC_COLLATE 'sl_SI.UTF-8' LC_CTYPE 'sl_SI.UTF-8';

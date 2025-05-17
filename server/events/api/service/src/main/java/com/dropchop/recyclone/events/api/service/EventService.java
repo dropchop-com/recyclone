@@ -12,4 +12,6 @@ public interface EventService extends CrudService<Event> {
   default String getSecurityDomain() {
     return Constants.Domains.Events.EVENT;
   }
+
+  Integer deleteByQuery();
 }

@@ -1,11 +1,11 @@
 package com.dropchop.recyclone.events.jaxrs.internal;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.rest.ClassicRestByIdResource;
 import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.dto.model.invoke.EventParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.api.rest.ClassicRestByIdResource;
-import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.events.api.service.EventService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -68,5 +68,10 @@ public class EventResource extends ClassicRestByIdResource<Event, EventParams> i
   @Override
   public Result<Event> search(EventParams parameters) {
     return service.search();
+  }
+
+  @Override
+  public int deleteByQuery(EventParams codeParams) {
+    return service.deleteByQuery();
   }
 }

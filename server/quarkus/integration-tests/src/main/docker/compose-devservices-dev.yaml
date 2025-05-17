@@ -1,0 +1,46 @@
+name: recyclone-dev
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    networks:
+      - net
+    ports:
+      - "24092:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx3g
+      - cluster.name=cptm-dev
+      - network.host=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - data-es:/usr/share/elasticsearch/data
+
+  postgres:
+    image: postgres:17
+    ports:
+      - '24054:5432'
+    environment:
+      POSTGRES_USER: recyclone
+      POSTGRES_PASSWORD: recyclone
+      POSTGRES_DB: recyclone_dev
+    networks:
+      - net
+    volumes:
+      - data-pg:/var/lib/postgresql/data
+      - ./postgresql/init.d/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./postgresql/init.d/02-data.sql:/docker-entrypoint-initdb.d/02-data.sql
+
+networks:
+  net:
+
+volumes:
+  data-es:
+    driver: local
+  data-pg:
+    driver: local
