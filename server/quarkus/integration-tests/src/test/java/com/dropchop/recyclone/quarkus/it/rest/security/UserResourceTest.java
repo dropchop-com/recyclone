@@ -14,6 +14,7 @@ import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
@@ -157,6 +158,8 @@ public class UserResourceTest {
 
     String token = UUID.randomUUID().toString();
 
+    ZonedDateTime deactivated = ZonedDateTime.of(1900,1,2, 0,0,0,0, ZoneId.systemDefault());
+
     LoginAccount loginAccount = new LoginAccount();
     loginAccount.setId(loginAccountId);
     loginAccount.setUser(user2);
@@ -168,9 +171,11 @@ public class UserResourceTest {
     TokenAccount tokenAccount = new TokenAccount();
     tokenAccount.setId(tokenAccountId);
     tokenAccount.setUser(user2);
+    tokenAccount.setToken(token);
     tokenAccount.setModified(ZonedDateTime.now());
     tokenAccount.setCreated(ZonedDateTime.now());
-    tokenAccount.setToken(token);
+    tokenAccount.setDeactivated(deactivated);
+
 
     List<UserAccount> result = given()
       .log().all()
@@ -202,6 +207,17 @@ public class UserResourceTest {
     assertEquals(1, userResult.size());
     User respUser = userResult.getFirst();
     assertEquals(2, respUser.getAccounts().size());
+
+    respUser.getAccounts().forEach(account -> {
+      if (account instanceof LoginAccount loginAccount1) {
+        assertEquals(loginAccount.getLoginName(), loginAccount1.getLoginName());
+        assertEquals(loginAccount.getPassword(), loginAccount1.getPassword());
+      }
+      if (account instanceof TokenAccount tokenAccount1) {
+        assertEquals(tokenAccount.getToken(), tokenAccount1.getToken());
+        assertEquals(tokenAccount.getDeactivated(), tokenAccount1.getDeactivated().withZoneSameInstant(ZoneId.systemDefault()));
+      }
+    });
   }
 
 
@@ -213,10 +229,14 @@ public class UserResourceTest {
     user2.setId(userId2);
     String randomString = UUID.randomUUID().toString();
 
+    ZonedDateTime deactivated = ZonedDateTime.of(1900,1,2, 0,0,0,0, ZoneId.systemDefault());
+
     TokenAccount tokenAccount = new TokenAccount();
     tokenAccount.setUser(user2);
     tokenAccount.setId(tokenAccountId);
     tokenAccount.setToken(randomString);
+    tokenAccount.setDeactivated(deactivated);
+
     LoginAccount loginAccount = new LoginAccount();
     loginAccount.setUser(user2);
     loginAccount.setId(loginAccountId);
@@ -254,13 +274,13 @@ public class UserResourceTest {
     assertEquals(2, respUser.getAccounts().size());
 
     respUser.getAccounts().forEach(account -> {
-
       if (account instanceof LoginAccount loginAccount1) {
         assertEquals(loginAccount.getLoginName(), loginAccount1.getLoginName());
         assertEquals(loginAccount.getPassword(), loginAccount1.getPassword());
       }
       if (account instanceof TokenAccount tokenAccount1) {
-        assertEquals(tokenAccount1.getToken(), tokenAccount1.getToken());
+        assertEquals(tokenAccount.getToken(), tokenAccount1.getToken());
+        assertEquals(tokenAccount.getDeactivated(), tokenAccount1.getDeactivated().withZoneSameInstant(ZoneId.systemDefault()));
       }
     });
 
