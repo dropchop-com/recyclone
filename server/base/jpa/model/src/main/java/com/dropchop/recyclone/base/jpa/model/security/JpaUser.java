@@ -48,6 +48,17 @@ public class JpaUser extends JpaPerson
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   Set<JpaUserAccount> accounts = new LinkedHashSet<>();
 
+  public void addAccount(JpaUserAccount account) {
+    if (account == null) return;
+    this.accounts.add(account);
+    account.setUser(this);
+  }
+
+  public void removeAccount(JpaUserAccount account) {
+    account.setUser(null);
+    this.accounts.remove(account);
+  }
+
   @ManyToMany
   @JoinTable(
       name = "security_user_t",

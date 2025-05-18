@@ -146,11 +146,6 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
     MappingContext mapContext = mapperProvider.getMappingContextForModify();
     List<E> entities = mapperProvider.getToEntityMapper().toEntities(dtos, mapContext);
-    //TODO: CHECK THIS: if entities are not loaded before delete, delete on entity manager fails due to missing entities
-    // in session  in blaze repo and exception is thrown
-    //Collection<UUID> ids = entities.stream().map(e -> e.identifier()).map(UUID::fromString).collect(Collectors.toList());
-    //entities = getRepository().findById((Collection<ID>)ids);
-    // TODO END
     getRepository().delete(entities);
     return mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
   }
