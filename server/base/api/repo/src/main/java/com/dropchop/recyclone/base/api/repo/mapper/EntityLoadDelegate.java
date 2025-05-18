@@ -10,6 +10,7 @@ import com.dropchop.recyclone.base.dto.model.base.DtoCode;
 import com.dropchop.recyclone.base.dto.model.base.DtoId;
 import com.dropchop.recyclone.base.api.repo.ReadRepository;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -21,6 +22,11 @@ public abstract class EntityLoadDelegate<D extends Dto, E extends Entity, ID> ex
 
   public EntityLoadDelegate(ReadRepository<E, ID> repository) {
     super(Set.of(repository.getRootClass()));
+    this.repository = repository;
+  }
+
+  public <X extends Entity> EntityLoadDelegate(ReadRepository<E, ID> repository, Collection<Class<X>> supported) {
+    super(supported);
     this.repository = repository;
   }
 

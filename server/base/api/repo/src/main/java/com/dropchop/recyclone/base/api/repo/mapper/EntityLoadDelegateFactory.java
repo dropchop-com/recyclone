@@ -6,6 +6,8 @@ import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.repo.ReadRepository;
 
+import java.util.Collection;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 31. 05. 22.
  */
@@ -14,6 +16,10 @@ public class EntityLoadDelegateFactory<D extends Dto, E extends Entity, ID>
 
   public EntityLoadDelegateFactory(ReadRepository<E, ID> repository) {
     super(repository);
+  }
+
+  public <X extends Entity> EntityLoadDelegateFactory(ReadRepository<E, ID> repository, Collection<Class<X>> supported) {
+    super(repository, supported);
   }
 
   @Override

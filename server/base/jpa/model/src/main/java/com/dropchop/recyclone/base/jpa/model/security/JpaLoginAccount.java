@@ -30,5 +30,6 @@ public class JpaLoginAccount extends JpaUserAccount
   @Column(name="login_name")
   private String loginName;
 
+  @Column(name="password")
   private String password;
 }

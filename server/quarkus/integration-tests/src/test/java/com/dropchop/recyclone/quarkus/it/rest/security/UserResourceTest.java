@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
+import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -32,6 +33,8 @@ public class UserResourceTest {
 
   private static final String userId = UUID.randomUUID().toString();
   private static final String userId2 = UUID.randomUUID().toString();
+  private static final String loginAccountId = UUID.randomUUID().toString();
+  private static final String tokenAccountId = UUID.randomUUID().toString();
 
   @Inject
   ObjectMapper mapper;
@@ -125,66 +128,6 @@ public class UserResourceTest {
 
   @Test
   @Order(30)
-  @SuppressWarnings("unused")
-  @Tag("createUserWithAccounts")
-  @Tag("deleteUserAccount")
-  public void createUserWithAccounts() {
-    User user2 = new User();
-    user2.setId(userId2);
-
-    String loginAccountId = UUID.randomUUID().toString();
-    String tokenAccountId = UUID.randomUUID().toString();
-    String token = UUID.randomUUID().toString();
-
-    LoginAccount loginAccount = new LoginAccount();
-    loginAccount.setId(loginAccountId);
-    loginAccount.setUser(user2);
-    loginAccount.setModified(ZonedDateTime.now());
-    loginAccount.setCreated(ZonedDateTime.now());
-    loginAccount.setLoginName("test");
-    loginAccount.setPassword("test");
-
-    TokenAccount tokenAccount = new TokenAccount();
-    tokenAccount.setId(tokenAccountId);
-    tokenAccount.setUser(user2);
-    tokenAccount.setModified(ZonedDateTime.now());
-    tokenAccount.setCreated(ZonedDateTime.now());
-    tokenAccount.setToken(token);
-
-    List<User> result = given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
-      .and()
-      .body(List.of(tokenAccount, loginAccount))
-      .when()
-      .post("/api/internal/security/user/accounts?c_level=3")
-      .then()
-      .statusCode(200)
-      .extract()
-      .body().jsonPath().getList("data", User.class);
-    assertEquals(2, result.size());
-
-    result = given()
-      .log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
-      .and()
-      .when()
-      .get("/api/internal/security/user/" + userId2 + "?c_level=5")
-      .then()
-      .statusCode(200)
-      .extract()
-      .body().jsonPath().getList("data", User.class);
-    assertEquals(1, result.size());
-    User respUser = result.getFirst();
-    assertEquals(2, respUser.getAccounts().size());
-  }
-
-  @Test
-  @Order(40)
   @Tag("getUserById")
   public void getUserById() {
     List<User> result = given()
@@ -202,11 +145,131 @@ public class UserResourceTest {
     assertEquals(1, result.size());
   }
 
+  @Test
+  @Order(40)
+  @SuppressWarnings("unused")
+  @Tag("createAccounts")
+  @Tag("updateAccount")
+  @Tag("deleteAccount")
+  public void createAccounts() {
+    User user2 = new User();
+    user2.setId(userId2);
+
+    String token = UUID.randomUUID().toString();
+
+    LoginAccount loginAccount = new LoginAccount();
+    loginAccount.setId(loginAccountId);
+    loginAccount.setUser(user2);
+    loginAccount.setModified(ZonedDateTime.now());
+    loginAccount.setCreated(ZonedDateTime.now());
+    loginAccount.setLoginName("test");
+    loginAccount.setPassword("test");
+
+    TokenAccount tokenAccount = new TokenAccount();
+    tokenAccount.setId(tokenAccountId);
+    tokenAccount.setUser(user2);
+    tokenAccount.setModified(ZonedDateTime.now());
+    tokenAccount.setCreated(ZonedDateTime.now());
+    tokenAccount.setToken(token);
+
+    List<UserAccount> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(tokenAccount, loginAccount))
+      .when()
+      .post("/api/internal/security/user/accounts?c_level=3")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", UserAccount.class);
+    assertEquals(2, result.size());
+
+    List<User> userResult = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/security/user/" + userId2 + "?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+    assertEquals(1, userResult.size());
+    User respUser = userResult.getFirst();
+    assertEquals(2, respUser.getAccounts().size());
+  }
+
 
   @Test
   @Order(50)
-  @Tag("deleteUserAccount")
-  public void deleteUserAccount() {
+  @Tag("updateAccount")
+  public void updateAccounts() {
+    User user2 = new User();
+    user2.setId(userId2);
+    String randomString = UUID.randomUUID().toString();
+
+    TokenAccount tokenAccount = new TokenAccount();
+    tokenAccount.setUser(user2);
+    tokenAccount.setId(tokenAccountId);
+    tokenAccount.setToken(randomString);
+    LoginAccount loginAccount = new LoginAccount();
+    loginAccount.setUser(user2);
+    loginAccount.setId(loginAccountId);
+    loginAccount.setLoginName(randomString);
+    loginAccount.setPassword(randomString);
+
+    List<UserAccount> result = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .body(List.of(tokenAccount, loginAccount))
+      .when()
+      .put("/api/internal/security/user/accounts?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", UserAccount.class);
+
+    List<User> userResult = given()
+      .log().all()
+      .contentType(ContentType.JSON)
+      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+      .auth().preemptive().basic("admin1", "password")
+      .and()
+      .when()
+      .get("/api/internal/security/user/" + userId2 + "?c_level=5")
+      .then()
+      .statusCode(200)
+      .extract()
+      .body().jsonPath().getList("data", User.class);
+    assertEquals(1, userResult.size());
+    User respUser = userResult.getFirst();
+    assertEquals(2, respUser.getAccounts().size());
+
+    respUser.getAccounts().forEach(account -> {
+
+      if (account instanceof LoginAccount loginAccount1) {
+        assertEquals(loginAccount.getLoginName(), loginAccount1.getLoginName());
+        assertEquals(loginAccount.getPassword(), loginAccount1.getPassword());
+      }
+      if (account instanceof TokenAccount tokenAccount1) {
+        assertEquals(tokenAccount1.getToken(), tokenAccount1.getToken());
+      }
+    });
+
+  }
+
+  @Test
+  @Order(60)
+  @Tag("deleteAccount")
+  public void deleteAccount() {
     List<User> result = given()
       .log().all()
       .contentType(ContentType.JSON)

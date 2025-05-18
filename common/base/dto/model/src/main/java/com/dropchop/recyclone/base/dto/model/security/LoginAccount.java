@@ -26,6 +26,5 @@ public class LoginAccount extends UserAccount
   @NonNull
   private String loginName;
 
-  @JsonIgnore
   private String password;
 }
