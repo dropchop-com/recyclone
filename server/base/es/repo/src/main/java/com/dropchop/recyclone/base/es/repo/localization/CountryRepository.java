@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.es.repo.localization;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.model.localization.EsCountry;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
-import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.DefaultElasticQueryBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -30,5 +30,5 @@ public class CountryRepository extends ElasticRepository<EsCountry, String> {
   RestClient elasticsearchClient;
 
   @Inject
-  ElasticQueryBuilder elasticQueryBuilder;
+  DefaultElasticQueryBuilder elasticQueryBuilder;
 }

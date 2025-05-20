@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.es.repo.mapper;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
-import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.DefaultElasticQueryBuilder;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder.ValidationData;
 import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -397,7 +397,7 @@ public class ElasticsearchQueryBuilderTest {
            }
       """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
 
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
@@ -411,7 +411,7 @@ public class ElasticsearchQueryBuilderTest {
   @Test
   @SuppressWarnings("unused")
   public void debugConditionMustNotExist() {
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
 
     QueryParams params = QueryParams.builder().condition(
       and(
@@ -495,7 +495,7 @@ public class ElasticsearchQueryBuilderTest {
         }
         """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);
@@ -558,7 +558,7 @@ public class ElasticsearchQueryBuilderTest {
         }
         """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);
@@ -612,7 +612,7 @@ public class ElasticsearchQueryBuilderTest {
         }
         """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);
@@ -664,7 +664,7 @@ public class ElasticsearchQueryBuilderTest {
        }
        """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);
@@ -716,7 +716,7 @@ public class ElasticsearchQueryBuilderTest {
       }
       """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);
@@ -770,7 +770,7 @@ public class ElasticsearchQueryBuilderTest {
       }
       """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);
@@ -818,7 +818,7 @@ public class ElasticsearchQueryBuilderTest {
       }
       """;
 
-    ElasticQueryBuilder es = new ElasticQueryBuilder();
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
     ObjectMapper ob = factory.createObjectMapper();
     QueryNodeObject correct = es.build(new ValidationData(), params);

@@ -6,7 +6,7 @@ import com.dropchop.recyclone.base.es.repo.config.ClassStaticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
-import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
+import com.dropchop.recyclone.base.es.repo.query.DefaultElasticQueryBuilder;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -43,7 +43,7 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String>
   RestClient elasticsearchClient;
 
   @Inject
-  ElasticQueryBuilder elasticQueryBuilder;
+  DefaultElasticQueryBuilder elasticQueryBuilder;
 
   @Override
   public Collection<String> anyOf() {

@@ -336,7 +336,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     int size = queryParams.tryGetResultFilter().size();
     int from = queryParams.tryGetResultFilter().from();
 
-    ElasticQueryBuilder esQueryMapper = new ElasticQueryBuilder();
+    ElasticQueryBuilder esQueryMapper = this.getElasticQueryBuilder();
     ValidationData validationData = new ValidationData();
     QueryNodeObject initialQueryObject = esQueryMapper.build(validationData, queryParams);
     if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
