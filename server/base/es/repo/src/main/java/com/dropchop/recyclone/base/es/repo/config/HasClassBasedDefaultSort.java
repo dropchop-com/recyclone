@@ -11,16 +11,32 @@ import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3/26/25.
  */
-public interface HasClassBasedDefaultSort extends ClassIndexConfig {
+public interface HasClassBasedDefaultSort extends HasDefaultSort, ClassIndexConfig, HasSearchAfterTieBreaker {
+
+  default void appendTieBreaker(QueryNodeObject defaultSort, Class<?> rootClass) {
+    if (HasUuid.class.isAssignableFrom(rootClass)) {
+      defaultSort.put("uuid", "desc");
+    }
+    if (HasCode.class.isAssignableFrom(rootClass)) {
+      defaultSort.put("code", "desc");
+    }
+    if (HasId.class.isAssignableFrom(rootClass)) {
+      defaultSort.put("id", "desc");
+    }
+  }
+
   default QueryNodeObject getSortOrder() {
     QueryNodeObject defaultSort = new QueryNodeObject();
     Class<?> rootClass = getRootClass();
     if (HasCreated.class.isAssignableFrom(rootClass)) {
       defaultSort.put("created", "desc");
+      appendTieBreaker(defaultSort, rootClass);
     } else if (HasModified.class.isAssignableFrom(rootClass)) {
       defaultSort.put("modified", "desc");
+      appendTieBreaker(defaultSort, rootClass);
     } else if (HasPublished.class.isAssignableFrom(rootClass)) {
       defaultSort.put("published", "desc");
+      appendTieBreaker(defaultSort, rootClass);
     } else if (HasUuid.class.isAssignableFrom(rootClass)) {
       defaultSort.put("uuid", "desc");
     } else if (HasCode.class.isAssignableFrom(rootClass)) {
