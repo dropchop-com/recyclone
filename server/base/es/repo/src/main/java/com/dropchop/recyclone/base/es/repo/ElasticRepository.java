@@ -454,6 +454,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     int requestFrom = queryParams.tryGetResultFilter().getFrom();
     boolean searchAfterMode = this.useSearchAfterMode(queryParams);
 
+    if (requestSize >= getElasticIndexConfig().getSizeOfPagination() && searchAfterMode) {
+      queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
+    }
+
     QueryNodeObject query = buildQueryObject(queryParams, searchAfterMode);
     elasticContext.init(getElasticIndexConfig(), query); // TODO add index config and query node object
     context.getListeners()

@@ -142,7 +142,7 @@ public class ResultFilter
 
   @Override
   public ResultFilter from(int from) {
-    this.setFrom(size);
+    this.setFrom(from);
     return this;
   }
 
