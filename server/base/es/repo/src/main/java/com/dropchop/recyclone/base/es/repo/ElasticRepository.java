@@ -313,14 +313,21 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         .toList();
       sortOrder.put("sort", sortEntries);
       return sortOrder;
-    } else if (indexConfig instanceof HasClassBasedDefaultSort hasClassBasedDefaultSort) {
-      QueryNodeObject defaultSort = hasClassBasedDefaultSort.getSortOrder();
+    } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
+      QueryNodeObject defaultSort = hasDefaultSort.getSortOrder();
       if (defaultSort == null) {
         throw new ServiceException(
             ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
         );
       }
-      sortOrder.put("sort", defaultSort);
+      List<QueryNodeObject> sortEntries = defaultSort.entrySet().stream().map(
+          e ->  {
+            QueryNodeObject sortEntry = new QueryNodeObject();
+            sortEntry.put(e.getKey(), e.getValue());
+            return sortEntry;
+          }
+      ).toList();
+      sortOrder.put("sort", sortEntries);
       return sortOrder;
     }
     return null;
