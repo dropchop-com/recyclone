@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.query;
 
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.Iterator;
+import java.util.List;
 
 @Slf4j
 @ApplicationScoped
@@ -212,6 +214,22 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       MatchAllObject matchAll = new MatchAllObject();
       query.put("match_all", matchAll);
       queryContainer.put("query", query);
+    }
+
+    ResultFilter.ContentFilter filter = params.tryGetResultContentFilter();
+    if (filter != null) {
+      QueryNodeObject source = new QueryNodeObject();
+      List<String> excludes = filter.getExcludes();
+      if (excludes != null && !excludes.isEmpty()) {
+        source.put("excludes", excludes);
+      }
+      List<String> includes = filter.getIncludes();
+      if (includes != null && !includes.isEmpty()) {
+        source.put("includes", includes);
+      }
+      if (!source.isEmpty()) {
+        queryContainer.put("_source", source);
+      }
     }
 
     if (params.getAggregate() != null) {

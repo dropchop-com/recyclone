@@ -41,13 +41,13 @@ public interface ResultFilter<CF extends ResultFilter.ContentFilter, LF extends 
       return this;
     }
 
-    default ContentFilter exclude(String include) {
+    default ContentFilter exclude(String exclude) {
       List<String> excludes = this.getExcludes();
       if (excludes == null) {
         excludes = new ArrayList<>();
         this.setExcludes(excludes);
       }
-      excludes.add(include);
+      excludes.add(exclude);
       return this;
     }
 
