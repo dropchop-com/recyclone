@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.base.es.repo.query;
 
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
@@ -12,11 +15,14 @@ import com.dropchop.recyclone.base.es.model.query.BoolQueryObject;
 import com.dropchop.recyclone.base.es.model.query.MatchAllObject;
 import com.dropchop.recyclone.base.es.model.query.OperatorNodeObject;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
+import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.Iterator;
+import java.util.List;
 
 @Slf4j
 @ApplicationScoped
@@ -200,18 +206,104 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
   @Override
-  public QueryNodeObject build(ValidationData validationData, QueryParams params) {
+  public boolean useSearchAfter(ElasticIndexConfig indexConfig, QueryParams queryParams) {
+    if (indexConfig == null) {
+      return false;
+    }
+    int requestSize = queryParams.tryGetResultFilter().getSize();
+    int requestFrom = queryParams.tryGetResultFilter().getFrom();
+    int maxSize = indexConfig.getSizeOfPagination();
+    return requestSize + requestFrom >= maxSize;  // we would overflow allowed elastic maximum
+  }
+
+  protected QueryNodeObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig,
+                                           boolean useSearchAfter) {
+    QueryNodeObject sortOrder = new QueryNodeObject();
+    if (!sortList.isEmpty()) {
+      List<QueryNodeObject> sortEntries = sortList.stream()
+          .map(sort -> {
+            QueryNodeObject sortEntry = new QueryNodeObject();
+            sortEntry.put(sort, "desc");
+            return sortEntry;
+          })
+          .toList();
+      sortOrder.put("sort", sortEntries);
+      return sortOrder;
+    } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
+      QueryNodeObject defaultSort = hasDefaultSort.getSortOrder();
+      if ((defaultSort == null || defaultSort.isEmpty()) && useSearchAfter) {
+        throw new ServiceException(
+            ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
+        );
+      }
+      if (defaultSort != null && !defaultSort.isEmpty()) {
+        List<QueryNodeObject> sortEntries = defaultSort.entrySet().stream().map(
+            e -> {
+              QueryNodeObject sortEntry = new QueryNodeObject();
+              sortEntry.put(e.getKey(), e.getValue());
+              return sortEntry;
+            }
+        ).toList();
+        sortOrder.put("sort", sortEntries);
+        return sortOrder;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public QueryNodeObject build(ValidationData validationData, ElasticIndexConfig indexConfig, QueryParams params) {
     QueryNodeObject query = new QueryNodeObject();
     QueryNodeObject queryContainer = new QueryNodeObject();
 
+    boolean useSearchAfterMode = useSearchAfter(indexConfig, params);
+    QueryNodeObject sort = buildSortOrder(params.tryGetResultFilter().sort(), indexConfig, useSearchAfterMode);
+
+    int size = params.tryGetResultFilter().size();
+    int from = params.tryGetResultFilter().from();
+
+    if (useSearchAfterMode) {
+      if (sort == null) {
+        throw new ServiceException(
+            ErrorCode.parameter_validation_error, "Sort must be defined when using search-after mode!"
+        );
+      }
+      queryContainer.put("size", size);
+    } else {
+      queryContainer.put("from", from);
+      queryContainer.put("size", size);
+    }
+
+    if (sort != null) {
+      queryContainer.putAll(sort);
+    }
+
     if (params.getCondition() != null) {
-      QueryNodeObject conditions = mapCondition(validationData, params.getCondition(), null, null);
+      QueryNodeObject conditions = mapCondition(
+          validationData, params.getCondition(), null, null
+      );
       query.put("bool", conditions);
       queryContainer.put("query", query);
     } else {
       MatchAllObject matchAll = new MatchAllObject();
       query.put("match_all", matchAll);
       queryContainer.put("query", query);
+    }
+
+    ResultFilter.ContentFilter filter = params.tryGetResultContentFilter();
+    if (filter != null) {
+      QueryNodeObject source = new QueryNodeObject();
+      List<String> excludes = filter.getExcludes();
+      if (excludes != null && !excludes.isEmpty()) {
+        source.put("excludes", excludes);
+      }
+      List<String> includes = filter.getIncludes();
+      if (includes != null && !includes.isEmpty()) {
+        source.put("includes", includes);
+      }
+      if (!source.isEmpty()) {
+        queryContainer.put("_source", source);
+      }
     }
 
     if (params.getAggregate() != null) {
@@ -229,4 +321,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return queryContainer;
   }
 
+  public QueryNodeObject build(ValidationData validationData, QueryParams params) {
+    return build(validationData, null, params);
+  }
 }

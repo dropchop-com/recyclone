@@ -203,7 +203,7 @@ public class ElasticsearchQueryBuilderTest {
 
   @Test
   @SuppressWarnings("unused")
-  public void testQueryParamsMapper() throws JsonProcessingException, JSONException {
+  public void testQueryParams() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
       and(
         or(
@@ -258,143 +258,144 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    String correctJson = """
-      
-        {
-             "query": {
-               "bool": {
-                 "must": [
-                   {
-                     "bool": {
-                       "should": [
-                         {
-                           "range": {
-                             "updated": {
-                               "gte": "2024-09-19T10:12:01.123+02",
-                               "lt": "2024-09-20T11:00:01.123+02"
+    String expectedJson = """
+      {
+         "query": {
+           "bool": {
+             "must": [
+               {
+                 "bool": {
+                   "should": [
+                     {
+                       "range": {
+                         "updated": {
+                           "gte": "2024-09-19T10:12:01.123+02",
+                           "lt": "2024-09-20T11:00:01.123+02"
+                         }
+                       }
+                     },
+                     {
+                       "bool": {
+                         "must": [
+                           {
+                             "terms": {
+                               "neki": [
+                                 "one",
+                                 "two",
+                                 "three"
+                               ]
+                             }
+                           },
+                           {
+                             "range": {
+                               "created": {
+                                 "lt": "2024-09-19T10:12:01.123+02"
+                               }
                              }
                            }
-                         },
-                         {
-                           "bool": {
-                             "must": [
-                               {
-                                 "terms": {
-                                   "neki": [
-                                     "one",
-                                     "two",
-                                     "three"
-                                   ]
-                                 }
-                               },
-                               {
-                                 "range": {
-                                   "created": {
-                                     "lt": "2024-09-19T10:12:01.123+02"
-                                   }
-                                 }
-                               }
+                         ]
+                       }
+                     },
+                     {
+                       "range": {
+                         "modified": {
+                           "gte": "2024-09-19T10:12:01.123+02",
+                           "lte": "2024-09-19T10:12:01.123+02"
+                         }
+                       }
+                     },
+                     {
+                       "bool": {
+                         "must_not": {
+                           "terms": {
+                             "uuid": [
+                               "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db",
+                               "c456c510-3939-4e2a-98d1-3d02c5d2c609"
                              ]
                            }
-                         },
-                         {
-                           "range": {
-                             "modified": {
-                               "gte": "2024-09-19T10:12:01.123+02",
-                               "lte": "2024-09-19T10:12:01.123+02"
-                             }
-                           }
-                         },
-                         {
-                           "bool": {
-                             "must_not": {
-                               "terms": {
-                                 "uuid": [
-                                   "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db",
-                                   "c456c510-3939-4e2a-98d1-3d02c5d2c609"
-                                 ]
-                               }
-                             }
-                           }
-                         }
-                       ],
-                       "minimum_should_match": 1
-                     }
-                   },
-                   {
-                     "terms": {
-                       "type": [
-                         1,
-                         2,
-                         3
-                       ]
-                     }
-                   },
-                   {
-                     "range": {
-                       "created": {
-                         "gte": "2024-09-19T10:12:01.123+02",
-                         "lte": "2024-09-19T10:12:01.123+02"
-                       }
-                     }
-                   },
-                   {
-                     "bool": {
-                       "must_not": {
-                         "exists": {
-                           "field": "miki"
                          }
                        }
                      }
-                   },
-                   {
-                     "terms": {
-                       "type2": [
-                         1,
-                         2,
-                         3
-                       ]
-                     }
-                   },
-                   {
-                     "term": {
-                       "type4": "type8"
+                   ],
+                   "minimum_should_match": 1
+                 }
+               },
+               {
+                 "terms": {
+                   "type": [
+                     1,
+                     2,
+                     3
+                   ]
+                 }
+               },
+               {
+                 "range": {
+                   "created": {
+                     "gte": "2024-09-19T10:12:01.123+02",
+                     "lte": "2024-09-19T10:12:01.123+02"
+                   }
+                 }
+               },
+               {
+                 "bool": {
+                   "must_not": {
+                     "exists": {
+                       "field": "miki"
                      }
                    }
-                 ]
+                 }
+               },
+               {
+                 "terms": {
+                   "type2": [
+                     1,
+                     2,
+                     3
+                   ]
+                 }
+               },
+               {
+                 "term": {
+                   "type4": "type8"
+                 }
                }
-             },
-             "aggs": {
-                      "watch_max": {
-                          "max": {
-                              "field": "watch"
-                          }
-                      },
-                      "nested_nested_worker_cardinality": {
-                          "cardinality": {
-                              "field": "worker"
-                          }
-                      },
-                      "nested_nested_worker_dateHistogram": {
-                          "date_histogram": {
-                              "calendar_interval": "month",
-                              "field": "worker"
-                          }
-                      },
-                      "nested_worker_terms": {
-                          "aggs": {
-                              "neste_min": {
-                                  "min": {
-                                      "field": "worker"
-                                  }
-                              }
-                          },
-                          "terms": {
-                              "field": "worker"
-                          }
-                      }
-                  }
+             ]
            }
+         },
+         "aggs": {
+            "watch_max": {
+                "max": {
+                    "field": "watch"
+                }
+            },
+            "nested_nested_worker_cardinality": {
+                "cardinality": {
+                    "field": "worker"
+                }
+            },
+            "nested_nested_worker_dateHistogram": {
+                "date_histogram": {
+                    "calendar_interval": "month",
+                    "field": "worker"
+                }
+            },
+            "nested_worker_terms": {
+                "aggs": {
+                    "neste_min": {
+                        "min": {
+                            "field": "worker"
+                        }
+                    }
+                },
+                "terms": {
+                    "field": "worker"
+                }
+            }
+        },
+        from: 0,
+        size: 100
+      }
       """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
@@ -405,7 +406,7 @@ public class ElasticsearchQueryBuilderTest {
 
     String json = ob.writeValueAsString(correct);
 
-    JSONAssert.assertEquals(correctJson, json, true);
+    JSONAssert.assertEquals(expectedJson, json, true);
   }
 
   @Test
@@ -441,7 +442,7 @@ public class ElasticsearchQueryBuilderTest {
       )
     ).build();
 
-    QueryNodeObject correct = es.build(new ValidationData(), params);
+    QueryNodeObject expected = es.build(new ValidationData(), params);
   }
 
   @Test
@@ -491,7 +492,9 @@ public class ElasticsearchQueryBuilderTest {
                 }
               }
             }
-          }
+          },
+          from: 0,
+          size: 100
         }
         """;
 
@@ -554,7 +557,9 @@ public class ElasticsearchQueryBuilderTest {
                 }
               }
             }
-          }
+          },
+          from: 0,
+          size: 100
         }
         """;
 
@@ -608,7 +613,9 @@ public class ElasticsearchQueryBuilderTest {
                 }
               }
             }
-          }
+          },
+          from: 0,
+          size: 100
         }
         """;
 
@@ -660,7 +667,9 @@ public class ElasticsearchQueryBuilderTest {
                }
              }
            }
-         }
+         },
+         from: 0,
+         size: 100
        }
        """;
 
@@ -712,7 +721,9 @@ public class ElasticsearchQueryBuilderTest {
               }
             }
           }
-        }
+        },
+        from: 0,
+        size: 100
       }
       """;
 
@@ -766,7 +777,9 @@ public class ElasticsearchQueryBuilderTest {
               }
             }
           }
-        }
+        },
+        from: 0,
+        size: 100
       }
       """;
 
@@ -814,7 +827,9 @@ public class ElasticsearchQueryBuilderTest {
               }
             }
           }
-        }
+        },
+        from: 0,
+        size: 100
       }
       """;
 

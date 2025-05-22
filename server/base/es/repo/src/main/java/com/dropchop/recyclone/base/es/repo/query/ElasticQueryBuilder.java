@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.query.Aggregation;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -30,8 +31,10 @@ public interface ElasticQueryBuilder {
     }
   }
 
-  QueryNodeObject buildAggregation(Aggregation aggregation);
 
+  boolean useSearchAfter(ElasticIndexConfig indexConfig, QueryParams params);
+  QueryNodeObject build(ValidationData validationData, ElasticIndexConfig indexConfig, QueryParams params);
   QueryNodeObject build(ValidationData validationData, QueryParams params);
+  QueryNodeObject buildAggregation(Aggregation aggregation);
 
 }
