@@ -29,7 +29,7 @@ public class SearchByUserDetailsDecorator <E> extends BlazeCriteriaDecorator<E> 
         cb.where(alias + DELIM + "lastName").eq(lastName);
       }
       if (email != null && !email.isBlank()) {
-        cb.where(alias + DELIM + "email").eq(email);
+        cb.where(alias + DELIM + "defaultEmail").eq(email);
       }
       if (searchTerm != null && !searchTerm.isBlank()) {
         cb.join("accounts", "a", JoinType.LEFT);
@@ -37,11 +37,11 @@ public class SearchByUserDetailsDecorator <E> extends BlazeCriteriaDecorator<E> 
         cb.whereOr()
           .where("LOWER(" + alias + DELIM + "firstName)").like().value(searchTerm.toLowerCase() + '%').noEscape()
           .where("LOWER(" + alias + DELIM + "lastName)").like().value(searchTerm.toLowerCase() + '%').noEscape()
-          .where("LOWER(" + alias + DELIM + "email)").like().value(searchTerm.toLowerCase() + '%').noEscape()
+          .where("LOWER(" + alias + DELIM + "defaultEmail)").like().value(searchTerm.toLowerCase() + '%').noEscape()
           .where("TREAT(a AS " + JpaLoginAccount.class.getSimpleName() + ")"
-          + DELIM + SearchFields.User.LOGIN_NAME).eq(searchTerm.toLowerCase())
+            + DELIM + SearchFields.User.LOGIN_NAME).eq(searchTerm.toLowerCase())
           .where("TREAT(t AS " + JpaTokenAccount.class.getSimpleName() + ")"
-          + DELIM + SearchFields.User.TOKEN).eq(searchTerm.toLowerCase());
+            + DELIM + SearchFields.User.TOKEN).eq(searchTerm.toLowerCase()).endOr();
       }
     }
   }
