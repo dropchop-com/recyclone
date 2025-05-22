@@ -7,6 +7,7 @@ import com.dropchop.recyclone.base.api.model.attr.AttributeDecimal;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
+import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
@@ -251,6 +252,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     if (this instanceof AlwaysPresentDeleteFields alwaysPresentDeleteFields) {
       validateRequiredFields(validationData, alwaysPresentDeleteFields.anyOf());
     }
+    //query does not allow this in delete
+    queryObject.remove("from");
 
     String query;
     try {
@@ -293,81 +296,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
           Set.of(new AttributeString("delete query", query)), e
       );
     }
-  }
-
-  protected boolean useSearchAfterMode(QueryParams queryParams) {
-    int requestSize = queryParams.tryGetResultFilter().getSize();
-    int requestFrom = queryParams.tryGetResultFilter().getFrom();
-    int maxSize = getElasticIndexConfig().getSizeOfPagination();
-    return requestSize + requestFrom >= maxSize;  // we would overflow allowed elastic maximum
-  }
-
-  protected QueryNodeObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig) {
-    QueryNodeObject sortOrder = new QueryNodeObject();
-    if (!sortList.isEmpty()) {
-      List<QueryNodeObject> sortEntries = sortList.stream()
-          .map(sort -> {
-            QueryNodeObject sortEntry = new QueryNodeObject();
-            sortEntry.put(sort, "desc");
-            return sortEntry;
-          })
-          .toList();
-      sortOrder.put("sort", sortEntries);
-      return sortOrder;
-    } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
-      QueryNodeObject defaultSort = hasDefaultSort.getSortOrder();
-      if (defaultSort == null) {
-        throw new ServiceException(
-            ErrorCode.parameter_validation_error,
-            "No sort order received from index config for search-after mode!"
-        );
-      }
-      List<QueryNodeObject> sortEntries = defaultSort.entrySet().stream().map(
-          e -> {
-            QueryNodeObject sortEntry = new QueryNodeObject();
-            sortEntry.put(e.getKey(), e.getValue());
-            return sortEntry;
-          }
-      ).toList();
-      sortOrder.put("sort", sortEntries);
-      return sortOrder;
-    }
-    return null;
-  }
-
-  protected <S extends E> QueryNodeObject buildQueryObject(QueryParams queryParams, boolean useSearchAfterMode) {
-    ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
-    QueryNodeObject sortOrder = buildSortOrder(
-        queryParams.tryGetResultFilter().sort(), indexConfig
-    );
-
-    int sizeOfPagination = indexConfig.getSizeOfPagination();
-    int size = queryParams.tryGetResultFilter().size();
-    int from = queryParams.tryGetResultFilter().from();
-
-    ElasticQueryBuilder queryBuilder = this.getElasticQueryBuilder();
-    ValidationData validationData = new ValidationData();
-    QueryNodeObject queryObject = queryBuilder.build(validationData, queryParams);
-    if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
-      validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
-    }
-    if (useSearchAfterMode) {
-      if (sortOrder == null) {
-        throw new ServiceException(
-            ErrorCode.parameter_validation_error, "Sort must be defined when using search-after mode!"
-        );
-      }
-      queryObject.put("size", size);
-    } else {
-      queryObject.put("from", from);
-      queryObject.put("size", size);
-    }
-
-    if (sortOrder != null) {
-      queryObject.putAll(sortOrder);
-    }
-
-    return queryObject;
   }
 
   protected <X> SearchResultMetadata executeSearch(QueryNodeObject queryObject,
@@ -461,15 +389,23 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     QueryParams queryParams = context.getParams();
+    ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
+    ElasticQueryBuilder queryBuilder = this.getElasticQueryBuilder();
+
     int requestSize = queryParams.tryGetResultFilter().getSize();
     int requestFrom = queryParams.tryGetResultFilter().getFrom();
-    boolean searchAfterMode = this.useSearchAfterMode(queryParams);
+    boolean searchAfterMode = queryBuilder.useSearchAfter(indexConfig, queryParams);
 
-    if (requestSize >= getElasticIndexConfig().getSizeOfPagination() && searchAfterMode) {
-      queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
+    if (requestSize >= indexConfig.getSizeOfPagination() && searchAfterMode) {
+      queryParams.tryGetResultFilter().setSize(indexConfig.getSizeOfPagination());
     }
 
-    QueryNodeObject query = buildQueryObject(queryParams, searchAfterMode);
+    ValidationData validationData = new ValidationData();
+    QueryNodeObject query = queryBuilder.build(validationData, indexConfig, queryParams);
+    if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
+      validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
+    }
+
     elasticContext.init(getElasticIndexConfig(), query);
     context.getListeners()
         .stream()
@@ -512,33 +448,27 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   @Override
   public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
     Collection<String> strIds = ids.stream().map(Object::toString).toList();
-    Class<E> cls = getRepositoryExecContext().getRootClass();
-    QueryParams params = new QueryParams();
+    ElasticExecContext<S> context = getRepositoryExecContext();
+    Class<S> cls = context.getRootClass();
+    QueryParams queryParams = new QueryParams();
     QueryNodeObject queryObject;
     if (!ids.isEmpty()) {
       if (HasCode.class.isAssignableFrom(cls)) {
-        params.condition(and(field("code", in(strIds))));
+        queryParams.condition(and(field("code", in(strIds))));
       } else if (HasUuid.class.isAssignableFrom(cls)) {
-        params.condition(and(field("uuid", in(strIds))));
+        queryParams.condition(and(field("uuid", in(strIds))));
+      } else if (HasId.class.isAssignableFrom(cls)) {
+        queryParams.condition(and(field("id", in(strIds))));
+      } else {
+        throw new ServiceException(
+            ErrorCode.parameter_validation_error,
+            "Unable to find entities by id. Entity class " + cls.getSimpleName() + " does not implement any of ["
+                + Set.of(HasId.class, HasUuid.class, HasCode.class) + "]!"
+        );
       }
     }
-    boolean searchAfterMode = false;
-    queryObject = buildQueryObject(params, searchAfterMode);
-    List<S> results = new ArrayList<>();
-    List<QueryResultListener<E>> resultListeners = List.of(result -> {
-      //noinspection unchecked
-      results.add((S) result);
-      return QueryResultListener.Progress.CONTINUE;
-    });
-
-    SearchResultMetadata metadata = this.executeSearch(
-        queryObject,
-        cls,
-        resultListeners,
-        new ArrayList<>(),
-        searchAfterMode
-    );
-    return results;
+    context.setParams(queryParams);
+    return this.search(context);
   }
 
   @Override
