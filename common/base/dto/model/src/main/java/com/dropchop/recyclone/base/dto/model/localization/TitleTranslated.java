@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.dto.model.localization;
 
 import com.dropchop.recyclone.base.api.model.marker.HasId;
+import com.dropchop.recyclone.base.dto.model.base.Generic;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -13,15 +14,18 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
-public class TitleTranslated implements HasId, com.dropchop.recyclone.base.api.model.localization.TitleTranslated {
+@EqualsAndHashCode(callSuper = true)
+public class TitleTranslated extends Generic
+    implements HasId, com.dropchop.recyclone.base.api.model.localization.TitleTranslated {
 
-  @NonNull
-  private String id;
+  /*public TitleTranslated(@NonNull String id, @NonNull String type, @NonNull String lang, @NonNull String title) {
+    super(id, type);
+    this.lang = lang;
+    this.title = title;
+  }*/
 
   @NonNull
   private String lang;
-
-  private String group;
 
   @NonNull
   @EqualsAndHashCode.Exclude

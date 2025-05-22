@@ -2,7 +2,6 @@ package com.dropchop.recyclone.base.dto.model.localization;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -19,10 +18,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class TitleDescriptionTranslated
   extends TitleTranslated
   implements com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslated {
-
-  public TitleDescriptionTranslated(@NonNull String id, @NonNull String lang, @NonNull String title) {
-    super(id, lang, title);
-  }
 
   private String description;
 }
