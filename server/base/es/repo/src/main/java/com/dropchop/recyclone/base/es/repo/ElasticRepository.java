@@ -298,7 +298,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
   }
 
-  protected <X> SearchResultMetadata executeSearch(QueryNodeObject queryObject,
+  protected <X> SearchResultMetadata executeSearch(QueryParams params,
+                                                   QueryNodeObject queryObject,
                                                    Class<X> resultClass,
                                                    List<QueryResultListener<X>> queryListeners,
                                                    List<AggregationResultListener> aggListeners,
@@ -324,6 +325,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         SearchResultMetadata searchResultMetadata;
         searchResultMetadata = parser.parse(
             response.getEntity().getContent(),
+            params,
             resultClass,
             queryListeners,
             aggListeners
@@ -416,7 +418,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     long totalCount = 0;
     SearchResultMetadata metadata;
     while (true) {
-      metadata = this.executeSearch(query, cls, queryListeners, aggListeners, searchAfterMode);
+      metadata = this.executeSearch(queryParams, query, cls, queryListeners, aggListeners, searchAfterMode);
       long count = metadata.getHits();
       totalCount += count;
       if (searchAfterMode) {  // search after mode is active, so we must exit loop or continue until we get all hits

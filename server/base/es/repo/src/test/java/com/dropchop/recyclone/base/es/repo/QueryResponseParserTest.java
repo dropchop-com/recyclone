@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo;
 
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
@@ -42,6 +43,7 @@ class QueryResponseParserTest {
       @SuppressWarnings("unchecked")
       SearchResultMetadata metadata = parser.parse(
           is,
+          new QueryParams(),
           (Class<Map<String,?>>) result.getClass(),
           List.of(listener),
           List.of(aggListener)
