@@ -123,7 +123,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       response = getElasticsearchClient().performRequest(request);
     } catch (ServiceException | IOException e) {
       throw new ServiceException(
-          ErrorCode.unknown_error, "Failed to save entity to Elasticsearch",
+          ErrorCode.process_error,
+          "Failed to save entity to Elasticsearch",
           Set.of(new AttributeString("error", e.getMessage())), e
       );
     }
@@ -157,8 +158,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   private void throwDeleteException() {
     throw new ServiceException(
-      ErrorCode.internal_error,
-      "Delete operations are blocked by our implementation for repository: " + this.getClass().getSimpleName()
+        ErrorCode.parameter_validation_error,
+        "Delete operations are blocked by our implementation for repository: " + this.getClass().getSimpleName()
     );
   }
 
@@ -225,15 +226,15 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
 
   protected void validateRequiredFields(ValidationData validationData, Collection<String> requiredFields) {
     boolean hasRequiredField = validationData.getRootFields().stream()
-      .anyMatch(requiredFields::contains);
+        .anyMatch(requiredFields::contains);
 
     if (!hasRequiredField) {
       throw new ServiceException(
-        ErrorCode.internal_error,
-        String.format(
-            "Query validation failed! Operation requires at least one of [%s] fields at the root level!",
-            requiredFields
-        )
+          ErrorCode.internal_error,
+          String.format(
+              "Query validation failed! Operation requires at least one of [%s] fields at the root level!",
+              requiredFields
+          )
       );
     }
   }
@@ -256,7 +257,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
       query = getObjectMapper().writeValueAsString(queryObject);
     } catch (JsonProcessingException e) {
       throw new ServiceException(
-        ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e
+          ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e
       );
     }
 
@@ -270,19 +271,19 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         return jsonResponse.get("deleted").asInt();
       } else if (response.getStatusLine().getStatusCode() == 404) {
         throw new ServiceException(
-          ErrorCode.data_missing_error, "Missing data for query",
-          Set.of(
-            new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
-            new AttributeString("delete query", query)
-          )
+            ErrorCode.data_missing_error, "Missing data for query",
+            Set.of(
+                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+                new AttributeString("delete query", query)
+            )
         );
       } else {
         throw new ServiceException(
-          ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
-          Set.of(
-            new AttributeDecimal("status", response.getStatusLine().getStatusCode()),
-            new AttributeString("query", query)
-          )
+            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+            Set.of(
+                new AttributeDecimal("status", response.getStatusLine().getStatusCode()),
+                new AttributeString("query", query)
+            )
         );
       }
     } catch (IOException e) {
@@ -305,23 +306,24 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     QueryNodeObject sortOrder = new QueryNodeObject();
     if (!sortList.isEmpty()) {
       List<QueryNodeObject> sortEntries = sortList.stream()
-        .map(sort -> {
-          QueryNodeObject sortEntry = new QueryNodeObject();
-          sortEntry.put(sort, "desc");
-          return sortEntry;
-        })
-        .toList();
+          .map(sort -> {
+            QueryNodeObject sortEntry = new QueryNodeObject();
+            sortEntry.put(sort, "desc");
+            return sortEntry;
+          })
+          .toList();
       sortOrder.put("sort", sortEntries);
       return sortOrder;
     } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
       QueryNodeObject defaultSort = hasDefaultSort.getSortOrder();
       if (defaultSort == null) {
         throw new ServiceException(
-            ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
+            ErrorCode.parameter_validation_error,
+            "No sort order received from index config for search-after mode!"
         );
       }
       List<QueryNodeObject> sortEntries = defaultSort.entrySet().stream().map(
-          e ->  {
+          e -> {
             QueryNodeObject sortEntry = new QueryNodeObject();
             sortEntry.put(e.getKey(), e.getValue());
             return sortEntry;
@@ -343,27 +345,29 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     int size = queryParams.tryGetResultFilter().size();
     int from = queryParams.tryGetResultFilter().from();
 
-    ElasticQueryBuilder esQueryMapper = this.getElasticQueryBuilder();
+    ElasticQueryBuilder queryBuilder = this.getElasticQueryBuilder();
     ValidationData validationData = new ValidationData();
-    QueryNodeObject initialQueryObject = esQueryMapper.build(validationData, queryParams);
+    QueryNodeObject queryObject = queryBuilder.build(validationData, queryParams);
     if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
       validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
     }
     if (useSearchAfterMode) {
       if (sortOrder == null) {
-        throw new ServiceException(ErrorCode.internal_error, "Sort must be defined when using search after mode!");
+        throw new ServiceException(
+            ErrorCode.parameter_validation_error, "Sort must be defined when using search-after mode!"
+        );
       }
-      initialQueryObject.put("size", size);
+      queryObject.put("size", size);
     } else {
-      initialQueryObject.put("from", from);
-      initialQueryObject.put("size", size);
+      queryObject.put("from", from);
+      queryObject.put("size", size);
     }
 
     if (sortOrder != null) {
-      initialQueryObject.putAll(sortOrder);
+      queryObject.putAll(sortOrder);
     }
 
-    return initialQueryObject;
+    return queryObject;
   }
 
   protected <X> SearchResultMetadata executeSearch(QueryNodeObject queryObject,
@@ -379,7 +383,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     } catch (IOException e) {
       throw new ServiceException(ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e);
     }
-    //Class<E> cls = getRootClass();
+
     Request request = null;
     try {
       request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
@@ -415,7 +419,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
         );
       }
     } catch (IOException e) {
-      log.error("Error executing search on endpoint {} with query {}", request.getEndpoint(),  query,  e);
+      log.error("Error executing search on endpoint {} with query {}", request.getEndpoint(), query, e);
       throw new ServiceException(
           ErrorCode.internal_error, "Unable to execute query",
           Set.of(new AttributeString("query", query)), e
@@ -426,8 +430,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   public <S extends E> List<S> search(RepositoryExecContext<S> context) {
     if (!(context instanceof ElasticExecContext<S> elasticContext)) {
       throw new ServiceException(
-        ErrorCode.parameter_validation_error,
-        "Invalid context: Expected ElasticExecContext but received " + context.getClass()
+          ErrorCode.parameter_validation_error,
+          "Invalid context: Expected ElasticExecContext but received " + context.getClass()
       );
     }
 
@@ -466,7 +470,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     }
 
     QueryNodeObject query = buildQueryObject(queryParams, searchAfterMode);
-    elasticContext.init(getElasticIndexConfig(), query); // TODO add index config and query node object
+    elasticContext.init(getElasticIndexConfig(), query);
     context.getListeners()
         .stream()
         .filter(listener -> listener instanceof CriteriaDecorator)
@@ -476,30 +480,22 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     long totalCount = 0;
     SearchResultMetadata metadata;
     while (true) {
-      try {
-        metadata = this.executeSearch(query, cls, queryListeners, aggListeners, searchAfterMode);
-        long count = metadata.getHits();
-        totalCount += count;
-        if (searchAfterMode) {  // search after mode is active, so we must exit loop or continue until we get all hits
-          if (metadata.getLastSortValues().isEmpty()) {  // the last hit was not set we must exit
-            break;
-          }
-          if (totalCount >= requestSize) {
-            break;
-          }
-          List<?> searchAfterValues = metadata.getLastSortValues();
-          query.put("search_after", searchAfterValues);
-        } else { // classical i.e. normal search mode
-          if (count <= requestSize || requestSize == 0) {  // no more hits will be returned
-            break;
-          }
+      metadata = this.executeSearch(query, cls, queryListeners, aggListeners, searchAfterMode);
+      long count = metadata.getHits();
+      totalCount += count;
+      if (searchAfterMode) {  // search after mode is active, so we must exit loop or continue until we get all hits
+        if (metadata.getLastSortValues().isEmpty()) {  // the last hit was not set we must exit
+          break;
         }
-      } catch (Exception e) {
-        String msg = e.getMessage() != null ? e.getMessage() : "";
-        throw new ServiceException(
-          ErrorCode.internal_error, "Unexpected error occurred during search execution.",
-          Set.of(new AttributeString("errorMessage", msg)), e
-        );
+        if (totalCount >= requestSize) {
+          break;
+        }
+        List<?> searchAfterValues = metadata.getLastSortValues();
+        query.put("search_after", searchAfterValues);
+      } else { // classical i.e. normal search mode
+        if (count <= requestSize || requestSize == 0) {  // no more hits will be returned
+          break;
+        }
       }
     }
 
@@ -531,7 +527,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
     List<S> results = new ArrayList<>();
     List<QueryResultListener<E>> resultListeners = List.of(result -> {
       //noinspection unchecked
-      results.add((S)result);
+      results.add((S) result);
       return QueryResultListener.Progress.CONTINUE;
     });
 
