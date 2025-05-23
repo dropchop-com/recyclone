@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.base.es.repo;
 
+import com.dropchop.recyclone.base.api.model.invoke.Constants;
+import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.StreamReadConstraints;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -74,7 +77,10 @@ public class QueryResponseParser {
     return !stop;
   }
 
-  private <T> void parseHitsArray(SearchResultMetadata metaData, JsonParser parser, Class<T> sourceType,
+  private <T> void parseHitsArray(SearchResultMetadata metaData,
+                                  Params params,
+                                  JsonParser parser,
+                                  Class<T> sourceType,
                                   List<QueryResultListener<T>> objectListeners,
                                   List<QueryResultListener<Map<String, ?>>> mapListeners) throws IOException {
     parser.nextToken(); // START_ARRAY
@@ -96,11 +102,15 @@ public class QueryResponseParser {
             if (continueParsing) {
               boolean stop = true;
               if (!mapListeners.isEmpty()) {
-                Map<String, ?> source = mapper.readValue(parser, new MapTypeRef());
+                ObjectReader reader = mapper.readerFor(new MapTypeRef())
+                    .withAttribute(Constants.InternalContextVariables.RECYCLONE_PARAMS, params);
+                Map<String, ?> source = reader.readValue(parser);
                 continueParsing = invokeListeners(mapListeners, source);
               }
               if (!objectListeners.isEmpty()) {
-                T source = mapper.readValue(parser, sourceType);
+                ObjectReader reader = mapper.readerFor(sourceType)
+                    .withAttribute(Constants.InternalContextVariables.RECYCLONE_PARAMS, params);
+                T source = reader.readValue(parser);
                 continueParsing = invokeListeners(objectListeners, source);
               }
               hitCount++;
@@ -175,7 +185,9 @@ public class QueryResponseParser {
     }
   }
 
-  public <T> SearchResultMetadata parse(InputStream responseStream, Class<T> sourceType,
+  public <T> SearchResultMetadata parse(InputStream responseStream,
+                                        Params params,
+                                        Class<T> sourceType,
                                         List<QueryResultListener<T>> hitListeners,
                                         List<AggregationResultListener> aggListeners)
       throws IOException {
@@ -224,7 +236,7 @@ public class QueryResponseParser {
                   }
                 }
               } else if ("hits".equals(parser.currentName())) {
-                parseHitsArray(metadata, parser, sourceType, objectListeners, mapListeners);
+                parseHitsArray(metadata, params, parser, sourceType, objectListeners, mapListeners);
               } else {
                 parser.skipChildren();
               }

@@ -28,7 +28,8 @@ public class EsLanguage extends EsCode
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasEsLanguage,
   HasTags<EsTag, EsTitleDescriptionTranslation> {
 
-  static void componentsFromLocale(EsLanguage language, Locale locale) {
+  @SuppressWarnings("ConstantValue")
+  public static void componentsFromLocale(EsLanguage language, Locale locale) {
     language.langCode = locale.getLanguage();
     String tmp = locale.getScript();
     if (tmp != null && !tmp.isEmpty()) {
