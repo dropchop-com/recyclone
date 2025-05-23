@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
+
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
@@ -32,5 +34,11 @@ public class RoleNodePermission extends DtoId implements com.dropchop.recyclone.
 
   private Boolean allowed;
 
+  private ZonedDateTime created;
+
+  private ZonedDateTime modified;
+
   public void setType(String type) {}
+
+
 }

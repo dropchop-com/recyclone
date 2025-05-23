@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -34,5 +35,8 @@ public class RoleNode extends DtoId implements com.dropchop.recyclone.base.api.m
 
     //Defines how many levels up on hierarchy
     private Integer maxParentInstanceLevel;
+
+    private ZonedDateTime created;
+    private ZonedDateTime modified;
 
 }

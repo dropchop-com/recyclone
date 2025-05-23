@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
+
 
 @Getter
 @Setter
@@ -37,4 +39,9 @@ public class JpaRoleNodePermission extends JpaUuid implements RoleNodePermission
   @Column(name = "allowed", nullable = false)
   private Boolean allowed;
 
+  @Column(name = "created")
+  private ZonedDateTime created;
+
+  @Column(name = "modified")
+  private ZonedDateTime modified;
 }

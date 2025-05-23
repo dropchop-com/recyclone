@@ -2,6 +2,8 @@ package com.dropchop.recyclone.base.api.model.security;
 
 import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslation;
+import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ public interface RoleNode<
         RN extends RoleNode<A, D, P, RN, RNP, TDT>,
         RNP extends RoleNodePermission<A, D, P , RN, RNP, TDT>,
         TDT extends TitleDescriptionTranslation
-        > extends Model {
+        > extends Model, HasCreated, HasModified {
 
     /**
      * Role node target defines target group for role nodes.

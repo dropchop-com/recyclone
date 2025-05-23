@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -46,4 +47,10 @@ public class JpaRoleNode extends JpaUuid implements RoleNode<
 
     @Column(name = "max_parent_instance_level")
     private Integer maxParentInstanceLevel;
+
+    @Column(name = "created")
+    private ZonedDateTime created;
+
+    @Column(name = "modified")
+    private ZonedDateTime modified;
 }
