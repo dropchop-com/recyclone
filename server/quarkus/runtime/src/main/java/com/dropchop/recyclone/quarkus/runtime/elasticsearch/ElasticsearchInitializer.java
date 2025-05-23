@@ -130,7 +130,7 @@ public class ElasticsearchInitializer {
             .forEach(filePath -> {
               String resource = filePath.getFileName().toString();
               if (resource.startsWith("%") && !resource.startsWith("%" + profileKey + ".")) {
-                log.debug("Skipping profile [{}] template [{}]", profileKey, resource);
+                log.debug("Skipping non [{}] profile template [{}]", profileKey, resource);
                 return;
               }
               try (BufferedReader br = Files.newBufferedReader(filePath, UTF_8)) {
