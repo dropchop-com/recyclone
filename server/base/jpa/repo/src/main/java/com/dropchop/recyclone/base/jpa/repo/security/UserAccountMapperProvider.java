@@ -10,6 +10,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityLoadDelegateFactory;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
+import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
 import com.dropchop.recyclone.base.dto.model.security.UserAccount;
@@ -19,6 +20,7 @@ import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.*;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
+import com.dropchop.recyclone.base.jpa.repo.mapping.SetAccountPassword;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -51,8 +53,8 @@ public class UserAccountMapperProvider extends RecycloneMapperProvider<UserAccou
   private <X extends Entity> Collection<Class<X>> getSupported() {
     //noinspection unchecked
     return Set.of(
-      (Class<X>) JpaTokenAccount.class,
-      (Class<X>) JpaLoginAccount.class
+        (Class<X>) JpaTokenAccount.class,
+        (Class<X>) JpaLoginAccount.class
     );
   }
 
@@ -61,16 +63,18 @@ public class UserAccountMapperProvider extends RecycloneMapperProvider<UserAccou
   public MappingContext getMappingContextForModify() {
     MappingContext context = super.getMappingContextForModify();
     context
-      .createWith(
-        new EntityPolymorphicCreateFactory<>(getMapperSubTypeConfig(), getSupported())
-      );
+        .createWith(
+            new EntityPolymorphicCreateFactory<>(getMapperSubTypeConfig(), getSupported())
+        ).afterMapping(
+            new SetAccountPassword(getRepository())
+        );
 
     MappingListener loadDelegateFactory =
-      context.getListeners().stream().filter((ExecContext.Listener l) -> l instanceof EntityLoadDelegateFactory)
-        .findFirst().orElse(null);
+        context.getListeners().stream().filter((ExecContext.Listener l) -> l instanceof EntityLoadDelegateFactory)
+            .findFirst().orElse(null);
 
-    if (loadDelegateFactory != null ) {
-      ((EntityLoadDelegateFactory)loadDelegateFactory).getSupported().addAll(getSupported());
+    if (loadDelegateFactory != null) {
+      ((EntityLoadDelegateFactory) loadDelegateFactory).getSupported().addAll(getSupported());
     }
 
     return context;

@@ -14,10 +14,11 @@ import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -46,6 +47,21 @@ public class UserResourceTest {
         objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper
         ));
   }
+
+  private String getPasswordHash(String password) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      byte[] digest = md.digest(password.getBytes());
+      StringBuilder sb = new StringBuilder();
+      for (byte b : digest) {
+        sb.append(String.format("%02x", b));
+      }
+      return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+      return null;
+    }
+  }
+
 
   @Test
   @Order(10)
@@ -211,7 +227,7 @@ public class UserResourceTest {
     respUser.getAccounts().forEach(account -> {
       if (account instanceof LoginAccount loginAccount1) {
         assertEquals(loginAccount.getLoginName(), loginAccount1.getLoginName());
-        assertEquals(loginAccount.getPassword(), loginAccount1.getPassword());
+        assertEquals(this.getPasswordHash(loginAccount.getPassword()), loginAccount1.getPassword());
       }
       if (account instanceof TokenAccount tokenAccount1) {
         assertEquals(tokenAccount.getToken(), tokenAccount1.getToken());
@@ -276,7 +292,7 @@ public class UserResourceTest {
     respUser.getAccounts().forEach(account -> {
       if (account instanceof LoginAccount loginAccount1) {
         assertEquals(loginAccount.getLoginName(), loginAccount1.getLoginName());
-        assertEquals(loginAccount.getPassword(), loginAccount1.getPassword());
+        assertEquals(this.getPasswordHash(loginAccount.getPassword()), loginAccount1.getPassword());
       }
       if (account instanceof TokenAccount tokenAccount1) {
         assertEquals(tokenAccount.getToken(), tokenAccount1.getToken());
