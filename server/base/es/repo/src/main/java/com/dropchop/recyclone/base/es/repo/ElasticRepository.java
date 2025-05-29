@@ -22,6 +22,7 @@ import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import com.dropchop.recyclone.base.es.repo.marker.BlockAllDelete;
+import com.dropchop.recyclone.base.es.repo.marker.ConditionStringProvider;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder.ValidationData;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +47,8 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class ElasticRepository<E extends EsEntity, ID> implements ElasticCrudRepository<E, ID> {
+public abstract class ElasticRepository<E extends EsEntity, ID> implements
+  ElasticCrudRepository<E, ID>, ConditionStringProvider {
 
   private static final String HTTP_POST = "POST";
   private static final String ENDPOINT_SEARCH = "/_search";
@@ -79,6 +81,29 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements Elast
   protected <S extends E> Collection<ElasticCriteriaDecorator<S>> getCommonCriteriaDecorators() {
     // TODO: implement page criteria decorators
     return new ArrayList<>();
+  }
+
+  @Override
+  public String provideConditionString(QueryParams queryParams) {
+
+    int tempSize = queryParams.tryGetResultFilter().getSize();
+    queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
+    ElasticQueryBuilder.ValidationData validationData = new ElasticQueryBuilder.ValidationData();
+
+    String result;
+    try {
+      result = getObjectMapper().writeValueAsString(
+        getElasticQueryBuilder().build(validationData, queryParams));
+    } catch (JsonProcessingException e) {
+      throw new ServiceException(
+        ErrorCode.data_validation_error,
+        "Error in processing conditions: " + this.getClass().getName(),
+        e
+      );
+    }
+
+    queryParams.tryGetResultFilter().setSize(tempSize);
+    return result;
   }
 
   @Override
