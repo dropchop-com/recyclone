@@ -21,7 +21,6 @@ import org.mapstruct.*;
     uses = {EntityFactoryInvoker.class}
 )
 public interface RoleNodePermissionToJpaMapper extends ToEntityMapper<RoleNodePermission, JpaRoleNodePermission> {
-  @SubclassMapping( source = RoleNodePermission.class, target =  JpaRoleNodePermission.class)
   @SubclassMapping( source = RoleNodePermissionTemplate.class, target = JpaRoleNodePermissionTemplate.class)
   JpaRoleNodePermission toEntity(RoleNodePermission dto, @Context MappingContext context);
 }

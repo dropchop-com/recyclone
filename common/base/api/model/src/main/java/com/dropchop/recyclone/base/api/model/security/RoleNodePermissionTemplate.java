@@ -8,14 +8,12 @@ public interface RoleNodePermissionTemplate<
         D extends Domain<TDT, A>,
         P extends Permission<TDT, A, D>,
         RN extends RoleNode<RN>,
-        RNP extends RoleNodePermission<A, D, P, RN, RNP, TDT>,
         TDT extends TitleDescriptionTranslation
-        > extends RoleNodePermission<A, D, P, RN, RNP, TDT> {
+        > extends RoleNodePermission<A, D, P, RN, TDT> {
 
     String getTarget();
     void setTarget(String template);
 
     String getTargetId();
     void setTargetId(String targetId);
-
 }

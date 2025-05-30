@@ -14,12 +14,11 @@ import lombok.Setter;
 @Entity
 @DiscriminatorValue("Template")
 public class JpaRoleNodePermissionTemplate extends JpaRoleNodePermission implements RoleNodePermissionTemplate<
-        JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
+        JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaTitleDescriptionTranslation> {
 
     @Column(name="target")
     private String target;
 
     @Column(name="target_id")
     private String targetId;
-
 }

@@ -22,8 +22,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   property = "type"
 )
 @SuppressWarnings("unused")
-public class RoleNodePermission extends DtoId implements com.dropchop.recyclone.base.api.model.security.RoleNodePermission<
-        Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
+public class RoleNodePermission extends DtoId implements
+        com.dropchop.recyclone.base.api.model.security.RoleNodePermission<
+                Action, Domain, Permission, RoleNode, TitleDescriptionTranslation> {
 
   @Getter
   private final String type = this.getClass().getSimpleName();

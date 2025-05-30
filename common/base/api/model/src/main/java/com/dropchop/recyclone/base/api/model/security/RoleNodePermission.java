@@ -11,7 +11,6 @@ public interface RoleNodePermission<
         D extends Domain<TDT, A>,
         P extends Permission<TDT, A, D>,
         RN extends RoleNode<RN>,
-        RNP extends RoleNodePermission<A, D, P, RN, RNP, TDT>,
         TDT extends TitleDescriptionTranslation
         > extends Model, HasCreated, HasModified {
 
@@ -23,5 +22,4 @@ public interface RoleNodePermission<
 
     Boolean getAllowed();
     void setAllowed(Boolean allowed);
-
 }
