@@ -20,8 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "security_role_node")
-public class JpaRoleNode extends JpaUuid implements RoleNode<
-        JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
+public class JpaRoleNode extends JpaUuid implements RoleNode<JpaRoleNode> {
 
     @Column(name = "target", nullable = false)
     private String target;
@@ -36,14 +35,14 @@ public class JpaRoleNode extends JpaUuid implements RoleNode<
     )
     private JpaRoleNode parent;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "roleNode")
-    private List<JpaRoleNodePermission> roleNodePermissions;
-
     @Column(name = "entity")
     private String entity;
 
     @Column(name = "entity_id")
     private String entityId;
+
+    @Column(name = "entity_name")
+    private String entityName;
 
     @Column(name = "max_parent_instance_level")
     private Integer maxParentInstanceLevel;

@@ -16,8 +16,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
-public class RoleNode extends DtoId implements com.dropchop.recyclone.base.api.model.security.RoleNode<
-        Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
+public class RoleNode extends DtoId implements com.dropchop.recyclone.base.api.model.security.RoleNode<RoleNode> {
 
     //target group info
     private String target;
@@ -26,17 +25,19 @@ public class RoleNode extends DtoId implements com.dropchop.recyclone.base.api.m
     //parent node
     private RoleNode parent;
 
-    //permissions set for role node
-    private List<RoleNodePermission> roleNodePermissions;
-
     //db entity instance info
     private String entity;
     private String entityId;
+    private String entityName;
 
     //Defines how many levels up on hierarchy
     private Integer maxParentInstanceLevel;
 
     private ZonedDateTime created;
     private ZonedDateTime modified;
+
+
+    //permissions set for role node
+    private List<RoleNodePermission> roleNodePermissions;
 
 }

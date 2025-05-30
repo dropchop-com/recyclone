@@ -3,18 +3,27 @@ package com.dropchop.recyclone.base.jpa.service.security;
 import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
+import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.es.repo.ElasticExecContext;
+import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
+import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermission;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
+import com.dropchop.recyclone.base.jpa.repo.BlazeExecContext;
 import com.dropchop.recyclone.base.jpa.repo.security.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -46,6 +55,31 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   @Inject
   RoleNodeMapperProvider roleNodeMapperProvider;
 
+  @Inject
+  RoleNodePermissionRepository roleNodePermissionRepository;
+
+  @Inject
+  RoleNodePermissionMapperProvider roleNodePermissionMapperProvider;
+
+  /**
+   * Loads role node permissions
+   * @param roleNode
+   */
+  private void loadRoleNodePermissions(RoleNode roleNode) {
+    MappingContext permMapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
+    BlazeExecContext<JpaRoleNodePermission> permissionContext =
+        this.roleNodePermissionRepository.getRepositoryExecContext(permMapContext);
+    RoleNodePermissionToDtoMapper permToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
+
+    RoleNodePermissionParams params = new RoleNodePermissionParams();
+    params.setRoleNodeId(roleNode.getId());
+    permissionContext.setParams(params);
+    List<JpaRoleNodePermission> permissions = this.roleNodePermissionRepository.find(permissionContext);
+    List<RoleNodePermission> permissionDtos = permToDtoMapper.toDtos(permissions, permMapContext);
+    roleNode.setRoleNodePermissions(permissionDtos);
+  }
+
+
   /**
    * Loads role node for provided parameters.
    * NOTE: Parameters must define only 1 role node. Combination target/entity should be unique per role node.
@@ -66,7 +100,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
       throw new ServiceException(getStatusMessage("Only one role node must be found by params", params));
     }
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
-    return roleNodeToDtoMapper.toDto(jpaRoleNodes.getFirst(), mapContext);
+    RoleNode roleNode = roleNodeToDtoMapper.toDto(jpaRoleNodes.getFirst(), mapContext);
+    loadRoleNodePermissions(roleNode);
+    return roleNode;
   }
 
   /**
@@ -80,7 +116,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
     JpaRoleNode loadedParentRoleNode = this.roleNodeRepository.findById(uuid);
-    return roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
+    RoleNode roleNode = roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
+    loadRoleNodePermissions(roleNode);
+    return roleNode;
   }
 
   /**

@@ -7,7 +7,7 @@ public interface RoleNodePermissionTemplate<
         A extends Action<TDT>,
         D extends Domain<TDT, A>,
         P extends Permission<TDT, A, D>,
-        RN extends RoleNode<A, D, P, RN, RNP, TDT>,
+        RN extends RoleNode<RN>,
         RNP extends RoleNodePermission<A, D, P, RN, RNP, TDT>,
         TDT extends TitleDescriptionTranslation
         > extends RoleNodePermission<A, D, P, RN, RNP, TDT> {
