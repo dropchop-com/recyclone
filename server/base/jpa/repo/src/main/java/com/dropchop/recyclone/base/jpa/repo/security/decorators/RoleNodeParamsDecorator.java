@@ -27,6 +27,7 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
         String targetId = roleNodeParams.getTargetId();
         String entity = roleNodeParams.getEntity();
         String entityId = roleNodeParams.getEntityId();
+        Boolean rootOnly = roleNodeParams.getRootOnly();
 
         if (entity != null && !entity.isBlank() && entityId != null && !entityId.isBlank()) {
           cb.where(alias + DELIM + "entity").eq(entity);
@@ -51,6 +52,9 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
             cb.where(alias + DELIM + "targetId").eq(targetId);
           } else {
             cb.where(alias + DELIM + "targetId").isNull();
+          }
+          if (rootOnly != null && rootOnly) {
+            cb.where(alias + DELIM + "parent").isNull();
           }
         }
       }
