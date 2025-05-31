@@ -214,6 +214,16 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     return permissions;
   }
 
+
+  @Transactional
+  @Override
+  public RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId) {
+
+    RoleNode roleNode = this.loadRoleNodeById(UUID.fromString(roleNodeId));
+    RoleNodePermission roleNodePermission = this.loadRoleNodePermissionById(UUID.fromString(roleNodePermissionId));
+    return new RoleNodePermission();
+  }
+
   /**
    * Loads role node for provided parameters.
    * NOTE: Parameters must define only 1 role node. Combination target/entity should be unique per role node.
@@ -231,5 +241,13 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
    * @return found role node or service exception if not found.
    */
   abstract protected RoleNode loadRoleNodeById(UUID uuid);
+
+  /**
+   * Loads role node for provided uuid.
+   *
+   * @param uuid         - role node uuid
+   * @return found role node or service exception if not found.
+   */
+  abstract protected RoleNodePermission loadRoleNodePermissionById(UUID uuid);
 
 }

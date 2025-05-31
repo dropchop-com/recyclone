@@ -42,4 +42,16 @@ public class SecurityPermissionResource implements
     result.setStatus(status);
     return result;
   }
+
+
+  @Override
+  public Result<RoleNodePermission> update(String roleNodeId, String roleNodePermissionId) {
+    RoleNodePermission roleNodePermission = this.securityLoadingService.updatePermission(roleNodeId, roleNodePermissionId);
+    ResultStatus status = new ResultStatus();
+    status.setCode(ResultCode.success);
+    Result<RoleNodePermission> result = new Result<>();
+    result.setData(List.of(roleNodePermission));
+    result.setStatus(status);
+    return result;
+  }
 }

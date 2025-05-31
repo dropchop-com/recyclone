@@ -121,6 +121,16 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return roleNode;
   }
 
+
+  @Override
+  protected RoleNodePermission loadRoleNodePermissionById(UUID uuid) {
+    MappingContext mapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
+    RoleNodePermissionToDtoMapper roleNodeToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
+    JpaRoleNodePermission loadedParentRoleNode = this.roleNodePermissionRepository.findById(uuid);
+    return roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
+  }
+
+
   /**
    * Maps loaded jsa user to dto with user accounts.
    * @param user - jsa user instance.

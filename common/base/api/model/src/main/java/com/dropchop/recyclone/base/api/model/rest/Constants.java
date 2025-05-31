@@ -55,6 +55,7 @@ public interface Constants {
       String PERMISSIONS_SEGMENT = "/permissions";
       String PERMISSIONS = SECURITY_SEGMENT + PERMISSIONS_SEGMENT;
       String PERMISSIONS_LIST_SEGMENT = "/list";
+      String PERMISSIONS_UPDATE_SEGMENT = "/update";
       String USER_SEGMENT = "/user";
       String USER = SECURITY_SEGMENT + USER_SEGMENT;
       String USER_ACCOUNTS_SEGMENT = "/accounts";
