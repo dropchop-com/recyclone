@@ -36,7 +36,8 @@ public class RoleNodeParams extends IdentifierParams {
   private Boolean all;
 
   public boolean isEmpty() {
-    return (this.entity == null || this.entity.isBlank())
+    return (this.getIdentifiers() == null || this.getIdentifiers().isEmpty())
+        && (this.entity == null || this.entity.isBlank())
         && (this.entityId == null || this.entityId.isBlank())
         && (this.target == null || this.target.isBlank())
         && (this.targetId == null || this.targetId.isBlank());
