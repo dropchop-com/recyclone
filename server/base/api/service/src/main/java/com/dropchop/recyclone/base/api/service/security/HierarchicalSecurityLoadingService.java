@@ -70,7 +70,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     }
     //if max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
-    if (maxParentInstanceLevel != null && maxParentInstanceLevel >= currentLevel) {
+    if (maxParentInstanceLevel != null && maxParentInstanceLevel > 0 && maxParentInstanceLevel >= currentLevel) {
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream()
         .filter(p -> !(p instanceof RoleNodePermissionTemplate))
         .toList());
@@ -225,24 +225,48 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     RoleNode roleNode = this.loadRoleNodeById(roleNodeUuid);
     RoleNodePermission roleNodePermission = this.loadRoleNodePermissionById(permissionUuid);
 
-
-    boolean isSameRoleNode = roleNode.getId().equals(roleNodePermission.getRoleNode().getId());
+    boolean isRootRoleNode = roleNode.getEntity() == null && roleNode.getParent() == null;
     boolean isRoleNodeTemplate = roleNode.getEntity() == null || roleNode.getEntity().isBlank();
     boolean isPermissionTemplate = roleNodePermission instanceof RoleNodePermissionTemplate;
+    boolean isSameRoleNode = roleNode.getId().equals(roleNodePermission.getRoleNode().getId());
+    boolean isSameRoleNodeTarget = roleNode.getTarget().equals(roleNodePermission.getRoleNode().getTarget());
     boolean isAllowed = !roleNodePermission.getAllowed();
+
+    log.info(
+      "Resolved permission process parameters " +
+      "isRootRoleNode [{}] isRoleNodeTemplate [{}] isPermissionTemplate [{}] isSameRoleNode [{}]" +
+      "isSameRoleNodeTarget [{}] isAllowed [{}]",
+      isRootRoleNode, isRoleNodeTemplate, isPermissionTemplate, isSameRoleNode,
+      isSameRoleNodeTarget, isAllowed
+    );
 
     if (isRoleNodeTemplate) {
       if (isSameRoleNode) {
-        //delete permission from current role node
-        //this.deleteRoleNodePermission(permissionUuid);
+        if (isRootRoleNode) {
+          //update  permission allowed flag changing the permission of root role node !!!
+          log.info("Will change allowed flag on permission [{}] allowed from [{}] to [{}]",
+            permissionUuid, roleNodePermission.getAllowed(), isAllowed);
+          this.updateRoleNodePermissionAllowed(permissionUuid, isAllowed);
+        } else {
+          //delete permission from current role node if role node is template role node but not root role node
+          log.info("Will delete permission [{}] from template role node [{}]",
+            permissionUuid, roleNodeUuid);
+          this.deleteRoleNodePermission(permissionUuid);
+        }
       } else {
-        //when role node different from permission role node add opposite permission to current role node
+        //when role nodes are different add inverse allowed flagged permission to current role node
+        //NOTE: prepare template role node if not same target and add permission to it!
+        log.info("Will add new permission from [{}] from template role node [{}]",
+          permissionUuid, roleNodeUuid);
+        this.createRoleNodePermission(roleNodeUuid, roleNodePermission);
       }
     } else { //working with real entity
       if (isSameRoleNode) {
         if (!isPermissionTemplate) {
           //delete instance permission from current entity role node
-          //this.deleteRoleNodePermission(permissionUuid);
+          log.info("Will delete permission [{}] from instance role node [{}]",
+            permissionUuid, roleNodeUuid);
+          this.deleteRoleNodePermission(permissionUuid);
         }
       }  else {
         //when role node different from permission role node add opposite permission to current role node
@@ -251,8 +275,6 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
         }
       }
     }
-
-
     return new RoleNodePermission();
   }
 
@@ -284,6 +306,16 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   abstract protected RoleNodePermission loadRoleNodePermissionById(UUID uuid);
 
 
-  //abstract protected boolean deleteRoleNodePermission(UUID uuid);
+  abstract protected void deleteRoleNodePermission(UUID uuid);
+  abstract protected void updateRoleNodePermissionAllowed(UUID uuid, boolean allowed);
 
+  /**
+   * Uses source roleNodePermission to create a new instance with reverse allowed value
+   * and attaches it to specified role node
+   *
+   * @param targetRoleNodeId  - target role node to attach permission to
+   * @param sourceRoleNodePermission - existing role node permission to create new role node permission from
+   */
+  abstract protected void createRoleNodePermission(
+    UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission);
 }

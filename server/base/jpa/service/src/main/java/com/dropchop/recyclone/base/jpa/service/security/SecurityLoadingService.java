@@ -12,23 +12,19 @@ import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
-import com.dropchop.recyclone.base.dto.model.security.RoleNode;
-import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
-import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.dto.model.security.*;
 import com.dropchop.recyclone.base.es.repo.ElasticExecContext;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
-import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNode;
-import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermission;
-import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
+import com.dropchop.recyclone.base.jpa.model.security.*;
 import com.dropchop.recyclone.base.jpa.repo.BlazeExecContext;
 import com.dropchop.recyclone.base.jpa.repo.security.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +56,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
   @Inject
   RoleNodePermissionMapperProvider roleNodePermissionMapperProvider;
+
+  @Inject
+  PermissionRepository permissionRepository;
 
   /**
    * Loads role node permissions
@@ -126,8 +125,52 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   protected RoleNodePermission loadRoleNodePermissionById(UUID uuid) {
     MappingContext mapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
     RoleNodePermissionToDtoMapper roleNodeToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
-    JpaRoleNodePermission loadedParentRoleNode = this.roleNodePermissionRepository.findById(uuid);
-    return roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
+    JpaRoleNodePermission jpaPermission = this.roleNodePermissionRepository.findById(uuid);
+    return roleNodeToDtoMapper.toDto(jpaPermission, mapContext);
+  }
+
+
+  @Override
+  protected void deleteRoleNodePermission(UUID uuid) {
+    JpaRoleNodePermission jpaPermission = this.roleNodePermissionRepository.findById(uuid);
+    this.roleNodePermissionRepository.delete(jpaPermission);
+  }
+
+
+  @Override
+  protected void updateRoleNodePermissionAllowed(UUID uuid, boolean allowed) {
+    JpaRoleNodePermission jpaPermission = this.roleNodePermissionRepository.findById(uuid);
+    jpaPermission.setAllowed(allowed);
+    this.roleNodePermissionRepository.save(jpaPermission);
+  }
+
+
+  @Override
+  protected void createRoleNodePermission(UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission) {
+    UUID permissionUuid = UUID.fromString(sourceRoleNodePermission.getPermission().getId());
+    boolean isAllowed = !sourceRoleNodePermission.getAllowed();
+
+    JpaRoleNode jpaRoleNode = this.roleNodeRepository.findById(targetRoleNodeId);
+    boolean isTemplateRoleNode = jpaRoleNode.getEntity() == null || jpaRoleNode.getEntity().isBlank();
+
+    JpaPermission jpaPermission = this.permissionRepository.findById(permissionUuid);
+
+    JpaRoleNodePermission jpaRoleNodePermission = isTemplateRoleNode ?
+      new JpaRoleNodePermissionTemplate() : new JpaRoleNodePermission();
+
+    if (jpaRoleNodePermission instanceof JpaRoleNodePermissionTemplate) {
+      ((JpaRoleNodePermissionTemplate)jpaRoleNodePermission).setTarget(jpaRoleNode.getTarget());
+      ((JpaRoleNodePermissionTemplate)jpaRoleNodePermission).setTargetId(jpaRoleNode.getTargetId());
+    }
+
+    jpaRoleNodePermission.setUuid(UUID.randomUUID());
+    jpaRoleNodePermission.setRoleNode(jpaRoleNode);
+    jpaRoleNodePermission.setPermission(jpaPermission);
+    jpaRoleNodePermission.setAllowed(isAllowed);
+    jpaRoleNodePermission.setCreated(ZonedDateTime.now());
+    jpaRoleNodePermission.setModified(ZonedDateTime.now());
+
+    this.roleNodePermissionRepository.save(jpaRoleNodePermission);
   }
 
 
