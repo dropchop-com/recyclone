@@ -482,6 +482,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     ElasticExecContext<S> context = getRepositoryExecContext();
     Class<S> cls = context.getRootClass();
     QueryParams queryParams = new QueryParams();
+    queryParams.tryGetResultFilter().setSize(ids.size());
     QueryNodeObject queryObject;
     if (!ids.isEmpty()) {
       if (HasCode.class.isAssignableFrom(cls)) {
