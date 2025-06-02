@@ -281,7 +281,8 @@ class ParamsPropertyFilterSerializerModifierTest {
                  "lang":"sl",
                  "title":"Dovoli vse akcije na jezikih."
               }
-           ]
+           ],
+           "wildcardString": "localization.language:*"
         }
      ]
      """;
