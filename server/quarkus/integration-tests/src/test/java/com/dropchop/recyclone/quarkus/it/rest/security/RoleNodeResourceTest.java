@@ -437,18 +437,24 @@ public class RoleNodeResourceTest {
       assertInstanceOf(RoleNodePermissionTemplate.class, p);
     }
 
-    List<RoleNode> resultTplNode = given()
+
+    RoleNodePermissionParams params = new RoleNodePermissionParams();
+    params.setRoleNodeId(roleNodeTpl.getId());
+
+    List<RoleNodePermission> resultPermissions = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic("admin1", "password")
-      .get("/api" + INTERNAL_SEGMENT + ROLE_NODE + "/" + UUID3 + "?c_level=5")
+      .body(params)
+      .when()
+      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION + SEARCH_SEGMENT + "?c_level=5")
       .then()
       .statusCode(200)
       .extract()
-      .body().jsonPath().getList("data", RoleNode.class);
-    RoleNode tplNode = resultTplNode.getFirst();
-    for (RoleNodePermission p : tplNode.getRoleNodePermissions()) {
+      .body().jsonPath().getList("data", RoleNodePermission.class);
+    assertEquals(4, resultPermissions.size());
+    for (RoleNodePermission p : resultPermissions) {
       assertInstanceOf(RoleNodePermissionTemplate.class, p);
       assertNotNull(((RoleNodePermissionTemplate)p).getTarget());
     }

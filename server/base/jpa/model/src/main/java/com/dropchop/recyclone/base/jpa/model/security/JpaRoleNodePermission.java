@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("Instance")
 public class JpaRoleNodePermission extends JpaUuid implements RoleNodePermission<
-  JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaRoleNodePermission, JpaTitleDescriptionTranslation> {
+        JpaAction, JpaDomain, JpaPermission, JpaRoleNode, JpaTitleDescriptionTranslation> {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fk_role_node_uuid",

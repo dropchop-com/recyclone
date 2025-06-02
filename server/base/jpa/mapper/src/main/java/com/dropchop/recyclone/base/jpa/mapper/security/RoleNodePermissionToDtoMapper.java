@@ -20,7 +20,6 @@ import org.mapstruct.*;
     uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class}
 )
 public interface RoleNodePermissionToDtoMapper extends ToDtoMapper<RoleNodePermission, JpaRoleNodePermission> {
-  @SubclassMapping( source = JpaRoleNodePermission.class, target = RoleNodePermission.class)
   @SubclassMapping( source = JpaRoleNodePermissionTemplate.class, target = RoleNodePermissionTemplate.class)
   RoleNodePermission toDto(JpaRoleNodePermission node, @Context MappingContext context);
 }

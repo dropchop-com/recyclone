@@ -9,12 +9,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public interface RoleNode<
-        A extends Action<TDT>,
-        D extends Domain<TDT, A>,
-        P extends Permission<TDT, A, D>,
-        RN extends RoleNode<A, D, P, RN, RNP, TDT>,
-        RNP extends RoleNodePermission<A, D, P , RN, RNP, TDT>,
-        TDT extends TitleDescriptionTranslation
+        RN extends RoleNode<RN>
         > extends Model, HasCreated, HasModified {
 
     /**
@@ -34,12 +29,6 @@ public interface RoleNode<
     void setParent(RN parent);
 
     /**
-     * Defines permissions set on role node
-     */
-    List<RNP> getRoleNodePermissions();
-    void setRoleNodePermissions(List<RNP> roleNodePermissions);
-
-    /**
      * Defines specific system entity role node refers to.
      */
     String getEntity();
@@ -47,6 +36,9 @@ public interface RoleNode<
 
     String getEntityId();
     void setEntityId(String entityId);
+
+    String getEntityName();
+    void setEntityName(String entityName);
 
     //Defines how many levels up on hierarchy
     Integer getMaxParentInstanceLevel();

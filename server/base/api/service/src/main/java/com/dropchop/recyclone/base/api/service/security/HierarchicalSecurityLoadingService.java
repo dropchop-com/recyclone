@@ -103,12 +103,14 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
    * @param permissionsByLevel - list of permissions by level that root template permissions will be added to.
    */
   private void resolveRootTargetPermission(RoleNodeParams params, List<List<RoleNodePermission>> permissionsByLevel) {
-    RoleNode loadedRoleNode = this.loadRoleNode(params);
+    RoleNodeParams rootParams = RoleNodeParams.of(params);
+    rootParams.setRootOnly(true);
+    RoleNode loadedRoleNode = this.loadRoleNode(rootParams);
     permissionsByLevel.add(loadedRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof RoleNodePermissionTemplate permissionTemplate) {
         String targetId = permissionTemplate.getTargetId();
-        return permissionTemplate.getTarget().equals(params.getTarget())
-            && (targetId == null || targetId.equals(params.getTargetId()));
+        return permissionTemplate.getTarget().equals(rootParams.getTarget())
+            && (targetId == null || targetId.equals(rootParams.getTargetId()));
       }
       return false;
     }).toList());

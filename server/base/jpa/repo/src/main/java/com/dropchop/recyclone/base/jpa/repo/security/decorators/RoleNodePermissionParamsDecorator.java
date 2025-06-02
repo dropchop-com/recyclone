@@ -18,9 +18,9 @@ public class RoleNodePermissionParamsDecorator<E> extends BlazeCriteriaDecorator
     Params params = (Params)getContext().getParams();
     CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
 
-    if (params instanceof RoleNodePermissionParams roleNodePermissionParamsDecorator) {
+    if (params instanceof RoleNodePermissionParams roleNodePermissionParams) {
       cb.where(alias + DELIM + "roleNode" + DELIM + SearchFields.Common.UUID)
-        .eq(UUID.fromString(roleNodePermissionParamsDecorator.getRoleNodeId()));
+        .eq(UUID.fromString(roleNodePermissionParams.getRoleNodeId()));
     }
   }
 }

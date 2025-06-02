@@ -123,12 +123,7 @@ public class SecurityLoadingTest {
   }
 
   private List<Permission> prepPermissions() {
-    Permission permissionView = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_PROJECTS, Constants.Actions.VIEW);
-    Permission permissionCreate = SecurityHelper.permissionOf(PERMISSION2, DOMAIN_PROJECTS, Constants.Actions.CREATE);
-    Permission permissionUpdate = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_PROJECTS, Constants.Actions.UPDATE);
-    Permission permissionDelete = SecurityHelper.permissionOf(PERMISSION4, DOMAIN_PROJECTS, Constants.Actions.DELETE);
-
-    List<Permission> permissions = List.of(permissionView, permissionCreate, permissionUpdate, permissionDelete);
+    List<Permission> permissions = getPermissions();
 
     List<Permission> permissionsResult = given()
       .contentType(ContentType.JSON)
@@ -137,7 +132,7 @@ public class SecurityLoadingTest {
       .and()
       .body(permissions)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + PERMISSION + "?c_level=2")
+      .post("/api" + INTERNAL_SEGMENT + PERMISSION + "?c_level=3")
       .then()
       .statusCode(200)
       .extract()

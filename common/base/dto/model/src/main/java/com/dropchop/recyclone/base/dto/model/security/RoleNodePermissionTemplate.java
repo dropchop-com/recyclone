@@ -18,10 +18,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "type"
 )
-public class RoleNodePermissionTemplate extends RoleNodePermission implements com.dropchop.recyclone.base.api.model.security.RoleNodePermissionTemplate<
-        Action, Domain, Permission, RoleNode, RoleNodePermission, TitleDescriptionTranslation> {
+public class RoleNodePermissionTemplate extends RoleNodePermission
+        implements com.dropchop.recyclone.base.api.model.security.RoleNodePermissionTemplate<
+        Action, Domain, Permission, RoleNode, TitleDescriptionTranslation> {
 
    private String target;
    private String targetId;
-
 }
