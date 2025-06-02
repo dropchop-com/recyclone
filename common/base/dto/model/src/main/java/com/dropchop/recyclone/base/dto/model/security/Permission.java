@@ -50,11 +50,14 @@ public class Permission extends DtoId
 
   private ZonedDateTime deactivated;
 
+  private String wildcardString;
+
   public Permission(@NonNull String id) {
     super(id);
   }
 
-  @JsonIgnore
+
+  //@JsonIgnore
   public String getWildcardString() {
     StringBuilder buff = new StringBuilder();
     if (this.domain != null) {
