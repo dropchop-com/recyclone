@@ -682,7 +682,8 @@ class FieldFilterTest {
       "translations[0].description",
       "translations[0].lang",
       "translations[0].title",
-      "uuid"
+      "uuid",
+      "wildcardString"
     ), filteredAndVisited);
   }
 }

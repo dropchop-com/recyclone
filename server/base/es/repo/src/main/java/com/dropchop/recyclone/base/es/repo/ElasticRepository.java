@@ -9,6 +9,7 @@ import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
+import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
@@ -87,6 +88,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   public String provideConditionString(QueryParams queryParams) {
 
     int tempSize = queryParams.tryGetResultFilter().getSize();
+    AggregationList tempAggs = queryParams.getAggregate();
+    queryParams.setAggregate(null);
     queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
     ElasticQueryBuilder.ValidationData validationData = new ElasticQueryBuilder.ValidationData();
 
@@ -103,6 +106,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     }
 
     queryParams.tryGetResultFilter().setSize(tempSize);
+    queryParams.setAggregate(tempAggs);
     return result;
   }
 
@@ -478,6 +482,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     ElasticExecContext<S> context = getRepositoryExecContext();
     Class<S> cls = context.getRootClass();
     QueryParams queryParams = new QueryParams();
+    queryParams.tryGetResultFilter().setSize(ids.size());
     QueryNodeObject queryObject;
     if (!ids.isEmpty()) {
       if (HasCode.class.isAssignableFrom(cls)) {
