@@ -440,7 +440,6 @@ public class SecurityLoadingTest {
 
   @Test
   @Order(35)
-  @Disabled
   public void testLoadAndCheckPermissionInstanceForOrgUnitEntity() {
     RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
         ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0
@@ -527,7 +526,6 @@ public class SecurityLoadingTest {
 
   @Test
   @Order(40)
-  @Disabled
   public void testLoadAndCheckPermissionOFSecondLevelInstanceForEntity() {
     RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
         ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null, ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, 0
