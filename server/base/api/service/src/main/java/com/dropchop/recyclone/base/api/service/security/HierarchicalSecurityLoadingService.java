@@ -68,7 +68,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     if (roleNode == null) {
       throw new ServiceException(getStatusMessage("Role node cannot be null", null));
     }
-    //if max parent instance level is set and current level is less or equals to it, instance permissions will be taken
+    //if role node is instance and max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
     if (maxParentInstanceLevel != null
         && maxParentInstanceLevel > 0

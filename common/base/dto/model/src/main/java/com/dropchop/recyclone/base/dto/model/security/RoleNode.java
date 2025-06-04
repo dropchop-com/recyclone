@@ -40,4 +40,9 @@ public class RoleNode extends DtoId implements com.dropchop.recyclone.base.api.m
     //permissions set for role node
     private List<RoleNodePermission> roleNodePermissions;
 
+
+    public boolean isInstance() {
+        return this.entity != null && this.entityId != null;
+    }
+
 }
