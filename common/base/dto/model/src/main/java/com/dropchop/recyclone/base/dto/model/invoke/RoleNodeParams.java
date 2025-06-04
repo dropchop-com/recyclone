@@ -38,6 +38,12 @@ public class RoleNodeParams extends IdentifierParams {
   //Defines if you want to search only for root permissions
   private Boolean rootOnly;
 
+  //Defines if you want to search all root role nodes
+  private Boolean allRoot;
+
+  //Defines if you want to search all root role nodes with children
+  private Boolean allRootWithChildren;
+
   public boolean isEmpty() {
     return (this.getIdentifiers() == null || this.getIdentifiers().isEmpty())
         && (this.entity == null || this.entity.isBlank())
@@ -56,6 +62,8 @@ public class RoleNodeParams extends IdentifierParams {
     result.setAll(params.getAll());
     result.setRootOnly(params.getRootOnly());
     result.setIdentifiers(params.getIdentifiers());
+    result.setAllRoot(params.getAllRoot());
+    result.setAllRootWithChildren(params.getAllRootWithChildren());
     return result;
   }
 }

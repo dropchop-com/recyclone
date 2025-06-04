@@ -15,7 +15,7 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
   @Override
   public void decorate() {
     String alias = getContext().getRootAlias();
-    Params params = (Params)getContext().getParams();
+    Params params = (Params) getContext().getParams();
     CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
 
     if (params instanceof RoleNodeParams roleNodeParams) {
@@ -28,37 +28,51 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
         String entity = roleNodeParams.getEntity();
         String entityId = roleNodeParams.getEntityId();
         Boolean rootOnly = roleNodeParams.getRootOnly();
-
-        if (entity != null && !entity.isBlank() && entityId != null && !entityId.isBlank()) {
-          cb.where(alias + DELIM + "entity").eq(entity);
-          cb.where(alias + DELIM + "entityId").eq(entityId);
-        } else {
-          if (entity == null || entity.isBlank()) {
-            cb.where(alias + DELIM + "entity").isNull();
-          } else {
-            cb.where(alias + DELIM + "entity").eq(entity);
-          }
-          if (entityId == null || entityId.isBlank()) {
-            cb.where(alias + DELIM + "entityId").isNull();
-          } else {
-            cb.where(alias + DELIM + "entityId").eq(entityId);
-          }
+        Boolean allRoot = roleNodeParams.getAllRoot();
+        Boolean allRootWithChildren = roleNodeParams.getAllRootWithChildren();
+        if (allRoot != null && allRoot) {
+          cb.where(alias + DELIM + "entity").isNull();
+          cb.where(alias + DELIM + "entityId").isNull();
           if (target != null && !target.isBlank()) {
             cb.where(alias + DELIM + "target").eq(target);
-          } else {
-            cb.where(alias + DELIM + "target").isNull();
           }
           if (targetId != null && !targetId.isBlank()) {
             cb.where(alias + DELIM + "targetId").eq(targetId);
-          } else {
-            cb.where(alias + DELIM + "targetId").isNull();
           }
-          if (rootOnly != null && rootOnly) {
+          if (allRootWithChildren == null || !allRootWithChildren) {
             cb.where(alias + DELIM + "parent").isNull();
+          }
+        } else {
+          if (entity != null && !entity.isBlank() && entityId != null && !entityId.isBlank()) {
+            cb.where(alias + DELIM + "entity").eq(entity);
+            cb.where(alias + DELIM + "entityId").eq(entityId);
+          } else {
+            if (entity == null || entity.isBlank()) {
+              cb.where(alias + DELIM + "entity").isNull();
+            } else {
+              cb.where(alias + DELIM + "entity").eq(entity);
+            }
+            if (entityId == null || entityId.isBlank()) {
+              cb.where(alias + DELIM + "entityId").isNull();
+            } else {
+              cb.where(alias + DELIM + "entityId").eq(entityId);
+            }
+            if (target != null && !target.isBlank()) {
+              cb.where(alias + DELIM + "target").eq(target);
+            } else {
+              cb.where(alias + DELIM + "target").isNull();
+            }
+            if (targetId != null && !targetId.isBlank()) {
+              cb.where(alias + DELIM + "targetId").eq(targetId);
+            } else {
+              cb.where(alias + DELIM + "targetId").isNull();
+            }
+            if (rootOnly != null && rootOnly) {
+              cb.where(alias + DELIM + "parent").isNull();
+            }
           }
         }
       }
     }
-
   }
 }
