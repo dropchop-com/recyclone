@@ -31,6 +31,8 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
         Boolean allRoot = roleNodeParams.getAllRoot();
         Boolean allRootWithChildren = roleNodeParams.getAllRootWithChildren();
         if (allRoot != null && allRoot) {
+          //to search root nodes only with or without children in the result.
+          // Note that it's a flat result
           cb.where(alias + DELIM + "entity").isNull();
           cb.where(alias + DELIM + "entityId").isNull();
           if (target != null && !target.isBlank()) {
@@ -43,6 +45,7 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
             cb.where(alias + DELIM + "parent").isNull();
           }
         } else {
+          //get role node by entity or target
           if (entity != null && !entity.isBlank() && entityId != null && !entityId.isBlank()) {
             cb.where(alias + DELIM + "entity").eq(entity);
             cb.where(alias + DELIM + "entityId").eq(entityId);
