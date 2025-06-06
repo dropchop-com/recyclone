@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
@@ -27,7 +28,7 @@ class QueryResponseParserTest {
 
   @Test
   void parse() throws IOException {
-    Map<String, Object> aggResult = new HashMap<>();
+    Map<String, AggregationResult> aggResult = new HashMap<>();
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     Map<String, ?> result = new HashMap<>();
     List<Map<String, ?>> results = new ArrayList<>();
@@ -44,7 +45,7 @@ class QueryResponseParserTest {
       SearchResultMetadata metadata = parser.parse(
           is,
           new QueryParams(),
-          (Class<Map<String,?>>) result.getClass(),
+          (Class<Map<String, ?>>) result.getClass(),
           List.of(listener),
           List.of(aggListener)
       );
@@ -53,9 +54,8 @@ class QueryResponseParserTest {
       assertEquals(10, metadata.getHits());
       assertEquals(10, results.size());
       assertEquals(1, aggResult.size());
-      @SuppressWarnings("unchecked")
-      Map<String, ?> agg = (Map<String,?>)aggResult.get("media_0_uuid_LFN_Media");
-      assertEquals(4, agg.size());
+      AggregationResult subAgg = aggResult.get("media_0_uuid_LFN_Media");
+      assertEquals(1500, subAgg.getBuckets().size());
     }
   }
 }

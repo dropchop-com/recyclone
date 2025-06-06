@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -31,7 +32,7 @@ public class Result<T> implements com.dropchop.recyclone.base.api.model.rest.Res
   @EqualsAndHashCode.Exclude
   private List<T> data = new ArrayList<>();
 
-  private HashMap<String, Object> aggregations = new HashMap<>();
+  private Map<String, AggregationResult> aggregations = new LinkedHashMap<>();
 
   public Result<T> toSuccess(List<T> data, int totalCount, ResultStats stats) {
 

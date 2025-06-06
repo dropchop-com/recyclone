@@ -2,6 +2,7 @@ package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.api.model.invoke.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
+import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
@@ -161,19 +162,15 @@ public class QueryResponseParser {
 
     while (parser.nextToken() == JsonToken.FIELD_NAME) {
       //String aggName = parser.currentName();
-      Map<String, Object> aggData = mapper.readValue(parser,
+      Map<String, AggregationResult> aggData = mapper.readValue(parser,
           new TypeReference<>() {});
       parser.nextToken(); // START_OBJECT
       if (aggData != null && !aggData.isEmpty()) {
-        for (Map.Entry<String, Object> entry : aggData.entrySet()) {
+        for (Map.Entry<String, AggregationResult> entry : aggData.entrySet()) {
           String aggName = entry.getKey();
-          Object aggValue = entry.getValue();
+          AggregationResult aggValue = entry.getValue();
 
           if (aggName == null || aggValue == null) {
-            continue;
-          }
-
-          if (!(aggValue instanceof Map<?,?>)) {
             continue;
           }
 
