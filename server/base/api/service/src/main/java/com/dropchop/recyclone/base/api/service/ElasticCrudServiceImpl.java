@@ -69,7 +69,7 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
 
     Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
     result.setAggregations(aggregations);
-    log.debug("Mapped {} entities in [{}]ms", result.getData().size(), timer.stop());
+    log.debug("Mapped [{}] entities in [{}]ms", result.getData().size(), timer.stop());
     return result;
   }
 
