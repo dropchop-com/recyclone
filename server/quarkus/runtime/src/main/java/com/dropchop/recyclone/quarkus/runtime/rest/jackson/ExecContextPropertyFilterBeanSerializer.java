@@ -4,8 +4,8 @@ import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import io.quarkus.arc.Arc;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.spi.Context;
@@ -17,13 +17,12 @@ import java.io.IOException;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 08. 22.
  */
-public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSerializer {
+public class ExecContextPropertyFilterBeanSerializer extends ParamsPropertyFilterBeanSerializer {
 
-  private static final Logger log = LoggerFactory.getLogger(ExecContextPropertyFilterSerializer.class);
+  private static final Logger log = LoggerFactory.getLogger(ExecContextPropertyFilterBeanSerializer.class);
   private final ExecContextContainer execContextContainer;
 
-  public ExecContextPropertyFilterSerializer(JsonSerializer<Object> delegate,
-                                             ExecContextContainer execContextContainer) {
+  public ExecContextPropertyFilterBeanSerializer(BeanSerializer delegate, ExecContextContainer execContextContainer) {
     super(delegate, null);
     this.execContextContainer = execContextContainer;
   }

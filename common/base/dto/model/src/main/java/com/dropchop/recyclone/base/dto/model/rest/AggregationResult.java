@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 06. 06. 2025
  */
@@ -18,11 +20,13 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor(force = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(NON_NULL)
 public class AggregationResult {
 
   @Getter
   @Setter
   @NoArgsConstructor(force = true)
+  @JsonInclude(NON_NULL)
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Bucket {
     @JsonProperty("key")
@@ -48,10 +52,15 @@ public class AggregationResult {
     }
   }
 
+  @JsonProperty("meta")
+  Map<String, Object> meta = new LinkedHashMap<>();
+
   @JsonProperty("buckets")
   private List<Bucket> buckets;
+
   @JsonProperty("doc_count_error_upper_bound")
   private Long docCountErrorUpperBound;
+
   @JsonProperty("sum_other_doc_count")
   private Long sumOtherDocCount;
 
@@ -62,12 +71,16 @@ public class AggregationResult {
   // For stats aggregations
   @JsonProperty("count")
   private Long count;
+
   @JsonProperty("min")
   private Double min;
+
   @JsonProperty("max")
   private Double max;
+
   @JsonProperty("avg")
   private Double avg;
+
   @JsonProperty("sum")
   private Double sum;
 }

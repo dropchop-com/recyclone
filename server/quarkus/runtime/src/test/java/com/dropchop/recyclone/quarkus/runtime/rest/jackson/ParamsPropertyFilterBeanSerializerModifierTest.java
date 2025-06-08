@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-class ParamsPropertyFilterSerializerModifierTest {
+class ParamsPropertyFilterBeanSerializerModifierTest {
 
   //private static final Logger log = LoggerFactory.getLogger(ParamsPropertyFilterSerializerModifierTest.class);
 

@@ -11,11 +11,10 @@ import java.io.IOException;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 09. 22.
  */
-public class ParamsPropertyFilterSerializer extends PropertyFilterSerializer {
+public class ParamsPropertyFilterStdSerializer extends PropertyFilterStdSerializer {
   private final Params params;
 
-  public ParamsPropertyFilterSerializer(JsonSerializer<Object> delegate,
-                                        Params params) {
+  public ParamsPropertyFilterStdSerializer(JsonSerializer<Object> delegate, Params params) {
     super(delegate, params != null ? FieldFilter.fromParams(params) : null);
     this.params = params;
   }

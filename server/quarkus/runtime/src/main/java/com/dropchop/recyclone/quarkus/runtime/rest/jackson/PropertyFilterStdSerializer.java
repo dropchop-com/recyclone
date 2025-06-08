@@ -17,55 +17,61 @@ import java.io.IOException;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 09. 22.
  */
-public class PropertyFilterSerializer extends StdSerializer<Object> {
+public class PropertyFilterStdSerializer extends StdSerializer<Object> {
   private final JsonSerializer<Object> delegate;
   private final FieldFilter filter;
 
-  public PropertyFilterSerializer(JsonSerializer<Object> delegate,
-                                  FieldFilter filter) {
+  public PropertyFilterStdSerializer(JsonSerializer<Object> delegate, FieldFilter filter) {
     super(delegate.handledType());
     this.delegate = delegate;
     this.filter = filter;
   }
 
+  public JsonSerializer<Object> getDelegate() {
+    return delegate;
+  }
+
+  public FieldFilter getFilter() {
+    return filter;
+  }
+
   private boolean wrappedResult(Object o) {
     return o instanceof Result<?,?,?> ||
-      o instanceof ResultStatus<?> ||
-      o instanceof ResultStats ||
-      o instanceof StatusMessage;
+        o instanceof ResultStatus<?> ||
+        o instanceof ResultStats ||
+        o instanceof StatusMessage;
   }
 
   protected void serialize(FieldFilter filter, Object o, JsonGenerator generator, SerializerProvider provider)
-    throws IOException {
+      throws IOException {
     boolean start = false;
     if (filter != null && o instanceof Model && !wrappedResult(o) && !(generator instanceof FilteringJsonGenerator)) {
       start = true;
       generator = new FilteringJsonGenerator(
-        generator, filter
+          generator, filter
       );
     }
 
     if (generator instanceof FilteringJsonGenerator filteringJsonGenerator) {
       if (filteringJsonGenerator.continueSerialization(o)) {
-        delegate.serialize(o, generator, provider);
+        getDelegate().serialize(o, generator, provider);
         if (start) { // end of root object serialization
           // actually write the JSON with saved generator write state commands.
           filteringJsonGenerator.outputDelayedWriteState();
         }
       }
     } else {
-      delegate.serialize(o, generator, provider);
+      getDelegate().serialize(o, generator, provider);
     }
   }
 
-  @Override
   public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
-    throws IOException {
-    this.serialize(filter, o, generator, provider);
+      throws IOException {
+    this.serialize(getFilter(), o, generator, provider);
   }
 
-  @Override
-  public void serializeWithType(Object value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-    delegate.serializeWithType(value, gen, serializers, typeSer);
+  public void serializeWithType(Object value, JsonGenerator gen, SerializerProvider serializers,
+                                TypeSerializer typeSer) throws IOException {
+    getDelegate().serializeWithType(value, gen, serializers, typeSer);
   }
 }

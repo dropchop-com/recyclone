@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 /**
@@ -26,8 +27,9 @@ public class ParamsPropertyFilterSerializerModifier extends BeanSerializerModifi
   public JsonSerializer<?> modifySerializer(SerializationConfig config,
                                             BeanDescription beanDesc,
                                             JsonSerializer<?> serializer) {
-    @SuppressWarnings("unchecked")
-    JsonSerializer<Object> jsonSerializer = (JsonSerializer<Object>) serializer;
-    return new ParamsPropertyFilterSerializer(jsonSerializer, params);
+    if (serializer instanceof BeanSerializer beanSerializer) {
+      return new ParamsPropertyFilterBeanSerializer(beanSerializer, params);
+    }
+    return super.modifySerializer(config, beanDesc, serializer);
   }
 }
