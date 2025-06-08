@@ -145,12 +145,13 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     List<List<RoleNodePermission>> permissionsByLevel
   ) {
     //prepare target parameters
-    RoleNodeParams rootParams = new RoleNodeParams(); //will be passing original target details up the hierarchy
+    RoleNodeParams rootParams = new RoleNodeParams();
     rootParams.setTarget(roleNode.getTarget());
     rootParams.setTargetId(roleNode.getTargetId());
     rootParams.setRootOnly(true);
 
     RoleNode loadedRootRoleNode = this.loadRoleNode(rootParams);
+    //TODO: implement override params target !!!!
     permissionsByLevel.add(loadedRootRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof RoleNodePermissionTemplate permissionTemplate) {
         String targetId = permissionTemplate.getTargetId();
