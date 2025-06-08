@@ -20,6 +20,9 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class RoleNodeParams extends IdentifierParams {
 
+  //Defines parent entity id
+  private String parentId;
+
   //Defines entity type
   private String entity;
 

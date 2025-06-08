@@ -27,24 +27,24 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
     if (params != null) {
       status.setDetails(Set.of(
-          new AttributeString(
-              "roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""
-          ),
-          new AttributeString(
-              "target", params.getTarget() != null ? params.getTarget() : ""
-          ),
-          new AttributeString(
-              "targetId", params.getTargetId() != null ? params.getTargetId() : ""
-          ),
-          new AttributeString(
-              "entity", params.getEntity() != null ? params.getEntity() : ""
-          ),
-          new AttributeString(
-              "entityId", params.getEntityId() != null ? params.getEntityId() : ""
-          ),
-          new AttributeBool(
-              "all", params.getAll() != null ? params.getAll() : false
-          )
+        new AttributeString(
+          "roleNodeId", params.getIdentifiers() != null ? params.getIdentifiers().toString() : ""
+        ),
+        new AttributeString(
+          "target", params.getTarget() != null ? params.getTarget() : ""
+        ),
+        new AttributeString(
+          "targetId", params.getTargetId() != null ? params.getTargetId() : ""
+        ),
+        new AttributeString(
+          "entity", params.getEntity() != null ? params.getEntity() : ""
+        ),
+        new AttributeString(
+          "entityId", params.getEntityId() != null ? params.getEntityId() : ""
+        ),
+        new AttributeBool(
+          "all", params.getAll() != null ? params.getAll() : false
+        )
       ));
     }
     return status;
@@ -93,20 +93,20 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     // as opposed to template permissions.
     // different targets means that load for different target permissions is in progress.
     if (roleNode.isInstance() && !differentTargets && maxParentInstanceLevel != null
-        && maxParentInstanceLevel >= currentLevel
+      && maxParentInstanceLevel >= currentLevel
     ) {
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream()
-          .filter(p -> !(p instanceof RoleNodePermissionTemplate))
-          .toList());
+        .filter(p -> !(p instanceof RoleNodePermissionTemplate))
+        .toList());
     } else {
       //if instance permissions are not taken from parents, load template permissions for target on current node.
       List<RoleNodePermission> levelPermissions = new LinkedList<>();
       for (RoleNodePermission roleNodePermission : roleNode.getRoleNodePermissions()) {
         if (roleNodePermission instanceof RoleNodePermissionTemplate permissionTemplate) {
           String targetId = permissionTemplate.getTargetId();
-          if(
+          if (
             permissionTemplate.getTarget().equals(roleNodeTarget)
-            && (targetId == null || targetId.equals(roleNodeTargetId))
+              && (targetId == null || targetId.equals(roleNodeTargetId))
           ) {
             levelPermissions.add(permissionTemplate);
           }
@@ -119,7 +119,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     if (parentRoleNode != null) {
       RoleNode loadedParentRoleNode = this.loadRoleNodeById(parentRoleNode.getUuid());
       this.resolveRoleNodePermissionLevels(
-          loadedParentRoleNode, permissionsByLevel, params, currentLevel + 1, maxParentInstanceLevel
+        loadedParentRoleNode, permissionsByLevel, params, currentLevel + 1, maxParentInstanceLevel
       );
     }
   }
@@ -128,18 +128,26 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   /**
    * Loads ROOT template permissions for target.
    *
-   * @param params             - parameters defining target data.
+   * @param overrideParams         - parameters defining root target .
    * @param permissionsByLevel - list of permissions by level that root template permissions will be added to.
    */
-  private void resolveRootTargetPermission(RoleNodeParams params, List<List<RoleNodePermission>> permissionsByLevel) {
-    RoleNodeParams rootParams = RoleNodeParams.of(params);
+  private void resolveRootTargetPermissions(
+    RoleNode roleNode,
+    RoleNodeParams overrideParams,
+    List<List<RoleNodePermission>> permissionsByLevel
+  ) {
+    //prepare target parameters
+    RoleNodeParams rootParams = new RoleNodeParams(); //will be passing original target details up the hierarchy
+    rootParams.setTarget(roleNode.getTarget());
+    rootParams.setTargetId(roleNode.getTargetId());
     rootParams.setRootOnly(true);
-    RoleNode loadedRoleNode = this.loadRoleNode(rootParams);
-    permissionsByLevel.add(loadedRoleNode.getRoleNodePermissions().stream().filter(p -> {
+
+    RoleNode loadedRootRoleNode = this.loadRoleNode(rootParams);
+    permissionsByLevel.add(loadedRootRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof RoleNodePermissionTemplate permissionTemplate) {
         String targetId = permissionTemplate.getTargetId();
         return permissionTemplate.getTarget().equals(rootParams.getTarget())
-            && (targetId == null || targetId.equals(rootParams.getTargetId()));
+          && (targetId == null || targetId.equals(rootParams.getTargetId()));
       }
       return false;
     }).toList());
@@ -162,8 +170,8 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   private Collection<RoleNodePermission> mergePermissionLevels(List<List<RoleNodePermission>> permissionsByLevel) {
     if (permissionsByLevel == null) {
       throw new ServiceException(
-          ErrorCode.data_validation_error,
-          "Role node permissions levels cannot be null"
+        ErrorCode.data_validation_error,
+        "Role node permissions levels cannot be null"
       );
     }
     if (permissionsByLevel.isEmpty()) {
@@ -172,10 +180,10 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     Map<UUID, RoleNodePermission> resolvedPermissions = new LinkedHashMap<>();
     Collections.reverse(permissionsByLevel);
     permissionsByLevel.forEach(levelPermissions ->
-        levelPermissions.forEach(roleNodePermission -> {
-          UUID permissionUuid = roleNodePermission.getPermission().getUuid();
-          resolvedPermissions.put(permissionUuid, roleNodePermission);
-        })
+      levelPermissions.forEach(roleNodePermission -> {
+        UUID permissionUuid = roleNodePermission.getPermission().getUuid();
+        resolvedPermissions.put(permissionUuid, roleNodePermission);
+      })
     );
     return resolvedPermissions.values();
   }
@@ -186,22 +194,18 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
    *
    * @param roleNode               - role node to start resolving on
    * @param maxParentInstanceLevel - maximum level of instance permission taken from parents
-   *                                 that influence end permission state
+   *                               that influence end permission state
    * @return list or merged role node permissions of all role nodes in the hierarchy.
    */
   private Collection<RoleNodePermission> resolveHierarchyPermissions(RoleNode roleNode,
-                                                                        Integer maxParentInstanceLevel,
+                                                                     Integer maxParentInstanceLevel,
                                                                      RoleNodeParams roleNodeParams
   ) {
     List<List<RoleNodePermission>> permissionsByLevel = new LinkedList<>();
-    //prepare target parameters
-    RoleNodeParams rootParams = new RoleNodeParams(); //will be passing original target details up the hierarchy
-    rootParams.setTarget(roleNode.getTarget());
-    rootParams.setTargetId(roleNode.getTargetId());
     //resolve all hierarchy permissions from parent nodes and add permissions into permission levels list.
     this.resolveRoleNodePermissionLevels(roleNode, permissionsByLevel, roleNodeParams, 0, maxParentInstanceLevel);
     //resolve root level template permissions and add them as last level in permission levels list.
-    this.resolveRootTargetPermission(rootParams, permissionsByLevel);
+    this.resolveRootTargetPermissions(roleNode, roleNodeParams, permissionsByLevel);
     //merge all permission levels into final list or resolved permissions.
     return this.mergePermissionLevels(permissionsByLevel);
   }
@@ -209,7 +213,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
   private boolean isInstanceRoleNode(RoleNode loadedRoleNode) {
     return loadedRoleNode.getEntity() != null && !loadedRoleNode.getEntity().isBlank()
-        && loadedRoleNode.getEntityId() != null && !loadedRoleNode.getEntityId().isBlank();
+      && loadedRoleNode.getEntityId() != null && !loadedRoleNode.getEntityId().isBlank();
   }
 
 
@@ -264,8 +268,8 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
     log.info(
       "Resolved permission process parameters " +
-      "isRootRoleNode [{}] isRoleNodeTemplate [{}] isPermissionTemplate [{}] isSameRoleNode [{}]" +
-      "isSameRoleNodeTarget [{}] isAllowed [{}]",
+        "isRootRoleNode [{}] isRoleNodeTemplate [{}] isPermissionTemplate [{}] isSameRoleNode [{}]" +
+        "isSameRoleNodeTarget [{}] isAllowed [{}]",
       isRootRoleNode, isRoleNodeTemplate, isPermissionTemplate, isSameRoleNode,
       isSameRoleNodeTarget, isAllowed
     );
@@ -298,7 +302,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
             permissionUuid, roleNodeUuid);
           this.deleteRoleNodePermission(permissionUuid);
         }
-      }  else {
+      } else {
         //when role node different from permission role node add opposite permission to current role node
         if (isPermissionTemplate) {
           //create template
@@ -337,13 +341,14 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
 
   abstract protected void deleteRoleNodePermission(UUID uuid);
+
   abstract protected void updateRoleNodePermissionAllowed(UUID uuid, boolean allowed);
 
   /**
    * Uses source roleNodePermission to create a new instance with reverse allowed value
    * and attaches it to specified role node
    *
-   * @param targetRoleNodeId  - target role node to attach permission to
+   * @param targetRoleNodeId         - target role node to attach permission to
    * @param sourceRoleNodePermission - existing role node permission to create new role node permission from
    */
   abstract protected void createRoleNodePermission(

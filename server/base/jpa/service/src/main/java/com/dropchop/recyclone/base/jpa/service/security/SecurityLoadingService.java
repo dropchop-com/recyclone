@@ -1,19 +1,17 @@
 package com.dropchop.recyclone.base.jpa.service.security;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
-import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
-import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
-import com.dropchop.recyclone.base.dto.model.security.*;
-import com.dropchop.recyclone.base.es.repo.ElasticExecContext;
+import com.dropchop.recyclone.base.dto.model.security.RoleNode;
+import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodePermissionToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
