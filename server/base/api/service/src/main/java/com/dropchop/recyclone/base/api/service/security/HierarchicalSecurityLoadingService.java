@@ -114,6 +114,14 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       }
       permissionsByLevel.add(levelPermissions);
     }
+    //TODO: implement case where params target and role node (with parent = null) aka root instance role node
+    // target don't match and we need to load template role node from lat role node target
+    // and find if it has any sub role nodes matching params.target so we take those role node permissions and add to level
+    // exmaple:
+    // params target = Y
+    // template node with target X > has sub node with target Y
+    // we gotta load template node with target X  and find out if it has a child with target Y
+
     //find parent node and repeat the process until no more parents.
     RoleNode parentRoleNode = roleNode.getParent();
     if (parentRoleNode != null) {
