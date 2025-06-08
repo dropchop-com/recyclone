@@ -70,17 +70,24 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     }
     String roleNodeTarget = roleNode.getTarget();
     String roleNodeTargetId = roleNode.getTargetId();
+    String paramsTarget = null;
+    String paramsTargetId = null;
     boolean differentTargets = false;
-    if (params != null) {
-      String paramsTarget = params.getTarget();
-      String paramsTargetId = params.getTargetId();
-      if (paramsTarget != null && !paramsTarget.isBlank()) {
-        if (!roleNodeTarget.equals(paramsTarget)) {
-          differentTargets = true;
-          roleNodeTarget = paramsTarget;
-          roleNodeTargetId = paramsTargetId;
-        }
+    if (params == null) {
+      params = new RoleNodeParams();
+    }
+    paramsTarget = params.getTarget();
+    paramsTargetId = params.getTargetId();
+    if (paramsTarget != null && !paramsTarget.isBlank()) {
+      if (!roleNodeTarget.equals(paramsTarget)) {
+        differentTargets = true;
+        roleNodeTarget = paramsTarget;
+        roleNodeTargetId = paramsTargetId;
       }
+    } else {
+      //this only happens when permissions are loaded by role node and no addition params are set
+      params.setTarget(roleNodeTarget);
+      params.setTargetId(roleNodeTargetId);
     }
     //if role node is instance and max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
@@ -93,8 +100,8 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
           .toList());
     } else {
       //if instance permissions are not taken from parents, load template permissions for target on current node.
+      List<RoleNodePermission> levelPermissions = new LinkedList<>();
       for (RoleNodePermission roleNodePermission : roleNode.getRoleNodePermissions()) {
-        List<RoleNodePermission> levelPermissions = new LinkedList<>();
         if (roleNodePermission instanceof RoleNodePermissionTemplate permissionTemplate) {
           String targetId = permissionTemplate.getTargetId();
           if(
@@ -104,8 +111,8 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
             levelPermissions.add(permissionTemplate);
           }
         }
-        permissionsByLevel.add(levelPermissions);
       }
+      permissionsByLevel.add(levelPermissions);
     }
     //find parent node and repeat the process until no more parents.
     RoleNode parentRoleNode = roleNode.getParent();

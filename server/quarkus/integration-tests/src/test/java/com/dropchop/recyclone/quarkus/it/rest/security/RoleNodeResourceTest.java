@@ -393,7 +393,7 @@ public class RoleNodeResourceTest {
   @Order(60)
   public void addTemplatePermissionToRoleNode() {
 
-    RoleNode roleNodeTpl = SecurityHelper.roleNodeOf(UUID3, TPL_TARGET_NAME, null, null, null, null);
+    RoleNode roleNodeTpl = SecurityHelper.roleNodeOf(UUID3, TPL_TARGET_NAME, null, null, null, TPL_TARGET_NAME, null);
     List<RoleNode> result = given()
       .log().all()
       .contentType(ContentType.JSON)

@@ -23,6 +23,7 @@ public class SecurityHelper {
                                     String targetId,
                                     String entity,
                                     String entityUuid,
+                                    String entityName,
                                     Integer maxParentLevelInstsance) {
     RoleNode roleNode = new RoleNode();
     roleNode.setId(uuid);
@@ -30,6 +31,7 @@ public class SecurityHelper {
     roleNode.setTargetId(targetId);
     roleNode.setEntity(entity);
     roleNode.setEntityId(entityUuid);
+    roleNode.setEntityName(entityName);
     roleNode.setMaxParentInstanceLevel(maxParentLevelInstsance);
     return roleNode;
   }
