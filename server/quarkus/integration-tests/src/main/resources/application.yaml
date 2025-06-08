@@ -77,9 +77,6 @@ quarkus:
       - com.dropchop.recyclone.base.jpa.model.tagging
       - com.dropchop.recyclone.quarkus.it.model.entity.jpa
 
-  transaction-manager:
-    default-transaction-timeout=PT60M
-
   recyclone:
     test: neki
     rest:
