@@ -1,25 +1,25 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
-import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.filtering.FieldFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanSerializer;
-import io.quarkus.arc.Arc;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.context.spi.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 08. 22.
+ * Bean serializer that delegates serialization to a {@link JsonSerializer}
+ * and applies filtering using {@link FieldFilter} from {@link Params} object
+ * obtained from {@link ExecContextContainer} object.
+ *
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 08. 25.
  */
-public class ExecContextPropertyFilterBeanSerializer extends ParamsPropertyFilterBeanSerializer {
+public class ExecContextPropertyFilterBeanSerializer extends ParamsPropertyFilterBeanSerializer
+    implements ExecContextFilteringDelegateSerializer {
 
-  private static final Logger log = LoggerFactory.getLogger(ExecContextPropertyFilterBeanSerializer.class);
   private final ExecContextContainer execContextContainer;
 
   public ExecContextPropertyFilterBeanSerializer(BeanSerializer delegate, ExecContextContainer execContextContainer) {
@@ -27,27 +27,8 @@ public class ExecContextPropertyFilterBeanSerializer extends ParamsPropertyFilte
     this.execContextContainer = execContextContainer;
   }
 
-  public boolean isRequestContextActive() {
-    Context context = Arc.container().getActiveContext(RequestScoped.class);
-    return context != null && context.isActive();
-  }
-
   @Override
-  public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
-    throws IOException {
-    if (!isRequestContextActive()) {
-      log.debug("Not request context");
-      super.serialize(o, generator, provider);
-      return;
-    }
-    Params params = null;
-    if (execContextContainer != null) {
-      ExecContext<?> execContext = execContextContainer.get();
-      if (execContext != null) {
-        params = execContext.tryGetParams();
-      }
-    }
-
-    super.serialize(params, o, generator, provider);
+  public void serialize(Object o, JsonGenerator generator, SerializerProvider provider) throws IOException {
+    this.serialize(this.execContextContainer, o, generator, provider);
   }
 }

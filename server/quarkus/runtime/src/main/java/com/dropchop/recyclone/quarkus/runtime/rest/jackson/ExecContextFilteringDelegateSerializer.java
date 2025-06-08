@@ -8,28 +8,30 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import io.quarkus.arc.Arc;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.spi.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public interface ExecContextFilteringDelegateSerializer extends ParamsFilteringDelegateSerializer {
 
-  ExecContextContainer getExecContextContainer();
+  Logger log = LoggerFactory.getLogger(ExecContextFilteringDelegateSerializer.class);
 
   default boolean isRequestContextActive() {
     Context context = Arc.container().getActiveContext(RequestScoped.class);
     return context != null && context.isActive();
   }
 
-  @Override
-  default void serialize(Object o, JsonGenerator generator, SerializerProvider provider) throws IOException {
+  default void serialize(ExecContextContainer execContextContainer, Object o, JsonGenerator generator,
+                         SerializerProvider provider) throws IOException {
     if (!isRequestContextActive()) {
-      //log.debug("Not request context");
-      ParamsFilteringDelegateSerializer.super.serialize(o, generator, provider);
+      log.debug("Not request context");
+      ParamsFilteringDelegateSerializer.super.serialize((Params) null, o, generator, provider);
       return;
     }
     Params params = null;
-    if (getExecContextContainer() != null) {
-      ExecContext<?> execContext = getExecContextContainer().get();
+    if (execContextContainer != null) {
+      ExecContext<?> execContext = execContextContainer.get();
       if (execContext != null) {
         params = execContext.tryGetParams();
       }

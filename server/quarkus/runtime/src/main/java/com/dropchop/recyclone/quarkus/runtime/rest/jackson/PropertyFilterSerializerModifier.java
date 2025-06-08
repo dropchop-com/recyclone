@@ -30,6 +30,9 @@ public class PropertyFilterSerializerModifier extends BeanSerializerModifier {
     if (serializer instanceof BeanSerializer beanSerializer) {
       return new PropertyFilterBeanSerializer(beanSerializer, filter);
     }
-    return super.modifySerializer(config, beanDesc, serializer);
+    //noinspection unchecked
+    return new PropertyFilterStdSerializer(
+        (JsonSerializer<Object>) serializer, filter
+    );
   }
 }

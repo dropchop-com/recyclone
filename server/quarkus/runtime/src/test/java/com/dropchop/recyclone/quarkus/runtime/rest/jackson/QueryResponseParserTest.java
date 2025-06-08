@@ -63,7 +63,7 @@ class QueryResponseParserTest {
       assertEquals(10, results.size());
       assertEquals(1, aggResult.size());
       AggregationResult subAgg = aggResult.get("media_0_uuid_LFN_Media");
-      assertEquals(1500, subAgg.getBuckets().size());
+      assertEquals(1500, subAgg.getContainers().size());
       String json = mapper.writeValueAsString(aggResult);
       assertFalse(json.isBlank());
     }

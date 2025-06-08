@@ -13,6 +13,10 @@ import java.util.Map;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
+ * A single aggregation result.
+ * Can be used for both single-bucket and multi-bucket aggregations and is
+ * directly compatible with the Elasticsearch response format.
+ *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 06. 06. 2025
  */
 @Slf4j
@@ -28,15 +32,32 @@ public class AggregationResult {
   @NoArgsConstructor(force = true)
   @JsonInclude(NON_NULL)
   @JsonIgnoreProperties(ignoreUnknown = true)
-  public static class Bucket {
+  public static class Container {
+
     @JsonProperty("key")
     private String key;
+
     @JsonProperty("doc_count")
     private Long docCount;
+
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("type")
+    private String type;
+
+    @JsonProperty("title")
+    private String title;
+
+    @JsonProperty("lang")
+    private String lang;
 
     @JsonIgnore
     private Map<String, AggregationResult> subAggregations = new LinkedHashMap<>();
 
+    /**
+     * Set a named sub-aggregation.
+     */
     @JsonAnySetter
     public void setSub(String name, AggregationResult value) {
       if (name == null || value == null) {
@@ -46,6 +67,9 @@ public class AggregationResult {
       subAggregations.put(name, value);
     }
 
+    /**
+     * Get all named sub-aggregations, or an empty map if there are none.
+     */
     @JsonAnyGetter
     public Map<String, AggregationResult> getSubs(){
       return subAggregations;
@@ -56,7 +80,7 @@ public class AggregationResult {
   Map<String, Object> meta = new LinkedHashMap<>();
 
   @JsonProperty("buckets")
-  private List<Bucket> buckets;
+  private List<Container> containers;
 
   @JsonProperty("doc_count_error_upper_bound")
   private Long docCountErrorUpperBound;

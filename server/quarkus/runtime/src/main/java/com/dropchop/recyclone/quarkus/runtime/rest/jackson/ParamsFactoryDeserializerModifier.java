@@ -87,6 +87,4 @@ public class ParamsFactoryDeserializerModifier extends BeanDeserializerModifier 
     }
     return deserializer; // return the original deserializer for other classes
   }
-
-
 }

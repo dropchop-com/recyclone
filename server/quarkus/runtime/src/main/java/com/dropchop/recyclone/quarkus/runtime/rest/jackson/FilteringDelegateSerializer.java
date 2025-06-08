@@ -9,14 +9,18 @@ import com.dropchop.recyclone.base.api.model.rest.ResultStatus;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
 import java.io.IOException;
 
+/**
+ * Interface for serializers that delegate filtering to a {@link JsonSerializer}
+ * and optionally wrap the result in a {@link FilteringJsonGenerator} to filter JSON by properties.
+ *
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 08. 06. 25.
+ */
 public interface FilteringDelegateSerializer {
 
   JsonSerializer<Object> getDelegate();
-  FieldFilter getFilter();
 
   default boolean wrappedResult(Object o) {
     return o instanceof Result<?,?,?> ||
@@ -39,22 +43,12 @@ public interface FilteringDelegateSerializer {
       if (filteringJsonGenerator.continueSerialization(o)) {
         getDelegate().serialize(o, generator, provider);
         if (start) { // end of root object serialization
-          // actually write the JSON with saved generator write state commands.
+          // actually writes the JSON with saved generator write state commands.
           filteringJsonGenerator.outputDelayedWriteState();
         }
       }
     } else {
       getDelegate().serialize(o, generator, provider);
     }
-  }
-
-  default void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
-      throws IOException {
-    this.serialize(getFilter(), o, generator, provider);
-  }
-
-  default void serializeWithType(Object value, JsonGenerator gen, SerializerProvider serializers,
-                                 TypeSerializer typeSer) throws IOException {
-    getDelegate().serializeWithType(value, gen, serializers, typeSer);
   }
 }

@@ -30,6 +30,9 @@ public class ParamsPropertyFilterSerializerModifier extends BeanSerializerModifi
     if (serializer instanceof BeanSerializer beanSerializer) {
       return new ParamsPropertyFilterBeanSerializer(beanSerializer, params);
     }
-    return super.modifySerializer(config, beanDesc, serializer);
+    //noinspection unchecked
+    return new ParamsPropertyFilterStdSerializer(
+        (JsonSerializer<Object>) serializer, params
+    );
   }
 }
