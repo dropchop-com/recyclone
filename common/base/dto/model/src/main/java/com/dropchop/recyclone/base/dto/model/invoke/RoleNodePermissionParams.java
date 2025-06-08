@@ -15,5 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class RoleNodePermissionParams extends IdentifierParams {
 
   private String roleNodeId;
+  private String target;
+  private String targetId;
 
 }

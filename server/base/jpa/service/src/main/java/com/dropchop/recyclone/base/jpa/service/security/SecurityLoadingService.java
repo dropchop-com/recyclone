@@ -62,9 +62,10 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
   /**
    * Loads role node permissions
-   * @param roleNode
+   * @param roleNode  - defines role node from where permissions must be loaded
+   * @param roleNodeParams - additional search parameters for search. (Example: different target than role node)
    */
-  private void loadRoleNodePermissions(RoleNode roleNode) {
+  private void loadRoleNodePermissions(RoleNode roleNode, RoleNodeParams roleNodeParams) {
     MappingContext permMapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
     BlazeExecContext<JpaRoleNodePermission> permissionContext =
         this.roleNodePermissionRepository.getRepositoryExecContext(permMapContext);
@@ -72,6 +73,16 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
     RoleNodePermissionParams params = new RoleNodePermissionParams();
     params.setRoleNodeId(roleNode.getId());
+    if (roleNodeParams != null) { //check of targets are different and load permissions on role node for that target
+      String target = roleNodeParams.getTarget();
+      String targetId = roleNodeParams.getTargetId();
+      if (target != null && !target.isBlank() && !roleNode.getTarget().equals(target)) {
+        params.setTarget(target);
+        if (targetId != null && !targetId.isBlank()) {
+          params.setTargetId(targetId);
+        }
+      }
+    }
     permissionContext.setParams(params);
     List<JpaRoleNodePermission> permissions = this.roleNodePermissionRepository.find(permissionContext);
     List<RoleNodePermission> permissionDtos = permToDtoMapper.toDtos(permissions, permMapContext);
@@ -100,7 +111,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     }
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
     RoleNode roleNode = roleNodeToDtoMapper.toDto(jpaRoleNodes.getFirst(), mapContext);
-    loadRoleNodePermissions(roleNode);
+    loadRoleNodePermissions(roleNode, params);
     return roleNode;
   }
 
@@ -116,7 +127,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
     JpaRoleNode loadedParentRoleNode = this.roleNodeRepository.findById(uuid);
     RoleNode roleNode = roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
-    loadRoleNodePermissions(roleNode);
+    loadRoleNodePermissions(roleNode, null);
     return roleNode;
   }
 
