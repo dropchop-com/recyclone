@@ -45,8 +45,11 @@ public class SecurityPermissionResource implements
 
 
   @Override
-  public Result<RoleNodePermission> update(String roleNodeId, String roleNodePermissionId) {
-    RoleNodePermission roleNodePermission = this.securityLoadingService.updatePermission(roleNodeId, roleNodePermissionId);
+  public Result<RoleNodePermission> update(
+    String roleNodeId, String roleNodePermissionId, RoleNodeParams params
+  ) {
+    RoleNodePermission roleNodePermission =
+      this.securityLoadingService.updatePermission(roleNodeId, roleNodePermissionId, params);
     ResultStatus status = new ResultStatus();
     status.setCode(ResultCode.success);
     Result<RoleNodePermission> result = new Result<>();

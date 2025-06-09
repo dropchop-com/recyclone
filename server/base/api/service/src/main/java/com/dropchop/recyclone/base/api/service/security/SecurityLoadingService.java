@@ -46,6 +46,6 @@ public interface SecurityLoadingService extends Service {
   User loadUserByToken(String token);
 
 
-  RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId);
+  RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId, RoleNodeParams params);
 
 }

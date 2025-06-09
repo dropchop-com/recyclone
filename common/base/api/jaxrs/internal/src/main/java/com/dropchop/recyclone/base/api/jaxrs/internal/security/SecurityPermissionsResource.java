@@ -35,6 +35,7 @@ public interface SecurityPermissionsResource {
   @Produces(APPLICATION_JSON_DROPCHOP_RESULT)
   Result<RoleNodePermission> update(
     @PathParam("roleNodeId") String roleNodeId,
-    @PathParam("roleNodePermissionId")String roleNodePermissionId
+    @PathParam("roleNodePermissionId")String roleNodePermissionId,
+    RoleNodeParams params
   );
 }

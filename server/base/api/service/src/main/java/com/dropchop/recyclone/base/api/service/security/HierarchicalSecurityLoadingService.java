@@ -342,7 +342,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
   @Transactional
   @Override
-  public RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId) {
+  public RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId, RoleNodeParams params) {
 
     UUID roleNodeUuid = UUID.fromString(roleNodeId);
     UUID permissionUuid = UUID.fromString(roleNodePermissionId);
