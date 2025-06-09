@@ -56,28 +56,24 @@ public class AggregationResult {
     @JsonProperty("lang")
     private String lang;
 
-    @JsonIgnore
-    private Map<String, AggregationResult> subAggregations = new LinkedHashMap<>();
+    @JsonProperty("results")
+    private Map<String, AggregationResult> results = new LinkedHashMap<>();
 
     /**
      * Set a named sub-aggregation.
      */
     @JsonAnySetter
-    public void setSub(String name, AggregationResult value) {
+    public void setResult(String name, AggregationResult value) {
       if (name == null || value == null) {
         log.warn("Invalid sub-aggregation: {}={}", name, value);
         return;
       }
-      subAggregations.put(name, value);
+      results.put(name, value);
     }
-
-    /**
-     * Get all named sub-aggregations, or an empty map if there are none.
-     */
-    @JsonAnyGetter
+    /*@JsonAnyGetter
     public Map<String, AggregationResult> getSubs(){
       return subAggregations;
-    }
+    }*/
   }
 
   @JsonProperty("meta")
