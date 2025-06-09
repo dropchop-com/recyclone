@@ -38,6 +38,9 @@ public class AggregationResult {
     @JsonProperty("key")
     private String key;
 
+    @JsonProperty("key_as_string")
+    private String keyAsString;
+
     @JsonProperty("doc_count")
     private Long docCount;
 
