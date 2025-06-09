@@ -12,6 +12,7 @@ import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.IdentifierParams;
+import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.dropchop.recyclone.base.es.repo.ElasticCrudRepository;
@@ -19,10 +20,7 @@ import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,7 +46,7 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     MappingContext mapContext = mapperProvider.getMappingContextForRead();
 
     // Create aggregation collector
-    HashMap<String, Object> aggregations = new LinkedHashMap<>();
+    Map<String, AggregationResult> aggregations = new LinkedHashMap<>();
 
     RepositoryExecContext<E> context = repository.getRepositoryExecContext(mapContext);
     context.listener((AggregationResultListener) aggregations::put);
@@ -69,7 +67,7 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
 
     Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
     result.setAggregations(aggregations);
-    log.debug("Mapped {} entities in [{}]ms", result.getData().size(), timer.stop());
+    log.debug("Mapped [{}] entities in [{}]ms", result.getData().size(), timer.stop());
     return result;
   }
 

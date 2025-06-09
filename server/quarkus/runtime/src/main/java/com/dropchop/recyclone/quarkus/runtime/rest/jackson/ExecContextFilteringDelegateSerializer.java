@@ -4,7 +4,6 @@ import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import io.quarkus.arc.Arc;
 import jakarta.enterprise.context.RequestScoped;
@@ -14,31 +13,20 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 08. 22.
- */
-public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSerializer {
+public interface ExecContextFilteringDelegateSerializer extends ParamsFilteringDelegateSerializer {
 
-  private static final Logger log = LoggerFactory.getLogger(ExecContextPropertyFilterSerializer.class);
-  private final ExecContextContainer execContextContainer;
+  Logger log = LoggerFactory.getLogger(ExecContextFilteringDelegateSerializer.class);
 
-  public ExecContextPropertyFilterSerializer(JsonSerializer<Object> delegate,
-                                             ExecContextContainer execContextContainer) {
-    super(delegate, null);
-    this.execContextContainer = execContextContainer;
-  }
-
-  public boolean isRequestContextActive() {
+  default boolean isRequestContextActive() {
     Context context = Arc.container().getActiveContext(RequestScoped.class);
     return context != null && context.isActive();
   }
 
-  @Override
-  public void serialize(Object o, JsonGenerator generator, SerializerProvider provider)
-    throws IOException {
+  default void serialize(ExecContextContainer execContextContainer, Object o, JsonGenerator generator,
+                         SerializerProvider provider) throws IOException {
     if (!isRequestContextActive()) {
       log.debug("Not request context");
-      super.serialize(o, generator, provider);
+      ParamsFilteringDelegateSerializer.super.serialize((Params) null, o, generator, provider);
       return;
     }
     Params params = null;
@@ -49,6 +37,6 @@ public class ExecContextPropertyFilterSerializer extends ParamsPropertyFilterSer
       }
     }
 
-    super.serialize(params, o, generator, provider);
+    ParamsFilteringDelegateSerializer.super.serialize(params, o, generator, provider);
   }
 }

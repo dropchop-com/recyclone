@@ -20,7 +20,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class ResultStatus implements com.dropchop.recyclone.base.api.model.rest.ResultStatus<ResultStats> {
 
   @NonNull
-  private ResultCode code;
+  private ResultCode code = ResultCode.success;
 
   private long time;
 

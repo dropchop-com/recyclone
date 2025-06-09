@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.filtering.FieldFilter;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 /**
@@ -26,8 +27,12 @@ public class PropertyFilterSerializerModifier extends BeanSerializerModifier {
   public JsonSerializer<?> modifySerializer(SerializationConfig config,
                                             BeanDescription beanDesc,
                                             JsonSerializer<?> serializer) {
-    @SuppressWarnings("unchecked")
-    JsonSerializer<Object> jsonSerializer = (JsonSerializer<Object>) serializer;
-    return new PropertyFilterSerializer(jsonSerializer, filter);
+    if (serializer instanceof BeanSerializer beanSerializer) {
+      return new PropertyFilterBeanSerializer(beanSerializer, filter);
+    }
+    //noinspection unchecked
+    return new PropertyFilterStdSerializer(
+        (JsonSerializer<Object>) serializer, filter
+    );
   }
 }

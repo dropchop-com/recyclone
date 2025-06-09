@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.base;
 
+import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -16,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
-public class Generic implements HasId {
+public class Generic implements HasId, Dto {
 
   @NonNull
   private String id;

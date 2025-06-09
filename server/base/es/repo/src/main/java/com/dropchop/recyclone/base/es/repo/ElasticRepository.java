@@ -96,7 +96,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     String result;
     try {
       result = getObjectMapper().writeValueAsString(
-        getElasticQueryBuilder().build(validationData, queryParams));
+        getElasticQueryBuilder().build(validationData, queryParams)
+      );
     } catch (JsonProcessingException e) {
       throw new ServiceException(
         ErrorCode.data_validation_error,

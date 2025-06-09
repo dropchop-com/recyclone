@@ -1,7 +1,9 @@
-package com.dropchop.recyclone.base.es.repo;
+package com.dropchop.recyclone.quarkus.runtime.rest.jackson;
 
+import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
+import com.dropchop.recyclone.base.es.repo.QueryResponseParser;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
@@ -36,7 +38,13 @@ class QueryResponseParserTest {
       return QueryResultListener.Progress.CONTINUE;
     };
 
-    ObjectMapper mapper = new ObjectMapper();
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(10);
+
+    ObjectMapperFactory producer = new ObjectMapperFactory(new ParamsPropertyFilterSerializerModifier(params));
+    ObjectMapper mapper = producer.createFilteringObjectMapper();
+    //mapper = new ObjectMapper();
+
     AggregationResultListener aggListener = aggResult::put;
 
     try (InputStream is = getTestResource()) {
