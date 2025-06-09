@@ -11,6 +11,7 @@ import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
 import jakarta.transaction.Transactional;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +23,20 @@ import java.util.*;
 @Slf4j
 @Getter
 abstract public class HierarchicalSecurityLoadingService implements SecurityLoadingService {
+
+  @Builder
+  @Getter
+  public static class RoleNodeFlags {
+
+    public static RoleNodeFlags getDefaultFlags() {
+      return RoleNodeFlags.builder().build();
+    }
+
+    @Builder.Default private boolean withPermissions = true;
+    @Builder.Default private boolean mustExist = true;
+
+  }
+
 
   protected static StatusMessage getStatusMessage(String error, RoleNodeParams params) {
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
@@ -114,14 +129,6 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       }
       permissionsByLevel.add(levelPermissions);
     }
-    //TODO: implement case where params target and role node (with parent = null) aka root instance role node
-    // target don't match and we need to load template role node from lat role node target
-    // and find if it has any sub role nodes matching params.target so we take those role node permissions and add to level
-    // exmaple:
-    // params target = Y
-    // template node with target X > has sub node with target Y
-    // we gotta load template node with target X  and find out if it has a child with target Y
-
     //find parent node and repeat the process until no more parents.
     RoleNode parentRoleNode = roleNode.getParent();
     if (parentRoleNode != null) {
@@ -129,6 +136,67 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       this.resolveRoleNodePermissionLevels(
         loadedParentRoleNode, permissionsByLevel, params, currentLevel + 1, maxParentInstanceLevel
       );
+    } else {
+
+      //This part is executed when target in parameters is different then target in first/root instance role node
+      //The following code:
+      //  - finds root template role node for role node target
+      //  - finds child role node for target defined by parameters
+      //  - gets template permissions from the loaded child role node
+      //    and puts them as another leve in permissionsByLevel list.
+
+      //Example:
+      //  INSTANCE ROLE NODE - TARGET X
+      //     |
+      //     -> INSTANCE ROLE NODE - TARGET Y   << the one instance we are listing permissions for
+      //
+      //
+      //  ROOT TEMPLATE ROLE NODE - TARGET X
+      //     |
+      //     -> CHILD TEMPLATE ROLE NODE - TARGET Y << there are the permissions we have to get out too !!!
+      //
+      if (differentTargets) {
+
+        RoleNodeFlags flags = RoleNodeFlags.builder()
+          .withPermissions(false)
+          .build();
+
+        //find template role node for instance role node target
+        RoleNodeParams rootNodeParams = new RoleNodeParams();
+        rootNodeParams.setRootOnly(true);
+        rootNodeParams.setTarget(roleNode.getTarget());
+        rootNodeParams.setTargetId(roleNode.getTargetId());
+        RoleNode differentTargetRootRoleNode = this.loadRoleNode(rootNodeParams, flags);
+
+        //find child role node from parent template role node
+        RoleNodeParams rootChildParams = new RoleNodeParams();
+        rootChildParams.setTarget(paramsTarget);
+        if (paramsTargetId != null && !paramsTargetId.isBlank()) {
+          rootChildParams.setTarget(paramsTargetId);
+        }
+        rootChildParams.setParentId(differentTargetRootRoleNode.getId());
+
+        RoleNodeFlags childFlags = RoleNodeFlags.builder()
+          .withPermissions(true)
+          .mustExist(false)
+          .build();
+        RoleNode rootChildRoleNode = this.loadRoleNode(rootChildParams, childFlags);
+        if (rootChildRoleNode != null) {
+          List<RoleNodePermission> levelPermissions = new LinkedList<>();
+          for (RoleNodePermission roleNodePermission : rootChildRoleNode.getRoleNodePermissions()) {
+            if (roleNodePermission instanceof RoleNodePermissionTemplate permissionTemplate) {
+              String targetId = permissionTemplate.getTargetId();
+              if (
+                permissionTemplate.getTarget().equals(paramsTarget)
+                  && (targetId == null || targetId.equals(paramsTargetId))
+              ) {
+                levelPermissions.add(permissionTemplate);
+              }
+            }
+          }
+          permissionsByLevel.add(levelPermissions);
+        }
+      }
     }
   }
 
@@ -136,7 +204,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   /**
    * Loads ROOT template permissions for target.
    *
-   * @param overrideParams         - parameters defining root target .
+   * @param overrideParams     - parameters defining root target .
    * @param permissionsByLevel - list of permissions by level that root template permissions will be added to.
    */
   private void resolveRootTargetPermissions(
@@ -144,14 +212,28 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     RoleNodeParams overrideParams,
     List<List<RoleNodePermission>> permissionsByLevel
   ) {
+
+    String roleNodeTarget = roleNode.getTarget();
+    String roleNodeTargetId = roleNode.getTargetId();
+
+
     //prepare target parameters
     RoleNodeParams rootParams = new RoleNodeParams();
-    rootParams.setTarget(roleNode.getTarget());
-    rootParams.setTargetId(roleNode.getTargetId());
+    rootParams.setTarget(roleNodeTarget);
+    rootParams.setTargetId(roleNodeTargetId);
     rootParams.setRootOnly(true);
 
+    if (overrideParams != null) {
+      String overrideTarget = overrideParams.getTarget();
+      String overrideTargetId = overrideParams.getTargetId();
+      if (overrideTarget != null && !overrideTarget.isBlank() && !roleNodeTarget.equals(overrideTarget)) {
+        rootParams.setTarget(overrideTarget);
+        if (overrideTargetId != null && !overrideTarget.isBlank()) {
+          rootParams.setTargetId(overrideTargetId);
+        }
+      }
+    }
     RoleNode loadedRootRoleNode = this.loadRoleNode(rootParams);
-    //TODO: implement override params target !!!!
     permissionsByLevel.add(loadedRootRoleNode.getRoleNodePermissions().stream().filter(p -> {
       if (p instanceof RoleNodePermissionTemplate permissionTemplate) {
         String targetId = permissionTemplate.getTargetId();
@@ -323,13 +405,26 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
 
   /**
-   * Loads role node for provided parameters.
+   * Loads role node for provided parameters with default flags
    * NOTE: Parameters must define only 1 role node. Combination target/entity should be unique per role node.
    *
    * @param params - role node target/entity parameters
    * @return found role node or service exception if not found.
    */
-  abstract protected RoleNode loadRoleNode(RoleNodeParams params);
+  protected RoleNode loadRoleNode(RoleNodeParams params) {
+    return this.loadRoleNode(params, RoleNodeFlags.getDefaultFlags());
+  }
+
+
+  /**
+   * Loads role node for provided parameters.
+   * NOTE: Parameters must define only 1 role node. Combination target/entity should be unique per role node.
+   *
+   * @param params - role node target/entity parameters
+   * @param flags  - defined how to load role node
+   * @return role node instance
+   */
+  abstract protected RoleNode loadRoleNode(RoleNodeParams params, RoleNodeFlags flags);
 
 
   /**

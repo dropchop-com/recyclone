@@ -72,7 +72,7 @@ public class RoleNodeParamsDecorator<E> extends BlazeCriteriaDecorator<E> {
               cb.where(alias + DELIM + "targetId").isNull();
             }
             if (parentId != null && !parentId.isBlank()) {
-              cb.where(alias + DELIM + "parent" + DELIM + SearchFields.Common.UUID).eq(parentId);
+              cb.where(alias + DELIM + "parent" + DELIM + SearchFields.Common.UUID).eq(UUID.fromString(parentId));
             } else
             if (rootOnly != null && rootOnly) {
               cb.where(alias + DELIM + "parent").isNull();

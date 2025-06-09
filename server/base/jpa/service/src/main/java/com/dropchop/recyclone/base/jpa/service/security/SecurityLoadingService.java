@@ -96,20 +96,27 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
    * @return found role node or service exception if not found.
    */
   @Override
-  protected RoleNode loadRoleNode(RoleNodeParams params) {
+  protected RoleNode loadRoleNode(RoleNodeParams params, RoleNodeFlags flags) {
     MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
     RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext(mapContext);
     execContext.setParams(params);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);
+
     if (jpaRoleNodes == null || jpaRoleNodes.isEmpty()) {
-      throw new ServiceException(getStatusMessage("Role node not found for params", params));
+      if (flags.isMustExist()) {
+        throw new ServiceException(getStatusMessage("Role node not found for params", params));
+      } else {
+        return null;
+      }
     }
     if (jpaRoleNodes.size() != 1) {
       throw new ServiceException(getStatusMessage("Only one role node must be found by params", params));
     }
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
     RoleNode roleNode = roleNodeToDtoMapper.toDto(jpaRoleNodes.getFirst(), mapContext);
-    loadRoleNodePermissions(roleNode, params);
+    if (flags.isWithPermissions()) {
+      loadRoleNodePermissions(roleNode, params);
+    }
     return roleNode;
   }
 
