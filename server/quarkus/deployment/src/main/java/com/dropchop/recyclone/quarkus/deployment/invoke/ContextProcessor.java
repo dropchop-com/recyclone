@@ -139,6 +139,22 @@ public class ContextProcessor {
       );
     }
 
+    for (Map.Entry<String, RestClass> restClassEntry : restMapping.getApiClasses().entrySet()) {
+      RestClass restClass = restClassEntry.getValue();
+      if (restClass.isExcluded()) {
+        continue;
+      }
+      String paramsClass = restClass.getParamClass();
+      if (paramsClass != null && !paramsPriority.containsKey(paramsClass)) {
+        fillClassPriorities(indexView, paramsClass, CTX_PARAMS_IFACE, paramsPriority);
+      }
+
+      String contextClass = restClass.getCtxClass();
+      if (contextClass != null && !contextPriority.containsKey(contextClass)) {
+        fillClassPriorities(indexView, contextClass, EXEC_CTX_IFACE, contextPriority);
+      }
+    }
+
     paramsPriority.put(buildConfig.rest().defaultParams(), 1);
     paramsBuildProducer.produce(new ParamsBuildItem(paramsPriority));
     //contextMappings.add(new ContextMapping(buildConfig.rest().defaultExecContext(), null, 2));
