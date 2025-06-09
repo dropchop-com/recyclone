@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
@@ -77,6 +78,7 @@ public class AggregationResult {
   }
 
   @JsonProperty("meta")
+  @JsonInclude(NON_EMPTY)
   Map<String, Object> meta = new LinkedHashMap<>();
 
   @JsonProperty("buckets")
