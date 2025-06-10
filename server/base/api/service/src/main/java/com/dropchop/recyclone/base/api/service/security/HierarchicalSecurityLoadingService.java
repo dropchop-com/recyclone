@@ -83,6 +83,9 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     if (roleNode == null) {
       throw new ServiceException(getStatusMessage("Role node cannot be null", null));
     }
+
+    boolean isRoleNodeInstance = roleNode.isInstance();
+    boolean settingTemplate = false;
     String roleNodeTarget = roleNode.getTarget();
     String roleNodeTargetId = roleNode.getTargetId();
     String paramsTarget = null;
@@ -94,6 +97,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     paramsTarget = params.getTarget();
     paramsTargetId = params.getTargetId();
     if (paramsTarget != null && !paramsTarget.isBlank()) {
+      settingTemplate = isRoleNodeInstance;
       if (!roleNodeTarget.equals(paramsTarget)) {
         differentTargets = true;
         roleNodeTarget = paramsTarget;
@@ -107,7 +111,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     //if role node is instance and max parent instance level is set and current level is less or equals to it, instance permissions will be taken
     // as opposed to template permissions.
     // different targets means that load for different target permissions is in progress.
-    if (roleNode.isInstance() && !differentTargets && maxParentInstanceLevel != null
+    if (isRoleNodeInstance && !settingTemplate && !differentTargets && maxParentInstanceLevel != null
       && maxParentInstanceLevel >= currentLevel
     ) {
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream()
@@ -383,21 +387,36 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
         //NOTE: prepare template role node if not same target and add permission to it!
         log.info("Will add new permission from [{}] from template role node [{}]",
           permissionUuid, roleNodeUuid);
-        this.createRoleNodePermission(roleNodeUuid, roleNodePermission);
+        this.createRoleNodePermission(roleNodeUuid, roleNodePermission, null);
       }
-    } else { //working with real entity
-      if (isSameRoleNode) {
-        if (!isPermissionTemplate) {
-          //delete instance permission from current entity role node
-          log.info("Will delete permission [{}] from instance role node [{}]",
-            permissionUuid, roleNodeUuid);
-          this.deleteRoleNodePermission(permissionUuid);
-        }
+    } else {
+      //working with entity instance role node
+      if (!isPermissionTemplate || isSameRoleNode) {
+        //delete instance permission from current entity role node
+        log.info("Will delete permission [{}] from instance role node [{}]",
+          permissionUuid, roleNodeUuid);
+        this.deleteRoleNodePermission(permissionUuid);
       } else {
         //when role node different from permission role node add opposite permission to current role node
-        if (isPermissionTemplate) {
-          //create template
+        String target = null;
+        String targetId = null;
+        boolean asTemplate = false;
+        if (params != null) {
+          //working with templates on instance role nodes !
+          target = params.getTarget();
+          targetId = params.getTargetId();
+          if (target != null && !target.isBlank()) {
+            asTemplate = true;
+          }
         }
+        if (asTemplate) {
+          //create template permission for target on role node.
+          this.createRoleNodePermission(roleNodeUuid, roleNodePermission, params);
+        } else {
+          //create instance permission on role node
+          this.createRoleNodePermission(roleNodeUuid, roleNodePermission, null);
+        }
+
       }
     }
     return new RoleNodePermission();
@@ -454,7 +473,9 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
    *
    * @param targetRoleNodeId         - target role node to attach permission to
    * @param sourceRoleNodePermission - existing role node permission to create new role node permission from
+   * @param params - define target when adding template permission on instance role node permission
    */
   abstract protected void createRoleNodePermission(
-    UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission);
+    UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission, RoleNodeParams params
+  );
 }

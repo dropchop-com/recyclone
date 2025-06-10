@@ -162,12 +162,26 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
 
   @Override
-  protected void createRoleNodePermission(UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission) {
+  protected void createRoleNodePermission(
+    UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission, RoleNodeParams params
+  ) {
     UUID permissionUuid = UUID.fromString(sourceRoleNodePermission.getPermission().getId());
     boolean isAllowed = !sourceRoleNodePermission.getAllowed();
 
     JpaRoleNode jpaRoleNode = this.roleNodeRepository.findById(targetRoleNodeId);
-    boolean isTemplateRoleNode = jpaRoleNode.getEntity() == null || jpaRoleNode.getEntity().isBlank();
+
+    String target = jpaRoleNode.getTarget();
+    String targetId = jpaRoleNode.getTargetId();
+    boolean forceTemplate = false;
+    if (params != null) {
+      target = params.getTarget();
+      targetId = params.getTargetId();
+      if (target != null && !target.isBlank()) {
+        forceTemplate = true;
+      }
+    }
+
+    boolean isTemplateRoleNode = jpaRoleNode.getEntity() == null || jpaRoleNode.getEntity().isBlank() || forceTemplate;
 
     JpaPermission jpaPermission = this.permissionRepository.findById(permissionUuid);
 
@@ -175,8 +189,8 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
       new JpaRoleNodePermissionTemplate() : new JpaRoleNodePermission();
 
     if (jpaRoleNodePermission instanceof JpaRoleNodePermissionTemplate) {
-      ((JpaRoleNodePermissionTemplate)jpaRoleNodePermission).setTarget(jpaRoleNode.getTarget());
-      ((JpaRoleNodePermissionTemplate)jpaRoleNodePermission).setTargetId(jpaRoleNode.getTargetId());
+      ((JpaRoleNodePermissionTemplate)jpaRoleNodePermission).setTarget(target);
+      ((JpaRoleNodePermissionTemplate)jpaRoleNodePermission).setTargetId(targetId);
     }
 
     jpaRoleNodePermission.setUuid(UUID.randomUUID());
