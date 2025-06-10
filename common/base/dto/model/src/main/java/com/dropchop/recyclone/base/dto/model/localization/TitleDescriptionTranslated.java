@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.localization;
 
+import com.dropchop.recyclone.base.dto.model.base.Generic;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,18 @@ public class TitleDescriptionTranslated
   implements com.dropchop.recyclone.base.api.model.localization.TitleDescriptionTranslated {
 
   private String description;
+
+  public TitleDescriptionTranslated(
+      com.dropchop.recyclone.base.api.model.localization.TitleTranslated titleTranslated) {
+    this.setId(titleTranslated.getId());
+    this.setLang(titleTranslated.getLang());
+    this.setTitle(titleTranslated.getTitle());
+    this.setType(titleTranslated.getType());
+    if (titleTranslated instanceof Generic generic) {
+      this.setName(generic.getName());
+    }
+    if (!titleTranslated.getGroups().isEmpty()) {
+      this.setGroups(titleTranslated.getGroups());
+    }
+  }
 }
