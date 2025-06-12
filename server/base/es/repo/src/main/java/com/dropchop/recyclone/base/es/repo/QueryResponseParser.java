@@ -154,6 +154,7 @@ public class QueryResponseParser {
   }
 
   private void parseAggregations(JsonParser parser,
+                                 Params params,
                                  List<AggregationResultListener> aggListeners) throws IOException {
     if (aggListeners == null || aggListeners.isEmpty()) {
       return;
@@ -162,7 +163,10 @@ public class QueryResponseParser {
 
     while (parser.nextToken() == JsonToken.FIELD_NAME) {
       //String aggName = parser.currentName();
-      Map<String, AggregationResult> aggData = mapper.readValue(parser,
+      ObjectReader reader = mapper.readerFor(new MapTypeRef())
+          .withAttribute(Constants.InternalContextVariables.RECYCLONE_PARAMS, params);
+
+      Map<String, AggregationResult> aggData = reader.readValue(parser,
           new TypeReference<>() {});
       parser.nextToken(); // START_OBJECT
       if (aggData != null && !aggData.isEmpty()) {
@@ -241,7 +245,7 @@ public class QueryResponseParser {
             break;
 
           case "aggregations":
-            parseAggregations(parser, aggListeners);
+            parseAggregations(parser, params, aggListeners);
             break;
 
           default:

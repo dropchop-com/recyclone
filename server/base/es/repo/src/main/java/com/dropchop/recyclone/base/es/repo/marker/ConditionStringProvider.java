@@ -4,4 +4,5 @@ import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 
 public interface ConditionStringProvider {
   String provideConditionString(QueryParams params);
+  String provideConditionStringWithMaxSizeWithoutAggregation(QueryParams params);
 }
