@@ -104,6 +104,14 @@ public class ResultFilter
       this.translation = translation;
       return this;
     }
+
+    /**
+     * Syntactic sugar starting point.
+     */
+    @SuppressWarnings("unused")
+    public static LanguageFilter lf() {
+      return new LanguageFilter();
+    }
   }
 
   private ContentFilter content = new ContentFilter();
@@ -156,5 +164,45 @@ public class ResultFilter
    */
   public static ResultFilter rf() {
     return new ResultFilter();
+  }
+
+  public static ResultFilter copy(com.dropchop.recyclone.base.api.model.invoke.ResultFilter<?, ?> rf,
+                                  com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter cfDefault,
+                                  com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.LanguageFilter lfDefault) {
+    ResultFilter copyRf = new ResultFilter();
+    if (rf != null && rf.getContent() != null) {
+      com.dropchop.recyclone.base.api.model.invoke.ResultFilter.ContentFilter cf = rf.getContent();
+      copyRf.setContent(
+          new ContentFilter(
+              cf.getIncludes(),
+              cf.getExcludes(),
+              cf.getTreeLevel(),
+              cf.getDetailLevel()
+          )
+      );
+    } else if (cfDefault != null) {
+      copyRf.setContent(cfDefault);
+    }
+    if (rf != null && rf.getLang() != null) {
+      copyRf.setLang(new LanguageFilter(rf.getLang().getSearch(), rf.getLang().getTranslation()));
+    } else if (lfDefault != null) {
+      copyRf.setLang(lfDefault);
+    }
+    if (rf != null) {
+      copyRf.setSize(rf.getSize());
+      copyRf.setFrom(rf.getFrom());
+      copyRf.setVersion(rf.getVersion());
+      copyRf.getStates().addAll(rf.getStates());
+    }
+    return copyRf;
+  }
+
+  public static ResultFilter copy(com.dropchop.recyclone.base.api.model.invoke.ResultFilter<?, ?> rf,
+                                  com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter cfDefault) {
+    return copy(rf, cfDefault, null);
+  }
+
+  public static ResultFilter copy(com.dropchop.recyclone.base.api.model.invoke.ResultFilter<?, ?> rf) {
+    return copy(rf, null, null);
   }
 }

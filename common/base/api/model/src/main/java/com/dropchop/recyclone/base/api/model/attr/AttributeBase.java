@@ -18,6 +18,6 @@ public abstract class AttributeBase<X> implements Attribute<X> {
   private String name;
 
   public String toString() {
-    return this.getClass().getSimpleName() + ":" + this.getName();
+    return "%s{%s=%s}".formatted(this.getClass().getSimpleName(), this.getName(), this.getValue());
   }
 }

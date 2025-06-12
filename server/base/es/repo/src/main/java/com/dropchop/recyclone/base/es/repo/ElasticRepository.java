@@ -86,13 +86,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   @Override
   public String provideConditionString(QueryParams queryParams) {
-
-    int tempSize = queryParams.tryGetResultFilter().getSize();
-    AggregationList tempAggs = queryParams.getAggregate();
-    queryParams.setAggregate(null);
-    queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
     ElasticQueryBuilder.ValidationData validationData = new ElasticQueryBuilder.ValidationData();
-
     String result;
     try {
       result = getObjectMapper().writeValueAsString(
@@ -105,9 +99,31 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
         e
       );
     }
+    return result;
+  }
 
-    queryParams.tryGetResultFilter().setSize(tempSize);
-    queryParams.setAggregate(tempAggs);
+  @Override
+  public String provideConditionStringWithMaxSizeWithoutAggregation(QueryParams queryParams) {
+    String result;
+    ResultFilter<?, ?> rf = queryParams.tryGetResultFilter();
+    String conditionString;
+    if (rf != null) {
+      int tempFrom = queryParams.tryGetResultFilter().getFrom();
+      int tempSize = queryParams.tryGetResultFilter().getSize();
+      AggregationList tempAggs = queryParams.getAggregate();
+      queryParams.setAggregate(null);
+      queryParams.tryGetResultFilter().setFrom(0);
+      queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
+      try {
+        result = this.provideConditionString(queryParams);
+      } finally {
+        queryParams.tryGetResultFilter().setFrom(tempFrom);
+        queryParams.tryGetResultFilter().setSize(tempSize);
+        queryParams.setAggregate(tempAggs);
+      }
+    } else {
+      result = this.provideConditionString(queryParams);
+    }
     return result;
   }
 
