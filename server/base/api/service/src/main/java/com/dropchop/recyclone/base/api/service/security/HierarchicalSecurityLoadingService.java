@@ -435,26 +435,29 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
           permissionUuid, roleNodeUuid);
         this.deleteRoleNodePermission(permissionUuid);
       } else {
-        //when role node different from permission role node add opposite permission to current role node
-        String target = null;
-        String targetId = null;
-        boolean asTemplate = false;
-        if (params != null) {
-          //working with templates on instance role nodes !
-          target = params.getTarget();
-          targetId = params.getTargetId();
-          if (target != null && !target.isBlank()) {
-            asTemplate = true;
+        if (isPermissionTemplate && isSameRoleNode) {
+          this.deleteRoleNodePermission(permissionUuid);
+        } else {
+          //when role node different from permission role node add opposite permission to current role node
+          String target = null;
+          String targetId = null;
+          boolean asTemplate = false;
+          if (params != null) {
+            //working with templates on instance role nodes !
+            target = params.getTarget();
+            targetId = params.getTargetId();
+            if (target != null && !target.isBlank()) {
+              asTemplate = true;
+            }
+          }
+          if (asTemplate) {
+            //create template permission for target on role node.
+            this.createRoleNodePermission(roleNodeUuid, roleNodePermission, params);
+          } else {
+            //create instance permission on role node
+            this.createRoleNodePermission(roleNodeUuid, roleNodePermission, null);
           }
         }
-        if (asTemplate) {
-          //create template permission for target on role node.
-          this.createRoleNodePermission(roleNodeUuid, roleNodePermission, params);
-        } else {
-          //create instance permission on role node
-          this.createRoleNodePermission(roleNodeUuid, roleNodePermission, null);
-        }
-
       }
     }
     return new RoleNodePermission();
