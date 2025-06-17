@@ -5,7 +5,6 @@ import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
-import com.dropchop.recyclone.base.api.model.query.operator.In;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
@@ -15,7 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -173,7 +171,7 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       );
     } else {
 
-      //This part is executed when target in parameters is different then target in first/root instance role node
+      //This part is executed when target in parameters is different then target in first/rcoot instance role node
       //The following code:
       //  - finds root template role node for role node target
       //  - finds child role node for target defined by parameters
