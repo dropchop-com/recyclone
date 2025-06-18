@@ -64,9 +64,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
    * @param roleNodeParams - additional search parameters for search. (Example: different target than role node)
    */
   private void loadRoleNodePermissions(RoleNode roleNode, RoleNodeParams roleNodeParams) {
-    MappingContext permMapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
+
     BlazeExecContext<JpaRoleNodePermission> permissionContext =
-        this.roleNodePermissionRepository.getRepositoryExecContext(permMapContext);
+        this.roleNodePermissionRepository.getRepositoryExecContext();
     RoleNodePermissionToDtoMapper permToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
 
     RoleNodePermissionParams params = new RoleNodePermissionParams();
@@ -82,6 +82,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
       }
     }
     permissionContext.setParams(params);
+    MappingContext permMapContext = new FilteringDtoContext();
+    params.getFilter().getContent().setTreeLevel(5);
+    permMapContext.setParams(params);
     List<JpaRoleNodePermission> permissions = this.roleNodePermissionRepository.find(permissionContext);
     List<RoleNodePermission> permissionDtos = permToDtoMapper.toDtos(permissions, permMapContext);
     roleNode.setRoleNodePermissions(permissionDtos);
@@ -97,10 +100,11 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
    */
   @Override
   protected RoleNode loadRoleNode(RoleNodeParams params, RoleNodeFlags flags) {
-    MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
-    RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext(mapContext);
+    params.getFilter().getContent().setTreeLevel(5);
+    MappingContext mapContext = new FilteringDtoContext();
+    mapContext.setParams(params);
+    RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext();
     execContext.setParams(params);
-    //mapContext.setParams(params);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);
 
     if (jpaRoleNodes == null || jpaRoleNodes.isEmpty()) {
@@ -129,7 +133,11 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
    */
   @Override
   protected RoleNode loadRoleNodeById(UUID uuid) {
-    MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
+    //MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
+    MappingContext mapContext = new FilteringDtoContext();
+    Params params = new Params();
+    params.getFilter().getContent().setTreeLevel(5);
+    mapContext.setParams(params);
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
     JpaRoleNode loadedParentRoleNode = this.roleNodeRepository.findById(uuid);
     RoleNode roleNode = roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);

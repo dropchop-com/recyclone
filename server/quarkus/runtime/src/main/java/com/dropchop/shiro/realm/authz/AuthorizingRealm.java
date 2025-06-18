@@ -47,7 +47,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     User p = (User) principals.getPrimaryPrincipal();
     RoleNodeParams params = RoleNodeParams.builder().entity(p.getClass().getSimpleName()).entityId(p.getId()).build();
-    //params.getFilter().getContent().setTreeLevel(5);
+    params.getFilter().getContent().setTreeLevel(5);
     Collection<Permission> permissions = this.securityLoadingService.loadPermissions(params);
     SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
     if (!permissions.isEmpty()) {
