@@ -12,6 +12,7 @@ import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
 import jakarta.transaction.Transactional;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,52 +67,79 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   }
 
 
+  @Data
+  @Builder
+  protected static class ResolveContext {
+
+    private RoleNodeParams inputParams = new RoleNodeParams();
+    private Integer maxParentInstanceLevel = null;
+
+    private int currentLevel = 0;
+
+    private RoleNodeParams processParams = new RoleNodeParams();
+    private String initialRoleNodeTarget = null;
+    private String initialRoleNodeTargetId = null;
+
+    private boolean settingTemplate = false;
+
+    public void incrementLevel() {
+      this.currentLevel++;
+    }
+
+  }
+
   /**
    * Resolves template or instance permissions from role node and adds them to permissions level list.
    *
    * @param roleNode           - role node to load permissions for.
    * @param permissionsByLevel - target permissions level list.
-   * @param params             - default target data.
-   * @param currentLevel       - hierarchy level counter.
+   * @param resolveContext     - resolve context
    */
   private void resolveRoleNodePermissionLevels(RoleNode roleNode,
                                                List<List<RoleNodePermission>> permissionsByLevel,
-                                               RoleNodeParams params,
-                                               int currentLevel,
-                                               Integer maxParentInstanceLevel
+                                               ResolveContext resolveContext
   ) {
     if (roleNode == null) {
       throw new ServiceException(getStatusMessage("Role node cannot be null", null));
     }
 
-    boolean isRoleNodeInstance = roleNode.isInstance();
-    boolean settingTemplate = false;
+    int currentLevel = resolveContext.getCurrentLevel();
+    Integer maxParentInstanceLevel = resolveContext.getMaxParentInstanceLevel();
+
+    RoleNodeParams inputParams = resolveContext.getInputParams();
+    RoleNodeParams processParams = resolveContext.getInputParams();
     String roleNodeTarget = roleNode.getTarget();
     String roleNodeTargetId = roleNode.getTargetId();
-    String paramsTarget = null;
-    String paramsTargetId = null;
-    boolean differentTargets = false;
-    if (params == null) {
-      params = new RoleNodeParams();
+    String paramsTarget = processParams.getTarget();
+    String paramsTargetId = processParams.getTargetId();
+    if (currentLevel == 0) {
+      resolveContext.setInitialRoleNodeTarget(roleNode.getTarget());
+      resolveContext.setInitialRoleNodeTarget(roleNode.getTargetId());
+      String target = inputParams.getTarget();
+      processParams.setTarget(target);
+      processParams.setTargetId(inputParams.getTargetId());
+      if (target != null && !target.isBlank()) {
+        resolveContext.settingTemplate = true;
+      }
+
     }
-    paramsTarget = params.getTarget();
-    paramsTargetId = params.getTargetId();
+    boolean isRoleNodeInstance = roleNode.isInstance();
+    boolean differentTargets = false;
     if (paramsTarget != null && !paramsTarget.isBlank()) {
-      settingTemplate = isRoleNodeInstance;
       if (!roleNodeTarget.equals(paramsTarget)) {
         differentTargets = true;
         roleNodeTarget = paramsTarget;
         roleNodeTargetId = paramsTargetId;
       }
     } else {
-      //this only happens when permissions are loaded by role node and no addition params are set
-      params.setTarget(roleNodeTarget);
-      params.setTargetId(roleNodeTargetId);
+      //this only happens when permissions are loaded by role node and no additional params are set
+      processParams.setTarget(roleNodeTarget);
+      processParams.setTargetId(roleNodeTargetId);
     }
-    //if role node is instance and max parent instance level is set and current level is less or equals to it, instance permissions will be taken
-    // as opposed to template permissions.
+    //if role node is instance and max parent instance level is set and current level is less or equals to it,
+    // instance permissions will be taken as opposed to template permissions.
     // different targets means that load for different target permissions is in progress.
-    if (isRoleNodeInstance && !settingTemplate && !differentTargets && maxParentInstanceLevel != null
+    if (isRoleNodeInstance && !resolveContext.settingTemplate && !differentTargets && maxParentInstanceLevel != null
       && maxParentInstanceLevel >= currentLevel
     ) {
       permissionsByLevel.add(roleNode.getRoleNodePermissions().stream()
@@ -137,12 +165,13 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     RoleNode parentRoleNode = roleNode.getParent();
     if (parentRoleNode != null) {
       RoleNode loadedParentRoleNode = this.loadRoleNodeById(parentRoleNode.getUuid());
+      resolveContext.incrementLevel();
       this.resolveRoleNodePermissionLevels(
-        loadedParentRoleNode, permissionsByLevel, params, currentLevel + 1, maxParentInstanceLevel
+        loadedParentRoleNode, permissionsByLevel, resolveContext
       );
     } else {
 
-      //This part is executed when target in parameters is different then target in first/root instance role node
+      //This part is executed when target in parameters is different then target in first/rcoot instance role node
       //The following code:
       //  - finds root template role node for role node target
       //  - finds child role node for target defined by parameters
@@ -297,8 +326,15 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
                                                                      RoleNodeParams roleNodeParams
   ) {
     List<List<RoleNodePermission>> permissionsByLevel = new LinkedList<>();
+
+    ResolveContext resolveContext = ResolveContext
+      .builder()
+      .inputParams(roleNodeParams)
+      .maxParentInstanceLevel(maxParentInstanceLevel)
+      .build();
+
     //resolve all hierarchy permissions from parent nodes and add permissions into permission levels list.
-    this.resolveRoleNodePermissionLevels(roleNode, permissionsByLevel, roleNodeParams, 0, maxParentInstanceLevel);
+    this.resolveRoleNodePermissionLevels(roleNode, permissionsByLevel, resolveContext);
     //resolve root level template permissions and add them as last level in permission levels list.
     this.resolveRootTargetPermissions(roleNode, roleNodeParams, permissionsByLevel);
     //merge all permission levels into final list or resolved permissions.
@@ -391,32 +427,35 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       }
     } else {
       //working with entity instance role node
-      if (!isPermissionTemplate || isSameRoleNode) {
+      if (!isPermissionTemplate && isSameRoleNode) {
         //delete instance permission from current entity role node
         log.info("Will delete permission [{}] from instance role node [{}]",
           permissionUuid, roleNodeUuid);
         this.deleteRoleNodePermission(permissionUuid);
       } else {
-        //when role node different from permission role node add opposite permission to current role node
-        String target = null;
-        String targetId = null;
-        boolean asTemplate = false;
-        if (params != null) {
-          //working with templates on instance role nodes !
-          target = params.getTarget();
-          targetId = params.getTargetId();
-          if (target != null && !target.isBlank()) {
-            asTemplate = true;
+        if (isPermissionTemplate && isSameRoleNode) {
+          this.deleteRoleNodePermission(permissionUuid);
+        } else {
+          //when role node different from permission role node add opposite permission to current role node
+          String target = null;
+          String targetId = null;
+          boolean asTemplate = false;
+          if (params != null) {
+            //working with templates on instance role nodes !
+            target = params.getTarget();
+            targetId = params.getTargetId();
+            if (target != null && !target.isBlank()) {
+              asTemplate = true;
+            }
+          }
+          if (asTemplate) {
+            //create template permission for target on role node.
+            this.createRoleNodePermission(roleNodeUuid, roleNodePermission, params);
+          } else {
+            //create instance permission on role node
+            this.createRoleNodePermission(roleNodeUuid, roleNodePermission, null);
           }
         }
-        if (asTemplate) {
-          //create template permission for target on role node.
-          this.createRoleNodePermission(roleNodeUuid, roleNodePermission, params);
-        } else {
-          //create instance permission on role node
-          this.createRoleNodePermission(roleNodeUuid, roleNodePermission, null);
-        }
-
       }
     }
     return new RoleNodePermission();

@@ -100,6 +100,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
     RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext(mapContext);
     execContext.setParams(params);
+    //mapContext.setParams(params);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);
 
     if (jpaRoleNodes == null || jpaRoleNodes.isEmpty()) {
