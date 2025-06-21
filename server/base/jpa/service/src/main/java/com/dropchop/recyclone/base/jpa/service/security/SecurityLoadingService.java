@@ -84,6 +84,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     permissionContext.setParams(params);
     MappingContext permMapContext = new FilteringDtoContext();
     params.getFilter().getContent().setTreeLevel(5);
+    params.getFilter().setSize(1000);
     permMapContext.setParams(params);
     List<JpaRoleNodePermission> permissions = this.roleNodePermissionRepository.find(permissionContext);
     List<RoleNodePermission> permissionDtos = permToDtoMapper.toDtos(permissions, permMapContext);
@@ -105,6 +106,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     mapContext.setParams(params);
     RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext();
     execContext.setParams(params);
+    params.filter().size(1000);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);
 
     if (jpaRoleNodes == null || jpaRoleNodes.isEmpty()) {
