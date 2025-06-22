@@ -156,7 +156,7 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
         ((TotalCountExecContextListener) listener).onTotalCount(total);
       }
     }
-    log.debug("Executing find [{}].", cb.getQueryString());
+    //log.debug("Executing find [{}].", cb.getQueryString());
     return cb.getResultList();
   }
 
