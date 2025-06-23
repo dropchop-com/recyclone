@@ -33,6 +33,14 @@ public interface SecurityLoadingService extends Service {
 
   /**
    * Loads user by login name,
+   * @param userId - user login name
+   * @return user instance or null if not found
+   */
+  User loadUserById(String userId);
+
+
+  /**
+   * Loads user by login name,
    * @param loginName - user login name
    * @return user instance or null if not found
    */

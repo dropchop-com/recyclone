@@ -232,6 +232,14 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return userToDtoMapper.toDto(user, mapContext);
   }
 
+
+  @Override
+  public User loadUserById(String id) {
+    JpaUser user = userRepository.findById(UUID.fromString(id));
+    if (user == null) {return null;}
+    return this.mapToUser(user);
+  }
+
   @Override
   public User loadUserByToken(String token) {
     JpaUserAccount userAccount = userAccountRepository.findByToken(token);

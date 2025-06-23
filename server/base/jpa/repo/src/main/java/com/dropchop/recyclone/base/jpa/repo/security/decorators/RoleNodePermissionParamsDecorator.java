@@ -1,10 +1,9 @@
 package com.dropchop.recyclone.base.jpa.repo.security.decorators;
 
 import com.blazebit.persistence.CriteriaBuilder;
+import com.dropchop.recyclone.base.api.repo.utils.SearchFields;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
-import com.dropchop.recyclone.base.api.repo.utils.SearchFields;
-import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRoleNodePermissionTemplate;
 import com.dropchop.recyclone.base.jpa.repo.BlazeCriteriaDecorator;
 import lombok.extern.slf4j.Slf4j;
