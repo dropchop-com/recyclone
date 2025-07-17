@@ -16,9 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 
 import static com.dropchop.recyclone.base.api.model.invoke.Constants.Messages.CACHE_STORAGE_INIT;
 
@@ -112,34 +110,57 @@ public class CacheLoaderManager {
   @ConsumeEvent(CACHE_STORAGE_INIT)
   public void onInitSignal(String message) {
     log.info("Cache loading initialization start with message [{}={}] ", CACHE_STORAGE_INIT, message);
-    executorService = Executors.newThreadPerTaskExecutor(Executors.defaultThreadFactory());
-    loaders.forEach( loader -> {
-      if (loader == null) {
-        return;
-      }
-      if (!loader.isEnabled()) {
-        return;
-      }
-      // Initial load
-      refreshLoader(loader);
 
-      int interval = loader.getReloadIntervalSeconds();
-      int delaySeconds = ThreadLocalRandom.current().nextInt(interval, 2 * interval);
-      log.info(
-          "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds",
-          loader.getClass().getName(), interval, delaySeconds
-      );
-      scheduler.newJob("cache_loader." + loader.getClass().getName())
-          .setDelayed(delaySeconds + "s")
-          .setInterval(interval + "s")
-          .setTask(executionContext -> refreshLoader(loader))
-          .schedule();
-    });
+    executorService = Executors.newSingleThreadExecutor();
+
+    CompletableFuture.runAsync(() -> {
+      loaders.forEach(loader -> {
+        if (loader == null) {
+          return;
+        }
+        if (!loader.isEnabled()) {
+          return;
+        }
+
+        try {
+          refreshLoader(loader);
+
+          int interval = loader.getReloadIntervalSeconds();
+          int delaySeconds = ThreadLocalRandom.current().nextInt(interval, 2 * interval);
+          log.info(
+            "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds",
+            loader.getClass().getName(), interval, delaySeconds
+          );
+
+          scheduler.newJob("cache_loader." + loader.getClass().getName())
+            .setDelayed(delaySeconds + "s")
+            .setInterval(interval + "s")
+            .setTask(executionContext -> refreshLoader(loader))
+            .schedule();
+        } catch (Exception e) {
+          log.error("Failed to initialize cache loader: {}", loader.getClass().getName(), e);
+        }
+      });
+    }, executorService);
   }
+
 
   public void onStop(@Observes ShutdownEvent event) {
-    if (executorService != null) {
+    if (executorService != null && !executorService.isShutdown()) {
+      log.info("Shutting down cache loading executor");
       executorService.shutdown();
+
+      try {
+        if (!executorService.awaitTermination(30, TimeUnit.SECONDS)) {
+          log.warn("Cache loading executor did not terminate gracefully, forcing shutdown");
+          executorService.shutdownNow();
+        }
+      } catch (InterruptedException e) {
+        log.warn("Interrupted while waiting for cache loading executor to terminate");
+        executorService.shutdownNow();
+        Thread.currentThread().interrupt();
+      }
     }
   }
+
 }
