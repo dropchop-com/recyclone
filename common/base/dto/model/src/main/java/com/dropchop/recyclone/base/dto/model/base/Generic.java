@@ -35,7 +35,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
-public class Generic implements HasId, HasName, Dto, Titled {
+public class Generic implements HasId, HasName, Dto, Titled, com.dropchop.recyclone.base.api.model.base.Generic {
 
   @NonNull
   private String id;
