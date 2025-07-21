@@ -1,15 +1,18 @@
 package com.dropchop.recyclone.base.dto.model.base;
 
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Titled;
-import com.dropchop.recyclone.base.api.model.marker.HasId;
+import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.marker.HasName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
@@ -35,7 +38,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
-public class Generic implements HasId, HasName, Dto, Titled, com.dropchop.recyclone.base.api.model.base.Generic {
+public class Generic implements
+    HasName, Dto, Titled, HasAttributes, com.dropchop.recyclone.base.api.model.base.Generic {
 
   @NonNull
   private String id;
@@ -50,6 +54,9 @@ public class Generic implements HasId, HasName, Dto, Titled, com.dropchop.recycl
   @NonNull
   @EqualsAndHashCode.Exclude
   private List<String> groups = new ArrayList<>();
+
+  @JsonInclude(NON_EMPTY)
+  private Set<Attribute<?>> attributes;
 
   @Override
   public String getTitle() {

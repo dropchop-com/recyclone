@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 04. 25.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 04. 2025.
  */
 @Getter
 @Setter
