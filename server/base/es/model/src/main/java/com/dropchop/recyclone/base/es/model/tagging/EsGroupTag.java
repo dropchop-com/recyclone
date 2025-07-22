@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.es.model.tagging;
 
-import com.dropchop.recyclone.base.api.model.tagging.Group;
+import com.dropchop.recyclone.base.api.model.tagging.GroupTag;
 import com.dropchop.recyclone.base.es.model.localization.EsTitleDescriptionTranslation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @SuppressWarnings("unused")
 public class EsGroupTag extends EsNamedTag
-    implements Group<EsTag, EsTitleDescriptionTranslation> {
+    implements GroupTag<EsTag, EsTitleDescriptionTranslation> {
   public EsGroupTag(@NonNull String name) {
     super(name);
   }
