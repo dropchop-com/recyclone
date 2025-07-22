@@ -60,12 +60,12 @@ public class CacheLoaderManager {
    * The loading process involves notifying each listener at the start of loading, reacting
    * to each loaded item, and finalizing the process with an end lifecycle event.
    *
-   * @param <I>          the type of items managed and loaded by the cache loader
+   * @param <S>          the source type of items managed and loaded by the cache loader
    * @param <C>          the type of the loading context associated with the loading process
    * @param cacheLoader  the cache loader whose loading process is to be refreshed
    */
-  private <I, C extends CacheLoader.LoadingContext> void refreshLoader(CacheLoader<I> cacheLoader) {
-    Map<Listener<I, C>, C> contexts = new HashMap<>();
+  private <S, C extends CacheLoader.LoadingContext> void refreshLoader(CacheLoader<S> cacheLoader) {
+    Map<Listener<S, C>, C> contexts = new HashMap<>();
     for (CacheLoader.Listener<?, ?> listener : consumers) {
       if (listener == null) {
         continue;
@@ -74,30 +74,21 @@ public class CacheLoaderManager {
       C context = (C) listener.onStart(cacheLoader);
       if (context != null) {
         //noinspection unchecked
-        contexts.put((Listener<I, C>) listener, context);
+        contexts.put((Listener<S, C>) listener, context);
       }
     }
 
     if (!contexts.isEmpty()) {
       // Invoke a cache loader load with wrapped callback so we can delegate to all interested listeners
-      cacheLoader.load((LoadListener<I, C>) (__, item) -> {
-        for (Map.Entry<Listener<I, C>, C> entry : contexts.entrySet()) {
-          LoadListener<I, C> listener = entry.getKey();
+      cacheLoader.load((LoadListener<S, C>) (__, item) -> {
+        for (Map.Entry<Listener<S, C>, C> entry : contexts.entrySet()) {
+          LoadListener<S, C> listener = entry.getKey();
           listener.onItem(entry.getValue(), item);
-          /*C loaderContext = entry.getValue();
-          CacheLoader.Adapter<I, A> adapter = cacheLoader.getAdapter();
-          if (listener instanceof AdaptiveLoadingListener && adapter != null) {
-            @SuppressWarnings("PatternVariableCanBeUsed")
-            AdaptiveLoadingListener<I, A, C> adaptiveListener = (AdaptiveLoadingListener<I, A, C>) listener;
-            adaptiveListener.onItem(loaderContext, item, adapter.adapt(item));
-          } else {
-            listener.onItem(entry.getValue(), item);
-          }*/
         }
       });
 
-      for (Map.Entry<Listener<I, C>, C> entry : contexts.entrySet()) {
-        Listener<I, C> listener = entry.getKey();
+      for (Map.Entry<Listener<S, C>, C> entry : contexts.entrySet()) {
+        Listener<S, C> listener = entry.getKey();
         listener.onEnd(entry.getValue());
       }
     }
@@ -126,7 +117,7 @@ public class CacheLoaderManager {
       try {
         refreshLoader(loader);
         int interval = loader.getReloadIntervalSeconds();
-        int delaySeconds = ThreadLocalRandom.current().nextInt(interval, 2 * interval);
+        int delaySeconds = ThreadLocalRandom.current().nextInt(0, interval / 2);
         log.info(
           "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds.",
           loader.getClass().getName(), interval, delaySeconds

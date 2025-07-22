@@ -11,8 +11,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuppressWarnings("unused")
 public class GroupCacheKey extends CacheKey implements com.dropchop.recyclone.base.api.model.cache.GroupCacheKey {
+
+  private String searchGroup;
+
   public GroupCacheKey(@NonNull String code) {
     super(code);
+  }
+
+  public GroupCacheKey(@NonNull String code, @NonNull String lang) {
+    super(code, lang);
+  }
+
+  public GroupCacheKey forSearch(String searchGroup, String searchLang) {
+    this.setSearchGroup(searchGroup);
+    this.setSearchLang(searchLang);
+    return this;
   }
 }
