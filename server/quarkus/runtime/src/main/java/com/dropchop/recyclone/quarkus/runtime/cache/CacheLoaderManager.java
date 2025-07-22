@@ -1,9 +1,8 @@
 package com.dropchop.recyclone.quarkus.runtime.cache;
 
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader;
-import com.dropchop.recyclone.base.api.service.caching.CacheLoader.AdaptiveLoadingListener;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.Listener;
-import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LoadingListener;
+import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LoadListener;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.scheduler.Scheduler;
 import io.quarkus.vertx.ConsumeEvent;
@@ -16,9 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 
 import static com.dropchop.recyclone.base.api.model.invoke.Constants.Messages.CACHE_STORAGE_INIT;
 
@@ -45,7 +42,7 @@ public class CacheLoaderManager {
 
   private final Logger log = LoggerFactory.getLogger(CacheLoaderManager.class);
 
-  private ExecutorService executorService;
+  private ExecutorService startupLoadExecutor;
 
   @Inject
   Instance<CacheLoader<?>> loaders;
@@ -67,7 +64,7 @@ public class CacheLoaderManager {
    * @param <C>          the type of the loading context associated with the loading process
    * @param cacheLoader  the cache loader whose loading process is to be refreshed
    */
-  private <I, A, C extends CacheLoader.LoadingContext> void refreshLoader(CacheLoader<I> cacheLoader) {
+  private <I, C extends CacheLoader.LoadingContext> void refreshLoader(CacheLoader<I> cacheLoader) {
     Map<Listener<I, C>, C> contexts = new HashMap<>();
     for (CacheLoader.Listener<?, ?> listener : consumers) {
       if (listener == null) {
@@ -83,10 +80,11 @@ public class CacheLoaderManager {
 
     if (!contexts.isEmpty()) {
       // Invoke a cache loader load with wrapped callback so we can delegate to all interested listeners
-      cacheLoader.load((LoadingListener<I, C>) (__, item) -> {
+      cacheLoader.load((LoadListener<I, C>) (__, item) -> {
         for (Map.Entry<Listener<I, C>, C> entry : contexts.entrySet()) {
-          LoadingListener<I, C> listener = entry.getKey();
-          C loaderContext = entry.getValue();
+          LoadListener<I, C> listener = entry.getKey();
+          listener.onItem(entry.getValue(), item);
+          /*C loaderContext = entry.getValue();
           CacheLoader.Adapter<I, A> adapter = cacheLoader.getAdapter();
           if (listener instanceof AdaptiveLoadingListener && adapter != null) {
             @SuppressWarnings("PatternVariableCanBeUsed")
@@ -94,7 +92,7 @@ public class CacheLoaderManager {
             adaptiveListener.onItem(loaderContext, item, adapter.adapt(item));
           } else {
             listener.onItem(entry.getValue(), item);
-          }
+          }*/
         }
       });
 
@@ -111,35 +109,55 @@ public class CacheLoaderManager {
   @SuppressWarnings("unused")
   @ConsumeEvent(CACHE_STORAGE_INIT)
   public void onInitSignal(String message) {
-    log.info("Cache loading initialization start with message [{}={}] ", CACHE_STORAGE_INIT, message);
-    executorService = Executors.newThreadPerTaskExecutor(Executors.defaultThreadFactory());
-    loaders.forEach( loader -> {
+    log.info("Cache loading initialization start with message [{}={}].", CACHE_STORAGE_INIT, message);
+
+    startupLoadExecutor = Executors.newSingleThreadExecutor();
+
+    // We must load caches for the first time off of the Vert.x thread, which has blocking and running time-constraints.
+    // We must start load after connections were established to the database(s)
+    CompletableFuture.runAsync(() -> loaders.forEach(loader -> {
       if (loader == null) {
         return;
       }
       if (!loader.isEnabled()) {
         return;
       }
-      // Initial load
-      refreshLoader(loader);
 
-      int interval = loader.getReloadIntervalSeconds();
-      int delaySeconds = ThreadLocalRandom.current().nextInt(interval, 2 * interval);
-      log.info(
-          "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds",
+      try {
+        refreshLoader(loader);
+        int interval = loader.getReloadIntervalSeconds();
+        int delaySeconds = ThreadLocalRandom.current().nextInt(interval, 2 * interval);
+        log.info(
+          "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds.",
           loader.getClass().getName(), interval, delaySeconds
-      );
-      scheduler.newJob("cache_loader." + loader.getClass().getName())
+        );
+
+        scheduler.newJob("cache_loader." + loader.getClass().getName())
           .setDelayed(delaySeconds + "s")
           .setInterval(interval + "s")
           .setTask(executionContext -> refreshLoader(loader))
           .schedule();
-    });
+      } catch (Exception e) {
+        log.error("Failed to initialize cache loader: {}!", loader.getClass().getName(), e);
+      }
+    }), startupLoadExecutor);
   }
 
   public void onStop(@Observes ShutdownEvent event) {
-    if (executorService != null) {
-      executorService.shutdown();
+    if (startupLoadExecutor != null && !startupLoadExecutor.isShutdown()) {
+      log.info("Shutting down cache loading executor.");
+      startupLoadExecutor.shutdown();
+
+      try {
+        if (!startupLoadExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
+          log.warn("Cache loading executor did not terminate gracefully, forcing shutdown!");
+          startupLoadExecutor.shutdownNow();
+        }
+      } catch (InterruptedException e) {
+        log.warn("Interrupted while waiting for cache loading executor to terminate!");
+        startupLoadExecutor.shutdownNow();
+        Thread.currentThread().interrupt();
+      }
     }
   }
 }

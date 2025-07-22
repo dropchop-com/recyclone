@@ -12,7 +12,7 @@ package com.dropchop.recyclone.base.api.service.caching;
 public interface CacheLoader<I> {
 
   /**
-   * Represents a context for managing the loading process within a cache loader.
+   * Represents a context for managing the loading process state within a cache loader.
    * A LoadingContext defines the specific configuration and state required during
    * the lifecycle of the loading process.
    * <br />
@@ -52,73 +52,39 @@ public interface CacheLoader<I> {
    * @param <I> the type of items being loaded
    * @param <C> the type of the loading context associated with the loading process
    */
-  interface LoadingListener<I, C extends LoadingContext> {
+  interface LoadListener<I, C extends LoadingContext> {
     void onItem(C context, I item);
   }
 
   /**
-   * Represents a listener interface that extends {@link LoadingListener} to handle adaptive
-   * item processing during a loading operation within a specific {@link LoadingContext}.
-   * This interface is designed to support item adaptation and provides a mechanism for
-   * reacting when both the original and the adapted forms of an item become available.
+   * Interface for listening to lifecycle events of a cache loading process.
+   * Provides methods to handle the start and end of the loading lifecycle
+   * with the ability to establish and manage a context specific to the loading session.
    *
-   * @param <I> the type of the original items being loaded
-   * @param <A> the type of the adapted items resulting from the transformation of the original items
-   * @param <C> the type of the loading context associated with the loading process, extending {@link LoadingContext}
+   * @param <C> the type of the loading context, which must extend {@code LoadingContext}
    */
-  interface AdaptiveLoadingListener<I, A, C extends LoadingContext> extends LoadingListener<I, C> {
-    void onItem(C context, I item, A adapted);
-
-    // never called, so we implement it here to avoid boiler plating the implementation code.
-    default void onItem(C context, I item) {
-    }
-  }
-
-  /**
-   * Represents a specialized lifecycle listener that manages the beginning and end of
-   * a loading process for a given cache loader. This interface extends the
-   * {@link LoadingListener} interface, enabling it to react to individual item loading events
-   * as well as the broader lifecycle phases of the loading process.
-   *
-   * @param <I> the type of items being loaded by the cache loader
-   * @param <C> the type of the loading context associated with the loading process
-   */
-  interface Listener<I, C extends LoadingContext> extends LoadingListener<I, C> {
-
-    /**
-     * Handles the start of the loading process for the given cache loader.
-     * <br>
-     * This method is responsible for initiating the lifecycle event of starting
-     * the loading process. It allows the implementer to prepare or configure a
-     * specific loading context before the loading begins.
-     *
-     * @param cacheLoader the cache loader associated with the loading process
-     * @return the context associated with the loading process or null if not interested!
-     */
+  interface LifecycleListener<C extends LoadingContext> {
     C onStart(CacheLoader<?> cacheLoader);
     void onEnd(C context);
   }
 
   /**
-   * Represents a specialized lifecycle listener that extends the functionality
-   * of both {@link AdaptiveLoadingListener} and {@link Listener}.
-   * This interface provides a combined mechanism for handling lifecycle events
-   * and adapting items during the loading process.
-   * <br />
-   * The {@code AdaptiveListener} facilitates seamless integration of
-   * item adaptation with the broader loading lifecycle management, enabling
-   * implementers to define transformation rules for loaded items and to
-   * manage the start and end of the loading process within a given context.
+   * Represents a composite listener interface that combines the functionality of both the
+   * {@link LoadListener} and {@link LifecycleListener} interfaces.
+   *
+   * <p>
+   * This interface is designed to manage cache loading lifecycle events, allowing implementers
+   * to listen and react to both item-specific loading events and overall loading lifecycle
+   * events. It extends the functionality of {@link LoadListener} to handle per-item loading
+   * operations and of {@link LifecycleListener} to manage the start and end of the loading
+   * process.
+   * </p>
    *
    * @param <I> the type of items being loaded
-   * @param <A> the type of adapted items resulting from the transformation of loaded items
-   * @param <C> the type of the loading context associated with the loading process,
-   *            extending {@link LoadingContext}
+   * @param <C> the type of the loading context associated with the loading process, which
+   *            must extend {@link LoadingContext}
    */
-  @SuppressWarnings("unused")
-  interface AdaptiveListener<I, A, C extends LoadingContext> extends
-      AdaptiveLoadingListener<I, A, C>,
-      Listener<I, C> {
+  interface Listener<I, C extends LoadingContext> extends LoadListener<I, C>, LifecycleListener<C> {
   }
 
   String getName();
@@ -129,5 +95,5 @@ public interface CacheLoader<I> {
 
   <A> Adapter<I, A> getAdapter();
 
-  <C extends LoadingContext> void load(LoadingListener<I, C> listener);
+  <C extends LoadingContext> void load(LoadListener<I, C> listener);
 }
