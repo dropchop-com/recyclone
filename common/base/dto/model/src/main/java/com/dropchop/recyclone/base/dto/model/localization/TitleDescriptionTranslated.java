@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.localization;
 
-import com.dropchop.recyclone.base.api.model.marker.HasId;
-import com.dropchop.recyclone.base.api.model.marker.HasName;
+import com.dropchop.recyclone.base.api.model.marker.*;
 import com.dropchop.recyclone.base.api.model.base.Generic;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -46,6 +45,12 @@ public class TitleDescriptionTranslated
     }
     if (titled instanceof HasId identified) {
       this.setId(identified.getId());
+    }
+    if (titled instanceof HasDescription hasDescription) {
+      this.setDescription(hasDescription.getDescription());
+    }
+    if (titled instanceof HasLanguageCode hasLanguageCode) {
+      this.setLang(hasLanguageCode.getLang());
     }
     if (titled instanceof Generic generic) {
       this.setType(generic.getType());
