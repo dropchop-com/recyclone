@@ -1,6 +1,8 @@
 package com.dropchop.recyclone.base.dto.model.localization;
 
-import com.dropchop.recyclone.base.dto.model.base.Generic;
+import com.dropchop.recyclone.base.api.model.marker.HasId;
+import com.dropchop.recyclone.base.api.model.marker.HasName;
+import com.dropchop.recyclone.base.api.model.base.Generic;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +30,28 @@ public class TitleDescriptionTranslated
     this.setLang(titleTranslated.getLang());
     this.setTitle(titleTranslated.getTitle());
     this.setType(titleTranslated.getType());
-    if (titleTranslated instanceof Generic generic) {
-      this.setName(generic.getName());
+    if (titleTranslated instanceof HasName named) {
+      this.setName(named.getName());
     }
     if (!titleTranslated.getGroups().isEmpty()) {
       this.setGroups(titleTranslated.getGroups());
+    }
+  }
+
+  public TitleDescriptionTranslated(
+      com.dropchop.recyclone.base.api.model.base.Titled titled) {
+    this.setTitle(titled.getTitle());
+    if (titled instanceof HasName named) {
+      this.setName(named.getName());
+    }
+    if (titled instanceof HasId identified) {
+      this.setId(identified.getId());
+    }
+    if (titled instanceof Generic generic) {
+      this.setType(generic.getType());
+      if (!generic.getGroups().isEmpty()) {
+        this.setGroups(generic.getGroups());
+      }
     }
   }
 }
