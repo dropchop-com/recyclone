@@ -8,11 +8,8 @@ import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
 import com.dropchop.shiro.filter.RequestFilter;
 import com.dropchop.shiro.filter.ResponseFilter;
 import com.dropchop.shiro.filter.ShiroFilter;
-import com.dropchop.shiro.jaxrs.ShiroSecurityContext;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
@@ -23,8 +20,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.SubjectThreadState;
-import org.apache.shiro.util.ThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,31 +37,13 @@ import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authorizati
  */
 @DefaultBean
 @ApplicationScoped
-public class ShiroAuthorizationService implements AuthorizationService {
+public class ShiroAuthorizationService extends ShiroAuthenticationService implements AuthorizationService {
 
   private static final Logger log = LoggerFactory.getLogger(ShiroAuthorizationService.class);
 
   @Inject
-  org.apache.shiro.mgt.SecurityManager shiroSecurityManager;
-
-  @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   List<ShiroFilter> shiroFilters;
-
-
-  public void bindSubjectToThreadStateInRequestContext(ContainerRequestContext requestContext) {
-    Subject subject = new Subject.Builder(shiroSecurityManager).buildSubject();
-    ThreadState threadState = new SubjectThreadState(subject);
-    threadState.bind();
-    requestContext.setProperty("shiro.req.internal.thread.state", threadState);
-    requestContext.setSecurityContext(new ShiroSecurityContext(requestContext));
-  }
-
-  @Produces
-  @RequestScoped
-  public Subject subject() {
-    return SecurityUtils.getSubject();
-  }
 
   public void invokeRequestFilterChain(ContainerRequestContext requestContext) {
     try {
@@ -79,7 +56,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
         }
       }
     } catch (AuthorizationException e) {
-      unbindSubjectFromThreadStateInRequestContext(requestContext);
+      unbindSubject(requestContext);
       if (e instanceof UnauthenticatedException) {
         throw new ServiceException(authentication_error, "User is unauthenticated.");
       } else {
@@ -99,7 +76,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
         }
       }
     } catch (AuthorizationException e) {
-      unbindSubjectFromThreadStateInRequestContext(requestContext);
+      unbindSubject(requestContext);
       if (e instanceof UnauthenticatedException) {
         throw new ServiceException(authentication_error, "User is unauthenticated.");
       } else {
@@ -116,7 +93,7 @@ public class ShiroAuthorizationService implements AuthorizationService {
       try {
         handler.assertAuthorized(authzSpec);
       } catch (AuthorizationException e) {
-        unbindSubjectFromThreadStateInRequestContext(requestContext);
+        unbindSubject(requestContext);
         if (e instanceof UnauthenticatedException) {
           throw new ServiceException(authentication_error, "User is unauthenticated.");
         } else {
@@ -145,13 +122,6 @@ public class ShiroAuthorizationService implements AuthorizationService {
               com.dropchop.recyclone.base.api.model.security.annotations.Logical.AND :
               com.dropchop.recyclone.base.api.model.security.annotations.Logical.OR
       );
-    }
-  }
-
-  public void unbindSubjectFromThreadStateInRequestContext(ContainerRequestContext requestContext) {
-    Object threadStateObj = requestContext.getProperty("shiro.req.internal.thread.state");
-    if (threadStateObj instanceof ThreadState threadState) {
-      threadState.clear();
     }
   }
 

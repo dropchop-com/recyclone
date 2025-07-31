@@ -1,6 +1,7 @@
 package com.dropchop.shiro.filter;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
+
 import java.util.Base64;
 
 /**
@@ -8,11 +9,32 @@ import java.util.Base64;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
+@SuppressWarnings("unused")
 public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
+  private static final String BASIC = "Basic" ;
+
   public BasicHttpAuthenticationFilter() {
-    setAuthcScheme("Basic");
-    setAuthzScheme("Basic");
+    setAuthcScheme(BASIC);
+    setAuthzScheme(BASIC);
+  }
+
+  public BasicHttpAuthenticationFilter(String loginUrl) {
+    super(loginUrl);
+    setAuthcScheme(BASIC);
+    setAuthzScheme(BASIC);
+  }
+
+  public BasicHttpAuthenticationFilter(boolean permissive) {
+    super(permissive);
+    setAuthcScheme(BASIC);
+    setAuthzScheme(BASIC);
+  }
+
+  public BasicHttpAuthenticationFilter(boolean permissive, String loginUrl) {
+    super(permissive, loginUrl);
+    setAuthcScheme(BASIC);
+    setAuthzScheme(BASIC);
   }
 
   /**

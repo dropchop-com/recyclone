@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
@@ -32,6 +33,7 @@ public class Result<T> implements com.dropchop.recyclone.base.api.model.rest.Res
   @EqualsAndHashCode.Exclude
   private List<T> data = new ArrayList<>();
 
+  @JsonInclude(NON_EMPTY)
   private Map<String, AggregationResult> aggregations = new LinkedHashMap<>();
 
   public Result<T> toSuccess(List<T> data, int totalCount, ResultStats stats) {

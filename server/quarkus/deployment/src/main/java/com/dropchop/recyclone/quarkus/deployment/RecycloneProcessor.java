@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.base.api.service.Service;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
 import com.dropchop.recyclone.quarkus.runtime.cache.CacheLoaderManager;
 import com.dropchop.recyclone.quarkus.runtime.invoke.*;
@@ -7,8 +8,6 @@ import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFi
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.selectors.ServiceSelector;
-import com.dropchop.recyclone.base.api.service.Service;
-import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
@@ -162,13 +161,13 @@ class RecycloneProcessor {
             .setUnremovable()
             .build()
     );
-    additionalBeanBuildItemProducer.produce(
+    /*additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ApiKeyHttpAuthenticationFilter.class)
             .setUnremovable()
             .build()
-    );
+    );*/
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()

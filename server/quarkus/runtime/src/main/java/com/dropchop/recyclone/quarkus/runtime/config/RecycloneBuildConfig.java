@@ -130,17 +130,28 @@ public interface RecycloneBuildConfig {
         }
       }
 
-      static String getApiKeyIfPresent(List<Security> mechanisms) {
+      class ApiKeyConfig {
+        public final String headerName;
+        public final String queryName;
+
+        public ApiKeyConfig(String headerName, String queryName) {
+          this.headerName = headerName;
+          this.queryName = queryName;
+        }
+      }
+
+      static ApiKeyConfig getApiKeyConfig(List<Security> mechanisms) {
         if (!mechanisms.isEmpty()) {
           for (Rest.Security security : mechanisms) {
             if (security.mechanism() == API_KEY) {
-              if (security.apiKeyName().isPresent()) {
-                return security.apiKeyName().get();
-              }
+              return new ApiKeyConfig(
+                  security.headerName().orElse(null),
+                  security.queryName().orElse(null)
+              );
             }
           }
         }
-        return null;
+        return new ApiKeyConfig(null, null);
       }
 
       static JwtConfig getJwtConfig(List<Security> mechanisms) {
@@ -199,7 +210,12 @@ public interface RecycloneBuildConfig {
       /**
        * REST security item apiKeyName if the type is apiKey.
        */
-      Optional<String> apiKeyName();
+      Optional<String> headerName();
+
+      /**
+       * REST security item apiKeyName if the type is apiKey.
+       */
+      Optional<String> queryName();
 
       /**
        * REST OpenAPI security item bearerFormat if a scheme is bearer.

@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.quarkus.deployment.shiro;
 
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
-import com.dropchop.shiro.cdi.ShiroAuthenticationService;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import com.dropchop.shiro.cdi.ShiroEnvironment;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
@@ -114,13 +113,13 @@ public class ShiroProcessor {
             .setUnremovable()
             .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
     );
-    additionalBeanBuildItemProducer.produce(
+    /*additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ShiroAuthenticationService.class)
             .setUnremovable()
             .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
-    );
+    );*/
   }
 
   private void transformAnnotation(ConstPool constPool, AnnotationsAttribute attr,

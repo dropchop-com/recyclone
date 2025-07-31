@@ -80,7 +80,7 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);
     }
-    Subject subject = this.authorizationService.subject();
+    Subject subject = this.authorizationService.getSubject();
     if (subject == null) {
       log.warn("Shiro Subject is missing!");
     } else {

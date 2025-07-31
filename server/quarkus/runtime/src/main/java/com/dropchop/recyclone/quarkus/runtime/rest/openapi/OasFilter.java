@@ -128,8 +128,8 @@ public class OasFilter implements OASFilter {
                 SecurityScheme.In.valueOf((ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC.toUpperCase()))
               );
             }
-            if (restSecurity.apiKeyName().isPresent()) {
-              securityScheme.name(restSecurity.apiKeyName().get());
+            if (restSecurity.headerName().isPresent()) {
+              securityScheme.name(restSecurity.headerName().get());
             } else {
               securityScheme.name(ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_NAME);
             }

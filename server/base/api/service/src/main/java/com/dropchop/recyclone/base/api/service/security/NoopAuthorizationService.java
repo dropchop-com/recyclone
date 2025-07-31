@@ -4,6 +4,8 @@ import com.dropchop.recyclone.base.api.model.base.Model;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 06. 22.
@@ -11,7 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Alternative
 @ApplicationScoped
-public class NoopAuthorizationService implements AuthorizationService {
+public class NoopAuthorizationService implements AuthorizationService, AuthenticationService {
+
+  @Override
+  public Subject login(AuthenticationToken context) {
+    log.warn("Using [{}]", NoopAuthorizationService.class);
+    return null;
+  }
 
   @Override
   public boolean isPermitted(String domain, String action) {

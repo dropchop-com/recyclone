@@ -11,12 +11,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
+@SuppressWarnings("unused")
 public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
   private static final Logger log = LoggerFactory.getLogger(BearerHttpAuthenticationFilter.class);
   private static final String BEARER = "Bearer";
 
   public BearerHttpAuthenticationFilter() {
+    setAuthcScheme(BEARER);
+    setAuthzScheme(BEARER);
+  }
+
+  public BearerHttpAuthenticationFilter(String loginUrl) {
+    super(loginUrl);
+    setAuthcScheme(BEARER);
+    setAuthzScheme(BEARER);
+  }
+
+  public BearerHttpAuthenticationFilter(boolean permissive) {
+    super(permissive);
+    setAuthcScheme(BEARER);
+    setAuthzScheme(BEARER);
+  }
+
+  public BearerHttpAuthenticationFilter(boolean permissive, String loginUrl) {
+    super(permissive, loginUrl);
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
   }
@@ -42,7 +61,7 @@ public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
    */
   protected AuthenticationToken createToken(ContainerRequestContext requestContext) {
     String authorizationHeader = getAuthzHeader(requestContext);
-    if (authorizationHeader == null || authorizationHeader.length() == 0) {
+    if (authorizationHeader == null || authorizationHeader.isEmpty()) {
       // Create an empty authentication token since there is no
       // Authorization header.
       return createBearerToken("", requestContext);
