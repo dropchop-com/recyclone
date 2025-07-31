@@ -1,4 +1,4 @@
-package com.dropchop.shiro.realm.auth;
+package com.dropchop.shiro.realm.authc;
 
 import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
 import org.apache.shiro.authc.AuthenticationInfo;

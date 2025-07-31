@@ -1,4 +1,4 @@
-package com.dropchop.shiro.realm.auth;
+package com.dropchop.shiro.realm.authc;
 
 import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.User;

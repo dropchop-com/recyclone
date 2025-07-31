@@ -118,6 +118,18 @@ public interface RecycloneBuildConfig {
     @ConfigGroup
     interface Security {
 
+      class JwtConfig {
+        public final String issuer;
+        public final String secret;
+        public final Integer timeoutSeconds;
+
+        public JwtConfig(String issuer, String secret, Integer timeoutSeconds) {
+          this.issuer = issuer;
+          this.secret = secret;
+          this.timeoutSeconds = timeoutSeconds;
+        }
+      }
+
       static String getApiKeyIfPresent(List<Security> mechanisms) {
         if (!mechanisms.isEmpty()) {
           for (Rest.Security security : mechanisms) {
@@ -129,6 +141,21 @@ public interface RecycloneBuildConfig {
           }
         }
         return null;
+      }
+
+      static JwtConfig getJwtConfig(List<Security> mechanisms) {
+        if (!mechanisms.isEmpty()) {
+          for (Rest.Security security : mechanisms) {
+            if (security.mechanism() == Mechanism.JWT) {
+              return new JwtConfig(
+                  security.issuer().orElse(null),
+                  security.secret().orElse(null),
+                  security.timeoutSeconds().orElse(null)
+              );
+            }
+          }
+        }
+        return new JwtConfig(null, null, null);
       }
 
       enum Mechanism {
@@ -153,26 +180,46 @@ public interface RecycloneBuildConfig {
        * REST OpenAPI security item enabled.
        */
       Mechanism mechanism();
+
       /**
        * REST OpenAPI security item type (bearer-token, basic-auth, jwt).
        */
       Optional<String> type();
+
       /**
        * REST OpenAPI security item scheme (bearer, basic).
        */
       Optional<String> scheme();
+
       /**
        * REST OpenAPI security item location (header, query, cookie).
        */
       Optional<String> in();
+
       /**
-       * REST OpenAPI security item apiKeyName if type is apiKey.
+       * REST security item apiKeyName if the type is apiKey.
        */
       Optional<String> apiKeyName();
+
       /**
-       * REST OpenAPI security item bearerFormat if scheme is bearer.
+       * REST OpenAPI security item bearerFormat if a scheme is bearer.
        */
       Optional<String> bearerFormat();
+
+      /**
+       * REST security item timeout seconds if a scheme is JWT.
+       */
+      Optional<Integer> timeoutSeconds();
+
+      /**
+       * REST security item issuer if a scheme is JWT.
+       */
+      Optional<String> issuer();
+
+      /**
+       * REST security item secret if a scheme is JWT.
+       */
+      Optional<String> secret();
     }
 
     /**
