@@ -161,13 +161,6 @@ class RecycloneProcessor {
             .setUnremovable()
             .build()
     );
-    /*additionalBeanBuildItemProducer.produce(
-        AdditionalBeanBuildItem
-            .builder()
-            .addBeanClasses(ApiKeyHttpAuthenticationFilter.class)
-            .setUnremovable()
-            .build()
-    );*/
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()

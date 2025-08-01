@@ -1,8 +1,6 @@
 package com.dropchop.shiro.filter;
 
-import jakarta.ws.rs.container.ContainerRequestContext;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.BearerToken;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,77 +9,21 @@ import org.slf4j.LoggerFactory;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
+@ApplicationScoped
 @SuppressWarnings("unused")
-public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
+public class BearerHttpAuthenticationFilter extends HeaderHttpAuthenticationFilter {
 
   private static final Logger log = LoggerFactory.getLogger(BearerHttpAuthenticationFilter.class);
-  private static final String BEARER = "Bearer";
 
-  public BearerHttpAuthenticationFilter() {
+
+  /*public BearerHttpAuthenticationFilter() {
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
-  }
+  }*/
 
-  public BearerHttpAuthenticationFilter(String loginUrl) {
-    super(loginUrl);
+  public BearerHttpAuthenticationFilter(BearerConfig bearerConfig) {
+    super(bearerConfig.permissive);
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
-  }
-
-  public BearerHttpAuthenticationFilter(boolean permissive) {
-    super(permissive);
-    setAuthcScheme(BEARER);
-    setAuthzScheme(BEARER);
-  }
-
-  public BearerHttpAuthenticationFilter(boolean permissive, String loginUrl) {
-    super(permissive, loginUrl);
-    setAuthcScheme(BEARER);
-    setAuthzScheme(BEARER);
-  }
-
-  protected AuthenticationToken createBearerToken(String token, ContainerRequestContext requestContext) {
-    return new BearerToken(token, "" /*requestContext.getRemoteHost()*/);
-  }
-
-  /**
-   * Creates an AuthenticationToken for use during login attempt with the provided credentials in the http header.
-   * <p/>
-   * This implementation:
-   * <ol><li>acquires the username and password based on the request's
-   * {@link #getAuthzHeader(ContainerRequestContext) authorization header} via the
-   * {@link #getPrincipalsAndCredentials(String, ContainerRequestContext) getPrincipalsAndCredentials} method</li>
-   * <li>The return value of that method is converted to an <code>AuthenticationToken</code> via the
-   * {@link #createToken(String, String, ContainerRequestContext) createToken} method</li>
-   * <li>The created <code>AuthenticationToken</code> is returned.</li>
-   * </ol>
-   *
-   * @param requestContext  incoming ServletRequest
-   * @return the AuthenticationToken used to execute the login attempt
-   */
-  protected AuthenticationToken createToken(ContainerRequestContext requestContext) {
-    String authorizationHeader = getAuthzHeader(requestContext);
-    if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-      // Create an empty authentication token since there is no
-      // Authorization header.
-      return createBearerToken("", requestContext);
-    }
-
-    log.debug("Attempting to execute login with auth header");
-
-    String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, requestContext);
-    if (prinCred == null || prinCred.length < 1) {
-      // Create an authentication token with an empty password,
-      // since one hasn't been provided in the request.
-      return createBearerToken("", requestContext);
-    }
-
-    String token = prinCred[0] != null ? prinCred[0] : "";
-    return createBearerToken(token, requestContext);
-  }
-
-  @Override
-  protected String[] getPrincipalsAndCredentials(String scheme, String token) {
-    return new String[] {token};
   }
 }

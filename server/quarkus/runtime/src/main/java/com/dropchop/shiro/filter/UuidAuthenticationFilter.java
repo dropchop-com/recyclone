@@ -1,8 +1,9 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.ApiKeyConfig;
 import com.dropchop.shiro.token.UuidApiKeyToken;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.slf4j.Logger;
@@ -10,11 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
+@ApplicationScoped
 @SuppressWarnings("unused")
-public class UuidAuthenticationFilter extends ApiKeyHttpAuthenticationFilter {
+public class UuidAuthenticationFilter extends CustomKeyHttpAuthenticationFilter {
 
   private static final Logger log = LoggerFactory.getLogger(UuidAuthenticationFilter.class);
 
+  @Inject
   public UuidAuthenticationFilter(ApiKeyConfig apiKeyConfig) {
     super(apiKeyConfig);
   }
@@ -30,11 +33,5 @@ public class UuidAuthenticationFilter extends ApiKeyHttpAuthenticationFilter {
       return createToken(UUID.randomUUID().toString(), UUID.randomUUID().toString(), requestContext);
     }
     return new UuidApiKeyToken(receivedToken);
-  }
-
-  @Override
-  protected boolean isLoginAttempt(ContainerRequestContext requestContext) {
-    String receivedToken = getAuthzHeader(requestContext);
-    return receivedToken != null && !receivedToken.isEmpty();
   }
 }

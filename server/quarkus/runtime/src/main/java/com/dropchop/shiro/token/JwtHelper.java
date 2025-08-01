@@ -1,8 +1,8 @@
 package com.dropchop.shiro.token;
 
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.JwtConfig;
 import com.dropchop.shiro.filter.JwtAuthenticationFilter;
+import com.dropchop.shiro.filter.JwtConfig;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

@@ -10,8 +10,8 @@ import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
+import com.dropchop.shiro.cdi.ShiroEnabledFilters;
 import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
-import com.dropchop.shiro.filter.ShiroFilter;
 import com.dropchop.shiro.realm.ShiroMapRealm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Priority;
@@ -21,12 +21,10 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import org.apache.shiro.realm.Realm;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.getApiKeyConfig;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 06. 22.
@@ -111,11 +109,8 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   }
 
   @Produces
-  public List<ShiroFilter> getFilters() {
-    List<ShiroFilter> filters = new ArrayList<>(super.getFilters());
-    filters.add(
-        new ApiKeyHttpAuthenticationFilter(getApiKeyConfig(recycloneConfig.rest().security()))
-    );
-    return filters;
+  @Override
+  public ShiroEnabledFilters getEnabledFilters() {
+    return super.getEnabledFilters().append(ApiKeyHttpAuthenticationFilter.class);
   }
 }

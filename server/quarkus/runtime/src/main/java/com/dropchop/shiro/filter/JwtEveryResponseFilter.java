@@ -1,18 +1,23 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.JwtConfig;
 import com.dropchop.shiro.token.JwtHelper;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import org.apache.shiro.subject.Subject;
 
-public class JwtEveryResponseFilter extends BearerHttpAuthenticationFilter implements ResponseFilter {
+@ApplicationScoped
+public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter implements ResponseFilter {
 
   private final JwtConfig jwtConfig;
 
+  @Inject
   public JwtEveryResponseFilter(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
+    setAuthcScheme(BEARER);
+    setAuthzScheme(BEARER);
   }
 
   @Override

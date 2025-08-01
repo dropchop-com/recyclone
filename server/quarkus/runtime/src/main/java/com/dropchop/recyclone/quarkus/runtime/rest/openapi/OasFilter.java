@@ -1,7 +1,10 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.openapi;
 
 import com.dropchop.recyclone.base.api.model.base.State;
-import com.dropchop.recyclone.base.api.model.invoke.*;
+import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
 import com.dropchop.recyclone.base.api.model.rest.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
@@ -10,7 +13,7 @@ import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.S
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
-import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
+import com.dropchop.shiro.filter.CustomKeyHttpAuthenticationFilter;
 import io.smallrye.openapi.api.models.OperationImpl;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
@@ -125,14 +128,10 @@ public class OasFilter implements OASFilter {
               }
             } else {
               securityScheme.setIn(
-                SecurityScheme.In.valueOf((ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC.toUpperCase()))
+                SecurityScheme.In.valueOf((CustomKeyHttpAuthenticationFilter.DEFAULT_API_KEY_LOC.toUpperCase()))
               );
             }
-            if (restSecurity.headerName().isPresent()) {
-              securityScheme.name(restSecurity.headerName().get());
-            } else {
-              securityScheme.name(ApiKeyHttpAuthenticationFilter.DEFAULT_API_KEY_NAME);
-            }
+            securityScheme.name(restSecurity.headerName());
           }
           case JWT -> {
             securityScheme.setType(SecurityScheme.Type.HTTP);

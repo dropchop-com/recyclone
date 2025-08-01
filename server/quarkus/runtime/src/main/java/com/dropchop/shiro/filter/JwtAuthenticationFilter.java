@@ -1,23 +1,29 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.JwtConfig;
 import com.dropchop.shiro.token.JwtHelper;
 import com.dropchop.shiro.token.JwtShiroToken;
 import io.jsonwebtoken.MalformedJwtException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JwtAuthenticationFilter extends BearerHttpAuthenticationFilter {
+@ApplicationScoped
+@SuppressWarnings("unused")
+public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
 
   private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
   private final JwtConfig jwtConfig;
 
+  @Inject
   public JwtAuthenticationFilter(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
+    setAuthcScheme(BEARER);
+    setAuthzScheme(BEARER);
   }
 
   @Override

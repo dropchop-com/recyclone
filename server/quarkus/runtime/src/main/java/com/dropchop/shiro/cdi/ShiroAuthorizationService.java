@@ -10,6 +10,7 @@ import com.dropchop.shiro.filter.ResponseFilter;
 import com.dropchop.shiro.filter.ShiroFilter;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
@@ -24,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authentication_error;
 import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authorization_error;
@@ -42,12 +40,15 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
   private static final Logger log = LoggerFactory.getLogger(ShiroAuthorizationService.class);
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  List<ShiroFilter> shiroFilters;
+  Instance<ShiroFilter> allShiroFilters;
+
+  @Inject
+  ShiroEnabledFilters shiroEnabledFilters;
 
   public void invokeRequestFilterChain(ContainerRequestContext requestContext) {
     try {
-      for (ShiroFilter filter : shiroFilters) {
+      for (Class<? extends ShiroFilter> clazz : shiroEnabledFilters) {
+        ShiroFilter filter = allShiroFilters.select(clazz).get();
         if (filter instanceof RequestFilter requestFilter) {
           boolean proceed = requestFilter.onFilterRequest(requestContext);
           if (!proceed) {
@@ -67,7 +68,8 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
 
   public void invokeResponseFilterChain(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
     try {
-      for (ShiroFilter filter : shiroFilters) {
+      for (Class<? extends ShiroFilter> clazz : shiroEnabledFilters) {
+        ShiroFilter filter = allShiroFilters.select(clazz).get();
         if (filter instanceof ResponseFilter responseFilter) {
           boolean proceed = responseFilter.onFilterResponse(requestContext, responseContext);
           if (!proceed) {

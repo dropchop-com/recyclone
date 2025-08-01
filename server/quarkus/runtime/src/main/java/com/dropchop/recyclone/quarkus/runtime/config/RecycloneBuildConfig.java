@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.Mechanism.API_KEY;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
@@ -118,57 +117,6 @@ public interface RecycloneBuildConfig {
     @ConfigGroup
     interface Security {
 
-      class JwtConfig {
-        public final String issuer;
-        public final String secret;
-        public final Integer timeoutSeconds;
-
-        public JwtConfig(String issuer, String secret, Integer timeoutSeconds) {
-          this.issuer = issuer;
-          this.secret = secret;
-          this.timeoutSeconds = timeoutSeconds;
-        }
-      }
-
-      class ApiKeyConfig {
-        public final String headerName;
-        public final String queryName;
-
-        public ApiKeyConfig(String headerName, String queryName) {
-          this.headerName = headerName;
-          this.queryName = queryName;
-        }
-      }
-
-      static ApiKeyConfig getApiKeyConfig(List<Security> mechanisms) {
-        if (!mechanisms.isEmpty()) {
-          for (Rest.Security security : mechanisms) {
-            if (security.mechanism() == API_KEY) {
-              return new ApiKeyConfig(
-                  security.headerName().orElse(null),
-                  security.queryName().orElse(null)
-              );
-            }
-          }
-        }
-        return new ApiKeyConfig(null, null);
-      }
-
-      static JwtConfig getJwtConfig(List<Security> mechanisms) {
-        if (!mechanisms.isEmpty()) {
-          for (Rest.Security security : mechanisms) {
-            if (security.mechanism() == Mechanism.JWT) {
-              return new JwtConfig(
-                  security.issuer().orElse(null),
-                  security.secret().orElse(null),
-                  security.timeoutSeconds().orElse(null)
-              );
-            }
-          }
-        }
-        return new JwtConfig(null, null, null);
-      }
-
       enum Mechanism {
         BEARER_TOKEN("bearer-token"),
         BASIC_AUTH("basic-auth"),
@@ -210,12 +158,14 @@ public interface RecycloneBuildConfig {
       /**
        * REST security item apiKeyName if the type is apiKey.
        */
-      Optional<String> headerName();
+      @WithDefault("X-API-Key")
+      String headerName();
 
       /**
        * REST security item apiKeyName if the type is apiKey.
        */
-      Optional<String> queryName();
+      @WithDefault("api-key")
+      String queryName();
 
       /**
        * REST OpenAPI security item bearerFormat if a scheme is bearer.
@@ -236,6 +186,18 @@ public interface RecycloneBuildConfig {
        * REST security item secret if a scheme is JWT.
        */
       Optional<String> secret();
+
+      /**
+       * REST security item loginPath if a scheme is JWT.
+       */
+      @WithDefault("/api/security/login/jwt")
+      String loginPath();
+
+      /**
+       * REST security item permissive filter if a scheme is JWT, apiKey, Bearer.
+       */
+      @WithDefault("true")
+      Boolean permissive();
     }
 
     /**
