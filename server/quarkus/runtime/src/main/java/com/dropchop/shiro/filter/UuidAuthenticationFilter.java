@@ -1,5 +1,6 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.config.ApiKeyConfig;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import com.dropchop.shiro.token.UuidApiKeyToken;
 import jakarta.enterprise.context.ApplicationScoped;

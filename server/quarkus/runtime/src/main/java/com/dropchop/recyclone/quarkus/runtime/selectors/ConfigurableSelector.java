@@ -80,7 +80,7 @@ public abstract class ConfigurableSelector<X> implements Selector<X> {
       }
     }
     Y instance = dependency.get();
-    log.debug("Selected [{}] for requested [{}] using [{}]", instance.getClass(), dependencyClass, qualifier);
+    log.info("Selected [{}] for requested [{}] using [{}]", instance.getClass(), dependencyClass, qualifier);
     return instance;
   }
 

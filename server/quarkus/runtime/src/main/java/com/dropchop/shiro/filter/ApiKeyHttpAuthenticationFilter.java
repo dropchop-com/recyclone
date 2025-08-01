@@ -1,5 +1,6 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.config.ApiKeyConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**

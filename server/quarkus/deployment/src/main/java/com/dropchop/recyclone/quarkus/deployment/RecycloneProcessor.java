@@ -194,6 +194,7 @@ class RecycloneProcessor {
         continue;
       }
       for (ClassInfo impl : candidates) {
+        log.info("Service candidate [{}].", impl.name());
         if (!impl.hasAnnotation(ANNO_NAMED)) {
           continue;
         }
@@ -205,6 +206,7 @@ class RecycloneProcessor {
         Set<DotName> intersection = new HashSet<>(impl.interfaceNames());
         intersection.retainAll(serviceNames);
         if (intersection.isEmpty()) {
+          log.info("Empty service intersection [{}].", impl.name());
           continue;
         }
         DotName serviceIf = intersection.iterator().next();
@@ -212,6 +214,7 @@ class RecycloneProcessor {
         producerMappings.add(
             new ProducerMapping(serviceIf.toString(), impl.name().toString(), selector, rootIface)
         );
+        log.info("Found service implementation [{}] for interface [{}].", impl.name(), serviceIf);
       }
     }
   }

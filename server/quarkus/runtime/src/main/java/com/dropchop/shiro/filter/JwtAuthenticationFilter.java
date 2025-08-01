@@ -1,7 +1,8 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.config.JwtConfig;
+import com.dropchop.recyclone.base.api.jwt.JwtHelper;
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.shiro.token.JwtHelper;
 import com.dropchop.shiro.token.JwtShiroToken;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.enterprise.context.ApplicationScoped;

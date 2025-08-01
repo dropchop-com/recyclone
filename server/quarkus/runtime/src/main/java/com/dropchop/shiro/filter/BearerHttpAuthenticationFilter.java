@@ -1,5 +1,6 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.config.BearerConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,16 +1,16 @@
 package com.dropchop.recyclone.base.api.service;
 
-import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;
+import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail;
-import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.api.repo.CrudRepository;
 import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**

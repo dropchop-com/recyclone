@@ -6,10 +6,8 @@ import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 import com.dropchop.recyclone.base.api.model.security.Constants.Domains;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
-import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
 import com.dropchop.recyclone.base.dto.model.invoke.UserAccountParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 import jakarta.ws.rs.*;
 
@@ -85,6 +83,6 @@ public interface UserAccountResource<P extends UserAccount> {
   @Produces(MediaType.APPLICATION_JSON)
   @RequiresPermissions(Domains.Security.ROLE_NODE + PERM_DELIM + Actions.DELETE)
   List <P> deleteRest(List <P> objects);
-  
+
 }
 

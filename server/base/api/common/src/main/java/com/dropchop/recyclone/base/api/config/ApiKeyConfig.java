@@ -1,4 +1,4 @@
-package com.dropchop.shiro.filter;
+package com.dropchop.recyclone.base.api.config;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 01. 08. 2025

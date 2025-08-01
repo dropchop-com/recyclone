@@ -1,5 +1,9 @@
 package com.dropchop.shiro.cdi;
 
+import com.dropchop.recyclone.base.api.config.ApiKeyConfig;
+import com.dropchop.recyclone.base.api.config.BasicConfig;
+import com.dropchop.recyclone.base.api.config.BearerConfig;
+import com.dropchop.recyclone.base.api.config.JwtConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
 import com.dropchop.shiro.filter.*;
 import com.dropchop.shiro.realm.ShiroMapRealm;

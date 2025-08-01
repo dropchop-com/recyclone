@@ -1,8 +1,6 @@
-package com.dropchop.shiro.token;
+package com.dropchop.recyclone.base.api.jwt;
 
-import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.shiro.filter.JwtAuthenticationFilter;
-import com.dropchop.shiro.filter.JwtConfig;
+import com.dropchop.recyclone.base.api.config.JwtConfig;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -17,9 +15,9 @@ import java.util.UUID;
 
 public class JwtHelper {
 
-  private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+  private static final Logger log = LoggerFactory.getLogger(JwtHelper.class);
 
-  public static String encode(JwtConfig config, User user, Map<String, Object> claims) {
+  public static String encode(JwtConfig config, String subject, Map<String, Object> claims) {
     if (config.secret == null || config.secret.isEmpty()) {
       log.error("No security secret available");
       return null;
@@ -29,7 +27,7 @@ public class JwtHelper {
     JwtBuilder builder = Jwts.builder()
         .id(UUID.randomUUID().toString())
         .issuer(config.issuer)
-        .subject(user.getUuid().toString())
+        .subject(subject)
         .header()
         .add("typ", "jwt")
         .and()
@@ -41,8 +39,8 @@ public class JwtHelper {
     return builder.compact();
   }
 
-  public static String encode(JwtConfig config, User user) {
-    return encode(config, user, null);
+  public static String encode(JwtConfig config, String subject) {
+    return encode(config, subject, null);
   }
 
   public static String decodeSubject(JwtConfig config, String token) {

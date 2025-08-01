@@ -6,10 +6,10 @@ import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
-import com.dropchop.recyclone.base.dto.model.security.Permission;
-import com.dropchop.recyclone.base.dto.model.security.RoleNode;
-import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
-import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
+import com.dropchop.recyclone.base.dto.model.security.*;
+import com.dropchop.recyclone.base.dto.model.tagging.Owner;
+import com.dropchop.recyclone.base.dto.model.tagging.Shared;
+import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import jakarta.transaction.Transactional;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +23,7 @@ import java.util.*;
  */
 @Slf4j
 @Getter
-abstract public class HierarchicalSecurityLoadingService implements SecurityLoadingService {
+abstract public class HierarchicalSecurityLoadingService {
 
   @Builder
   @Getter
@@ -71,16 +71,16 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   @Builder
   protected static class ResolveContext {
 
-    private RoleNodeParams inputParams = new RoleNodeParams();
-    private Integer maxParentInstanceLevel = null;
+    private RoleNodeParams inputParams;
+    private Integer maxParentInstanceLevel;
 
-    private int currentLevel = 0;
+    private int currentLevel;
 
-    private RoleNodeParams processParams = new RoleNodeParams();
-    private String initialRoleNodeTarget = null;
-    private String initialRoleNodeTargetId = null;
+    private RoleNodeParams processParams;
+    private String initialRoleNodeTarget;
+    private String initialRoleNodeTargetId;
 
-    private boolean settingTemplate = false;
+    private boolean settingTemplate;
 
     public void incrementLevel() {
       this.currentLevel++;
@@ -349,7 +349,6 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
 
   @Transactional
-  @Override
   public Collection<RoleNodePermission> loadRoleNodePermissions(RoleNodeParams roleNodeParams) {
     if (roleNodeParams.isEmpty()) {
       throw new ServiceException(ErrorCode.parameter_validation_error, "Role node params cannot be empty");
@@ -366,7 +365,6 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
 
 
   @Transactional
-  @Override
   public Collection<Permission> loadPermissions(RoleNodeParams roleNodeParams) {
     Boolean all = roleNodeParams.getAll();
     Collection<RoleNodePermission> roleNodePermissions = this.loadRoleNodePermissions(roleNodeParams);
@@ -379,9 +377,63 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     return permissions;
   }
 
+  @Transactional
+  public Collection<Permission> loadPermissions(User user, Set<String> domainPrefixes) {
+    RoleNodeParams params = RoleNodeParams.builder()
+        .entity(user.getClass().getSimpleName())
+        .entityId(user.getUuid().toString())
+        .build();
+
+    Collection<Permission> permissions = this.loadPermissions(params);
+    if (domainPrefixes != null && !domainPrefixes.isEmpty()) {
+      permissions = permissions.stream()
+          .filter(p -> {
+            for (String prefix : domainPrefixes) {
+              if (p.getWildcardString().startsWith(prefix)) {
+                return true;
+              }
+            }
+            return false;
+          })
+          .toList();
+    }
+    return permissions;
+  }
+
+  public void addMetadata(User user) {
+    List<String> permissions = new ArrayList<>();
+    for (Permission permission : user.getPermissions()) {
+      permissions.add(permission.getWildcardString());
+    }
+    user.setAttributeValue("permissions", permissions);
+
+    //if (TODO.getRoles() != null) {
+    //  List<String> roles = new ArrayList<>();
+    //  for (Role role : user.getRoles()) {
+    //    roles.add(role.getName());
+    //  }
+    //  user.setAttributeValue("roles", roles);
+    //}
+
+    List<Tag> tags = user.getTags();
+    if (tags != null) {
+      Owner ownerTag = (Owner) user.getTags().stream().filter(
+          t -> t instanceof Owner
+      ).findAny().orElse(null);
+
+      if (ownerTag == null) {
+        return;
+      }
+      String ownerUuid = ownerTag.getName();
+      user.setAttributeValue("ownerUuid", ownerUuid);
+      user.setAttributeValue("ownerTitle", ownerTag.getTitle());
+      user.setAttributeValue("ownerTagUuid", ownerTag.getId());
+      String shareTagUuid = new Shared(ownerUuid).getId();
+      user.setAttributeValue("shareTagUuid", shareTagUuid);
+    }
+  }
 
   @Transactional
-  @Override
   public RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId, RoleNodeParams params) {
 
     UUID roleNodeUuid = UUID.fromString(roleNodeId);
@@ -437,13 +489,13 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
           this.deleteRoleNodePermission(permissionUuid);
         } else {
           //when role node different from permission role node add opposite permission to current role node
-          String target = null;
-          String targetId = null;
+          String target;
+          //String targetId = null;
           boolean asTemplate = false;
           if (params != null) {
             //working with templates on instance role nodes !
             target = params.getTarget();
-            targetId = params.getTargetId();
+            //targetId = params.getTargetId();
             if (target != null && !target.isBlank()) {
               asTemplate = true;
             }
