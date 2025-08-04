@@ -17,13 +17,8 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
   private static final String BASIC = "Basic" ;
 
-  /*public BasicHttpAuthenticationFilter() {
-    setAuthcScheme(BASIC);
-    setAuthzScheme(BASIC);
-  }*/
-
   public BasicHttpAuthenticationFilter(BasicConfig bearerConfig) {
-    super(bearerConfig.permissive);
+    super(bearerConfig.isPermissive());
     setAuthcScheme(BASIC);
     setAuthzScheme(BASIC);
   }

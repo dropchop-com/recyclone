@@ -16,14 +16,8 @@ public class BearerHttpAuthenticationFilter extends HeaderHttpAuthenticationFilt
 
   private static final Logger log = LoggerFactory.getLogger(BearerHttpAuthenticationFilter.class);
 
-
-  /*public BearerHttpAuthenticationFilter() {
-    setAuthcScheme(BEARER);
-    setAuthzScheme(BEARER);
-  }*/
-
   public BearerHttpAuthenticationFilter(BearerConfig bearerConfig) {
-    super(bearerConfig.permissive);
+    super(bearerConfig.isPermissive());
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
   }

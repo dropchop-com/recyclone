@@ -93,6 +93,14 @@ quarkus:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
       security:
+        client-access-keys:
+          my-recyclone-key:
+            secret: Gs*t4USB29uAMVex!vmRJ#8g6jt^cq3n
+            salt: QqvBbrGSFVAVAd9*
+          my-other-client-key:
+            secret: 2cDYw%BKSK4bD9zk^^FE%z$y7mbeX8wj
+            salt: ymCY6BrfPPxv1MX$
+
         mechanisms:
           - mechanism: bearer-token
           - mechanism: basic-auth

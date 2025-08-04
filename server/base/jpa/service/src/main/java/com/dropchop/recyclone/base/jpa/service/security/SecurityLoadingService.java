@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.api.service.security.ClientAccessKeyService;
 import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
@@ -57,6 +58,11 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
   @Inject
   PermissionRepository permissionRepository;
+
+  @Inject
+  @RecycloneType(RECYCLONE_DEFAULT)
+  @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
+  ClientAccessKeyService clientAccessKeyService;
 
   /**
    * Loads role node permissions

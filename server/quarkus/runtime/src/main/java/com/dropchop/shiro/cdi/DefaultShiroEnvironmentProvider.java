@@ -66,13 +66,13 @@ public class DefaultShiroEnvironmentProvider {
   @Produces
   public ApiKeyConfig getApiKeyConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
-      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
-        if (security.mechanism() == API_KEY) {
+      for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
+        if (mechanism.mechanism() == API_KEY) {
           return new ApiKeyConfig(
               recycloneConfig.rest().info().title().orElse(null),
-              security.permissive(),
-              security.headerName(),
-              security.queryName()
+              mechanism.permissive(),
+              mechanism.headerName(),
+              mechanism.queryName()
           );
         }
       }
@@ -90,17 +90,17 @@ public class DefaultShiroEnvironmentProvider {
   @Produces
   public JwtConfig getJwtConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
-      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
-        if (security.mechanism() == JWT) {
+      for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
+        if (mechanism.mechanism() == JWT) {
           return new JwtConfig(
               recycloneConfig.rest().info().title().orElse(null),
-              security.loginPath(),
-              security.permissive(),
-              security.issuer().orElse(
+              mechanism.loginPath(),
+              mechanism.permissive(),
+              mechanism.issuer().orElse(
                   recycloneConfig.rest().info().contact().name().orElse("Jwt Issuer")
               ),
-              security.secret().orElse(null),
-              security.timeoutSeconds().orElse(600)
+              mechanism.secret().orElse(null),
+              mechanism.timeoutSeconds().orElse(600)
           );
         }
       }
@@ -120,11 +120,11 @@ public class DefaultShiroEnvironmentProvider {
   @Produces
   public BasicConfig getBasicConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
-      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
-        if (security.mechanism() == BASIC_AUTH) {
+      for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
+        if (mechanism.mechanism() == BASIC_AUTH) {
           return new BasicConfig(
               recycloneConfig.rest().info().title().orElse(null),
-              security.permissive()
+              mechanism.permissive()
           );
         }
       }
@@ -141,11 +141,11 @@ public class DefaultShiroEnvironmentProvider {
   @Produces
   public BearerConfig getBearerConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
-      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
-        if (security.mechanism() == BEARER_TOKEN) {
+      for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
+        if (mechanism.mechanism() == BEARER_TOKEN) {
           return new BearerConfig(
               recycloneConfig.rest().info().title().orElse(null),
-              security.permissive()
+              mechanism.permissive()
           );
         }
       }

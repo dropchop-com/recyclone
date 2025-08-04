@@ -18,20 +18,20 @@ public class JwtHelper {
   private static final Logger log = LoggerFactory.getLogger(JwtHelper.class);
 
   public static String encode(JwtConfig config, String subject, Map<String, Object> claims) {
-    if (config.secret == null || config.secret.isEmpty()) {
+    if (config.getSecret() == null || config.getSecret().isEmpty()) {
       log.error("No security secret available");
       return null;
     }
-    byte[] keyBytes = Decoders.BASE64.decode(config.secret);
+    byte[] keyBytes = Decoders.BASE64.decode(config.getSecret());
     SecretKey key = Keys.hmacShaKeyFor(keyBytes);
     JwtBuilder builder = Jwts.builder()
         .id(UUID.randomUUID().toString())
-        .issuer(config.issuer)
+        .issuer(config.getIssuer())
         .subject(subject)
         .header()
         .add("typ", "jwt")
         .and()
-        .expiration(Date.from(ZonedDateTime.now().plusSeconds(config.timeoutSeconds).toInstant()))
+        .expiration(Date.from(ZonedDateTime.now().plusSeconds(config.getTimeoutSeconds()).toInstant()))
         .signWith(key, Jwts.SIG.HS512);
     if (claims != null && !claims.isEmpty()) {
       builder.claims(claims);
@@ -44,13 +44,13 @@ public class JwtHelper {
   }
 
   public static String decodeSubject(JwtConfig config, String token) {
-    byte[] keyBytes = Decoders.BASE64.decode(config.secret);
+    byte[] keyBytes = Decoders.BASE64.decode(config.getSecret());
     SecretKey key = Keys.hmacShaKeyFor(keyBytes);
     Jws<Claims> jws;
     try {
       jws = Jwts.parser()
           .verifyWith(key)
-          .requireIssuer(config.issuer)
+          .requireIssuer(config.getIssuer())
           .build()
           .parseSignedClaims(token);
     } catch (JwtException e) {

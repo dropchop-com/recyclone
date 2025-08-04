@@ -24,12 +24,12 @@ public abstract class CustomKeyHttpAuthenticationFilter extends HeaderHttpAuthen
   }
 
   public CustomKeyHttpAuthenticationFilter(ApiKeyConfig apiKeyConfig) {
-    super(apiKeyConfig.permissive);
-    this.setApplicationName(apiKeyConfig.applicationName);
-    String headerKey = apiKeyConfig.headerName;
+    super(apiKeyConfig.isPermissive());
+    this.setApplicationName(apiKeyConfig.getApplicationName());
+    String headerKey = apiKeyConfig.getHeaderName();
     String queryParamKey =
-    this.headerKey = apiKeyConfig.headerName;
-    this.queryParamKey = apiKeyConfig.queryName;
+    this.headerKey = apiKeyConfig.getHeaderName();
+    this.queryParamKey = apiKeyConfig.getQueryName();
     setAuthcScheme(this.headerKey);
     setAuthzScheme("");
   }

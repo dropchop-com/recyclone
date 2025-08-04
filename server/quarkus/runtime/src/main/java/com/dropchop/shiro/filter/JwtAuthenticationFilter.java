@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
       }
       final User user = new User();
       user.setId(jwtSubjectString);
-      return new JwtShiroToken(user, this.jwtConfig.issuer, encodedToken, true);
+      return new JwtShiroToken(user, this.jwtConfig.getIssuer(), encodedToken, true);
     } catch (MalformedJwtException jwtEx) {
       log.warn("Invalid JWT: {}",principalsAndCredentials[0], jwtEx);
       return createBearerToken("", request);

@@ -1,11 +1,15 @@
 package com.dropchop.recyclone.base.dto.model.security;
 
+import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,4 +39,26 @@ public class AuthorizationRequest extends Params {
   String username;
 
   String password;
+
+  public static <R extends AuthorizationRequest> LoginParameters toLoginParameters(R req) {
+    String scopeStr = req.getScope();
+    Set<String> domainPrefixes = new LinkedHashSet<>();
+    if (scopeStr != null && !scopeStr.isBlank()) {
+      for (String prefix : scopeStr.trim().split(" ")) {
+        if (!prefix.isBlank()) {
+          domainPrefixes.add(prefix);
+        }
+      }
+    }
+
+    LoginParameters loginParameters = new LoginParameters();
+    loginParameters.setLoginName(req.getUsername());
+    loginParameters.setPassword(req.getPassword());
+    loginParameters.setDomainPrefix(domainPrefixes);
+    return loginParameters;
+  }
+
+  public LoginParameters toLoginParameters() {
+    return toLoginParameters(this);
+  }
 }

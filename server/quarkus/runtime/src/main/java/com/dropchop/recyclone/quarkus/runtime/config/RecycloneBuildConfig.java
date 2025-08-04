@@ -3,8 +3,10 @@ package com.dropchop.recyclone.quarkus.runtime.config;
 import io.quarkus.runtime.annotations.*;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithParentName;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
@@ -110,7 +112,44 @@ public interface RecycloneBuildConfig {
     /**
      * REST Security information.
      */
+    @ConfigGroup
     interface Security {
+
+      /**
+       * REST client access key information.
+       */
+      ClientAccessKeys clientAccessKeys();
+
+      /**
+       * REST client access key information.
+       */
+      @ConfigGroup
+      interface ClientAccessKeys {
+
+        /**
+         * REST client-id named access key configs.
+         */
+        @WithParentName
+        Map<String, KeyConfig> named();
+
+        /**
+         * REST client-id named access key configs.
+         */
+        @ConfigGroup
+        interface KeyConfig {
+
+          /**
+           * REST secret for the named access key config.
+           */
+          String secret();
+
+          /**
+           * REST salt for the named access key config.
+           */
+          Optional<String> salt();
+        }
+      }
+
       /**
        * Additional security configuration.
        */

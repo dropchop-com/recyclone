@@ -67,7 +67,7 @@ public interface SecurityLoadingService extends Service {
    * @param user - previously loaded user
    * @param domainPrefixes the set of domain prefixes to filter permissions by
    */
-  void loadUserData(User user, Set<String> domainPrefixes);
+  User loadUserData(User user, Set<String> domainPrefixes);
 
   RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId, RoleNodeParams params);
 }

@@ -7,6 +7,7 @@ import com.dropchop.recyclone.quarkus.runtime.invoke.*;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFilterSerializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
+import com.dropchop.recyclone.quarkus.runtime.security.ClientAccessKeyService;
 import com.dropchop.recyclone.quarkus.runtime.selectors.ServiceSelector;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
@@ -175,6 +176,13 @@ class RecycloneProcessor {
             .setUnremovable()
             .build()
     );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ClientAccessKeyService.class)
+            .setUnremovable()
+            .build()
+    );
   }
 
   private final DotName ANNO_NAMED = DotName.createSimple(
@@ -194,7 +202,7 @@ class RecycloneProcessor {
         continue;
       }
       for (ClassInfo impl : candidates) {
-        log.info("Service candidate [{}].", impl.name());
+        log.debug("Service candidate [{}].", impl.name());
         if (!impl.hasAnnotation(ANNO_NAMED)) {
           continue;
         }
@@ -214,7 +222,7 @@ class RecycloneProcessor {
         producerMappings.add(
             new ProducerMapping(serviceIf.toString(), impl.name().toString(), selector, rootIface)
         );
-        log.info("Found service implementation [{}] for interface [{}].", impl.name(), serviceIf);
+        log.debug("Found service implementation [{}] for interface [{}].", impl.name(), serviceIf);
       }
     }
   }

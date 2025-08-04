@@ -572,8 +572,10 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission, RoleNodeParams params
   );
 
+  abstract protected ClientAccessKeyService getClientAccessKeyService();
+
   @Override
-  public void loadUserData(User user, Set<String> domainPrefixes) {
+  public User loadUserData(User user, Set<String> domainPrefixes) {
     // load user with the correct service if it was loaded by the wrong realm.
     // maybe remove this call in the future
     user = this.loadUserById(user.getId());
@@ -584,7 +586,10 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     Collection<Permission> permissions = this.loadPermissions(user, domainPrefixes);
     user.setPermissions(new LinkedHashSet<>(permissions));
 
+    getClientAccessKeyService().loadAccessKeys(user);
+
     // put available meta data to user attributes
     this.addMetadata(user);
+    return user;
   }
 }
