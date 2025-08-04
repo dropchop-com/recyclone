@@ -93,15 +93,16 @@ quarkus:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
       security:
-        - mechanism: bearer-token
-        - mechanism: basic-auth
-        - mechanism: api-key
-          header-name: X-Recyclone-API-Key
-          query-name: x-recyclone-api-key
-        - mechanism: jwt
-          secret: 26dx0wLJMZRwUWPDeLNFqnAUem5qAKrzNmxLAvBgE78u36DhBv1pAq0zH36M4qKy1yncXgCPBpJdX1CNfweB5Zx6uHptPxGB92ZfRPKUewAPmNpHLmBUZcypL7YXbrDH4zWUgV877CciMAy9425P3vmGjy0NPpFdy7bT2vVEvhjDb501iq1Q0tW3iXhVh1CFCxPGfaFfuE3tzvg6qSYmP6xNrFKkNEfP3aTWRwt5pud8PqyLrBbcGn5Sf4JCV1ac
-          issuer: Dropchop d.o.o.
-          timeout-seconds: 900
+        mechanisms:
+          - mechanism: bearer-token
+          - mechanism: basic-auth
+          - mechanism: api-key
+            header-name: X-Recyclone-API-Key
+            query-name: x-recyclone-api-key
+          - mechanism: jwt
+            secret: 26dx0wLJMZRwUWPDeLNFqnAUem5qAKrzNmxLAvBgE78u36DhBv1pAq0zH36M4qKy1yncXgCPBpJdX1CNfweB5Zx6uHptPxGB92ZfRPKUewAPmNpHLmBUZcypL7YXbrDH4zWUgV877CciMAy9425P3vmGjy0NPpFdy7bT2vVEvhjDb501iq1Q0tW3iXhVh1CFCxPGfaFfuE3tzvg6qSYmP6xNrFKkNEfP3aTWRwt5pud8PqyLrBbcGn5Sf4JCV1ac
+            issuer: Dropchop d.o.o.
+            timeout-seconds: 900
       includes:
         - "com.dropchop.recyclone.quarkus.it.rest.api.*"
         - "*.localization.*"

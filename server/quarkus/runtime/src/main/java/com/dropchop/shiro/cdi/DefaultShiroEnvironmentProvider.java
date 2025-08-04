@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.config.BasicConfig;
 import com.dropchop.recyclone.base.api.config.BearerConfig;
 import com.dropchop.recyclone.base.api.config.JwtConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security;
 import com.dropchop.shiro.filter.*;
 import com.dropchop.shiro.realm.ShiroMapRealm;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.Mechanism.*;
+import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.Mechanism.MechanismType.*;
 
 /**
  * Modeled and copied from Shiro Spring.
@@ -64,8 +65,8 @@ public class DefaultShiroEnvironmentProvider {
 
   @Produces
   public ApiKeyConfig getApiKeyConfig() {
-    if (!recycloneConfig.rest().security().isEmpty()) {
-      for (RecycloneBuildConfig.Rest.Security security : recycloneConfig.rest().security()) {
+    if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
+      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
         if (security.mechanism() == API_KEY) {
           return new ApiKeyConfig(
               recycloneConfig.rest().info().title().orElse(null),
@@ -88,8 +89,8 @@ public class DefaultShiroEnvironmentProvider {
 
   @Produces
   public JwtConfig getJwtConfig() {
-    if (!recycloneConfig.rest().security().isEmpty()) {
-      for (RecycloneBuildConfig.Rest.Security security : recycloneConfig.rest().security()) {
+    if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
+      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
         if (security.mechanism() == JWT) {
           return new JwtConfig(
               recycloneConfig.rest().info().title().orElse(null),
@@ -118,8 +119,8 @@ public class DefaultShiroEnvironmentProvider {
 
   @Produces
   public BasicConfig getBasicConfig() {
-    if (!recycloneConfig.rest().security().isEmpty()) {
-      for (RecycloneBuildConfig.Rest.Security security : recycloneConfig.rest().security()) {
+    if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
+      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
         if (security.mechanism() == BASIC_AUTH) {
           return new BasicConfig(
               recycloneConfig.rest().info().title().orElse(null),
@@ -139,8 +140,8 @@ public class DefaultShiroEnvironmentProvider {
 
   @Produces
   public BearerConfig getBearerConfig() {
-    if (!recycloneConfig.rest().security().isEmpty()) {
-      for (RecycloneBuildConfig.Rest.Security security : recycloneConfig.rest().security()) {
+    if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
+      for (Security.Mechanism security : recycloneConfig.rest().security().mechanisms()) {
         if (security.mechanism() == BEARER_TOKEN) {
           return new BearerConfig(
               recycloneConfig.rest().info().title().orElse(null),

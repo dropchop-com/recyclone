@@ -102,102 +102,110 @@ public interface RecycloneBuildConfig {
       }
     }
 
+    /**
+     * REST Security information.
+     */
+    Security security();
 
     /**
-     * Additional security configuration.
+     * REST Security information.
      */
-    @ConfigDocSection
-    @ConfigDocMapKey("security-name")
-    //@WithKeys(SecurityKeysProvider.class)
-    List<Security> security();
-
-    /**
-     * REST OpenAPI security item configuration.
-     */
-    @ConfigGroup
     interface Security {
+      /**
+       * Additional security configuration.
+       */
+      @ConfigDocSection
+      @ConfigDocMapKey("security-name")
+      List<Mechanism> mechanisms();
 
-      enum Mechanism {
-        BEARER_TOKEN("bearer-token"),
-        BASIC_AUTH("basic-auth"),
-        API_KEY("api-key"),
-        JWT("jwt");
+      /**
+       * REST OpenAPI security item configuration.
+       */
+      @ConfigGroup
+      interface Mechanism {
 
-        private final String value;
+        enum MechanismType {
+          BEARER_TOKEN("bearer-token"),
+          BASIC_AUTH("basic-auth"),
+          API_KEY("api-key"),
+          JWT("jwt");
 
-        Mechanism(String value) {
-          this.value = value;
+          private final String value;
+
+          MechanismType(String value) {
+            this.value = value;
+          }
+
+          @Override
+          public String toString() {
+            return String.valueOf(value);
+          }
         }
 
-        @Override
-        public String toString() {
-          return String.valueOf(value);
-        }
+        /**
+         * REST OpenAPI security item enabled.
+         */
+        MechanismType mechanism();
+
+        /**
+         * REST OpenAPI security item type (bearer-token, basic-auth, jwt).
+         */
+        Optional<String> type();
+
+        /**
+         * REST OpenAPI security item scheme (bearer, basic).
+         */
+        Optional<String> scheme();
+
+        /**
+         * REST OpenAPI security item location (header, query, cookie).
+         */
+        Optional<String> in();
+
+        /**
+         * REST security item apiKeyName if the type is apiKey.
+         */
+        @WithDefault("X-API-Key")
+        String headerName();
+
+        /**
+         * REST security item apiKeyName if the type is apiKey.
+         */
+        @WithDefault("api-key")
+        String queryName();
+
+        /**
+         * REST OpenAPI security item bearerFormat if a scheme is bearer.
+         */
+        Optional<String> bearerFormat();
+
+        /**
+         * REST security item timeout seconds if a scheme is JWT.
+         */
+        Optional<Integer> timeoutSeconds();
+
+        /**
+         * REST security item issuer if a scheme is JWT.
+         */
+        Optional<String> issuer();
+
+        /**
+         * REST security item secret if a scheme is JWT.
+         */
+        Optional<String> secret();
+
+        /**
+         * REST security item loginPath if a scheme is JWT.
+         */
+        @WithDefault("/api/security/login/jwt")
+        String loginPath();
+
+        /**
+         * REST security item permissive filter if a scheme is JWT, apiKey, Bearer.
+         */
+        @WithDefault("true")
+        Boolean permissive();
       }
-
-      /**
-       * REST OpenAPI security item enabled.
-       */
-      Mechanism mechanism();
-
-      /**
-       * REST OpenAPI security item type (bearer-token, basic-auth, jwt).
-       */
-      Optional<String> type();
-
-      /**
-       * REST OpenAPI security item scheme (bearer, basic).
-       */
-      Optional<String> scheme();
-
-      /**
-       * REST OpenAPI security item location (header, query, cookie).
-       */
-      Optional<String> in();
-
-      /**
-       * REST security item apiKeyName if the type is apiKey.
-       */
-      @WithDefault("X-API-Key")
-      String headerName();
-
-      /**
-       * REST security item apiKeyName if the type is apiKey.
-       */
-      @WithDefault("api-key")
-      String queryName();
-
-      /**
-       * REST OpenAPI security item bearerFormat if a scheme is bearer.
-       */
-      Optional<String> bearerFormat();
-
-      /**
-       * REST security item timeout seconds if a scheme is JWT.
-       */
-      Optional<Integer> timeoutSeconds();
-
-      /**
-       * REST security item issuer if a scheme is JWT.
-       */
-      Optional<String> issuer();
-
-      /**
-       * REST security item secret if a scheme is JWT.
-       */
-      Optional<String> secret();
-
-      /**
-       * REST security item loginPath if a scheme is JWT.
-       */
-      @WithDefault("/api/security/login/jwt")
-      String loginPath();
-
-      /**
-       * REST security item permissive filter if a scheme is JWT, apiKey, Bearer.
-       */
-      @WithDefault("true")
-      Boolean permissive();
     }
 
     /**
