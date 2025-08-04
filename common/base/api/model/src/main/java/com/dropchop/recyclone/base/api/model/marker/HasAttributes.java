@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface HasAttributes {
   Set<Attribute<?>> getAttributes();
   void setAttributes(Set<Attribute<?>> attributes);
@@ -51,8 +51,8 @@ public interface HasAttributes {
   }
 
   /**
-   * Creates attribute object and adds it to the collection of attributes.
-   * Attribute with equal name is replaced. If value is null attribute gets removed.
+   * Creates an attribute object and adds it to the collection of attributes.
+   * Attribute with an equal name is replaced. If a value is null, then an attribute is removed.
    * @param name attribute name
    * @param value attribute value
    * @return this for chaining.

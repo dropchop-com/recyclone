@@ -33,13 +33,6 @@ public interface SecurityLoadingService extends Service {
   Collection<Permission> loadPermissions(User user, Set<String> domainPrefixes);
 
   /**
-   * Adds metadata to the attributes of the provided user.
-   *
-   * @param user the user to whom metadata will be added
-   */
-  void addMetadata(User user);
-
-  /**
    * Resolves Apache Shiro permissions for entity and/or target defined by exactly 1 role node!
    * @param params - parameters with entity and/or target data
    * @return list of resolved apache shiro permissions
@@ -47,14 +40,14 @@ public interface SecurityLoadingService extends Service {
   Collection<Permission> loadPermissions(RoleNodeParams params);
 
   /**
-   * Loads user by login name,
+   * Loads user by login name.
    * @param userId - user login name
    * @return user instance or null if not found
    */
   User loadUserById(String userId);
 
   /**
-   * Loads user by login name,
+   * Loads user by login name.
    * @param loginName - user login name
    * @return user instance or null if not found
    */
@@ -66,6 +59,15 @@ public interface SecurityLoadingService extends Service {
    * @return user instance or null if not found
    */
   User loadUserByToken(String token);
+
+  /**
+   * Resolves Apache Shiro permissions for entity and/or target defined by exactly 1 role node!
+   * Resolves roles if existing and adds additional metadata to the attributes of the provided user.
+   *
+   * @param user - previously loaded user
+   * @param domainPrefixes the set of domain prefixes to filter permissions by
+   */
+  void loadUserData(User user, Set<String> domainPrefixes);
 
   RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId, RoleNodeParams params);
 }

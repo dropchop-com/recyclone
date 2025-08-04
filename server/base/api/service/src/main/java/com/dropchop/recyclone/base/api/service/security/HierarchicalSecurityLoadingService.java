@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.api.service.security;
 
 import com.dropchop.recyclone.base.api.model.attr.AttributeBool;
+import com.dropchop.recyclone.base.api.model.attr.AttributeSet;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
@@ -23,7 +24,7 @@ import java.util.*;
  */
 @Slf4j
 @Getter
-abstract public class HierarchicalSecurityLoadingService {
+abstract public class HierarchicalSecurityLoadingService implements SecurityLoadingService {
 
   @Builder
   @Getter
@@ -401,11 +402,12 @@ abstract public class HierarchicalSecurityLoadingService {
   }
 
   public void addMetadata(User user) {
+    AttributeSet attributes = new AttributeSet();
     List<String> permissions = new ArrayList<>();
     for (Permission permission : user.getPermissions()) {
       permissions.add(permission.getWildcardString());
     }
-    user.setAttributeValue("permissions", permissions);
+    attributes.setAttributeValue("permissions", permissions);
 
     //if (TODO.getRoles() != null) {
     //  List<String> roles = new ArrayList<>();
@@ -425,11 +427,11 @@ abstract public class HierarchicalSecurityLoadingService {
         return;
       }
       String ownerUuid = ownerTag.getName();
-      user.setAttributeValue("ownerUuid", ownerUuid);
-      user.setAttributeValue("ownerTitle", ownerTag.getTitle());
-      user.setAttributeValue("ownerTagUuid", ownerTag.getId());
+      attributes.setAttributeValue("ownerUuid", ownerUuid);
+      attributes.setAttributeValue("ownerTitle", ownerTag.getTitle());
+      attributes.setAttributeValue("ownerTagUuid", ownerTag.getId());
       String shareTagUuid = new Shared(ownerUuid).getId();
-      user.setAttributeValue("shareTagUuid", shareTagUuid);
+      attributes.setAttributeValue("shareTagUuid", shareTagUuid);
     }
   }
 
@@ -560,7 +562,7 @@ abstract public class HierarchicalSecurityLoadingService {
 
   /**
    * Uses source roleNodePermission to create a new instance with reverse allowed value
-   * and attaches it to specified role node
+   * and attaches it to the specified role node.
    *
    * @param targetRoleNodeId         - target role node to attach permission to
    * @param sourceRoleNodePermission - existing role node permission to create new role node permission from
@@ -569,4 +571,20 @@ abstract public class HierarchicalSecurityLoadingService {
   abstract protected void createRoleNodePermission(
     UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission, RoleNodeParams params
   );
+
+  @Override
+  public void loadUserData(User user, Set<String> domainPrefixes) {
+    // load user with the correct service if it was loaded by the wrong realm.
+    // maybe remove this call in the future
+    user = this.loadUserById(user.getId());
+
+    // TODO: load roles
+
+    // load permissions for the user
+    Collection<Permission> permissions = this.loadPermissions(user, domainPrefixes);
+    user.setPermissions(new LinkedHashSet<>(permissions));
+
+    // put available meta data to user attributes
+    this.addMetadata(user);
+  }
 }

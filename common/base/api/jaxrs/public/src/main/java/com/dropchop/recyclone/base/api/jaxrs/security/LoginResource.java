@@ -1,15 +1,16 @@
 package com.dropchop.recyclone.base.api.jaxrs.security;
 
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
+import com.dropchop.recyclone.base.dto.model.security.AuthorizationRequest;
 import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.dto.model.security.AuthorizationResponse;
+import com.dropchop.recyclone.base.dto.model.security.OauthLikeRequest;
+import com.dropchop.recyclone.base.dto.model.security.OauthLikeResponse;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-
-import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.JWT_SEGMENT;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.LOGIN;
@@ -25,10 +26,10 @@ public interface LoginResource {
   @POST
   @Path(JWT_SEGMENT)
   @Produces({APPLICATION_JSON_DROPCHOP_RESULT})
-  Result<User> loginJwt(LoginParameters params);
+  Result<AuthorizationResponse> loginJwt(AuthorizationRequest params);
 
   @POST
   @Path(JWT_SEGMENT)
   @Produces({MediaType.APPLICATION_JSON})
-  List<User> loginJwtRest(LoginParameters params);
+  OauthLikeResponse loginJwtRest(OauthLikeRequest params);
 }

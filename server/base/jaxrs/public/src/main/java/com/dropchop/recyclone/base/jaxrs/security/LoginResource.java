@@ -9,12 +9,9 @@ import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.base.api.rest.ClassicRestResource;
 import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
 import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
-import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
+import com.dropchop.recyclone.base.dto.model.security.*;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.rest.ResultStatus;
-import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
-import com.dropchop.recyclone.base.dto.model.security.Permission;
-import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.api.jwt.JwtHelper;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -24,6 +21,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -36,7 +34,7 @@ public class LoginResource implements
 
   @Inject
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
-  AuthenticationService service;
+  AuthenticationService authenticationService;
 
   @Inject
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
@@ -47,55 +45,34 @@ public class LoginResource implements
   JwtConfig jwtConfig;
 
 
-  private void fillRequestClaims(User user, Map<String, Object> claims) {
-    claims.put("u", user);
-    String ownerUuid = user.getAttributeValue("ownerUuid", "");
-    if (ownerUuid != null && !ownerUuid.isBlank()) {
-      claims.put("o", ownerUuid);
-    }
+  @SuppressWarnings("unused")
+  private void fillRefreshClaims(User user, Map<String, Object> claims) {
   }
 
-  private void fillFirstResponseClaims(User user, Map<String, Object> claims) {
-    String ownerUuid = user.getAttributeValue("ownerUuid", "");
-    if (ownerUuid != null && !ownerUuid.isBlank()) {
-      claims.put("o", ownerUuid);
-    }
-    String ownerTitle = user.getAttributeValue("ownerTitle", "");
-    if (ownerTitle != null && !ownerTitle.isBlank()) {
-      claims.put("on", ownerTitle);
-    }
-    String ownerTagUuid = user.getAttributeValue("ownerTagUuid", "");
-    if (ownerTagUuid != null && !ownerTagUuid.isBlank()) {
-      claims.put("ot", ownerTagUuid);
-    }
-    String shareTagUuid = user.getAttributeValue("shareTagUuid", "");
-    if (shareTagUuid != null && !shareTagUuid.isBlank()) {
-      claims.put("os", shareTagUuid);
-    }
-    List<String> roles = user.getAttributeValue("roles", new ArrayList<>());
-    if (roles != null && !roles.isEmpty()) {
-      claims.put("r", roles);
-    }
-    List<String> permissions = user.getAttributeValue("permissions", new ArrayList<>());
-    if (permissions != null && !permissions.isEmpty()) {
-      claims.put("p", permissions);
-    }
+  private <R extends AuthorizationRequest> void fillAccessClaims(R req, Map<String, Object> claims) {
+    claims.put("auth_time", ZonedDateTime.now().toEpochSecond());
+    claims.put("iat", ZonedDateTime.now().toEpochSecond());
+    claims.put("a", "here implement access token");
   }
 
-  @Override
-  public Result<User> loginJwt(LoginParameters params) {
+  private void fillIdClaims(User user, Map<String, Object> claims) {
+    User user1 = user.cloneSimplified();
+    claims.put("u", user1);
+  }
+
+  public <R extends AuthorizationRequest, S extends AuthorizationResponse> void login(R req, S resp) {
     AuthenticationToken token = new UsernamePasswordToken(
-        params.getLoginName(), params.getPassword(), false
+        req.getUsername(), req.getPassword(), false
     );
     Subject subject;
     try {
-      subject =  service.login(token);
+      subject = authenticationService.login(token);
     } catch (AuthenticationException e) {
       throw new ServiceException(
           new StatusMessage(
-              ErrorCode.authentication_error, "Invalid credentials",
+              ErrorCode.authentication_error, "Invalid credentials!",
               Set.of(
-                  new AttributeString("loginName", params.getLoginName())
+                  new AttributeString("username", req.getUsername())
               )
           )
       );
@@ -107,24 +84,27 @@ public class LoginResource implements
               ErrorCode.internal_error,
               String.format("Invalid Shiro Subject principal type: [%s]!", principal.getClass().getName()),
               Set.of(
-                  new AttributeString("loginName", params.getLoginName())
+                  new AttributeString("username", req.getUsername())
               )
           )
       );
     }
-    log.warn("Invalid credentials provided for login name [{}]!", params.getLoginName());
+    String scopeStr = req.getScope();
+    Set<String> domainPrefixes = new LinkedHashSet<>();
+    if (scopeStr != null && !scopeStr.isBlank()) {
+      for (String prefix : scopeStr.trim().split(" ")) {
+        if (!prefix.isBlank()) {
+          domainPrefixes.add(prefix);
+        }
+      }
+    }
 
-    // load user with the correct service if it was loaded by the wrong realm.
-    // maybe remove this call in the future
-    user = securityLoadingService.loadUserById(user.getId());
-    Collection<Permission> permissions = securityLoadingService.loadPermissions(user, params.getDomainPrefix());
-    user.setPermissions(new LinkedHashSet<>(permissions));
+    log.warn("Invalid credentials provided for user name [{}]!", req.getUsername());
 
-    // put available meta data to user attributes
-    securityLoadingService.addMetadata(user);
+    securityLoadingService.loadUserData(user, domainPrefixes);
 
     // clear permissions since they are conveniently put in attributes.
-    user.setPermissions(null);
+    /*user.setPermissions(null);
 
     // clear sensitive data
     user.getAccounts().forEach(account -> {
@@ -133,24 +113,62 @@ public class LoginResource implements
       }
     });
 
+    resp.setUser(user);*/
+
     Map<String, Object> claims = new HashMap<>();
-    fillRequestClaims(user, claims);
-    String requestJwtToken = JwtHelper.encode(jwtConfig, user.getUuid().toString(), claims);
-    user.setAttributeValue("requestJwtToken", requestJwtToken);
+    fillAccessClaims(req, claims);
+    // keep the access token simple
+    String accessToken = JwtHelper.encode(jwtConfig, user.getUuid().toString(), claims);
+    resp.setAccessToken(accessToken);
 
-    // we respond with triple encoded same data ... Huh, yes, can't win with my argument.
-    fillFirstResponseClaims(user, claims);
-    String userJwtToken = JwtHelper.encode(jwtConfig, user.getUuid().toString(), claims);
-    user.setAttributeValue("userJwtToken", userJwtToken);
+    // we respond with id token i.e., all user data
+    fillIdClaims(user, claims);
+    // add more data to access token
+    String idToken = JwtHelper.encode(jwtConfig, user.getUuid().toString(), claims);
+    resp.setIdToken(idToken);
 
-    Result<User> result = new Result<>();
-    result.getData().add(user);
+    resp.setCode(req.getRequestId());
+    resp.setTokenType("Bearer");
+    resp.setExpiresIn(jwtConfig.timeoutSeconds);
+  }
+
+  @Override
+  public Result<AuthorizationResponse> loginJwt(AuthorizationRequest params) {
+    params.tryGetResultContentFilter().setTreeLevel(100);
+
+    AuthorizationResponse response = new AuthorizationResponse();
+    login(params, response);
+
+    Result<AuthorizationResponse> result = new Result<>();
+    result.getData().add(response);
     result.setStatus(new ResultStatus(ResultCode.success, 0, 1, null, null, null));
     return result;
   }
 
   @Override
-  public List<User> loginJwtRest(LoginParameters params) {
-    return unwrap(loginJwt(params));
+  public OauthLikeResponse loginJwtRest(OauthLikeRequest params) {
+    OauthLikeResponse response = new OauthLikeResponse();
+    try {
+      login(params, response);
+      return response;
+    } catch (ServiceException e) {
+      if (!e.getStatusMessages().isEmpty()) {
+        ErrorCode errorCode = e.getStatusMessages().getFirst().getCode();
+        String message = e.getStatusMessages().getFirst().getText();
+        if (errorCode != null && message != null) {
+          response.setError(String.valueOf(errorCode.toString()));
+          response.setErrorDescription(message);
+        } else if (errorCode != null) {
+          response.setError(String.valueOf(errorCode.toString()));
+          response.setErrorDescription(e.getMessage());
+        } else if (message != null) {
+          response.setError(message);
+          response.setErrorDescription(e.getMessage());
+        } else {
+          response.setError(e.getMessage());
+        }
+      }
+    }
+    return response;
   }
 }

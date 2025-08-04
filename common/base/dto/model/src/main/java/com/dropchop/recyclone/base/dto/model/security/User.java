@@ -60,4 +60,17 @@ public class User extends Person
 
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes;
+
+  public User cloneSimplified() {
+    User newUser;
+    try {
+      newUser = (User) super.clone();
+      newUser.setAccounts(null);
+      newUser.setRoles(null);
+      newUser.setPermissions(null);
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+    return newUser;
+  }
 }
