@@ -35,7 +35,8 @@ if [[ "$HOST" == https* ]]; then
     CURL_OPTS="$CURL_OPTS -k"
 fi
 if [[ -n "$AUTH" ]]; then
-    CURL_OPTS="$CURL_OPTS -u $AUTH"
+    CURL_OPTS_T="$CURL_OPTS -u $AUTH"
+    CURL_OPTS_P="$CURL_OPTS -u '$AUTH'"
 fi
 
 # --- SCRIPT LOCATION ---
@@ -58,11 +59,11 @@ handle_jsons() {
     [[ -e "$file" ]] || continue
     json_name="$(basename "$file" .json)"
     if [[ "$ACTION" == "init" ]]; then
-      echo "$CURL_OPTS -X PUT $HOST/$url_path/$json_name -H 'Content-Type: application/json' --data-binary @$file"
-      curl $CURL_OPTS -X PUT "$HOST/$url_path/$json_name" -H 'Content-Type: application/json' --data-binary "@$file"
+      echo "curl $CURL_OPTS_P -X PUT $HOST/$url_path/$json_name -H 'Content-Type: application/json' --data-binary @$file"
+      curl $CURL_OPTS_T -X PUT "$HOST/$url_path/$json_name" -H 'Content-Type: application/json' --data-binary "@$file"
     elif [[ "$ACTION" == "remove" ]]; then
-      echo "$CURL_OPTS -X DELETE $HOST/$url_path/$json_name"
-      curl $CURL_OPTS -X DELETE "$HOST/$url_path/$json_name"
+      echo "curl $CURL_OPTS_P -X DELETE $HOST/$url_path/$json_name"
+      curl $CURL_OPTS_T -X DELETE "$HOST/$url_path/$json_name"
     fi
     echo   # empty line
   done
