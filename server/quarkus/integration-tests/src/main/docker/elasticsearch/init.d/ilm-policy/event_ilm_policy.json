@@ -1,15 +1,1 @@
-{
-  "policy": {
-    "_meta": {
-      "description": "A policy to keep event indices for one year."
-    },
-    "phases": {
-      "delete": {
-        "min_age": "365d",
-        "actions": {
-          "delete": {}
-        }
-      }
-    }
-  }
-}
+../../../../../../../../events/es/scripts/index/ilm-policy/event_ilm_policy.json

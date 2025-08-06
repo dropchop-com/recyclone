@@ -1,7 +1,1 @@
-{
-  "index_patterns": [
-    "event-20*"
-  ],
-  "priority": 20000,
-  "composed_of": ["event_field_mapping_1", "event_index_settings_1"]
-}
+../../../../../../../../events/es/scripts/index/index-template/event.json
