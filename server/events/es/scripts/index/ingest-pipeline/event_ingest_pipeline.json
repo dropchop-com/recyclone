@@ -1,10 +1,10 @@
 {
-  "description": "Recyclone event date-time index naming",
+  "description": "Event index date-time naming",
   "processors" : [
     {
       "date_index_name" : {
         "field" : "created",
-        "index_name_prefix" : "recyclone_event-",
+        "index_name_prefix" : "event-",
         "index_name_format" : "yyyy-MM-dd",
         "date_rounding" : "M"
       }

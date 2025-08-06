@@ -11,8 +11,14 @@
         "lifecycle": {
           "name": "event_ilm_policy",
           "rollover_alias": "event"
+        },
+        "mapping": {
+          "total_fields.limit": 2000
         }
       }
+    },
+    "mappings" : {
+      "_source" : { "enabled" : true }
     }
   }
 }

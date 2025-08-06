@@ -1,7 +1,7 @@
 {
   "policy": {
     "_meta": {
-      "description": "Used for recyclone events"
+      "description": "A policy to keep event indices for one year."
     },
     "phases": {
       "delete": {

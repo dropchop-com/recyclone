@@ -1,0 +1,24 @@
+{
+  "template": {
+    "aliases": {
+      "event": {}
+    },
+    "settings" : {
+      "index" : {
+        "default_pipeline": "event_ingest_pipeline",
+        "number_of_shards" : "1",
+        "number_of_replicas" : "0",
+        "lifecycle": {
+          "name": "event_ilm_policy",
+          "rollover_alias": "event"
+        },
+        "mapping": {
+          "total_fields.limit": 2000
+        }
+      }
+    },
+    "mappings" : {
+      "_source" : { "enabled" : true }
+    }
+  }
+}
