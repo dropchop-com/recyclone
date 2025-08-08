@@ -1,7 +1,7 @@
-package com.dropchop.recyclone.quarkus.runtime.security;
+package com.dropchop.recyclone.base.api.model.security;
 
-import com.dropchop.recyclone.base.api.config.ClientKeyConfig;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
+import lombok.Getter;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -16,13 +16,14 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.time.ZonedDateTime;
 import java.util.Base64;
+import java.util.Objects;
 
+@Getter
 @SuppressWarnings("unused")
 public class AccessKey {
   private static final String SEPARATOR = "::";
   private static final String ALGO = "AES/GCM/NoPadding";
   private static final int GCM_IV_LENGTH = 12;
-  private static final byte[] KEY = "your-32-byte-long-secret-key-!!!".getBytes(StandardCharsets.UTF_8);
 
   public enum Type {
     user_password,
@@ -30,14 +31,16 @@ public class AccessKey {
   }
 
   private final String clientId;
+  private final String userId;
   private final String token;
   private final Type type;
   private final String userName;
-  private final String password;
+  private final char[] password;
   private final ZonedDateTime created;
 
-  public AccessKey(String clientId, ZonedDateTime created, String userName, String password) {
+  public AccessKey(String clientId, ZonedDateTime created, String userId, String userName, char[] password) {
     this.clientId = clientId;
+    this.userId = userId;
     this.created = created;
     this.token = null;
     this.type = Type.user_password;
@@ -45,13 +48,34 @@ public class AccessKey {
     this.password = password;
   }
 
-  public AccessKey(String clientId, ZonedDateTime created, String token) {
+  public AccessKey(String clientId, ZonedDateTime created, String userId, String token) {
     this.clientId = clientId;
+    this.userId = userId;
     this.created = created;
     this.token = token;
     this.type = Type.user_token;
     this.userName = null;
     this.password = null;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof AccessKey accessKey)) {
+      return false;
+    }
+    return Objects.equals(getClientId(), accessKey.getClientId())
+        && Objects.equals(getUserId(), accessKey.getUserId())
+        && getType() == accessKey.getType();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getClientId(), getUserId(), getType());
+  }
+
+  @Override
+  public String toString() {
+    return "access-key." + clientId + "." + type.name();
   }
 
   private static SecretKey getKeyFromPassword(String password, String salt)
@@ -67,12 +91,23 @@ public class AccessKey {
     if (accessKey.created != null) {
       date = Iso8601.DATE_TIME_MS_TZ_FORMATTER.get().format(accessKey.created);
     }
-    String plainText = accessKey.type.name() + SEPARATOR + date + SEPARATOR;
+    StringBuilder plainTextBuilder = new StringBuilder(256);
+    plainTextBuilder.append(accessKey.type.name())
+        .append(SEPARATOR)
+        .append(date)
+        .append(SEPARATOR);
     if (accessKey.type == Type.user_password) {
-      plainText += accessKey.userName + SEPARATOR + accessKey.password;
+      plainTextBuilder.append(accessKey.userId)
+          .append(SEPARATOR)
+          .append(accessKey.userName)
+          .append(SEPARATOR)
+          .append(accessKey.password);
     } else {
-      plainText += accessKey.token;
+      plainTextBuilder.append(accessKey.userId)
+          .append(SEPARATOR)
+          .append(accessKey.token);
     }
+    String plainText = plainTextBuilder.toString();
 
     byte[] iv = new byte[GCM_IV_LENGTH];
     new SecureRandom().nextBytes(iv);
@@ -94,85 +129,23 @@ public class AccessKey {
 
     byte[] result = new byte[prefix.length + iv.length + encrypted.length];
     System.arraycopy(prefix, 0, result, 0, prefix.length);
-    System.arraycopy(iv, 0, result, 0, iv.length);
-    System.arraycopy(encrypted, 0, result, iv.length, encrypted.length);
+    System.arraycopy(iv, 0, result, prefix.length, iv.length);
+    System.arraycopy(encrypted, 0, result, prefix.length + iv.length, encrypted.length);
 
     return Base64.getEncoder().encodeToString(result);
   }
 
-  public static String encrypt(ClientKeyConfig config, String userName, String password) {
-    return encrypt(config, new AccessKey(config.getClientId(), ZonedDateTime.now(), userName, password));
+  public static String encrypt(ClientKeyConfig config, String userId, String userName, String password) {
+    return encrypt(
+        config, new AccessKey(
+            config.getClientId(), ZonedDateTime.now(), userId, userName, password.toCharArray()
+        )
+    );
   }
 
-  public static String encrypt(ClientKeyConfig config, String token) {
-    return encrypt(config, new AccessKey(config.getClientId(), ZonedDateTime.now(), token));
+  public static String encrypt(ClientKeyConfig config, String userId, String token) {
+    return encrypt(config, new AccessKey(config.getClientId(), ZonedDateTime.now(), userId, token));
   }
-
-  /*
-  public static AccessKey decrypt(String base64CipherText) {
-    byte[] input = Base64.getDecoder().decode(base64CipherText);
-
-    byte[] iv = new byte[GCM_IV_LENGTH];
-    System.arraycopy(input, 0, iv, 0, iv.length);
-
-    String plainText;
-    try {
-      Cipher cipher = Cipher.getInstance(ALGO);
-      cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(KEY, "AES"), new GCMParameterSpec(128, iv));
-      byte[] decrypted = cipher.doFinal(input, GCM_IV_LENGTH, input.length - GCM_IV_LENGTH);
-      plainText = new String(decrypted, StandardCharsets.UTF_8);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to encrypt the access key!", e);
-    }
-
-    String[] parts = plainText.split(SEPARATOR);
-    if (parts.length < 4) {
-      throw new RuntimeException("Invalid access key format! Expected at least 4 parts but got " + parts.length);
-    }
-
-    Type type;
-    try {
-      type = Type.valueOf(parts[0]);
-    } catch (IllegalArgumentException ex) {
-      throw new RuntimeException("Unknown access key type: " + parts[0], ex);
-    }
-
-    ZonedDateTime created;
-    try {
-      if (parts[1].equalsIgnoreCase("null")) {
-        created = null;
-      } else {
-        created = ZonedDateTime.parse(parts[1], Iso8601.DATE_TIME_MS_TZ_FORMATTER.get());
-      }
-    } catch (Exception e) {
-      throw new RuntimeException("Invalid date format for access key: " + parts[1], e);
-    }
-
-    String clientId = parts[2];
-    if (clientId.equalsIgnoreCase("null")) {
-      clientId = null;
-    }
-    if (type == Type.user_password) {
-      if (parts.length != 5) {
-        throw new RuntimeException(
-            "Invalid access key format for user_password type! Expected 5 parts but got " + parts.length
-        );
-      }
-      String userName = parts[3];
-      String password = parts[4];
-      return new AccessKey(clientId, created, userName, password);
-    } else if (type == Type.user_token) {
-      if (parts.length != 4) {
-        throw new RuntimeException(
-            "Invalid access key format for user_token type! Expected 4 parts but got " + parts.length
-        );
-      }
-      String token = parts[3];
-      return new AccessKey(clientId, created, token);
-    } else {
-      throw new RuntimeException("Unhandled access key type: " + type);
-    }
-  }*/
 
   public static AccessKey decrypt(ClientKeyConfig config, String base64CipherText) {
     byte[] input = Base64.getDecoder().decode(base64CipherText);
@@ -223,7 +196,7 @@ public class AccessKey {
 
     // 5. Parse plaintext fields as before
     String[] parts = plainText.split(SEPARATOR, -1);
-    if (parts.length < 3) {
+    if (parts.length < 4) {
       throw new RuntimeException("Invalid access key format! Expected at least 3 parts but got " + parts.length);
     }
 
@@ -246,22 +219,24 @@ public class AccessKey {
     }
 
     if (type == Type.user_password) {
-      if (parts.length != 4) {
+      if (parts.length != 5) {
         throw new RuntimeException(
             "Invalid access key format for user_password type! Expected 4 parts but got " + parts.length
         );
       }
-      String userName = parts[2];
-      String password = parts[3];
-      return new AccessKey(clientId, created, userName, password);
+      String userId = parts[2];
+      String userName = parts[3];
+      String password = parts[4];
+      return new AccessKey(clientId, created, userId, userName, password.toCharArray());
     } else if (type == Type.user_token) {
-      if (parts.length != 3) {
+      if (parts.length != 4) {
         throw new RuntimeException(
             "Invalid access key format for user_token type! Expected 3 parts but got " + parts.length
         );
       }
-      String token = parts[2];
-      return new AccessKey(clientId, created, token);
+      String userId = parts[2];
+      String token = parts[3];
+      return new AccessKey(clientId, created, userId, token);
     } else {
       throw new RuntimeException("Unhandled access key type: " + type);
     }

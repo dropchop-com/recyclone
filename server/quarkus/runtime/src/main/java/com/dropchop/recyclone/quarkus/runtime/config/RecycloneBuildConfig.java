@@ -147,6 +147,17 @@ public interface RecycloneBuildConfig {
            * REST salt for the named access key config.
            */
           Optional<String> salt();
+
+          /**
+           * REST uri for the named access key config.
+           */
+          Optional<String> uri();
+
+          /**
+           * REST uri for the named access key config.
+           */
+          @WithDefault("3600")
+          Integer expiresAfterSeconds();
         }
       }
 

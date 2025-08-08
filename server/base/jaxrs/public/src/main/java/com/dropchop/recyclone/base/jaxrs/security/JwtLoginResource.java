@@ -3,7 +3,10 @@ package com.dropchop.recyclone.base.jaxrs.security;
 import com.dropchop.recyclone.base.api.config.JwtConfig;
 import com.dropchop.recyclone.base.api.jwt.JwtHelper;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
@@ -40,6 +43,10 @@ public class JwtLoginResource extends BaseLoginResource
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
   JwtConfig jwtConfig;
 
+  @Inject
+  @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
+  ExecContextContainer execContextContainer;
+
   @SuppressWarnings("unused")
   private void fillRefreshClaims(User user, Map<String, Object> claims) {
   }
@@ -47,6 +54,13 @@ public class JwtLoginResource extends BaseLoginResource
   private void fillAccessClaims(User user, Map<String, Object> claims) {
     claims.put("auth_time", ZonedDateTime.now().toEpochSecond());
     claims.put("iat", ZonedDateTime.now().toEpochSecond());
+    ExecContext<?> execContext = execContextContainer.get();
+    if (execContext instanceof HasAttributes hasAttributes) {
+      String clientAddress = hasAttributes.getAttributeValue(ExecContext.ReqAttributeNames.REQ_CLIENT_ADDRESS);
+      if (clientAddress != null) {
+        claims.put("client_ip", clientAddress);
+      }
+    }
     user.getAttributes().forEach(attr -> {
       if (attr.getName().endsWith("accessKey")) {
         claims.put(attr.getName(), attr.getValue());

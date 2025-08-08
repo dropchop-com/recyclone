@@ -1,13 +1,16 @@
 package com.dropchop.recyclone.base.dto.model.invoke;
 
+import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext.Listener;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
+import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.security.annotations.Logical;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Container for common current execution variables.
@@ -21,20 +24,22 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class DefaultExecContext<D extends Dto>
   extends ParamsExecContext<Listener>
-  implements CommonExecContext<D, Listener>, SecurityExecContext {
+  implements CommonExecContext<D, Listener>, SecurityExecContext, HasAttributes {
 
   @NonNull
-  List<D> data;
+  private List<D> data;
 
-  List<String> requiredPermissions;
+  private List<String> requiredPermissions;
 
-  Logical requiredPermissionsOp = Logical.AND;
+  private Logical requiredPermissionsOp = Logical.AND;
 
-  List<String> requiredRoles;
+  private List<String> requiredRoles;
 
-  Logical requiredRolesOp = Logical.AND;
+  private Logical requiredRolesOp = Logical.AND;
 
-  Boolean requiredGuest;
+  private Boolean requiredGuest;
 
-  Boolean requiredAuthenticated;
+  private Boolean requiredAuthenticated;
+
+  private Set<Attribute<?>> attributes;
 }

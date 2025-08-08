@@ -8,7 +8,7 @@ import org.apache.shiro.subject.Subject;
  */
 public interface AuthenticationService {
 
-  Subject login(AuthenticationToken context);
+  Subject login(AuthenticationToken token);
 
 }
 

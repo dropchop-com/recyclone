@@ -1,7 +1,12 @@
 package com.dropchop.shiro.cdi;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
+import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
+import com.dropchop.recyclone.base.api.model.marker.HasId;
+import com.dropchop.recyclone.base.api.model.security.AccessKey;
 import com.dropchop.recyclone.base.api.model.security.PermissionBearer;
 import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
+import com.dropchop.recyclone.base.api.service.security.ClientAccessKeyService;
 import com.dropchop.shiro.jaxrs.ShiroSecurityContext;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
@@ -18,6 +23,10 @@ import org.apache.shiro.util.ThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
+import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
+
 public class ShiroAuthenticationService implements AuthenticationService {
 
   private static final Logger log = LoggerFactory.getLogger(ShiroAuthenticationService.class);
@@ -33,8 +42,14 @@ public class ShiroAuthenticationService implements AuthenticationService {
     return SecurityUtils.getSubject();
   }
 
+  @Inject
+  @RecycloneType(RECYCLONE_DEFAULT)
+  @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
+  ClientAccessKeyService clientAccessKeyService;
+
   @Produces
   @RequestScoped
+  @Deprecated
   public PermissionBearer getPermissionBearer() {
     try {
       Subject subject = SecurityUtils.getSubject();
@@ -54,7 +69,7 @@ public class ShiroAuthenticationService implements AuthenticationService {
     }
   }
 
-  public ThreadState bindSubject() {
+  private ThreadState bindSubject() {
     Subject subject = new Subject.Builder(shiroSecurityManager).buildSubject();
     ThreadState threadState = new SubjectThreadState(subject);
     threadState.bind();
@@ -84,6 +99,16 @@ public class ShiroAuthenticationService implements AuthenticationService {
     try {
       Subject subject = getSubject();
       subject.login(token);
+      Object principal = subject.getPrincipal();
+      if (principal instanceof HasId hasId) {
+        Map<AccessKey, String> keys = clientAccessKeyService.createAccessKeys(hasId, token);
+        if (principal instanceof HasAttributes hasAttributes) {
+          for (Map.Entry<AccessKey, String> entry : keys.entrySet()) {
+            AccessKey key = entry.getKey();
+            hasAttributes.setAttributeValue(key.toString(), entry.getValue());
+          }
+        }
+      }
       return subject;
     } catch (AuthenticationException e) {
       log.warn("Authentication failed for token [{}]", token, e);
