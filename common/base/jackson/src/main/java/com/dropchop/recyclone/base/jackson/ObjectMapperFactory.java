@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.filtering.JsonSerializationTypeConfig;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.api.model.query.knn.KnnQuery;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -41,6 +42,7 @@ public class ObjectMapperFactory {
     module.addDeserializer(Attribute.class, new AttributeDeserializer());
     module.addDeserializer(Condition.class, new ConditionDeserializer());
     module.addDeserializer(AggregationList.class, new AggregationDeserializer());
+    module.addDeserializer(KnnQuery.class, new KnnQueryDeserializer());
     module.addSerializer(new AttributeCompactSerializer());
 
     mapper.registerModule(module);

@@ -8,26 +8,43 @@ import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public interface ElasticQueryBuilder {
 
   @Getter
   class ValidationData {
-    private final List<String> rootFields = new ArrayList<>();
-    private Condition rootCondition = null;
+    private final Set<String> rootFields = new HashSet<>();
+    private final Set<String> knnFields = new HashSet<>();
+    private Condition rootCondition;
+
+    public void addRootField(String field, Condition parentCondition) {
+      rootFields.add(field);
+    }
+
+    public void addKnnField(String field) {
+      knnFields.add(field);
+    }
+
+    public Set<String> getRootFields() {
+      return rootFields;
+    }
+
+    public Set<String> getKnnFields() {
+      return knnFields;
+    }
+
+    public boolean hasKnnFields() {
+      return !knnFields.isEmpty();
+    }
 
     protected void setRootCondition(Condition rootCondition) {
       if (rootCondition == null) {
         return;
       }
       this.rootCondition = rootCondition;
-    }
-
-    protected void addRootField(String candidateField, Condition parentCondition) {
-      if (this.rootCondition == parentCondition) {
-        this.rootFields.add(candidateField);
-      }
     }
   }
 
