@@ -16,7 +16,7 @@ class AccessKeyTest {
   @Test
   public void testEncryptUserPasswordType() {
     ClientKeyConfig clientKeyConfig = new ClientKeyConfig(
-        "testClient", URI.create("example.com"), "Gs*t4USB29uAMVex!vmRJ#8g6jt^cq3n", "QqvBbrGSFVAVAd9*"
+        "testClient", URI.create("example.com"), "A75KchP2jqNnQNF8$MDxtuXsrHVWrUN9", "UtVV0zbsdkq4y*P9"
     );
     ZonedDateTime created = ZonedDateTime.now();
     AccessKey accessKey = new AccessKey(
