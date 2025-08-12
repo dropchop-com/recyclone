@@ -25,7 +25,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @ApplicationScoped
 @SuppressWarnings("unused")
 public class ElasticDummyRepository extends ElasticRepository<EsDummy, String>
-  implements AlwaysPresentSearchFields, AlwaysPresentDeleteFields {
+  implements AlwaysPresentDeleteFields {
   //implements BlockAllDelete {
 
   private final Class<EsDummy> rootClass = EsDummy.class;

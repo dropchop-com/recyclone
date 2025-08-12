@@ -60,7 +60,7 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
   private AggregationList aggregate;
 
   @ToString.Include
-  private KnnQuery knnQuery = new KnnQuery();
+  private KnnQuery knnQuery;
 
   @Override
   public String toString() {

@@ -2,8 +2,6 @@ package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.knn.KnnQuery;
-import com.dropchop.recyclone.base.api.model.query.knn.KnnQueryVectorBuilder;
-import com.dropchop.recyclone.base.api.model.query.knn.KnnRescoreVector;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -37,54 +35,6 @@ public class KnnQueryDeserializer extends JsonDeserializer<KnnQuery> {
     return result;
   }
 
-  private KnnQueryVectorBuilder parseQueryVectorBuilder(JsonNode builderNode) {
-    if (!builderNode.isObject()) {
-      throw new IllegalArgumentException("query_vector_builder must be an object");
-    }
-
-    KnnQueryVectorBuilder.KnnQueryVectorBuilderBuilder<?, ?> builder = KnnQueryVectorBuilder.builder();
-
-
-    JsonNode textEmbeddingNode = builderNode.get("text_embedding") != null ?
-      builderNode.get("text_embedding") : builderNode.get("textEmbedding");
-
-    if (textEmbeddingNode.isObject()) {
-      KnnQueryVectorBuilder.TextEmbedding.TextEmbeddingBuilder<?, ?> textBuilder =
-        KnnQueryVectorBuilder.TextEmbedding.builder();
-
-      JsonNode modelTextNode = textEmbeddingNode.get("model_text") != null ?
-        textEmbeddingNode.get("model_text") : textEmbeddingNode.get("modelText");
-      if (modelTextNode != null && modelTextNode.isTextual()) {
-        textBuilder.modelText(modelTextNode.asText());
-      } else {
-        throw new IllegalArgumentException("text_embedding.model_text is required and must be a string");
-      }
-
-      JsonNode modelIdNode = textEmbeddingNode.get("model_id") != null ?
-        textEmbeddingNode.get("model_id") : textEmbeddingNode.get("modelId");
-      if (modelIdNode != null && modelIdNode.isTextual()) {
-        textBuilder.modelId(modelIdNode.asText());
-      }
-
-      builder.textEmbedding(textBuilder.build());
-    }
-
-    return builder.build();
-  }
-
-  private KnnRescoreVector parseRescoreVector(JsonNode rescoreNode) {
-    if (!rescoreNode.isObject()) {
-      throw new IllegalArgumentException("rescore_vector must be an object");
-    }
-
-    JsonNode oversampleNode = rescoreNode.get("oversample");
-    if (oversampleNode != null && oversampleNode.isNumber()) {
-      return KnnRescoreVector.of(oversampleNode.floatValue());
-    }
-
-    throw new IllegalArgumentException("rescore_vector.oversample is required and must be a number");
-  }
-
   private Condition parseFilter(JsonNode filterNode, ObjectCodec codec) throws IOException {
     if (filterNode == null || filterNode.isNull()) {
       return null;
@@ -109,30 +59,15 @@ public class KnnQueryDeserializer extends JsonDeserializer<KnnQuery> {
     builder.field(fieldNode.asText());
 
     JsonNode queryVectorNode = node.get("query_vector");
-    JsonNode queryVectorBuilderNode = node.get("query_vector_builder");
-
     boolean hasQueryVector = queryVectorNode != null && !queryVectorNode.isNull() &&
       queryVectorNode.isArray() && !queryVectorNode.isEmpty();
-    boolean hasQueryVectorBuilder = queryVectorBuilderNode != null && !queryVectorBuilderNode.isNull() &&
-      !queryVectorBuilderNode.isEmpty();
 
-    if (hasQueryVector && hasQueryVectorBuilder) {
-      throw new IllegalArgumentException("knn query cannot have both query_vector and query_vector_builder");
+    if (!hasQueryVector) {
+      throw new IllegalArgumentException("knn query must have query_vector");
     }
 
-    if (!hasQueryVector && !hasQueryVectorBuilder) {
-      throw new IllegalArgumentException("knn query must have either query_vector or query_vector_builder");
-    }
+    builder.queryVector(parseQueryVector(queryVectorNode));
 
-    if (hasQueryVector) {
-      builder.queryVector(parseQueryVector(queryVectorNode));
-    }
-
-    if (hasQueryVectorBuilder) {
-      builder.queryVectorBuilder(parseQueryVectorBuilder(queryVectorBuilderNode));
-    }
-
-    // FIX: Add the missing k field parsing
     JsonNode kNode = node.get("k");
     if (kNode != null && kNode.isNumber()) {
       builder.k(kNode.asInt());
@@ -170,17 +105,6 @@ public class KnnQueryDeserializer extends JsonDeserializer<KnnQuery> {
     JsonNode nameNode = node.get("name");
     if (nameNode != null && nameNode.isTextual()) {
       builder.name(nameNode.asText());
-    }
-
-    JsonNode rescoreVectorNode = node.get("rescore_vector");
-    if (rescoreVectorNode != null && !rescoreVectorNode.isNull()) {
-      try {
-        builder.rescoreVector(parseRescoreVector(rescoreVectorNode));
-      } catch (IllegalArgumentException e) {
-        System.out.println("DEBUG: rescoreVectorNode type: " + rescoreVectorNode.getNodeType());
-        System.out.println("DEBUG: rescoreVectorNode value: " + rescoreVectorNode);
-        throw e;
-      }
     }
 
     return builder.build();

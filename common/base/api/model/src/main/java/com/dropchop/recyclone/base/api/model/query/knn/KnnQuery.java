@@ -20,9 +20,6 @@ public class KnnQuery {
   @JsonProperty("query_vector")
   private float[] queryVector;
 
-  @JsonProperty("query_vector_builder")
-  private KnnQueryVectorBuilder queryVectorBuilder;
-
   @JsonProperty("k")
   private Integer k;
 
@@ -41,9 +38,6 @@ public class KnnQuery {
 
   @JsonProperty("name")
   private String name;
-
-  @JsonProperty("rescore_vector")
-  private KnnRescoreVector rescoreVector;
 
   public static KnnQuery of(String field, float[] queryVector) {
     return KnnQuery.builder()
