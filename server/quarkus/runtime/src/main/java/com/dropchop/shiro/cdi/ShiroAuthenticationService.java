@@ -26,15 +26,6 @@ public class ShiroAuthenticationService implements AuthenticationService {
   public static final String SHIRO_REQ_INTERNAL_THREAD_STATE = "shiro.req.internal.thread.state";
   public static final String SHIRO_REQ_INTERNAL_SERVICE = "shiro.req.internal.service";
 
-  /*@Inject
-  SecurityManager shiroSecurityManager;
-
-  @Produces
-  @RequestScoped
-  public Subject getSubject() {
-    return SecurityUtils.getSubject();
-  }*/
-
   @Inject
   Subject subject;
 
