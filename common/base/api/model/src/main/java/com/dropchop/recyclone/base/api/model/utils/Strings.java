@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.base.api.model.utils;
 
+import java.text.Normalizer;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 07. 22.
  */
@@ -182,14 +184,14 @@ public interface Strings {
           return false; // Character mismatch
         }
       }
-      return true; // String matches against pattern
+      return true; // String matches against a pattern
     }
 
     if (patIdxEnd == 0) {
       return true; // Pattern contains only '*', which matches anything
     }
 
-    // Process characters before first star
+    // Process characters before a first star
     while (true) {
       char ch = patArr[patIdxStart];
       if (ch == '*' || strIdxStart > strIdxEnd) {
@@ -208,7 +210,7 @@ public interface Strings {
       return allStars(patArr, patIdxStart, patIdxEnd);
     }
 
-    // Process characters after last star
+    // Process characters after a last star
     while (true) {
       char ch = patArr[patIdxEnd];
       if (ch == '*' || strIdxStart > strIdxEnd) {
@@ -296,7 +298,7 @@ public interface Strings {
     int strIdxStart = 0;
     int strIdxEnd = Math.min(strEnd, tokStr.length - 1);
 
-    // up to first '**'
+    // up to a first '**'
     while (patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
       String patDir = tokPattern[patIdxStart];
       if (patDir.equals(DEEP_TREE_MATCH)) {
@@ -318,7 +320,7 @@ public interface Strings {
       return true;
     }
     if (patIdxStart > patIdxEnd) {
-      // String not exhausted, but pattern is. Failure.
+      // A String is not exhausted, but the pattern is. Failure.
       return false;
     }
 
@@ -399,5 +401,15 @@ public interface Strings {
       .replaceAll("([A-Z])([A-Z][a-z])", "$1_$2");
 
     return result.toLowerCase();
+  }
+
+  static String normalizeRemoveAccents(String text) {
+    if (text == null) {
+      return null;
+    }
+    text = text.replaceAll("[^a-zA-Z0-9.-]+", "_") + ".pdf";
+    // Normalize to decomposed form, then strip diacritical marks
+    return Normalizer.normalize(text, Normalizer.Form.NFD)
+        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
   }
 }
