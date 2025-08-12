@@ -46,20 +46,16 @@ public class UserAccountService extends CrudServiceImpl<UserAccount, JpaUserAcco
   @Transactional
   public Result<UserAccount> delete(List<UserAccount> dtos) {
     checkDtoPermissions(dtos);
-    //get account ids
-    List<UUID> acountUuids = dtos.stream().map(UserAccount::getUuid).collect(Collectors.toList());
-    //load accounts
-    List<JpaUserAccount> loadedAccounts = getRepository().findById(acountUuids);
-    //remove the accounts from parent user collection !!!
-    loadedAccounts.forEach(loadedAccount -> {
-      loadedAccount.getUser().removeAccount(loadedAccount);
-    });
-    //delete the accounts
+    // get account ids
+    List<UUID> accountUuids = dtos.stream().map(UserAccount::getUuid).collect(Collectors.toList());
+    // load accounts
+    List<JpaUserAccount> loadedAccounts = getRepository().findById(accountUuids);
+    // remove the accounts from a parent user collection !!!
+    loadedAccounts.forEach(loadedAccount -> loadedAccount.getUser().removeAccount(loadedAccount));
+    // delete the accounts
     getRepository().delete(loadedAccounts);
     FilteringMapperProvider<UserAccount, JpaUserAccount, ?> mapperProvider = getMapperProvider();
     MappingContext mapContext = mapperProvider.getMappingContextForModify();
     return mapperProvider.getToDtoMapper().toDtosResult(loadedAccounts, mapContext);
   }
-
-
 }

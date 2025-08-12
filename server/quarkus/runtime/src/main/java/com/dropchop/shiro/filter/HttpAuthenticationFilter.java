@@ -270,7 +270,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
       return createToken("", "", requestContext);
     }
 
-    log.debug("Attempting to execute login with auth header");
+    log.trace("Creating login token with auth header");
 
     String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, requestContext);
     if (prinCred == null || prinCred.length < 2) {

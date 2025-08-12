@@ -2,7 +2,9 @@ package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.api.config.BasicConfig;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import org.apache.shiro.subject.Subject;
 
 import java.util.Base64;
 
@@ -17,10 +19,17 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
   private static final String BASIC = "Basic" ;
 
+  @Inject
+  Subject subject;
+
   public BasicHttpAuthenticationFilter(BasicConfig bearerConfig) {
     super(bearerConfig.isPermissive());
     setAuthcScheme(BASIC);
     setAuthzScheme(BASIC);
+  }
+
+  public Subject getSubject() {
+    return subject;
   }
 
   /**

@@ -9,6 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +22,17 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
   private final JwtConfig jwtConfig;
 
   @Inject
+  Subject subject;
+
+  @Inject
   public JwtAuthenticationFilter(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
+  }
+
+  public Subject getSubject() {
+    return subject;
   }
 
   @Override

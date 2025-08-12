@@ -148,7 +148,7 @@ public class RestProcessor {
   }
 
   private static String extractSecondFromLastPathSegment(String pathValue) {
-    // Assuming path starts with "/", remove it for splitting
+    // Assuming a path starts with "/", remove it for splitting
     String normalizedPath = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
     String[] segments = normalizedPath.split("/");
 
@@ -298,10 +298,10 @@ public class RestProcessor {
   }
 
   /**
-   * Find a leaf in a class hierarchy that implements certain interface.
+   * Find a leaf in a class hierarchy that implements a certain interface.
    */
   private static ClassInfo findLastImplementor(IndexView indexView, ClassInfo apiClass) {
-    Collection<ClassInfo> classes = indexView.getAllKnownImplementors(apiClass.name());
+    Collection<ClassInfo> classes = indexView.getAllKnownImplementations(apiClass.name());
     // Identify leaf classes
     ClassInfo implClass = null;
     for (ClassInfo implementor : classes) {
@@ -440,7 +440,7 @@ public class RestProcessor {
         continue;
       }
 
-      //in recyclone all meta-data is annotated on an interface except the actual @Path
+      // In recyclone all meta-data is annotated on an interface except the actual @Path
       if (!(Modifier.isInterface(apiClass.flags()) || Modifier.isAbstract(apiClass.flags()))) {
         log.warn("Contract violation: The [{}] annotation should be declared on an interface or an abstract class!");
         continue;
@@ -471,14 +471,14 @@ public class RestProcessor {
       );
       boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
 
-      Collection<String> implementors = indexView.getAllKnownImplementors(apiClass.name())
+      Collection<String> implementors = indexView.getAllKnownImplementations(apiClass.name())
               .stream().map(c -> c.name().toString()).collect(Collectors.toSet());
 
-      // Identify leaf class
+      // Identify a leaf class
       ClassInfo implClass = findLastImplementor(indexView, apiClass);
 
       boolean doExclude = shouldExclude(apiClass, config);
-      //Get correct REST resource path
+      // Get a correct REST resource path
       String rewrittenPath;
       boolean implMissingPath;
       if (implClass != null) {
@@ -493,7 +493,7 @@ public class RestProcessor {
         rewrittenPath = path;
         implMissingPath = true;
       }
-      String rewrtittenMethodPath = rewrittenPath + methodSegment;
+      String rewrittenMethodPath = rewrittenPath + methodSegment;
 
       RestClass restClass = mapping.addApiClass(apiClass.name().toString(),
           () -> new RestClass(
@@ -538,7 +538,7 @@ public class RestProcessor {
           verb,
           internal,
           methodPath,
-          rewrtittenMethodPath,
+          rewrittenMethodPath,
           segment,
           doExclude
       );

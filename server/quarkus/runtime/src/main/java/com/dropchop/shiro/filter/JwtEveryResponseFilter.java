@@ -15,10 +15,17 @@ public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter imple
   private final JwtConfig jwtConfig;
 
   @Inject
+  Subject subject;
+
+  @Inject
   public JwtEveryResponseFilter(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
+  }
+
+  public Subject getSubject() {
+    return subject;
   }
 
   @Override

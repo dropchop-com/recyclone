@@ -1,12 +1,8 @@
 package com.dropchop.recyclone.base.dto.model.base;
 
-import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.ModelWithCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -16,7 +12,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Data
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-public class DtoCode implements Dto, ModelWithCode, Comparable<ModelWithCode> {
+@EqualsAndHashCode(callSuper = false)
+public class DtoCode extends Dto implements ModelWithCode, Comparable<ModelWithCode> {
 
   @NonNull
   @JsonInclude(NON_NULL)
