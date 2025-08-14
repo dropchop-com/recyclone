@@ -11,6 +11,7 @@ import lombok.Getter;
 
 @Getter
 @ApplicationScoped
+@SuppressWarnings("unused")
 public class DictionaryTermMapperProvider extends RecycloneMapperProvider<DictionaryTerm, JpaDictionaryTerm, String> {
 
 

@@ -4,8 +4,10 @@ import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
 import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
 import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import com.dropchop.recyclone.base.dto.model.localization.Country;
+import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaCountry;
+import com.dropchop.recyclone.base.jpa.model.localization.JpaDictionaryTerm;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -20,5 +22,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
                 TagToDtoMapper.class
         }
 )
-public interface DictionaryTermToDtoMapper extends ToDtoMapper<Country, JpaCountry> {
+public interface DictionaryTermToDtoMapper extends ToDtoMapper<DictionaryTerm, JpaDictionaryTerm> {
 }
