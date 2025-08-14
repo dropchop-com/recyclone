@@ -103,6 +103,7 @@
     <lombok.version>1.18.38</lombok.version>
     <jackson.version>2.18.3</jackson.version>
     <apache.shiro.version>2.0.4</apache.shiro.version>
+    <jjwt.version>0.12.6</jjwt.version>
     <mapstruct.version>1.6.3</mapstruct.version>
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -207,6 +208,23 @@
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-core</artifactId>
         <version>${apache.shiro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>org.mapstruct</groupId>

@@ -5,11 +5,11 @@ import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVar
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.shiro.annotation.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import org.apache.shiro.authz.annotation.*;
-import org.apache.shiro.authz.aop.*;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +65,8 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext context) throws IOException {
+    String path = context.getUriInfo().getPath();
+    log.trace("Executing REST method shiro filter chain [{}]", path);
     this.authorizationService.invokeRequestFilterChain(context);
 
     ExecContext<?> execContext = (ExecContext<?>)context
@@ -76,11 +78,14 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       return;
     }
 
+    log.debug(
+        "REST method subject authorization check [{}] on {}", path, authzChecks.values()
+    );
     this.authorizationService.doAuthorizationChecks(context, authzChecks);
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);
     }
-    Subject subject = this.authorizationService.subject();
+    Subject subject = this.authorizationService.getSubject();
     if (subject == null) {
       log.warn("Shiro Subject is missing!");
     } else {

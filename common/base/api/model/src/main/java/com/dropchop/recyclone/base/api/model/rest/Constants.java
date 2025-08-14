@@ -61,6 +61,10 @@ public interface Constants {
       String USER_ACCOUNTS_SEGMENT = "/accounts";
       String LOGIN_SEGMENT = "/login";
       String LOGIN = SECURITY_SEGMENT + LOGIN_SEGMENT;
+      String JWT_SEGMENT = "/jwt";
+      String LOGIN_JWT = LOGIN + JWT_SEGMENT;
+      String PLAIN_SEGMENT = "/plain";
+      String LOGIN_PLAIN = LOGIN + PLAIN_SEGMENT;
     }
 
     interface Tagging {

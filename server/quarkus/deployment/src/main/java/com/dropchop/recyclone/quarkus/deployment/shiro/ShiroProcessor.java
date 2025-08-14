@@ -1,9 +1,10 @@
 package com.dropchop.recyclone.quarkus.deployment.shiro;
 
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
-import com.dropchop.shiro.cdi.ShiroAuthenticationService;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import com.dropchop.shiro.cdi.ShiroEnvironment;
+import com.dropchop.shiro.cdi.ShiroSubjectProducer;
+import com.dropchop.shiro.filter.*;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -110,6 +111,13 @@ public class ShiroProcessor {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
+            .addBeanClasses(ShiroSubjectProducer.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
             .addBeanClasses(ShiroAuthorizationService.class)
             .setUnremovable()
             .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
@@ -117,9 +125,50 @@ public class ShiroProcessor {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
-            .addBeanClasses(ShiroAuthenticationService.class)
+            .addBeanClasses(ApiKeyHttpAuthenticationFilter.class)
+            .setDefaultScope(DotNames.APPLICATION_SCOPED)
             .setUnremovable()
-            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(JwtAuthenticationFilter.class)
+            .setDefaultScope(DotNames.APPLICATION_SCOPED)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(JwtEveryResponseFilter.class)
+            .setDefaultScope(DotNames.APPLICATION_SCOPED)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(UuidAuthenticationFilter.class)
+            .setDefaultScope(DotNames.APPLICATION_SCOPED)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(BasicHttpAuthenticationFilter.class)
+            .setDefaultScope(DotNames.APPLICATION_SCOPED)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(BearerHttpAuthenticationFilter.class)
+            .setDefaultScope(DotNames.APPLICATION_SCOPED)
+            .setUnremovable()
+            .build()
     );
   }
 

@@ -1,15 +1,1 @@
-{
-  "policy": {
-    "_meta": {
-      "description": "Used for recyclone events"
-    },
-    "phases": {
-      "delete": {
-        "min_age": "1095d",
-        "actions": {
-          "delete": {}
-        }
-      }
-    }
-  }
-}
+../../../../../../../../events/es/scripts/index/ilm-policy/event_ilm_policy.json

@@ -243,6 +243,9 @@ public class ContextProcessor {
       );
     }
     for(ContextMapping mapping : contextsBuildItem.getContextMappings()) {
+      if (mapping.dataClass == null || mapping.contextClass == null) {
+        continue;
+      }
       ClassInfo execContexClassInfo = index.getClassByName(mapping.contextClass);
       ClassInfo dataClassInfo = index.getClassByName(mapping.dataClass);
       boolean passTypeParam = JandexTypeBoundsChecker.isWithinBounds(execContexClassInfo, dataClassInfo, index);

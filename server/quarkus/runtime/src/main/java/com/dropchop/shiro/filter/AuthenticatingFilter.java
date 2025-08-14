@@ -1,5 +1,6 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -9,6 +10,8 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.dropchop.shiro.cdi.ShiroAuthenticationService.SHIRO_REQ_INTERNAL_SERVICE;
 
 /**
  * Modeled and copied from Shiro Web.
@@ -76,15 +79,19 @@ public abstract class AuthenticatingFilter implements AccessControlFilter {
     AuthenticationToken token = createToken(requestContext);
     if (token == null) {
       String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken " +
-        "must be created in order to execute a login attempt.";
+          "must be created in order to execute a login attempt.";
       throw new IllegalStateException(msg);
     }
-    try {
-      Subject subject = getSubject();
-      subject.login(token);
-      return onLoginSuccess(token, subject, requestContext);
-    } catch (AuthenticationException e) {
-      return onLoginFailure(token, e, requestContext);
+    Object oAuthService = requestContext.getProperty(SHIRO_REQ_INTERNAL_SERVICE);
+    if (oAuthService instanceof AuthenticationService authenticationService) {
+      try {
+        Subject subject = authenticationService.login(token);
+        return onLoginSuccess(token, subject, requestContext);
+      } catch (AuthenticationException e) {
+        return onLoginFailure(token, e, requestContext);
+      }
+    } else {
+      throw new IllegalStateException("Missing " + AuthenticationService.class.getName() + " in request context!");
     }
   }
 

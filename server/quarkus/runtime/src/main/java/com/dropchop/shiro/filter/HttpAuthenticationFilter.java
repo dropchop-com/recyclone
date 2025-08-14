@@ -29,7 +29,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
   private static final Logger log = LoggerFactory.getLogger(HttpAuthenticationFilter.class);
 
   /**
-   * The name that is displayed during the challenge process of authentication, defaults to <code>application</code>
+   * The name which is displayed during the challenge process of authentication, defaults to <code>application</code>
    * and can be overridden by the {@link #setApplicationName(String) setApplicationName} method.
    */
   private String applicationName = "application";
@@ -43,6 +43,23 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    * The authzScheme value to look for in the <code>Authorization</code> header, defaults to <code>BASIC</code>
    */
   private String authzScheme;
+
+
+  public HttpAuthenticationFilter() {
+    super();
+  }
+
+  public HttpAuthenticationFilter(String loginUrl) {
+    super(loginUrl);
+  }
+
+  public HttpAuthenticationFilter(boolean permissive) {
+    super(permissive);
+  }
+
+  public HttpAuthenticationFilter(boolean permissive, String loginUrl) {
+    super(permissive, loginUrl);
+  }
 
   /**
    * Returns the name to use in the ServletResponse's <b><code>WWW-Authenticate</code></b> header.
@@ -253,7 +270,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
       return createToken("", "", requestContext);
     }
 
-    log.debug("Attempting to execute login with auth header");
+    log.trace("Creating login token with auth header");
 
     String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, requestContext);
     if (prinCred == null || prinCred.length < 2) {

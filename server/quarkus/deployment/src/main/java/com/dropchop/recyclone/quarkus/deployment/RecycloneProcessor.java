@@ -1,14 +1,14 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
+import com.dropchop.recyclone.base.api.service.Service;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
 import com.dropchop.recyclone.quarkus.runtime.cache.CacheLoaderManager;
 import com.dropchop.recyclone.quarkus.runtime.invoke.*;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ExecContextPropertyFilterSerializerModifier;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ObjectMapperFactory;
 import com.dropchop.recyclone.quarkus.runtime.rest.jackson.ParamsFactoryDeserializerModifier;
+import com.dropchop.recyclone.quarkus.runtime.security.ClientAccessKeyService;
 import com.dropchop.recyclone.quarkus.runtime.selectors.ServiceSelector;
-import com.dropchop.recyclone.base.api.service.Service;
-import com.dropchop.shiro.filter.ApiKeyHttpAuthenticationFilter;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
@@ -165,13 +165,6 @@ class RecycloneProcessor {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
-            .addBeanClasses(ApiKeyHttpAuthenticationFilter.class)
-            .setUnremovable()
-            .build()
-    );
-    additionalBeanBuildItemProducer.produce(
-        AdditionalBeanBuildItem
-            .builder()
             .addBeanClasses(ObjectMapperFactory.class)
             .setUnremovable()
             .build()
@@ -180,6 +173,13 @@ class RecycloneProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(CacheLoaderManager.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ClientAccessKeyService.class)
             .setUnremovable()
             .build()
     );
@@ -202,6 +202,7 @@ class RecycloneProcessor {
         continue;
       }
       for (ClassInfo impl : candidates) {
+        log.debug("Service candidate [{}].", impl.name());
         if (!impl.hasAnnotation(ANNO_NAMED)) {
           continue;
         }
@@ -213,6 +214,7 @@ class RecycloneProcessor {
         Set<DotName> intersection = new HashSet<>(impl.interfaceNames());
         intersection.retainAll(serviceNames);
         if (intersection.isEmpty()) {
+          log.info("Empty service intersection [{}].", impl.name());
           continue;
         }
         DotName serviceIf = intersection.iterator().next();
@@ -220,6 +222,7 @@ class RecycloneProcessor {
         producerMappings.add(
             new ProducerMapping(serviceIf.toString(), impl.name().toString(), selector, rootIface)
         );
+        log.debug("Found service implementation [{}] for interface [{}].", impl.name(), serviceIf);
       }
     }
   }

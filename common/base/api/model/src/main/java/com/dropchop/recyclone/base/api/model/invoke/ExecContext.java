@@ -17,6 +17,18 @@ public interface ExecContext<ECL extends ExecContext.Listener> extends Model, Ha
   String MDC_PERSON_ID = "pID";
   String MDC_PERSON_NAME = "pName";
 
+  interface ReqAttributeNames {
+    String REQ_CLIENT_HOST    = "req.client.host";
+    String REQ_CLIENT_ADDRESS = "req.client.address";
+    String REQ_METHOD         = "req.method";
+    String REQ_PATH           = "req.path";
+    String REQ_URI            = "req.uri";
+    String REQ_URI_HOST       = "req.uri.host";
+    String REQ_URI_QUERY      = "req.uri.query";
+    String REQ_URI_FRAGMENT   = "req.uri.fragment";
+    String REQ_URI_SCHEME     = "req.uri.scheme";
+  }
+
   interface Listener {
   }
 
@@ -42,7 +54,6 @@ public interface ExecContext<ECL extends ExecContext.Listener> extends Model, Ha
     return this;
   }
 
-
   default <EC extends ExecContext<? extends Listener>> EC copyAs(EC context) {
     String id = getId();
     if (id != null) {
@@ -54,7 +65,6 @@ public interface ExecContext<ECL extends ExecContext.Listener> extends Model, Ha
     }
     return context;
   }
-
 
   default ExecContext<ECL> of(ExecContext<?> sourceContext) {
     if (sourceContext == null) {
@@ -70,7 +80,6 @@ public interface ExecContext<ECL extends ExecContext.Listener> extends Model, Ha
     }
     return this;
   }
-
 
   default Params tryGetParams() {
     if (this instanceof ParamsExecContext<?> paramsExecContext) {

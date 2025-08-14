@@ -1,0 +1,76 @@
+#!/bin/bash
+set -e
+
+# --- FUNCTIONS ---
+usage() {
+    echo "Usage: $0 <action> <host> [auth]"
+    echo "  action: init | remove"
+    echo "  host: Elasticsearch host (e.g. http://localhost:9200 or https://es:9200)"
+    echo "  auth: Optional <username:password>"
+    exit 1
+}
+
+# --- ARGUMENT HANDLING ---
+ACTION="$1"
+HOST="$2"
+AUTH="$3"
+
+if [[ -z "$ACTION" || -z "$HOST" ]]; then
+    usage
+fi
+
+if [[ "$ACTION" != "init" && "$ACTION" != "remove" ]]; then
+    echo "Unknown action: $ACTION"
+    usage
+fi
+
+if [[ -n "$AUTH" && "$AUTH" != *:* ]]; then
+    echo "Auth must contain a colon (username:password)."
+    exit 1
+fi
+
+# --- CURL SWITCHES ---
+CURL_OPTS="-sS"
+if [[ "$HOST" == https* ]]; then
+    CURL_OPTS="$CURL_OPTS -k"
+fi
+if [[ -n "$AUTH" ]]; then
+    CURL_OPTS_T="$CURL_OPTS -u $AUTH"
+    CURL_OPTS_P="$CURL_OPTS -u '$AUTH'"
+fi
+
+# --- SCRIPT LOCATION ---
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# --- JSON SCRIPT ARRAYS (NAMES) ---
+pipelines=( "$SCRIPT_DIR/ingest-pipeline/"*.json )
+components=( "$SCRIPT_DIR/component-template/"*.json )
+index_templates=( "$SCRIPT_DIR/index-template/"*.json )
+ilm_policies=( "$SCRIPT_DIR/ilm-policy/"*.json )
+
+# --- HANDLER FUNCTION ---
+handle_jsons() {
+  local kind="$1"
+  local url_path="$2"
+  shift 2
+  local files=( "$@" )
+
+  for file in "${files[@]}"; do
+    [[ -e "$file" ]] || continue
+    json_name="$(basename "$file" .json)"
+    if [[ "$ACTION" == "init" ]]; then
+      echo "curl $CURL_OPTS_P -X PUT $HOST/$url_path/$json_name -H 'Content-Type: application/json' --data-binary @$file"
+      curl $CURL_OPTS_T -X PUT "$HOST/$url_path/$json_name" -H 'Content-Type: application/json' --data-binary "@$file"
+    elif [[ "$ACTION" == "remove" ]]; then
+      echo "curl $CURL_OPTS_P -X DELETE $HOST/$url_path/$json_name"
+      curl $CURL_OPTS_T -X DELETE "$HOST/$url_path/$json_name"
+    fi
+    echo   # empty line
+  done
+}
+
+# --- MAIN EXECUTION ORDER ---
+handle_jsons "ingest-pipeline"    "_ingest/pipeline"    "${pipelines[@]}"
+handle_jsons "component-template" "_component_template" "${components[@]}"
+handle_jsons "index-template"     "_index_template"     "${index_templates[@]}"
+handle_jsons "ilm-policy"         "_ilm/policy"         "${ilm_policies[@]}"

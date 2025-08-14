@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.base.dto.model.base;
 
-import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.ModelWithId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,7 +15,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Data
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-public class DtoId implements Dto, ModelWithId {
+@EqualsAndHashCode(callSuper = false)
+public class DtoId extends Dto implements ModelWithId {
 
   @NonNull
   @JsonInclude(NON_NULL)

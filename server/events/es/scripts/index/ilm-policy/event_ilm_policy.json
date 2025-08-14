@@ -1,0 +1,15 @@
+{
+  "policy": {
+    "_meta": {
+      "description": "A policy to keep event indices for one year."
+    },
+    "phases": {
+      "delete": {
+        "min_age": "1095d",
+        "actions": {
+          "delete": {}
+        }
+      }
+    }
+  }
+}

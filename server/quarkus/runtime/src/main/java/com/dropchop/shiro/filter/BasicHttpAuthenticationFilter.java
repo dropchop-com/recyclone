@@ -1,6 +1,11 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.config.BasicConfig;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import org.apache.shiro.subject.Subject;
+
 import java.util.Base64;
 
 /**
@@ -8,11 +13,23 @@ import java.util.Base64;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 01. 22.
  */
+@ApplicationScoped
+@SuppressWarnings("unused")
 public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
 
-  public BasicHttpAuthenticationFilter() {
-    setAuthcScheme("Basic");
-    setAuthzScheme("Basic");
+  private static final String BASIC = "Basic" ;
+
+  @Inject
+  Subject subject;
+
+  public BasicHttpAuthenticationFilter(BasicConfig bearerConfig) {
+    super(bearerConfig.isPermissive());
+    setAuthcScheme(BASIC);
+    setAuthzScheme(BASIC);
+  }
+
+  public Subject getSubject() {
+    return subject;
   }
 
   /**
@@ -31,6 +48,7 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
    * @param encoded the Base64-encoded username:password value found after the scheme in the header
    * @return the username (index 0)/password (index 1) pair obtained from the encoded header data.
    */
+  @Override
   protected String[] getPrincipalsAndCredentials(String scheme, String encoded) {
     byte[] decodedBytes = Base64.getDecoder().decode(encoded);
     String decodedString = new String(decodedBytes);

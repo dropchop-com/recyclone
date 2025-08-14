@@ -2,8 +2,10 @@ quarkus:
   log:
     category:
       "org.apache.shiro":
+        # noinspection QsYaml
         level: WARN
       "com.dropchop":
+        # noinspection QsYaml
         level: DEBUG
   index-dependency:
     recyclone-base-jpa-mapper:
@@ -91,11 +93,28 @@ quarkus:
           name: "Apache 2.0"
           url: "https://www.apache.org/licenses/LICENSE-2.0.html"
       security:
-        - mechanism: bearer-token
-        - mechanism: basic-auth
-        - mechanism: api-key
-          api-key-name: X-My-API-Key
-        - mechanism: jwt
+        client-access-keys:
+          my-recyclone-key:
+            secret: Gs*t4USB29uAMVex!vmRJ#8g6jt^cq3n
+            salt: QqvBbrGSFVAVAd9*
+          my-other-client-key:
+            secret: 2cDYw%BKSK4bD9zk^^FE%z$y7mbeX8wj
+            salt: ymCY6BrfPPxv1MX$
+
+        mechanisms:
+          - mechanism: bearer-token
+          - mechanism: basic-auth
+          - mechanism: api-key
+            header-name: X-Recyclone-API-Key
+            query-name: x-recyclone-api-key
+          - mechanism: jwt
+            secret: > 
+              26dx0wLJMZRwUWPDeLNFqnAUem5qAKrzNmxLAvBgE78u36DhBv1pAq0zH36M4qKy
+              1yncXgCPBpJdX1CNfweB5Zx6uHptPxGB92ZfRPKUewAPmNpHLmBUZcypL7YXbrDH
+              4zWUgV877CciMAy9425P3vmGjy0NPpFdy7bT2vVEvhjDb501iq1Q0tW3iXhVh1CF
+              CxPGfaFfuE3tzvg6qSYmP6xNrFKkNEfP3aTWRwt5pud8PqyLrBbcGn5Sf4JCV1ac
+            issuer: Dropchop d.o.o.
+            timeout-seconds: 900
       includes:
         - "com.dropchop.recyclone.quarkus.it.rest.api.*"
         - "*.localization.*"
@@ -103,7 +122,7 @@ quarkus:
         - "*.security.*"
         - "*.events.*"
 
-    # this config is actually not needed, but is here to showcase
+    # this config is actually not needed but is here to showcase
     injection-points-config:
       target-qualifier: <same-as-dependant>
       fallback-qualifier: recyclone_default

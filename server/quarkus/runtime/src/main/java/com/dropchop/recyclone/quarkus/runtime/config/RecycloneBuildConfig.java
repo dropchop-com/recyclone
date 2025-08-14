@@ -3,12 +3,13 @@ package com.dropchop.recyclone.quarkus.runtime.config;
 import io.quarkus.runtime.annotations.*;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithParentName;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
-import static com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.Mechanism.API_KEY;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 14. 03. 24.
@@ -103,76 +104,170 @@ public interface RecycloneBuildConfig {
       }
     }
 
-
     /**
-     * Additional security configuration.
+     * REST Security information.
      */
-    @ConfigDocSection
-    @ConfigDocMapKey("security-name")
-    //@WithKeys(SecurityKeysProvider.class)
-    List<Security> security();
+    Security security();
 
     /**
-     * REST OpenAPI security item configuration.
+     * REST Security information.
      */
     @ConfigGroup
     interface Security {
 
-      static String getApiKeyIfPresent(List<Security> mechanisms) {
-        if (!mechanisms.isEmpty()) {
-          for (Rest.Security security : mechanisms) {
-            if (security.mechanism() == API_KEY) {
-              if (security.apiKeyName().isPresent()) {
-                return security.apiKeyName().get();
-              }
-            }
+      /**
+       * REST client access key information.
+       */
+      ClientAccessKeys clientAccessKeys();
+
+      /**
+       * REST client access key information.
+       */
+      @ConfigGroup
+      interface ClientAccessKeys {
+
+        /**
+         * REST client-id named access key configs.
+         */
+        @WithParentName
+        Map<String, KeyConfig> named();
+
+        /**
+         * REST client-id named access key configs.
+         */
+        @ConfigGroup
+        interface KeyConfig {
+
+          /**
+           * REST secret for the named access key config.
+           */
+          String secret();
+
+          /**
+           * REST salt for the named access key config.
+           */
+          Optional<String> salt();
+
+          /**
+           * REST uri for the named access key config.
+           */
+          Optional<String> uri();
+
+          /**
+           * REST uri for the named access key config.
+           */
+          @WithDefault("3600")
+          Integer expiresAfterSeconds();
+
+          /**
+           * REST security item apiKeyName if the type is apiKey.
+           */
+          @WithDefault("X-Client-API-Key")
+          String headerName();
+
+          /**
+           * REST security item apiKeyName if the type is apiKey.
+           */
+          @WithDefault("client-api-key")
+          String queryName();
+        }
+      }
+
+      /**
+       * Additional security configuration.
+       */
+      @ConfigDocSection
+      @ConfigDocMapKey("security-name")
+      List<Mechanism> mechanisms();
+
+      /**
+       * REST OpenAPI security item configuration.
+       */
+      @ConfigGroup
+      interface Mechanism {
+
+        enum MechanismType {
+          BEARER_TOKEN("bearer-token"),
+          BASIC_AUTH("basic-auth"),
+          API_KEY("api-key"),
+          JWT("jwt");
+
+          private final String value;
+
+          MechanismType(String value) {
+            this.value = value;
+          }
+
+          @Override
+          public String toString() {
+            return String.valueOf(value);
           }
         }
-        return null;
+
+        /**
+         * REST OpenAPI security item enabled.
+         */
+        MechanismType mechanism();
+
+        /**
+         * REST OpenAPI security item type (bearer-token, basic-auth, jwt).
+         */
+        Optional<String> type();
+
+        /**
+         * REST OpenAPI security item scheme (bearer, basic).
+         */
+        Optional<String> scheme();
+
+        /**
+         * REST OpenAPI security item location (header, query, cookie).
+         */
+        Optional<String> in();
+
+        /**
+         * REST security item apiKeyName if the type is apiKey.
+         */
+        @WithDefault("X-API-Key")
+        String headerName();
+
+        /**
+         * REST security item apiKeyName if the type is apiKey.
+         */
+        @WithDefault("api-key")
+        String queryName();
+
+        /**
+         * REST OpenAPI security item bearerFormat if a scheme is bearer.
+         */
+        Optional<String> bearerFormat();
+
+        /**
+         * REST security item timeout seconds if a scheme is JWT.
+         */
+        Optional<Integer> timeoutSeconds();
+
+        /**
+         * REST security item issuer if a scheme is JWT.
+         */
+        Optional<String> issuer();
+
+        /**
+         * REST security item secret if a scheme is JWT.
+         */
+        Optional<String> secret();
+
+        /**
+         * REST security item loginPath if a scheme is JWT.
+         */
+        @WithDefault("/api/security/login/jwt")
+        String loginPath();
+
+        /**
+         * REST security item permissive filter if a scheme is JWT, apiKey, Bearer.
+         */
+        @WithDefault("true")
+        Boolean permissive();
       }
-
-      enum Mechanism {
-        BEARER_TOKEN("bearer-token"),
-        BASIC_AUTH("basic-auth"),
-        API_KEY("api-key"),
-        JWT("jwt");
-
-        private final String value;
-
-        Mechanism(String value) {
-          this.value = value;
-        }
-
-        @Override
-        public String toString() {
-          return String.valueOf(value);
-        }
-      }
-
-      /**
-       * REST OpenAPI security item enabled.
-       */
-      Mechanism mechanism();
-      /**
-       * REST OpenAPI security item type (bearer-token, basic-auth, jwt).
-       */
-      Optional<String> type();
-      /**
-       * REST OpenAPI security item scheme (bearer, basic).
-       */
-      Optional<String> scheme();
-      /**
-       * REST OpenAPI security item location (header, query, cookie).
-       */
-      Optional<String> in();
-      /**
-       * REST OpenAPI security item apiKeyName if type is apiKey.
-       */
-      Optional<String> apiKeyName();
-      /**
-       * REST OpenAPI security item bearerFormat if scheme is bearer.
-       */
-      Optional<String> bearerFormat();
     }
 
     /**

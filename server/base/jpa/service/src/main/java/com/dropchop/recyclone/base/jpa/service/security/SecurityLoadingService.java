@@ -61,8 +61,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   /**
    * Loads role node permissions
    * @param roleNode  - defines role node from where permissions must be loaded
-   * @param roleNodeParams - additional search parameters for search. (Example: different target than role node)
+   * @param roleNodeParams - additional search parameters for search. (Example: different target than a role node)
    */
+  @SuppressWarnings("ExtractMethodRecommender")
   private void loadRoleNodePermissions(RoleNode roleNode, RoleNodeParams roleNodeParams) {
 
     BlazeExecContext<JpaRoleNodePermission> permissionContext =
@@ -71,7 +72,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
     RoleNodePermissionParams params = new RoleNodePermissionParams();
     params.setRoleNodeId(roleNode.getId());
-    if (roleNodeParams != null) { //check of targets are different and load permissions on role node for that target
+    if (roleNodeParams != null) { //check of targets are different and load permissions on a role node for that target
       String target = roleNodeParams.getTarget();
       String targetId = roleNodeParams.getTargetId();
       if (target != null && !target.isBlank() && !roleNode.getTarget().equals(target)) {
@@ -147,7 +148,6 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return roleNode;
   }
 
-
   @Override
   protected RoleNodePermission loadRoleNodePermissionById(UUID uuid) {
     MappingContext mapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
@@ -156,13 +156,11 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return roleNodeToDtoMapper.toDto(jpaPermission, mapContext);
   }
 
-
   @Override
   protected void deleteRoleNodePermission(UUID uuid) {
     JpaRoleNodePermission jpaPermission = this.roleNodePermissionRepository.findById(uuid);
     this.roleNodePermissionRepository.delete(jpaPermission);
   }
-
 
   @Override
   protected void updateRoleNodePermissionAllowed(UUID uuid, boolean allowed) {
@@ -171,11 +169,9 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     this.roleNodePermissionRepository.save(jpaPermission);
   }
 
-
   @Override
-  protected void createRoleNodePermission(
-    UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission, RoleNodeParams params
-  ) {
+  protected void createRoleNodePermission(UUID targetRoleNodeId, RoleNodePermission sourceRoleNodePermission,
+                                          RoleNodeParams params) {
     UUID permissionUuid = UUID.fromString(sourceRoleNodePermission.getPermission().getId());
     boolean isAllowed = !sourceRoleNodePermission.getAllowed();
 
@@ -214,11 +210,10 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     this.roleNodePermissionRepository.save(jpaRoleNodePermission);
   }
 
-
   /**
-   * Maps loaded jsa user to dto with user accounts.
-   * @param user - jsa user instance.
-   * @return user dto or null if not loaded.
+   * Maps loaded JPA user to dto with user accounts.
+   * @param user - JPA user instance.
+   * @return user DTO or null if not loaded.
    */
   private User mapToUser(JpaUser user) {
     if (user == null) {
@@ -231,7 +226,6 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     UserToDtoMapper userToDtoMapper = this.userMapperProvider.getToDtoMapper();
     return userToDtoMapper.toDto(user, mapContext);
   }
-
 
   @Override
   public User loadUserById(String id) {
