@@ -1,7 +1,7 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
-import com.dropchop.recyclone.base.api.jwt.JwtHelper;
+import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
 import io.jsonwebtoken.MalformedJwtException;
@@ -25,6 +25,9 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
   Subject subject;
 
   @Inject
+  JwtService jwtService;
+
+  @Inject
   public JwtAuthenticationFilter(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
     setAuthcScheme(BEARER);
@@ -46,7 +49,7 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
     final String[] principalsAndCredentials = getPrincipalsAndCredentials(authorizationHeaderContent, request);
     final String encodedToken = principalsAndCredentials[0];
     try {
-      String jwtSubjectString = JwtHelper.decodeSubject(this.jwtConfig, encodedToken);
+      String jwtSubjectString = jwtService.decodeSubject(this.jwtConfig, encodedToken);
       if (jwtSubjectString == null) {
         return super.createBearerToken("", request);
       }
