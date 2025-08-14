@@ -27,7 +27,7 @@ public interface User<
     L extends Language<TT>,
     T extends Tag<T, TDT>
     >
-    extends Person<C, L, TT>, PermissionBearer, HasTags<T, TDT>, HasAttributes {
+    extends Person<C, L, TT>, HasTags<T, TDT>, HasAttributes {
 
   Set<R> getRoles();
 
