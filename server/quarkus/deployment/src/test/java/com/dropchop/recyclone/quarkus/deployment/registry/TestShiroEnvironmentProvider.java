@@ -27,9 +27,9 @@ public class TestShiroEnvironmentProvider extends DefaultShiroEnvironmentProvide
   }
 
   /**
-   * ObjectMapper customization/extension point. Add own polymorphic mappings here.
+   * ObjectMapper customization/extension point. Add custom polymorphic mappings here.
    * This is needed because of polymorphism if you want to use existing To[XY]TagMapper.
-   * If provide your own To[XY]MyCustomTagMapper then you (probably) don't need this.
+   * If you provide your own To[XY]MyCustomTagMapper, then you (probably) don't need this.
    */
   @Produces
   @ApplicationScoped
