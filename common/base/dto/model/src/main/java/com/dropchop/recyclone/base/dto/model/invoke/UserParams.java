@@ -18,5 +18,6 @@ public class UserParams extends TagParams {
   private String email;
 
   private String searchTerm;
+  private Boolean active;
 
 }
