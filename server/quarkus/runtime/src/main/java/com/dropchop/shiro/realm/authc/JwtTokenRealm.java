@@ -1,5 +1,6 @@
 package com.dropchop.shiro.realm.authc;
 
+import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -19,7 +20,13 @@ public class JwtTokenRealm extends BaseAuthenticatingRealm {
   @Override
   protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token) {
     if (token instanceof JwtShiroToken) {
-      return new SimpleAuthenticationInfo(token.getPrincipal(), token, this.getName());
+      Object userObj = token.getPrincipal();
+      if (userObj instanceof User tmpuser) {
+        User user = this.getSecurityLoadingService().loadUserById(tmpuser.getId());
+        if (user != null) {
+          return new SimpleAuthenticationInfo(user, token, this.getName());
+        }
+      }
     }
     throw new AuthenticationException("Unsupported token type [" + token + "]!");
   }
