@@ -14,7 +14,7 @@ import java.util.List;
 
 public class KnnQueryDeserializer extends JsonDeserializer<KnnQuery> {
 
-  private float[] parseQueryVector(JsonNode vectorNode) {
+  private Float[] parseQueryVector(JsonNode vectorNode) {
     if (!vectorNode.isArray()) {
       throw new IllegalArgumentException("query_vector must be an array of numbers");
     }
@@ -28,7 +28,7 @@ public class KnnQueryDeserializer extends JsonDeserializer<KnnQuery> {
       values.add(element.floatValue());
     }
 
-    float[] result = new float[values.size()];
+    Float[] result = new Float[values.size()];
     for (int i = 0; i < values.size(); i++) {
       result[i] = values.get(i);
     }

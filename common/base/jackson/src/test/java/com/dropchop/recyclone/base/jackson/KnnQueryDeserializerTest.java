@@ -15,7 +15,7 @@ public class KnnQueryDeserializerTest {
   public void testSimpleKnnQuerySerialization() throws Exception {
     KnnQuery knnQuery = KnnQuery.builder()
       .field("embedding_field")
-      .queryVector(new float[]{0.1f, 0.2f, 0.3f, 0.4f, 0.5f})
+      .queryVector(new Float[]{0.1f, 0.2f, 0.3f, 0.4f, 0.5f})
       .k(10)
       .build();
 
@@ -38,7 +38,7 @@ public class KnnQueryDeserializerTest {
   public void testKnnQueryWithAllParametersSerialization() throws Exception {
     KnnQuery knnQuery = KnnQuery.builder()
       .field("product_embedding")
-      .queryVector(new float[]{0.5f, 0.3f, 0.8f})
+      .queryVector(new Float[]{0.5f, 0.3f, 0.8f})
       .k(5)
       .numCandidates(50)
       .filter(field("category", eq("electronics")))
@@ -73,7 +73,7 @@ public class KnnQueryDeserializerTest {
   public void testSimpleKnnQueryDeserialization() throws Exception {
     KnnQuery knnQuery = KnnQuery.builder()
       .field("embedding_field")
-      .queryVector(new float[]{0.1f, 0.2f, 0.3f})
+      .queryVector(new Float[]{0.1f, 0.2f, 0.3f})
       .k(10)
       .build();
 
@@ -92,7 +92,7 @@ public class KnnQueryDeserializerTest {
   public void testComplexKnnQueryDeserialization() throws Exception {
     KnnQuery knnQuery = KnnQuery.builder()
       .field("product_embedding")
-      .queryVector(new float[]{0.5f, 0.3f, 0.8f, 0.1f})
+      .queryVector(new Float[]{0.5f, 0.3f, 0.8f, 0.1f})
       .k(15)
       .numCandidates(100)
       .filter(and(
@@ -119,7 +119,7 @@ public class KnnQueryDeserializerTest {
   public void testKnnQueryWithComplexFilterDeserialization() throws Exception {
     KnnQuery knnQuery = KnnQuery.builder()
       .field("document_embedding")
-      .queryVector(new float[]{0.2f, 0.4f, 0.6f, 0.8f, 1.0f})
+      .queryVector(new Float[]{0.2f, 0.4f, 0.6f, 0.8f, 1.0f})
       .k(12)
       .numCandidates(60)
       .filter(or(
@@ -147,7 +147,7 @@ public class KnnQueryDeserializerTest {
   public void testMinimalKnnQueryDeserialization() throws Exception {
     KnnQuery knnQuery = KnnQuery.builder()
       .field("minimal_field")
-      .queryVector(new float[]{1.0f})
+      .queryVector(new Float[]{1.0f})
       .build();
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();

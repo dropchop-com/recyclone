@@ -18,7 +18,7 @@ public class KnnQuery {
   private String field;
 
   @JsonProperty("query_vector")
-  private float[] queryVector;
+  private Float[] queryVector;
 
   @JsonProperty("k")
   private Integer k;
@@ -39,14 +39,14 @@ public class KnnQuery {
   @JsonProperty("name")
   private String name;
 
-  public static KnnQuery of(String field, float[] queryVector) {
+  public static KnnQuery of(String field, Float[] queryVector) {
     return KnnQuery.builder()
       .field(field)
       .queryVector(queryVector)
       .build();
   }
 
-  public static KnnQuery of(String field, float[] queryVector, int k) {
+  public static KnnQuery of(String field, Float[] queryVector, int k) {
     return KnnQuery.builder()
       .field(field)
       .queryVector(queryVector)
@@ -54,7 +54,7 @@ public class KnnQuery {
       .build();
   }
 
-  public static KnnQuery of(String field, float[] queryVector, int k, int numCandidates) {
+  public static KnnQuery of(String field, Float[] queryVector, int k, int numCandidates) {
     return KnnQuery.builder()
       .field(field)
       .queryVector(queryVector)
