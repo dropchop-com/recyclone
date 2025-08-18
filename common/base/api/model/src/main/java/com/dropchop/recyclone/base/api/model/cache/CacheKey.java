@@ -15,6 +15,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasLanguageCode;
  *
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 27. 04. 25.
  */
+@SuppressWarnings("unused")
 public interface CacheKey extends ModelWithCode, HasLanguageCode {
 
   String getSearchCode();
@@ -24,4 +25,8 @@ public interface CacheKey extends ModelWithCode, HasLanguageCode {
   String getSearchLang();
 
   void setSearchLang(String lang);
+
+  boolean hasSearchLang();
+
+  boolean hasWildcard();
 }

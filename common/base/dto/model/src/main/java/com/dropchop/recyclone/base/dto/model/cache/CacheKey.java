@@ -34,4 +34,12 @@ public class CacheKey extends DtoCode implements com.dropchop.recyclone.base.api
     this.setSearchLang(searchLang);
     return this;
   }
+
+  public boolean hasSearchLang() {
+    return searchLang != null && !searchLang.isBlank();
+  }
+
+  public boolean hasWildcard() {
+    return searchCode != null && searchCode.endsWith("*");
+  }
 }
