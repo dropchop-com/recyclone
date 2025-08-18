@@ -83,7 +83,7 @@ public class JwtLoginResource extends BaseLoginResource
     resp.setUser(simplifiedUser);
 
     Map<String, Object> claims = new HashMap<>();
-    fillAccessClaims(user, claims);
+    fillAccessClaims(simplifiedUser, claims);
     // keep the access token simple
     String accessToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
     resp.setAccessToken(accessToken);
