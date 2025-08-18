@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.jpa.repo.security;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.SetEntityDeactivated;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
@@ -49,13 +50,16 @@ public class UserMapperProvider extends RecycloneMapperProvider<User, JpaUser, U
 
   @Override
   public MappingContext getMappingContextForModify() {
+    Class<?> rootClass = getRepository().getRootClass();
     MappingContext context = super.getMappingContextForModify();
     context
         .createWith(
             new EntityPolymorphicCreateFactory<User, JpaUser>(
                 getMapperSubTypeConfig(), getSupported()
             )
-        );
+        ).afterMapping(
+                    new SetEntityDeactivated(rootClass)
+            );
     /*context.beforeMapping(new SetAccountUuid());
     context.afterMapping(new SetAccountUser());*/
     return context;

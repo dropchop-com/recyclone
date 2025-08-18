@@ -16,11 +16,11 @@ class AccessKeyTest {
   @Test
   public void testEncryptUserPasswordType() {
     ClientKeyConfig clientKeyConfig = new ClientKeyConfig(
-        "testClient", URI.create("example.com"), "testSecret123!", "testSalt123!"
+        "testClient", URI.create("example.com"), "A75KchP2jqNnQNF8$MDxtuXsrHVWrUN9", "UtVV0zbsdkq4y*P9"
     );
     ZonedDateTime created = ZonedDateTime.now();
     AccessKey accessKey = new AccessKey(
-        "testClient", created, "testUserId", "testUserName", "testPassword".toCharArray()
+        "testClient", created, "cac6d703-a941-4fc0-bb23-1201a5976718", "nikola", "dev1234".toCharArray()
     );
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, accessKey);

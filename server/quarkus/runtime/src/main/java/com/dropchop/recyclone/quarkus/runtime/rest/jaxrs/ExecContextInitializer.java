@@ -81,7 +81,9 @@ public class ExecContextInitializer implements ContainerRequestFilter {
     if (dataClassName == null) {
       dataClassName = restClass.getDataClass();
     }
-    dataClass = dataClassName != null ? (Class<? extends Dto>) loadClass(dataClassName) : null;
+    dataClass = dataClassName != null
+        ? (Class<? extends Dto>) loadClass(dataClassName)
+        : com.dropchop.recyclone.base.dto.model.base.Dto.class;
     log.debug("Registering REST initializer for [{}#{}] with [{}, {}, {}]",
         restClass.getImplClass(),
         restMethod.getName(),

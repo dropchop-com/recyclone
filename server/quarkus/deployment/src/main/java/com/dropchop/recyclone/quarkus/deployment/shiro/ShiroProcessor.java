@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.deployment.shiro;
 import com.dropchop.shiro.cdi.DefaultShiroEnvironmentProvider;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import com.dropchop.shiro.cdi.ShiroEnvironment;
+import com.dropchop.shiro.cdi.ShiroSubjectProducer;
 import com.dropchop.shiro.filter.*;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
@@ -104,6 +105,13 @@ public class ShiroProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ShiroEnvironment.class)
+            .setUnremovable()
+            .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(ShiroSubjectProducer.class)
             .setUnremovable()
             .setDefaultScope(DotNames.APPLICATION_SCOPED).build()
     );

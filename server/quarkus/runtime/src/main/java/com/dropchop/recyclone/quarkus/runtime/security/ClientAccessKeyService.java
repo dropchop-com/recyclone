@@ -43,6 +43,8 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
       KeyConfig config = configEntry.getValue();
       ClientKeyConfig clientKeyConfig = new ClientKeyConfig(
           clientId,
+          config.queryName(),
+          config.headerName(),
           config.expiresAfterSeconds(),
           config.uri().map(URI::create).orElse(null),
           config.secret(),

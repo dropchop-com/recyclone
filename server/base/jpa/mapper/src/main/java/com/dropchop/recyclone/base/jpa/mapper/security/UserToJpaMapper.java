@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;

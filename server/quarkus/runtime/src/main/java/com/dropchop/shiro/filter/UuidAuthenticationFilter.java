@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,16 @@ public class UuidAuthenticationFilter extends CustomKeyHttpAuthenticationFilter 
   private static final Logger log = LoggerFactory.getLogger(UuidAuthenticationFilter.class);
 
   @Inject
+  Subject subject;
+
+  @Inject
   public UuidAuthenticationFilter(ApiKeyConfig apiKeyConfig) {
     super(apiKeyConfig);
+  }
+
+  @Override
+  public Subject getSubject() {
+    return subject;
   }
 
   @Override

@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
 import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
+import com.dropchop.shiro.annotation.AuthorizingAnnotationHandler;
 import com.dropchop.shiro.filter.RequestFilter;
 import com.dropchop.shiro.filter.ResponseFilter;
 import com.dropchop.shiro.filter.ShiroFilter;
@@ -14,18 +15,18 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authentication_error;
 import static com.dropchop.recyclone.base.api.model.invoke.ErrorCode.authorization_error;
@@ -44,6 +45,9 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
 
   @Inject
   ShiroEnabledFilters shiroEnabledFilters;
+
+  @Inject
+  Subject subject;
 
   public void invokeRequestFilterChain(ContainerRequestContext requestContext) {
     try {
@@ -66,19 +70,19 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
     }
   }
 
-  public void invokeResponseFilterChain(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+  public void invokeResponseFilterChain(ContainerRequestContext reqContext, ContainerResponseContext respContext) {
     try {
       for (Class<? extends ShiroFilter> clazz : shiroEnabledFilters) {
         ShiroFilter filter = allShiroFilters.select(clazz).get();
         if (filter instanceof ResponseFilter responseFilter) {
-          boolean proceed = responseFilter.onFilterResponse(requestContext, responseContext);
+          boolean proceed = responseFilter.onFilterResponse(reqContext, respContext);
           if (!proceed) {
             break;
           }
         }
       }
     } catch (AuthorizationException e) {
-      unbindSubject(requestContext);
+      unbindSubject(reqContext);
       if (e instanceof UnauthenticatedException) {
         throw new ServiceException(authentication_error, "User is unauthenticated.");
       } else {
@@ -93,7 +97,7 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
       AuthorizingAnnotationHandler handler = authzCheck.getKey();
       Annotation authzSpec = authzCheck.getValue();
       try {
-        handler.assertAuthorized(authzSpec);
+        handler.assertAuthorized(authzSpec, subject);
       } catch (AuthorizationException e) {
         unbindSubject(requestContext);
         if (e instanceof UnauthenticatedException) {
@@ -131,7 +135,6 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
     if (op == null) {
       op = Logical.AND;
     }
-    Subject subject = SecurityUtils.getSubject();
     if (subject == null) {
       log.warn("Shiro Subject is missing!");
       return false;

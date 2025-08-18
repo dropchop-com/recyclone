@@ -1,7 +1,7 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
-import com.dropchop.recyclone.base.api.jwt.JwtHelper;
+import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
 import io.jsonwebtoken.MalformedJwtException;
@@ -9,6 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +22,20 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
   private final JwtConfig jwtConfig;
 
   @Inject
+  Subject subject;
+
+  @Inject
+  JwtService jwtService;
+
+  @Inject
   public JwtAuthenticationFilter(JwtConfig jwtConfig) {
     this.jwtConfig = jwtConfig;
     setAuthcScheme(BEARER);
     setAuthzScheme(BEARER);
+  }
+
+  public Subject getSubject() {
+    return subject;
   }
 
   @Override
@@ -38,7 +49,7 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
     final String[] principalsAndCredentials = getPrincipalsAndCredentials(authorizationHeaderContent, request);
     final String encodedToken = principalsAndCredentials[0];
     try {
-      String jwtSubjectString = JwtHelper.decodeSubject(this.jwtConfig, encodedToken);
+      String jwtSubjectString = jwtService.decodeSubject(this.jwtConfig, encodedToken);
       if (jwtSubjectString == null) {
         return super.createBearerToken("", request);
       }

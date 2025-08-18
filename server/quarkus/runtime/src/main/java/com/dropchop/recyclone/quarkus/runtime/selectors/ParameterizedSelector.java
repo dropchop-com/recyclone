@@ -21,12 +21,13 @@ public interface ParameterizedSelector<X, Y> {
     }
 
     // Getting the Instance
-    InstanceHandle<R> instanceHandle = container.instance(type);
-    if (!instanceHandle.isAvailable()) {
-      throw new RuntimeException("Missing class [" + rawClass + "<" + parameterClass + ">] implementation!");
-    }
+    try (InstanceHandle<R> instanceHandle = container.instance(type)) {
+      if (!instanceHandle.isAvailable()) {
+        throw new RuntimeException("Missing class [" + rawClass + "<" + parameterClass + ">] implementation!");
+      }
 
-    // If instance exists, return; else return null
-    return instanceHandle.get();
+      // If instance exists, return; else return null
+      return instanceHandle.get();
+    }
   }
 }

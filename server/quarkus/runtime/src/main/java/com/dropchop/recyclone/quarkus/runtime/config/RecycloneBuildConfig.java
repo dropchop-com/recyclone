@@ -158,6 +158,18 @@ public interface RecycloneBuildConfig {
            */
           @WithDefault("3600")
           Integer expiresAfterSeconds();
+
+          /**
+           * REST security item apiKeyName if the type is apiKey.
+           */
+          @WithDefault("X-Client-API-Key")
+          String headerName();
+
+          /**
+           * REST security item apiKeyName if the type is apiKey.
+           */
+          @WithDefault("client-api-key")
+          String queryName();
         }
       }
 

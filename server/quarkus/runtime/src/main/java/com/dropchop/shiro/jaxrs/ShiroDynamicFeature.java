@@ -121,7 +121,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
     }
 
     context.register(
-      new ShiroThreadStateFilter(authorizationService), Priorities.AUTHORIZATION - 100
+      new ShiroRequestStateFilter(authorizationService), Priorities.AUTHORIZATION - 100
     );
 
     if (!authzSpecs.isEmpty()) {

@@ -5,16 +5,16 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
 import com.dropchop.recyclone.base.api.model.invoke.ParamsExecContext;
+import com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_ID;
-import static com.dropchop.recyclone.base.api.model.utils.Objects.isWithinBounds;
 
 @ApplicationScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
@@ -37,7 +37,11 @@ public class ExecContextBinder {
   @Inject
   ParamsSelector paramsSelector;
 
-  private final ConcurrentHashMap<String, Boolean> boundsMapCache = new ConcurrentHashMap<>();
+  @Produces
+  @RequestScoped
+  public DefaultExecContext<com.dropchop.recyclone.base.dto.model.base.Dto> produceDefaultExecContext() {
+    return new DefaultExecContext<>();
+  }
 
   public void bind(ExecContext<?> execContext, Params params) {
     if (params != null && execContext != null) {
@@ -68,13 +72,17 @@ public class ExecContextBinder {
   public ExecContext<?> bind(Class<? extends ExecContext<?>> execContextClass,
                              Class<? extends Dto> dataClass,
                              Class<? extends Params> paramsClass) {
-    String key = execContextClass.getName() + "::" + dataClass.getName();
-    boolean hasParameterWithinDataClass = boundsMapCache.computeIfAbsent(
-        key, s -> isWithinBounds(execContextClass, dataClass)
-    );
-    ExecContext<?> execContext = execContextSelector.select(
-        execContextClass, hasParameterWithinDataClass ? dataClass : null
-    );
+    ExecContext<?> execContext;
+    if (dataClass == null) {
+      throw new IllegalArgumentException(
+          "Data class cannot be null for exec context class [" + execContextClass
+              + "], because we can not request the correct ExecContext from the Container!"
+      );
+    } else {
+      execContext = execContextSelector.select(
+          execContextClass, dataClass
+      );
+    }
     if (paramsClass != null) {
       Params params = paramsSelector.select(paramsClass);
       bind(execContext, params);
