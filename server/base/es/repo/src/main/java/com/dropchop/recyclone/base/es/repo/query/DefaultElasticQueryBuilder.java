@@ -357,6 +357,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     int size = params.tryGetResultFilter().size();
     int from = params.tryGetResultFilter().from();
 
+    boolean hasKnnQuery = params.getKnnQuery() != null;
+    boolean hasConditions = params.getCondition() != null && hasActualConditions(params.getCondition());
+
     if (useSearchAfterMode) {
       if (sort == null) {
         throw new ServiceException(
@@ -369,12 +372,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       queryContainer.put("size", size);
     }
 
-    if (sort != null) {
+    if (sort != null && !hasConditions) {
       queryContainer.putAll(sort);
     }
-
-    boolean hasKnnQuery = params.getKnnQuery() != null;
-    boolean hasConditions = params.getCondition() != null && hasActualConditions(params.getCondition());
 
     if (hasConditions || hasKnnQuery) {
       if (hasKnnQuery && !hasConditions) {
