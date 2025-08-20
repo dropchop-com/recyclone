@@ -1,7 +1,7 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
-import com.dropchop.recyclone.base.api.jwt.JwtHelper;
+import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,6 +16,9 @@ public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter imple
 
   @Inject
   Subject subject;
+
+  @Inject
+  JwtService jwtService;
 
   @Inject
   public JwtEveryResponseFilter(JwtConfig jwtConfig) {
@@ -37,7 +40,7 @@ public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter imple
     Subject subject = getSubject();
     Object principal = subject.getPrincipal();
     if (principal instanceof User user) {
-      String newToken = JwtHelper.encode(this.jwtConfig, user.getId());
+      String newToken = jwtService.encode(this.jwtConfig, user.getId());
       responseContext.getHeaders().add("X-Auth-Token", newToken);
       responseContext.getHeaders().add("Access-Control-Expose-Headers", "*");
     }

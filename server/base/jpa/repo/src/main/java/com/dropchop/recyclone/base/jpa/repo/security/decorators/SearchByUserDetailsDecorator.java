@@ -21,6 +21,7 @@ public class SearchByUserDetailsDecorator<E> extends BlazeCriteriaDecorator<E> {
       String lastName = userParams.getLastName();
       String email = userParams.getEmail();
       String searchTerm = userParams.getSearchTerm();
+      Boolean active = userParams.getActive();
 
       CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
       if (loginName != null && !loginName.isBlank()) {
@@ -37,6 +38,14 @@ public class SearchByUserDetailsDecorator<E> extends BlazeCriteriaDecorator<E> {
       if (email != null && !email.isBlank()) {
         cb.where(alias + DELIM + "defaultEmail").eq(email);
       }
+      if (active != null) {
+        if (active) {
+          cb.where(alias +  DELIM  + "deactivated").isNull();
+        } else {
+          cb.where(alias + DELIM + "deactivated").isNotNull();
+        }
+      }
+
       if (searchTerm != null && !searchTerm.isBlank()) {
         cb.join("accounts", "a", JoinType.LEFT);
         cb.join("accounts", "t", JoinType.LEFT);

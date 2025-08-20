@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.base.jaxrs.security;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
-import com.dropchop.recyclone.base.api.jwt.JwtHelper;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
@@ -10,6 +9,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
+import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
@@ -47,6 +47,9 @@ public class JwtLoginResource extends BaseLoginResource
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
   ExecContextContainer execContextContainer;
 
+  @Inject
+  JwtService jwtService;
+
   @SuppressWarnings("unused")
   private void fillRefreshClaims(User user, Map<String, Object> claims) {
   }
@@ -80,15 +83,15 @@ public class JwtLoginResource extends BaseLoginResource
     resp.setUser(simplifiedUser);
 
     Map<String, Object> claims = new HashMap<>();
-    fillAccessClaims(user, claims);
+    fillAccessClaims(simplifiedUser, claims);
     // keep the access token simple
-    String accessToken = JwtHelper.encode(jwtConfig, user.getUuid().toString(), claims);
+    String accessToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
     resp.setAccessToken(accessToken);
 
     // we respond with id token i.e., all user data
-    fillIdClaims(simplifiedUser, claims);
+    fillIdClaims(user, claims);
     // add more data to access token
-    String idToken = JwtHelper.encode(jwtConfig, user.getUuid().toString(), claims);
+    String idToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
     resp.setIdToken(idToken);
 
     resp.setCode(req.getRequestId());
