@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
 import com.dropchop.shiro.annotation.AuthorizingAnnotationHandler;
 import com.dropchop.shiro.filter.RequestFilter;
@@ -54,7 +55,9 @@ public class ShiroAuthorizationService extends ShiroAuthenticationService implem
       for (Class<? extends ShiroFilter> clazz : shiroEnabledFilters) {
         ShiroFilter filter = allShiroFilters.select(clazz).get();
         if (filter instanceof RequestFilter requestFilter) {
+          ProfileTimer timer = new ProfileTimer();
           boolean proceed = requestFilter.onFilterRequest(requestContext);
+          log.trace("Executed shiro filter [{}] in [{}]ms.", clazz, timer.stop());
           if (!proceed) {
             break;
           }

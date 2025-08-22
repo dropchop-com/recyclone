@@ -38,6 +38,12 @@ public interface SecurityExecContext {
 
   List<String> getRequiredPermissions();
   void setRequiredPermissions(List<String> requiredPermissions);
+
+  default boolean hasRequiredPermissions() {
+    List<String> permissions = getRequiredPermissions();
+    return permissions != null && !permissions.isEmpty();
+  }
+
   Logical getRequiredPermissionsOp();
   void setRequiredPermissionsOp(Logical op);
 

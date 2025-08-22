@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.annotation.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
@@ -65,6 +66,7 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext context) throws IOException {
+    ProfileTimer timer = new ProfileTimer();
     String path = context.getUriInfo().getPath();
     log.trace("Executing REST method shiro filter chain [{}]", path);
     this.authorizationService.invokeRequestFilterChain(context);
@@ -78,9 +80,6 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       return;
     }
 
-    log.debug(
-        "REST method subject authorization check [{}] on {}", path, authzChecks.values()
-    );
     this.authorizationService.doAuthorizationChecks(context, authzChecks);
     if (execContext instanceof SecurityExecContext securityExecContext) {
       this.authorizationService.extractRequiredPermissionsToExecContext(securityExecContext, authzChecks);
@@ -97,5 +96,9 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
         MDC.put(MDC_PERSON_NAME, principal.getFirstName() + " " + principal.getLastName());
       }
     }
+
+    log.debug(
+        "REST method subject authorization check [{}] on {} in [{}]ms.", path, authzChecks.values(), timer.mark()
+    );
   }
 }
