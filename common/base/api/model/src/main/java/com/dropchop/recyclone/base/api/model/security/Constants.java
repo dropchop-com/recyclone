@@ -65,6 +65,7 @@ public interface Constants {
     interface Localization {
       String LANGUAGE = "localization.language";
       String COUNTRY = "localization.country";
+      String DICTIONARY_TERM = "localization.dictionary_term";
     }
 
 
