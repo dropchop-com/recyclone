@@ -640,7 +640,7 @@ public class ElasticsearchQueryBuilderTest {
             "price_sum",
             "price",
             filter(
-              includes(List.of("include_ports"))
+              includes("include_ports")
             )
           )
         )
@@ -694,7 +694,7 @@ public class ElasticsearchQueryBuilderTest {
             "price_sum",
             "price",
             filter(
-              excludes(List.of("include_ports"))
+              excludes(List.of("exclude_ports_1", "exclude_ports_2"))
             )
           )
         )
@@ -716,7 +716,7 @@ public class ElasticsearchQueryBuilderTest {
               "price_sum" : {
                 "terms" : {
                   "field" : "price",
-                  "exclude" : [ "include_ports" ]
+                  "exclude" : [ "exclude_ports_1", "exclude_ports_2" ]
                 }
               }
             }
@@ -748,8 +748,8 @@ public class ElasticsearchQueryBuilderTest {
             "price_sum",
             "price",
             filter(
-              includes(List.of("include_ports")),
-              excludes(List.of("exclude_ports"))
+              includes("include_ports.*"), // reg ex
+              excludes("exclude_ports.*")  // reg ex
             )
           )
         )
@@ -771,8 +771,8 @@ public class ElasticsearchQueryBuilderTest {
               "price_sum" : {
                 "terms" : {
                   "field" : "price",
-                  "include" : [ "include_ports" ],
-                  "exclude": [ "exclude_ports" ]
+                  "include" : "include_ports.*",
+                  "exclude": "exclude_ports.*"
                 }
               }
             }

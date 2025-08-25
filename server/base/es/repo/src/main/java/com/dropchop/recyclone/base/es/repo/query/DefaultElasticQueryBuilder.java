@@ -144,11 +144,35 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
       if (terms.getFilter() != null) {
         if (terms.getFilter().getInclude() != null) {
-          termsNode.put("include", terms.getFilter().getInclude().getValue());
+          List<String> includes = terms.getFilter().getInclude().getValue();
+          if (includes != null && !includes.isEmpty()) {
+            if (includes.size() == 1) {
+              String include = includes.getFirst();
+              if (include.contains("*")) { // detect if it is a regex -> don't pass it as an array
+                termsNode.put("include", include);
+              } else {
+                termsNode.put("include", includes);
+              }
+            } else {
+              termsNode.put("include", includes);
+            }
+          }
         }
 
         if (terms.getFilter().getExclude() != null) {
-          termsNode.put("exclude", terms.getFilter().getExclude().getValue());
+          List<String> excludes = terms.getFilter().getExclude().getValue();
+          if (excludes != null && !excludes.isEmpty()) {
+            if (excludes.size() == 1) {
+              String exclude = excludes.getFirst();
+              if (exclude.contains("*")) { // detect if it is a regex -> don't pass it as an array
+                termsNode.put("exclude", exclude);
+              } else {
+                termsNode.put("exclude", excludes);
+              }
+            } else {
+              termsNode.put("exclude", excludes);
+            }
+          }
         }
       }
       node.put("terms", termsNode);
