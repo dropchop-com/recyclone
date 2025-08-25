@@ -166,8 +166,7 @@ public class QueryResponseParser {
       ObjectReader reader = mapper.readerFor(new MapTypeRef())
           .withAttribute(Constants.InternalContextVariables.RECYCLONE_PARAMS, params);
 
-      Map<String, AggregationResult> aggData = reader.readValue(parser,
-          new TypeReference<>() {});
+      Map<String, AggregationResult> aggData = reader.readValue(parser, new TypeReference<>() {});
       parser.nextToken(); // START_OBJECT
       if (aggData != null && !aggData.isEmpty()) {
         for (Map.Entry<String, AggregationResult> entry : aggData.entrySet()) {

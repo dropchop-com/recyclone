@@ -2,6 +2,7 @@ package com.dropchop.recyclone.base.dto.model.localization;
 
 import com.dropchop.recyclone.base.api.model.marker.*;
 import com.dropchop.recyclone.base.api.model.base.Generic;
+import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,21 @@ public class TitleDescriptionTranslated
       if (!generic.getGroups().isEmpty()) {
         this.setGroups(generic.getGroups());
       }
+    }
+  }
+
+  public TitleDescriptionTranslated(AggregationResult.Container container) {
+    if (container.getId() != null) {
+      this.setId(container.getId());
+    }
+    if (container.getLang() != null) {
+      this.setLang(container.getLang());
+    }
+    if (container.getType() != null) {
+      this.setType(container.getType());
+    }
+    if (container.getTitle() != null) {
+      this.setTitle(container.getTitle());
     }
   }
 }
