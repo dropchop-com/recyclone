@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jackson;
 
-import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -174,11 +174,7 @@ public class ConditionSerializationTest {
   @Test
   void testKnnWithSimilaritySerialization() throws Exception {
     Condition c = and(
-      knn("document_embedding",
-        new float[]{1.0f, 0.5f, -0.3f},
-        5,
-        null,
-        0.8f)
+      knn("document_embedding", new float[]{1.0f, 0.5f, -0.3f}, 5, 0.8f)
     );
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
     ObjectMapper mapper = mapperFactory.createObjectMapper();
@@ -198,12 +194,12 @@ public class ConditionSerializationTest {
       knn("product_features",
         new float[]{0.4f, 0.6f, 0.2f, 0.8f},
         10,
+        0.7f,
         and(
           field("category", in("electronics", "gadgets")),
           field("price", gteLt(50.0, 1000.0)),
           not(field("discontinued", eq(true)))
-        ),
-        0.7f
+        )
       )
     );
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -245,6 +241,7 @@ public class ConditionSerializationTest {
       knn("semantic_embedding",
         new float[]{-0.1f, 0.25f, 0.8f, -0.3f, 0.9f},
         15,
+        0.75f,
         or(
           and(
             field("type", eq("article")),
@@ -254,8 +251,7 @@ public class ConditionSerializationTest {
             field("type", eq("blog")),
             field("author", in("john", "jane", "bob"))
           )
-        ),
-        0.75f
+        )
       ),
       field("language", eq("en"))
     );

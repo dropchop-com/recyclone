@@ -714,14 +714,14 @@ public class ElasticsearchQueryBuilderTest {
           "article_embedding",
           new float[]{0.2f, 0.4f, 0.6f, 0.8f},
           12,
+          0.7f,
           or(
             and(
               field("status", eq("published")),
               field("views", gte(1000))
             ),
             field("featured", eq(true))
-          ),
-          0.7f
+          )
         )
       )
       .build();
@@ -846,8 +846,7 @@ public class ElasticsearchQueryBuilderTest {
         ),
         field("price", gteLt(50.0, 1000.0)),
         not(field("discontinued", eq(true))),
-        knn("product_features", new float[]{0.4f, 0.6f, 0.2f, 0.8f}, 10),
-        advancedText("")
+        knn("product_features", new float[]{0.4f, 0.6f, 0.2f, 0.8f}, 10)
       ))
       .aggregate(aggs(
         terms("top_categories", "category", 5),
@@ -891,9 +890,9 @@ public class ElasticsearchQueryBuilderTest {
             }
           }, {
             "knn" : {
-              "field" : "product_features",
-              "query_vector" : [ 0.4, 0.6, 0.2, 0.8 ],
-              "k" : 10
+              "name" : "product_features",
+              "value" : [ 0.4, 0.6, 0.2, 0.8 ],
+              "topK" : 10
             }
           } ]
         }

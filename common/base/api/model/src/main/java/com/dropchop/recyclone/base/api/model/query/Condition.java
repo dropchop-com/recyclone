@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.base.api.model.query;
 
 import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.condition.Knn;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
-import com.dropchop.recyclone.base.api.model.query.knn.Knn;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
@@ -59,16 +59,36 @@ public interface Condition {
     return new Field<>(name, value);
   }
 
-  static Knn knn(String field, float[] queryVector, Integer k) {
-    return Knn.of(field, queryVector, k);
+  static Knn knn(String field, float[] value, Integer topK, Float similarity, Integer numCandidates) {
+    return new Knn(new KnnField(field, value, topK, similarity, numCandidates));
   }
 
-  static Knn knn(String field, float[] queryVector, Integer k, Condition filter) {
-    return Knn.of(field, queryVector, k, filter);
+  static Knn knn(String field, float[] value, Integer topK, Float similarity) {
+    return new Knn(new KnnField(field, value, topK, similarity));
   }
 
-  static Knn knn(String field, float[] queryVector, Integer k, Condition filter, Float similarity) {
-    return Knn.of(field, queryVector, k, filter, similarity);
+  static Knn knn(String field, float[] value, Integer topK) {
+    return new Knn(new KnnField(field, value, topK));
+  }
+
+  static Knn knn(String field, float[] value) {
+    return new Knn(new KnnField(field, value));
+  }
+
+  static Knn knn(String field, float[] value, Integer topK, Float similarity, Integer numCandidates, Condition filter) {
+    return new Knn(new KnnField(field, value, topK, similarity, numCandidates, filter));
+  }
+
+  static Knn knn(String field, float[] value, Integer topK, Float similarity, Condition filter) {
+    return new Knn(new KnnField(field, value, topK, similarity, filter));
+  }
+
+  static Knn knn(String field, float[] value, Integer topK, Condition filter) {
+    return new Knn(new KnnField(field, value, topK, filter));
+  }
+
+  static Knn knn(String field, float[] value, Condition filter) {
+    return new Knn(new KnnField(field, value, filter));
   }
 
   static ConditionedField advancedText(String name, String value) {
