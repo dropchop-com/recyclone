@@ -5,11 +5,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
-import com.dropchop.recyclone.base.api.model.query.condition.And;
-import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
-import com.dropchop.recyclone.base.api.model.query.condition.Not;
-import com.dropchop.recyclone.base.api.model.query.condition.Or;
-import com.dropchop.recyclone.base.api.model.query.knn.Knn;
+import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.*;
@@ -19,7 +15,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -57,16 +52,16 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       return mapConditionField(fieldName, operator);
     } else if (condition instanceof Knn) {
       if (validationData != null) {
-        validationData.addKnnField(((Knn) condition).getField());
+        validationData.addKnnField(((Knn) condition).get$knn().getName());
       }
 
       KnnNodeObject knnNode = new KnnNodeObject(null, (Knn) condition);
       QueryNodeObject queryNodeObject = new QueryNodeObject();
       QueryNodeObject mustObject = new QueryNodeObject();
 
-      if (((Knn) condition).getFilter() != null) {
+      if (((Knn) condition).get$knn().getFilter() != null) {
         ValidationData filterValidation = new ValidationData();
-        QueryNodeObject filterQuery = mapCondition(filterValidation, ((Knn) condition).getFilter(),
+        QueryNodeObject filterQuery = mapCondition(filterValidation, ((Knn) condition).get$knn().getFilter(),
           null, null);
         knnNode.addFilter(filterQuery);
       }

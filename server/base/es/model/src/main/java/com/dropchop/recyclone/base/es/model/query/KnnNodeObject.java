@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.es.model.query;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.base.api.model.query.knn.Knn;
+import com.dropchop.recyclone.base.api.model.query.condition.Knn;
 import lombok.Getter;
 
 @Getter
@@ -14,14 +14,16 @@ public class KnnNodeObject extends QueryNodeObject {
   private final Integer k;
   private final Condition filter;
   private final Float similarity;
+  private final Integer numCandidates;
 
   public KnnNodeObject(IQueryNode parent, Knn knnQuery) {
     super(parent);
-    this.field = knnQuery.getField();
-    this.queryVector = knnQuery.getQueryVector();
-    this.k = knnQuery.getK();
-    this.filter = knnQuery.getFilter();
-    this.similarity = knnQuery.getSimilarity();
+    this.field = knnQuery.get$knn().getName();
+    this.queryVector = knnQuery.get$knn().getValue();
+    this.k = knnQuery.get$knn().getTopK();
+    this.filter = knnQuery.get$knn().getFilter();
+    this.similarity = knnQuery.get$knn().getSimilarity();
+    this.numCandidates = knnQuery.get$knn().getNumCandidates();
 
     validateAndBuild();
   }
@@ -50,6 +52,10 @@ public class KnnNodeObject extends QueryNodeObject {
 
     if (similarity != null) {
       this.put("similarity", similarity);
+    }
+
+    if (numCandidates != null) {
+      this.put("num_candidates", numCandidates);
     }
   }
 

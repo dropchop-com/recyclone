@@ -855,64 +855,64 @@ public class ElasticsearchQueryBuilderTest {
       .build();
 
     String expectedJson = """
-    {
-      "from" : 0,
-      "size" : 100,
-      "query" : {
-        "bool" : {
-          "must" : [ {
+        {
+          "from" : 0,
+          "size" : 100,
+          "query" : {
             "bool" : {
-              "should" : [ {
-                "terms" : {
-                  "category" : [ "electronics", "gadgets" ]
+              "must" : [ {
+                "bool" : {
+                  "should" : [ {
+                    "terms" : {
+                      "category" : [ "electronics", "gadgets" ]
+                    }
+                  }, {
+                    "term" : {
+                      "brand" : "Apple"
+                    }
+                  } ],
+                  "minimum_should_match" : 1
                 }
               }, {
-                "term" : {
-                  "brand" : "Apple"
+                "range" : {
+                  "price" : {
+                    "gte" : 50.0,
+                    "lt" : 1000.0
+                  }
                 }
-              } ],
-              "minimum_should_match" : 1
+              }, {
+                "bool" : {
+                  "must_not" : {
+                    "term" : {
+                      "discontinued" : true
+                    }
+                  }
+                }
+              }, {
+                "knn" : {
+                  "field" : "product_features",
+                  "query_vector" : [ 0.4, 0.6, 0.2, 0.8 ],
+                  "k" : 10
+                }
+              } ]
             }
-          }, {
-            "range" : {
-              "price" : {
-                "gte" : 50.0,
-                "lt" : 1000.0
+          },
+          "aggs" : {
+            "top_categories" : {
+              "terms" : {
+                "field" : "category",
+                "size" : 5
+              }
+            },
+            "sales_over_time" : {
+              "date_histogram" : {
+                "field" : "created",
+                "calendar_interval" : "month"
               }
             }
-          }, {
-            "bool" : {
-              "must_not" : {
-                "term" : {
-                  "discontinued" : true
-                }
-              }
-            }
-          }, {
-            "knn" : {
-              "name" : "product_features",
-              "value" : [ 0.4, 0.6, 0.2, 0.8 ],
-              "topK" : 10
-            }
-          } ]
-        }
-      },
-      "aggs" : {
-        "top_categories" : {
-          "terms" : {
-            "field" : "category",
-            "size" : 5
-          }
-        },
-        "sales_over_time" : {
-          "date_histogram" : {
-            "field" : "created",
-            "calendar_interval" : "month"
           }
         }
-      }
-    }
-  """;
+      """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();

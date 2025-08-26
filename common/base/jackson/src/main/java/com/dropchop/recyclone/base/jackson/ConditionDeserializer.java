@@ -1,13 +1,10 @@
 package com.dropchop.recyclone.base.jackson;
 
-import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
-import com.dropchop.recyclone.base.api.model.query.ConditionedField;
-import com.dropchop.recyclone.base.api.model.query.Field;
+import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.condition.Knn;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
-import com.dropchop.recyclone.base.api.model.query.knn.Knn;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
@@ -242,23 +239,32 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           if (!valueNode.isObject() || valueNode.isEmpty()) {
             throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
           }
-          JsonNode fieldNode = valueNode.get("field");
+          JsonNode fieldNode = valueNode.get("name");
           if (fieldNode == null || !fieldNode.isTextual()) {
-            throw new IllegalArgumentException("Invalid KNN query: 'field' is required and must be a string at [" + name + "]!");
+            throw new IllegalArgumentException(
+              "Invalid KNN query: 'name' is required and must be a string at [" + name + "]!"
+            );
           }
           String field = fieldNode.asText();
-          JsonNode queryVectorNode = valueNode.get("query_vector");
+          JsonNode queryVectorNode = valueNode.get("value");
           if (queryVectorNode == null || !queryVectorNode.isArray()) {
-            throw new IllegalArgumentException("Invalid KNN query: 'query_vector' is required and must be an array at [" + name + "]!");
+            throw new IllegalArgumentException(
+              "Invalid KNN query: 'value' is required and must be an array at [" + name + "]!"
+            );
           }
           float[] queryVector = new float[queryVectorNode.size()];
           for (int i = 0; i < queryVectorNode.size(); i++) {
             queryVector[i] = (float) queryVectorNode.get(i).asDouble();
           }
           Integer k = null;
-          JsonNode kNode = valueNode.get("k");
+          JsonNode kNode = valueNode.get("topK");
           if (kNode != null && kNode.isIntegralNumber()) {
             k = kNode.asInt();
+          }
+          Integer numCandidates = null;
+          JsonNode numNode = valueNode.get("numCandidates");
+          if (numNode != null && numNode.isIntegralNumber()) {
+            numCandidates = numNode.asInt();
           }
           Condition filter = null;
           JsonNode filterNode = valueNode.get("filter");
@@ -271,7 +277,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           if (similarityNode != null && similarityNode.isNumber()) {
             similarity = (float) similarityNode.asDouble();
           }
-          return Knn.of(field, queryVector, k, filter, similarity);
+          return new Knn(new KnnField(field, queryVector, k, similarity, numCandidates, filter));
         }
       }
     } else {
