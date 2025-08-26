@@ -5,7 +5,6 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleRole;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.util.PermissionUtils;
-//import org.apache.shiro.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;

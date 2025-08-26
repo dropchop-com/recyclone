@@ -32,6 +32,11 @@ public class JpaDictionaryTerm extends JpaCode
     JpaTitleTranslationHelper, HasCreated, HasModified,
     HasTags<JpaTag, JpaTitleDescriptionTranslation> {
 
+  @Column(name="title")
+  private String title;
+
+  @Column(name = "lang", insertable = false, updatable = false)
+  private String lang;
 
   private ZonedDateTime created;
   private ZonedDateTime modified;

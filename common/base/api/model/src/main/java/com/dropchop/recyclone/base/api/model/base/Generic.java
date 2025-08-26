@@ -8,7 +8,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 5/22/25.
  */
 @SuppressWarnings("unused")
-public interface Generic extends Model, HasId {
+public interface Generic extends Model, HasId, Titled {
   String getType();
   void setType(String type);
 

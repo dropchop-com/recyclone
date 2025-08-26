@@ -1,10 +1,13 @@
 package com.dropchop.shiro.realm.authc;
 
+import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
+import org.apache.shiro.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,23 @@ import org.slf4j.LoggerFactory;
 public class TokenRealm extends BaseAuthenticatingRealm {
 
   private static final Logger log = LoggerFactory.getLogger(TokenRealm.class);
+
+  public TokenRealm(SecurityLoadingService securityLoadingService) {
+    super(securityLoadingService);
+  }
+
+  public TokenRealm(CacheManager cacheManager, SecurityLoadingService securityLoadingService) {
+    super(cacheManager, securityLoadingService);
+  }
+
+  public TokenRealm(CredentialsMatcher matcher, SecurityLoadingService securityLoadingService) {
+    super(matcher, securityLoadingService);
+  }
+
+  public TokenRealm(CacheManager cacheManager, CredentialsMatcher matcher,
+                    SecurityLoadingService securityLoadingService) {
+    super(cacheManager, matcher, securityLoadingService);
+  }
 
   @Override
   protected void onInit() {

@@ -64,7 +64,7 @@ public class EsAttribute<X> implements Attribute<X> {
       //noinspection unchecked
       attribute = (Attribute<X>) unmarshall(esAttribute.getName(), esAttribute.getStrValue(), List.class);
     } else {
-      throw new UnsupportedOperationException("Unsupported JpaAttribute to Attribute conversion");
+      throw new UnsupportedOperationException("Unsupported EsAttribute to Attribute conversion");
     }
     attribute.setName(esAttribute.getName());
 

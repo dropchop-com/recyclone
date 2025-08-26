@@ -16,7 +16,7 @@ import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.dropchop.recyclone.base.es.repo.ElasticCrudRepository;
-import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
+import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,7 +49,7 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     Map<String, AggregationResult> aggregations = new LinkedHashMap<>();
 
     RepositoryExecContext<E> context = repository.getRepositoryExecContext(mapContext);
-    context.listener((AggregationResultListener) aggregations::put);
+    context.listener((AggregationResultConsumer) aggregations::put);
 
     List<E> entities = repository.find(context);
     log.debug("Found {} entities in [{}]ms", entities.size(), timer.mark());

@@ -1,5 +1,6 @@
 package com.dropchop.shiro.realm.authc;
 
+import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
 import org.apache.shiro.authc.AuthenticationException;
@@ -7,8 +8,28 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.cache.CacheManager;
 
+@SuppressWarnings("unused")
 public class JwtTokenRealm extends BaseAuthenticatingRealm {
+
+  public JwtTokenRealm(SecurityLoadingService securityLoadingService) {
+    super(securityLoadingService);
+  }
+
+  public JwtTokenRealm(CacheManager cacheManager, SecurityLoadingService securityLoadingService) {
+    super(cacheManager, securityLoadingService);
+  }
+
+  public JwtTokenRealm(CredentialsMatcher matcher, SecurityLoadingService securityLoadingService) {
+    super(matcher, securityLoadingService);
+  }
+
+  public JwtTokenRealm(CacheManager cacheManager, CredentialsMatcher matcher,
+                       SecurityLoadingService securityLoadingService) {
+    super(cacheManager, matcher, securityLoadingService);
+  }
 
   @Override
   protected void onInit() {

@@ -3,9 +3,9 @@ package com.dropchop.recyclone.base.es.repo;
 import com.dropchop.recyclone.base.api.model.invoke.Constants;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
-import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
-import com.dropchop.recyclone.base.es.repo.listener.MapResultListener;
-import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
+import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
+import com.dropchop.recyclone.base.es.repo.listener.MapResultConsumer;
+import com.dropchop.recyclone.base.es.repo.listener.QueryResultConsumer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.StreamReadConstraints;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static com.dropchop.recyclone.base.es.repo.listener.QueryResultListener.Progress;
+import static com.dropchop.recyclone.base.es.repo.listener.QueryResultConsumer.Progress;
 
 /**
  * Use single instance per response.
@@ -65,13 +65,13 @@ public class QueryResponseParser {
     this(objectMapper, false);
   }
 
-  private <T> boolean invokeListeners(List<QueryResultListener<T>> listeners, T source) {
+  private <T> boolean invokeListeners(List<QueryResultConsumer<T>> listeners, T source) {
     if (source == null) {
       return false;
     }
     boolean stop = true;
-    for (QueryResultListener<T> listener : listeners) {
-      if (listener.onResult(source) != Progress.STOP) {
+    for (QueryResultConsumer<T> listener : listeners) {
+      if (listener.accept(source) != Progress.STOP) {
         stop = false;
       }
     }
@@ -82,8 +82,8 @@ public class QueryResponseParser {
                                   Params params,
                                   JsonParser parser,
                                   Class<T> sourceType,
-                                  List<QueryResultListener<T>> objectListeners,
-                                  List<QueryResultListener<Map<String, ?>>> mapListeners) throws IOException {
+                                  List<QueryResultConsumer<T>> objectListeners,
+                                  List<QueryResultConsumer<Map<String, ?>>> mapListeners) throws IOException {
     parser.nextToken(); // START_ARRAY
     boolean continueParsing = !objectListeners.isEmpty() || !mapListeners.isEmpty();
     int hitCount = 0;
@@ -155,7 +155,7 @@ public class QueryResponseParser {
 
   private void parseAggregations(JsonParser parser,
                                  Params params,
-                                 List<AggregationResultListener> aggListeners) throws IOException {
+                                 List<AggregationResultConsumer> aggListeners) throws IOException {
     if (aggListeners == null || aggListeners.isEmpty()) {
       return;
     }
@@ -166,8 +166,7 @@ public class QueryResponseParser {
       ObjectReader reader = mapper.readerFor(new MapTypeRef())
           .withAttribute(Constants.InternalContextVariables.RECYCLONE_PARAMS, params);
 
-      Map<String, AggregationResult> aggData = reader.readValue(parser,
-          new TypeReference<>() {});
+      Map<String, AggregationResult> aggData = reader.readValue(parser, new TypeReference<>() {});
       parser.nextToken(); // START_OBJECT
       if (aggData != null && !aggData.isEmpty()) {
         for (Map.Entry<String, AggregationResult> entry : aggData.entrySet()) {
@@ -178,8 +177,8 @@ public class QueryResponseParser {
             continue;
           }
 
-          for (AggregationResultListener listener : aggListeners) {
-            listener.onAggregation(aggName, aggValue);
+          for (AggregationResultConsumer listener : aggListeners) {
+            listener.accept(aggName, aggValue);
           }
         }
       }
@@ -189,14 +188,14 @@ public class QueryResponseParser {
   public <T> SearchResultMetadata parse(InputStream responseStream,
                                         Params params,
                                         Class<T> sourceType,
-                                        List<QueryResultListener<T>> hitListeners,
-                                        List<AggregationResultListener> aggListeners)
+                                        List<QueryResultConsumer<T>> hitListeners,
+                                        List<AggregationResultConsumer> aggListeners)
       throws IOException {
-    List<QueryResultListener<T>> objectListeners = new ArrayList<>();
-    List<QueryResultListener<Map<String, ?>>> mapListeners = new ArrayList<>();
-    for (QueryResultListener<T> listener : hitListeners) {
-      if (listener instanceof MapResultListener) {
-        mapListeners.add((MapResultListener) listener);
+    List<QueryResultConsumer<T>> objectListeners = new ArrayList<>();
+    List<QueryResultConsumer<Map<String, ?>>> mapListeners = new ArrayList<>();
+    for (QueryResultConsumer<T> listener : hitListeners) {
+      if (listener instanceof MapResultConsumer) {
+        mapListeners.add((MapResultConsumer) listener);
       } else {
         objectListeners.add(listener);
       }

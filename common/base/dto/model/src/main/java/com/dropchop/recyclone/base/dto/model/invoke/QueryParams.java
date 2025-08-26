@@ -25,6 +25,11 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
       return self();
     }
 
+    public B cond(Condition ... condition) {
+      condition(com.dropchop.recyclone.base.api.model.query.Condition.and(condition));
+      return self();
+    }
+
     public B or(Condition ... condition) {
       condition(com.dropchop.recyclone.base.api.model.query.Condition.or(condition));
       return self();
@@ -37,6 +42,14 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
 
     public B aggs(Aggregation... aggs) {
       aggregate(com.dropchop.recyclone.base.api.model.query.Aggregation.aggs(aggs));
+      return self();
+    }
+
+    public B agg(Aggregation... aggs) {
+      if (aggregate == null) {
+        aggregate = new AggregationList();
+      }
+      aggregate.addAll(com.dropchop.recyclone.base.api.model.query.Aggregation.aggs(aggs));
       return self();
     }
   }
@@ -52,6 +65,9 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
 
   @ToString.Include
   private AggregationList aggregate;
+
+  @ToString.Include
+  private KnnQuery knnQuery;
 
   @Override
   public String toString() {

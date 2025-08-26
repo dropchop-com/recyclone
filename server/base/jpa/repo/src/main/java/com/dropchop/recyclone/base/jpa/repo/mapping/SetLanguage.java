@@ -43,7 +43,9 @@ public class SetLanguage
     if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
-    if (Constants.Actions.CREATE.equals(context.getSecurityAction())) { // for other actions it has no sense
+    boolean isCreateOrUpdate = Constants.Actions.CREATE.equals(context.getSecurityAction())
+        || Constants.Actions.UPDATE.equals(context.getSecurityAction());
+    if (isCreateOrUpdate) { // for other actions it has no sense
       if (entity instanceof HasLanguageCode hasLanguageCode && entity instanceof HasJpaLanguage hasJpaLanguage) {
         String code = hasLanguageCode.getLang();
         if (code == null) {
