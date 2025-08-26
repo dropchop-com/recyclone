@@ -1,5 +1,6 @@
 package com.dropchop.shiro.filter;
 
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.apache.shiro.authc.AuthenticationException;
@@ -76,7 +77,10 @@ public abstract class AuthenticatingFilter implements AccessControlFilter {
   }
 
   protected boolean executeLogin(ContainerRequestContext requestContext) {
+    ProfileTimer timer = new ProfileTimer();
+    log.debug("Executing [{}] login.", this.getClass().getName());
     AuthenticationToken token = createToken(requestContext);
+    log.debug("Created [{}] authentication token in [{}].", this.getClass().getName(), timer.mark());
     if (token == null) {
       String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken " +
           "must be created in order to execute a login attempt.";
@@ -86,6 +90,7 @@ public abstract class AuthenticatingFilter implements AccessControlFilter {
     if (oAuthService instanceof AuthenticationService authenticationService) {
       try {
         Subject subject = authenticationService.login(token);
+        log.debug("Executed [{}] login in [{}]ms.", this.getClass().getName(), timer.stop());
         return onLoginSuccess(token, subject, requestContext);
       } catch (AuthenticationException e) {
         return onLoginFailure(token, e, requestContext);

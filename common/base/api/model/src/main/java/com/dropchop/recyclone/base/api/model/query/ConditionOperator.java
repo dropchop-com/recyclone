@@ -87,6 +87,9 @@ public interface ConditionOperator {
 
   static Include includes(List<String> values) {return new Include(values);}
 
+  static Include includes(String value) {return new Include(value);}
+
   static Exclude excludes(List<String> values) {return new Exclude(values);}
 
+  static Exclude excludes(String value) {return new Exclude(value);}
 }

@@ -37,6 +37,8 @@ public interface Constants {
       String LANGUAGE = LOCALIZATION_SEGMENT + LANGUAGE_SEGMENT;
       String COUNTRY_SEGMENT = "/country";
       String COUNTRY = LOCALIZATION_SEGMENT + COUNTRY_SEGMENT;
+      String DICTIONARY_TERM_SEGMENT = "/dictionaryTerm";
+      String DICTIONARY_TERM = LOCALIZATION_SEGMENT + DICTIONARY_TERM_SEGMENT;
     }
 
     interface Security {

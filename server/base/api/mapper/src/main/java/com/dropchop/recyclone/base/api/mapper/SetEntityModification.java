@@ -30,7 +30,8 @@ public class SetEntityModification
     if (onlyForEntity != null && !onlyForEntity.isAssignableFrom(entity.getClass())) {
       return;
     }
-    boolean isCreateOrUpdate = Actions.CREATE.equals(context.getSecurityAction()) || Actions.UPDATE.equals(context.getSecurityAction());
+    boolean isCreateOrUpdate = Actions.CREATE.equals(context.getSecurityAction())
+        || Actions.UPDATE.equals(context.getSecurityAction());
     if (isCreateOrUpdate) {
       if (entity instanceof HasModified && ((HasModified) entity).getModified() == null) {
         ((HasModified) entity).setModified(ZonedDateTime.now());

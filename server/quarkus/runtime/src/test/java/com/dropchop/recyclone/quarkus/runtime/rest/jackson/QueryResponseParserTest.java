@@ -5,8 +5,8 @@ import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
-import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
-import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
+import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
+import com.dropchop.recyclone.base.es.repo.listener.QueryResultConsumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +33,9 @@ class QueryResponseParserTest {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     Map<String, ?> result = new HashMap<>();
     List<Map<String, ?>> results = new ArrayList<>();
-    QueryResultListener<Map<String, ?>> listener = (r) -> {
+    QueryResultConsumer<Map<String, ?>> listener = (r) -> {
       results.add(r);
-      return QueryResultListener.Progress.CONTINUE;
+      return QueryResultConsumer.Progress.CONTINUE;
     };
 
     CodeParams params = new CodeParams();
@@ -45,7 +45,7 @@ class QueryResponseParserTest {
     ObjectMapper mapper = producer.createFilteringObjectMapper();
     //mapper = new ObjectMapper();
 
-    AggregationResultListener aggListener = aggResult::put;
+    AggregationResultConsumer aggListener = aggResult::put;
 
     try (InputStream is = getTestResource()) {
       QueryResponseParser parser = new QueryResponseParser(mapper);

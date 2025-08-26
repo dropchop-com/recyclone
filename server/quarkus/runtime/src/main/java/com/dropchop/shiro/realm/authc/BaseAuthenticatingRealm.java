@@ -1,5 +1,6 @@
 package com.dropchop.shiro.realm.authc;
 
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -15,8 +16,7 @@ abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
 
   private static final Logger log = LoggerFactory.getLogger(BaseAuthenticatingRealm.class);
 
-  //private SecurityLoaderService securityLoaderService;
-  private SecurityLoadingService securityLoadingService;
+  private final SecurityLoadingService securityLoadingService;
 
 
   public SecurityLoadingService getSecurityLoadingService() {
@@ -24,34 +24,31 @@ abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
   }
 
 
-  public void setSecurityLoadingService(SecurityLoadingService securityLoadingService) {
+  public BaseAuthenticatingRealm(SecurityLoadingService securityLoadingService) {
     this.securityLoadingService = securityLoadingService;
   }
 
-
-  public BaseAuthenticatingRealm() {
-  }
-
-
-  public BaseAuthenticatingRealm(CacheManager cacheManager) {
+  public BaseAuthenticatingRealm(CacheManager cacheManager, SecurityLoadingService securityLoadingService) {
     super(cacheManager);
+    this.securityLoadingService = securityLoadingService;
   }
 
-
-  public BaseAuthenticatingRealm(CredentialsMatcher matcher) {
+  public BaseAuthenticatingRealm(CredentialsMatcher matcher, SecurityLoadingService securityLoadingService) {
     super(matcher);
+    this.securityLoadingService = securityLoadingService;
   }
 
-
-  public BaseAuthenticatingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
+  public BaseAuthenticatingRealm(CacheManager cacheManager, CredentialsMatcher matcher,
+                                 SecurityLoadingService securityLoadingService) {
     super(cacheManager, matcher);
+    this.securityLoadingService = securityLoadingService;
   }
-
 
   @Override
   protected AuthenticationInfo doGetAuthenticationInfo(final AuthenticationToken token) {
+    ProfileTimer timer = new ProfileTimer();
     AuthenticationInfo authInfo = this.invokeGetAuthenticationInfo(token);
-    log.info("Got principal [{}] authentication info.", token.getPrincipal());
+    log.info("Got principal [{}] authentication info in [{}].", token.getPrincipal(), timer.stop());
     return authInfo;
   }
 

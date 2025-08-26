@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.security.AccessKey;
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.service.security.AuthenticationService;
 import com.dropchop.recyclone.base.api.service.security.ClientAccessKeyService;
 import com.dropchop.shiro.jaxrs.ShiroSecurityContext;
@@ -69,7 +70,9 @@ public class ShiroAuthenticationService implements AuthenticationService {
     }
     try {
       Subject subject = getSubject();
+      ProfileTimer timer = new ProfileTimer();
       subject.login(token);
+      log.trace("Executed [{}] login in [{}]ms.", this.getClass().getName(), timer.stop());
       Object principal = subject.getPrincipal();
       if (principal instanceof HasId hasId) {
         Map<AccessKey, String> keys = clientAccessKeyService.createAccessKeys(hasId, token);

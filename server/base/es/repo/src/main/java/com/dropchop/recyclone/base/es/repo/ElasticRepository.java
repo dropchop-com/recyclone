@@ -18,8 +18,8 @@ import com.dropchop.recyclone.base.es.model.base.EsEntity;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.config.*;
-import com.dropchop.recyclone.base.es.repo.listener.AggregationResultListener;
-import com.dropchop.recyclone.base.es.repo.listener.QueryResultListener;
+import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
+import com.dropchop.recyclone.base.es.repo.listener.QueryResultConsumer;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import com.dropchop.recyclone.base.es.repo.marker.BlockAllDelete;
@@ -347,8 +347,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   protected <X> SearchResultMetadata executeSearch(QueryParams params,
                                                    QueryNodeObject queryObject,
                                                    Class<X> resultClass,
-                                                   List<QueryResultListener<X>> queryListeners,
-                                                   List<AggregationResultListener> aggListeners,
+                                                   List<QueryResultConsumer<X>> queryListeners,
+                                                   List<AggregationResultConsumer> aggListeners,
                                                    boolean searchAfterMode) {
     ProfileTimer timer = new ProfileTimer();
     ObjectMapper objectMapper = getObjectMapper();
@@ -413,15 +413,15 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
     // collect result listeners and aggregators from context
     Class<S> cls = elasticContext.getRootClass();
-    List<QueryResultListener<S>> queryListeners = new ArrayList<>();
-    List<AggregationResultListener> aggListeners = new ArrayList<>();
+    List<QueryResultConsumer<S>> queryListeners = new ArrayList<>();
+    List<AggregationResultConsumer> aggListeners = new ArrayList<>();
     for (RepositoryExecContextListener listener : context.getListeners()) {
-      if (listener instanceof QueryResultListener<?> queryResultListener) {
+      if (listener instanceof QueryResultConsumer<?> queryResultListener) {
         //noinspection unchecked
-        queryListeners.add((QueryResultListener<S>) queryResultListener);
+        queryListeners.add((QueryResultConsumer<S>) queryResultListener);
       }
-      if (listener instanceof AggregationResultListener aggregationResultListener) {
-        aggListeners.add(aggregationResultListener);
+      if (listener instanceof AggregationResultConsumer aggregationResultConsumer) {
+        aggListeners.add(aggregationResultConsumer);
       }
     }
 
@@ -431,7 +431,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       queryListeners.add(
           result -> {
             results.add(result);
-            return QueryResultListener.Progress.CONTINUE;
+            return QueryResultConsumer.Progress.CONTINUE;
           }
       );
     }

@@ -38,9 +38,12 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
 
   protected void checkDtoPermissions(List<D> dtos) {
     for (D dto : dtos) {
-      if (!authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(dto.identifier()))) {
-        throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
-          Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
+      CommonExecContext<?, ?> ctx = getExecutionContext();
+      if (ctx.hasRequiredPermissions()) {
+        if (!authorizationService.isPermitted(ctx.getSecurityDomainAction(dto.identifier()))) {
+          throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
+              Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
+        }
       }
     }
   }
@@ -52,9 +55,12 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
     MappingContext mapContext = mapperProvider.getMappingContextForRead();
     List<E> entities = repository.find(repository.getRepositoryExecContext(mapContext));
-    entities = entities.stream().filter(
-      e -> authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()))
-    ).collect(Collectors.toList());
+    CommonExecContext<?, ?> ctx = getExecutionContext();
+    if (ctx.hasRequiredPermissions()) {
+      entities = entities.stream().filter(
+          e -> authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
+      ).collect(Collectors.toList());
+    }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);

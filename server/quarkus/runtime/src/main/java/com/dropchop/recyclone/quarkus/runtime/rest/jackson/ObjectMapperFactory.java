@@ -126,7 +126,7 @@ public class ObjectMapperFactory {
     if (serializationTypeConfig != null) {
       serializationTypeConfig.getSubTypeMap().forEach(
           (key, value) -> {
-            log.info("Registering named type value [{}] for key [{}].", value, key);
+            log.trace("Registering named type value [{}] for key [{}].", value, key);
             mapper.registerSubtypes(new NamedType(value, key));
           }
       );

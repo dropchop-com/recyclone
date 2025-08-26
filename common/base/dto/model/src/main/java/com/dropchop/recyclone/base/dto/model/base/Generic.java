@@ -2,7 +2,6 @@ package com.dropchop.recyclone.base.dto.model.base;
 
 import com.dropchop.recyclone.base.api.model.attr.Attribute;
 import com.dropchop.recyclone.base.api.model.base.Dto;
-import com.dropchop.recyclone.base.api.model.base.Titled;
 import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.marker.HasName;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -39,7 +38,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @RequiredArgsConstructor
 @JsonInclude(NON_NULL)
 public class Generic implements
-    HasName, Dto, Titled, HasAttributes, com.dropchop.recyclone.base.api.model.base.Generic {
+    HasName, Dto, HasAttributes, com.dropchop.recyclone.base.api.model.base.Generic {
 
   @NonNull
   private String id;

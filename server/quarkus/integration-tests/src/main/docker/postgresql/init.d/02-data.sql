@@ -38,6 +38,9 @@ COPY public.language (created, deactivated, modified, code, lang, title) FROM st
 --
 
 COPY public.country (created, deactivated, modified, code, lang, title) FROM stdin;
+2025-08-24 05:37:37.980427+00	\N	2025-08-24 05:37:37.980049+00	SI	en	Slovenia
+2025-08-24 06:16:56.792084+00	\N	2025-08-24 06:16:56.792052+00	HR	en	Croatia
+2025-08-24 06:16:56.792254+00	\N	2025-08-24 06:16:56.792245+00	RS	en	Serbia
 \.
 
 
@@ -46,6 +49,15 @@ COPY public.country (created, deactivated, modified, code, lang, title) FROM std
 --
 
 COPY public.country_l (created, modified, title, fk_country_code, lang) FROM stdin;
+2025-08-24 05:45:30.020986+00	2025-08-24 05:45:30.020986+00	Slovenija	SI	sl
+2025-08-24 05:45:30.020989+00	2025-08-24 05:45:30.020989+00	Slovenija	SI	hr
+2025-08-24 05:45:30.020992+00	2025-08-24 05:45:30.020993+00	Slovenija	SI	sr
+2025-08-24 06:16:56.792188+00	2025-08-24 06:16:56.792189+00	Hrvaška	HR	sl
+2025-08-24 06:16:56.792190+00	2025-08-24 06:16:56.792191+00	Hrvatska	HR	hr
+2025-08-24 06:16:56.792192+00	2025-08-24 06:16:56.792194+00	Hrvatska	HR	sr
+2025-08-24 06:16:56.792272+00	2025-08-24 06:16:56.792273+00	Srbija	RS	sl
+2025-08-24 06:16:56.792274+00	2025-08-24 06:16:56.792275+00	Srbija	RS	hr
+2025-08-24 06:16:56.792276+00	2025-08-24 06:16:56.792277+00	Srbija	RS	sr
 \.
 
 
@@ -55,6 +67,8 @@ COPY public.country_l (created, modified, title, fk_country_code, lang) FROM std
 
 COPY public.tag (created, deactivated, modified, uuid, type, description, lang, name, title) FROM stdin;
 2025-05-16 13:37:03.416705+00	2025-05-16 13:37:03.416705+00	2025-05-16 13:37:03.416705+00	c73847a8-836a-3ad3-b4f8-4a331248088d	LanguageGroup	\N	en	slavic	Slavic
+2025-08-23 14:26:09.955550+00	\N	2025-08-23 14:26:09.955543+00	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	CountryGroup	\N	en	ex_yugoslavia	Ex Yugoslavia
+2025-08-23 14:25:22.393886+00	\N	2025-08-23 14:25:22.393851+00	32656c8d-8361-3bc0-ad3b-442e665d4839	CountryGroup	\N	en	european_union	European Union
 \.
 
 
@@ -63,6 +77,11 @@ COPY public.tag (created, deactivated, modified, uuid, type, description, lang, 
 --
 
 COPY public.country_t (idx, fk_tag_uuid, fk_country_code) FROM stdin;
+0	32656c8d-8361-3bc0-ad3b-442e665d4839	SI
+1	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	SI
+0	32656c8d-8361-3bc0-ad3b-442e665d4839	HR
+1	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	HR
+0	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	RS
 \.
 
 
@@ -379,6 +398,12 @@ COPY public.tag_a (fk_tag_uuid, name, type, value) FROM stdin;
 COPY public.tag_l (created, modified, fk_tag_uuid, title, description, lang) FROM stdin;
 2025-05-16 13:37:03.420367+00	2025-05-16 13:37:03.420367+00	c73847a8-836a-3ad3-b4f8-4a331248088d	Slovanski Jezik	\N	sl
 2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	c73847a8-836a-3ad3-b4f8-4a331248088d	Slovanski Jezik	\N	hr
+2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	32656c8d-8361-3bc0-ad3b-442e665d4839	Evropska Unija	\N	hr
+2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	32656c8d-8361-3bc0-ad3b-442e665d4839	Evropska Unija	\N	sr
+2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	32656c8d-8361-3bc0-ad3b-442e665d4839	Evropska Unija	\N	sl
+2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	Ex Jugoslavija	\N	hr
+2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	Ex Jugoslavija	\N	sr
+2025-05-16 13:37:03.423681+00	2025-05-16 13:37:03.423681+00	7d767bc7-86cc-36b7-a7a4-9bf79d100b3b	Ex Jugoslavija	\N	sl
 \.
 
 
