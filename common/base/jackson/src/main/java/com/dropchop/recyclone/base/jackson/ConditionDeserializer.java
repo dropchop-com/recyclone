@@ -7,6 +7,7 @@ import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.knn.Knn;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
@@ -43,14 +44,14 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
       String cname = entry.getKey();
       if (!cname.startsWith("$")) {
         throw new IllegalArgumentException(
-            "Invalid query conditioned field name structure at [" + name + "." + cname + "]!"
+          "Invalid query conditioned field name structure at [" + name + "." + cname + "]!"
         );
       }
       Class<? extends ConditionOperator> cClass = (Class<? extends ConditionOperator>)
         ConditionOperator.supported().get(cname.substring(1));
       if (cClass == null) {
         throw new UnsupportedOperationException(
-            "Missing condition implementation for [" + name + "." + cname + "]!"
+          "Missing condition implementation for [" + name + "." + cname + "]!"
         );
       }
       cClasses.add(cClass);
@@ -67,7 +68,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
       JsonNode valueNode1 = fields.get(cNames.getFirst());
       Object value1 = this.parseValidate(name + "." + cNames.getFirst(), valueNode1);
       JsonNode valueNode2 = fields.get(cNames.getLast());
-      Object value2 =  this.parseValidate(name + "." + cNames.getLast(), valueNode2);
+      Object value2 = this.parseValidate(name + "." + cNames.getLast(), valueNode2);
       if (Gt.class.equals(cClasses.getFirst()) && Lt.class.equals(cClasses.getLast())) {
         return new ConditionedField(name, new OpenInterval<>(value1, value2));
       } else if (Gt.class.equals(cClasses.getFirst()) && Lte.class.equals(cClasses.getLast())) {
@@ -78,7 +79,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
         return new ConditionedField(name, new OpenInterval<>(value1, value2));
       } else {
         throw new IllegalArgumentException(
-            "Missing condition implementation for conditioned field operators [" + name + "." + cNames + "]!"
+          "Missing condition implementation for conditioned field operators [" + name + "." + cNames + "]!"
         );
       }
     } else {
@@ -88,72 +89,72 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
         Object value1 = ValueParser.parse(valueNode);
         return new ConditionedField(name, new Eq<>(value1));
       } else if (Match.class.equals(cClasses.getFirst())) {
-        if(!valueNode.isObject() || valueNode.isEmpty()) {
+        if (!valueNode.isObject() || valueNode.isEmpty()) {
           throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
         }
         if (operatorName.endsWith("match")) {
           try {
             String conditionValue = valueNode.get("value").asText();
             Boolean caseInsensitive = valueNode.has("caseInsensitive")
-                ? valueNode.get("caseInsensitive").asBoolean()
-                : null;
+              ? valueNode.get("caseInsensitive").asBoolean()
+              : null;
 
             Integer slop = valueNode.has("slop")
-                ? valueNode.get("slop").asInt()
-                : null;
+              ? valueNode.get("slop").asInt()
+              : null;
 
             Boolean inOrder = valueNode.has("inOrder")
-                ? valueNode.get("inOrder").asBoolean()
-                : null;
+              ? valueNode.get("inOrder").asBoolean()
+              : null;
 
             return new ConditionedField(
-                name, new Match<>(new AdvancedText(conditionValue, caseInsensitive, slop, inOrder))
+              name, new Match<>(new AdvancedText(conditionValue, caseInsensitive, slop, inOrder))
             );
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                "Invalid [%s] format at [%s]: %s".formatted(AdvancedText.class.getSimpleName(), name, e.getMessage()),
-                e
+              "Invalid [%s] format at [%s]: %s".formatted(AdvancedText.class.getSimpleName(), name, e.getMessage()),
+              e
             );
           }
         } else if (operatorName.endsWith("matchPhrase")) {
           try {
             String conditionValue = valueNode.get("value").asText();
             String analyzer = valueNode.has("analyzer")
-                ? valueNode.get("analyzer").asText()
-                : null;
+              ? valueNode.get("analyzer").asText()
+              : null;
 
             Integer slop = valueNode.has("slop")
-                ? valueNode.get("slop").asInt()
-                : null;
+              ? valueNode.get("slop").asInt()
+              : null;
 
             return new ConditionedField(name, new Match<>(new Phrase(conditionValue, analyzer, slop)));
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                "Invalid [%s] format at [%s]: %s".formatted(Phrase.class.getSimpleName(), name, e.getMessage()),
-                e
+              "Invalid [%s] format at [%s]: %s".formatted(Phrase.class.getSimpleName(), name, e.getMessage()),
+              e
             );
           }
         } else if (operatorName.endsWith("matchWildcard")) {
           try {
             String conditionValue = valueNode.get("value").asText();
             Boolean caseInsensitive = valueNode.has("caseInsensitive")
-                ? valueNode.get("caseInsensitive").asBoolean()
-                : null;
+              ? valueNode.get("caseInsensitive").asBoolean()
+              : null;
 
             Float boost = valueNode.has("boost")
-                ? Double.valueOf(valueNode.get("boost").asDouble()).floatValue()
-                : null;
+              ? Double.valueOf(valueNode.get("boost").asDouble()).floatValue()
+              : null;
 
             return new ConditionedField(name, new Match<>(new Wildcard(conditionValue, caseInsensitive, boost)));
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                "Invalid [%s] format at [%s]: %s".formatted(Wildcard.class.getSimpleName(), name, e.getMessage()),
-                e
+              "Invalid [%s] format at [%s]: %s".formatted(Wildcard.class.getSimpleName(), name, e.getMessage()),
+              e
             );
           }
         } else {
           throw new IllegalArgumentException(
-              "Invalid Match text format at [%s]".formatted(name)
+            "Invalid Match text format at [%s]".formatted(name)
           );
         }
       } else if (In.class.equals(cClasses.getFirst())) {
@@ -176,7 +177,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
         return new ConditionedField(name, new Gte<>(value));
       } else {
         throw new IllegalArgumentException(
-            "Missing condition implementation for conditioned field operator [" + name + "." + cNames.getFirst() + "]!"
+          "Missing condition implementation for conditioned field operator [" + name + "." + cNames.getFirst() + "]!"
         );
       }
     }
@@ -237,8 +238,40 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           String cname = valueNode.fieldNames().next();
           Condition v = parseCondition(cname, valueNode.get(cname));
           return new Not(v);
-        } else {
-          throw new UnsupportedOperationException("Missing condition implementation for [" + name + "]!");
+        } else if (cClass.equals(Knn.class)) {
+          if (!valueNode.isObject() || valueNode.isEmpty()) {
+            throw new IllegalArgumentException("Invalid query structure at [" + name + "] value is missing or wrong!");
+          }
+          JsonNode fieldNode = valueNode.get("field");
+          if (fieldNode == null || !fieldNode.isTextual()) {
+            throw new IllegalArgumentException("Invalid KNN query: 'field' is required and must be a string at [" + name + "]!");
+          }
+          String field = fieldNode.asText();
+          JsonNode queryVectorNode = valueNode.get("query_vector");
+          if (queryVectorNode == null || !queryVectorNode.isArray()) {
+            throw new IllegalArgumentException("Invalid KNN query: 'query_vector' is required and must be an array at [" + name + "]!");
+          }
+          float[] queryVector = new float[queryVectorNode.size()];
+          for (int i = 0; i < queryVectorNode.size(); i++) {
+            queryVector[i] = (float) queryVectorNode.get(i).asDouble();
+          }
+          Integer k = null;
+          JsonNode kNode = valueNode.get("k");
+          if (kNode != null && kNode.isIntegralNumber()) {
+            k = kNode.asInt();
+          }
+          Condition filter = null;
+          JsonNode filterNode = valueNode.get("filter");
+          if (filterNode != null && filterNode.isObject()) {
+            String filterName = filterNode.fieldNames().next();
+            filter = parseCondition(filterName, filterNode.get(filterName));
+          }
+          Float similarity = null;
+          JsonNode similarityNode = valueNode.get("similarity");
+          if (similarityNode != null && similarityNode.isNumber()) {
+            similarity = (float) similarityNode.asDouble();
+          }
+          return Knn.of(field, queryVector, k, filter, similarity);
         }
       }
     } else {

@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.api.model.query;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.knn.Knn;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
@@ -25,7 +26,8 @@ public interface Condition {
       "or", Or.class,
       "not", Not.class,
       "field", Field.class,
-      "conditionedField", ConditionedField.class
+      "conditionedField", ConditionedField.class,
+      "knn", Knn.class
     );
   }
 
@@ -55,6 +57,18 @@ public interface Condition {
 
   static <T> Field<T> field(String name, T value) {
     return new Field<>(name, value);
+  }
+
+  static Knn knn(String field, float[] queryVector, Integer k) {
+    return Knn.of(field, queryVector, k);
+  }
+
+  static Knn knn(String field, float[] queryVector, Integer k, Condition filter) {
+    return Knn.of(field, queryVector, k, filter);
+  }
+
+  static Knn knn(String field, float[] queryVector, Integer k, Condition filter, Float similarity) {
+    return Knn.of(field, queryVector, k, filter, similarity);
   }
 
   static ConditionedField advancedText(String name, String value) {

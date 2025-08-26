@@ -4,7 +4,6 @@ import com.dropchop.recyclone.base.api.model.query.Aggregation;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
-import com.dropchop.recyclone.base.api.model.query.knn.KnnQuery;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -40,11 +39,6 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
       aggregate(com.dropchop.recyclone.base.api.model.query.Aggregation.aggs(aggs));
       return self();
     }
-
-    public B knn(KnnQuery knn) {
-      knnQuery(knn);
-      return self();
-    }
   }
 
   @Override
@@ -58,9 +52,6 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
 
   @ToString.Include
   private AggregationList aggregate;
-
-  @ToString.Include
-  private KnnQuery knnQuery;
 
   @Override
   public String toString() {

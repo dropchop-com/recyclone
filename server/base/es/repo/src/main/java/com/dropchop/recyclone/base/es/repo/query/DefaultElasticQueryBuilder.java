@@ -9,13 +9,10 @@ import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
-import com.dropchop.recyclone.base.api.model.query.knn.KnnQuery;
+import com.dropchop.recyclone.base.api.model.query.knn.Knn;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
-import com.dropchop.recyclone.base.es.model.query.BoolQueryObject;
-import com.dropchop.recyclone.base.es.model.query.MatchAllObject;
-import com.dropchop.recyclone.base.es.model.query.OperatorNodeObject;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.*;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -58,6 +55,30 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
         validationData.addRootField(fieldName, parentCond);
       }
       return mapConditionField(fieldName, operator);
+    } else if (condition instanceof Knn) {
+      if (validationData != null) {
+        validationData.addKnnField(((Knn) condition).getField());
+      }
+
+      KnnNodeObject knnNode = new KnnNodeObject(null, (Knn) condition);
+      QueryNodeObject queryNodeObject = new QueryNodeObject();
+      QueryNodeObject mustObject = new QueryNodeObject();
+
+      if (((Knn) condition).getFilter() != null) {
+        ValidationData filterValidation = new ValidationData();
+        QueryNodeObject filterQuery = mapCondition(filterValidation, ((Knn) condition).getFilter(),
+          null, null);
+        knnNode.addFilter(filterQuery);
+      }
+
+      queryNodeObject.put("knn", knnNode);
+
+      if (parentCond != null) {
+        return queryNodeObject;
+      }
+
+      mustObject.put("must", queryNodeObject);
+      return mustObject;
     } else if (condition instanceof Field<?> field) {
       String fieldName = field.getName();
       if (validationData != null) {
@@ -220,11 +241,6 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return true;
   }
 
-  protected boolean isSimpleKnnSearch(QueryParams params) {
-    boolean hasConditions = params.getCondition() != null && hasActualConditions(params.getCondition());
-    return !hasConditions && params.getKnnQuery() != null;
-  }
-
   protected void ensureBoolQueryStructure(QueryNodeObject query) {
     if (!query.containsKey("bool")) {
       Object existingQuery = null;
@@ -242,63 +258,6 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
       query.put("bool", boolQuery);
     }
-  }
-
-  protected QueryNodeObject buildKnnQuery(KnnQuery knnQuery, ValidationData validationData) {
-    QueryNodeObject knnNode = new QueryNodeObject();
-
-    knnNode.put("field", knnQuery.getField());
-
-    if (validationData != null) {
-      validationData.addKnnField(knnQuery.getField());
-    }
-
-    if (knnQuery.getQueryVector() != null) {
-      knnNode.put("query_vector", knnQuery.getQueryVector());
-    } else {
-      throw new ServiceException(
-        ErrorCode.parameter_validation_error,
-        "kNN query must have query_vector"
-      );
-    }
-
-    if (knnQuery.getK() != null) {
-      knnNode.put("k", knnQuery.getK());
-    }
-
-    if (knnQuery.getNumCandidates() != null) {
-      if (knnQuery.getNumCandidates() > 10000) {
-        throw new ServiceException(
-          ErrorCode.parameter_validation_error,
-          "num_candidates cannot exceed 10,000"
-        );
-      }
-      knnNode.put("num_candidates", knnQuery.getNumCandidates());
-    }
-
-    if (knnQuery.getFilter() != null) {
-      ValidationData filterValidation = new ValidationData();
-      QueryNodeObject filterQuery = mapCondition(filterValidation, knnQuery.getFilter(),
-        null, null);
-
-      QueryNodeObject wrappedFilter = new QueryNodeObject();
-      wrappedFilter.put("bool", filterQuery);
-      knnNode.put("filter", wrappedFilter);
-    }
-
-    if (knnQuery.getSimilarity() != null) {
-      knnNode.put("similarity", knnQuery.getSimilarity());
-    }
-
-    if (knnQuery.getBoost() != null && !knnQuery.getBoost().equals(1.0f)) {
-      knnNode.put("boost", knnQuery.getBoost());
-    }
-
-    if (knnQuery.getName() != null) {
-      knnNode.put("_name", knnQuery.getName());
-    }
-
-    return knnNode;
   }
 
   @Override
@@ -349,6 +308,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
   @Override
   public QueryNodeObject build(ValidationData validationData, ElasticIndexConfig indexConfig, QueryParams params) {
+    QueryNodeObject query = new QueryNodeObject();
     QueryNodeObject queryContainer = new QueryNodeObject();
 
     boolean useSearchAfterMode = useSearchAfter(indexConfig, params);
@@ -356,9 +316,6 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
     int size = params.tryGetResultFilter().size();
     int from = params.tryGetResultFilter().from();
-
-    boolean hasKnnQuery = params.getKnnQuery() != null;
-    boolean hasConditions = params.getCondition() != null && hasActualConditions(params.getCondition());
 
     if (useSearchAfterMode) {
       if (sort == null) {
@@ -372,55 +329,17 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       queryContainer.put("size", size);
     }
 
-    if (sort != null && !hasConditions) {
+    if (sort != null) {
       queryContainer.putAll(sort);
     }
 
-    if (hasConditions || hasKnnQuery) {
-      if (hasKnnQuery && !hasConditions) {
-        QueryNodeObject knnQuery = buildKnnQuery(params.getKnnQuery(), validationData);
-        queryContainer.put("knn", knnQuery);
-
-        QueryNodeObject query = new QueryNodeObject();
-        MatchAllObject matchAll = new MatchAllObject();
-        query.put("match_all", matchAll);
-        queryContainer.put("query", query);
-      } else if (!hasKnnQuery) {
-        QueryNodeObject conditions = mapCondition(
-          validationData, params.getCondition(), null, null
-        );
-        QueryNodeObject query = new QueryNodeObject();
-        query.put("bool", conditions);
-        queryContainer.put("query", query);
-      } else {
-        QueryNodeObject conditions = mapCondition(
-          validationData, params.getCondition(), null, null
-        );
-
-        QueryNodeObject hybridQuery = new QueryNodeObject();
-        QueryNodeObject boolSection = new QueryNodeObject();
-
-        List<Object> mustArray = new ArrayList<>();
-        if (conditions instanceof BoolQueryObject) {
-          QueryNodeObject conditionsWrapper = new QueryNodeObject();
-          conditionsWrapper.put("bool", conditions);
-          mustArray.add(conditionsWrapper);
-        } else {
-          mustArray.add(conditions);
-        }
-        boolSection.put("must", mustArray);
-
-        List<Object> shouldArray = new ArrayList<>();
-        QueryNodeObject knnWrapper = new QueryNodeObject();
-        knnWrapper.put("knn", buildKnnQuery(params.getKnnQuery(), validationData));
-        shouldArray.add(knnWrapper);
-        boolSection.put("should", shouldArray);
-
-        hybridQuery.put("bool", boolSection);
-        queryContainer.put("query", hybridQuery);
-      }
+    if (params.getCondition() != null) {
+      QueryNodeObject conditions = mapCondition(
+        validationData, params.getCondition(), null, null
+      );
+      query.put("bool", conditions);
+      queryContainer.put("query", query);
     } else {
-      QueryNodeObject query = new QueryNodeObject();
       MatchAllObject matchAll = new MatchAllObject();
       query.put("match_all", matchAll);
       queryContainer.put("query", query);

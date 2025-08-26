@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.base.es.repo.mapper;
 
-import com.dropchop.recyclone.base.api.model.query.knn.KnnQuery;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
@@ -21,189 +20,7 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 
 public class ElasticsearchQueryBuilderTest {
 
-  /*@Test
-  public void testConditionMapper() throws JsonProcessingException, JSONException {
-    Condition c = and(
-      or(
-        not(
-          field(
-            "updated",
-            in(3, 2, 1)
-          )
-        ),
-        field(
-          "title",
-          in(1, 2, 3)
-        )
-      ),
-      field(
-        "lol",
-        eq("drone")
-      )
-    );
-
-    String correctJson =
-      """
-        {
-           "must": [
-             {
-               "bool": {
-                 "should": [
-                   {
-                     "bool": {
-                       "must_not":
-                         {
-                           "terms": {
-                             "updated": [3, 2, 1]
-                           }
-                         }
-                     }
-                   },
-                   {
-                     "terms": {
-                       "title": [1, 2, 3]
-                     }
-                   }
-                 ],
-                 "minimum_should_match": 1
-               }
-             },
-             {
-               "term": {
-                 "lol": "drone"
-               }
-             }
-           ]
-         }
-      """;
-
-    QueryNodeObject ob = mapCondition(c, null);
-
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    String json = objectMapper.writeValueAsString(ob);
-
-    JSONAssert.assertEquals(correctJson, json, true);
-  }
-
   @Test
-  public void testAggregationMapper() throws JsonProcessingException, JSONException {
-    AggregationList a = aggs(
-      max(
-        "price_max",
-        "price",
-        dateHistogram(
-          "price_histogram",
-          "price",
-          "month"
-        ),
-        count(
-          "price_count",
-          "price"
-        ),
-        avg(
-          "price_avg",
-          "price",
-          cardinality(
-            "price_cardinality",
-            "price",
-            terms(
-              "price_terms",
-              "price"
-            )
-          )
-        )
-      ),
-      min(
-        "price_min",
-        "price",
-        dateHistogram(
-          "price_histogram",
-          "price",
-          "seconds",
-          sum(
-            "price_sum",
-            "price"
-          )
-        )
-      )
-    );
-
-    String jsonOutput1 = """
-      {
-         "aggs": {
-           "price_max": {
-             "max": {
-               "field": "price"
-             },
-             "aggs": {
-               "price_histogram": {
-                 "date_histogram": {
-                   "field": "price",
-                   "calendar_interval": "month"
-                 }
-               },
-               "price_count": {
-                 "value_count": {
-                   "field": "price"
-                 }
-               },
-               "price_avg": {
-                 "avg": {
-                   "field": "price"
-                 },
-                 "aggs": {
-                   "price_cardinality": {
-                     "cardinality": {
-                       "field": "price"
-                     },
-                     "aggs": {
-                       "price_terms": {
-                         "terms": {
-                           "field": "price"
-                         }
-                       }
-                     }
-                   }
-                 }
-               }
-             }
-           },
-           "price_min": {
-             "min": {
-               "field": "price"
-             },
-             "aggs": {
-               "price_histogram": {
-                 "date_histogram": {
-                   "field": "price",
-                   "calendar_interval": "seconds"
-                 },
-                 "aggs": {
-                   "price_sum": {
-                     "sum": {
-                       "field": "price"
-                     }
-                   }
-                 }
-               }
-             }
-           }
-         }
-       }
-     """;
-
-    QueryNodeObject agg = mapAggregation(a);
-
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    String jsonOutput2 = objectMapper.writeValueAsString(agg);
-
-    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
-  }*/
-
-  @Test
-  @SuppressWarnings("unused")
   public void testQueryParams() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
       and(
@@ -394,8 +211,8 @@ public class ElasticsearchQueryBuilderTest {
                 }
             }
         },
-        from: 0,
-        size: 100
+        "from": 0,
+        "size": 100
       }
       """;
 
@@ -494,8 +311,8 @@ public class ElasticsearchQueryBuilderTest {
               }
             }
           },
-          from: 0,
-          size: 100
+          "from": 0,
+          "size": 100
         }
         """;
 
@@ -559,8 +376,8 @@ public class ElasticsearchQueryBuilderTest {
               }
             }
           },
-          from: 0,
-          size: 100
+          "from": 0,
+          "size": 100
         }
         """;
 
@@ -615,8 +432,8 @@ public class ElasticsearchQueryBuilderTest {
               }
             }
           },
-          from: 0,
-          size: 100
+          "from": 0,
+          "size": 100
         }
         """;
 
@@ -669,8 +486,8 @@ public class ElasticsearchQueryBuilderTest {
              }
            }
          },
-         from: 0,
-         size: 100
+         "from": 0,
+         "size": 100
        }
        """;
 
@@ -723,8 +540,8 @@ public class ElasticsearchQueryBuilderTest {
             }
           }
         },
-        from: 0,
-        size: 100
+        "from": 0,
+        "size": 100
       }
       """;
 
@@ -779,8 +596,8 @@ public class ElasticsearchQueryBuilderTest {
             }
           }
         },
-        from: 0,
-        size: 100
+        "from": 0,
+        "size": 100
       }
       """;
 
@@ -829,8 +646,8 @@ public class ElasticsearchQueryBuilderTest {
             }
           }
         },
-        from: 0,
-        size: 100
+        "from": 0,
+        "size": 100
       }
       """;
 
@@ -844,91 +661,40 @@ public class ElasticsearchQueryBuilderTest {
   }
 
   @Test
-  public void testSimpleKnnQuery() throws JsonProcessingException, JSONException {
-    QueryParams params = QueryParams.builder()
-      .knnQuery(KnnQuery.builder()
-        .field("product_embedding")
-        .queryVector(new float[]{0.1f, 0.2f, 0.3f, 0.4f, 0.5f})
-        .k(10)
-        .build())
-      .build();
-
-    String expectedJson = """
-      {
-        "knn": {
-          "field": "product_embedding",
-          "query_vector": [0.1, 0.2, 0.3, 0.4, 0.5],
-          "k": 10
-        },
-        "query": {
-          "match_all": {}
-        },
-        "from": 0,
-        "size": 100
-      }
-      """;
-
-    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
-    ObjectMapperFactory factory = new ObjectMapperFactory();
-    ObjectMapper ob = factory.createObjectMapper();
-    QueryNodeObject result = es.build(new ValidationData(), params);
-
-    String json = ob.writeValueAsString(result);
-    JSONAssert.assertEquals(expectedJson, json, true);
-  }
-
-  @Test
   public void testHybridSearchKnnWithTextConditions() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder()
       .condition(and(
         field("title", "smartphone"),
-        field("category", eq("electronics"))
+        field("category", eq("electronics")),
+        knn("product_embedding", new float[]{0.5f, 0.3f, 0.8f}, 5)
       ))
-      .knnQuery(KnnQuery.builder()
-        .field("product_embedding")
-        .queryVector(new float[]{0.5f, 0.3f, 0.8f})
-        .k(5)
-        .boost(1.5f)
-        .build())
       .build();
 
     String expectedJson = """
-      {
-        "query": {
-          "bool": {
-            "must": [
-              {
-                "bool": {
-                  "must": [
-                    {
-                      "term": {
-                        "title": "smartphone"
-                      }
-                    },
-                    {
-                      "term": {
-                        "category": "electronics"
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            "should": [
-              {
-                "knn": {
-                  "field": "product_embedding",
-                  "query_vector": [0.5, 0.3, 0.8],
-                  "k": 5,
-                  "boost": 1.5
-                }
-              }
-            ]
-          }
-        },
-        "from": 0,
-        "size": 100
-      }
+      
+          {
+         "from" : 0,
+         "size" : 100,
+         "query" : {
+           "bool" : {
+             "must" : [ {
+               "term" : {
+                 "title" : "smartphone"
+               }
+             }, {
+               "term" : {
+                 "category" : "electronics"
+               }
+             }, {
+               "knn" : {
+                 "field" : "product_embedding",
+                 "query_vector" : [ 0.5, 0.3, 0.8 ],
+                 "k" : 5
+               }
+             } ]
+           }
+         }
+       }
       """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
@@ -943,68 +709,63 @@ public class ElasticsearchQueryBuilderTest {
   @Test
   public void testKnnQueryWithComplexFilter() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder()
-      .knnQuery(KnnQuery.builder()
-        .field("article_embedding")
-        .queryVector(new float[]{0.2f, 0.4f, 0.6f, 0.8f})
-        .k(12)
-        .numCandidates(60)
-        .filter(or(
-          and(
-            field("status", eq("published")),
-            field("views", gte(1000))
+      .condition(
+        knn(
+          "article_embedding",
+          new float[]{0.2f, 0.4f, 0.6f, 0.8f},
+          12,
+          or(
+            and(
+              field("status", eq("published")),
+              field("views", gte(1000))
+            ),
+            field("featured", eq(true))
           ),
-          field("featured", eq(true))
-        ))
-        .similarity(0.7f)
-        .name("article_similarity_search")
-        .build())
+          0.7f
+        )
+      )
       .build();
 
     String expectedJson = """
       {
-        "knn": {
-          "field": "article_embedding",
-          "query_vector": [0.2, 0.4, 0.6, 0.8],
-          "k": 12,
-          "num_candidates": 60,
-          "filter": {
-            "bool": {
-              "should": [
-                {
-                  "bool": {
-                    "must": [
-                      {
-                        "term": {
-                          "status": "published"
-                        }
-                      },
-                      {
-                        "range": {
-                          "views": {
-                            "gte": 1000
+        "from" : 0,
+        "size" : 100,
+        "query" : {
+          "bool" : {
+            "must" : {
+              "knn" : {
+                "field" : "article_embedding",
+                "query_vector" : [ 0.2, 0.4, 0.6, 0.8 ],
+                "k" : 12,
+                "similarity" : 0.7,
+                "filter" : {
+                  "bool" : {
+                    "should" : [ {
+                      "bool" : {
+                        "must" : [ {
+                          "term" : {
+                            "status" : "published"
                           }
-                        }
+                        }, {
+                          "range" : {
+                            "views" : {
+                              "gte" : 1000
+                            }
+                          }
+                        } ]
                       }
-                    ]
-                  }
-                },
-                {
-                  "term": {
-                    "featured": true
+                    }, {
+                      "term" : {
+                        "featured" : true
+                      }
+                    } ],
+                    "minimum_should_match" : 1
                   }
                 }
-              ],
-              "minimum_should_match": 1
+              }
             }
-          },
-          "similarity": 0.7,
-          "_name": "article_similarity_search"
-        },
-        "query": {
-          "match_all": {}
-        },
-        "from": 0,
-        "size": 100
+          }
+        }
       }
       """;
 
@@ -1020,11 +781,9 @@ public class ElasticsearchQueryBuilderTest {
   @Test
   public void testKnnQueryWithAggregations() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder()
-      .knnQuery(KnnQuery.builder()
-        .field("user_behavior_embedding")
-        .queryVector(new float[]{0.3f, 0.7f, 0.9f})
-        .k(20)
-        .build())
+      .condition(
+        knn("user_behavior_embedding", new float[]{0.3f, 0.7f, 0.9f}, 20)
+      )
       .aggregate(aggs(
         terms("category_breakdown", "category", 10),
         avg("avg_price", "price"),
@@ -1034,34 +793,37 @@ public class ElasticsearchQueryBuilderTest {
 
     String expectedJson = """
       {
-        "knn": {
-          "field": "user_behavior_embedding",
-          "query_vector": [0.3, 0.7, 0.9],
-          "k": 20
-        },
-        "query": {
-          "match_all": {}
-        },
-        "aggs": {
-          "category_breakdown": {
-            "terms": {
-              "field": "category",
-              "size": 10
-            }
-          },
-          "avg_price": {
-            "avg": {
-              "field": "price"
-            }
-          },
-          "unique_brands": {
-            "cardinality": {
-              "field": "brand"
+        "from" : 0,
+        "size" : 100,
+        "query" : {
+          "bool" : {
+            "must" : {
+              "knn" : {
+                "field" : "user_behavior_embedding",
+                "query_vector" : [ 0.3, 0.7, 0.9 ],
+                "k" : 20
+              }
             }
           }
         },
-        "from": 0,
-        "size": 100
+        "aggs" : {
+          "category_breakdown" : {
+            "terms" : {
+              "field" : "category",
+              "size" : 10
+            }
+          },
+          "avg_price" : {
+            "avg" : {
+              "field" : "price"
+            }
+          },
+          "unique_brands" : {
+            "cardinality" : {
+              "field" : "brand"
+            }
+          }
+        }
       }
       """;
 
@@ -1083,16 +845,10 @@ public class ElasticsearchQueryBuilderTest {
           field("brand", eq("Apple"))
         ),
         field("price", gteLt(50.0, 1000.0)),
-        not(field("discontinued", eq(true)))
+        not(field("discontinued", eq(true))),
+        knn("product_features", new float[]{0.4f, 0.6f, 0.2f, 0.8f}, 10),
+        advancedText("")
       ))
-      .knnQuery(KnnQuery.builder()
-        .field("product_features")
-        .queryVector(new float[]{0.4f, 0.6f, 0.2f, 0.8f})
-        .k(10)
-        .numCandidates(100)
-        .boost(2.0f)
-        .name("feature_similarity")
-        .build())
       .aggregate(aggs(
         terms("top_categories", "category", 5),
         dateHistogram("sales_over_time", "created", "month")
@@ -1100,83 +856,107 @@ public class ElasticsearchQueryBuilderTest {
       .build();
 
     String expectedJson = """
-      {
-        "query": {
-          "bool": {
-            "must": [
-              {
-                "bool": {
-                  "must": [
-                    {
-                      "bool": {
-                        "should": [
-                          {
-                            "terms": {
-                              "category": ["electronics", "gadgets"]
-                            }
-                          },
-                          {
-                            "term": {
-                              "brand": "Apple"
-                            }
-                          }
-                        ],
-                        "minimum_should_match": 1
-                      }
-                    },
-                    {
-                      "range": {
-                        "price": {
-                          "gte": 50.0,
-                          "lt": 1000.0
-                        }
-                      }
-                    },
-                    {
-                      "bool": {
-                        "must_not": {
-                          "term": {
-                            "discontinued": true
-                          }
-                        }
-                      }
-                    }
-                  ]
+    {
+      "from" : 0,
+      "size" : 100,
+      "query" : {
+        "bool" : {
+          "must" : [ {
+            "bool" : {
+              "should" : [ {
+                "terms" : {
+                  "category" : [ "electronics", "gadgets" ]
+                }
+              }, {
+                "term" : {
+                  "brand" : "Apple"
+                }
+              } ],
+              "minimum_should_match" : 1
+            }
+          }, {
+            "range" : {
+              "price" : {
+                "gte" : 50.0,
+                "lt" : 1000.0
+              }
+            }
+          }, {
+            "bool" : {
+              "must_not" : {
+                "term" : {
+                  "discontinued" : true
                 }
               }
-            ],
-            "should": [
-              {
-                "knn": {
-                  "field": "product_features",
-                  "query_vector": [0.4, 0.6, 0.2, 0.8],
-                  "k": 10,
-                  "num_candidates": 100,
-                  "boost": 2.0,
-                  "_name": "feature_similarity"
-                }
-              }
-            ]
+            }
+          }, {
+            "knn" : {
+              "field" : "product_features",
+              "query_vector" : [ 0.4, 0.6, 0.2, 0.8 ],
+              "k" : 10
+            }
+          } ]
+        }
+      },
+      "aggs" : {
+        "top_categories" : {
+          "terms" : {
+            "field" : "category",
+            "size" : 5
           }
         },
-        "aggs": {
-          "top_categories": {
-            "terms": {
-              "field": "category",
-              "size": 5
+        "sales_over_time" : {
+          "date_histogram" : {
+            "field" : "created",
+            "calendar_interval" : "month"
+          }
+        }
+      }
+    }
+  """;
+
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject result = es.build(new ValidationData(), params);
+
+    String json = ob.writeValueAsString(result);
+    JSONAssert.assertEquals(expectedJson, json, true);
+  }
+
+  @Test
+  public void testKnnAsCondition() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder()
+      .condition(and(
+        field("category", eq("electronics")),
+        knn("product_embedding", new float[]{0.1f, 0.2f, 0.3f}, 5)
+      ))
+      .build();
+
+    String expectedJson = """
+  {
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "term": {
+              "category": "electronics"
             }
           },
-          "sales_over_time": {
-            "date_histogram": {
-              "field": "created",
-              "calendar_interval": "month"
+          {
+            "knn": {
+              "field": "product_embedding",
+              "query_vector": [0.1, 0.2, 0.3],
+              "k": 5
             }
           }
-        },
-        "from": 0,
-        "size": 100
+        ]
       }
-      """;
+    },
+    "from": 0,
+    "size": 100
+  }
+  """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
