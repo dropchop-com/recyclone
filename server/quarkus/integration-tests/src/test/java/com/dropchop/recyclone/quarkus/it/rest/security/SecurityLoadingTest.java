@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.INTERNAL_SEGMENT;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.*;
+import static com.dropchop.recyclone.quarkus.it.rest.Constants.*;
 import static com.dropchop.recyclone.quarkus.it.rest.security.SecurityLoadingTest.Data.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
@@ -101,7 +102,7 @@ public class SecurityLoadingTest {
     List<Domain> domainsResult = given()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(domain))
       .when()
@@ -133,7 +134,7 @@ public class SecurityLoadingTest {
     List<Permission> permissionsResult = given()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(permissions)
       .when()
@@ -150,7 +151,7 @@ public class SecurityLoadingTest {
 
   /**
    * Creates role nodes for organization and organization unit targets
-   * Adds template permissions both targets.
+   * Adds template permissions to both targets.
    * Tests if all data is properly loaded.
    **/
   @Test
@@ -183,7 +184,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(roleNodeOrgTemplate))
       .when()
@@ -203,11 +204,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(roleNodeOrgPermissions)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
+      .post(ROLE_NODE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -219,11 +220,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(roleNodeOrgUnitTemplate))
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE)
+      .post(ROLE_NODE_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -239,11 +240,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(roleNodeOrgUnitPermissions)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
+      .post(ROLE_NODE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -259,7 +260,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(orgParams)
       .when()
@@ -281,7 +282,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(orgUnitParams)
       .when()
@@ -302,12 +303,12 @@ public class SecurityLoadingTest {
    * Creates role nodes for organization and organization unit instances.
    * Creates template permission (DELETE with allowed = false) for organization unit on organization instance role node
    * Loads permissions for organization unit and checks if resolved organization unit DELETE permission is not allowed.
-   * Test data prepare by previous test.
+   * Test data prepared by a previous test.
    */
   @Test
   @Order(20)
   public void testLoadFirstLevelPermissionTemplates() {
-    //role node for organization instance
+    //role node for an organization instance
     RoleNode organizationRoleNode = SecurityHelper.roleNodeOf(
       ORG_ROLE_NODE_ID, ORG_ENTITY, null,
       ORG_ENTITY, ORG_ENTITY_ID, ORG_ENTITY + "-" + ORG_ENTITY_ID,
@@ -325,11 +326,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(organizationRoleNode))
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE)
+      .post(ROLE_NODE_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -339,11 +340,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(organizationUnitRoleNode))
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE + "?c_level=4")
+      .post(ROLE_NODE_ENDPOINT + "?c_level=4")
       .then()
       .statusCode(200)
       .extract()
@@ -371,11 +372,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(deletePermission))
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
+      .post(ROLE_NODE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -386,7 +387,7 @@ public class SecurityLoadingTest {
       assertNotNull(((RoleNodePermissionTemplate) p).getTarget());
     }
 
-    //load permissions for org unit
+    //load permissions for an org unit
     RoleNodeParams params = new RoleNodeParams();
     params.setEntity(ORG_UNIT_ENTITY);
     params.setEntityId(ORG_UNIT_ENTITY_ID);
@@ -396,7 +397,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(params)
       .when()
@@ -432,7 +433,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(params)
       .when()
@@ -471,11 +472,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(roleNodeOrgUnitInstancePermissions)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION)
+      .post(ROLE_NODE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -485,7 +486,7 @@ public class SecurityLoadingTest {
       assertInstanceOf(RoleNodePermission.class, p);
     }
 
-    //load permissions for org unit
+    //load permissions for an org unit
     RoleNodeParams params = new RoleNodeParams();
     params.setEntity(ORG_UNIT_ENTITY);
     params.setEntityId(ORG_UNIT_ENTITY_ID);
@@ -495,7 +496,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(params)
       .when()
@@ -556,11 +557,11 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(organizationUnitUserRoleNode))
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE + "?c_level=4")
+      .post(ROLE_NODE_ENDPOINT + "?c_level=4")
       .then()
       .statusCode(200)
       .extract()
@@ -579,16 +580,16 @@ public class SecurityLoadingTest {
         p -> p.setAllowed(false)
       ).toList();
 
-    //Store role node permissions for user of organization unit
+    //Store role node permissions for user of an organization unit
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(roleNodeOrgUnitInstancePermissions)
       .when()
-      .post("/api" + INTERNAL_SEGMENT + ROLE_NODE_PERMISSION + "?c_level=4")
+      .post(ROLE_NODE_PERM_ENDPOINT + "?c_level=4")
       .then()
       .statusCode(200)
       .extract()
@@ -608,7 +609,7 @@ public class SecurityLoadingTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(params)
       .when()

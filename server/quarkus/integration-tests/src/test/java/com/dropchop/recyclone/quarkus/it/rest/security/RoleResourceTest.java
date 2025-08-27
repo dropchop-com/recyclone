@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.dropchop.recyclone.quarkus.it.rest.Constants.ROLE_ENDPOINT;
+import static com.dropchop.recyclone.quarkus.it.rest.Constants.ROLE_PERM_ENDPOINT;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -44,7 +46,7 @@ public class RoleResourceTest {
       .and()
       .body(List.of(role))
       .when()
-      .post("/api/internal/security/role")
+      .post(ROLE_ENDPOINT)
       .then()
       .statusCode(500)
       .body("status.code", equalTo("error"))
@@ -72,7 +74,7 @@ public class RoleResourceTest {
       .and()
       .body(List.of(role))
       .when()
-      .post("/api/internal/security/role")
+      .post(ROLE_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -103,7 +105,7 @@ public class RoleResourceTest {
       .and()
       .body(List.of(role))
       .when()
-      .put("/api/internal/security/role")
+      .put(ROLE_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -142,7 +144,7 @@ public class RoleResourceTest {
       .and()
       .body(params)
       .when()
-      .put("/api/internal/security/role/permission")
+      .put(ROLE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -180,7 +182,7 @@ public class RoleResourceTest {
       .and()
       .body(params)
       .when()
-      .delete("/api/internal/security/role/permission")
+      .delete(ROLE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -214,7 +216,7 @@ public class RoleResourceTest {
       .and()
       .body(params)
       .when()
-      .delete("/api/internal/security/role/permission")
+      .delete(ROLE_PERM_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -239,7 +241,7 @@ public class RoleResourceTest {
       .and()
       .body(List.of(role))
       .when()
-      .delete("/api/internal/security/role")
+      .delete(ROLE_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()

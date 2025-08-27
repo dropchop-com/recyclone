@@ -15,7 +15,6 @@ import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,7 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
 import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
+import static com.dropchop.recyclone.quarkus.it.rest.Constants.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +47,8 @@ public class DummyResourceTest {
   @Inject
   ObjectMapper mapper;
 
+  private static final String Q_ENDPOINT = "/api/public/test/dummy/query";
+
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
@@ -66,14 +68,14 @@ public class DummyResourceTest {
   @Tag("deleteById")
   @Tag("deleteByQuery")
   @Tag("aggregationsWithFilters")
-  public void create() throws IOException {
+  public void create() {
     List<Dummy> dummies = this.dummyMockData.createMockDummies();
 
     given()
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic("admin1", TEST_PASSWORD)
       .and()
       .body(dummies)
       .when()
@@ -103,11 +105,11 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
+      .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
       .and()
       .body(params)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -132,11 +134,11 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
+      .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
       .and()
       .body(params)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -162,10 +164,10 @@ public class DummyResourceTest {
     Map<Object, Object> response = given()
       .contentType(ContentType.JSON)
       .accept(APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .body(params)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -194,10 +196,10 @@ public class DummyResourceTest {
     Map<Object, Object> response = given()
       .contentType(ContentType.JSON)
       .accept(APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .body(params)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -223,10 +225,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("user1", TEST_PASSWORD)
       .body(params)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -252,10 +254,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic("user1", TEST_PASSWORD)
       .body(s)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -281,10 +283,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(USER_USER, TEST_PASSWORD)
       .body(s)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -310,10 +312,10 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(USER_USER, TEST_PASSWORD)
       .body(s)
       .when()
-      .post("/api/public/test/dummy/query")
+      .post(Q_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -337,7 +339,7 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
+      .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
       .body(params1)
       .when()
       .delete("/api/internal/test/dummy/deleteById")
@@ -366,7 +368,7 @@ public class DummyResourceTest {
       .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
-      .auth().preemptive().basic("editor1", "password")
+      .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
       .body(s)
       .when()
       .delete("/api/internal/test/dummy/deleteByQuery")

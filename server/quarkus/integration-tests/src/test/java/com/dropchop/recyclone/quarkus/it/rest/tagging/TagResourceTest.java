@@ -16,6 +16,7 @@ import org.junit.jupiter.api.*;
 import jakarta.inject.Inject;
 import java.util.List;
 
+import static com.dropchop.recyclone.quarkus.it.rest.Constants.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static org.hamcrest.Matchers.empty;
@@ -59,7 +60,7 @@ public class TagResourceTest {
       .and()
       .body(List.of(languageGroupExYu, languageGroupSlavic))
       .when()
-      .post("/api/internal/tagging/tag")
+      .post(TAG_ENDPOINT)
       .then()
       .statusCode(500)
       .body("status.code", equalTo("error"))
@@ -95,7 +96,7 @@ public class TagResourceTest {
         .and()
         .body(List.of(dummyTag1, dummyTag2))
         .when()
-        .post("/api/internal/tagging/tag")
+        .post(TAG_ENDPOINT)
         .then()
         .statusCode(200)
         .extract()
@@ -150,11 +151,11 @@ public class TagResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       //.header("Authorization", "Bearer editortoken1")
-      .auth().preemptive().basic("admin1", "password")
+      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
       .and()
       .body(List.of(languageGroupSSlavic, languageGroupItalic))
       .when()
-      .post("/api/internal/tagging/tag")
+      .post(TAG_ENDPOINT)
       .then()
       .statusCode(200)
       .log().all()
@@ -189,11 +190,11 @@ public class TagResourceTest {
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
         //.header("Authorization", "Bearer editortoken1")
-        .auth().preemptive().basic("admin1", "password")
+        .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
         .and()
         .body(List.of(languageGroupSSlavic))
         .when()
-        .put("/api/internal/tagging/tag")
+        .put(TAG_ENDPOINT)
         .then()
         .statusCode(200)
         .log().all()

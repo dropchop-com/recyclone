@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.dto.model.localization.TitleTranslation;
 import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
+import com.dropchop.recyclone.quarkus.it.rest.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -43,9 +44,9 @@ public class LanguageResourceTest {
   public void languageRestByCodeEndpoint() {
     given()
       //.log().all()
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
       .when()
-      .get("/api/public/localization/language/sl")
+      .get(Constants.LANG_ENDPOINT + "/sl")
       .then()
       .statusCode(200)
       .log().all()
@@ -54,12 +55,13 @@ public class LanguageResourceTest {
 
   @Test
   @Order(20)
+  @SuppressWarnings("UastIncorrectHttpHeaderInspection")
   public void languageRestByCodeEndpointApiKey() {
     given()
       //.log().all()
       .header("X-Recyclone-API-Key", "admintoken1")
       .when()
-      .get("/api/public/localization/language/sl")
+      .get(Constants.LANG_ENDPOINT + "/sl")
       .then()
       .statusCode(200)
       .body("[0].code", equalTo("sl"));
@@ -71,7 +73,7 @@ public class LanguageResourceTest {
     given()
       //.log().all()
       .when()
-      .get("/api/public/localization/language/sl?x-recyclone-api-key=admintoken1")
+      .get(Constants.LANG_ENDPOINT + "/sl?x-recyclone-api-key=admintoken1")
       .then()
       .statusCode(200)
       .body("[0].code", equalTo("sl"));
@@ -84,7 +86,7 @@ public class LanguageResourceTest {
       //.log().all()
       .header("Authorization", "Bearer admintoken1")
       .when()
-      .get("/api/public/localization/language/sl")
+      .get(Constants.LANG_ENDPOINT + "/sl")
       .then()
       .statusCode(200)
       .body("[0].code", equalTo("sl"));
@@ -96,9 +98,9 @@ public class LanguageResourceTest {
     given()
       //.log().all()
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
       .when()
-      .get("/api/public/localization/language/sl")
+      .get(Constants.LANG_ENDPOINT + "/sl")
       .then()
       .statusCode(200)
       .body("status.code", equalTo("success"))
@@ -110,10 +112,10 @@ public class LanguageResourceTest {
   public void languagesRestEndpoint() {
     List<Language> languages = given()
       //.log().all()
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
       .accept(MediaType.APPLICATION_JSON)
       .when()
-      .get("/api/public/localization/language")
+      .get(Constants.LANG_ENDPOINT)
       .then()
       .statusCode(200)
       .extract()
@@ -130,10 +132,10 @@ public class LanguageResourceTest {
   public void languagesRestEndpointWithTags() {
     List<Language> languages = given()
         //.log().all()
-        .auth().preemptive().basic("user1", "password")
+        .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
         .accept(MediaType.APPLICATION_JSON)
         .when()
-        .get("/api/public/localization/language?c_level=10")
+        .get(Constants.LANG_ENDPOINT + "?c_level=10")
         .then()
         .statusCode(200)
         .extract()
@@ -153,7 +155,7 @@ public class LanguageResourceTest {
   public void languagesRestUnauthorized() {
     given()
       .when()
-      .get("/api/public/localization/language")
+      .get(Constants.LANG_ENDPOINT)
       .then()
       .statusCode(401)
       .body("status.code", equalTo("error"))
@@ -165,10 +167,10 @@ public class LanguageResourceTest {
   public void languagesEndpoint() {
     List<Language> languages = given()
       //.log().all()
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .when()
-      .get("/api/public/localization/language")
+      .get(Constants.LANG_ENDPOINT)
       .then()
       .statusCode(200)
       .log().all()
@@ -194,10 +196,10 @@ public class LanguageResourceTest {
   public void languagesEndpointWithSortPageFieldFilter() {
     List<Language> languages = given()
       //.log().all()
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .when()
-      .get("/api/public/localization/language?from=4&size=2&sort=-code&c_fields=code&c_fields=title")
+      .get(Constants.LANG_ENDPOINT + "?from=4&size=2&sort=-code&c_fields=code&c_fields=title")
       .then()
       .statusCode(200)
       .body("status.code", equalTo("success"))
@@ -215,38 +217,6 @@ public class LanguageResourceTest {
     assertEquals(new Language("hr"), languages.get(1));
   }
 
-  /*
-  @Test
-  @Order(7)
-  public void languageByUuidEndpoint() {
-    List<Language> languages = given()
-      .auth().preemptive().basic("user1", "password")
-      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .when()
-      .get("/api/language/4c4de73e-fbdc-321a-a15b-3c084204a915")
-      .then()
-      .statusCode(200)
-      .body("status.code", equalTo("success"))
-      .extract()
-      .jsonPath().getList("data", Language.class);
-    assertEquals(1, languages.size());
-    assertEquals(new Language("sl"), languages.get(0));
-  }
-
-  @Test
-  @Order(8)
-  public void languageByMissingUuidEndpoint() {
-    given()
-      .auth().preemptive().basic("user1", "password")
-      .when()
-      .get("/api/language/5c6de73e-fbdc-321a-a15b-3c084204a915")
-      .then()
-      .statusCode(404)
-      .body("status.code", equalTo("error"))
-      .body("status.message.code", equalTo("not_found_error"));
-  }
-  */
-
   @Test
   @Order(90)
   @org.junit.jupiter.api.Tag("languagesPostEndpoint")
@@ -261,7 +231,7 @@ public class LanguageResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")
-      .auth().preemptive().basic("editor1", "password")
+      .auth().preemptive().basic("editor1", Constants.TEST_PASSWORD)
       .and()
       .body(List.of(language))
       .when()
@@ -283,7 +253,7 @@ public class LanguageResourceTest {
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .header("Authorization", "Bearer editortoken1")
-      //.auth().preemptive().basic("editor1", "password")
+      //.auth().preemptive().basic("editor1", ANY_PASSWORD)
       .and()
       .body(List.of(new Language("bs")))
       .when()
@@ -301,10 +271,10 @@ public class LanguageResourceTest {
   public void languagesEndpointWithLevelFilter() {
     List<Language> languages = given()
       //.log().all()
-      .auth().preemptive().basic("user1", "password")
+      .auth().preemptive().basic(Constants.USER_USER, Constants.TEST_PASSWORD)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .when()
-      .get("/api/public/localization/language?from=4&size=2&sort=-code&c_level=3.nest_id")
+      .get(Constants.LANG_ENDPOINT + "?from=4&size=2&sort=-code&c_level=3.nest_id")
       .then()
       .statusCode(200)
       .body("status.code", equalTo("success"))
