@@ -4,8 +4,12 @@ import com.dropchop.recyclone.base.api.model.query.Aggregation;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.condition.Or;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -21,17 +25,26 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
   @SuppressWarnings("unused")
   public abstract static class QueryParamsBuilder<C extends QueryParams, B extends QueryParamsBuilder<C, B>> extends Params.ParamsBuilder<C, B> {
     public B and(Condition ... condition) {
-      condition(com.dropchop.recyclone.base.api.model.query.Condition.and(condition));
-      return self();
-    }
-
-    public B cond(Condition ... condition) {
-      condition(com.dropchop.recyclone.base.api.model.query.Condition.and(condition));
+      if (this.condition == null) {
+        this.condition = com.dropchop.recyclone.base.api.model.query.Condition.and(condition);
+      }
+      if (this.condition instanceof And and) {
+        for (Condition c : condition) {
+          and.get$and().add(c);
+        }
+      }
       return self();
     }
 
     public B or(Condition ... condition) {
-      condition(com.dropchop.recyclone.base.api.model.query.Condition.or(condition));
+      if (this.condition == null) {
+        this.condition = com.dropchop.recyclone.base.api.model.query.Condition.or(condition);
+      }
+      if (this.condition instanceof Or or) {
+        for (Condition c : condition) {
+          or.get$or().add(c);
+        }
+      }
       return self();
     }
 
