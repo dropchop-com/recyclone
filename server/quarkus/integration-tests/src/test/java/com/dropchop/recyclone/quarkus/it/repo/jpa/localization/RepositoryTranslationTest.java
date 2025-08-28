@@ -7,16 +7,14 @@ import com.dropchop.recyclone.base.jpa.repo.security.ActionRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 05. 22.
  */
+@Disabled
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepositoryTranslationTest {

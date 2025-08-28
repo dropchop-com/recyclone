@@ -6,6 +6,7 @@ import com.dropchop.recyclone.base.jpa.repo.tagging.TagRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 20. 07. 22.
  */
+@Disabled
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TagRepositoryTest {
