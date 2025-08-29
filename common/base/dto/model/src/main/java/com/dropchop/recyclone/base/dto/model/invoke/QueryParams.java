@@ -26,7 +26,7 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
   public abstract static class QueryParamsBuilder<C extends QueryParams, B extends QueryParamsBuilder<C, B>> extends Params.ParamsBuilder<C, B> {
     public B and(Condition ... condition) {
       if (this.condition == null) {
-        this.condition = com.dropchop.recyclone.base.api.model.query.Condition.and(condition);
+        this.condition = com.dropchop.recyclone.base.api.model.query.Condition.and();
       }
       if (this.condition instanceof And and) {
         for (Condition c : condition) {
@@ -38,7 +38,7 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
 
     public B or(Condition ... condition) {
       if (this.condition == null) {
-        this.condition = com.dropchop.recyclone.base.api.model.query.Condition.or(condition);
+        this.condition = com.dropchop.recyclone.base.api.model.query.Condition.or();
       }
       if (this.condition instanceof Or or) {
         for (Condition c : condition) {
