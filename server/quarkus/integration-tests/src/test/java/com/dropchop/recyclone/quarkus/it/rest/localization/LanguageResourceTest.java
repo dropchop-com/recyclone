@@ -49,7 +49,7 @@ public class LanguageResourceTest {
       .get(Constants.LANG_ENDPOINT + "/sl")
       .then()
       .statusCode(200)
-      .log().all()
+      //.log().all()
       .body("[0].code", equalTo("sl")).extract().asPrettyString();
   }
 
@@ -173,7 +173,7 @@ public class LanguageResourceTest {
       .get(Constants.LANG_ENDPOINT)
       .then()
       .statusCode(200)
-      .log().all()
+      //.log().all()
       .body("status.code", equalTo("success"))
       .extract()
       .jsonPath().getList("data", Language.class);
@@ -278,7 +278,7 @@ public class LanguageResourceTest {
       .then()
       .statusCode(200)
       .body("status.code", equalTo("success"))
-      .log().all()
+      //.log().all()
       .extract()
       .jsonPath().getList("data", Language.class);
     assertEquals(2, languages.size());

@@ -66,7 +66,7 @@ public class RoleResourceTest {
     role.addTranslation(new TitleDescriptionTranslation("sl", "Test"));
 
     List<Role> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       //.header("Authorization", "Bearer editortoken1")
@@ -97,7 +97,7 @@ public class RoleResourceTest {
     role.addTranslation(new TitleDescriptionTranslation("sl", "Test update "));
 
     List<Role> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       //.header("Authorization", "Bearer editortoken1")
@@ -136,7 +136,7 @@ public class RoleResourceTest {
     params.setPermissionUuids(permissions);
 
     List<Role> roles = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")
@@ -174,7 +174,7 @@ public class RoleResourceTest {
       UUID.fromString("0edf37b1-8b7c-4d81-9f17-05f683f54570")
     );
     List<Role> roles = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")
@@ -208,7 +208,7 @@ public class RoleResourceTest {
     params.setPermissionUuids(permissions);
 
     List<Role> roles = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")

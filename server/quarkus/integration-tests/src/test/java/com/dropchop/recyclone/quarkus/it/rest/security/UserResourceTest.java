@@ -89,7 +89,7 @@ public class UserResourceTest {
 
 
     List<User> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -123,7 +123,7 @@ public class UserResourceTest {
     user.setModified(ZonedDateTime.now());
 
     List<User> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -149,7 +149,7 @@ public class UserResourceTest {
   @Tag("getUserById")
   public void getUserById() {
     List<User> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -195,7 +195,7 @@ public class UserResourceTest {
 
 
     List<UserAccount> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -210,7 +210,7 @@ public class UserResourceTest {
     assertEquals(2, result.size());
 
     List<User> userResult = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -261,7 +261,7 @@ public class UserResourceTest {
     loginAccount.setPassword(randomString);
 
     given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -275,7 +275,7 @@ public class UserResourceTest {
       .body().jsonPath().getList("data", UserAccount.class);
 
     List<User> userResult = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -308,7 +308,7 @@ public class UserResourceTest {
   @Tag("deleteAccount")
   public void deleteAccount() {
     List<User> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -330,7 +330,7 @@ public class UserResourceTest {
     );
 
     given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -344,7 +344,7 @@ public class UserResourceTest {
       .body().jsonPath().getList("data", User.class);
 
     result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)

@@ -147,7 +147,7 @@ public class TagResourceTest {
         Iso8601.fromIso("2022-08-03"))).build());
 
     List<LanguageGroup> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       //.header("Authorization", "Bearer editortoken1")
@@ -158,7 +158,7 @@ public class TagResourceTest {
       .post(TAG_ENDPOINT)
       .then()
       .statusCode(200)
-      .log().all()
+      //.log().all()
       .extract()
       .body().jsonPath().getList("data", LanguageGroup.class);
     assertEquals(2, result.size());
@@ -186,7 +186,7 @@ public class TagResourceTest {
     //languageGroupSSlavic.addTag(languageGroupSlavic);
 
     List<LanguageGroup> result = given()
-        .log().all()
+        //.log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
         //.header("Authorization", "Bearer editortoken1")
@@ -197,7 +197,7 @@ public class TagResourceTest {
         .put(TAG_ENDPOINT)
         .then()
         .statusCode(200)
-        .log().all()
+        //.log().all()
         .extract()
         .body().jsonPath().getList("data", LanguageGroup.class);
     assertEquals(1, result.size());

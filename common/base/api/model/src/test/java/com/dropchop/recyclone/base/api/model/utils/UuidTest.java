@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.api.model.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
  */
+@Slf4j
 class UuidTest {
 
   @Test
@@ -25,7 +27,7 @@ class UuidTest {
     for (int i = 0; i < 12; i++) {
       start = sdf.format(c.getTime());
       UUID suuid = Uuid.msAlignedMin(c.getTime().getTime());
-      System.out.println("UUID ["+ start +"] = ["+ suuid +"]");
+      log.info("UUID [{}] = [{}]", start, suuid);
       c.add(Calendar.MONTH, 1);
     }
   }

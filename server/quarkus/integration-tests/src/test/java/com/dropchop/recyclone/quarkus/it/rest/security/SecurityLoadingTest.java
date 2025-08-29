@@ -181,7 +181,7 @@ public class SecurityLoadingTest {
 
     //store templates for org role node
     List<RoleNode> resultOrg = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -201,7 +201,7 @@ public class SecurityLoadingTest {
     assertEquals(roleNodeOrgTemplate.getEntityId(), respRoleOrg.getEntityId());
 
     List<RoleNodePermission> resultOrgPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -217,7 +217,7 @@ public class SecurityLoadingTest {
 
     //store templates for org unit role node
     List<RoleNode> resultOrgUnit = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -237,7 +237,7 @@ public class SecurityLoadingTest {
     assertEquals(roleNodeOrgUnitTemplate.getEntityId(), respOrgUnit.getEntityId());
 
     List<RoleNodePermission> resultOrgUnitPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -257,7 +257,7 @@ public class SecurityLoadingTest {
     orgParams.setTarget(ORG_ENTITY);
 
     List<RoleNodePermission> loadedOrgTemplatePermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -279,7 +279,7 @@ public class SecurityLoadingTest {
     orgUnitParams.setTarget(ORG_UNIT_ENTITY);
 
     List<RoleNodePermission> loadedOrgUnitTemplatePermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -323,7 +323,7 @@ public class SecurityLoadingTest {
     organizationUnitRoleNode.setParent(organizationRoleNode); //connect to parent node !!!
     //store both nodes
     List<RoleNode> resultOrg = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -337,7 +337,7 @@ public class SecurityLoadingTest {
       .body().jsonPath().getList("data", RoleNode.class);
     assertEquals(1, resultOrg.size());
     resultOrg = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -369,7 +369,7 @@ public class SecurityLoadingTest {
       ).findFirst().get();
 
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -394,7 +394,7 @@ public class SecurityLoadingTest {
     params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgUnitCombinedPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -430,7 +430,7 @@ public class SecurityLoadingTest {
     params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -469,7 +469,7 @@ public class SecurityLoadingTest {
       .toList();
 
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -493,7 +493,7 @@ public class SecurityLoadingTest {
     params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgUnitCombinedPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -554,7 +554,7 @@ public class SecurityLoadingTest {
     organizationUnitUserRoleNode.setParent(organizationUnitRoleNode); //connect to parent node !!!
 
     List<RoleNode> resultOrg = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -582,7 +582,7 @@ public class SecurityLoadingTest {
 
     //Store role node permissions for user of an organization unit
     List<RoleNodePermission> resultRoleNodeOrgUnitPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -606,7 +606,7 @@ public class SecurityLoadingTest {
     params.getFilter().getContent().setTreeLevel(4);
 
     List<RoleNodePermission> orgUnitUserCombinedPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)

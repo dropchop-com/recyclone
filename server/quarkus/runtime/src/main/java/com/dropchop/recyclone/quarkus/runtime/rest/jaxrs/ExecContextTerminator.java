@@ -51,7 +51,7 @@ public class ExecContextTerminator implements WriterInterceptor {
       context.proceed();
       return;
     }
-    log.debug("[{}].aroundWriteTo done.", this.getClass().getSimpleName());
+    log.trace("[{}].aroundWriteTo done.", this.getClass().getSimpleName());
     ((Result<?>) entity).setId(execContext.getId());
     ((Result<?>) entity).getStatus().setTime(execContext.getExecTime());
     context.proceed();

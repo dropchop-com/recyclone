@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.attr.AttributeString;
 import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter.LanguageFilter;
+import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import jakarta.ws.rs.ConstrainedTo;
@@ -275,6 +276,9 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
+    ProfileTimer timer = new ProfileTimer();
+    String path = requestContext.getUriInfo().getPath();
+    log.trace("Executing REST params decorator [{}]", path);
     if (paramType == null) {
       log.warn("Missing parameter type for {}!", requestContext.getUriInfo());
       return;
@@ -291,7 +295,10 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
     Params params = (Params)requestContext.getProperty(InternalContextVariables.RECYCLONE_PARAMS);
     if (params instanceof CommonParams<?, ?, ?, ?> commonParams) {
       decorate(commonParams, requestContext);
-      log.debug("Decorated request local params from execution context [{}].", execContext);
+      log.debug(
+          "Decorated REST request [{}] local params from execution context [{}] in [{}]ms.",
+          path, execContext, timer.stop()
+      );
     }
   }
 }

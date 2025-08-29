@@ -136,7 +136,7 @@ public class PermissionResourceTest {
     permission.setDomain(domain);
 
     List<Permission> permissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")
@@ -173,7 +173,7 @@ public class PermissionResourceTest {
     permission.setUuid("28c9e87d-befe-4c70-b582-c176653d917c");
 
     List<Permission> permissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       //.header("Authorization", "Bearer editortoken1")

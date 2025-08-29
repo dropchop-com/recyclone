@@ -48,7 +48,7 @@ abstract public class BaseAuthenticatingRealm extends AuthenticatingRealm {
   protected AuthenticationInfo doGetAuthenticationInfo(final AuthenticationToken token) {
     ProfileTimer timer = new ProfileTimer();
     AuthenticationInfo authInfo = this.invokeGetAuthenticationInfo(token);
-    log.info("Got principal [{}] authentication info in [{}].", token.getPrincipal(), timer.stop());
+    log.trace("Got principal [{}] authentication info in [{}].", token.getPrincipal(), timer.stop());
     return authInfo;
   }
 

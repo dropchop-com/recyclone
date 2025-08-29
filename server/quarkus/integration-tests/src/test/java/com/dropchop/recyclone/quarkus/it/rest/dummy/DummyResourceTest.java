@@ -72,7 +72,7 @@ public class DummyResourceTest {
     List<Dummy> dummies = this.dummyMockData.createMockDummies();
 
     given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic("admin1", TEST_PASSWORD)
@@ -102,7 +102,7 @@ public class DummyResourceTest {
       .build();
 
     List<Dummy> dummies = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
@@ -131,7 +131,7 @@ public class DummyResourceTest {
       .build();
 
     List<Dummy> dummies = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
@@ -222,7 +222,7 @@ public class DummyResourceTest {
       .build();
 
     List<Dummy> dummies = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic("user1", TEST_PASSWORD)
@@ -251,7 +251,7 @@ public class DummyResourceTest {
       .build();
 
     List<Dummy> dummies = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic("user1", TEST_PASSWORD)
@@ -280,7 +280,7 @@ public class DummyResourceTest {
       .build();
 
     List<Dummy> dummies = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(USER_USER, TEST_PASSWORD)
@@ -309,7 +309,7 @@ public class DummyResourceTest {
       .build();
 
     List<Dummy> dummies = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(USER_USER, TEST_PASSWORD)
@@ -336,7 +336,7 @@ public class DummyResourceTest {
       .build();
 
     Integer number_of_deleted = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)
@@ -365,7 +365,7 @@ public class DummyResourceTest {
       .build();
 
     Integer number_of_deleted = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(EDITOR_USER, TEST_PASSWORD)

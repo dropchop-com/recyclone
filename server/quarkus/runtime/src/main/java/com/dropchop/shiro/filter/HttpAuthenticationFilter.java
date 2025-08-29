@@ -206,7 +206,7 @@ public abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
    * @return false - this sends the challenge to be sent back
    */
   protected boolean sendChallenge(ContainerRequestContext requestContext) {
-    log.debug("Authentication required: sending 401 Authentication challenge response.");
+    log.info("Authentication required: sending 401 Authentication challenge response.");
     requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).header(
       AUTHENTICATE_HEADER, getAuthcScheme() + " realm=\"" + getApplicationName() + "\""
     ).build());

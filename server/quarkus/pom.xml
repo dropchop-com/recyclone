@@ -26,7 +26,7 @@
     <maven.source.skip>true</maven.source.skip>
   </properties>
 
-  <dependencyManagement>
+  <!--dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>${quarkus.platform.group-id}</groupId>
@@ -36,7 +36,7 @@
         <scope>import</scope>
       </dependency>
     </dependencies>
-  </dependencyManagement>
+  </dependencyManagement>-->
 
   <build>
     <pluginManagement>

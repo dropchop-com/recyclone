@@ -134,7 +134,7 @@ public class RoleNodeResourceTest {
   private RoleNode prepRoleNode1() {
     RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
     List<RoleNode> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -152,7 +152,7 @@ public class RoleNodeResourceTest {
 
   private RoleNode getRoleNode2() {
     List<RoleNode> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -170,7 +170,7 @@ public class RoleNodeResourceTest {
   public void createRoleNodeForEntity() {
     RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
     List<RoleNode> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -191,7 +191,7 @@ public class RoleNodeResourceTest {
 
     roleNode = SecurityHelper.roleNodeOf(UUID2, ENTITY2, ENTITY2_ID, null);
     result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -215,7 +215,7 @@ public class RoleNodeResourceTest {
   @Order(20)
   public void updateEntityRoleNode() {
     List<RoleNode> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -235,7 +235,7 @@ public class RoleNodeResourceTest {
     respRole.setEntityId(ENTITY2_ID);
 
     result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -255,7 +255,7 @@ public class RoleNodeResourceTest {
     assertEquals(respRole.getEntityId(), respRoleUpdated.getEntityId());
 
     result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -279,7 +279,7 @@ public class RoleNodeResourceTest {
     node.setUuid(UUID1);
 
     given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -291,7 +291,7 @@ public class RoleNodeResourceTest {
       .statusCode(200);
 
     List<RoleNode> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -320,7 +320,7 @@ public class RoleNodeResourceTest {
 
     //store all permissions on role node
     List<RoleNodePermission> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -336,7 +336,7 @@ public class RoleNodeResourceTest {
 
     //store one permissions on role node
     result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -358,7 +358,7 @@ public class RoleNodeResourceTest {
     params.setRoleNodeId(UUID1);
 
     List<RoleNodePermission> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -375,7 +375,7 @@ public class RoleNodeResourceTest {
     params.setRoleNodeId(UUID2);
 
     result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -398,7 +398,7 @@ public class RoleNodeResourceTest {
         UUID3, TPL_TARGET_NAME, null, null, null, TPL_TARGET_NAME, null
     );
     List<RoleNode> result = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -423,7 +423,7 @@ public class RoleNodeResourceTest {
 
     //store all permissions on role node
     List<RoleNodePermissionTemplate> tplPermissionResult = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -445,7 +445,7 @@ public class RoleNodeResourceTest {
     params.setRoleNodeId(roleNodeTpl.getId());
 
     List<RoleNodePermission> resultPermissions = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)

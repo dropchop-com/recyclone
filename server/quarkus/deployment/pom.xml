@@ -24,6 +24,7 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc-deployment</artifactId>
     </dependency>
+    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-core-deployment</artifactId>
@@ -36,7 +37,6 @@
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
     </dependency>
-    <!--suppress VulnerableLibrariesLocal -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi-deployment</artifactId>

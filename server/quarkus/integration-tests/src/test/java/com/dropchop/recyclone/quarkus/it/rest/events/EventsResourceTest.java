@@ -163,7 +163,7 @@ public class EventsResourceTest {
     event.addAttribute(new AttributeBool(Strings.ATTRIBUTE_BOOL, true));*/
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -194,7 +194,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -214,7 +214,7 @@ public class EventsResourceTest {
   @Order(25)
   public void get() {
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -237,7 +237,7 @@ public class EventsResourceTest {
     event.setId(EVENT_ID);
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -260,7 +260,7 @@ public class EventsResourceTest {
         .build();
 
     events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .header("Authorization", "Bearer editortoken1")
@@ -304,7 +304,7 @@ public class EventsResourceTest {
 
     //same as before just for multiple events
     given()
-        .log().all()
+        //.log().all()
         .contentType(ContentType.JSON)
         .accept(MediaType.APPLICATION_JSON)
         .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -341,7 +341,7 @@ public class EventsResourceTest {
 
     //same as before just for multiple events
     given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -368,7 +368,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -398,7 +398,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -428,7 +428,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -459,7 +459,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -499,7 +499,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -529,7 +529,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -558,7 +558,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -596,7 +596,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -640,7 +640,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -686,7 +686,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -723,7 +723,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -758,7 +758,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -792,7 +792,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-      .log().all()
+      //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -829,7 +829,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-            .log().all()
+            //.log().all()
             .contentType(ContentType.JSON)
             .accept(MediaType.APPLICATION_JSON)
             .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -868,7 +868,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-            .log().all()
+            //.log().all()
             .contentType(ContentType.JSON)
             .accept(MediaType.APPLICATION_JSON)
             .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -895,7 +895,7 @@ public class EventsResourceTest {
         .build();
 
     List<Event> events = given()
-            .log().all()
+            //.log().all()
             .contentType(ContentType.JSON)
             .accept(MediaType.APPLICATION_JSON)
             .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)

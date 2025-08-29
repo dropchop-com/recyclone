@@ -110,45 +110,17 @@
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>3.23.3</quarkus.platform.version>
 
-    <junit.version>5.12.1</junit.version>
     <jsonassert.version>1.5.3</jsonassert.version>
-
-    <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
-    <jakarta.cdi-api.version>4.1.0</jakarta.cdi-api.version>
-    <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
-    <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
-    <microprofile-openapi-api.version>4.0.2</microprofile-openapi-api.version>
-    <microprofile-config-api.version>3.1</microprofile-config-api.version>
-
-    <!-- elasticsearch low level rest client -->
-    <elasticsearch-rest-client.version>8.17.4</elasticsearch-rest-client.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>jakarta.ws.rs</groupId>
-        <artifactId>jakarta.ws.rs-api</artifactId>
-        <version>${jakarta.ws.rs.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.enterprise</groupId>
-        <artifactId>jakarta.enterprise.cdi-api</artifactId>
-        <version>${jakarta.cdi-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.transaction</groupId>
-        <artifactId>jakarta.transaction-api</artifactId>
-        <version>${jakarta.transaction-api.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.persistence</groupId>
-        <artifactId>jakarta.persistence-api</artifactId>
-        <version>${jakarta.persistence-api.version}</version>
-        <scope>compile</scope>
+        <groupId>${quarkus.platform.group-id}</groupId>
+        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -165,44 +137,6 @@
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjrt</artifactId>
         <version>${aspectj.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jdk8</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-jsr310</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.module</groupId>
-        <artifactId>jackson-module-parameter-names</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.eclipse.microprofile.openapi</groupId>
-        <artifactId>microprofile-openapi-api</artifactId>
-        <version>${microprofile-openapi-api.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.config</groupId>
-        <artifactId>microprofile-config-api</artifactId>
-        <version>${microprofile-config-api.version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.shiro</groupId>
@@ -237,16 +171,6 @@
         <version>${quarkus.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch.client</groupId>
-        <artifactId>elasticsearch-rest-client</artifactId>
-        <version>${elasticsearch-rest-client.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-elasticsearch-rest-client</artifactId>
-        <version>${quarkus.platform.version}</version>
       </dependency>
 
       <!-- frontend common/client API -->
@@ -402,12 +326,6 @@
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>${logback.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

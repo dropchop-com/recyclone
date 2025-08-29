@@ -1,12 +1,14 @@
 package com.dropchop.recyclone.base.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Slf4j
 public class ZoneDateTimeSerializerTest {
 
   @Test
@@ -21,7 +23,7 @@ public class ZoneDateTimeSerializerTest {
 
     assertEquals(jsonOutput1, jsonOutput2);
 
-    System.out.println("zonedDateTime: " + zonedDateTime);
-    System.out.println("Serialized ZonedDateTime: " + jsonOutput1);
+    log.info("zonedDateTime: [{}]", zonedDateTime);
+    log.info("Serialized ZonedDateTime: [{}]", jsonOutput1);
   }
 }
