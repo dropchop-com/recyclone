@@ -18,7 +18,6 @@ import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.LanguageRe
 import static com.dropchop.recyclone.quarkus.it.repo.jpa.localization.LanguageRepositoryTest.lngSlCode;
 
 @Slf4j
-@Disabled
 @QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

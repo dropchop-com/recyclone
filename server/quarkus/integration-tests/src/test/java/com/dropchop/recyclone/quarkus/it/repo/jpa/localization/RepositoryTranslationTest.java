@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 05. 22.
  */
-@Disabled
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepositoryTranslationTest {

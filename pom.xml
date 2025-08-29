@@ -101,21 +101,21 @@
     <logback.version>1.5.18</logback.version>
     <aspectj.version>1.9.24</aspectj.version>
     <lombok.version>1.18.38</lombok.version>
-    <jackson.version>2.19.2</jackson.version>
+    <jackson.version>2.18.3</jackson.version>
     <apache.shiro.version>2.0.4</apache.shiro.version>
     <jjwt.version>0.12.6</jjwt.version>
     <mapstruct.version>1.6.3</mapstruct.version>
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.26.0</quarkus.platform.version>
+    <quarkus.platform.version>3.23.3</quarkus.platform.version>
 
-    <junit.version>5.13.4</junit.version>
+    <junit.version>5.12.1</junit.version>
     <jsonassert.version>1.5.3</jsonassert.version>
 
     <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
     <jakarta.cdi-api.version>4.1.0</jakarta.cdi-api.version>
-    <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+    <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
     <jakarta.transaction-api.version>2.0.1</jakarta.transaction-api.version>
     <microprofile-openapi-api.version>4.0.2</microprofile-openapi-api.version>
     <microprofile-config-api.version>3.1</microprofile-config-api.version>

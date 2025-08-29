@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Kristijan Sečan <kristijan.secan@dropchop.com> on 4. 07. 23.
  */
-@Disabled
 @QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

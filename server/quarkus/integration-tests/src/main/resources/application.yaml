@@ -62,8 +62,8 @@ quarkus:
     #log:
     #  sql: true
     #  bind-parameters: true
-    database:
-      generation: update
+    schema-management:
+      strategy: update
     packages:
       - com.dropchop.recyclone.base.api.model
       - com.dropchop.recyclone.base.api.model.marker
