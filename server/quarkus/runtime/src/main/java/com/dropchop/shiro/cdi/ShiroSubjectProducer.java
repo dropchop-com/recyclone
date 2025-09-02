@@ -20,7 +20,7 @@ public class ShiroSubjectProducer {
 
   private final AtomicReference<PrincipalCollection> atomicReference = new AtomicReference<>();
 
-  public void forcePrincipalCollection(PrincipalCollection principals) {
+  public void setAuthenticatedPrincipals(PrincipalCollection principals) {
     this.atomicReference.set(principals); // forcibly sets the Subject
   }
 
