@@ -99,7 +99,7 @@ public class DefaultShiroEnvironmentProvider {
               mechanism.issuer().orElse(
                   recycloneConfig.rest().info().contact().name().orElse("Jwt Issuer")
               ),
-              mechanism.secret().orElse(null),
+              mechanism.secret().map(s -> s.replaceAll("\\s+", "")).orElse(null),
               mechanism.timeoutSeconds().orElse(600)
           );
         }
