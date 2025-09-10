@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dropchop.recyclone</groupId>
   <artifactId>recyclone</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Recyclone</name>
 
@@ -26,7 +26,7 @@
     <connection>scm:git:https://github.com/dropchop-com/recyclone.git</connection>
     <developerConnection>scm:git:https://github.com/dropchop-com/recyclone.git</developerConnection>
     <url>https://github.com/dropchop-com/recyclone.git</url>
-    <tag>recyclone-2.0.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
@@ -97,8 +97,6 @@
     <war-plugin.version>3.4.0</war-plugin.version>
     <frontend-plugin.version>1.15.1</frontend-plugin.version>
     <exec-plugin.version>3.5.1</exec-plugin.version>
-    <central-publishing-plugin.version>0.6.0</central-publishing-plugin.version>
-    <docker-plugin.version>0.46.0</docker-plugin.version>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>21</maven.compiler.source>
@@ -360,36 +358,6 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>${source-plugin.version}</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${javadoc-plugin.version}</version>
-            <configuration>
-              <doclint>none</doclint>
-            </configuration>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <!--suppress MavenModelInspection -->
             <artifactId>maven-gpg-plugin</artifactId>
             <!--suppress MavenModelInspection -->
@@ -414,7 +382,7 @@
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>${central-publishing-plugin.version}</version>
+            <version>0.6.0</version>
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
@@ -422,6 +390,24 @@
           </plugin>
         </plugins>
       </build>
+
+      <!--<distributionManagement>
+        <repository>
+          <id>ossrh</id>
+          <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </distributionManagement>
+
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+          <id>ossrh</id>
+          <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </repositories>-->
     </profile>
 
     <profile>
