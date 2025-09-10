@@ -17,25 +17,6 @@
     <module>integration-tests</module>
   </modules>
 
-  <!--<properties>
-    <maven.deploy.skip>true</maven.deploy.skip>
-    <maven.install.skip>true</maven.install.skip>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
-    <maven.source.skip>true</maven.source.skip>
-  </properties>-->
-
-  <!--dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>${quarkus.platform.group-id}</groupId>
-        <artifactId>${quarkus.platform.artifact-id}</artifactId>
-        <version>${quarkus.platform.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>-->
-
   <build>
     <pluginManagement>
       <plugins>
