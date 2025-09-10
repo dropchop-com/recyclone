@@ -11,10 +11,6 @@
   </parent>
 
   <properties>
-    <maven.deploy.skip>true</maven.deploy.skip>
-    <maven.install.skip>true</maven.install.skip>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
-    <maven.source.skip>true</maven.source.skip>
     <skipITs>true</skipITs>
   </properties>
 
@@ -118,53 +114,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <!--
-        To build this image use: mvn docker:build && mvn docker:push
-        If you want to push new version, add this to your settings .m2/settings.xml
-
-        <server>
-          <id>ghcr.io/dropchop-com</id>
-          <username>ivlcic</username>
-          <password>ghp_DxiyZz****************</password>
-        </server>
-        -->
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.45.1</version>
-        <executions>
-          <!--<execution>
-            <id>build-image</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>build</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>push-image</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>push</goal>
-            </goals>
-          </execution>-->
-        </executions>
-        <configuration>
-          <registry>ghcr.io/dropchop-com:443</registry>
-          <images>
-            <image>
-              <name>ghcr.io/dropchop-com/recyclone/elastic-it-test</name>
-              <build>
-                <tags>
-                  <tag>%T</tag>
-                  <tag>%l</tag>
-                </tags>
-                <dockerFileDir>${project.basedir}/src/main/docker/elastic-it-test</dockerFileDir>
-              </build>
-            </image>
-          </images>
-        </configuration>
-      </plugin>
-
       <plugin><!-- mapstruct and lombok are required only for tests -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
