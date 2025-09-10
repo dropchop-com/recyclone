@@ -17,12 +17,12 @@
     <module>integration-tests</module>
   </modules>
 
-  <properties>
+  <!--<properties>
     <maven.deploy.skip>true</maven.deploy.skip>
     <maven.install.skip>true</maven.install.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <maven.source.skip>true</maven.source.skip>
-  </properties>
+  </properties>-->
 
   <!--dependencyManagement>
     <dependencies>
