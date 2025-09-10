@@ -12,6 +12,9 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.install.skip>false</maven.install.skip>
+    <maven.javadoc.skip>false</maven.javadoc.skip>
+    <maven.source.skip>false</maven.source.skip>
     <skipITs>true</skipITs>
   </properties>
 
@@ -188,18 +191,6 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <version>${flatten-plugin.version}</version>
-        <configuration>
-          <flattenMode>oss</flattenMode>
-          <pomElements>
-            <properties>keep</properties>
-          </pomElements>
         </configuration>
       </plugin>
     </plugins>
