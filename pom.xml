@@ -421,7 +421,7 @@
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
-              <excludeArtifacts>recyclone-quarkus-extension-integration-test</excludeArtifacts>
+              <excludeArtifacts>recyclone,recyclone-common,recyclone-common-base,recyclone-common-base-api,recyclone-common-base-api-jaxrs,recyclone-common-base-dto,recyclone-common-events,recyclone-common-events-api,recyclone-common-events-api-jaxrs,recyclone-quarkus-extension-parent,recyclone-server,recyclone-server-base,recyclone-server-base-api,recyclone-server-base-es,recyclone-server-base-jaxrs,recyclone-server-base-jpa,recyclone-server-events,recyclone-server-events-api,recyclone-server-events-es,recyclone-server-events-jaxrs,recyclone-quarkus-extension-integration-test</excludeArtifacts>
             </configuration>
           </plugin>
         </plugins>

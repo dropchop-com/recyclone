@@ -28,3 +28,9 @@ mvn compile quarkus:dev
 # navigate to http://localhost:8080/api/spec/ui/
 ```
 
+Find packaging pom artifacts:
+```bash
+find . -path '*/target' -prune -o -name pom.xml -exec \
+  xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" \
+  -t -m "/x:project[x:packaging='pom']" -v "/x:project/x:artifactId" -n {} \;
+```
