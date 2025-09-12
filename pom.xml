@@ -97,12 +97,15 @@
     <war-plugin.version>3.4.0</war-plugin.version>
     <frontend-plugin.version>1.15.1</frontend-plugin.version>
     <exec-plugin.version>3.5.1</exec-plugin.version>
+    <central-publishing-plugin.version>0.8.0</central-publishing-plugin.version>
+    <docker-plugin.version>0.46.0</docker-plugin.version>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.release>21</maven.compiler.release>
 
+    <skipPublishing>true</skipPublishing>
     <maven.deploy.skip>true</maven.deploy.skip>
     <maven.install.skip>true</maven.install.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -414,10 +417,11 @@
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>0.6.0</version>
+            <version>${central-publishing-plugin.version}</version>
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
+              <excludeArtifacts>recyclone-quarkus-extension-integration-test</excludeArtifacts>
             </configuration>
           </plugin>
         </plugins>
