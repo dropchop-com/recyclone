@@ -11,7 +11,7 @@
   </parent>
 
   <properties>
-    <skipPublishing>false</skipPublishing>
+    <skipPublishing>true</skipPublishing>
     <maven.deploy.skip>true</maven.deploy.skip>
     <maven.install.skip>false</maven.install.skip>
     <maven.javadoc.skip>false</maven.javadoc.skip>
