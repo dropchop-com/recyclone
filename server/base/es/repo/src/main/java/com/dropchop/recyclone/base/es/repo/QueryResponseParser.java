@@ -172,11 +172,10 @@ public class QueryResponseParser {
         for (Map.Entry<String, AggregationResult> entry : aggData.entrySet()) {
           String aggName = entry.getKey();
           AggregationResult aggValue = entry.getValue();
-
           if (aggName == null || aggValue == null) {
             continue;
           }
-
+          aggValue.getContainers().removeIf(Objects::isNull);
           for (AggregationResultConsumer listener : aggListeners) {
             listener.accept(aggName, aggValue);
           }
