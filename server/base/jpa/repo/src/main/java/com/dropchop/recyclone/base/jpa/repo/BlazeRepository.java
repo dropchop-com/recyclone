@@ -113,21 +113,14 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     return cb.getResultList();
   }
 
-  private static <E extends Model, S extends E> TypedQuery<Long> applyDecorators(RepositoryExecContext<S> context,
-                                                                                 CriteriaBuilder<S> cb) {
-    TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();
+  private static <E extends Model, S extends E> void applyDecorators(RepositoryExecContext<S> context) {
     for (RepositoryExecContextListener listener : context.getListeners()) {
-      if (listener instanceof PageCriteriaDecorator) {
-        //get a count query before page-ing;
-        countQuery = cb.getQueryRootCountQuery();
-      }
       if (listener instanceof CriteriaDecorator<?, ?>) {
         @SuppressWarnings("unchecked")
         CriteriaDecorator<E, BlazeExecContext<E>> decorator = (CriteriaDecorator<E, BlazeExecContext<E>>) listener;
         decorator.decorate();
       }
     }
-    return countQuery;
   }
 
   @Override
@@ -143,7 +136,8 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     CriteriaBuilder<S> cb = getBuilder(cls).from(cls, alias);
     blazeExecContext.init(cb);
 
-    TypedQuery<Long> countQuery = applyDecorators(context, cb);
+    applyDecorators(context);
+    TypedQuery<Long> countQuery = cb.getQueryRootCountQuery();
     long total = Long.MIN_VALUE;
     for (ExecContext.Listener listener : context.getListeners()) {
       if (listener instanceof QueryExecContextListener) {

@@ -4,6 +4,8 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.dropchop.recyclone.base.api.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.api.model.invoke.IdentifierParams;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.marker.HasCode;
+import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,14 +22,15 @@ public class LikeIdentifiersCriteriaDecorator<E> extends LikeListCriteriaDecorat
     List<String> ids;
 
     String alias = getContext().getRootAlias();
+    Class<?> clazz = getContext().getRootClass();
     String idColName = alias + ".uuid";
     CriteriaBuilder<?> cb = getContext().getCriteriaBuilder();
-    if (params instanceof IdentifierParams) {
+    if (params instanceof IdentifierParams && HasUuid.class.isAssignableFrom(clazz)) {
       ids = ((IdentifierParams<?, ?, ?, ?>) params).getIdentifiers();
       if (!ids.isEmpty()) {
         cb.where(idColName).in(ids.stream().map(UUID::fromString).collect(Collectors.toList()));
       }
-    } else if (params instanceof CodeParams) {
+    } else if (params instanceof CodeParams && HasCode.class.isAssignableFrom(clazz)) {
       ids = ((CodeParams<?, ?, ?, ?>) params).getCodes();
       idColName = alias + ".code";
       if (!ids.isEmpty()) {
