@@ -19,6 +19,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,6 +99,12 @@ public class ElasticsearchInitializer {
     }
   }
 
+  private static class EmptyData extends Templates {
+    public EmptyData() {
+      super("empty", "");
+    }
+  }
+
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
   RestClient restClient;
@@ -111,6 +119,7 @@ public class ElasticsearchInitializer {
       new ComponentTemplate(),
       new IlmPolicy(),
       new IndexTemplate(),
+      new EmptyData(),
       new Data()
   );
 
@@ -174,7 +183,9 @@ public class ElasticsearchInitializer {
 
   private void apply(String templateUrl, String templateSource, String method) throws IOException {
     Request request = new Request(method, templateUrl);
-    request.setJsonEntity(templateSource);
+    if (templateSource != null && !templateSource.isBlank()) {
+      request.setJsonEntity(templateSource);
+    }
     restClient.performRequest(request);
   }
 
@@ -184,6 +195,52 @@ public class ElasticsearchInitializer {
 
   private void applyInitMarkerTemplate() throws IOException {
     applyTemplate(IndexTemplate.BASE_URL + "/" + markerTemplate.name, markerTemplate.template);
+  }
+
+  private void applyEmptyData(Template template) throws IOException {
+    String json = template.template;
+    json = json.replace("{", "").replace("}", "").trim();
+
+    // Split entries by commas
+    String[] entries = json.split(",");
+
+    int count = 0;
+    String name = "";
+    String unit = "";
+
+    for (String entry : entries) {
+      String[] parts = entry.split(":");
+      String key = parts[0].replace("\"", "").trim();
+      String value = parts[1].replace("\"", "").trim();
+      switch (key) {
+        case "count" -> count = Integer.parseInt(value);
+        case "name" -> name = value;
+        case "unit" -> unit = value;
+      }
+    }
+
+    if (name.isBlank() || unit.isBlank()) {
+      log.warn("Invalid template format [{}] missing name and unit", template.templatePath);
+      return;
+    }
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(name);
+    for (int i = 0; i < count; i++) {
+      LocalDate now = LocalDate.now();
+      LocalDate timeAgo;
+      if (unit.equals("days")) {
+        timeAgo = now.minusDays(i);
+      } else if (unit.equals("months")) {
+        timeAgo = now.minusMonths(i);
+      } else {
+        log.warn("Invalid template format [{}] unknown unit [{}]", template.templatePath, unit);
+        continue;
+      }
+      String index = timeAgo.format(formatter);
+      if (!checkTemplateExists("/" + index)) {
+        apply("/" + index, null, "PUT");
+      }
+    }
   }
 
   private String extractSource(String doc) {
@@ -273,6 +330,14 @@ public class ElasticsearchInitializer {
         for (Template template : templates.templates) {
           try {
             applyData(template, dataTemplate.baseUrl);
+          } catch (IOException e) {
+            log.error("Failed to apply data template [{}]!", template.name, e);
+          }
+        }
+      } else if (templates instanceof EmptyData) {
+        for (Template template : templates.templates) {
+          try {
+            applyEmptyData(template);
           } catch (IOException e) {
             log.error("Failed to apply data template [{}]!", template.name, e);
           }
