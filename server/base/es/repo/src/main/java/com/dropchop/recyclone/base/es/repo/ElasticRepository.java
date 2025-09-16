@@ -51,9 +51,9 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 public abstract class ElasticRepository<E extends EsEntity, ID> implements
   ElasticCrudRepository<E, ID>, ConditionStringProvider {
 
-  private static final String HTTP_POST = "POST";
-  private static final String ENDPOINT_SEARCH = "/_search";
-  private static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
+  public static final String HTTP_POST = "POST";
+  public static final String ENDPOINT_SEARCH = "/_search";
+  public static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
 
   @Inject
   @SuppressWarnings("CdiInjectionPointsInspection")
@@ -365,7 +365,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
       int queryId = query.hashCode();
-      log.debug("Received response for query [{}][{}] in [{}]ms.", queryId, query, timer.stop());
+      log.debug(
+          "Received response for query [{}] on[{}] with[{}] in [{}]ms.",
+          queryId, request.getEndpoint(), query, timer.stop()
+      );
       if (response.getStatusLine().getStatusCode() == 200) {
         QueryResponseParser parser = new QueryResponseParser(objectMapper, searchAfterMode);
         SearchResultMetadata searchResultMetadata;
