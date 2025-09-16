@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,10 @@ public class User extends Person
       UserAccount, TitleDescriptionTranslation, TitleTranslation,
       Action, Domain, Permission, Role, Country, Language, Tag>,
     com.dropchop.recyclone.base.api.model.common.Person<Country, Language, TitleTranslation> {
+
+  public enum Fields {
+    accounts, roles, permissions, tags, attributes, owner
+  }
 
   @JsonInclude(NON_EMPTY)
   private Set<Role> roles;
@@ -61,16 +66,34 @@ public class User extends Person
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes;
 
-  public User cloneSimplified() {
+  public User cloneSimplified(EnumSet<Fields> fieldsToExclude) {
     User newUser;
     try {
       newUser = (User) super.clone();
-      newUser.setAccounts(null);
-      newUser.setRoles(null);
-      newUser.setPermissions(null);
+      if (fieldsToExclude.contains(Fields.attributes)) {
+        newUser.setAttributes(null);
+      }
+      if (fieldsToExclude.contains(Fields.tags)) {
+        newUser.setTags(null);
+      }
+      if (fieldsToExclude.contains(Fields.accounts)) {
+        newUser.setAccounts(null);
+      }
+      if (fieldsToExclude.contains(Fields.roles)) {
+        newUser.setRoles(null);
+      }
+      if (fieldsToExclude.contains(Fields.permissions)) {
+        newUser.setPermissions(null);
+      }
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
     }
     return newUser;
+  }
+
+  public User cloneSimplified() {
+    return cloneSimplified(
+        EnumSet.of(Fields.accounts, Fields.roles, Fields.permissions)
+    );
   }
 }

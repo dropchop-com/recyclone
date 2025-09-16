@@ -20,8 +20,7 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 04. 08. 2025
@@ -88,7 +87,21 @@ public class JwtLoginResource extends BaseLoginResource
     String accessToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
     resp.setAccessToken(accessToken);
 
-    // we respond with id token i.e., all user data
+    // we respond with id token i.e., all user data but,
+    // we remove all fields for which simplified attributes are present
+    List<String> permissionsInAttributes = user.getAttributeValue("permissions", new ArrayList<>());
+    if (permissionsInAttributes != null && !permissionsInAttributes.isEmpty()) {
+      user = user.cloneSimplified(EnumSet.of(User.Fields.permissions));
+    }
+    List<String> rolesInAttributes = user.getAttributeValue("roles", new ArrayList<>());
+    if (rolesInAttributes != null && !rolesInAttributes.isEmpty()) {
+      user = user.cloneSimplified(EnumSet.of(User.Fields.roles));
+    }
+    Object ownerInAttributes = user.getAttributeValue("owner", null);
+    if (ownerInAttributes != null) {
+      user = user.cloneSimplified(EnumSet.of(User.Fields.owner));
+    }
+
     fillIdClaims(user, claims);
     // add more data to access token
     String idToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
