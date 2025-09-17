@@ -105,7 +105,6 @@
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.release>21</maven.compiler.release>
 
-    <skipPublishing>true</skipPublishing>
     <maven.deploy.skip>true</maven.deploy.skip>
     <maven.install.skip>true</maven.install.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -421,9 +420,29 @@
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
-              <!--
-              <excludeArtifacts>recyclone,recyclone-common,recyclone-common-base,recyclone-common-base-api,recyclone-common-base-api-jaxrs,recyclone-common-base-dto,recyclone-common-events,recyclone-common-events-api,recyclone-common-events-api-jaxrs,recyclone-quarkus-extension-parent,recyclone-server,recyclone-server-base,recyclone-server-base-api,recyclone-server-base-es,recyclone-server-base-jaxrs,recyclone-server-base-jpa,recyclone-server-events,recyclone-server-events-api,recyclone-server-events-es,recyclone-server-events-jaxrs,recyclone-quarkus-extension-integration-test</excludeArtifacts>
-              -->
+              <excludeArtifacts>
+                <artifact>recyclone</artifact>
+                <artifact>recyclone-common</artifact>
+                <artifact>recyclone-common-base</artifact>
+                <artifact>recyclone-common-base-api</artifact>
+                <artifact>recyclone-common-base-api-jaxrs</artifact>
+                <artifact>recyclone-common-base-dto</artifact>
+                <artifact>recyclone-common-events</artifact>
+                <artifact>recyclone-common-events-api</artifact>
+                <artifact>recyclone-common-events-api-jaxrs</artifact>
+                <artifact>recyclone-quarkus-extension-parent</artifact>
+                <artifact>recyclone-server</artifact>
+                <artifact>recyclone-server-base</artifact>
+                <artifact>recyclone-server-base-api</artifact>
+                <artifact>recyclone-server-base-es</artifact>
+                <artifact>recyclone-server-base-jaxrs</artifact>
+                <artifact>recyclone-server-base-jpa</artifact>
+                <artifact>recyclone-server-events</artifact>
+                <artifact>recyclone-server-events-api</artifact>
+                <artifact>recyclone-server-events-es</artifact>
+                <artifact>recyclone-server-events-jaxrs</artifact>
+                <artifact>recyclone-quarkus-extension-integration-test</artifact>
+              </excludeArtifacts>
             </configuration>
           </plugin>
         </plugins>
