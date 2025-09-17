@@ -15,8 +15,7 @@ import io.quarkus.gizmo.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import org.jboss.jandex.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -26,7 +25,7 @@ import java.util.*;
  */
 public class ContextProcessor {
 
-  private final static Logger log = LoggerFactory.getLogger(ContextProcessor.class);
+  private final Logger log = Logger.getLogger(getClass());
 
   private static final DotName EXEC_CTX_IFACE = DotName.createSimple(
       "com.dropchop.recyclone.base.api.model.invoke.ExecContext"
@@ -133,8 +132,8 @@ public class ContextProcessor {
         prio = 1000;
       }
       contextMappings.add(new ContextMapping(contextClass, dataClass, prio));
-      log.trace(
-          "Requesting injection point producer [{}-with-{}] for rest method [{}#{}] implementation.",
+      log.tracef(
+          "Requesting injection point producer [%s-with-%s] for rest method [%s#%s] implementation.",
           contextClass, dataClass, restClass.getApiClass(), restMethod.getName()
       );
     }
@@ -169,10 +168,12 @@ public class ContextProcessor {
           DotName.createSimple(prodRetParamType).withoutPackagePrefix() + "_" + impl.name().hashCode() +
           "_" + prodRetParamType.hashCode();
     }
+    try {
+      log.infof(
+          "Generating producer for injection point %s implementation.", producerClassName
+      );
+    } catch (Exception ignored) {}
     GeneratedBeanGizmoAdaptor classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
-    log.info(
-        "Generating producer for injection point {} implementation.", producerClassName
-    );
     try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
         .className(producerClassName)
         .build()) {

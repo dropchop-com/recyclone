@@ -34,7 +34,7 @@ import java.util.function.Consumer;
  */
 public class ShiroProcessor {
 
-  private static final Logger LOG = Logger.getLogger(ShiroProcessor.class);
+  private final Logger log = Logger.getLogger(getClass());
 
   private static final DotName OLD_LOGICAL = DotName.createSimple(
       "com.dropchop.recyclone.base.api.model.security.annotations.Logical"
@@ -218,7 +218,7 @@ public class ShiroProcessor {
         }
       }
     }
-    LOG.debugf("Will replace Recyclone security Annotations with Apache Shiro's in [%s]", classesToChange);
+    log.debugf("Will replace Recyclone security Annotations with Apache Shiro's in [%s]", classesToChange);
     for (DotName dcAnnoClass : classesToChange) {
       BytecodeTransformerBuildItem item = new BytecodeTransformerBuildItem.Builder()
           .setCacheable(true)

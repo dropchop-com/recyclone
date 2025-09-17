@@ -28,14 +28,5 @@ public class RestResourceAnnotationProcessor implements AnnotationsTransformer {
   public void transform(TransformationContext context) {
     ClassInfo classInfo = context.getTarget().asClass();
     String newPath = addAnnotation.get(classInfo.name());
-    /*if (newPath != null) {
-      context.transform().add(
-          DotName.createSimple(Path.class.getName()),
-          AnnotationValue.createStringValue("value", newPath)
-      ).add(
-          DotName.createSimple(RecycloneResource.class.getName()),
-          AnnotationValue.createStringValue("value", newPath)
-      ).done();
-    }*/
   }
 }

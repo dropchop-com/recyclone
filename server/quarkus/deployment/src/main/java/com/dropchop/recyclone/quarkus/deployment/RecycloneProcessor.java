@@ -30,8 +30,7 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
 
 class RecycloneProcessor {
 
-  private static final Logger log = LoggerFactory.getLogger(RecycloneProcessor.class);
+  private final Logger log = Logger.getLogger(getClass());
   private static final String FEATURE = "quarkus-recyclone";
 
   @BuildStep
@@ -202,7 +201,7 @@ class RecycloneProcessor {
         continue;
       }
       for (ClassInfo impl : candidates) {
-        log.debug("Service candidate [{}].", impl.name());
+        log.debugf("Service candidate [%s].", impl.name());
         if (!impl.hasAnnotation(ANNO_NAMED)) {
           continue;
         }
@@ -214,7 +213,7 @@ class RecycloneProcessor {
         Set<DotName> intersection = new HashSet<>(impl.interfaceNames());
         intersection.retainAll(serviceNames);
         if (intersection.isEmpty()) {
-          log.info("Empty service intersection [{}].", impl.name());
+          log.infof("Empty service intersection [%s].", impl.name());
           continue;
         }
         DotName serviceIf = intersection.iterator().next();
@@ -222,7 +221,7 @@ class RecycloneProcessor {
         producerMappings.add(
             new ProducerMapping(serviceIf.toString(), impl.name().toString(), selector, rootIface)
         );
-        log.debug("Found service implementation [{}] for interface [{}].", impl.name(), serviceIf);
+        log.debugf("Found service implementation [%s] for interface [%s].", impl.name(), serviceIf);
       }
     }
   }
@@ -253,8 +252,8 @@ class RecycloneProcessor {
 
       String producerClassName = ifaceClass.name().toString() + "Producer";
       GeneratedBeanGizmoAdaptor classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
-      log.info(
-          "Generating producer for injection point {}.", ifaceClass //, serviceImpl
+      log.infof(
+          "Generating producer for injection point %s.", ifaceClass //, serviceImpl
       );
       try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
           .className(producerClassName)

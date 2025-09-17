@@ -38,7 +38,7 @@ import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
  */
 public class RestProcessor {
 
-  private static final Logger log = Logger.getLogger("com.dropchop.recyclone.quarkus");
+  private final Logger log = Logger.getLogger(getClass());
 
   private static final DotName DYN_CTX_ANNO = DotName.createSimple(
       "com.dropchop.recyclone.base.api.model.rest.DynamicExecContext"
@@ -236,7 +236,7 @@ public class RestProcessor {
     return false;
   }
 
-  private static DotName[] computeParamDataClass(ClassInfo apiClass, MethodInfo method, IndexView indexView) {
+  private DotName[] computeParamDataClass(ClassInfo apiClass, MethodInfo method, IndexView indexView) {
     AnnotationInstance dynamicExecAnnotation = apiClass.annotation(DYN_CTX_ANNO);
 
     DotName tmpDataClass = getClassAnnotationValueIfDifferent(

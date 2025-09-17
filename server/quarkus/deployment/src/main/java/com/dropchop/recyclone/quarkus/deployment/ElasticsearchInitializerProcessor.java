@@ -7,8 +7,7 @@ import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 //@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 public class ElasticsearchInitializerProcessor {
 
-  private static final Logger log = LoggerFactory.getLogger(ElasticsearchInitializerProcessor.class);
+  private static final Logger log = Logger.getLogger(ElasticsearchInitializerProcessor.class);
 
   @BuildStep
   public void registerInitializer(List<DevServicesResultBuildItem> devservicesElasticsearchBuildItems,
@@ -36,7 +35,7 @@ public class ElasticsearchInitializerProcessor {
     }
     for (DevServicesResultBuildItem result : devservicesElasticsearchBuildItems) {
       if (result.getName().startsWith("elasticsearch")) {
-        log.info("Registering Elasticsearch initializer for: {}@{}", result.getName(), result.getConfig());
+        log.infof("Registering Elasticsearch initializer for: %s@%s", result.getName(), result.getConfig());
         additionalBeanBuildItemProducer.produce(
             AdditionalBeanBuildItem
                 .builder()
