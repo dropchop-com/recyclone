@@ -15,6 +15,7 @@ import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
+import com.dropchop.recyclone.base.es.model.query.IQueryNodeObject;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.config.*;
@@ -85,26 +86,31 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public String provideConditionString(QueryParams queryParams) {
-    ElasticQueryBuilder.ValidationData validationData = new ElasticQueryBuilder.ValidationData();
+  public String encodeCondition(IQueryNodeObject queryNodeObject) {
     String result;
     try {
       result = getObjectMapper().writeValueAsString(
-        getElasticQueryBuilder().build(validationData, queryParams)
+          queryNodeObject
       );
     } catch (JsonProcessingException e) {
       throw new ServiceException(
-        ErrorCode.data_validation_error,
-        "Error in processing conditions: " + this.getClass().getName(),
-        e
+          ErrorCode.data_validation_error,
+          "Error in processing conditions: " + this.getClass().getName(),
+          e
       );
     }
     return result;
   }
 
   @Override
-  public String provideConditionStringWithMaxSizeWithoutAggregation(QueryParams queryParams) {
-    String result;
+  public IQueryNodeObject provideCondition(QueryParams queryParams) {
+    ElasticQueryBuilder.ValidationData validationData = new ElasticQueryBuilder.ValidationData();
+    return getElasticQueryBuilder().build(validationData, queryParams);
+  }
+
+  @Override
+  public IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams) {
+    IQueryNodeObject result;
     ResultFilter<?, ?> rf = queryParams.tryGetResultFilter();
     String conditionString;
     if (rf != null) {
@@ -115,14 +121,14 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       queryParams.tryGetResultFilter().setFrom(0);
       queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
       try {
-        result = this.provideConditionString(queryParams);
+        result = this.provideCondition(queryParams);
       } finally {
         queryParams.tryGetResultFilter().setFrom(tempFrom);
         queryParams.tryGetResultFilter().setSize(tempSize);
         queryParams.setAggregate(tempAggs);
       }
     } else {
-      result = this.provideConditionString(queryParams);
+      result = this.provideCondition(queryParams);
     }
     return result;
   }
@@ -253,7 +259,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     return delete(List.of(entity)).getFirst();
   }
 
-  protected Request buildRequestForSearch(QueryNodeObject query, String endpoint) {
+  protected Request buildRequestForSearch(IQueryNodeObject query, String endpoint) {
     ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
     String indexName;
     if (indexConfig instanceof HasQueryBasedReadIndex hasQueryBasedReadIndex) {

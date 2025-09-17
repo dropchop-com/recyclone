@@ -6,6 +6,7 @@ import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
+import com.dropchop.recyclone.base.es.model.query.IQueryNodeObject;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +102,7 @@ public class DateBasedIndexConfig extends IngestPipelineIndexConfig
   }
 
   @Override
-  public String getReadIndexName(QueryNodeObject query) {
+  public String getReadIndexName(IQueryNodeObject query) {
     if (indexPostfix == null) {
       log.warn(
           "No index name generator configured for search in index config [{}]!",

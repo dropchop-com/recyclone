@@ -5,7 +5,6 @@ import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.config.ClassStaticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
-import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import com.dropchop.recyclone.base.es.repo.query.DefaultElasticQueryBuilder;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +25,6 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @SuppressWarnings("unused")
 public class ElasticDummyRepository extends ElasticRepository<EsDummy, String>
   implements AlwaysPresentDeleteFields {
-  //implements BlockAllDelete {
 
   private final Class<EsDummy> rootClass = EsDummy.class;
 
