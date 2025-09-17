@@ -356,7 +356,7 @@
 
   <profiles>
     <profile>
-      <id>maven-central</id>
+      <id>production</id>
       <build>
         <plugins>
           <plugin>
