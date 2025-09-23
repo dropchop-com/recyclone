@@ -6,6 +6,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.SecurityExecContext;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.dropchop.shiro.annotation.*;
 import com.dropchop.shiro.cdi.ShiroAuthorizationService;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -73,7 +74,9 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       this.authorizationService.invokeRequestFilterChain(context);
     } catch (Exception e) {
       log.warn("Exception during REST method shiro filter chain [{}]!", path, e);
-      throw e;
+      ServiceErrorExceptionMapper mapper = new ServiceErrorExceptionMapper();
+      context.abortWith(mapper.toResponse(e));
+      return;
     }
 
     ExecContext<?> execContext = (ExecContext<?>)context
@@ -91,7 +94,9 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       this.authorizationService.doAuthorizationChecks(context, authzChecks);
     } catch (Exception e) {
       log.warn("Exception during REST method authorization check [{}]!", path, e);
-      throw e;
+      ServiceErrorExceptionMapper mapper = new ServiceErrorExceptionMapper();
+      context.abortWith(mapper.toResponse(e));
+      return;
     }
 
     if (execContext instanceof SecurityExecContext securityExecContext) {
