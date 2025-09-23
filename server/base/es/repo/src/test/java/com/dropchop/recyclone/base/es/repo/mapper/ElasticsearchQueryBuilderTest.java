@@ -364,7 +364,6 @@ public class ElasticsearchQueryBuilderTest {
                     }
                   }, {
                     "span_term" : {
-                      "case_insensitive": true,
                       "text" : {
                         "value" : "gubam"
                       }
@@ -409,7 +408,6 @@ public class ElasticsearchQueryBuilderTest {
                   "clauses": [
                     {
                       "span_term": {
-                        "case_insensitive": false,
                         "text": {
                           "value": "Nivea"
                         }
