@@ -409,7 +409,7 @@ public class ElasticsearchQueryBuilderTest {
                     {
                       "span_term": {
                         "text": {
-                          "value": "Nivea"
+                          "value": "nivea"
                         }
                       }
                     },

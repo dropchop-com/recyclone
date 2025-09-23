@@ -9,6 +9,10 @@ public class PrefixClauseStrategy implements QueryClauseStrategy {
     QueryNodeObject multi = new QueryNodeObject();
     QueryNodeObject match = new QueryNodeObject();
     QueryNodeObject prefix = new QueryNodeObject();
+    // commented out for now since we don't know if we need it yet
+    //if (value != null && caseInsensitive != null && caseInsensitive) {
+    //  value = value.trim().toLowerCase();
+    //}
 
     QueryNodeObject fieldObject = createFieldValueObject(field, value, caseInsensitive, true);
     prefix.put("prefix", fieldObject);
