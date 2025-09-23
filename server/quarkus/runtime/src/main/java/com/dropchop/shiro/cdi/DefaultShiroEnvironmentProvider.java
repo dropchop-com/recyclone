@@ -101,7 +101,7 @@ public class DefaultShiroEnvironmentProvider {
               ),
               mechanism.secret().map(s -> s.replaceAll("\\s+", "")).orElse(null),
               mechanism.timeoutSeconds().orElse(900),
-              mechanism.timeoutSeconds().orElse(86400)
+              mechanism.longTimeoutSeconds().orElse(86400)
           );
         }
       }

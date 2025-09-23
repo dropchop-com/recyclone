@@ -40,6 +40,8 @@ public class AuthorizationRequest extends Params {
 
   String password;
 
+  Boolean rememberMe;
+
   public static <R extends AuthorizationRequest> LoginParameters toLoginParameters(R req) {
     String scopeStr = req.getScope();
     Set<String> domainPrefixes = new LinkedHashSet<>();
@@ -55,6 +57,7 @@ public class AuthorizationRequest extends Params {
     loginParameters.setLoginName(req.getUsername());
     loginParameters.setPassword(req.getPassword());
     loginParameters.setDomainPrefix(domainPrefixes);
+    loginParameters.setRememberMe(req.getRememberMe());
     return loginParameters;
   }
 
