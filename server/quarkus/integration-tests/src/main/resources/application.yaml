@@ -115,6 +115,7 @@ quarkus:
               CxPGfaFfuE3tzvg6qSYmP6xNrFKkNEfP3aTWRwt5pud8PqyLrBbcGn5Sf4JCV1ac
             issuer: Dropchop d.o.o.
             timeout-seconds: 900
+            long-timeout-seconds: 864000
       includes:
         - "com.dropchop.recyclone.quarkus.it.rest.api.*"
         - "*.localization.*"

@@ -100,7 +100,8 @@ public class DefaultShiroEnvironmentProvider {
                   recycloneConfig.rest().info().contact().name().orElse("Jwt Issuer")
               ),
               mechanism.secret().map(s -> s.replaceAll("\\s+", "")).orElse(null),
-              mechanism.timeoutSeconds().orElse(600)
+              mechanism.timeoutSeconds().orElse(900),
+              mechanism.timeoutSeconds().orElse(86400)
           );
         }
       }
@@ -113,7 +114,7 @@ public class DefaultShiroEnvironmentProvider {
     }
     return new JwtConfig(
         recycloneConfig.rest().info().title().orElse(null), "/api/security/login/jwt", Boolean.TRUE,
-        recycloneConfig.rest().info().contact().name().orElse("Jwt Issuer"), "no-need-for-secrecy", 600
+        recycloneConfig.rest().info().contact().name().orElse("Jwt Issuer"), "no-need-for-secrecy", 900, 86400
     );
   }
 

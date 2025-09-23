@@ -32,7 +32,7 @@ public class JwtDefaultService implements JwtService {
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
   ObjectMapper mapper;
 
-  public String encode(JwtConfig config, String subject, Map<String, Object> claims) {
+  public String encode(JwtConfig config, long timeout, String subject, Map<String, Object> claims) {
     if (config.getSecret() == null || config.getSecret().isEmpty()) {
       log.error("No security secret available");
       return null;
@@ -46,7 +46,8 @@ public class JwtDefaultService implements JwtService {
         .header()
         .add("typ", "jwt")
         .and()
-        .expiration(Date.from(ZonedDateTime.now().plusSeconds(config.getTimeoutSeconds()).toInstant()))
+        .issuedAt(Date.from(ZonedDateTime.now().toInstant()))
+        .expiration(Date.from(ZonedDateTime.now().plusSeconds(timeout).toInstant()))
         .signWith(key, Jwts.SIG.HS512);
     if (claims != null && !claims.isEmpty()) {
       builder.claims(claims);
@@ -57,7 +58,7 @@ public class JwtDefaultService implements JwtService {
     return builder.compact();
   }
 
-  public String decodeSubject(JwtConfig config, String token) {
+  public Claims decode(JwtConfig config, String token) {
     byte[] keyBytes = Decoders.BASE64.decode(config.getSecret());
     SecretKey key = Keys.hmacShaKeyFor(keyBytes);
     Jws<Claims> jws;
@@ -80,6 +81,6 @@ public class JwtDefaultService implements JwtService {
       log.warn("Invalid JWT token! Missing claims!");
       return null;
     }
-    return claims.getSubject();
+    return claims;
   }
 }

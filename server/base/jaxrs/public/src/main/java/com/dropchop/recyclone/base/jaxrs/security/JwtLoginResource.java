@@ -84,7 +84,12 @@ public class JwtLoginResource extends BaseLoginResource
     Map<String, Object> claims = new HashMap<>();
     fillAccessClaims(simplifiedUser, claims);
     // keep the access token simple
-    String accessToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
+    String accessToken;
+    int timeoutSeconds = jwtConfig.getTimeoutSeconds();
+    if (loginParameters.getRememberMe() != null && loginParameters.getRememberMe()) {
+      timeoutSeconds = jwtConfig.getLongTimeoutSeconds();
+    }
+    accessToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
     resp.setAccessToken(accessToken);
 
     // we respond with id token i.e., all user data but,
@@ -104,12 +109,12 @@ public class JwtLoginResource extends BaseLoginResource
 
     fillIdClaims(user, claims);
     // add more data to access token
-    String idToken = jwtService.encode(jwtConfig, user.getUuid().toString(), claims);
+    String idToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
     resp.setIdToken(idToken);
 
     resp.setCode(req.getRequestId());
     resp.setTokenType("Bearer");
-    resp.setExpiresIn(jwtConfig.getTimeoutSeconds());
+    resp.setExpiresIn(timeoutSeconds);
   }
 
   @Override

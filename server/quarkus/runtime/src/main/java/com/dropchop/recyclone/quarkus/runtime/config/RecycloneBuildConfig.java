@@ -247,6 +247,12 @@ public interface RecycloneBuildConfig {
         Optional<Integer> timeoutSeconds();
 
         /**
+         * REST security item long interval (for instance, if remember-me is selected) timeout seconds
+         * if a scheme is JWT.
+         */
+        Optional<Integer> longTimeoutSeconds();
+
+        /**
          * REST security item issuer if a scheme is JWT.
          */
         Optional<String> issuer();

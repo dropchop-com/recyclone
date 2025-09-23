@@ -3,11 +3,16 @@ package com.dropchop.shiro.filter;
 import com.dropchop.recyclone.base.api.config.JwtConfig;
 import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import io.jsonwebtoken.Claims;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import org.apache.shiro.subject.Subject;
+
+import java.util.Date;
+
+import static com.dropchop.shiro.filter.JwtAuthenticationFilter.JWT_AUTHENTICATED_REQUEST_CLAIMS;
 
 @ApplicationScoped
 public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter implements ResponseFilter {
@@ -40,7 +45,14 @@ public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter imple
     Subject subject = getSubject();
     Object principal = subject.getPrincipal();
     if (principal instanceof User user) {
-      String newToken = jwtService.encode(this.jwtConfig, user.getId());
+      Object oClaims = requestContext.getProperty(JWT_AUTHENTICATED_REQUEST_CLAIMS);
+      long timeout = jwtConfig.getTimeoutSeconds();
+      if (oClaims instanceof Claims claims) {
+        Date expiration = claims.getExpiration();
+        Date issuedAt = claims.getIssuedAt();
+        timeout = ((expiration.getTime() - issuedAt.getTime()) / 1000);
+      }
+      String newToken = jwtService.encode(this.jwtConfig, timeout, user.getId());
       responseContext.getHeaders().add("X-Auth-Token", newToken);
       responseContext.getHeaders().add("Access-Control-Expose-Headers", "*");
     }

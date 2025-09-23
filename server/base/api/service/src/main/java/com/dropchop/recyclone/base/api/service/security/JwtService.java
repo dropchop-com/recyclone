@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.api.service.security;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
+import io.jsonwebtoken.Claims;
 
 import java.util.Map;
 
@@ -9,11 +10,11 @@ import java.util.Map;
  */
 public interface JwtService {
 
-  String encode(JwtConfig config, String subject, Map<String, Object> claims);
+  String encode(JwtConfig config, long timeout, String subject, Map<String, Object> claims);
 
-  default String encode(JwtConfig config, String subject) {
-    return encode(config, subject, null);
+  default String encode(JwtConfig config, long timeout, String subject) {
+    return encode(config, timeout, subject, null);
   }
 
-  String decodeSubject(JwtConfig config, String token);
+  Claims decode(JwtConfig config, String token);
 }
