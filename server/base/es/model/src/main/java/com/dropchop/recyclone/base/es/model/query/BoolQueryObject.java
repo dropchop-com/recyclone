@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.model.query;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @SuppressWarnings("unused")
@@ -9,7 +10,8 @@ public class BoolQueryObject extends QueryNodeObject{
   IQueryNodeList should;
   IQueryNodeList mustNot;
   IQueryNodeList filter;
-  private final int minimumShouldMatch;
+  @Setter
+  private int minimumShouldMatch;
   private int numClauses;
 
   public BoolQueryObject(IQueryNode parent, int minimumShouldMatch) {

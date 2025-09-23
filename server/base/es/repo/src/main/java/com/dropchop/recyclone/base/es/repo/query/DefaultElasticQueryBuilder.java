@@ -8,6 +8,9 @@ import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
+import com.dropchop.recyclone.base.dto.model.text.ExpressionToken;
+import com.dropchop.recyclone.base.dto.model.text.Filter;
+import com.dropchop.recyclone.base.dto.model.text.LegacyExpressionParser;
 import com.dropchop.recyclone.base.es.model.query.*;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @ApplicationScoped
@@ -114,6 +118,115 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return previousCondition;
   }
 
+  private boolean isAdvancedText(String value) {
+    if (value == null || value.isEmpty()) {
+      return false;
+    }
+    return value.indexOf('"') >= 0 ||
+      value.contains(" OR ") ||
+      value.contains("|") ||
+      value.indexOf('+') >= 0 ||
+      value.indexOf('-') >= 0 ||
+      value.indexOf(':') >= 0 ||
+      value.indexOf('[') >= 0 ||
+      value.indexOf(']') >= 0 ||
+      value.indexOf('{') >= 0 ||
+      value.indexOf('}') >= 0 ||
+      value.indexOf('*') >= 0;
+  }
+
+  private QueryNodeObject mapAdvancedText(String defaultField, String value) {
+    List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
+    return renderAdvanced(defaultField, tokens);
+  }
+
+  private QueryNodeObject renderAdvanced(String defaultField, List<ExpressionToken> tokens) {
+    BoolQueryObject bool = new BoolQueryObject();
+    for (ExpressionToken token : tokens) {
+      QueryNodeObject node = toQueryNode(defaultField, token);
+      if (token.isMustNot()) {
+        bool.mustNot(node);
+      } else if (token.isMust()) {
+        bool.must(node);
+      } else {
+        bool.should(node);
+      }
+    }
+    if (!bool.containsKey("must") && !bool.containsKey("must_not") && bool.getShould() != null) {
+      bool.setMinimumShouldMatch(1);
+    }
+    return bool;
+  }
+
+  private QueryNodeObject toQueryNode(String defaultField, ExpressionToken token) {
+    if (token instanceof com.dropchop.recyclone.base.dto.model.text.Or orToken) {
+      BoolQueryObject orBool = new BoolQueryObject();
+      for (ExpressionToken part : orToken.getExpressionTokens()) {
+        QueryNodeObject child = toQueryNode(defaultField, part);
+        orBool.should(child);
+      }
+      orBool.setMinimumShouldMatch(1);
+      return orBool;
+    }
+
+    String field = defaultField;
+    if (token instanceof Filter filter && filter.getName() != null && !filter.getName().isEmpty()) {
+      field = filter.getName();
+    }
+
+    if (token instanceof com.dropchop.recyclone.base.dto.model.text.Phrase phrase) {
+      String phraseText = phrase.getExpression().toString();
+      QueryNodeObject matchPhrase = new QueryNodeObject();
+      QueryNodeObject conf = new QueryNodeObject();
+      conf.put("query", phraseText);
+      Map<String, Object> meta = phrase.getMetaData();
+      if (meta != null) {
+        copyIfPresent(meta, conf, "slop");
+        copyIfPresent(meta, conf, "boost");
+        copyIfPresent(meta, conf, "analyzer");
+      }
+      QueryNodeObject wrapper = new QueryNodeObject();
+      wrapper.put(field, conf);
+      matchPhrase.put("match_phrase", wrapper);
+      return matchPhrase;
+    }
+    String term = token.getExpression().toString();
+    if (token.isPrefix() || term.indexOf('*') >= 0) {
+      QueryNodeObject wildcard = new QueryNodeObject();
+      QueryNodeObject conf = new QueryNodeObject();
+      conf.put("value", term);
+      conf.put("case_insensitive", true);
+      Map<String, Object> meta = token.getMetaData();
+      if (meta != null) {
+        copyIfPresent(meta, conf, "boost");
+      }
+      QueryNodeObject wrapper = new QueryNodeObject();
+      wrapper.put(field, conf);
+      wildcard.put("wildcard", wrapper);
+      return wildcard;
+    } else {
+      QueryNodeObject match = new QueryNodeObject();
+      QueryNodeObject conf = new QueryNodeObject();
+      conf.put("query", term);
+      Map<String, Object> meta = token.getMetaData();
+      if (meta != null) {
+        copyIfPresent(meta, conf, "fuzziness");
+        copyIfPresent(meta, conf, "boost");
+        copyIfPresent(meta, conf, "analyzer");
+        copyIfPresent(meta, conf, "operator");
+      }
+      QueryNodeObject wrapper = new QueryNodeObject();
+      wrapper.put(field, conf);
+      match.put("match", wrapper);
+      return match;
+    }
+  }
+
+  private void copyIfPresent(Map<String, Object> meta, QueryNodeObject to, String key) {
+    Object v = meta.get(key);
+    if (v != null) to.put(key, v);
+  }
+
   protected OperatorNodeObject mapConditionField(String field, ConditionOperator operator) {
     OperatorNodeObject operatorNode = new OperatorNodeObject();
 
@@ -138,6 +251,15 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     } else if (operator instanceof OpenClosedInterval<?> interval) {
       operatorNode.addOpenClosedInterval(field, interval.get$gt(), interval.get$lte());
     } else if (operator instanceof Match<?> textMatch) {
+      Object raw = textMatch.get$match();
+      String value = (raw == null) ? "" : raw.toString();
+      if (isAdvancedText(value)) {
+        QueryNodeObject advancedQuery = mapAdvancedText(field, value);
+        if (!advancedQuery.isEmpty()) {
+          operatorNode.putAll(advancedQuery);
+          return operatorNode;
+        }
+      }
       operatorNode.addTextSearch(field, textMatch);
     } else if (operator == null) {
       operatorNode.addNullSearch(field);
