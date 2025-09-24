@@ -419,7 +419,14 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       List<QueryNodeObject> sortEntries = sortList.stream()
           .map(sort -> {
             QueryNodeObject sortEntry = new QueryNodeObject();
-            sortEntry.put(sort, "desc");
+            if (sort.startsWith("-")) {
+              sortEntry.put(sort.substring(1), "desc");
+            } else {
+              if (sort.startsWith("+")) {
+                sort = sort.substring(1);
+              }
+              sortEntry.put(sort, "asc");
+            }
             return sortEntry;
           })
           .toList();
@@ -453,7 +460,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     QueryNodeObject queryContainer = new QueryNodeObject();
 
     boolean useSearchAfterMode = useSearchAfter(indexConfig, params);
-    QueryNodeObject sort = buildSortOrder(params.tryGetResultFilter().sort(), indexConfig, useSearchAfterMode);
+    QueryNodeObject sort = buildSortOrder(params.tryGetResultFilter().getSort(), indexConfig, useSearchAfterMode);
 
     int size = params.tryGetResultFilter().size();
     int from = params.tryGetResultFilter().from();
