@@ -350,6 +350,13 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       QueryNodeObject stats = new QueryNodeObject();
       stats.put("field", aggregation.getField());
       node.put("stats", stats);
+    } else if (aggregation instanceof TopHits topHits) {
+      TopHitsNodeObject topHitsNode = new TopHitsNodeObject();
+      topHitsNode.setSize(topHits.getSize());
+      for (Sort s : topHits.getSort()) {
+        topHitsNode.addSort(s.getField(), s.getValue());
+      }
+      node.put("top_hits", topHitsNode);
     }
 
     if (aggregation instanceof BucketAggregation bucket) {

@@ -1,9 +1,7 @@
 package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.api.model.query.Aggregation;
-import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
-import com.dropchop.recyclone.base.api.model.query.aggregation.DateHistogram;
-import com.dropchop.recyclone.base.api.model.query.aggregation.Terms;
+import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Exclude;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Include;
@@ -15,17 +13,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
-  List<String> convertToList(String input) {
-    if (input == null || input.isEmpty()) return Collections.emptyList();
-
+  List<String> convertToList(JsonNode inputNode) {
+    List<String> list = new ArrayList<>();
+    if (inputNode.isArray()) {
+      for (JsonNode node : inputNode) {
+        list.add(node.asText());
+      }
+    } else if (inputNode.isTextual()) {
+      list.add(inputNode.asText());
+    }
+    return list;
+    /*
     return Arrays.stream(input
         .replaceAll("^\\[|]$", "")
         .replaceAll("\"", "")
@@ -33,6 +36,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         .split("\\s*,\\s*"))
       .filter(s -> !s.isEmpty())
       .collect(Collectors.toList());
+     */
   }
 
   private Aggregation aggregationSwitch(
@@ -51,6 +55,22 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
           return new DateHistogram(name, field, interval);
         }
         return new DateHistogram(name, field, interval, subAggregations);
+      } else if (cClass.equals(TopHits.class)) {
+        JsonNode sizeNode = entry.getValue().get("size");
+        JsonNode sortNode = entry.getValue().get("sort");
+        Integer size = null;
+        if (sizeNode != null) {
+          size = sizeNode.asInt();
+        }
+        List<Sort> sortList = new ArrayList<>();
+        if (sortNode != null && sortNode.isArray()) {
+          for (JsonNode sortElement : sortNode) {
+            String fieldName = sortElement.get("field").asText();
+            String value = sortElement.get("value").asText();
+            sortList.add(new Sort(fieldName, value));
+          }
+        }
+        return new TopHits(name, size, sortList);
       } else if (cClass.equals(Terms.class)) {
         JsonNode sizeNode = entry.getValue().get("size");
         JsonNode filterNode = entry.getValue().get("filter");
@@ -81,14 +101,14 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
           if ((includeNode != null && !includeNode.isNull()) && (excludeNode != null && !excludeNode.isNull())) {
             terms.setFilter(
               new Filter(
-                new Include(convertToList(includeNode.get("value").toString())),
-                new Exclude(convertToList(excludeNode.get("value").toString()))
+                new Include(convertToList(includeNode.get("value"))),
+                new Exclude(convertToList(excludeNode.get("value")))
               )
             );
           } else if (includeNode != null && !includeNode.isNull()) {
-            terms.setFilter(new Filter(new Include(convertToList(includeNode.get("value").toString()))));
+            terms.setFilter(new Filter(new Include(convertToList(includeNode.get("value")))));
           } else if (excludeNode != null && !excludeNode.isNull()) {
-            terms.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value").toString()))));
+            terms.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value")))));
           }
         }
 
@@ -114,8 +134,14 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
     Class<? extends Aggregation> cClass = Aggregation.supported().get(type);
 
     if (cClass != null) {
-      String name = entry.getValue().get("name").asText();
-      String field = entry.getValue().get("field").asText();
+      String name = null;
+      String field = null;
+      if (entry.getValue().get("name") != null) {
+        name = entry.getValue().get("name").asText();
+      }
+      if (entry.getValue().get("field") != null) {
+        field = entry.getValue().get("field").asText();
+      }
       JsonNode aggs = entry.getValue().get("aggs");
 
       AggregationList aggregations = new AggregationList();

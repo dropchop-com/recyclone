@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.mapper;
 
+import com.dropchop.recyclone.base.api.model.query.aggregation.Sort;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
@@ -15,6 +16,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.topHits;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 
@@ -962,6 +964,78 @@ public class ElasticsearchQueryBuilderTest {
 
     String json = ob.writeValueAsString(result);
     JSONAssert.assertEquals(expectedJson, json, true);
+  }
+
+  @Test
+  public void testTopHitsAggregation() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().aggregate(
+      aggs(
+        dateHistogram(
+          "price_histogram",
+          "price",
+          "seconds",
+          terms(
+            "price_sum",
+            "price",
+            filter(
+              includes("include_ports")
+            ),
+            topHits(
+              "NewsSegmentHits",
+              50,
+              List.of(new Sort("clickCount", "desc")))
+          )
+        )
+      )
+    ).build();
+
+    String correctJson = """
+       {
+         "query" : {
+           "match_all" : { }
+         },
+         "aggs" : {
+           "price_histogram" : {
+             "date_histogram" : {
+               "field" : "price",
+               "calendar_interval" : "seconds"
+             },
+             "aggs" : {
+               "price_sum" : {
+                 "terms" : {
+                   "field" : "price",
+                   "include" : [ "include_ports" ]
+                 },
+                 "aggs": {
+                   "NewsSegmentHits": {
+                     "top_hits": {
+                       "size": 50,
+                       "sort": [
+                         {
+                           "clickCount": {
+                             "order": "desc"
+                           }
+                         }
+                       ]
+                     }
+                   }
+                 }
+               }
+             }
+           }
+         },
+         "from": 0,
+         "size": 100
+       }
+       """;
+
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(new ValidationData(), params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
   }
 
 }

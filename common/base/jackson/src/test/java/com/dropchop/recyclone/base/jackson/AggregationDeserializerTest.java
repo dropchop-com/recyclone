@@ -2,6 +2,7 @@ package com.dropchop.recyclone.base.jackson;
 
 import com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
+import com.dropchop.recyclone.base.api.model.query.aggregation.Sort;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -9,6 +10,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
+import static com.dropchop.recyclone.base.api.model.query.Aggregation.topHits;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 
 public class AggregationDeserializerTest {
@@ -263,6 +265,38 @@ public class AggregationDeserializerTest {
             )
           )
         )
+      )
+    );
+
+    ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
+    ObjectMapper mapper = mapperFactory.createObjectMapper();
+
+    String jsonOutput1 = mapper.writeValueAsString(a);
+    AggregationList a1 = mapper.readValue(jsonOutput1, AggregationList.class);
+    a1 = Wrapper.wrap(a1);
+
+    String jsonOutput2 = mapper.writeValueAsString(a1);
+    JSONAssert.assertEquals(jsonOutput1, jsonOutput2, true);
+  }
+
+  @Test
+  public void topHitsAggregationTest() throws Exception {
+    AggregationList a = aggs(
+      terms(
+        "price_sum",
+        "price",
+        4500,
+        terms(
+          "terms with",
+          "price",
+          filter(
+            includes(List.of("include_ports"))
+          )
+        ),
+        topHits(
+          "TermsAggregation",
+          50,
+          List.of(new Sort("clickCounter", "desc")))
       )
     );
 

@@ -38,7 +38,8 @@ public interface Aggregation {
       "terms", Terms.class,
       "cardinality", Cardinality.class,
       "dateHistogram", DateHistogram.class,
-      "stats", Stats.class
+      "stats", Stats.class,
+      "topHits", TopHits.class
     );
   }
 
@@ -61,6 +62,10 @@ public interface Aggregation {
 
   static Stats stats(String name, String field) {
     return new Stats(name, field);
+  }
+
+  static TopHits topHits(String name, Integer size, List<Sort> sorts) {
+    return new TopHits(name, size, sorts);
   }
 
   static Min min(String name, String field) {
