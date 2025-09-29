@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.File;
-
 @SuppressWarnings("unused")
 @Getter
 @Setter

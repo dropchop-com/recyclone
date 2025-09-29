@@ -5,8 +5,8 @@ import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Include;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
