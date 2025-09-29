@@ -50,7 +50,12 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         filteringAgg.setFilter(new Filter(new Include(convertToList(includeNode.get("value")))));
       }
       if (excludeNode != null && !excludeNode.isNull()) {
-        filteringAgg.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value")))));
+        Filter filter = filteringAgg.getFilter();
+        if (filter != null) {
+          filter.setExclude(new Exclude(convertToList(excludeNode.get("value"))));
+        } else {
+          filteringAgg.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value")))));
+        }
       }
     }
   }
