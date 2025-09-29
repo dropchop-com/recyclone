@@ -1,6 +1,9 @@
 package com.dropchop.recyclone.base.dto.model.rest;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -108,4 +111,7 @@ public class AggregationResult {
 
   @JsonProperty("sum")
   private Double sum;
+
+  @JsonProperty("hits")
+  private Map<String, Object> hits = new LinkedHashMap<>();
 }

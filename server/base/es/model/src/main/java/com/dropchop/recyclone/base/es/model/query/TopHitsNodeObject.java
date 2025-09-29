@@ -1,5 +1,8 @@
 package com.dropchop.recyclone.base.es.model.query;
 
+import com.dropchop.recyclone.base.api.model.query.operator.filter.Exclude;
+import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
+import com.dropchop.recyclone.base.api.model.query.operator.filter.Include;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ public class TopHitsNodeObject extends QueryNodeObject {
   private Integer size;
   private Integer from;
   private List<SortNodeObject> sort;
+  private Filter filter;
   private QueryNodeObject source;
 
   public TopHitsNodeObject(IQueryNode parent, Integer size) {
@@ -91,30 +95,26 @@ public class TopHitsNodeObject extends QueryNodeObject {
   }
 
 
-  public void setSource(String[] includes, String[] excludes) {
+  public void setSource(Include includes, Exclude excludes) {
     QueryNodeObject sourceConfig = new QueryNodeObject(this);
 
-    if (includes != null && includes.length > 0) {
-      QueryNodeList includesList = new QueryNodeList(sourceConfig);
-      Collections.addAll(includesList, includes);
-      sourceConfig.put("includes", includesList);
+    if (includes != null) {
+      sourceConfig.put("includes", includes.getValue());
     }
 
-    if (excludes != null && excludes.length > 0) {
-      QueryNodeList excludesList = new QueryNodeList(sourceConfig);
-      Collections.addAll(excludesList, excludes);
-      sourceConfig.put("excludes", excludesList);
+    if (excludes != null) {
+      sourceConfig.put("excludes", excludes.getValue());
     }
 
     this.source = sourceConfig;
     this.put("_source", sourceConfig);
   }
 
-  public void setSourceIncludes(String... includes) {
+  public void setSourceIncludes(Include includes) {
     setSource(includes, null);
   }
 
-  public void setSourceExcludes(String... excludes) {
+  public void setSourceExcludes(Exclude excludes) {
     setSource(null, excludes);
   }
 }

@@ -13,8 +13,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
@@ -39,6 +40,39 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
      */
   }
 
+  private void addFilterNodes(JsonNode filterNode, Aggregation agg) {
+    JsonNode includeNode = filterNode.get("include");
+    JsonNode excludeNode = filterNode.get("exclude");
+
+    if (agg instanceof Terms terms) {
+      if ((includeNode != null && !includeNode.isNull()) && (excludeNode != null && !excludeNode.isNull())) {
+        terms.setFilter(
+          new Filter(
+            new Include(convertToList(includeNode.get("value"))),
+            new Exclude(convertToList(excludeNode.get("value")))
+          )
+        );
+      } else if (includeNode != null && !includeNode.isNull()) {
+        terms.setFilter(new Filter(new Include(convertToList(includeNode.get("value")))));
+      } else if (excludeNode != null && !excludeNode.isNull()) {
+        terms.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value")))));
+      }
+    } else if (agg instanceof TopHits topHits) {
+      if ((includeNode != null && !includeNode.isNull()) && (excludeNode != null && !excludeNode.isNull())) {
+        topHits.setFilter(
+          new Filter(
+            new Include(convertToList(includeNode.get("value"))),
+            new Exclude(convertToList(excludeNode.get("value")))
+          )
+        );
+      } else if (includeNode != null && !includeNode.isNull()) {
+        topHits.setFilter(new Filter(new Include(convertToList(includeNode.get("value")))));
+      } else if (excludeNode != null && !excludeNode.isNull()) {
+        topHits.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value")))));
+      }
+    }
+  }
+
   private Aggregation aggregationSwitch(
     Class<? extends Aggregation> cClass,
     String name, String field,
@@ -56,11 +90,13 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         }
         return new DateHistogram(name, field, interval, subAggregations);
       } else if (cClass.equals(TopHits.class)) {
+        TopHits hits = new TopHits();
         JsonNode sizeNode = entry.getValue().get("size");
         JsonNode sortNode = entry.getValue().get("sort");
-        Integer size = null;
+        JsonNode filterNode = entry.getValue().get("filter");
+        hits.setName(name);
         if (sizeNode != null) {
-          size = sizeNode.asInt();
+          hits.setSize(sizeNode.asInt());
         }
         List<Sort> sortList = new ArrayList<>();
         if (sortNode != null && sortNode.isArray()) {
@@ -69,8 +105,12 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
             String value = sortElement.get("value").asText();
             sortList.add(new Sort(fieldName, value));
           }
+          hits.setSort(sortList);
         }
-        return new TopHits(name, size, sortList);
+        if (filterNode != null) {
+          this.addFilterNodes(filterNode, hits);
+        }
+        return hits;
       } else if (cClass.equals(Terms.class)) {
         JsonNode sizeNode = entry.getValue().get("size");
         JsonNode filterNode = entry.getValue().get("filter");
@@ -95,21 +135,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         }
 
         if (filterNode != null) {
-          JsonNode includeNode = filterNode.get("include");
-          JsonNode excludeNode = filterNode.get("exclude");
-
-          if ((includeNode != null && !includeNode.isNull()) && (excludeNode != null && !excludeNode.isNull())) {
-            terms.setFilter(
-              new Filter(
-                new Include(convertToList(includeNode.get("value"))),
-                new Exclude(convertToList(excludeNode.get("value")))
-              )
-            );
-          } else if (includeNode != null && !includeNode.isNull()) {
-            terms.setFilter(new Filter(new Include(convertToList(includeNode.get("value")))));
-          } else if (excludeNode != null && !excludeNode.isNull()) {
-            terms.setFilter(new Filter(new Exclude(convertToList(excludeNode.get("value")))));
-          }
+          this.addFilterNodes(filterNode, terms);
         }
 
         return terms;

@@ -65,7 +65,11 @@ public interface Aggregation {
   }
 
   static TopHits topHits(String name, Integer size, List<Sort> sorts) {
-    return new TopHits(name, size, sorts);
+    return new TopHits(name, size, sorts, null);
+  }
+
+  static TopHits topHits(String name, Integer size, List<Sort> sorts, Filter filter) {
+    return new TopHits(name, size, sorts, filter);
   }
 
   static Min min(String name, String field) {
