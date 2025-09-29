@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.api.model.query.aggregation;
 
+import com.dropchop.recyclone.base.api.model.query.HasFiltering;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TopHits extends BaseAggregation {
+public class TopHits extends BaseAggregation implements HasFiltering {
   private Integer size;
   private List<Sort> sort;
   private Filter filter = null;

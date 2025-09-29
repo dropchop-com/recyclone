@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.api.model.query.aggregation;
 
 import com.dropchop.recyclone.base.api.model.query.Aggregation;
+import com.dropchop.recyclone.base.api.model.query.HasFiltering;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.io.File;
 @SuppressWarnings("unused")
 @Getter
 @Setter
-public class Terms extends BucketAggregation {
+public class Terms extends BucketAggregation implements HasFiltering {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private Integer size = null;
 
