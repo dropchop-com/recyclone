@@ -1,6 +1,7 @@
 package com.dropchop.shiro.realm.authc;
 
 import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
 import org.apache.shiro.authc.AuthenticationException;
@@ -10,9 +11,13 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 public class JwtTokenRealm extends BaseAuthenticatingRealm {
+
+  private static final Logger log = LoggerFactory.getLogger(JwtTokenRealm.class);
 
   public JwtTokenRealm(SecurityLoadingService securityLoadingService) {
     super(securityLoadingService);
@@ -43,7 +48,8 @@ public class JwtTokenRealm extends BaseAuthenticatingRealm {
     if (token instanceof JwtShiroToken) {
       Object userObj = token.getPrincipal();
       if (userObj instanceof User tmpuser) {
-        User user = this.getSecurityLoadingService().loadUserById(tmpuser.getId());
+        Result<User> userResult = this.getSecurityLoadingService().loadValidUserById(tmpuser.getId());
+        User user = this.validateResult(tmpuser.getId(), userResult);
         if (user != null) {
           return new SimpleAuthenticationInfo(user, token, this.getName());
         }

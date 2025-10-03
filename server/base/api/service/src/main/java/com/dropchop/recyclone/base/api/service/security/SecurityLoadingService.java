@@ -1,11 +1,12 @@
 package com.dropchop.recyclone.base.api.service.security;
 
 import com.dropchop.recyclone.base.api.model.security.Constants;
+import com.dropchop.recyclone.base.api.service.Service;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.User;
-import com.dropchop.recyclone.base.api.service.Service;
 
 import java.util.Collection;
 import java.util.Set;
@@ -70,4 +71,28 @@ public interface SecurityLoadingService extends Service {
   User loadUserData(User user, Set<String> domainPrefixes);
 
   RoleNodePermission updatePermission(String roleNodeId, String roleNodePermissionId, RoleNodeParams params);
+
+
+  /**
+   * Loads valid user by login name.
+   * @param userId - user login name
+   * @return user result with user instance or with data regarding error if not found
+   */
+  Result<User> loadValidUserById(String userId);
+
+  /**
+   * Loads valid user by login name.
+   * @param loginName - user login name
+   * @return user result with user instance or with data regarding error if not found
+   */
+  Result<User> loadValidUserByUsername(String loginName);
+
+  /**
+   * Loads valid user by login token,
+   * @param token - user login token
+   * @return user result with user instance or with data regarding error if not found
+   */
+  Result<User> loadValidUserByToken(String token);
+
+
 }

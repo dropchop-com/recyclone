@@ -3,12 +3,15 @@ package com.dropchop.recyclone.base.jpa.service.security;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.api.service.security.HierarchicalSecurityLoadingService;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.RoleNodePermissionParams;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.User;
@@ -246,5 +249,53 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     JpaUserAccount userAccount = userAccountRepository.findByLoginName(loginName);
     if (userAccount == null) {return null;}
     return this.mapToUser(userAccount.getUser());
+  }
+
+  protected Result<User> validateUser(JpaUser jpaUser) {
+    Result<User> result = new Result<>();
+    if (jpaUser.getDeactivated() != null) {
+      result.getStatus().setCode(ResultCode.error);
+      result.getStatus().getMessage().setCode(ErrorCode.data_validation_error);
+      result.getStatus().getMessage().setText("User deactivated!");
+    } else {
+      User user = this.mapToUser(jpaUser);
+      result.setData(List.of(user));
+    }
+    return result;
+  }
+
+  protected Result<User> validateUserAccount(JpaUserAccount userAccount) {
+    Result<User> result = new Result<>();
+    if (userAccount == null) {
+      result.getStatus().setCode(ResultCode.error);
+      result.getStatus().getMessage().setCode(ErrorCode.not_found_error);
+      result.getStatus().getMessage().setText("User not found!");
+      return result;
+    }
+    if (userAccount.getDeactivated() != null) {
+      result.getStatus().setCode(ResultCode.error);
+      result.getStatus().getMessage().setCode(ErrorCode.data_validation_error);
+      result.getStatus().getMessage().setText("User deactivated!");
+      return result;
+    }
+    return this.validateUser(userAccount.getUser());
+  }
+
+  @Override
+  public Result<User> loadValidUserById(String id) {
+    JpaUser jpaUser = userRepository.findById(UUID.fromString(id));
+    return this.validateUser(jpaUser);
+  }
+
+  @Override
+  public Result<User> loadValidUserByUsername(String loginName) {
+    JpaUserAccount userAccount = userAccountRepository.findByLoginName(loginName);
+    return this.validateUserAccount(userAccount);
+  }
+
+  @Override
+  public Result<User> loadValidUserByToken(String token) {
+    JpaUserAccount userAccount = userAccountRepository.findByToken(token);
+    return this.validateUserAccount(userAccount);
   }
 }

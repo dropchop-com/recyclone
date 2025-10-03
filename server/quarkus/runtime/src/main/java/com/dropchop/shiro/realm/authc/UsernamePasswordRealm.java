@@ -1,6 +1,7 @@
 package com.dropchop.shiro.realm.authc;
 
 import com.dropchop.recyclone.base.api.service.security.SecurityLoadingService;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.dto.model.security.UserAccount;
@@ -42,7 +43,8 @@ public class UsernamePasswordRealm extends BaseAuthenticatingRealm {
   protected AuthenticationInfo invokeGetAuthenticationInfo(AuthenticationToken token) {
     if (token instanceof UsernamePasswordToken) {
       String loginName = ((UsernamePasswordToken) token).getUsername();
-      User p = this.getSecurityLoadingService().loadUserByUsername(loginName);
+      Result<User> userResutl = this.getSecurityLoadingService().loadValidUserByUsername(loginName);
+      User p = this.validateResult(loginName, userResutl);
       if (p != null && p.getDeactivated() == null) {
         UserAccount account = p.getAccounts().stream()
             .filter(a -> a instanceof LoginAccount)
