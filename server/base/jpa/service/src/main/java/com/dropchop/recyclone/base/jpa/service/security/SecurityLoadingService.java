@@ -24,6 +24,7 @@ import com.dropchop.recyclone.base.jpa.repo.security.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.UUID;
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 @Getter
+@Slf4j
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 public class SecurityLoadingService extends HierarchicalSecurityLoadingService
@@ -251,9 +253,17 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return this.mapToUser(userAccount.getUser());
   }
 
-  protected Result<User> validateUser(JpaUser jpaUser) {
+  protected Result<User> validateUser(String identifier, JpaUser jpaUser) {
     Result<User> result = new Result<>();
+    if (jpaUser == null) {
+      log.warn("User [{}] not found!", identifier);
+      result.getStatus().setCode(ResultCode.error);
+      result.getStatus().getMessage().setCode(ErrorCode.not_found_error);
+      result.getStatus().getMessage().setText("User not found!");
+      return result;
+    }
     if (jpaUser.getDeactivated() != null) {
+      log.warn("User [{}] is deactivated on {}!", identifier, jpaUser.getDeactivated());
       result.getStatus().setCode(ResultCode.error);
       result.getStatus().getMessage().setCode(ErrorCode.data_validation_error);
       result.getStatus().getMessage().setText("User deactivated!");
@@ -264,7 +274,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     return result;
   }
 
-  protected Result<User> validateUserAccount(JpaUserAccount userAccount) {
+  protected Result<User> validateUserAccount(String identifier, JpaUserAccount userAccount) {
     Result<User> result = new Result<>();
     if (userAccount == null) {
       result.getStatus().setCode(ResultCode.error);
@@ -278,24 +288,25 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
       result.getStatus().getMessage().setText("User deactivated!");
       return result;
     }
-    return this.validateUser(userAccount.getUser());
+    JpaUser jpaUser = userAccount.getUser();
+    return this.validateUser(jpaUser.getUuid() + "/" + identifier  , jpaUser);
   }
 
   @Override
   public Result<User> loadValidUserById(String id) {
     JpaUser jpaUser = userRepository.findById(UUID.fromString(id));
-    return this.validateUser(jpaUser);
+    return this.validateUser(id, jpaUser);
   }
 
   @Override
   public Result<User> loadValidUserByUsername(String loginName) {
     JpaUserAccount userAccount = userAccountRepository.findByLoginName(loginName);
-    return this.validateUserAccount(userAccount);
+    return this.validateUserAccount(loginName, userAccount);
   }
 
   @Override
   public Result<User> loadValidUserByToken(String token) {
     JpaUserAccount userAccount = userAccountRepository.findByToken(token);
-    return this.validateUserAccount(userAccount);
+    return this.validateUserAccount(token, userAccount);
   }
 }
