@@ -7,6 +7,7 @@ import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
+import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.text.ExpressionToken;
 import com.dropchop.recyclone.base.dto.model.text.Filter;
@@ -118,26 +119,12 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return previousCondition;
   }
 
-  private boolean isAdvancedText(String value) {
-    if (value == null || value.isEmpty()) {
-      return false;
-    }
-    return value.indexOf('"') >= 0 ||
-      value.contains(" OR ") ||
-      value.contains("|") ||
-      value.indexOf('+') >= 0 ||
-      value.indexOf('-') >= 0 ||
-      value.indexOf(':') >= 0 ||
-      value.indexOf('[') >= 0 ||
-      value.indexOf(']') >= 0 ||
-      value.indexOf('{') >= 0 ||
-      value.indexOf('}') >= 0 ||
-      value.indexOf('*') >= 0;
-  }
-
   private QueryNodeObject mapAdvancedText(String defaultField, String value) {
     List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
-    return renderAdvanced(defaultField, tokens);
+    QueryNodeObject inner = renderAdvanced(defaultField, tokens);
+    QueryNodeObject wrapper = new QueryNodeObject();
+    wrapper.put("bool", inner);
+    return wrapper;
   }
 
   private QueryNodeObject renderAdvanced(String defaultField, List<ExpressionToken> tokens) {
@@ -252,12 +239,12 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       operatorNode.addOpenClosedInterval(field, interval.get$gt(), interval.get$lte());
     } else if (operator instanceof Match<?> textMatch) {
       Object raw = textMatch.get$match();
-      String value = (raw == null) ? "" : raw.toString();
-      if (isAdvancedText(value)) {
-        QueryNodeObject advancedQuery = mapAdvancedText(field, value);
+      if (raw instanceof AdvancedText text) {
+        QueryNodeObject advancedQuery = mapAdvancedText(field, text.getValue());
         if (!advancedQuery.isEmpty()) {
-          operatorNode.putAll(advancedQuery);
-          return operatorNode;
+          OperatorNodeObject wrapper = new OperatorNodeObject();
+          wrapper.putAll(advancedQuery);
+          return wrapper;
         }
       }
       operatorNode.addTextSearch(field, textMatch);
