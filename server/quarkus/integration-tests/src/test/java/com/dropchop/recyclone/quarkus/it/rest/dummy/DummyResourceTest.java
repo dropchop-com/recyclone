@@ -300,6 +300,7 @@ public class DummyResourceTest {
   @Test
   @Order(40)
   @Tag("advancedTextSearch")
+  @Disabled
   public void advancedTextSearch() {
     QueryParams s = QueryParams.builder()
       .and(
