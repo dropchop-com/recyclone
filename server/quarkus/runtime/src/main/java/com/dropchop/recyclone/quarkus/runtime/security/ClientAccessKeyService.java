@@ -69,10 +69,12 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
             upToken.getUsername(),
             upToken.getPassword()
         );
-        String accessEncryptedKey = AccessKey.encrypt(
-            clientKeyConfig, accessKey
-        );
-        accessKeys.put(accessKey, accessEncryptedKey);
+        if (clientKeyConfig.getSecret() != null && clientKeyConfig.getSalt() != null) {
+          String accessEncryptedKey = AccessKey.encrypt(
+              clientKeyConfig, accessKey
+          );
+          accessKeys.put(accessKey, accessEncryptedKey);
+        }
       } else if (token instanceof HostAuthenticationToken bearerToken) {
         AccessKey accessKey = new AccessKey(
             clientId,
@@ -80,10 +82,12 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
             identifiable.getId(),
             String.valueOf(bearerToken.getCredentials())
         );
-        String accessEncryptedKey = AccessKey.encrypt(
-            clientKeyConfig, accessKey
-        );
-        accessKeys.put(accessKey, accessEncryptedKey);
+        if (clientKeyConfig.getSecret() != null && clientKeyConfig.getSalt() != null) {
+          String accessEncryptedKey = AccessKey.encrypt(
+              clientKeyConfig, accessKey
+          );
+          accessKeys.put(accessKey, accessEncryptedKey);
+        }
       }
     }
     return accessKeys;
