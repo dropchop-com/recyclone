@@ -119,10 +119,14 @@ public interface Uuid {
   }
 
   static Instant toInstant(UUID uuid) {
+    if (uuid.version() != 1) {
+      throw new IllegalArgumentException("UUID is not time-based (v1)");
+    }
     long timestamp = uuid.timestamp();
-    long secs = (timestamp / TICKS_PER_SECOND) + START_EPOCH;
-    long nano = (timestamp % TICKS_PER_SECOND) * TICK;
-    return Instant.ofEpochSecond(secs, nano);
+    long epochSeconds = (START_EPOCH / 1000L);   // convert millis to seconds
+    long secsSinceStart = timestamp / TICKS_PER_SECOND;
+    long nanosSinceStart = (timestamp % TICKS_PER_SECOND) * TICK;
+    return Instant.ofEpochSecond(epochSeconds + secsSinceStart, nanosSinceStart);
   }
 
   static UUID msAlignedMin(long timestamp) {
