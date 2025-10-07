@@ -5,9 +5,9 @@ import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.security.AccessKey;
 import com.dropchop.recyclone.base.api.model.security.ClientKeyConfig;
 import com.dropchop.recyclone.base.api.model.security.ClientKeyConfigs;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.ClientAccessKeys;
-import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig.Rest.Security.ClientAccessKeys.KeyConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig.Rest.Security.ClientAccessKeys;
+import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig.Rest.Security.ClientAccessKeys.KeyConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
@@ -30,7 +30,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.service.security.ClientAccessKeyService {
 
   @Inject
-  RecycloneBuildConfig recycloneConfig;
+  RecycloneRuntimeConfig recycloneConfig;
 
   @Override
   @Produces
@@ -47,7 +47,7 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
           config.headerName(),
           config.expiresAfterSeconds(),
           config.uri().map(URI::create).orElse(null),
-          config.secret(),
+          config.secret().orElse(null),
           config.salt().orElse(null)
       );
       keyConfigMap.put(clientId, clientKeyConfig);

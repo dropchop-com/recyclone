@@ -3,10 +3,8 @@ package com.dropchop.recyclone.quarkus.runtime.config;
 import io.quarkus.runtime.annotations.*;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
-import io.smallrye.config.WithParentName;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
@@ -31,13 +29,13 @@ public interface RecycloneBuildConfig {
     Optional<String> path();
 
     /**
-     * Default Params class implementation to be instantiated if can not be determined from code or annotations.
+     * Default Params class implementation to be instantiated if it cannot be determined from code or annotations.
      */
     @WithDefault("com.dropchop.recyclone.base.dto.model.invoke.Params")
     String defaultParams();
 
     /**
-     * Default ExecContext class implementation to be instantiated if can not be determined from code or annotations.
+     * Default ExecContext class implementation to be instantiated if it cannot be determined from code or annotations.
      */
     @WithDefault("com.dropchop.recyclone.base.dto.model.invoke.DefaultExecContext")
     String defaultExecContext();
@@ -114,65 +112,6 @@ public interface RecycloneBuildConfig {
      */
     @ConfigGroup
     interface Security {
-
-      /**
-       * REST client access key information.
-       */
-      ClientAccessKeys clientAccessKeys();
-
-      /**
-       * REST client access key information.
-       */
-      @ConfigGroup
-      interface ClientAccessKeys {
-
-        /**
-         * REST client-id named access key configs.
-         */
-        @WithParentName
-        Map<String, KeyConfig> named();
-
-        /**
-         * REST client-id named access key configs.
-         */
-        @ConfigGroup
-        interface KeyConfig {
-
-          /**
-           * REST secret for the named access key config.
-           */
-          String secret();
-
-          /**
-           * REST salt for the named access key config.
-           */
-          Optional<String> salt();
-
-          /**
-           * REST uri for the named access key config.
-           */
-          Optional<String> uri();
-
-          /**
-           * REST uri for the named access key config.
-           */
-          @WithDefault("3600")
-          Integer expiresAfterSeconds();
-
-          /**
-           * REST security item apiKeyName if the type is apiKey.
-           */
-          @WithDefault("X-Client-API-Key")
-          String headerName();
-
-          /**
-           * REST security item apiKeyName if the type is apiKey.
-           */
-          @WithDefault("client-api-key")
-          String queryName();
-        }
-      }
-
       /**
        * Additional security configuration.
        */
