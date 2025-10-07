@@ -69,11 +69,11 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
       if (Gt.class.equals(cClasses.getFirst()) && Lt.class.equals(cClasses.getLast())) {
         return new ConditionedField(name, new OpenInterval<>(value1, value2));
       } else if (Gt.class.equals(cClasses.getFirst()) && Lte.class.equals(cClasses.getLast())) {
-        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+        return new ConditionedField(name, new OpenClosedInterval<>(value1, value2));
       } else if (Gte.class.equals(cClasses.getFirst()) && Lt.class.equals(cClasses.getLast())) {
-        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+        return new ConditionedField(name, new ClosedOpenInterval<>(value1, value2));
       } else if (Gte.class.equals(cClasses.getFirst()) && Lte.class.equals(cClasses.getLast())) {
-        return new ConditionedField(name, new OpenInterval<>(value1, value2));
+        return new ConditionedField(name, new ClosedInterval<>(value1, value2));
       } else {
         throw new IllegalArgumentException(
           "Missing condition implementation for conditioned field operators [" + name + "." + cNames + "]!"
