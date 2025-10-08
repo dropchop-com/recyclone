@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -62,5 +64,15 @@ class UuidTest {
     Date test = new Date(Uuid.toUnixTimestamp(uuid));
     Date date = sdf.parse("2019-11-16T09:00:00");
     assertEquals(date, test);
+  }
+
+  @Test
+  public void toInstant() {
+    UUID uuid = UUID.fromString("420312d3-a3d3-11f0-b1e4-1547566be87f");
+    Instant instant = Uuid.toInstant(uuid);
+    String pathParam = DateTimeFormatter.ofPattern("yyyy/MM/dd/")
+        .withZone(ZoneId.systemDefault())
+        .format(instant);
+    assertEquals("2025/10/08/", pathParam);
   }
 }
