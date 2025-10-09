@@ -71,8 +71,14 @@ class UuidTest {
     UUID uuid = UUID.fromString("420312d3-a3d3-11f0-b1e4-1547566be87f");
     Instant instant = Uuid.toInstant(uuid);
     String pathParam = DateTimeFormatter.ofPattern("yyyy/MM/dd/")
-        .withZone(ZoneId.systemDefault())
+        .withZone(ZoneId.of("Europe/Ljubljana"))
         .format(instant);
     assertEquals("2025/10/08/", pathParam);
+    uuid = UUID.fromString("2cef5b11-a49d-11f0-8cb9-5b69404c04b7");
+    instant = Uuid.toInstant(uuid);
+    pathParam = DateTimeFormatter.ofPattern("yyyy/MM/dd/")
+        .withZone(ZoneId.of("Europe/Ljubljana"))
+        .format(instant);
+    assertEquals("2025/10/09/", pathParam);
   }
 }
