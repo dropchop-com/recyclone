@@ -5,7 +5,7 @@ import jakarta.enterprise.util.AnnotationLiteral;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 15. 10. 2025.
  */
-public class RecycloneTypeLiteral extends AnnotationLiteral<RecycloneType> implements RecycloneType {
+public final class RecycloneTypeLiteral extends AnnotationLiteral<RecycloneType> implements RecycloneType {
 
   private final String value;
 
