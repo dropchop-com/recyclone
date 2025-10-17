@@ -3,6 +3,7 @@ package com.dropchop.recyclone.quarkus.runtime.cache;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.Listener;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LoadListener;
+import com.dropchop.recyclone.quarkus.runtime.app.AppReadiness;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.scheduler.Scheduler;
 import io.quarkus.vertx.ConsumeEvent;
@@ -10,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.health.Readiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +99,10 @@ public class CacheLoaderManager {
   @Inject
   Scheduler scheduler;
 
+  @Inject
+  @Readiness
+  AppReadiness readiness;
+
   @SuppressWarnings("unused")
   @ConsumeEvent(CACHE_STORAGE_INIT)
   public void onInitSignal(String message) {
@@ -106,32 +112,37 @@ public class CacheLoaderManager {
 
     // We must load caches for the first time off of the Vert.x thread, which has blocking and running time-constraints.
     // We must start load after connections were established to the database(s)
-    CompletableFuture.runAsync(() -> loaders.forEach(loader -> {
-      if (loader == null) {
-        return;
-      }
-      if (!loader.isEnabled()) {
-        return;
-      }
+    CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(
+        () -> loaders.forEach(loader -> {
+          if (loader == null) {
+            return;
+          }
+          if (!loader.isEnabled()) {
+            return;
+          }
 
-      try {
-        refreshLoader(loader);
-        int interval = loader.getReloadIntervalSeconds();
-        int delaySeconds = ThreadLocalRandom.current().nextInt(0, interval / 2);
-        log.info(
-          "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds.",
-          loader.getClass().getName(), interval, delaySeconds
-        );
+          try {
+            refreshLoader(loader);
+            int interval = loader.getReloadIntervalSeconds();
+            int delaySeconds = ThreadLocalRandom.current().nextInt(0, interval / 2);
+            log.info(
+              "Scheduling cache loader [{}] with interval [{}] seconds and delay [{}] seconds.",
+              loader.getClass().getName(), interval, delaySeconds
+            );
 
-        scheduler.newJob("cache_loader." + loader.getClass().getName())
-          .setDelayed(delaySeconds + "s")
-          .setInterval(interval + "s")
-          .setTask(executionContext -> refreshLoader(loader))
-          .schedule();
-      } catch (Exception e) {
-        log.error("Failed to initialize cache loader: {}!", loader.getClass().getName(), e);
-      }
-    }), startupLoadExecutor);
+            scheduler.newJob("cache_loader." + loader.getClass().getName())
+              .setDelayed(delaySeconds + "s")
+              .setInterval(interval + "s")
+              .setTask(executionContext -> refreshLoader(loader))
+              .schedule();
+          } catch (Exception e) {
+            log.error("Failed to initialize cache loader: {}!", loader.getClass().getName(), e);
+          }
+        }),
+        startupLoadExecutor
+    ).thenRun(
+        () -> readiness.markReady("cache")
+    );
   }
 
   public void onStop(@Observes ShutdownEvent event) {

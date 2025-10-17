@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
 import com.dropchop.recyclone.base.api.service.Service;
+import com.dropchop.recyclone.quarkus.runtime.app.AppReadiness;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
 import com.dropchop.recyclone.quarkus.runtime.cache.CacheLoaderManager;
 import com.dropchop.recyclone.quarkus.runtime.invoke.*;
@@ -165,6 +166,13 @@ class RecycloneProcessor {
         AdditionalBeanBuildItem
             .builder()
             .addBeanClasses(ObjectMapperFactory.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
+            .addBeanClasses(AppReadiness.class)
             .setUnremovable()
             .build()
     );
