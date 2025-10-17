@@ -3,7 +3,6 @@ package com.dropchop.recyclone.quarkus.runtime.cache;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.Listener;
 import com.dropchop.recyclone.base.api.service.caching.CacheLoader.LoadListener;
-import com.dropchop.recyclone.quarkus.runtime.app.AppReadiness;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.scheduler.Scheduler;
 import io.quarkus.vertx.ConsumeEvent;
@@ -101,7 +100,7 @@ public class CacheLoaderManager {
 
   @Inject
   @Readiness
-  AppReadiness readiness;
+  CacheReadiness readiness;
 
   @SuppressWarnings("unused")
   @ConsumeEvent(CACHE_STORAGE_INIT)
@@ -141,7 +140,7 @@ public class CacheLoaderManager {
         }),
         startupLoadExecutor
     ).thenRun(
-        () -> readiness.markReady("cache")
+        () -> readiness.markReady()
     );
   }
 

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.quarkus.runtime.app;
+package com.dropchop.recyclone.quarkus.runtime.cache;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.health.HealthCheck;
@@ -10,14 +10,14 @@ import org.eclipse.microprofile.health.Readiness;
  */
 @Readiness
 @ApplicationScoped
-public class AppReadiness implements HealthCheck {
+public class CacheReadiness implements HealthCheck {
 
   private volatile boolean ready;
 
-  public void markReady(String value) { this.ready = true; }
+  public void markReady() { this.ready = true; }
 
   @Override
   public HealthCheckResponse call() {
-    return ready ? HealthCheckResponse.up("app") : HealthCheckResponse.down("app");
+    return ready ? HealthCheckResponse.up("cache") : HealthCheckResponse.down("cache");
   }
 }
