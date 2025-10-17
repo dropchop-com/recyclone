@@ -262,17 +262,21 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   protected Request buildRequestForSearch(IQueryNodeObject query, String endpoint) {
     ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
     String indexName;
+    String postfix = "";
+    if (indexConfig instanceof HasTrackTotalHits) {
+      postfix = "?track_total_hits=true";
+    }
     if (indexConfig instanceof HasQueryBasedReadIndex hasQueryBasedReadIndex) {
       indexName = hasQueryBasedReadIndex.getReadIndexName(query);
-      return new Request(HTTP_POST, "/" + indexName + endpoint);
+      return new Request(HTTP_POST, "/" + indexName + endpoint + postfix);
     }
     if (indexConfig instanceof HasRootAlias hasRootAlias) {
       indexName = hasRootAlias.getRootAlias();
-      return new Request(HTTP_POST, "/" + indexName + endpoint);
+      return new Request(HTTP_POST, "/" + indexName + endpoint + postfix);
     }
     if (indexConfig instanceof HasStaticReadIndex hasStaticReadIndex) {
       indexName = hasStaticReadIndex.getReadIndex();
-      return new Request(HTTP_POST, "/" + indexName + endpoint);
+      return new Request(HTTP_POST, "/" + indexName + endpoint + postfix);
     }
     throw new ServiceException(ErrorCode.internal_error, "No valid index config found!");
   }
