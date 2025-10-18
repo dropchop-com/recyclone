@@ -48,6 +48,14 @@ public class RestDynamicFeature implements DynamicFeature {
     }
     RestMethod restMethod = restMapping.getMethod(methodDescriptor);
     if (restMethod == null) {
+      featureContext.register(
+          new FallbackExecContextInitializer(
+              defaultParamsClassName,
+              defaultExecContextClassName,
+              execContextBinder
+          ),
+          AUTHENTICATION - 100
+      );
       return;
     }
     if (restMethod.isExcluded()) {

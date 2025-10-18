@@ -108,10 +108,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
       );
     }
     RestMethod restMethod = restMapping.getMethod(methodDescriptor);
-    if (restMethod == null) {
-      return;
-    }
-    if (restMethod.isExcluded()) {
+    if (restMethod != null && restMethod.isExcluded()) {
       // TODO add blocking deny-all filter
       return;
     }
@@ -121,7 +118,7 @@ public class ShiroDynamicFeature implements DynamicFeature {
     }
 
     context.register(
-      new ShiroRequestStateFilter(authorizationService), Priorities.AUTHORIZATION - 100
+        new ShiroRequestStateFilter(authorizationService), Priorities.AUTHORIZATION - 100
     );
 
     if (!authzSpecs.isEmpty()) {

@@ -79,23 +79,23 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
       return;
     }
 
-    ExecContext<?> execContext = (ExecContext<?>)context
-        .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
-    if (execContext == null) {
-      log.warn(
-          "Missing REST [{}] context [{}] in {}!",
-          path,
-          ExecContext.class.getSimpleName(), ContainerRequestContext.class.getSimpleName()
-      );
-      return;
-    }
-
     try {
       this.authorizationService.doAuthorizationChecks(context, authzChecks);
     } catch (Exception e) {
       log.warn("Exception during REST method authorization check [{}]!", path, e);
       ServiceErrorExceptionMapper mapper = new ServiceErrorExceptionMapper();
       context.abortWith(mapper.toResponse(e));
+      return;
+    }
+
+    ExecContext<?> execContext = (ExecContext<?>)context
+        .getProperty(InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER);
+    if (execContext == null) {
+      log.info(
+          "Missing REST [{}] context [{}] in {}; Will skip extracting required permissions to the context.",
+          path,
+          ExecContext.class.getSimpleName(), ContainerRequestContext.class.getSimpleName()
+      );
       return;
     }
 

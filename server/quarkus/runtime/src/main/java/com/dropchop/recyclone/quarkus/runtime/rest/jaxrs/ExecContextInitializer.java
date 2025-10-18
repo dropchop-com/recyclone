@@ -33,13 +33,13 @@ public class ExecContextInitializer implements ContainerRequestFilter {
 
   private final ExecContextBinder execContextBinder;
 
-  private final Class<? extends ExecContext<?>> execContextClass;
+  final Class<? extends ExecContext<?>> execContextClass;
 
-  private final Class<? extends Params> paramsClass;
+  final Class<? extends Params> paramsClass;
 
-  private final Class<? extends Dto> dataClass;
+  final Class<? extends Dto> dataClass;
 
-  private static Class<?> loadClass(String className) {
+  static Class<?> loadClass(String className) {
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     Class<?> clazz;
     try {
@@ -48,6 +48,14 @@ public class ExecContextInitializer implements ContainerRequestFilter {
       throw new RuntimeException(e);
     }
     return clazz;
+  }
+
+  ExecContextInitializer(ExecContextBinder execContextBinder, Class<? extends ExecContext<?>> execContextClass,
+                         Class<? extends Params> paramsClass, Class<? extends Dto> dataClass) {
+    this.execContextBinder = execContextBinder;
+    this.execContextClass = execContextClass;
+    this.paramsClass = paramsClass;
+    this.dataClass = dataClass;
   }
 
   @SuppressWarnings("unchecked")

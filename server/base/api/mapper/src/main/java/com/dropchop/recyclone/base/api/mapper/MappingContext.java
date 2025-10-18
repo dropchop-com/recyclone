@@ -41,6 +41,9 @@ public class MappingContext
 
   public MappingContext of(CommonExecContext<?, ?> sourceContext) {
     super.of(sourceContext);
+    if (sourceContext == null) {
+      return this;
+    }
     //noinspection unchecked
     this.setData((List<Dto>) sourceContext.getData());
     this.setRequiredPermissions(sourceContext.getRequiredPermissions());
