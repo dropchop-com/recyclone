@@ -31,6 +31,14 @@ public class ServiceException extends RuntimeException {
     return prefix + "Unknown error";
   }
 
+  public static Optional<ErrorCode> getLastErrorCode(ServiceException e) {
+    List<StatusMessage> messages = e.getStatusMessages();
+    if (messages.isEmpty()) {
+      return Optional.empty();
+    }
+    return messages.stream().map(StatusMessage::getCode).findFirst();
+  }
+
   public ServiceException(StatusMessage statusMessage) {
     super(constructMessage(statusMessage, null));
     this.statusMessages.add(statusMessage);
@@ -75,5 +83,9 @@ public class ServiceException extends RuntimeException {
       throw new NullPointerException("Missing messages argument");
     }
     this.statusMessages = statusMessages;
+  }
+
+  public Optional<ErrorCode> getLastErrorCode() {
+    return ServiceException.getLastErrorCode(this);
   }
 }
