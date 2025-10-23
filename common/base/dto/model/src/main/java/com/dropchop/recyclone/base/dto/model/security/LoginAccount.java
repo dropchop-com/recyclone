@@ -5,7 +5,6 @@ import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.dto.model.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.base.dto.model.localization.TitleTranslation;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -16,14 +15,15 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
-@ToString(callSuper = true)
 @JsonInclude(NON_NULL)
+@NoArgsConstructor(force = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class LoginAccount extends UserAccount
   implements com.dropchop.recyclone.base.api.model.security.LoginAccount<User, UserAccount, TitleDescriptionTranslation,
   TitleTranslation, Action, Domain, Permission, Role, Country, Language, Tag> {
 
   @NonNull
+  @ToString.Include
   private String loginName;
 
   private String password;

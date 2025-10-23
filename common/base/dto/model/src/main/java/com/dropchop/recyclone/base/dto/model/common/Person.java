@@ -18,7 +18,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_NULL)
 public class Person extends DtoId
   implements com.dropchop.recyclone.base.api.model.common.Person<Country, Language, TitleTranslation> {
@@ -32,6 +32,8 @@ public class Person extends DtoId
   private String title;
   private String initials;
   private Boolean female;
+
+  @ToString.Include
   private String defaultEmail;
   private String defaultPhone;
 }
