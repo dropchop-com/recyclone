@@ -35,6 +35,11 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-scheduler</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-elasticsearch-rest-client</artifactId>
+      <optional>true</optional>
+    </dependency>
 
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
