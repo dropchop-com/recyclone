@@ -138,11 +138,15 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       String target = inputParams.getTarget();
       processParams.setTarget(target);
       processParams.setTargetId(inputParams.getTargetId());
-      //TODO: WRITE PROPER TESTS AND CHECK WHAT DOES THIS MEAN !!!
-      /*if (target != null && !target.isBlank()) {
-        resolveContext.settingTemplate = !isRoleNodeInstance;
-      }*/
 
+      /**
+       * When init parameters come with entity data and the target and the input target is the same of the role node
+       * the use case is that someone is working on template permissions on the role node
+       * and that is why we set settingTemplate flag in the resolving context.
+       */
+      if (target != null && !target.isBlank() && roleNode.getTarget().equals(target) ) {
+        resolveContext.settingTemplate = true;
+      }
     }
 
     boolean differentTargets = false;
@@ -160,8 +164,9 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     // if a role node is instance and max parent instance level is set and a current level is less or equals to it,
     // instance permissions will be taken as opposed to template permissions.
     // different targets means that loading of different target permissions is in progress.
+    // setting template flag is used to flag if template permissions are being handled on role node.
     if (isRoleNodeInstance
-        //&& !resolveContext.settingTemplate << //TODO: WRITE PROPER TESTS AND CHECK WHAT DOES THIS MEAN !!!
+        && !resolveContext.settingTemplate
         && !differentTargets
         && maxParentInstanceLevel != null
         && maxParentInstanceLevel >= currentLevel
@@ -577,9 +582,6 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
     // load user with the correct service if it was loaded by the wrong realm.
     // maybe remove this call in the future
     user = this.loadUserById(user.getId());
-
-    // TODO: load roles
-
     // load permissions for the user
     Collection<Permission> permissions = this.loadPermissions(user, domainPrefixes);
     user.setPermissions(new LinkedHashSet<>(permissions));
