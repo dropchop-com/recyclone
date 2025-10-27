@@ -1,10 +1,13 @@
 package com.dropchop.recyclone.base.es.model.base;
 
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 01. 22.
@@ -13,6 +16,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
+@JsonInclude(NON_EMPTY)
 public abstract class EsUuid implements EsEntity, HasUuid, Comparable<EsUuid> {
 
   @NonNull

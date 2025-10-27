@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.model.attr;
 
 import com.dropchop.recyclone.base.api.model.attr.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.marshall;
 import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.unmarshall;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
@@ -23,6 +25,7 @@ import static com.dropchop.recyclone.base.api.model.attr.AttributeMarshaller.unm
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonInclude(NON_EMPTY)
 public class EsAttribute<X> implements Attribute<X> {
 
   public enum Type {
