@@ -73,7 +73,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
     if (!permissions.isEmpty()) {
       info.setStringPermissions(permissions.stream().map(Permission::getWildcardString).collect(Collectors.toSet()));
     }
-    log.warn("Loaded principal [{}] authorization info permissions in [{}]ms.", p.getId(), timer.stop());
+    log.debug("Loaded principal [{}] authorization info permissions in [{}]ms.", p.getId(), timer.stop());
     return info;
   }
 }
