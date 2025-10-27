@@ -10,6 +10,7 @@ import com.dropchop.recyclone.base.es.model.base.EsCode;
 import com.dropchop.recyclone.base.es.model.base.EsTitleTranslationHelper;
 import com.dropchop.recyclone.base.es.model.marker.HasEsLanguage;
 import com.dropchop.recyclone.base.es.model.tagging.EsTag;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +19,8 @@ import lombok.Setter;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
  * Country with ISO 3166 2-letter code.
@@ -28,6 +31,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @SuppressWarnings("unused")
+@JsonInclude(NON_EMPTY)
 public class EsCountry extends EsCode
   implements Country<EsTitleTranslation>, EsTitleTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasEsLanguage,

@@ -10,6 +10,7 @@ import com.dropchop.recyclone.base.es.model.base.EsCode;
 import com.dropchop.recyclone.base.es.model.base.EsTitleTranslationHelper;
 import com.dropchop.recyclone.base.es.model.marker.HasEsLanguage;
 import com.dropchop.recyclone.base.es.model.tagging.EsTag;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.ZonedDateTime;
@@ -17,12 +18,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 01. 22.
  */
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonInclude(NON_EMPTY)
 public class EsLanguage extends EsCode
   implements Language<EsTitleTranslation>, EsTitleTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasEsLanguage,

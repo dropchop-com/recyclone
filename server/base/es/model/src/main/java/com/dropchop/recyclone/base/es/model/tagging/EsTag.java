@@ -11,6 +11,7 @@ import com.dropchop.recyclone.base.es.model.localization.EsLanguage;
 import com.dropchop.recyclone.base.es.model.localization.EsTitleDescriptionTranslation;
 import com.dropchop.recyclone.base.es.model.marker.HasEsAttributes;
 import com.dropchop.recyclone.base.es.model.marker.HasEsLanguage;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,12 +21,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 1. 06. 22.
  */
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonInclude(NON_EMPTY)
 public class EsTag extends EsUuid
     implements Tag<EsTag, EsTitleDescriptionTranslation>,
     HasCreated, HasDeactivated, HasModified, HasStateInlinedCommon, HasEsLanguage, HasEsAttributes {

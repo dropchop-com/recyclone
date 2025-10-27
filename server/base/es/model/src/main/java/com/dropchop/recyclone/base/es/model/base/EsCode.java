@@ -1,9 +1,12 @@
 package com.dropchop.recyclone.base.es.model.base;
 
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.Objects;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 4. 01. 22.
@@ -12,6 +15,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
+@JsonInclude(NON_EMPTY)
 public abstract class EsCode implements EsEntity, HasCode, Comparable<EsCode> {
 
   @NonNull
