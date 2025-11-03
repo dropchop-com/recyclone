@@ -56,6 +56,7 @@ public class ElasticConnectionEvictor {
       try {
         connManager.closeExpiredConnections();
         connManager.closeIdleConnections(IDLE_THRESHOLD.toMillis(), TimeUnit.MILLISECONDS);
+        log.info("Eviction idle threshold [{}] reached for connection manager [{}].", IDLE_THRESHOLD, connManager);
       } catch (RejectedExecutionException ex) {
         // Usually means shutdown in progress
         log.info("Eviction skipped", ex);

@@ -1,10 +1,8 @@
 package com.dropchop.recyclone.quarkus.deployment;
 
-import com.dropchop.recyclone.quarkus.runtime.elasticsearch.DefaultInitializerSignaler;
-import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticSearchTestHelper;
-import com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticsearchInitializer;
+import com.dropchop.recyclone.quarkus.runtime.elasticsearch.*;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
-import io.quarkus.deployment.Capabilities;
+import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
@@ -20,13 +18,10 @@ public class ElasticsearchProcessor {
 
   private static final Logger log = Logger.getLogger(ElasticsearchProcessor.class);
 
-  private static final String CAP_ELASTICSEARCH_REST = "io.quarkus.elasticsearch.rest-client";
-  private static final String CAP_ELASTICSEARCH_JAVA = "io.quarkus.elasticsearch.java-client";
-
   @BuildStep
-  public void registerInitializer(List<DevServicesResultBuildItem> devservicesElasticsearchBuildItems,
+  public void registerInitializer(List<DevServicesResultBuildItem> devServicesResultBuildItems,
                                   BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItemProducer) {
-    if (devservicesElasticsearchBuildItems.isEmpty()) {
+    if (devServicesResultBuildItems.isEmpty()) {
       log.info("Registering cache initializer DefaultInitializerSignaler.");
       additionalBeanBuildItemProducer.produce(
           AdditionalBeanBuildItem
@@ -37,7 +32,7 @@ public class ElasticsearchProcessor {
       );
       return;
     }
-    for (DevServicesResultBuildItem result : devservicesElasticsearchBuildItems) {
+    for (DevServicesResultBuildItem result : devServicesResultBuildItems) {
       if (result.getName().startsWith("elasticsearch")) {
         log.infof("Registering Elasticsearch initializer for: %s@%s", result.getName(), result.getConfig());
         additionalBeanBuildItemProducer.produce(
@@ -59,20 +54,27 @@ public class ElasticsearchProcessor {
   }
 
   @BuildStep
-  void registerBeansWhenElasticsearchPresent(Capabilities capabilities,
-                                             BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-
-    boolean hasEs = capabilities.isPresent(CAP_ELASTICSEARCH_REST)
-        || capabilities.isPresent(CAP_ELASTICSEARCH_JAVA);
-
-    if (!hasEs) {
-      return;
+  void registerBeansWhenElasticsearchPresent(BuildProducer<AdditionalBeanBuildItem> additionalBeans,
+                                             List<BeanDefiningAnnotationBuildItem> beanDefiningAnnotationBuildItems) {
+    for (BeanDefiningAnnotationBuildItem item : beanDefiningAnnotationBuildItems) {
+      if (item.getName().toString().equals("io.quarkus.elasticsearch.restclient.lowlevel.ElasticsearchClientConfig")) {
+        additionalBeans.produce(
+            AdditionalBeanBuildItem
+                .builder()
+                .addBeanClasses(ElasticConnectionEvictor.class)
+                .setUnremovable()
+                .build()
+        );
+        additionalBeans.produce(
+            AdditionalBeanBuildItem
+                .builder()
+                .addBeanClasses(ElasticHttpClientTuning.class)
+                .setUnremovable()
+                .build()
+        );
+        log.infof("Registering Elasticsearch Client http connection tuning. Timeout evictor.");
+        break;
+      }
     }
-
-    additionalBeans.produce(AdditionalBeanBuildItem.builder()
-        .addBeanClass("com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticConnectionEvictor")
-        .addBeanClass("com.dropchop.recyclone.quarkus.runtime.elasticsearch.ElasticHttpClientTuning")
-        .setUnremovable()
-        .build());
   }
 }
