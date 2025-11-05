@@ -7,6 +7,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +57,10 @@ public class Generic implements
 
   @JsonInclude(NON_EMPTY)
   private Set<Attribute<?>> attributes;
+
+  private ZonedDateTime deactivated;
+
+  private ZonedDateTime modified;
 
   @Override
   public String getTitle() {

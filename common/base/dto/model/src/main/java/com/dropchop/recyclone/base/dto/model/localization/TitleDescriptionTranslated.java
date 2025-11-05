@@ -1,7 +1,12 @@
 package com.dropchop.recyclone.base.dto.model.localization;
 
-import com.dropchop.recyclone.base.api.model.marker.*;
 import com.dropchop.recyclone.base.api.model.base.Generic;
+import com.dropchop.recyclone.base.api.model.marker.HasDescription;
+import com.dropchop.recyclone.base.api.model.marker.HasId;
+import com.dropchop.recyclone.base.api.model.marker.HasLanguageCode;
+import com.dropchop.recyclone.base.api.model.marker.HasName;
+import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -29,6 +34,8 @@ public class TitleDescriptionTranslated
     this.setId(titleTranslated.getId());
     this.setLang(titleTranslated.getLang());
     this.setTitle(titleTranslated.getTitle());
+    this.setDeactivated(titleTranslated.getDeactivated());
+    this.setModified(titleTranslated.getModified());
     this.setType(titleTranslated.getType());
     if (titleTranslated instanceof HasName named) {
       this.setName(named.getName());
@@ -49,6 +56,15 @@ public class TitleDescriptionTranslated
     }
     if (titled instanceof HasDescription hasDescription) {
       this.setDescription(hasDescription.getDescription());
+    }
+    if (titled instanceof HasLanguageCode hasLanguageCode) {
+      this.setLang(hasLanguageCode.getLang());
+    }
+    if (titled instanceof HasModified hasModified) {
+      this.setModified(hasModified.getModified());
+    }
+    if (titled instanceof HasDeactivated hasDeactivated) {
+      this.setDeactivated(hasDeactivated.getDeactivated());
     }
     if (titled instanceof HasLanguageCode hasLanguageCode) {
       this.setLang(hasLanguageCode.getLang());
