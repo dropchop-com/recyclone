@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QueryResponseParserTest {
 
-  private InputStream getTestResource() {
-    InputStream is = getClass().getResourceAsStream("/elasticsearch-resp.json");
-    assertNotNull(is, "Test resource " + "/elasticsearch-resp.json" + " not found!");
+  private InputStream getTestResource(String resourceName) {
+    InputStream is = getClass().getResourceAsStream("/" + resourceName);
+    assertNotNull(is, "Test resource " + resourceName + " not found!");
     return is;
   }
 
   @Test
-  void parse() throws IOException {
+  void parse1() throws IOException {
     Map<String, AggregationResult> aggResult = new HashMap<>();
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     Map<String, ?> result = new HashMap<>();
@@ -39,7 +39,7 @@ class QueryResponseParserTest {
     ObjectMapper mapper = new ObjectMapper();
     AggregationResultConsumer aggListener = aggResult::put;
 
-    try (InputStream is = getTestResource()) {
+    try (InputStream is = getTestResource("elasticsearch-resp-1.json")) {
       QueryResponseParser parser = new QueryResponseParser(mapper);
       @SuppressWarnings("unchecked")
       SearchResultMetadata metadata = parser.parse(
@@ -56,6 +56,71 @@ class QueryResponseParserTest {
       assertEquals(1, aggResult.size());
       AggregationResult subAgg = aggResult.get("media_0_uuid_LFN_Media");
       assertEquals(1500, subAgg.getContainers().size());
+      String json = mapper.writeValueAsString(aggResult);
+      assertFalse(json.isBlank());
+    }
+  }
+
+
+  @Test
+  void parse2() throws IOException {
+    Map<String, AggregationResult> aggResult = new HashMap<>();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    Map<String, ?> result = new HashMap<>();
+    QueryResultConsumer<Map<String, ?>> listener = (r) -> QueryResultConsumer.Progress.CONTINUE;
+
+    ObjectMapper mapper = new ObjectMapper();
+    AggregationResultConsumer aggListener = aggResult::put;
+
+    try (InputStream is = getTestResource("elasticsearch-resp-2.json")) {
+      QueryResponseParser parser = new QueryResponseParser(mapper);
+      @SuppressWarnings("unchecked")
+      SearchResultMetadata metadata = parser.parse(
+          is,
+          new QueryParams(),
+          (Class<Map<String, ?>>) result.getClass(),
+          List.of(listener),
+          List.of(aggListener)
+      );
+      assertNotNull(metadata);
+      AggregationResult subAgg = aggResult.get("distributed");
+      assertEquals(9, subAgg.getContainers().size());
+      AggregationResult.Container container = subAgg.getContainers().get(7);
+      assertEquals(3, container.getResults().size());
+      subAgg = container.getResults().get("neutralTags");
+      assertNotNull(subAgg);
+      assertEquals(2, subAgg.getContainers().size());
+      assertNotNull(subAgg.getContainers().getFirst());
+      assertNotNull(subAgg.getContainers().getLast());
+      String json = mapper.writeValueAsString(aggResult);
+      assertFalse(json.isBlank());
+    }
+  }
+
+  @Test
+  void parse3() throws IOException {
+    Map<String, AggregationResult> aggResult = new HashMap<>();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    Map<String, ?> result = new HashMap<>();
+    QueryResultConsumer<Map<String, ?>> listener = (r) -> QueryResultConsumer.Progress.CONTINUE;
+
+    ObjectMapper mapper = new ObjectMapper();
+    AggregationResultConsumer aggListener = aggResult::put;
+
+    try (InputStream is = getTestResource("elasticsearch-resp-3.json")) {
+      QueryResponseParser parser = new QueryResponseParser(mapper);
+      //noinspection unchecked
+      parser.parse(
+          is,
+          new QueryParams(),
+          (Class<Map<String, ?>>) result.getClass(),
+          List.of(listener),
+          List.of(aggListener)
+      );
+      AggregationResult subAgg = aggResult.get("publisher");
+      AggregationResult.Container container = subAgg.getContainers().get(3);
+      subAgg = container.getResults().get("neutralTags");
+      assertEquals(3, subAgg.getContainers().size());
       String json = mapper.writeValueAsString(aggResult);
       assertFalse(json.isBlank());
     }

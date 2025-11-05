@@ -1,0 +1,241 @@
+{
+  "took": 7,
+  "timed_out": false,
+  "_shards": {
+    "total": 12,
+    "successful": 12,
+    "skipped": 11,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 11,
+      "relation": "eq"
+    },
+    "max_score": null,
+    "hits": []
+  },
+  "aggregations": {
+    "distributed": {
+      "buckets": [
+        {
+          "key_as_string": "2025-10-20T00:00:00.000Z",
+          "key": 1760918400000,
+          "doc_count": 2,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-21T00:00:00.000Z",
+          "key": 1761004800000,
+          "doc_count": 2,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-22T00:00:00.000Z",
+          "key": 1761091200000,
+          "doc_count": 1,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-23T00:00:00.000Z",
+          "key": 1761177600000,
+          "doc_count": 1,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-24T00:00:00.000Z",
+          "key": 1761264000000,
+          "doc_count": 1,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-25T00:00:00.000Z",
+          "key": 1761350400000,
+          "doc_count": 0,
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-26T00:00:00.000Z",
+          "key": 1761436800000,
+          "doc_count": 2,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-27T00:00:00.000Z",
+          "key": 1761523200000,
+          "doc_count": 1,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "org.dropchop.jop.beans.tags.CustomerTopicGroup#347cc80d-913a-3934-860f-f3cf811f5f3c#6b0c6833-24d8-4c85-aafb-529593d6976e",
+                "doc_count": 1,
+                "advertValue": {
+                  "count": 1,
+                  "min": 480,
+                  "max": 480,
+                  "avg": 480,
+                  "sum": 480
+                },
+                "mediaReach": {
+                  "count": 1,
+                  "min": 74242,
+                  "max": 74242,
+                  "avg": 74242,
+                  "sum": 74242
+                }
+              },
+              {
+                "key": "org.dropchop.jop.beans.tags.CustomerTopicGroup#6b72cc88-7e4c-3604-9e5b-eaf1ecf7e686#a65c7372-9fbe-410c-93d7-4613d26488e7",
+                "doc_count": 1,
+                "advertValue": {
+                  "count": 1,
+                  "min": 480,
+                  "max": 480,
+                  "avg": 480,
+                  "sum": 480
+                },
+                "mediaReach": {
+                  "count": 1,
+                  "min": 74242,
+                  "max": 74242,
+                  "avg": 74242,
+                  "sum": 74242
+                }
+              }
+            ]
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        },
+        {
+          "key_as_string": "2025-10-28T00:00:00.000Z",
+          "key": 1761609600000,
+          "doc_count": 1,
+          "neutralTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "positiveTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          },
+          "negativeTags": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": []
+          }
+        }
+      ]
+    }
+  }
+}

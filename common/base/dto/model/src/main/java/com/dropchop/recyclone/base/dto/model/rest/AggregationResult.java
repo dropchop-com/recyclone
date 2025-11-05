@@ -1,9 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.rest;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -73,10 +70,6 @@ public class AggregationResult {
       }
       results.put(name, value);
     }
-    /*@JsonAnyGetter
-    public Map<String, AggregationResult> getSubs(){
-      return subAggregations;
-    }*/
   }
 
   @JsonProperty("meta")
@@ -84,6 +77,7 @@ public class AggregationResult {
   Map<String, Object> meta = new LinkedHashMap<>();
 
   @JsonProperty("buckets")
+  @JsonSetter(contentNulls = Nulls.SKIP)
   private List<Container> containers;
 
   @JsonProperty("doc_count_error_upper_bound")
