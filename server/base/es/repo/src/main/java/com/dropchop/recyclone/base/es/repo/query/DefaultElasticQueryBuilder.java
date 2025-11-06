@@ -28,46 +28,39 @@ import java.util.Map;
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
-  protected QueryNodeObject mapCondition(ValidationData validationData, Condition condition, Condition parentCond,
+  protected QueryNodeObject mapCondition(int level, QueryFieldListener listener,
+                                         Condition condition, Condition parentCond,
                                          QueryNodeObject parentNodeObject) {
     if (condition instanceof LogicalCondition logicalCondition) {
       BoolQueryObject query = new BoolQueryObject();
-      if ((condition instanceof And || condition instanceof Or) && validationData != null) {
-        validationData.setRootCondition(condition);
+      if (listener != null) {
+        listener.on(0, null, condition, parentNodeObject);
       }
 
       for (Iterator<Condition> it = logicalCondition.iterator(); it.hasNext(); ) {
         Condition subCondition = it.next();
         BoolQueryObject queryContainer = new BoolQueryObject();
         if (condition instanceof And) {
-          query.must(mapCondition(validationData, subCondition, condition, queryContainer));
+          query.must(mapCondition(level + 1, listener, subCondition, condition, queryContainer));
         } else if (condition instanceof Or) {
-          query.should(mapCondition(validationData, subCondition, condition, queryContainer));
+          query.should(mapCondition(level + 1, listener, subCondition, condition, queryContainer));
         } else if (condition instanceof Not) {
-          query.mustNot(mapCondition(validationData, subCondition, condition, queryContainer));
+          query.mustNot(mapCondition(level + 1, listener, subCondition, condition, queryContainer));
         }
       }
       return query;
     } else if (condition instanceof ConditionedField conditionedField) {
       String fieldName = conditionedField.getName();
       ConditionOperator operator = (ConditionOperator) conditionedField.values().toArray()[0];
-      if (validationData != null) {
-        validationData.addRootField(fieldName, parentCond);
-      }
-      return mapConditionField(fieldName, operator);
+      return mapConditionField(level, listener, fieldName, operator);
     } else if (condition instanceof Knn) {
-      if (validationData != null) {
-        validationData.addKnnField(((Knn) condition).get$knn().getName());
-      }
-
       KnnNodeObject knnNode = new KnnNodeObject(null, (Knn) condition);
       QueryNodeObject queryNodeObject = new QueryNodeObject();
       QueryNodeObject mustObject = new QueryNodeObject();
 
       if (((Knn) condition).get$knn().getFilter() != null) {
-        ValidationData filterValidation = new ValidationData();
-        QueryNodeObject filterQuery = mapCondition(filterValidation, ((Knn) condition).get$knn().getFilter(),
-          null, null);
+        QueryNodeObject filterQuery = mapCondition(
+            level + 1, listener, ((Knn) condition).get$knn().getFilter(), null, null);
         knnNode.addFilter(filterQuery);
       }
 
@@ -81,13 +74,14 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       return mustObject;
     } else if (condition instanceof Field<?> field) {
       String fieldName = field.getName();
-      if (validationData != null) {
-        validationData.addRootField(fieldName, parentCond);
-      }
+
       if (field.iterator().next() instanceof ZonedDateTime) {
         OperatorNodeObject operator = new OperatorNodeObject();
         if (field.iterator().next() instanceof ZonedDateTime date) {
           operator.addClosedInterval(fieldName, date, date);
+        }
+        if (listener != null) {
+          listener.on(0, fieldName, condition, operator);
         }
         return operator;
       }
@@ -95,6 +89,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       if (field.iterator().next() == null) {
         OperatorNodeObject operator = new OperatorNodeObject();
         operator.addNullSearch(fieldName);
+        if (listener != null) {
+          listener.on(0, fieldName, condition, operator);
+        }
         return operator;
       }
 
@@ -106,9 +103,15 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       mustWrapper.put("must", termWrapper);
 
       if (parentNodeObject == null) {
+        if (listener != null) {
+          listener.on(0, fieldName, condition, mustWrapper);
+        }
         return mustWrapper;
       }
 
+      if (listener != null) {
+        listener.on(0, fieldName, condition, termWrapper);
+      }
       return termWrapper;
     }
 
@@ -214,21 +217,22 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     if (v != null) to.put(key, v);
   }
 
-  protected OperatorNodeObject mapConditionField(String field, ConditionOperator operator) {
+  protected OperatorNodeObject mapConditionField(int level, QueryFieldListener listener, String field,
+                                                 ConditionOperator operator) {
     OperatorNodeObject operatorNode = new OperatorNodeObject();
 
     if (operator instanceof Eq) {
       operatorNode.addEqOperator(field, ((Eq<?>) operator).get$eq());
-    } else if (operator instanceof Gt) {
-      operatorNode.addRangeOperator(field, "gt", ((Gt<?>) operator).get$gt());
-    } else if (operator instanceof Lt) {
-      operatorNode.addRangeOperator(field, "lt", ((Lt<?>) operator).get$lt());
-    } else if (operator instanceof Gte) {
-      operatorNode.addRangeOperator(field, "gte", ((Gte<?>) operator).get$gte());
-    } else if (operator instanceof Lte) {
-      operatorNode.addRangeOperator(field, "lte", ((Lte<?>) operator).get$lte());
-    } else if (operator instanceof In) {
-      operatorNode.addInOperator(field, ((In<?>) operator).get$in());
+    } else if (operator instanceof Gt<?> gt) {
+      operatorNode.addRangeOperator(field, "gt", gt.get$gt());
+    } else if (operator instanceof Lt<?> lt) {
+      operatorNode.addRangeOperator(field, "lt", lt.get$lt());
+    } else if (operator instanceof Gte<?> gte) {
+      operatorNode.addRangeOperator(field, "gte", gte.get$gte());
+    } else if (operator instanceof Lte<?> lte) {
+      operatorNode.addRangeOperator(field, "lte", lte.get$lte());
+    } else if (operator instanceof In<?> in) {
+      operatorNode.addInOperator(field, in.get$in());
     } else if (operator instanceof ClosedInterval<?> interval) {
       operatorNode.addClosedInterval(field, interval.get$gte(), interval.get$lte());
     } else if (operator instanceof OpenInterval<?> interval) {
@@ -254,6 +258,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       operatorNode.addEqOperator(field, operator);
     }
 
+    if (listener != null) {
+      listener.on(level, field, operator, operatorNode);
+    }
     return operatorNode;
   }
 
@@ -454,7 +461,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
   @Override
-  public QueryNodeObject build(ValidationData validationData, ElasticIndexConfig indexConfig, QueryParams params) {
+  public QueryNodeObject build(QueryFieldListener fieldListener, ElasticIndexConfig indexConfig, QueryParams params) {
     QueryNodeObject query = new QueryNodeObject();
     QueryNodeObject queryContainer = new QueryNodeObject();
 
@@ -482,7 +489,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
     if (params.getCondition() != null) {
       QueryNodeObject conditions = mapCondition(
-        validationData, params.getCondition(), null, null
+        0, fieldListener, params.getCondition(), null, null
       );
       query.put("bool", conditions);
       queryContainer.put("query", query);
@@ -525,7 +532,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
 
-  public QueryNodeObject build(ValidationData validationData, QueryParams params) {
-    return build(validationData, null, params);
+  public QueryNodeObject build(QueryFieldListener fieldListener, QueryParams params) {
+    return build(fieldListener, null, params);
+  }
+
+  public QueryNodeObject build(QueryParams params) {
+    return build(null, null, params);
   }
 }

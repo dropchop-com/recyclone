@@ -9,6 +9,8 @@ import com.dropchop.recyclone.base.api.model.invoke.*;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
+import com.dropchop.recyclone.base.api.model.query.Condition;
+import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
@@ -21,16 +23,17 @@ import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetad
 import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
 import com.dropchop.recyclone.base.es.repo.listener.QueryResultConsumer;
-import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentDeleteFields;
 import com.dropchop.recyclone.base.es.repo.marker.AlwaysPresentSearchFields;
 import com.dropchop.recyclone.base.es.repo.marker.BlockAllDelete;
 import com.dropchop.recyclone.base.es.repo.marker.ConditionStringProvider;
 import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder;
-import com.dropchop.recyclone.base.es.repo.query.ElasticQueryBuilder.ValidationData;
+import com.dropchop.recyclone.base.es.repo.query.QueryFieldListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -51,6 +54,24 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 @SuppressWarnings("unused")
 public abstract class ElasticRepository<E extends EsEntity, ID> implements
   ElasticCrudRepository<E, ID>, ConditionStringProvider {
+
+  @Getter
+  @Setter
+  public static class ValidationData {
+    private final Set<String> rootFields = new HashSet<>();
+    private Condition rootCondition;
+
+    public void addRootField(String field) {
+      rootFields.add(field);
+    }
+
+    protected void setRootCondition(Condition rootCondition) {
+      if (rootCondition == null) {
+        return;
+      }
+      this.rootCondition = rootCondition;
+    }
+  }
 
   public static final String HTTP_POST = "POST";
   public static final String ENDPOINT_SEARCH = "/_search";
@@ -104,8 +125,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   @Override
   public IQueryNodeObject provideCondition(QueryParams queryParams) {
-    ElasticQueryBuilder.ValidationData validationData = new ElasticQueryBuilder.ValidationData();
-    return getElasticQueryBuilder().build(validationData, queryParams);
+    return getElasticQueryBuilder().build(queryParams);
   }
 
   @Override
@@ -296,18 +316,64 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     }
   }
 
+  protected <S extends E> QueryNodeObject buildQuery(ElasticIndexConfig config, ElasticQueryBuilder builder,
+                                                     QueryParams params,
+                                                     List<ElasticCriteriaDecorator<S>> criteriaDecorators) {
+    ValidationData validationData = new ValidationData();
+    QueryNodeObject query = builder.build(
+        new QueryFieldListener() {
+          @Override
+          public void on(int level, String fieldName, Condition condition, QueryNodeObject node) {
+            if (level == 0) {
+              validationData.setRootCondition(condition);
+            }
+          }
+
+          @Override
+          public void on(int level, String fieldName, ConditionOperator condition, QueryNodeObject node) {
+            if (level == 0) {
+              validationData.addRootField(fieldName);
+            }
+            for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
+              decorator.onBuiltField(fieldName, condition, node);
+            }
+          }
+        },
+        config,
+        params
+    );
+    if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
+      validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
+    }
+    return query;
+  }
+
   @Override
   public <S extends E> int deleteByQuery(RepositoryExecContext<S> context) {
     if (this instanceof BlockAllDelete) {
       this.throwDeleteException();
     }
+    if (!(context instanceof ElasticExecContext<S> elasticContext)) {
+      throw new ServiceException(
+          ErrorCode.parameter_validation_error,
+          "Invalid context: Expected ElasticExecContext but received " + context.getClass()
+      );
+    }
+
+    List<ElasticCriteriaDecorator<S>> criteriaDecorators = new ArrayList<>();
+    for (RepositoryExecContextListener listener : context.getListeners()) {
+      if (listener instanceof ElasticCriteriaDecorator<?> decorator) {
+        @SuppressWarnings("unchecked")
+        ElasticCriteriaDecorator<S> criteriaDecorator = (ElasticCriteriaDecorator<S>) listener;
+        criteriaDecorator.init(elasticContext);
+        criteriaDecorators.add(criteriaDecorator);
+      }
+    }
 
     QueryParams params = context.getParams();
-    ValidationData validationData = new ValidationData();
-    QueryNodeObject queryObject = getElasticQueryBuilder().build(validationData, params);
-    if (this instanceof AlwaysPresentDeleteFields alwaysPresentDeleteFields) {
-      validateRequiredFields(validationData, alwaysPresentDeleteFields.anyOf());
-    }
+    QueryNodeObject queryObject = buildQuery(null, getElasticQueryBuilder(), params, criteriaDecorators);
+
+
     //query does not allow this in delete
     queryObject.remove("from");
 
@@ -428,6 +494,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     Class<S> cls = elasticContext.getRootClass();
     List<QueryResultConsumer<S>> queryListeners = new ArrayList<>();
     List<AggregationResultConsumer> aggListeners = new ArrayList<>();
+    List<ElasticCriteriaDecorator<S>> criteriaDecorators = new ArrayList<>();
     for (RepositoryExecContextListener listener : context.getListeners()) {
       if (listener instanceof QueryResultConsumer<?> queryResultListener) {
         //noinspection unchecked
@@ -435,6 +502,12 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       }
       if (listener instanceof AggregationResultConsumer aggregationResultConsumer) {
         aggListeners.add(aggregationResultConsumer);
+      }
+      if (listener instanceof ElasticCriteriaDecorator<?> decorator) {
+        @SuppressWarnings("unchecked")
+        ElasticCriteriaDecorator<S> criteriaDecorator = (ElasticCriteriaDecorator<S>) listener;
+        criteriaDecorator.init(elasticContext);
+        criteriaDecorators.add(criteriaDecorator);
       }
     }
 
@@ -461,18 +534,15 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       queryParams.tryGetResultFilter().setSize(indexConfig.getSizeOfPagination());
     }
 
-    ValidationData validationData = new ValidationData();
-    QueryNodeObject query = queryBuilder.build(validationData, indexConfig, queryParams);
-    if (this instanceof AlwaysPresentSearchFields alwaysPresentSearchFields) {
-      validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
-    }
+    QueryNodeObject query = buildQuery(
+        indexConfig,
+        queryBuilder,
+        queryParams,
+        criteriaDecorators
+    );
 
     elasticContext.init(getElasticIndexConfig(), query);
-    context.getListeners()
-        .stream()
-        .filter(listener -> listener instanceof CriteriaDecorator)
-        .map(CriteriaDecorator.class::cast)
-        .forEach(CriteriaDecorator::decorate);
+    criteriaDecorators.forEach(CriteriaDecorator::decorate);
 
     long totalCount = 0;
     SearchResultMetadata metadata;

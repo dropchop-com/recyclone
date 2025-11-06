@@ -1,10 +1,8 @@
 package com.dropchop.recyclone.base.es.repo;
 
-import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
-import com.dropchop.recyclone.base.api.model.invoke.Params;
-import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
-import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
+import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,22 +16,5 @@ public abstract class ElasticCriteriaDecorator<E> implements CriteriaDecorator<E
     this.context = executionContext;
   }
 
-  protected CommonParams<?, ?, ?, ?> commonParamsGet() {
-    Params params = getContext().getParams();
-    if (!(params instanceof CommonParams<?, ?, ?, ?> parameters)) {
-      log.warn("Wrong parameters instance [{}] should be [{}]", params.getClass(), CommonParams.class);
-      return null;
-    }
-    ResultFilter<?, ?> resultFilter = parameters.getFilter();
-    if (resultFilter == null) {
-      log.warn("Missing result filter in params [{}]!", params);
-      return null;
-    }
-    ResultFilterDefaults defaults = parameters.getFilterDefaults();
-    if (defaults == null) {
-      log.warn("Missing result filter defaults in params [{}]!", params);
-      return null;
-    }
-    return parameters;
-  }
+  public abstract void onBuiltField(String field, ConditionOperator operator, QueryNodeObject node);
 }
