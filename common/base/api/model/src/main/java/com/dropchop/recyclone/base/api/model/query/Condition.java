@@ -60,35 +60,67 @@ public interface Condition {
   }
 
   static Knn knn(String field, float[] value, Integer topK, Float similarity, Integer numCandidates) {
-    return new Knn(new KnnField(field, value, topK, similarity, numCandidates));
+    return new Knn(new KnnEmbeddingCondition(field, value, topK, similarity, numCandidates));
+  }
+
+  static Knn knn(String field, String value, Integer topK, Float similarity, Integer numCandidates) {
+    return new Knn(new KnnTextCondition(field, value, topK, similarity, numCandidates));
   }
 
   static Knn knn(String field, float[] value, Integer topK, Float similarity) {
-    return new Knn(new KnnField(field, value, topK, similarity));
+    return new Knn(new KnnEmbeddingCondition(field, value, topK, similarity));
+  }
+
+  static Knn knn(String field, String value, Integer topK, Float similarity) {
+    return new Knn(new KnnTextCondition(field, value, topK, similarity));
   }
 
   static Knn knn(String field, float[] value, Integer topK) {
-    return new Knn(new KnnField(field, value, topK));
+    return new Knn(new KnnEmbeddingCondition(field, value, topK));
+  }
+
+  static Knn knn(String field, String value, Integer topK) {
+    return new Knn(new KnnTextCondition(field, value, topK));
   }
 
   static Knn knn(String field, float[] value) {
-    return new Knn(new KnnField(field, value));
+    return new Knn(new KnnEmbeddingCondition(field, value));
+  }
+
+  static Knn knn(String field, String value) {
+    return new Knn(new KnnTextCondition(field, value));
   }
 
   static Knn knn(String field, float[] value, Integer topK, Float similarity, Integer numCandidates, Condition filter) {
-    return new Knn(new KnnField(field, value, topK, similarity, numCandidates, filter));
+    return new Knn(new KnnEmbeddingCondition(field, value, topK, similarity, numCandidates, filter));
+  }
+
+  static Knn knn(String field, String value, Integer topK, Float similarity, Integer numCandidates, Condition filter) {
+    return new Knn(new KnnTextCondition(field, value, topK, similarity, numCandidates, filter));
   }
 
   static Knn knn(String field, float[] value, Integer topK, Float similarity, Condition filter) {
-    return new Knn(new KnnField(field, value, topK, similarity, filter));
+    return new Knn(new KnnEmbeddingCondition(field, value, topK, similarity, filter));
+  }
+
+  static Knn knn(String field, String value, Integer topK, Float similarity, Condition filter) {
+    return new Knn(new KnnTextCondition(field, value, topK, similarity, filter));
   }
 
   static Knn knn(String field, float[] value, Integer topK, Condition filter) {
-    return new Knn(new KnnField(field, value, topK, filter));
+    return new Knn(new KnnEmbeddingCondition(field, value, topK, filter));
+  }
+
+  static Knn knn(String field, String value, Integer topK, Condition filter) {
+    return new Knn(new KnnTextCondition(field, value, topK, filter));
   }
 
   static Knn knn(String field, float[] value, Condition filter) {
-    return new Knn(new KnnField(field, value, filter));
+    return new Knn(new KnnEmbeddingCondition(field, value, filter));
+  }
+
+  static Knn knn(String field, String value, Condition filter) {
+    return new Knn(new KnnTextCondition(field, value, filter));
   }
 
   static ConditionedField advancedText(String name, String value) {

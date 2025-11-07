@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.api.model.query.condition;
 
 import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.base.api.model.query.KnnField;
+import com.dropchop.recyclone.base.api.model.query.KnnCondition;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 26. 08. 2025
@@ -9,24 +9,24 @@ import com.dropchop.recyclone.base.api.model.query.KnnField;
 @SuppressWarnings("unused")
 public class Knn implements Condition {
 
-  private KnnField knn;
+  private KnnCondition<?> knn;
 
   public Knn() {
   }
 
-  public Knn(KnnField knn) {
+  public Knn(KnnCondition<?> knn) {
     set$knn(knn);
   }
 
-  public KnnField get$knn() {
+  public KnnCondition<?> get$knn() {
     return knn;
   }
 
-  public void set$knn(KnnField knn) {
+  public void set$knn(KnnCondition<?> knn) {
     this.knn = knn;
   }
 
-  public Knn knn(KnnField knn) {
+  public Knn knn(KnnCondition<?> knn) {
     this.set$knn(knn);
     return this;
   }

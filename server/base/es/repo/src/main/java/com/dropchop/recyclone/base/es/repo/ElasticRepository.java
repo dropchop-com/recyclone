@@ -327,15 +327,18 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
             if (level == 0) {
               validationData.setRootCondition(condition);
             }
+            for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
+              decorator.onBuiltField(fieldName, condition, node);
+            }
           }
 
           @Override
-          public void on(int level, String fieldName, ConditionOperator condition, QueryNodeObject node) {
+          public void on(int level, String fieldName, ConditionOperator operator, QueryNodeObject node) {
             if (level == 0) {
               validationData.addRootField(fieldName);
             }
             for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
-              decorator.onBuiltField(fieldName, condition, node);
+              decorator.onBuiltField(fieldName, operator, node);
             }
           }
         },

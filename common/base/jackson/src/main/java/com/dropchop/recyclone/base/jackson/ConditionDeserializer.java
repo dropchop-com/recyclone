@@ -5,10 +5,10 @@ import com.dropchop.recyclone.base.api.model.query.condition.And;
 import com.dropchop.recyclone.base.api.model.query.condition.Knn;
 import com.dropchop.recyclone.base.api.model.query.condition.Not;
 import com.dropchop.recyclone.base.api.model.query.condition.Or;
+import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
-import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -44,13 +44,14 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           "Invalid query conditioned field name structure at [" + name + "." + cname + "]!"
         );
       }
-      Class<? extends ConditionOperator> cClass = (Class<? extends ConditionOperator>)
-        ConditionOperator.supported().get(cname.substring(1));
-      if (cClass == null) {
+      Class<?> c = ConditionOperator.supported().get(cname.substring(1));
+      if (c == null) {
         throw new UnsupportedOperationException(
-          "Missing condition implementation for [" + name + "." + cname + "]!"
+            "Missing condition implementation for [" + name + "." + cname + "]!"
         );
       }
+      @SuppressWarnings("unchecked")
+      Class<? extends ConditionOperator> cClass = (Class<? extends ConditionOperator>) c;
       cClasses.add(cClass);
       cNames.add(cname);
     }
@@ -246,16 +247,38 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
             );
           }
           String field = fieldNode.asText();
-          JsonNode queryVectorNode = valueNode.get("value");
-          if (queryVectorNode == null || !queryVectorNode.isArray()) {
+          float[] queryVector = null;
+          String queryStrValue = null;
+          JsonNode queryValueNode = valueNode.get("value");
+          if (queryValueNode == null || queryValueNode.isNull()) {
             throw new IllegalArgumentException(
-              "Invalid KNN query: 'value' is required and must be an array at [" + name + "]!"
+              "Invalid KNN query: 'value' is required and must be a non-empty string at [" + name + "]!"
             );
           }
-          float[] queryVector = new float[queryVectorNode.size()];
-          for (int i = 0; i < queryVectorNode.size(); i++) {
-            queryVector[i] = (float) queryVectorNode.get(i).asDouble();
+          if (queryValueNode.isArray()) {
+            queryVector = new float[queryValueNode.size()];
+            for (int i = 0; i < queryValueNode.size(); i++) {
+              queryVector[i] = (float) queryValueNode.get(i).asDouble();
+            }
+            if (queryVector.length <= 0) {
+              throw new IllegalArgumentException(
+                  "Invalid KNN query: 'value' is required and must be an array with at least one element at ["
+                      + name + "]!"
+              );
+            }
+          } else if (queryValueNode.isTextual()) {
+            queryStrValue = queryValueNode.asText();
+            if (queryStrValue.isBlank()) {
+              throw new IllegalArgumentException(
+                  "Invalid KNN query: 'value' is required and must be a non-empty string at [" + name + "]!"
+              );
+            }
+          } else {
+            throw new IllegalArgumentException(
+                "Invalid KNN query: 'value' is required and must be an array or string at [" + name + "]!"
+            );
           }
+
           Integer k = null;
           JsonNode kNode = valueNode.get("topK");
           if (kNode != null && kNode.isIntegralNumber()) {
@@ -277,7 +300,11 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           if (similarityNode != null && similarityNode.isNumber()) {
             similarity = (float) similarityNode.asDouble();
           }
-          return new Knn(new KnnField(field, queryVector, k, similarity, numCandidates, filter));
+          if (queryVector != null) {
+            return new Knn(new KnnEmbeddingCondition(field, queryVector, k, similarity, numCandidates, filter));
+          } else {
+            return new Knn(new KnnTextCondition(field, queryStrValue, k, similarity, numCandidates, filter));
+          }
         }
       }
     } else {

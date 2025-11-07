@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
+import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
 import lombok.Getter;
@@ -17,4 +18,5 @@ public abstract class ElasticCriteriaDecorator<E> implements CriteriaDecorator<E
   }
 
   public abstract void onBuiltField(String field, ConditionOperator operator, QueryNodeObject node);
+  public abstract void onBuiltField(String field, Condition condition, QueryNodeObject node);
 }

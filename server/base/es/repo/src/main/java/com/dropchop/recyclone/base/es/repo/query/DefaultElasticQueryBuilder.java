@@ -122,37 +122,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return previousCondition;
   }
 
-  private QueryNodeObject mapAdvancedText(String defaultField, String value) {
-    List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
-    QueryNodeObject inner = renderAdvanced(defaultField, tokens);
-    QueryNodeObject wrapper = new QueryNodeObject();
-    wrapper.put("bool", inner);
-    return wrapper;
-  }
-
-  private QueryNodeObject renderAdvanced(String defaultField, List<ExpressionToken> tokens) {
-    BoolQueryObject bool = new BoolQueryObject();
-    for (ExpressionToken token : tokens) {
-      QueryNodeObject node = toQueryNode(defaultField, token);
-      if (token.isMustNot()) {
-        bool.mustNot(node);
-      } else if (token.isMust()) {
-        bool.must(node);
-      } else {
-        bool.should(node);
-      }
-    }
-    if (!bool.containsKey("must") && !bool.containsKey("must_not") && bool.getShould() != null) {
-      bool.setMinimumShouldMatch(1);
-    }
-    return bool;
-  }
-
-  private QueryNodeObject toQueryNode(String defaultField, ExpressionToken token) {
+  private QueryNodeObject expressionToQueryNode(String defaultField, ExpressionToken token) {
     if (token instanceof com.dropchop.recyclone.base.dto.model.text.Or orToken) {
       BoolQueryObject orBool = new BoolQueryObject();
       for (ExpressionToken part : orToken.getExpressionTokens()) {
-        QueryNodeObject child = toQueryNode(defaultField, part);
+        QueryNodeObject child = expressionToQueryNode(defaultField, part);
         orBool.should(child);
       }
       orBool.setMinimumShouldMatch(1);
@@ -212,6 +186,30 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     }
   }
 
+  private QueryNodeObject mapAdvancedText(String defaultField, String value) {
+    List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
+
+    BoolQueryObject inner = new BoolQueryObject();
+    for (ExpressionToken token : tokens) {
+      QueryNodeObject node = expressionToQueryNode(defaultField, token);
+      if (token.isMustNot()) {
+        inner.mustNot(node);
+      } else if (token.isMust()) {
+        inner.must(node);
+      } else {
+        inner.should(node);
+      }
+    }
+    if (!inner.containsKey("must") && !inner.containsKey("must_not") && inner.getShould() != null) {
+      inner.setMinimumShouldMatch(1);
+    }
+
+    QueryNodeObject wrapper = new QueryNodeObject();
+    wrapper.put("bool", inner);
+    return wrapper;
+  }
+
+
   private void copyIfPresent(Map<String, Object> meta, QueryNodeObject to, String key) {
     Object v = meta.get(key);
     if (v != null) to.put(key, v);
@@ -248,6 +246,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
         if (!advancedQuery.isEmpty()) {
           OperatorNodeObject wrapper = new OperatorNodeObject();
           wrapper.putAll(advancedQuery);
+          if (listener != null) {
+            listener.on(level, field, operator, wrapper);
+          }
           return wrapper;
         }
       }
