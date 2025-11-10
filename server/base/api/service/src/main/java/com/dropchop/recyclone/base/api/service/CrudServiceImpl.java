@@ -10,6 +10,7 @@ import com.dropchop.recyclone.base.api.model.rest.Constants.ContentDetail;
 import com.dropchop.recyclone.base.api.repo.CrudRepository;
 import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.base.api.service.security.AuthorizationService;
+import com.dropchop.recyclone.base.api.service.security.SkipInstanceLevelPermissionCheck;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -58,7 +59,12 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     CommonExecContext<?, ?> ctx = getExecutionContext();
     if (ctx.hasRequiredPermissions()) {
       entities = entities.stream().filter(
-          e -> authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()))
+          e -> {
+            if (!(this instanceof SkipInstanceLevelPermissionCheck)) {
+              return authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()));
+            }
+            return true;
+          }
       ).collect(Collectors.toList());
     }
 
