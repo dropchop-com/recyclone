@@ -38,12 +38,14 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
   public abstract CommonExecContext<D, ?> getExecutionContext();
 
   protected void checkDtoPermissions(List<D> dtos) {
+    CommonExecContext<?, ?> ctx = getExecutionContext();
     for (D dto : dtos) {
-      CommonExecContext<?, ?> ctx = getExecutionContext();
-      if (ctx.hasRequiredPermissions()) {
+      if (ctx.hasRequiredPermissions() && !(this instanceof SkipInstanceLevelPermissionCheck)) {
         if (!authorizationService.isPermitted(ctx.getSecurityDomainAction(dto.identifier()))) {
-          throw new ServiceException(ErrorCode.authorization_error, "Not permitted!",
-              Set.of(new AttributeString(dto.identifierField(), dto.identifier())));
+          throw new ServiceException(
+              ErrorCode.authorization_error, "Not permitted!",
+              Set.of(new AttributeString(dto.identifierField(), dto.identifier()))
+          );
         }
       }
     }
@@ -57,14 +59,10 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
     MappingContext mapContext = mapperProvider.getMappingContextForRead();
     List<E> entities = repository.find(repository.getRepositoryExecContext(mapContext));
     CommonExecContext<?, ?> ctx = getExecutionContext();
-    if (ctx.hasRequiredPermissions()) {
+    if (ctx.hasRequiredPermissions() && !(this instanceof SkipInstanceLevelPermissionCheck)) {
       entities = entities.stream().filter(
-          e -> {
-            if (!(this instanceof SkipInstanceLevelPermissionCheck)) {
-              return authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier()));
-            }
-            return true;
-          }
+          e -> authorizationService.isPermitted(ctx.getSecurityDomainAction(e.identifier())
+          )
       ).collect(Collectors.toList());
     }
 

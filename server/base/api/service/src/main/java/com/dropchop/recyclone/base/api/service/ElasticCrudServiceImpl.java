@@ -10,6 +10,7 @@ import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.CrudRepository;
 import com.dropchop.recyclone.base.api.repo.FilteringMapperProvider;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
+import com.dropchop.recyclone.base.api.service.security.SkipInstanceLevelPermissionCheck;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.IdentifierParams;
 import com.dropchop.recyclone.base.dto.model.rest.AggregationResult;
@@ -40,6 +41,7 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
 
   protected Result<D> search(boolean doAuthorization) {
     ProfileTimer timer = new ProfileTimer();
+    CommonExecContext<?, ?> ctx = getExecutionContext();
 
     CrudRepository<E, ID> repository = getRepository();
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
@@ -54,16 +56,13 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     List<E> entities = repository.find(context);
     log.debug("Found {} entities in [{}]ms", entities.size(), timer.mark());
 
-    entities = entities.stream()
-      .filter(
-          e -> {
-            if (!doAuthorization) {
-              return true;
-            } else {
-              return authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()));
-            }
-          })
-      .collect(Collectors.toList());
+    if (ctx.hasRequiredPermissions() && doAuthorization && !(this instanceof SkipInstanceLevelPermissionCheck)) {
+      entities = entities.stream()
+          .filter(
+              e -> authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()))
+          )
+          .collect(Collectors.toList());
+    }
 
     Result<D> result = mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);
     result.setAggregations(aggregations);
