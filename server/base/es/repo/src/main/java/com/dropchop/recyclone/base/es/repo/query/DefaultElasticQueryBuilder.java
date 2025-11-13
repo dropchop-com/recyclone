@@ -53,17 +53,18 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       String fieldName = conditionedField.getName();
       ConditionOperator operator = (ConditionOperator) conditionedField.values().toArray()[0];
       return mapConditionField(level, listener, fieldName, operator);
-    } else if (condition instanceof Knn) {
-      KnnNodeObject knnNode = new KnnNodeObject(null, (Knn) condition);
+    } else if (condition instanceof Knn knnCondition) {
+      KnnNodeObject knnNode = new KnnNodeObject(null, knnCondition);
       QueryNodeObject queryNodeObject = new QueryNodeObject();
       QueryNodeObject mustObject = new QueryNodeObject();
 
-      if (((Knn) condition).get$knn().getFilter() != null) {
+      if ((knnCondition).get$knn().getFilter() != null) {
         QueryNodeObject filterQuery = mapCondition(
-            level + 1, listener, ((Knn) condition).get$knn().getFilter(), null, null);
+            level + 1, listener, (knnCondition).get$knn().getFilter(), null, null);
         knnNode.addFilter(filterQuery);
       }
 
+      listener.on(0, null, condition, knnNode);
       queryNodeObject.put("knn", knnNode);
 
       if (parentCond != null) {

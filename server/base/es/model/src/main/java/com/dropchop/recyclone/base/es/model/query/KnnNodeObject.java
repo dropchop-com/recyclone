@@ -67,10 +67,10 @@ public class KnnNodeObject extends QueryNodeObject {
       this.queryVector = null;
       this.queryString = null;
     }
-    this.k = knnQuery.get$knn().getTopK();
-    this.filter = knnQuery.get$knn().getFilter();
-    this.similarity = knnQuery.get$knn().getSimilarity();
-    this.numCandidates = knnQuery.get$knn().getNumCandidates();
+    this.k = condition.getTopK();
+    this.filter = condition.getFilter();
+    this.similarity = condition.getSimilarity();
+    this.numCandidates = condition.getNumCandidates();
 
     validateAndBuild();
   }
@@ -85,6 +85,34 @@ public class KnnNodeObject extends QueryNodeObject {
 
   public void removeQueryVector() {
     replaceQueryVector(null);
+  }
+
+  public void renameField(String field) {
+    this.put("field", field);
+  }
+
+  public void replaceSimilarity(Float similarity) {
+    if (similarity == null) {
+      this.remove("similarity");
+      return;
+    }
+    this.put("similarity", similarity);
+  }
+
+  public void replaceTopK(Integer topK) {
+    if (topK == null) {
+      this.remove("k");
+      return;
+    }
+    this.put("k", topK);
+  }
+
+  public void replaceNumCandidates(Integer numCandidates) {
+    if (numCandidates == null) {
+      this.remove("num_candidates");
+      return;
+    }
+    this.put("num_candidates", numCandidates);
   }
 
   public KnnNodeObject addFilter(QueryNodeObject filterQuery) {
