@@ -41,6 +41,9 @@ public abstract class LogicalCondition implements Condition {
   }
 
   public Iterator<Condition> iterator() {
+    if (this.getSubConditions() == null) {
+      return Collections.emptyIterator();
+    }
     return this.getSubConditions().iterator();
   }
 }

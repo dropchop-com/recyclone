@@ -490,9 +490,15 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       queryContainer.putAll(sort);
     }
 
-    if (params.getCondition() != null) {
+    Condition condition = params.getCondition();
+    boolean makeBoolQuery = condition instanceof LogicalCondition logicalCondition
+        && logicalCondition.iterator().hasNext();
+    if (!makeBoolQuery) {
+      makeBoolQuery = condition instanceof Knn;
+    }
+    if (makeBoolQuery) {
       QueryNodeObject conditions = mapCondition(
-        0, fieldListener, params.getCondition(), null, null
+          0, fieldListener, condition, null, null
       );
       query.put("bool", conditions);
       queryContainer.put("query", query);
@@ -519,7 +525,8 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     }
 
     // Handle aggregations
-    if (params.getAggregate() != null) {
+    AggregationList aggsQuery = params.getAggregate();
+    if (aggsQuery != null && !aggsQuery.isEmpty()) {
       QueryNodeObject aggregations = new QueryNodeObject();
       for (Aggregation agg : params.getAggregate()) {
         if (agg instanceof Aggregation.Wrapper) {

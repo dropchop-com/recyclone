@@ -2,10 +2,7 @@ package com.dropchop.recyclone.base.dto.model.security;
 
 import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashSet;
@@ -27,6 +24,7 @@ public class AuthorizationRequest extends Params {
   String redirectUri;
 
   @ToString.Include
+  @Builder.Default
   String grantType = "password";
 
   @ToString.Include
