@@ -31,11 +31,10 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
         this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.and();
       }
       if (this.condition$value instanceof LogicalCondition cnd) {
-        if (!cnd.iterator().hasNext()) {
-          this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.and();
-        } else {
+        if (!(cnd instanceof And) && cnd.iterator().hasNext()) {
           throw new IllegalArgumentException("Can not mix type of logical conditions!");
         }
+        this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.and();
       }
       if (this.condition$value instanceof And and) {
         for (Condition c : condition) {
@@ -51,11 +50,10 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
         this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.or();
       }
       if (this.condition$value instanceof LogicalCondition cnd) {
-        if (!cnd.iterator().hasNext()) {
-          this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.or();
-        } else {
+        if (!(cnd instanceof Or) && cnd.iterator().hasNext()) {
           throw new IllegalArgumentException("Can not mix type of logical conditions!");
         }
+        this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.or();
       }
       if (this.condition$value instanceof Or or) {
         for (Condition c : condition) {
