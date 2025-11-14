@@ -45,8 +45,8 @@ public class UserResourceTest {
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper
-        ));
+        objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
+    );
   }
 
   private String getPasswordHash(String password) {
@@ -71,6 +71,9 @@ public class UserResourceTest {
   @Tag("createUserWithAccounts")
   @Tag("getUserById")
   @Tag("deleteUserAccount")
+  @Tag("createAccounts")
+  @Tag("updateAccount")
+  @Tag("deleteAccount")
   public void create() {
     User user = new User();
     user.setId(userId);
@@ -165,7 +168,6 @@ public class UserResourceTest {
 
   @Test
   @Order(40)
-  @SuppressWarnings("unused")
   @Tag("createAccounts")
   @Tag("updateAccount")
   @Tag("deleteAccount")
@@ -195,7 +197,7 @@ public class UserResourceTest {
 
 
     List<UserAccount> result = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
@@ -210,7 +212,7 @@ public class UserResourceTest {
     assertEquals(2, result.size());
 
     List<User> userResult = given()
-      //.log().all()
+      .log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)

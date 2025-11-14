@@ -1,7 +1,12 @@
 package com.dropchop.recyclone.quarkus.deployment.registry;
 
-import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapper;
-import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapperImpl;
+import com.dropchop.recyclone.base.es.mapper.tagging.TagToDtoMapper;
+import com.dropchop.recyclone.base.es.mapper.tagging.TagToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.localization.CountryToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.CountryToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.localization.LanguageToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.LanguageToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.security.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
@@ -18,8 +23,24 @@ public class RecycloneDevModeTest {
         .setArchiveProducer(
             () -> ShrinkWrap.create(JavaArchive.class)
                 .addClasses(
+                    ActionToDtoMapper.class,
+                    ActionToDtoMapperImpl.class,
+                    DomainToDtoMapper.class,
+                    DomainToDtoMapperImpl.class,
+                    CountryToDtoMapper.class,
+                    CountryToDtoMapperImpl.class,
+                    LanguageToDtoMapper.class,
+                    LanguageToDtoMapperImpl.class,
+                    PermissionToDtoMapper.class,
+                    PermissionToDtoMapperImpl.class,
+                    UserToDtoMapper.class,
+                    UserToDtoMapperImpl.class,
                     UserAccountToDtoMapper.class,
                     UserAccountToDtoMapperImpl.class,
+                    TagToDtoMapper.class,
+                    TagToDtoMapperImpl.class,
+                    com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper.class,
+                    com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapperImpl.class,
                     TestShiroEnvironmentProvider.class
                 )
         );

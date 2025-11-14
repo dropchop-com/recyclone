@@ -8,13 +8,16 @@ import com.dropchop.recyclone.base.dto.model.tagging.LanguageGroup;
 import com.dropchop.recyclone.base.es.mapper.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.base.es.mapper.tagging.TagToDtoMapperImpl;
 import com.dropchop.recyclone.base.es.model.tagging.EsLanguageGroup;
+import com.dropchop.recyclone.base.jpa.mapper.localization.CountryToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.CountryToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.localization.LanguageToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.LanguageToDtoMapperImpl;
+import com.dropchop.recyclone.base.jpa.mapper.security.*;
 import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
 import com.dropchop.recyclone.base.jpa.model.security.JpaTokenAccount;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
-import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapper;
-import com.dropchop.recyclone.base.jpa.mapper.security.UserAccountToDtoMapperImpl;
 import io.quarkus.test.QuarkusUnitTest;
 import jakarta.inject.Inject;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -34,6 +37,18 @@ public class RegistryTest {
     static final QuarkusUnitTest unitTest = new QuarkusUnitTest()
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
             .addClasses(
+                ActionToDtoMapper.class,
+                ActionToDtoMapperImpl.class,
+                DomainToDtoMapper.class,
+                DomainToDtoMapperImpl.class,
+                CountryToDtoMapper.class,
+                CountryToDtoMapperImpl.class,
+                LanguageToDtoMapper.class,
+                LanguageToDtoMapperImpl.class,
+                PermissionToDtoMapper.class,
+                PermissionToDtoMapperImpl.class,
+                UserToDtoMapper.class,
+                UserToDtoMapperImpl.class,
                 UserAccountToDtoMapper.class,
                 UserAccountToDtoMapperImpl.class,
                 com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper.class,

@@ -1,9 +1,9 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
-import com.dropchop.recyclone.base.dto.model.security.Action;
-import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
-import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
+import com.dropchop.recyclone.base.dto.model.security.Action;
+import com.dropchop.recyclone.base.api.mapper.IgnoreLanguageToEntityMapper;
+import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import org.mapstruct.*;
 
 /**
@@ -15,7 +15,9 @@ import org.mapstruct.*;
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
     injectionStrategy = InjectionStrategy.CONSTRUCTOR,
     builder = @Builder(disableBuilder = true),
-    uses = {EntityFactoryInvoker.class}
+    uses = {
+        EntityFactoryInvoker.class
+    }
 )
-public interface ActionToJpaMapper extends ToEntityMapper<Action, JpaAction> {
+public interface ActionToJpaMapper extends IgnoreLanguageToEntityMapper<Action, JpaAction> {
 }

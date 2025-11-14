@@ -15,7 +15,9 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     componentModel = "jakarta-cdi",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true),
-    uses = {ToDtoManipulator.class}
+    uses = {
+        ToDtoManipulator.class
+    }
 )
 public interface ActionToDtoMapper extends ToDtoMapper<Action, JpaAction> {
 }

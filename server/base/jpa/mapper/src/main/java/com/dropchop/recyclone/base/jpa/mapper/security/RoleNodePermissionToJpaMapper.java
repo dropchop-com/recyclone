@@ -18,7 +18,10 @@ import org.mapstruct.*;
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
     injectionStrategy = InjectionStrategy.CONSTRUCTOR,
     builder = @Builder(disableBuilder = true),
-    uses = {EntityFactoryInvoker.class}
+    uses = {
+        EntityFactoryInvoker.class,
+        PermissionToJpaMapper.class
+    }
 )
 public interface RoleNodePermissionToJpaMapper extends ToEntityMapper<RoleNodePermission, JpaRoleNodePermission> {
   @SubclassMapping( source = RoleNodePermissionTemplate.class, target = JpaRoleNodePermissionTemplate.class)

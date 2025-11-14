@@ -16,11 +16,14 @@ import org.mapstruct.*;
   componentModel = "jakarta-cdi",
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  uses = EntityFactoryInvoker.class,
+  uses = {
+      EntityFactoryInvoker.class, UserToJpaMapper.class
+  },
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
 public interface UserAccountToJpaMapper  extends ToEntityMapper<UserAccount, JpaUserAccount> {
+
   @SubclassMapping( source = LoginAccount.class, target = JpaLoginAccount.class)
   @SubclassMapping( source = TokenAccount.class, target = JpaTokenAccount.class)
   JpaUserAccount toEntity(UserAccount dto, @Context MappingContext context);

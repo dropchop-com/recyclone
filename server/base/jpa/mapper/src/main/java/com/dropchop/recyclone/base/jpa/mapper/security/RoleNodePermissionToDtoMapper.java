@@ -17,9 +17,15 @@ import org.mapstruct.*;
     componentModel = "jakarta-cdi",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true),
-    uses = {ToDtoManipulator.class, DtoPolymorphicFactory.class}
+    uses = {
+        ToDtoManipulator.class, DtoPolymorphicFactory.class, PermissionToDtoMapper.class,
+    }
 )
 public interface RoleNodePermissionToDtoMapper extends ToDtoMapper<RoleNodePermission, JpaRoleNodePermission> {
+  @Override
   @SubclassMapping( source = JpaRoleNodePermissionTemplate.class, target = RoleNodePermissionTemplate.class)
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "roleNode", ignore = true)
+  @Mapping(target = "type", ignore = true)
   RoleNodePermission toDto(JpaRoleNodePermission node, @Context MappingContext context);
 }

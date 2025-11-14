@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.jpa.mapper.tagging;
 
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
@@ -18,4 +19,9 @@ import org.mapstruct.*;
     uses = {EntityFactoryInvoker.class}
 )
 public interface TagToJpaMapper extends ToEntityMapper<Tag, JpaTag> {
+  @Override
+  @Mapping(target = "getFirstTagByType", ignore = true)
+  @Mapping(target = "language", ignore = true)
+  @Mapping(target = "jpaAttributes", ignore = true)
+  JpaTag toEntity(Tag dto, @Context MappingContext context);
 }

@@ -1,11 +1,13 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
+import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.jpa.mapper.localization.CountryToJpaMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.LanguageToJpaMapper;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
-import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
 import org.mapstruct.*;
 
 /**
@@ -17,11 +19,19 @@ import org.mapstruct.*;
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
   uses = {
       EntityFactoryInvoker.class,
+      TagToJpaMapper.class,
+      CountryToJpaMapper.class,
       UserAccountToJpaMapper.class,
-      TagToJpaMapper.class
+      RoleToJpaMapper.class,
+      PermissionToJpaMapper.class,
+      LanguageToJpaMapper.class
   },
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)
 )
 public interface UserToJpaMapper extends ToEntityMapper<User, JpaUser> {
+  @Override
+  @Mapping(target = "getFirstTagByType", ignore = true)
+  @Mapping(target = "jpaAttributes", ignore = true)
+  JpaUser toEntity(User dto, @Context MappingContext context);
 }

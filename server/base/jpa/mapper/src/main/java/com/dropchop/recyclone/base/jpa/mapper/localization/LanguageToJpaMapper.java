@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.jpa.mapper.localization;
 
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
-import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
+import com.dropchop.recyclone.base.api.mapper.IgnoreFtbtLanguageToEntityMapper;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaLanguage;
@@ -21,5 +21,5 @@ import org.mapstruct.*;
         TagToJpaMapper.class
     }
 )
-public interface LanguageToJpaMapper extends ToEntityMapper<Language, JpaLanguage> {
+public interface LanguageToJpaMapper extends IgnoreFtbtLanguageToEntityMapper<Language, JpaLanguage> {
 }

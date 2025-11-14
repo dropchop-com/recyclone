@@ -1,11 +1,13 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
 import com.dropchop.recyclone.base.api.mapper.DtoPolymorphicFactory;
+import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
 import com.dropchop.recyclone.base.dto.model.security.User;
+import com.dropchop.recyclone.base.api.mapper.IgnoreFtbtIdToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.CountryToDtoMapper;
+import com.dropchop.recyclone.base.jpa.mapper.localization.LanguageToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.api.mapper.ToDtoManipulator;
-import com.dropchop.recyclone.base.api.mapper.ToDtoMapper;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -18,10 +20,14 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     builder = @Builder(disableBuilder = true),
     uses = {
-        ToDtoManipulator.class, DtoPolymorphicFactory.class,
+        ToDtoManipulator.class,
+        DtoPolymorphicFactory.class,
         UserAccountToDtoMapper.class,
-        TagToDtoMapper.class
+        CountryToDtoMapper.class,
+        LanguageToDtoMapper.class,
+        TagToDtoMapper.class,
+        PermissionToDtoMapper.class
     }
 )
-public interface UserToDtoMapper extends ToDtoMapper<User, JpaUser> {
+public interface UserToDtoMapper extends IgnoreFtbtIdToDtoMapper<User, JpaUser> {
 }

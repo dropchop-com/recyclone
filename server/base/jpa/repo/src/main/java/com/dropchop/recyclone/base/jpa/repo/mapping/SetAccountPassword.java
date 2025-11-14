@@ -9,7 +9,6 @@ import com.dropchop.recyclone.base.api.repo.mapper.EntityLoadDelegate;
 import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.UserAccount;
 import com.dropchop.recyclone.base.jpa.model.security.JpaLoginAccount;
-import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +16,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -34,16 +32,15 @@ public class SetAccountPassword extends EntityLoadDelegate<UserAccount, JpaUserA
     super(repository, supported);
   }
 
-
   private String getPasswordHash(String password) {
     try {
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    byte[] digest = md.digest(password.getBytes());
-    StringBuilder sb = new StringBuilder();
-    for (byte b : digest) {
-      sb.append(String.format("%02x", b));
-    }
-    return sb.toString();
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      byte[] digest = md.digest(password.getBytes());
+      StringBuilder sb = new StringBuilder();
+      for (byte b : digest) {
+        sb.append(String.format("%02x", b));
+      }
+      return sb.toString();
     } catch (NoSuchAlgorithmException e) {
       log.error("Cannot get MD5 hash ", e);
       return null;
@@ -52,22 +49,37 @@ public class SetAccountPassword extends EntityLoadDelegate<UserAccount, JpaUserA
 
   @Override
   public void after(Model model, Entity entity, MappingContext context) {
-    if (entity instanceof JpaLoginAccount loginAccount) {
-      JpaUserAccount loadedAccount = this.findById((UserAccount) model);
-      String password = this.getPasswordHash(loginAccount.getPassword());
+    if (entity instanceof JpaLoginAccount jpaLoginAccount && model instanceof LoginAccount loginAccount) {
+      JpaUserAccount loadedAccount = this.findById(loginAccount);
+      if (loadedAccount instanceof JpaLoginAccount jpaLoadedLoginAccount) {
+        jpaLoginAccount = jpaLoadedLoginAccount;
+      }
+      String jpaPassword = jpaLoginAccount.getPassword();
+      String password = loginAccount.getPassword();
+      if (password == null || password.isBlank()) {
+        jpaLoginAccount.setPassword(null);
+      } else {
+        String hashedPassword = getPasswordHash(password);
+        if (!jpaPassword.equals(hashedPassword)){
+          jpaPassword = getPasswordHash(password);
+          jpaLoginAccount.setPassword(jpaPassword);
+          jpaLoginAccount.setModified(ZonedDateTime.now());
+        }
+      }
+      /*String password = this.getPasswordHash(jpaLoginAccount.getPassword());
       if (password == null || password.isBlank()) {
         ((JpaLoginAccount) entity).setPassword(null);
       } else {
         if (loadedAccount != null && loadedAccount instanceof JpaLoginAccount acc) {
           if (!acc.getPassword().equals(password)) {
-            loginAccount.setPassword(password);
-            loginAccount.setModified(ZonedDateTime.now());
+            jpaLoginAccount.setPassword(password);
+            jpaLoginAccount.setModified(ZonedDateTime.now());
           }
         } else {
-          loginAccount.setPassword(password);
-          loginAccount.setModified(ZonedDateTime.now());
+          jpaLoginAccount.setPassword(password);
+          jpaLoginAccount.setModified(ZonedDateTime.now());
         }
-      }
+      }*/
     }
   }
 }
