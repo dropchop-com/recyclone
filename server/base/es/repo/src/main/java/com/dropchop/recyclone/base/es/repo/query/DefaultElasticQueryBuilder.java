@@ -63,8 +63,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
             level + 1, listener, (knnCondition).get$knn().getFilter(), null, null);
         knnNode.addFilter(filterQuery);
       }
-
-      listener.on(0, null, condition, knnNode);
+      if (listener != null) {
+        listener.on(0, null, condition, knnNode);
+      }
       queryNodeObject.put("knn", knnNode);
 
       if (parentCond != null) {
