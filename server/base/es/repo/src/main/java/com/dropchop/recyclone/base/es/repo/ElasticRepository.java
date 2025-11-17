@@ -124,36 +124,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public IQueryNodeObject provideCondition(QueryParams queryParams) {
-    return getElasticQueryBuilder().build(queryParams);
-  }
-
-  @Override
-  public IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams) {
-    IQueryNodeObject result;
-    ResultFilter<?, ?> rf = queryParams.tryGetResultFilter();
-    String conditionString;
-    if (rf != null) {
-      int tempFrom = queryParams.tryGetResultFilter().getFrom();
-      int tempSize = queryParams.tryGetResultFilter().getSize();
-      AggregationList tempAggs = queryParams.getAggregate();
-      queryParams.setAggregate(null);
-      queryParams.tryGetResultFilter().setFrom(0);
-      queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
-      try {
-        result = this.provideCondition(queryParams);
-      } finally {
-        queryParams.tryGetResultFilter().setFrom(tempFrom);
-        queryParams.tryGetResultFilter().setSize(tempSize);
-        queryParams.setAggregate(tempAggs);
-      }
-    } else {
-      result = this.provideCondition(queryParams);
-    }
-    return result;
-  }
-
-  @Override
   public <S extends E> ElasticExecContext<S> getRepositoryExecContext() {
     ElasticExecContext<S> context = createRepositoryExecContext();
     context.of(ctxContainer.get());
@@ -349,6 +319,71 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       validateRequiredFields(validationData, alwaysPresentSearchFields.anyOf());
     }
     return query;
+  }
+
+  @Override
+  public IQueryNodeObject provideCondition(QueryParams queryParams, List<CriteriaDecorator<?, ?>> decorators) {
+    List<ElasticCriteriaDecorator<E>> criteriaDecorators = new ArrayList<>();
+    for (CriteriaDecorator<?, ?> decorator : decorators) {
+      if (decorator instanceof ElasticCriteriaDecorator<?> dec) {
+        @SuppressWarnings("unchecked")
+        ElasticCriteriaDecorator<E> elasticCriteriaDecorator = (ElasticCriteriaDecorator<E>) dec;
+        criteriaDecorators.add(elasticCriteriaDecorator);
+      }
+    }
+    return this.buildQuery(getElasticIndexConfig(), getElasticQueryBuilder(), queryParams, criteriaDecorators);
+  }
+
+  @Override
+  public IQueryNodeObject provideCondition(QueryParams queryParams) {
+    return this.provideCondition(queryParams, Collections.emptyList());
+  }
+
+  private IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(ElasticIndexConfig config,
+                                                                         QueryParams queryParams,
+                                                                         List<CriteriaDecorator<?, ?>> decorators) {
+    List<ElasticCriteriaDecorator<E>> criteriaDecorators = new ArrayList<>();
+    for (CriteriaDecorator<?, ?> decorator : decorators) {
+      if (decorator instanceof ElasticCriteriaDecorator<?> dec) {
+        @SuppressWarnings("unchecked")
+        ElasticCriteriaDecorator<E> elasticCriteriaDecorator = (ElasticCriteriaDecorator<E>) dec;
+        criteriaDecorators.add(elasticCriteriaDecorator);
+      }
+    }
+    IQueryNodeObject result;
+    ResultFilter<?, ?> rf = queryParams.tryGetResultFilter();
+    String conditionString;
+    if (rf != null) {
+      int tempFrom = queryParams.tryGetResultFilter().getFrom();
+      int tempSize = queryParams.tryGetResultFilter().getSize();
+      AggregationList tempAggs = queryParams.getAggregate();
+      queryParams.setAggregate(null);
+      queryParams.tryGetResultFilter().setFrom(0);
+      queryParams.tryGetResultFilter().setSize(getElasticIndexConfig().getSizeOfPagination());
+      try {
+        result = this.buildQuery(config, getElasticQueryBuilder(), queryParams, criteriaDecorators);
+      } finally {
+        queryParams.tryGetResultFilter().setFrom(tempFrom);
+        queryParams.tryGetResultFilter().setSize(tempSize);
+        queryParams.setAggregate(tempAggs);
+      }
+    } else {
+      result = this.buildQuery(config, getElasticQueryBuilder(), queryParams, criteriaDecorators);
+    }
+    return result;
+  }
+
+  @Override
+  public IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams,
+                                                                        List<CriteriaDecorator<?, ?>> decorators) {
+    return provideConditionWithMaxSizeWithoutAggregation(getElasticIndexConfig(), queryParams, decorators);
+  }
+
+  @Override
+  public IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams) {
+    return provideConditionWithMaxSizeWithoutAggregation(
+        getElasticIndexConfig(), queryParams, Collections.emptyList()
+    );
   }
 
   @Override
