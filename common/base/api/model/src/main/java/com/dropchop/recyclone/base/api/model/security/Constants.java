@@ -95,5 +95,6 @@ public interface Constants {
     String UPDATE = "update";
     //on tuesdays it's covered by update on fridays a see it as a separate action ... a možda i nije
     String DEACTIVATE = "deactivate";
+    String SEARCH = "search";
   }
 }
