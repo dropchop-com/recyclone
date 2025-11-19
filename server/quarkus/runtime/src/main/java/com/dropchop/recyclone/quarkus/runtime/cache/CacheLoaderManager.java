@@ -129,7 +129,8 @@ public class CacheLoaderManager {
               loader.getClass().getName(), interval, delaySeconds
             );
 
-            scheduler.newJob("cache_loader." + loader.getClass().getName())
+            String jobId = "cache_loader." + loader.getClass().getName();
+            scheduler.newJob(jobId)
               .setDelayed(delaySeconds + "s")
               .setInterval(interval + "s")
               .setTask(executionContext -> refreshLoader(loader))
@@ -160,5 +161,11 @@ public class CacheLoaderManager {
         Thread.currentThread().interrupt();
       }
     }
+    scheduler.getScheduledJobs().forEach(
+        t -> {
+          scheduler.unscheduleJob(t.getId());
+          log.info("Unscheduled cache loader job [{}].", t.getId());
+        }
+    );
   }
 }
