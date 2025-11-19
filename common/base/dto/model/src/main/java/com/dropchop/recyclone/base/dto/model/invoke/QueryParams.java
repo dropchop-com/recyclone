@@ -26,15 +26,18 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
   @SuppressWarnings("unused")
   public abstract static class QueryParamsBuilder<C extends QueryParams, B extends QueryParamsBuilder<C, B>>
       extends Params.ParamsBuilder<C, B> {
+
     public B and(Condition ... condition) {
       if (this.condition$value == null) {
         this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.and();
       }
       if (this.condition$value instanceof LogicalCondition cnd) {
-        if (!(cnd instanceof And) && cnd.iterator().hasNext()) {
-          throw new IllegalArgumentException("Can not mix type of logical conditions!");
+        if (!(cnd instanceof And)) {
+          if (cnd.iterator().hasNext()) {
+            throw new IllegalArgumentException("Can not mix type of logical conditions!");
+          }
+          this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.and();
         }
-        this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.and();
       }
       if (this.condition$value instanceof And and) {
         for (Condition c : condition) {
@@ -50,10 +53,12 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
         this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.or();
       }
       if (this.condition$value instanceof LogicalCondition cnd) {
-        if (!(cnd instanceof Or) && cnd.iterator().hasNext()) {
-          throw new IllegalArgumentException("Can not mix type of logical conditions!");
+        if (!(cnd instanceof Or)) {
+          if (cnd.iterator().hasNext()) {
+            throw new IllegalArgumentException("Can not mix type of logical conditions!");
+          }
+          this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.or();
         }
-        this.condition$value = com.dropchop.recyclone.base.api.model.query.Condition.or();
       }
       if (this.condition$value instanceof Or or) {
         for (Condition c : condition) {
@@ -66,6 +71,12 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
 
     public B not(Condition condition) {
       condition(com.dropchop.recyclone.base.api.model.query.Condition.not(condition));
+      return self();
+    }
+
+    public B aggregate(AggregationList aggregate) {
+      this.aggregate$value = aggregate;
+      this.aggregate$set = true;
       return self();
     }
 
