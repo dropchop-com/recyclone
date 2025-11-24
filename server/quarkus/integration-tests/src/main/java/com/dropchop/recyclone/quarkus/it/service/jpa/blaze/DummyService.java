@@ -33,7 +33,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 @Getter
 @ApplicationScoped
 @RecycloneType(RECYCLONE_DEFAULT)
-@SuppressWarnings({"unused", "CdiInjectionPointsInspection"})
+@SuppressWarnings({"unused", "CdiInjectionPointsInspection", "RedundantSuppression"})
 public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   implements com.dropchop.recyclone.quarkus.it.service.api.DummyService {
 
@@ -71,7 +71,7 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   @Override
   protected Result<Dummy> createOrUpdate(List<Dummy> dtos) {
     Result<Dummy> result = super.createOrUpdate(dtos);
-    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify(executionContext);
     List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
     elasticRepository.save(entities);
     return result;
@@ -80,7 +80,7 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
   @Override
   public Result<Dummy> delete(List<Dummy> dtos) {
     Result<Dummy> result = super.delete(dtos);
-    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify(executionContext);
     List<EsDummy> entities = mapperProvider.getToEsEntityMapper().toEntities(dtos, mapContext);
     elasticRepository.delete(entities);
     return result;

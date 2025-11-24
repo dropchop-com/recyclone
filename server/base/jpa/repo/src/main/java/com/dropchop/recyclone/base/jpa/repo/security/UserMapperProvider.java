@@ -4,15 +4,13 @@ import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.SetEntityDeactivated;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.UserToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
-import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import com.dropchop.recyclone.base.jpa.repo.RecycloneMapperProvider;
-import com.dropchop.recyclone.base.jpa.repo.mapping.SetAccountUser;
-import com.dropchop.recyclone.base.jpa.repo.mapping.SetAccountUuid;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -49,9 +47,9 @@ public class UserMapperProvider extends RecycloneMapperProvider<User, JpaUser, U
   }
 
   @Override
-  public MappingContext getMappingContextForModify() {
+  public MappingContext getMappingContextForModify(CommonExecContext<?, ?> sourceContext) {
     Class<?> rootClass = getRepository().getRootClass();
-    MappingContext context = super.getMappingContextForModify();
+    MappingContext context = super.getMappingContextForModify(sourceContext);
     context
         .createWith(
             new EntityPolymorphicCreateFactory<User, JpaUser>(

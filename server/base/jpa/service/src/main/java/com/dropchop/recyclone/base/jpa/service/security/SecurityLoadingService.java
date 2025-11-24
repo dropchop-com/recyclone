@@ -142,10 +142,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   @Override
   protected RoleNode loadRoleNodeById(UUID uuid) {
     //MappingContext mapContext = this.roleNodeMapperProvider.getMappingContextForRead();
-    MappingContext mapContext = new FilteringDtoContext();
-    Params params = new Params();
-    params.getFilter().getContent().setTreeLevel(5);
-    mapContext.setParams(params);
+    MappingContext mapContext = getStaticMappingContext(null, 5);
     RoleNodeToDtoMapper roleNodeToDtoMapper = this.roleNodeMapperProvider.getToDtoMapper();
     JpaRoleNode loadedParentRoleNode = this.roleNodeRepository.findById(uuid);
     RoleNode roleNode = roleNodeToDtoMapper.toDto(loadedParentRoleNode, mapContext);
@@ -155,7 +152,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
   @Override
   protected RoleNodePermission loadRoleNodePermissionById(UUID uuid) {
-    MappingContext mapContext = this.roleNodePermissionMapperProvider.getMappingContextForRead();
+    MappingContext mapContext = getStaticMappingContext(null, 5);
     RoleNodePermissionToDtoMapper roleNodeToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
     JpaRoleNodePermission jpaPermission = this.roleNodePermissionRepository.findById(uuid);
     return roleNodeToDtoMapper.toDto(jpaPermission, mapContext);

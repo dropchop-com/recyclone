@@ -56,7 +56,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
   public Result<D> search() {
     CrudRepository<E, ID> repository = getRepository();
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
-    MappingContext mapContext = mapperProvider.getMappingContextForRead();
+    MappingContext mapContext = mapperProvider.getMappingContextForRead(getExecutionContext());
     List<E> entities = repository.find(repository.getRepositoryExecContext(mapContext));
     CommonExecContext<?, ?> ctx = getExecutionContext();
     if (ctx.hasRequiredPermissions() && !(this instanceof SkipInstanceLevelPermissionCheck)) {
@@ -125,7 +125,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
   protected Result<D> createOrUpdate(List<D> dtos) {
     checkDtoPermissions(dtos);
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
-    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify(getExecutionContext());
     List<E> entities = mapperProvider.getToEntityMapper().toEntities(dtos, mapContext);
     save(entities);
     @SuppressWarnings("UnnecessaryLocalVariable")
@@ -153,7 +153,7 @@ public abstract class CrudServiceImpl<D extends Dto, E extends Entity, ID> imple
   public Result<D> delete(List<D> dtos) {
     checkDtoPermissions(dtos);
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
-    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify(getExecutionContext());
     List<E> entities = mapperProvider.getToEntityMapper().toEntities(dtos, mapContext);
     getRepository().delete(entities);
     return mapperProvider.getToDtoMapper().toDtosResult(entities, mapContext);

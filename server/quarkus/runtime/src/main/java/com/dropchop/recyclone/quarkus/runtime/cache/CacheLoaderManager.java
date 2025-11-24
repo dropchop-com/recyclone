@@ -161,11 +161,13 @@ public class CacheLoaderManager {
         Thread.currentThread().interrupt();
       }
     }
-    scheduler.getScheduledJobs().forEach(
-        t -> {
-          scheduler.unscheduleJob(t.getId());
-          log.info("Unscheduled cache loader job [{}].", t.getId());
-        }
-    );
+    if (scheduler != null && scheduler.isStarted()) {
+      scheduler.getScheduledJobs().forEach(
+          t -> {
+            scheduler.unscheduleJob(t.getId());
+            log.info("Unscheduled cache loader job [{}].", t.getId());
+          }
+      );
+    }
   }
 }

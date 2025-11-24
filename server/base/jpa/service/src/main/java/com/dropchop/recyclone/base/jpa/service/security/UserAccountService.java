@@ -55,7 +55,7 @@ public class UserAccountService extends CrudServiceImpl<UserAccount, JpaUserAcco
     // delete the accounts
     getRepository().delete(loadedAccounts);
     FilteringMapperProvider<UserAccount, JpaUserAccount, ?> mapperProvider = getMapperProvider();
-    MappingContext mapContext = mapperProvider.getMappingContextForModify();
+    MappingContext mapContext = mapperProvider.getMappingContextForModify(executionContext);
     return mapperProvider.getToDtoMapper().toDtosResult(loadedAccounts, mapContext);
   }
 }

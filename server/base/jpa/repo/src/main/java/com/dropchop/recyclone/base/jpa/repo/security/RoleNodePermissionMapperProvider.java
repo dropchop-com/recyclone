@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.mapper.AfterToDtoListener;
 import com.dropchop.recyclone.base.api.mapper.AfterToEntityListener;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.repo.mapper.EntityPolymorphicCreateFactory;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermission;
 import com.dropchop.recyclone.base.dto.model.security.RoleNodePermissionTemplate;
@@ -40,8 +41,8 @@ public class RoleNodePermissionMapperProvider extends RecycloneMapperProvider<Ro
 
 
   @Override
-  public MappingContext getMappingContextForModify() {
-    MappingContext context = super.getMappingContextForModify();
+  public MappingContext getMappingContextForModify(CommonExecContext<?, ?> sourceContext) {
+    MappingContext context = super.getMappingContextForModify(sourceContext);
     context
         .createWith(
             new EntityPolymorphicCreateFactory<>(getMapperSubTypeConfig(), JpaRoleNodePermission.class)

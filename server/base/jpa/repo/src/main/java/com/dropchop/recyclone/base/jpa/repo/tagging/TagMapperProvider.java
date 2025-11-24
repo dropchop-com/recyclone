@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.jpa.repo.tagging;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.tagging.TagToJpaMapper;
 import com.dropchop.recyclone.base.api.model.filtering.MapperSubTypeConfig;
@@ -35,8 +36,8 @@ public class TagMapperProvider extends RecycloneMapperProvider<Tag, JpaTag, UUID
   MapperSubTypeConfig mapperSubTypeConfig;
 
   @Override
-  public MappingContext getMappingContextForModify() {
-    MappingContext context = super.getMappingContextForModify();
+  public MappingContext getMappingContextForModify(CommonExecContext<?, ?> sourceContext) {
+    MappingContext context = super.getMappingContextForModify(sourceContext);
     context
         .createWith(
             new EntityPolymorphicCreateFactory<>(getMapperSubTypeConfig(), JpaTag.class)

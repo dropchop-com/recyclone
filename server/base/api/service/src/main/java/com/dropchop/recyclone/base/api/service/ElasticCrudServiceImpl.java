@@ -39,13 +39,12 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     );
   }
 
-  protected Result<D> search(boolean doAuthorization) {
+  protected Result<D> search(CommonExecContext<D, ?> execContext, boolean doAuthorization) {
     ProfileTimer timer = new ProfileTimer();
-    CommonExecContext<?, ?> ctx = getExecutionContext();
 
     CrudRepository<E, ID> repository = getRepository();
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
-    MappingContext mapContext = mapperProvider.getMappingContextForRead();
+    MappingContext mapContext = mapperProvider.getMappingContextForRead(getExecutionContext());
 
     // Create aggregation collector
     Map<String, AggregationResult> aggregations = new LinkedHashMap<>();
@@ -56,7 +55,11 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     List<E> entities = repository.find(context);
     log.debug("Found {} entities in [{}]ms", entities.size(), timer.mark());
 
-    if (ctx.hasRequiredPermissions() && doAuthorization && !(this instanceof SkipInstanceLevelPermissionCheck)) {
+    boolean mustCheckItemPermissions = execContext.hasRequiredPermissions()
+            && doAuthorization
+            && !(this instanceof SkipInstanceLevelPermissionCheck);
+
+    if (mustCheckItemPermissions) {
       entities = entities.stream()
           .filter(
               e -> authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()))
@@ -73,7 +76,8 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
   @Override
   @Transactional
   public Result<D> search() {
-    return search(true);
+    CommonExecContext<D, ?> context = getExecutionContext();
+    return search(context, true);
   }
 
   @Transactional

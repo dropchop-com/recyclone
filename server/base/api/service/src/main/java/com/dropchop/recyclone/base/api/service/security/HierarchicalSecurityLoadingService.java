@@ -29,16 +29,13 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
   @Builder
   @Getter
   public static class RoleNodeFlags {
-
     public static RoleNodeFlags getDefaultFlags() {
       return RoleNodeFlags.builder().build();
     }
 
     @Builder.Default private boolean withPermissions = true;
     @Builder.Default private boolean mustExist = true;
-
   }
-
 
   protected static StatusMessage getStatusMessage(String error, RoleNodeParams params) {
     StatusMessage status = new StatusMessage(ErrorCode.data_validation_error, error);
@@ -139,11 +136,9 @@ abstract public class HierarchicalSecurityLoadingService implements SecurityLoad
       processParams.setTarget(target);
       processParams.setTargetId(inputParams.getTargetId());
 
-      /**
-       * When init parameters come with entity data and the target and the input target is the same of the role node
-       * the use case is that someone is working on template permissions on the role node
-       * and that is why we set settingTemplate flag in the resolving context.
-       */
+      // When init parameters come with entity data and the target and the input target is the same of the role node
+      // the use case is that someone is working on template permissions on the role node
+      // and that is why we set settingTemplate flag in the resolving context.
       if (target != null && !target.isBlank() && roleNode.getTarget().equals(target) ) {
         resolveContext.settingTemplate = true;
       }

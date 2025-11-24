@@ -2,6 +2,7 @@ package com.dropchop.recyclone.base.jpa.repo.security;
 
 import com.dropchop.recyclone.base.api.mapper.AfterToDtoListener;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
+import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToDtoMapper;
 import com.dropchop.recyclone.base.jpa.mapper.security.RoleNodeToJpaMapper;
 import com.dropchop.recyclone.base.dto.model.security.RoleNode;
@@ -33,8 +34,8 @@ public class RoleNodeMapperProvider extends RecycloneMapperProvider<RoleNode, Jp
   RoleNodeToJpaMapper toEntityMapper;
 
   @Override
-  public MappingContext getMappingContextForRead() {
-    MappingContext context = super.getMappingContextForRead();
+  public MappingContext getMappingContextForRead(CommonExecContext<?, ?> sourceContext) {
+    MappingContext context = super.getMappingContextForRead(sourceContext);
     context
         .afterMapping(
             (AfterToDtoListener) (model, dto, context1) -> {
