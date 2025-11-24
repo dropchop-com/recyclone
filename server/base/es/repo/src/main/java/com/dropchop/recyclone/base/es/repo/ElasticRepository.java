@@ -136,7 +136,12 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   @Override
   public <S extends E> RepositoryExecContext<S> getRepositoryExecContext(MappingContext mappingContext) {
-    RepositoryExecContext<S> context = getRepositoryExecContext();
+    ElasticExecContext<S> context = createRepositoryExecContext();
+    context.of(mappingContext);
+    Collection<ElasticCriteriaDecorator<S>> decorators = getCommonCriteriaDecorators();
+    for (ElasticCriteriaDecorator<S> decorator : decorators) {
+      context.decorateWith(decorator);
+    }
     return context.totalCount(mappingContext);
   }
 
