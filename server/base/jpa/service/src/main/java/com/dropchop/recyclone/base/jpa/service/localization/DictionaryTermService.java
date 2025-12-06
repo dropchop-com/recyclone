@@ -7,7 +7,7 @@ import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.base.jpa.model.localization.JpaDictionaryTerm;
 import com.dropchop.recyclone.base.jpa.repo.localization.DictionaryTermMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.localization.DictionaryTermRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
@@ -17,7 +17,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
  */
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings("unused")
 public class DictionaryTermService extends CrudServiceImpl<DictionaryTerm, JpaDictionaryTerm, String>

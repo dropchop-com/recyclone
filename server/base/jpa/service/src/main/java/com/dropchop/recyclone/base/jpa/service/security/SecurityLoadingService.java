@@ -71,10 +71,6 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   @SuppressWarnings("ExtractMethodRecommender")
   private void loadRoleNodePermissions(RoleNode roleNode, RoleNodeParams roleNodeParams) {
 
-    BlazeExecContext<JpaRoleNodePermission> permissionContext =
-        this.roleNodePermissionRepository.getRepositoryExecContext();
-    RoleNodePermissionToDtoMapper permToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
-
     RoleNodePermissionParams params = new RoleNodePermissionParams();
     params.setRoleNodeId(roleNode.getId());
     if (roleNodeParams != null) { //check of targets are different and load permissions on a role node for that target
@@ -87,11 +83,17 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
         }
       }
     }
-    permissionContext.setParams(params);
+
     MappingContext permMapContext = new FilteringDtoContext();
-    params.getFilter().getContent().setTreeLevel(5);
     params.getFilter().setSize(1000);
     permMapContext.setParams(params);
+
+    BlazeExecContext<JpaRoleNodePermission> permissionContext =
+        this.roleNodePermissionRepository.getRepositoryExecContext(permMapContext);
+    RoleNodePermissionToDtoMapper permToDtoMapper = this.roleNodePermissionMapperProvider.getToDtoMapper();
+
+    permissionContext.setParams(params);
+
     List<JpaRoleNodePermission> permissions = this.roleNodePermissionRepository.find(permissionContext);
     List<RoleNodePermission> permissionDtos = permToDtoMapper.toDtos(permissions, permMapContext);
     roleNode.setRoleNodePermissions(permissionDtos);
@@ -110,7 +112,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
     params.getFilter().getContent().setTreeLevel(5);
     MappingContext mapContext = new FilteringDtoContext();
     mapContext.setParams(params);
-    RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext();
+    RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext(mapContext);
     execContext.setParams(params);
     params.filter().size(1000);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);

@@ -10,14 +10,14 @@ import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyMapperProvider;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
 
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType(RECYCLONE_ES_DEFAULT)
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection", "RedundantSuppression"})
 public class ElasticDummyService extends ElasticCrudServiceImpl<Dummy, EsDummy, String>

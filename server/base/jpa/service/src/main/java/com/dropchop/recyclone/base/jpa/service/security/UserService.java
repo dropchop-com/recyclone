@@ -2,14 +2,10 @@ package com.dropchop.recyclone.base.jpa.service.security;
 
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
-import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
-import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
 import com.dropchop.recyclone.base.api.model.rest.ResultCode;
-import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.dto.model.rest.ResultStats;
 import com.dropchop.recyclone.base.dto.model.rest.ResultStatus;
 import com.dropchop.recyclone.base.dto.model.security.LoginAccount;
 import com.dropchop.recyclone.base.dto.model.security.TokenAccount;
@@ -21,20 +17,18 @@ import com.dropchop.recyclone.base.jpa.model.security.JpaUser;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import com.dropchop.recyclone.base.jpa.repo.security.UserMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings("unused")
 public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
@@ -63,12 +57,14 @@ public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
       message.setText("No users provided!");
       isOk = false;
     }
-    for (User user : users) {
-      Collection<UserAccount> accounts = user.getAccounts();
-      if (accounts == null || accounts.isEmpty()) {
-        message.setText("No accounts provided!");
-        isOk = false;
-        break;
+    if (users != null) {
+      for (User user : users) {
+        Collection<UserAccount> accounts = user.getAccounts();
+        if (accounts == null || accounts.isEmpty()) {
+          message.setText("No accounts provided!");
+          isOk = false;
+          break;
+        }
       }
     }
     if (!isOk)  {
@@ -94,7 +90,7 @@ public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
         }
       }
       if (!removeAccounts.isEmpty()) {
-        currentAccounts.removeAll(removeAccounts);
+        removeAccounts.forEach(currentAccounts::remove);
       }
     }
     this.repository.save(jpaUsers);
@@ -116,12 +112,14 @@ public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
       message.setText("No users provided!");
       isOk = false;
     }
-    for (User user : users) {
-      Collection<UserAccount> accounts = user.getAccounts();
-      if (accounts == null || accounts.isEmpty()) {
-        message.setText("No accounts provided!");
-        isOk = false;
-        break;
+    if (users != null) {
+      for (User user : users) {
+        Collection<UserAccount> accounts = user.getAccounts();
+        if (accounts == null || accounts.isEmpty()) {
+          message.setText("No accounts provided!");
+          isOk = false;
+          break;
+        }
       }
     }
     if (!isOk)  {
@@ -143,9 +141,7 @@ public class UserService extends CrudServiceImpl<User, JpaUser, UUID>
       User u = usersMap.get(jpaUser.getUuid());
       List<UUID> accountUuids = u.getAccounts().stream().map((UserAccount ua) -> UUID.fromString(ua.getId())).toList();
 
-      Iterator<JpaUserAccount> iterator = jpaUser.getAccounts().iterator();
-      while(iterator.hasNext()) {
-        JpaUserAccount account = iterator.next();
+      for (JpaUserAccount account : jpaUser.getAccounts()) {
         UserAccount ua = accountsMap.get(account.getUuid());
         if (account instanceof JpaTokenAccount jpaTokenAccount) {
           if (ua instanceof TokenAccount tokenAccount) {

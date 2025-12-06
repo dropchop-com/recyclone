@@ -11,7 +11,7 @@ import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import com.dropchop.recyclone.base.jpa.repo.security.UserAccountMapperProvider;
 import com.dropchop.recyclone.base.jpa.repo.security.UserAccountRepository;
 import com.dropchop.recyclone.base.jpa.repo.security.UserRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_DEFAULT;
 
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings("unused")
 public class UserAccountService extends CrudServiceImpl<UserAccount, JpaUserAccount, UUID>

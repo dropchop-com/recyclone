@@ -7,7 +7,7 @@ import com.dropchop.recyclone.base.dto.model.event.Event;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.events.EsEventMapperProvider;
 import com.dropchop.recyclone.base.es.repo.events.EsEventRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
 
 @Slf4j
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType(RECYCLONE_ES_DEFAULT)
 @SuppressWarnings("unused")
 public class EventService extends ElasticCrudServiceImpl<Event, EsEvent, UUID>

@@ -1,6 +1,5 @@
 package com.dropchop.recyclone.base.jpa.repo.security;
 
-
 import com.dropchop.recyclone.base.dto.model.invoke.UserAccountParams;
 import com.dropchop.recyclone.base.jpa.model.security.JpaUserAccount;
 import com.dropchop.recyclone.base.jpa.repo.*;
@@ -20,7 +19,6 @@ public class UserAccountRepository extends BlazeRepository<JpaUserAccount, UUID>
 
   Class<JpaUserAccount> rootClass = JpaUserAccount.class;
 
-
   protected <S extends JpaUserAccount> Collection<BlazeCriteriaDecorator<S>> getCommonCriteriaDecorators() {
     return List.of(
       new LikeIdentifiersCriteriaDecorator<>(),
@@ -31,11 +29,11 @@ public class UserAccountRepository extends BlazeRepository<JpaUserAccount, UUID>
     );
   }
 
-
   public JpaUserAccount findByLoginName(String loginName) {
     UserAccountParams parameters = new UserAccountParams();
     parameters.setLoginName(loginName);
-    BlazeExecContext<JpaUserAccount> blazeExecContext = createRepositoryExecContext();
+    // TODO: Ota check this find by login name
+    BlazeExecContext<JpaUserAccount> blazeExecContext = createRepositoryExecContext(null);
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByLoginNameDecorator<>());
     List<JpaUserAccount> userList = this.find(blazeExecContext);
@@ -45,7 +43,8 @@ public class UserAccountRepository extends BlazeRepository<JpaUserAccount, UUID>
   public JpaUserAccount findByToken(String token) {
     UserAccountParams parameters = new UserAccountParams();
     parameters.setToken(token);
-    BlazeExecContext<JpaUserAccount> blazeExecContext = createRepositoryExecContext();
+    // TODO: Ota check this find by token
+    BlazeExecContext<JpaUserAccount> blazeExecContext = createRepositoryExecContext(null);
     blazeExecContext.setParams(parameters);
     blazeExecContext.decorateWith(new SearchByTokenDecorator<>());
     List<JpaUserAccount> userList = this.find(blazeExecContext);

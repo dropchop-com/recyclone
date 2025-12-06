@@ -17,7 +17,7 @@ import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -32,7 +32,7 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType("alter")
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection", "RedundantSuppression"})
 public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
@@ -75,7 +75,7 @@ public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>
 
     List<Dummy> actualResults = new java.util.ArrayList<>(Collections.emptyList());
     MappingContext map = new MappingContext().of(ctxContainer.get());
-    RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext();
+    RepositoryExecContext<EsDummy> ctx = elasticRepository.getRepositoryExecContext(map);
     List<EsDummy> entities = elasticRepository.search(ctx);
     MappingContext mapCtx = new FilteringDtoContext().of(ctxContainer.get());
     List<Dummy> dtos = mapperProvider.getToEsDtoMapper().toDtos(entities, mapCtx);

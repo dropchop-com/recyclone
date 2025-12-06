@@ -1,8 +1,11 @@
 package com.dropchop.recyclone.base.api.repo.mapper;
 
+import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
+import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Dto;
 import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.repo.ReadRepository;
+import com.dropchop.recyclone.base.dto.model.invoke.Params;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -18,7 +21,11 @@ public class EntityAllPreloadDelegate<D extends Dto, E extends Entity, ID>
 
   public EntityAllPreloadDelegate(ReadRepository<E, ID> repository) {
     super(repository);
-    preloaded = repository.find()
+    MappingContext mapContext = new FilteringDtoContext();
+    Params params = new Params();
+    params.getFilter().setSize(1000);
+    mapContext.setParams(params);
+    preloaded = repository.find(repository.getRepositoryExecContext(mapContext))
       .stream()
       .collect(Collectors.toMap(E::identifier, Function.identity()));
   }

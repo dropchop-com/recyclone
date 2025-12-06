@@ -1,8 +1,6 @@
 package com.dropchop.recyclone.base.api.repo;
 
-import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Model;
-import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,9 +10,6 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface CrudRepository<E extends Model, ID> extends ReadRepository<E, ID> {
-
-  <S extends E> RepositoryExecContext<S> getRepositoryExecContext();
-  <S extends E> RepositoryExecContext<S> getRepositoryExecContext(MappingContext mappingContext);
 
   <S extends E> List<S> save(Collection<S> entities);
   <S extends E> S save(S entity);

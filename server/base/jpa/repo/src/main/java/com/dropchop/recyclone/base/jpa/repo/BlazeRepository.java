@@ -10,7 +10,6 @@ import com.dropchop.recyclone.base.api.mapper.TotalCountExecContextListener;
 import com.dropchop.recyclone.base.api.model.base.Model;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
-import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
@@ -19,11 +18,11 @@ import com.dropchop.recyclone.base.api.repo.CrudRepository;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.QueryExecContextListener;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,10 +40,6 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
   @SuppressWarnings("CdiInjectionPointsInspection")
   CriteriaBuilderFactory cbf;
 
-  @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  ExecContextContainer ctxContainer;
-
   public String getClassAlias(Class<?> cls) {
     return cls.getSimpleName().toLowerCase();
   }
@@ -58,10 +53,9 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     );
   }
 
-  public <S extends E> BlazeExecContext<S> createRepositoryExecContext() {
+  public <S extends E> BlazeExecContext<S> createRepositoryExecContext(ExecContext<?> sourceContext) {
     Class<S> cls = getRootClass();
     String alias = getClassAlias(cls);
-    ExecContext<?> sourceContext = ctxContainer.get();
     if (sourceContext != null) {
       return new BlazeExecContext<>(cls, alias, sourceContext);
     }
@@ -69,18 +63,12 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
   }
 
   @Override
-  public <S extends E> BlazeExecContext<S> getRepositoryExecContext() {
-    BlazeExecContext<S> context = createRepositoryExecContext();
+  public <S extends E> BlazeExecContext<S> getRepositoryExecContext(MappingContext mappingContext) {
+    BlazeExecContext<S> context = createRepositoryExecContext(mappingContext);
     Collection<BlazeCriteriaDecorator<S>> decorators = getCommonCriteriaDecorators();
     for (BlazeCriteriaDecorator<S> decorator : decorators) {
       context.decorateWith(decorator);
     }
-    return context;
-  }
-
-  @Override
-  public <S extends E> BlazeExecContext<S> getRepositoryExecContext(MappingContext mappingContext) {
-    BlazeExecContext<S> context = getRepositoryExecContext();
     return context.totalCount(mappingContext);
   }
 
@@ -162,10 +150,10 @@ public abstract class BlazeRepository<E extends Model, ID> implements CrudReposi
     }
   }
 
-  @Override
+  /*@Override
   public <S extends E> List<S> find() {
     return find(getRepositoryExecContext());
-  }
+  }*/
 
   @Override
   public <X extends ID> int deleteById(X id) {

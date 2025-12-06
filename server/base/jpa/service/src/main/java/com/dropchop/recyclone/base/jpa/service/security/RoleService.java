@@ -64,7 +64,7 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(executionContext);
-    Collection<JpaRole> roles = getRepository().find(repository.getRepositoryExecContext());
+    Collection<JpaRole> roles = getRepository().find(repository.getRepositoryExecContext(mapContext));
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
       new JoinEntityHelper<>(
           authorizationService, Constants.Domains.Security.PERMISSION, permissionRepository, roles
@@ -85,7 +85,7 @@ public class RoleService extends CrudServiceImpl<Role, JpaRole, String>
       contentFilter.setTreeLevel(4);
     }
     MappingContext mapContext = new FilteringDtoContext().of(executionContext);
-    Collection<JpaRole> roles = getRepository().find(getRepository().getRepositoryExecContext());
+    Collection<JpaRole> roles = getRepository().find(getRepository().getRepositoryExecContext(mapContext));
     JoinEntityHelper<JpaRole, JpaPermission, UUID> helper =
         new JoinEntityHelper<>(
             authorizationService, Constants.Domains.Security.PERMISSION, permissionRepository, roles

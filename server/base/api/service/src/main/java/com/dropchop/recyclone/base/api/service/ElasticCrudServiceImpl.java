@@ -105,8 +105,11 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
 
   @Transactional
   public Integer deleteByQuery() {
+    FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
+    MappingContext mapContext = mapperProvider.getMappingContextForRead(getExecutionContext());
+
     ElasticCrudRepository<E, ID> repository = getElasticRepository();
-    RepositoryExecContext<E> context = repository.getRepositoryExecContext();
+    RepositoryExecContext<E> context = repository.getRepositoryExecContext(mapContext);
     return repository.deleteByQuery(context);
   }
 }

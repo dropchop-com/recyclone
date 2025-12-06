@@ -1,12 +1,12 @@
 package com.dropchop.recyclone.quarkus.it.service.jpa.blaze;
 
+import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContextContainer;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.service.CrudServiceImpl;
-import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
@@ -16,7 +16,7 @@ import com.dropchop.recyclone.quarkus.it.repo.DummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyRepository;
 import com.dropchop.recyclone.quarkus.it.repo.jpa.DummyMapperProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementat
  */
 @Slf4j
 @Getter
-@ApplicationScoped
+@RequestScoped
 @RecycloneType(RECYCLONE_DEFAULT)
 @SuppressWarnings({"unused", "CdiInjectionPointsInspection", "RedundantSuppression"})
 public class DummyService extends CrudServiceImpl<Dummy, JpaDummy, String>

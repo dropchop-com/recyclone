@@ -1,11 +1,15 @@
 package com.dropchop.recyclone.base.es.repo;
 
+import com.dropchop.recyclone.base.api.mapper.FilteringDtoContext;
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.mapper.RepositoryExecContextListener;
 import com.dropchop.recyclone.base.api.mapper.TotalCountExecContextListener;
 import com.dropchop.recyclone.base.api.model.attr.AttributeDecimal;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
-import com.dropchop.recyclone.base.api.model.invoke.*;
+import com.dropchop.recyclone.base.api.model.invoke.Constants;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
@@ -31,7 +35,6 @@ import com.dropchop.recyclone.base.es.repo.query.QueryFieldListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -77,10 +80,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   public static final String ENDPOINT_SEARCH = "/_search";
   public static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
 
-  @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
-  protected ExecContextContainer ctxContainer;
-
   public abstract ElasticQueryBuilder getElasticQueryBuilder();
 
   public abstract ObjectMapper getObjectMapper();
@@ -124,39 +123,26 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public <S extends E> ElasticExecContext<S> getRepositoryExecContext() {
+  public <S extends E> ElasticExecContext<S> getRepositoryExecContext(MappingContext mappingContext) {
     ElasticExecContext<S> context = createRepositoryExecContext();
-    context.of(ctxContainer.get());
+    if (mappingContext != null) {
+      context.of(mappingContext);
+    }
     Collection<ElasticCriteriaDecorator<S>> decorators = getCommonCriteriaDecorators();
     for (ElasticCriteriaDecorator<S> decorator : decorators) {
       context.decorateWith(decorator);
     }
+    context.totalCount(mappingContext);
     return context;
   }
 
-  @Override
-  public <S extends E> RepositoryExecContext<S> getRepositoryExecContext(MappingContext mappingContext) {
-    ElasticExecContext<S> context = createRepositoryExecContext();
-    context.of(mappingContext);
-    Collection<ElasticCriteriaDecorator<S>> decorators = getCommonCriteriaDecorators();
-    for (ElasticCriteriaDecorator<S> decorator : decorators) {
-      context.decorateWith(decorator);
-    }
-    return context.totalCount(mappingContext);
-  }
-
-  private Response invokeBulkRequest(BulkRequestBuilder bulkRequestBuilder, Collection<?> entities) {
+  @SuppressWarnings("SameParameterValue") // TODO: implement correct call with modifyPolicy in ESCrudServiceImpl
+  private Response invokeBulkRequest(BulkRequestBuilder bulkRequestBuilder, Collection<?> entities,
+                                     String modifyPolicy) {
     ObjectMapper mapper = getObjectMapper();
     String refresh = null;
-    ExecContext<?> context = ctxContainer.get();
-    if (context != null) {
-      Params params = context.tryGetParams();
-      if (params != null) {
-        List<String> policy = params.getModifyPolicy();
-        if (policy != null && policy.contains(Constants.ModifyPolicy.WAIT_FOR)) {
-          refresh = "wait_for";
-        }
-      }
+    if (modifyPolicy != null && modifyPolicy.contains(Constants.ModifyPolicy.WAIT_FOR)) {
+      refresh = "wait_for";
     }
     Request request = bulkRequestBuilder.bulkRequest(entities, refresh);
     if (refresh != null) {
@@ -186,7 +172,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
         BulkRequestBuilder.MethodType.INDEX, mapper, getElasticIndexConfig()
     );
 
-    Response response = invokeBulkRequest(bulkRequestBuilder, entities);
+    Response response = invokeBulkRequest(bulkRequestBuilder, entities, Constants.ModifyPolicy.WAIT_FOR);
     BulkResponseParser responseParser = new BulkResponseParser(mapper);
     return responseParser.parseResponse(entities, response);
   }
@@ -224,7 +210,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
         BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
     );
-    Response response = invokeBulkRequest(bulkRequestBuilder, ids);
+    Response response = invokeBulkRequest(bulkRequestBuilder, ids, Constants.ModifyPolicy.WAIT_FOR);
     BulkResponseParser responseParser = new BulkResponseParser(mapper);
     return responseParser.parseResponse(ids, response).size();
   }
@@ -244,7 +230,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(
         BulkRequestBuilder.MethodType.DELETE, mapper, getElasticIndexConfig()
     );
-    Response response = invokeBulkRequest(bulkRequestBuilder, entities);
+    Response response = invokeBulkRequest(bulkRequestBuilder, entities, Constants.ModifyPolicy.WAIT_FOR);
     BulkResponseParser responseParser = new BulkResponseParser(mapper);
     return responseParser.parseResponse(entities, response);
   }
@@ -602,7 +588,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
         }
         List<?> searchAfterValues = metadata.getLastSortValues();
         query.put("search_after", searchAfterValues);
-      } else { // classical i.e. normal search mode
+      } else { // classical i.e., normal search mode
         if (count <= requestSize || requestSize == 0) {  // no more hits will be returned
           break;
         }
@@ -621,11 +607,15 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   @Override
   public <S extends E, X extends ID> List<S> findById(Collection<X> ids) {
-    Collection<String> strIds = ids.stream().map(Object::toString).toList();
-    ElasticExecContext<S> context = getRepositoryExecContext();
-    Class<S> cls = context.getRootClass();
+    MappingContext mapContext = new FilteringDtoContext();
     QueryParams queryParams = new QueryParams();
     queryParams.tryGetResultFilter().setSize(ids.size());
+    mapContext.setParams(queryParams);
+
+    Collection<String> strIds = ids.stream().map(Object::toString).toList();
+    ElasticExecContext<S> context = getRepositoryExecContext(mapContext);
+    Class<S> cls = context.getRootClass();
+
     QueryNodeObject queryObject;
     if (!ids.isEmpty()) {
       if (HasCode.class.isAssignableFrom(cls)) {
@@ -661,13 +651,5 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       );
     }
     return this.search(elasticContext);
-  }
-
-  @Override
-  public <S extends E> List<S> find() {
-    throw new ServiceException(
-        ErrorCode.internal_error,
-        "Unimplemented"
-    );
   }
 }
