@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface ReadRepository<E extends Model, ID> extends Repository<E> {
 
+  //TODO: refactor this so that MappingContext is not needed, and maybe change "get" to "create"
   <S extends E> RepositoryExecContext<S> getRepositoryExecContext(MappingContext mappingContext);
 
   <S extends E, X extends ID> List<S> findById(Collection<X> ids);
