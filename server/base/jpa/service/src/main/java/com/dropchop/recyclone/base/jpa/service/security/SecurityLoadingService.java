@@ -110,11 +110,11 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
   @Override
   protected RoleNode loadRoleNode(RoleNodeParams params, RoleNodeFlags flags) {
     params.getFilter().getContent().setTreeLevel(5);
+    params.getFilter().setSize(1000);
     MappingContext mapContext = new FilteringDtoContext();
     mapContext.setParams(params);
     RepositoryExecContext<JpaRoleNode> execContext = this.roleNodeRepository.getRepositoryExecContext(mapContext);
     execContext.setParams(params);
-    params.filter().size(1000);
     List<JpaRoleNode> jpaRoleNodes = this.roleNodeRepository.find(execContext);
 
     if (jpaRoleNodes == null || jpaRoleNodes.isEmpty()) {

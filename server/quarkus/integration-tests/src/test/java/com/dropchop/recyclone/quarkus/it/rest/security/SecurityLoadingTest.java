@@ -156,6 +156,11 @@ public class SecurityLoadingTest {
    **/
   @Test
   @Order(10)
+  @Tag("SecurityLoadingTest.testLoadTemplatePermissions")
+  @Tag("SecurityLoadingTest.testLoadFirstLevelPermissionTemplates")
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionInstanceForOrgEntity")
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionInstanceForOrgUnitEntity")
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionOFSecondLevelInstanceForEntity")
   public void testLoadTemplatePermissions() {
 
     this.prepDomain();
@@ -307,6 +312,10 @@ public class SecurityLoadingTest {
    */
   @Test
   @Order(20)
+  @Tag("SecurityLoadingTest.testLoadFirstLevelPermissionTemplates")
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionInstanceForOrgEntity")
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionInstanceForOrgUnitEntity")
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionOFSecondLevelInstanceForEntity")
   public void testLoadFirstLevelPermissionTemplates() {
     //role node for an organization instance
     RoleNode organizationRoleNode = SecurityHelper.roleNodeOf(
@@ -421,6 +430,7 @@ public class SecurityLoadingTest {
 
   @Test
   @Order(30)
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionInstanceForOrgEntity")
   public void testLoadAndCheckPermissionInstanceForOrgEntity() {
 
     //load permissions for org
@@ -444,12 +454,12 @@ public class SecurityLoadingTest {
       .body().jsonPath().getList("data", RoleNodePermission.class);
 
     assertEquals(4, orgPermissions.size());
-
   }
 
 
   @Test
   @Order(35)
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionInstanceForOrgUnitEntity")
   public void testLoadAndCheckPermissionInstanceForOrgUnitEntity() {
     RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
       ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null,
@@ -538,7 +548,8 @@ public class SecurityLoadingTest {
 
   @Test
   @Order(40)
-  public void testLoadAndCheckPermissionOFSecondLevelInstanceForEntity() {
+  @Tag("SecurityLoadingTest.testLoadAndCheckPermissionOFSecondLevelInstanceForEntity")
+  public void testLoadAndCheckPermissionOfSecondLevelInstanceForEntity() {
     RoleNode organizationUnitRoleNode = SecurityHelper.roleNodeOf(
       ORG_UNIT_ROLE_NODE_ID, ORG_UNIT_ENTITY, null,
       ORG_UNIT_ENTITY, ORG_UNIT_ENTITY_ID, ORG_UNIT_ENTITY + "-" + ORG_UNIT_ENTITY_ID,
@@ -647,5 +658,4 @@ public class SecurityLoadingTest {
       ).findFirst().get().getAllowed()
     );
   }
-
 }

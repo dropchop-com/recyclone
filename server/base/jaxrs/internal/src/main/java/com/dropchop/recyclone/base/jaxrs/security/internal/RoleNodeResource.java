@@ -60,5 +60,4 @@ public class RoleNodeResource extends ClassicRestByIdResource<RoleNode, RoleNode
   public Result<RoleNode> update(List<RoleNode> roles) {
     return service.update(roles);
   }
-
 }

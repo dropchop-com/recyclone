@@ -66,14 +66,14 @@ public class UserResourceTest {
 
   @Test
   @Order(10)
-  @Tag("create")
-  @Tag("update")
-  @Tag("createUserWithAccounts")
-  @Tag("getUserById")
-  @Tag("deleteUserAccount")
-  @Tag("createAccounts")
-  @Tag("updateAccount")
-  @Tag("deleteAccount")
+  @Tag("UserResourceTest.create")
+  @Tag("UserResourceTest.update")
+  @Tag("UserResourceTest.createUserWithAccounts")
+  @Tag("UserResourceTest.getUserById")
+  @Tag("UserResourceTest.deleteUserAccount")
+  @Tag("UserResourceTest.createAccounts")
+  @Tag("UserResourceTest.updateAccount")
+  @Tag("UserResourceTest.deleteAccount")
   public void create() {
     User user = new User();
     user.setId(userId);
@@ -116,7 +116,7 @@ public class UserResourceTest {
 
   @Test
   @Order(20)
-  @Tag("update")
+  @Tag("UserResourceTest.update")
   public void update() {
     User user = new User();
     user.setId(userId);
@@ -149,7 +149,7 @@ public class UserResourceTest {
 
   @Test
   @Order(30)
-  @Tag("getUserById")
+  @Tag("UserResourceTest.getUserById")
   public void getUserById() {
     List<User> result = given()
       //.log().all()
@@ -168,9 +168,9 @@ public class UserResourceTest {
 
   @Test
   @Order(40)
-  @Tag("createAccounts")
-  @Tag("updateAccount")
-  @Tag("deleteAccount")
+  @Tag("UserResourceTest.createAccounts")
+  @Tag("UserResourceTest.updateAccount")
+  @Tag("UserResourceTest.deleteAccount")
   public void createAccounts() {
     User user2 = new User();
     user2.setId(userId2);
@@ -242,7 +242,7 @@ public class UserResourceTest {
 
   @Test
   @Order(50)
-  @Tag("updateAccount")
+  @Tag("UserResourceTest.updateAccount")
   public void updateAccounts() {
     User user2 = new User();
     user2.setId(userId2);
@@ -307,7 +307,7 @@ public class UserResourceTest {
 
   @Test
   @Order(60)
-  @Tag("deleteAccount")
+  @Tag("UserResourceTest.deleteAccount")
   public void deleteAccount() {
     List<User> result = given()
       //.log().all()
@@ -362,5 +362,4 @@ public class UserResourceTest {
     assertEquals(1, respUser.getAccounts().size());
     assertEquals(LoginAccount.class, respUser.getAccounts().iterator().next().getClass());
   }
-
 }
