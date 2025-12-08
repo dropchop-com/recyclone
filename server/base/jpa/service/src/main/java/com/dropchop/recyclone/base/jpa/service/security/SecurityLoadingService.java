@@ -86,6 +86,7 @@ public class SecurityLoadingService extends HierarchicalSecurityLoadingService
 
     MappingContext permMapContext = new FilteringDtoContext();
     params.getFilter().setSize(1000);
+    params.getFilter().getContent().setTreeLevel(5);
     permMapContext.setParams(params);
 
     BlazeExecContext<JpaRoleNodePermission> permissionContext =
