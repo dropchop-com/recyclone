@@ -1,6 +1,8 @@
 quarkus:
   http:
     port: 24188
+  transaction-manager:
+    default-transaction-timeout: PT1H
 
   log:
     category:
