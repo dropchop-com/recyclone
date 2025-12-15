@@ -45,6 +45,7 @@ import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.and;
@@ -88,11 +89,11 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   public static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
 
   @SuppressWarnings("RegExpRedundantEscape")
-  private static final Pattern NUMERIC_ARRAY = Pattern.compile(
-      "(\"[^\"]+\"\\s*:\\s*)" +                 // group 1: "key":
+  private static final Pattern LARGE_ARRAY = Pattern.compile(
+      "(\"[^\"]+\"\\s*:\\s*)" +
           "\\[" +
-          "\\s*-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\s*" + // first number
-          "(?:,\\s*-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\s*)*" + // more numbers
+          "(?=(?:[^\\]]*,){10})" +  // at least 10 commas inside -> ~11+ elements
+          "[^\\]]*" +
           "\\]"
   );
 
@@ -491,8 +492,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       if (skipQueryLogging == SkipQueryLogging.NONE) {
         int queryId = query.hashCode();
         // shorten for logging
-        //Matcher m = NUMERIC_ARRAY.matcher(query);
-        //query = m.replaceAll("$1[\"<omitted>\"]");
+        Matcher m = LARGE_ARRAY.matcher(query);
+        query = m.replaceAll("$1[\"<omitted>\"]");
         log.debug(
             "Received response for query [{}] on[{}] with[{}] in [{}]ms.",
             queryId, request.getEndpoint(), query, timer.stop()
