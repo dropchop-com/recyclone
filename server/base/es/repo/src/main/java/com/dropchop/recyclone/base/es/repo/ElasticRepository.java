@@ -90,11 +90,11 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   @SuppressWarnings("RegExpRedundantEscape")
   private static final Pattern LARGE_ARRAY = Pattern.compile(
-      "(\"[^\"]+\"\\s*:\\s*)" +
-          "\\[" +
-          "(?=(?:[^\\]]*,){10})" +  // at least 10 commas inside -> ~11+ elements
-          "[^\\]]*" +
-          "\\]"
+      "(?s)(\"[^\"]+\"\\s*:\\s*)\\[(?:[^\\]]*,){100}[^\\]]*\\]"
+      // (?s)      -> DOTALL, so [^\\]] can span lines
+      // \"[^\"]+\" -> any JSON key "..."
+      // \\s*:\\s* -> colon with optional spaces
+      // \\[...\\] -> array contents with at least 10 commas
   );
 
   public abstract ElasticQueryBuilder getElasticQueryBuilder();
