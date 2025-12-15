@@ -24,8 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_PERSON_ID;
-import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_PERSON_NAME;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 12. 21.
@@ -108,7 +107,10 @@ public class ShiroAuthorizationFilter implements ContainerRequestFilter {
     } else {
       Object p = subject.getPrincipal();
       if (p instanceof Dto principal) {
+        String principalId = principal.identifier();
         MDC.put(MDC_PERSON_ID, principal.identifier());
+        String shortId = principalId != null && principalId.length() > 8 ? principalId.substring(0, 8) : principalId;
+        MDC.put(MDC_SHORT_PERSON_ID, shortId);
       }
       if (p instanceof User principal) {
         MDC.put(MDC_PERSON_NAME, principal.getFirstName() + " " + principal.getLastName());

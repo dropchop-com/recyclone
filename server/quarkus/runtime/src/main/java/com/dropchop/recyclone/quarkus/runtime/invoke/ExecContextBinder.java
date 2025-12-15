@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_SHORT_REQUEST_ID;
 
 @ApplicationScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
@@ -62,7 +63,12 @@ public class ExecContextBinder {
       paramsExecContextContainer.set(paramsExecContext);
     }
     if (execContext != null) {
-      MDC.put(MDC_REQUEST_ID, execContext.getId());
+      String execContextId = execContext.getId();
+      if (execContextId != null) {
+        MDC.put(MDC_REQUEST_ID, execContextId);
+        String shortId = execContextId.length() > 8 ? execContextId.substring(0, 8) : execContextId;
+        MDC.put(MDC_SHORT_REQUEST_ID, shortId);
+      }
       log.debug("Created and bound params [{}] with execution context [{}].", params, execContext);
     } else {
       log.warn("Null execution context binding attempt.");

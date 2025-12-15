@@ -13,8 +13,11 @@ import java.util.List;
 public interface ExecContext<ECL extends ExecContext.Listener> extends Model, HasId {
 
   String MDC_REQUEST_ID = "reqId";
+  String MDC_SHORT_REQUEST_ID = "shortReqId";
   String MDC_REQUEST_PATH = "reqPath";
-  String MDC_PERSON_ID = "pID";
+  String MDC_SHORT_REQUEST_PATH = "shortReqPath";
+  String MDC_PERSON_ID = "pId";
+  String MDC_SHORT_PERSON_ID = "shortPId";
   String MDC_PERSON_NAME = "pName";
 
   interface ReqAttributeNames {

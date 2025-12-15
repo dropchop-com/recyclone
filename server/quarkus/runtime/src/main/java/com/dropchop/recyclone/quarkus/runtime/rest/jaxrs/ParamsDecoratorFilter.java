@@ -296,8 +296,7 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
     if (params instanceof CommonParams<?, ?, ?, ?> commonParams) {
       decorate(commonParams, requestContext);
       log.debug(
-          "Decorated REST request [{}] local params from execution context [{}] in [{}]ms.",
-          path, execContext, timer.stop()
+          "Decorated REST request local params from execution context [{}] in [{}]ms.", execContext, timer.stop()
       );
     }
   }

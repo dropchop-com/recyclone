@@ -22,6 +22,7 @@ import org.slf4j.MDC;
 import java.io.IOException;
 
 import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_PATH;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_SHORT_REQUEST_PATH;
 import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.ReqAttributeNames.*;
 
 /**
@@ -101,12 +102,36 @@ public class ExecContextInitializer implements ContainerRequestFilter {
         );
   }
 
+  private static String shortenPath(String path) {
+    if (path == null || path.isEmpty()) {
+      return path;
+    }
+
+    String[] segments = path.split("/");
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i < segments.length; i++) {
+      String seg = segments[i];
+      if (seg.isEmpty()) {
+        continue;
+      }
+      // example rule: max 3 chars per segment
+
+      String shortSeg = seg.length() > 3 && i < segments.length - 1 ? seg.substring(0, 3) : seg;
+      sb.append('/').append(shortSeg);
+    }
+
+    return sb.isEmpty() ? "" : sb.toString();
+  }
+
   /**
    * This is the starting request initialization entry point
    */
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
-    MDC.put(MDC_REQUEST_PATH, requestContext.getUriInfo().getPath());
+    String path = requestContext.getUriInfo().getPath();
+    MDC.put(MDC_REQUEST_PATH, path);
+    MDC.put(MDC_SHORT_REQUEST_PATH, shortenPath(path));
     ExecContext<?> execContext = execContextBinder.bind(execContextClass, dataClass, paramsClass);
     if (execContext instanceof HasAttributes hasAttributes) {
       Instance<HttpServerRequest> inst = CDI.current().select(HttpServerRequest.class);

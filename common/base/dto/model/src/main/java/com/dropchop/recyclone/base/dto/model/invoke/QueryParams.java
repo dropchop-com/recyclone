@@ -108,9 +108,4 @@ public class QueryParams extends Params implements com.dropchop.recyclone.base.a
   @ToString.Include
   @Builder.Default
   private AggregationList aggregate = new AggregationList();
-
-  @Override
-  public String toString() {
-    return super.toString() + ":" + getCondition() + ":" + this.getAggregate();
-  }
 }

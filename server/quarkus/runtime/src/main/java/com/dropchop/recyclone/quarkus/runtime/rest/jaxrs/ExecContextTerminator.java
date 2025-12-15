@@ -23,8 +23,11 @@ public class ExecContextTerminator implements WriterInterceptor {
 
   private void clearMdc() {
     MDC.remove(MDC_REQUEST_ID);
+    MDC.remove(MDC_SHORT_REQUEST_ID);
     MDC.remove(MDC_REQUEST_PATH);
+    MDC.remove(MDC_SHORT_REQUEST_PATH);
     MDC.remove(MDC_PERSON_ID);
+    MDC.remove(MDC_SHORT_PERSON_ID);
     MDC.remove(MDC_PERSON_NAME);
   }
 

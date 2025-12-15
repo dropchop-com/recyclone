@@ -45,6 +45,8 @@ import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.and;
 import static com.dropchop.recyclone.base.api.model.query.Condition.field;
@@ -57,6 +59,12 @@ import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.in;
 @SuppressWarnings("unused")
 public abstract class ElasticRepository<E extends EsEntity, ID> implements
   ElasticCrudRepository<E, ID>, ConditionStringProvider {
+
+  public enum SkipQueryLogging {
+    NONE,
+    QUERY,
+    COMPLETE
+  }
 
   @Getter
   @Setter
@@ -79,6 +87,15 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   public static final String HTTP_POST = "POST";
   public static final String ENDPOINT_SEARCH = "/_search";
   public static final String ENDPOINT_DELETE_BY_QUERY = "/_delete_by_query";
+
+  @SuppressWarnings("RegExpRedundantEscape")
+  private static final Pattern NUMERIC_ARRAY = Pattern.compile(
+      "(\"[^\"]+\"\\s*:\\s*)" +                 // group 1: "key":
+          "\\[" +
+          "\\s*-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\s*" + // first number
+          "(?:,\\s*-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\s*)*" + // more numbers
+          "\\]"
+  );
 
   public abstract ElasticQueryBuilder getElasticQueryBuilder();
 
@@ -401,8 +418,6 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
     QueryParams params = context.getParams();
     QueryNodeObject queryObject = buildQuery(null, getElasticQueryBuilder(), params, criteriaDecorators);
-
-
     //query does not allow this in delete
     queryObject.remove("from");
 
@@ -449,6 +464,10 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     }
   }
 
+  protected SkipQueryLogging skipQueryLogging() {
+    return SkipQueryLogging.NONE;
+  }
+
   protected <X> SearchResultMetadata executeSearch(QueryParams params,
                                                    QueryNodeObject queryObject,
                                                    Class<X> resultClass,
@@ -469,11 +488,22 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       request = this.buildRequestForSearch(queryObject, ENDPOINT_SEARCH);
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
-      int queryId = query.hashCode();
-      log.debug(
-          "Received response for query [{}] on[{}] with[{}] in [{}]ms.",
-          queryId, request.getEndpoint(), query, timer.stop()
-      );
+      SkipQueryLogging skipQueryLogging = skipQueryLogging();
+      if (skipQueryLogging == SkipQueryLogging.NONE) {
+        int queryId = query.hashCode();
+        // shorten for logging
+        Matcher m = NUMERIC_ARRAY.matcher(query);
+        query = m.replaceAll("$1[\"<omitted>\"]");
+        log.debug(
+            "Received response for query [{}] on[{}] with[{}] in [{}]ms.",
+            queryId, request.getEndpoint(), query, timer.stop()
+        );
+      } else if (skipQueryLogging == SkipQueryLogging.QUERY) {
+        log.debug(
+            "Received response for query on[{}] in [{}]ms.", request.getEndpoint(), timer.stop()
+        );
+      }
+
       if (response.getStatusLine().getStatusCode() == 200) {
         QueryResponseParser parser = new QueryResponseParser(objectMapper, searchAfterMode);
         SearchResultMetadata searchResultMetadata;
