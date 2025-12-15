@@ -90,7 +90,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   @SuppressWarnings("RegExpRedundantEscape")
   private static final Pattern LARGE_ARRAY = Pattern.compile(
-      "(?s)(\"[^\"]+\"\\s*:\\s*)\\[(?:[^\\]]*,){100}[^\\]]*\\]"
+      "(\"[^\"]+\"\\s*:\\s*)\\[[^\\]]{100,}\\]"
       // (?s)      -> DOTALL, so [^\\]] can span lines
       // \"[^\"]+\" -> any JSON key "..."
       // \\s*:\\s* -> colon with optional spaces
