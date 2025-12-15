@@ -18,12 +18,10 @@ package com.dropchop.recyclone.base.api.model.utils;
  * limitations under the License.
  */
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -114,5 +112,103 @@ public interface Iso8601 {
    */
   static ZonedDateTime fromIso(String value) {
     return fromMatchedIso(matchIso(value));
+  }
+
+
+  private static Duration parseDurationOrDefault(String isoDuration, Duration defaultDuration) {
+    if (isoDuration == null || isoDuration.isBlank()) {
+      return defaultDuration;
+    }
+    try {
+      Duration d = Duration.parse(isoDuration.trim());
+      // Disallow negative durations
+      if (d.isNegative()) {
+        return defaultDuration;
+      }
+      return d;
+    } catch (DateTimeParseException ex) {
+      return defaultDuration;
+    }
+  }
+
+  /**
+   * Computes endDate from startDate and ISO duration.
+   *
+   * @param startDate        The start of the window
+   * @param maxEndDate       The maximum end date of the window (ZonedDateTime.now() is the default value if null)
+   * @param isoDuration      ISO-8601 duration (e.g., "P10D", "PT5H"). It may be null/invalid.
+   * @param defaultDuration  Duration used if isoDuration is invalid or unusable
+   */
+  static ZonedDateTime computeDurationEndDate(ZonedDateTime startDate, ZonedDateTime maxEndDate, String isoDuration,
+                                              Duration defaultDuration) {
+    java.util.Objects.requireNonNull(startDate, "startDate must not be null");
+    java.util.Objects.requireNonNull(defaultDuration, "defaultDuration must not be null");
+
+    Duration effectiveDuration = parseDurationOrDefault(isoDuration, defaultDuration);
+    ZonedDateTime now = ZonedDateTime.now(startDate.getZone());
+    ZonedDateTime endDate;
+
+    try {
+      endDate = startDate.plus(effectiveDuration);
+    } catch (DateTimeException ex) {
+      endDate = startDate.plus(defaultDuration);
+    }
+
+    // Clamp endDate so it cannot exceed "now"
+    if (maxEndDate == null) {
+      maxEndDate = now;
+    } else if (maxEndDate.isAfter(now)) {
+      maxEndDate = now;
+    }
+
+    if (endDate.isAfter(maxEndDate)) {
+      endDate = maxEndDate;
+    }
+
+    return endDate;
+  }
+
+  /**
+   * Computes endDate from startDate and ISO duration.
+   *
+   * @param endDate          The end of the window
+   * @param maxStartDate     The maximum start date of the window (ZonedDateTime.now() is the default value if null)
+   * @param isoDuration      ISO-8601 duration (e.g., "P10D", "PT5H"). It may be null/invalid.
+   * @param defaultDuration  Duration used if isoDuration is invalid or unusable
+   */
+  static ZonedDateTime computeDurationStartDate(ZonedDateTime endDate, ZonedDateTime maxStartDate, String isoDuration,
+                                                Duration defaultDuration) {
+    java.util.Objects.requireNonNull(endDate, "endDate must not be null");
+    java.util.Objects.requireNonNull(defaultDuration, "defaultDuration must not be null");
+
+    Duration effectiveDuration = parseDurationOrDefault(isoDuration, defaultDuration);
+    ZonedDateTime startDate;
+
+    try {
+      startDate = endDate.minus(effectiveDuration);
+    } catch (DateTimeException ex) {
+      startDate = endDate.plus(defaultDuration);
+    }
+
+    // Clamp maxStartDate so it cannot exceed "now"
+    if (maxStartDate == null) {
+      maxStartDate = ZonedDateTime.now(endDate.getZone());
+    }
+    if (startDate.isBefore(maxStartDate)) {
+      startDate = maxStartDate;
+    }
+
+    return startDate;
+  }
+
+  /**
+   * Aligns the given ZonedDateTime to the start of its day (00:00:00.000) in the same zone.
+   *
+   * @param dateTime the date-time to align (must not be null)
+   * @return a new ZonedDateTime at 00:00:00.000 of the same day and zone
+   */
+  static ZonedDateTime alignToStartOfDay(ZonedDateTime dateTime) {
+    java.util.Objects.requireNonNull(dateTime, "dateTime must not be null");
+    return dateTime.truncatedTo(ChronoUnit.DAYS);
   }
 }
