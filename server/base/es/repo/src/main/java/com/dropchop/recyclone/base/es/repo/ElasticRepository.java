@@ -45,7 +45,6 @@ import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.and;
@@ -492,8 +491,8 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       if (skipQueryLogging == SkipQueryLogging.NONE) {
         int queryId = query.hashCode();
         // shorten for logging
-        Matcher m = NUMERIC_ARRAY.matcher(query);
-        query = m.replaceAll("$1[\"<omitted>\"]");
+        //Matcher m = NUMERIC_ARRAY.matcher(query);
+        //query = m.replaceAll("$1[\"<omitted>\"]");
         log.debug(
             "Received response for query [{}] on[{}] with[{}] in [{}]ms.",
             queryId, request.getEndpoint(), query, timer.stop()
