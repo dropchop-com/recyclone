@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 17. 12. 21.
@@ -208,6 +209,36 @@ public interface Uuid {
 
   static String getRandom() {
     return UUID.randomUUID().toString();
+  }
+
+  class TimeWindow {
+    public final Instant min;
+    public final Instant max;
+
+    public TimeWindow(Instant min, Instant max) {
+      this.min = min;
+      this.max = max;
+    }
+  }
+
+  static <T> TimeWindow computeWindow(Collection<T> uuids, Function<T, UUID> filter) {
+    Instant min = null;
+    Instant max = null;
+
+    for (T u : uuids) {
+      if (u == null) {
+        continue;
+      }
+      Instant t = toInstant(filter.apply(u));  // convert once
+      if (min == null || t.isBefore(min)) {
+        min = t;
+      }
+      if (max == null || t.isAfter(max))  {
+        max = t;
+      }
+    }
+
+    return new TimeWindow(min, max);
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
