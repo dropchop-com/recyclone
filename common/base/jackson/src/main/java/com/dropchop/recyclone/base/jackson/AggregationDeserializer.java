@@ -70,12 +70,21 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
       Constructor<? extends Aggregation> constructor;
 
       if (cClass.equals(DateHistogram.class)) {
-        String interval = entry.getValue().get("calendar_interval").asText();
+        String timeZone = null;
+        String interval = null;
+        JsonNode intervalNode = entry.getValue().get("calendar_interval");
+        JsonNode tzNode = entry.getValue().get("time_zone");
+        if (intervalNode != null && intervalNode.isTextual()) {
+          interval = intervalNode.asText();
+        }
+        if (tzNode != null && tzNode.isTextual()) {
+          timeZone = tzNode.asText();
+        }
 
         if (subAggregations.isEmpty()) {
-          return new DateHistogram(name, field, interval);
+          return new DateHistogram(name, field, interval, timeZone);
         }
-        return new DateHistogram(name, field, interval, subAggregations);
+        return new DateHistogram(name, field, interval, timeZone, subAggregations);
       } else if (cClass.equals(TopHits.class)) {
         TopHits hits = new TopHits();
         JsonNode sizeNode = entry.getValue().get("size");

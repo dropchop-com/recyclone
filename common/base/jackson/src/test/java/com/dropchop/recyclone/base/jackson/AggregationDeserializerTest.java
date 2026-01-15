@@ -18,24 +18,25 @@ public class AggregationDeserializerTest {
   @Test
   public void testAggregationCompositionTest() throws Exception {
     AggregationList a = Wrapper.aggs(
-      max(
-        "watch_max",
-        "watch"
-      ),
-      cardinality(
-        "nested_nested_worker_cardinality",
-        "worker"
-      ),
-      dateHistogram(
-        "nested_nested_worker_dateHistogram",
-        "worker",
-        "month"
-      ),
-      terms(
-        "nested_worker_terms",
-        "worker",
-        10
-      )
+        max(
+            "watch_max",
+            "watch"
+        ),
+        cardinality(
+            "nested_nested_worker_cardinality",
+            "worker"
+        ),
+        dateHistogram(
+            "nested_nested_worker_dateHistogram",
+            "worker",
+            "month",
+            "+01:00"
+        ),
+        terms(
+            "nested_worker_terms",
+            "worker",
+            10
+        )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -43,36 +44,37 @@ public class AggregationDeserializerTest {
 
     String jsonOutput1 = mapper.writeValueAsString(a);
     String expected = """
-        [
-         {
-           "$max": {
-             "name": "watch_max",
-             "field": "watch"
-           }
-         },
-         {
-           "$cardinality": {
-             "name": "nested_nested_worker_cardinality",
-             "field": "worker"
-           }
-         },
-         {
-           "$dateHistogram": {
-             "aggs": [],
-             "name": "nested_nested_worker_dateHistogram",
-             "field": "worker",
-             "calendar_interval": "month"
-           }
-         },
-         {
-           "$terms": {
-             "aggs": [],
-             "name": "nested_worker_terms",
-             "field": "worker",
-             "size": 10
-           }
-         }
-       ]""";
+         [
+          {
+            "$max": {
+              "name": "watch_max",
+              "field": "watch"
+            }
+          },
+          {
+            "$cardinality": {
+              "name": "nested_nested_worker_cardinality",
+              "field": "worker"
+            }
+          },
+          {
+            "$dateHistogram": {
+              "aggs": [],
+              "name": "nested_nested_worker_dateHistogram",
+              "field": "worker",
+              "calendar_interval": "month",
+              "time_zone": "+01:00"
+            }
+          },
+          {
+            "$terms": {
+              "aggs": [],
+              "name": "nested_worker_terms",
+              "field": "worker",
+              "size": 10
+            }
+          }
+        ]""";
     JSONAssert.assertEquals(expected, jsonOutput1, true);
   }
 
@@ -80,10 +82,10 @@ public class AggregationDeserializerTest {
   @SuppressWarnings("unused")
   public void testAggregationDeserialization() throws Exception {
     AggregationList a = aggs(
-      max(
-        "price_max",
-        "price"
-      )
+        max(
+            "price_max",
+            "price"
+        )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -101,19 +103,19 @@ public class AggregationDeserializerTest {
   @SuppressWarnings("unused")
   public void testNestedAggregationDeserialization() throws Exception {
     AggregationList a = aggs(
-      max(
-        "price_max",
-        "price"
-      ),
-      min(
-        "price_min",
-        "price"
-      ),
-      terms(
-        "nested_worker_terms",
-        "worker",
-        10
-      )
+        max(
+            "price_max",
+            "price"
+        ),
+        min(
+            "price_min",
+            "price"
+        ),
+        terms(
+            "nested_worker_terms",
+            "worker",
+            10
+        )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -131,23 +133,23 @@ public class AggregationDeserializerTest {
   @SuppressWarnings("unused")
   public void completeAggregationDeserialization() throws Exception {
     AggregationList a = aggs(
-      max(
-        "price_max",
-        "price"
-      ),
-      min(
-        "price_min",
-        "price"
-      ),
-      dateHistogram(
-        "price_histogram",
-        "price",
-        "seconds",
-        sum(
-          "price_sum",
-          "price"
+        max(
+            "price_max",
+            "price"
+        ),
+        min(
+            "price_min",
+            "price"
+        ),
+        dateHistogram(
+            "price_histogram",
+            "price",
+            "seconds",
+            sum(
+                "price_sum",
+                "price"
+            )
         )
-      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -164,19 +166,19 @@ public class AggregationDeserializerTest {
   @Test
   public void filterTermsAggregationTest() throws Exception {
     AggregationList a = aggs(
-      dateHistogram(
-        "price_histogram",
-        "price",
-        "seconds",
-        terms(
-          "price_sum",
-          "price",
-          filter(
-            includes(List.of("include_ports")),
-            excludes(List.of("*poms*"))
-          )
+        dateHistogram(
+            "price_histogram",
+            "price",
+            "seconds",
+            terms(
+                "price_sum",
+                "price",
+                filter(
+                    includes(List.of("include_ports")),
+                    excludes(List.of("*poms*"))
+                )
+            )
         )
-      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -193,18 +195,18 @@ public class AggregationDeserializerTest {
   @Test
   public void filterExcludeTermsAggregationTest() throws Exception {
     AggregationList a = aggs(
-      dateHistogram(
-        "price_histogram",
-        "price",
-        "seconds",
-        terms(
-          "price_sum",
-          "price",
-          filter(
-            excludes(List.of("*poms*"))
-          )
+        dateHistogram(
+            "price_histogram",
+            "price",
+            "seconds",
+            terms(
+                "price_sum",
+                "price",
+                filter(
+                    excludes(List.of("*poms*"))
+                )
+            )
         )
-      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -221,18 +223,18 @@ public class AggregationDeserializerTest {
   @Test
   public void filterIncludeTermsAggregationTest() throws Exception {
     AggregationList a = aggs(
-      dateHistogram(
-        "price_histogram",
-        "price",
-        "seconds",
-        terms(
-          "price_sum",
-          "price",
-          filter(
-            includes(List.of("include_ports"))
-          )
+        dateHistogram(
+            "price_histogram",
+            "price",
+            "seconds",
+            terms(
+                "price_sum",
+                "price",
+                filter(
+                    includes(List.of("include_ports"))
+                )
+            )
         )
-      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -249,23 +251,23 @@ public class AggregationDeserializerTest {
   @Test
   public void noFilterTermsAggregationTest() throws Exception {
     AggregationList a = aggs(
-      dateHistogram(
-        "price_histogram",
-        "price",
-        "seconds",
-        terms(
-          "price_sum",
-          "price",
-          4500,
-          terms(
-            "terms with",
+        dateHistogram(
+            "price_histogram",
             "price",
-            filter(
-              includes(List.of("include_ports"))
+            "seconds",
+            terms(
+                "price_sum",
+                "price",
+                4500,
+                terms(
+                    "terms with",
+                    "price",
+                    filter(
+                        includes(List.of("include_ports"))
+                    )
+                )
             )
-          )
         )
-      )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();
@@ -282,22 +284,22 @@ public class AggregationDeserializerTest {
   @Test
   public void topHitsAggregationTest() throws Exception {
     AggregationList a = aggs(
-      terms(
-        "price_sum",
-        "price",
-        4500,
         terms(
-          "terms with",
-          "price",
-          filter(
-            includes(List.of("include_ports"))
-          )
-        ),
-        topHits(
-          "TermsAggregation",
-          50,
-          List.of(new Sort("clickCounter", "desc")))
-      )
+            "price_sum",
+            "price",
+            4500,
+            terms(
+                "terms with",
+                "price",
+                filter(
+                    includes(List.of("include_ports"))
+                )
+            ),
+            topHits(
+                "TermsAggregation",
+                50,
+                List.of(new Sort("clickCounter", "desc")))
+        )
     );
 
     ObjectMapperFactory mapperFactory = new ObjectMapperFactory();

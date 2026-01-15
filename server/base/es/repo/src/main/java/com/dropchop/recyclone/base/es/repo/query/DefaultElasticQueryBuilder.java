@@ -317,7 +317,10 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       QueryNodeObject dhNode = new QueryNodeObject();
       dhNode.put("field", dh.getField());
       dhNode.put("calendar_interval", dh.getCalendar_interval());
-
+      String tz = dh.getTime_zone();
+      if (tz != null && !tz.isBlank()) {
+        dhNode.put("time_tone", tz);
+      }
       node.put("date_histogram", dhNode);
     } else if (aggregation instanceof Avg) {
       QueryNodeObject avg = new QueryNodeObject();

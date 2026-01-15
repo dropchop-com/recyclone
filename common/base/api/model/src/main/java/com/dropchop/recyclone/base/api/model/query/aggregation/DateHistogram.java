@@ -11,6 +11,23 @@ import java.util.Arrays;
 @SuppressWarnings("unused")
 public class DateHistogram extends BucketAggregation {
   private String calendar_interval;
+  private String time_zone;
+
+  public DateHistogram(String name, String field, String calendar_interval, String time_zone, Aggregation... aggs) {
+    this(name, field, calendar_interval, time_zone, new AggregationList(Arrays.asList(aggs)));
+  }
+
+  public DateHistogram(String name, String field, String calendar_interval, String time_zone, AggregationList aggs) {
+    super(name, field, aggs);
+    this.calendar_interval = calendar_interval;
+    this.time_zone = time_zone;
+  }
+
+  public DateHistogram(String name, String field, String calendar_interval, String time_zone) {
+    super(name, field);
+    this.calendar_interval = calendar_interval;
+    this.time_zone = time_zone;
+  }
 
   public DateHistogram(String name, String field, String calendar_interval, Aggregation... aggs) {
     this(name, field, calendar_interval, new AggregationList(Arrays.asList(aggs)));

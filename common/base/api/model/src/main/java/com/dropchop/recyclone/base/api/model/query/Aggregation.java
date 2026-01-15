@@ -92,6 +92,10 @@ public interface Aggregation {
     return new Cardinality(name, field);
   }
 
+  static DateHistogram dateHistogram(String name, String field, String calendar_interval, String time_zone, Aggregation... subAggregations) {
+    return new DateHistogram(name, field, calendar_interval, time_zone, subAggregations);
+  }
+
   static DateHistogram dateHistogram(String name, String field, String calendar_interval, Aggregation... subAggregations) {
     return new DateHistogram(name, field, calendar_interval, subAggregations);
   }
@@ -232,10 +236,19 @@ public interface Aggregation {
       return new Cardinality(name, field);
     }
 
+    public static DateHistogram dateHistogram(String name, String field, String calendarInterval, String timeZone, Aggregation... aggs) {
+      return new DateHistogram(
+          name, field, calendarInterval, timeZone, Arrays.stream(aggs).map(Wrapper::new)
+          .collect(Collectors.toCollection(AggregationList::new))
+      );
+    }
+
     public static DateHistogram dateHistogram(String name, String field, String calendarInterval, Aggregation... aggs) {
       return new DateHistogram(
-          name, field, calendarInterval, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new))
+          name,
+          field,
+          calendarInterval,
+          (AggregationList) Arrays.stream(aggs).map(Wrapper::new).collect(Collectors.toCollection(AggregationList::new))
       );
     }
 
