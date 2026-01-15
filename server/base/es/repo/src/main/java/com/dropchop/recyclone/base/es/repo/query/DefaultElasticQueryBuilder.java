@@ -319,7 +319,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       dhNode.put("calendar_interval", dh.getCalendar_interval());
       String tz = dh.getTime_zone();
       if (tz != null && !tz.isBlank()) {
-        dhNode.put("time_tone", tz);
+        dhNode.put("time_zone", tz);
       }
       node.put("date_histogram", dhNode);
     } else if (aggregation instanceof Avg) {
