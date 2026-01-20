@@ -32,7 +32,8 @@ public class JpaRole extends JpaCode
   implements Role<JpaTitleDescriptionTranslation, JpaAction, JpaDomain, JpaPermission>, JpaTitleDescriptionTranslationHelper,
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasJpaLanguage {
 
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = JpaPermission.class)
+  //@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = JpaPermission.class)
+  @ManyToMany(targetEntity = JpaPermission.class)
   @JoinTable(name = "security_role_security_permission",
     joinColumns = {
       @JoinColumn(name = "fk_security_role_code",

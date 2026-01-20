@@ -56,7 +56,8 @@
     </dependency>
     <dependency>
       <groupId>com.blazebit</groupId>
-      <artifactId>blaze-persistence-integration-hibernate-6.2</artifactId>
+      <artifactId>blaze-persistence-integration-hibernate-7.1</artifactId>
+      <!--<artifactId>blaze-persistence-integration-hibernate-6.2</artifactId>-->
       <scope>runtime</scope>
     </dependency>
 

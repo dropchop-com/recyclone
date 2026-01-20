@@ -1043,7 +1043,7 @@ ALTER TABLE ONLY public.security_role_node_permission
 --
 
 ALTER TABLE ONLY public.security_role_node_permission
-    ADD CONSTRAINT security_role_node_permission_security_role_node_fk FOREIGN KEY (fk_role_node_uuid) REFERENCES public.security_role_node(uuid);
+    ADD CONSTRAINT security_role_node_permission_security_role_node_fk FOREIGN KEY (fk_role_node_uuid) REFERENCES public.security_role_node(uuid) ON DELETE CASCADE;
 
 
 --
@@ -1161,4 +1161,3 @@ ALTER TABLE ONLY public.tag_t
 --
 -- PostgreSQL database dump complete
 --
-

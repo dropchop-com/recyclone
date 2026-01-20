@@ -33,7 +33,8 @@ public class JpaDomain extends JpaCode
   HasCreated, HasModified, HasDeactivated, HasStateInlinedCommon, HasJpaLanguage {
 
   //@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = JpaAction.class)
-  @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = JpaAction.class)
+  //@ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE}, targetEntity = JpaAction.class)
+  @ManyToMany(targetEntity = JpaAction.class)
   @JoinTable(name = "security_domain_security_action",
     joinColumns = {
       @JoinColumn(name = "fk_security_domain_code",
