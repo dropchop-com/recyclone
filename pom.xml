@@ -114,19 +114,18 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <slf4j.version>2.0.17</slf4j.version>
-    <logback.version>1.5.18</logback.version>
-    <aspectj.version>1.9.24</aspectj.version>
-    <lombok.version>1.18.38</lombok.version>
-    <jackson.version>2.18.3</jackson.version>
-    <apache.shiro.version>2.0.4</apache.shiro.version>
-    <jjwt.version>0.12.6</jjwt.version>
+    <logback.version>1.5.25</logback.version>
+    <aspectj.version>1.9.25.1</aspectj.version>
+    <lombok.version>1.18.42</lombok.version>
+    <jackson.version>2.20.1</jackson.version>
+    <apache.shiro.version>2.0.6</apache.shiro.version>
     <mapstruct.version>1.6.3</mapstruct.version>
+    <jjwt.version>0.13.0</jjwt.version>
+    <jsonassert.version>1.5.3</jsonassert.version>
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>3.30.6</quarkus.platform.version>
-
-    <jsonassert.version>1.5.3</jsonassert.version>
   </properties>
 
   <dependencyManagement>
