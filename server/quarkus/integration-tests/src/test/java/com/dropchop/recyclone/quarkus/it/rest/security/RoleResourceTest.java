@@ -7,10 +7,7 @@ import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 import java.util.Set;
@@ -58,6 +55,12 @@ public class RoleResourceTest {
 
   @Test
   @Order(20)
+  @Tag("RoleResourceTest.create")
+  @Tag("RoleResourceTest.update")
+  @Tag("RoleResourceTest.addPermissions")
+  @Tag("RoleResourceTest.removeSomePermissions")
+  @Tag("RoleResourceTest.removeOtherPermissions")
+  @Tag("RoleResourceTest.delete")
   public void create() {
     Role role = new Role();
     role.setCode("test_role");
@@ -89,6 +92,7 @@ public class RoleResourceTest {
 
   @Test
   @Order(25)
+  @Tag("RoleResourceTest.update")
   public void update() {
     Role role = new Role();
     role.setCode("test_role");
@@ -122,6 +126,9 @@ public class RoleResourceTest {
 
   @Test
   @Order(30)
+  @Tag("RoleResourceTest.addPermissions")
+  @Tag("RoleResourceTest.removeSomePermissions")
+  @Tag("RoleResourceTest.removeOtherPermissions")
   public void addPermissions() {
     RoleParams params = new RoleParams();
     params.code("test_role");
@@ -158,6 +165,7 @@ public class RoleResourceTest {
 
   @Test
   @Order(40)
+  @Tag("RoleResourceTest.removeSomePermissions")
   public void removeSomePermissions() {
     RoleParams params = new RoleParams();
     params.code("test_role");
@@ -197,6 +205,7 @@ public class RoleResourceTest {
 
   @Test
   @Order(50)
+  @Tag("RoleResourceTest.removeOtherPermissions")
   public void removeOtherPermissions() {
     RoleParams params = new RoleParams();
     params.code("test_role");
@@ -229,6 +238,7 @@ public class RoleResourceTest {
 
   @Test
   @Order(60)
+  @Tag("RoleResourceTest.delete")
   public void delete() {
     Role role = new Role();
     role.setCode("test_role");

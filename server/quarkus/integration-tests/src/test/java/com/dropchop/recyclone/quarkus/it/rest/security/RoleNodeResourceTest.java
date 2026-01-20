@@ -62,7 +62,7 @@ public class RoleNodeResourceTest {
         ));
   }
 
-  private static Domain getDomain() {
+  private static Domain makeTestDomain() {
     Action view = new Action();
     view.setCode(Constants.Actions.VIEW);
 
@@ -83,8 +83,8 @@ public class RoleNodeResourceTest {
     return domain;
   }
 
-  private Domain prepDomain() {
-    Domain domain = getDomain();
+  private Domain saveDomainRest() {
+    Domain domain = makeTestDomain();
 
     List<Domain> domainsResult = given()
       .contentType(ContentType.JSON)
@@ -105,7 +105,7 @@ public class RoleNodeResourceTest {
     return resultDomain;
   }
 
-  private List<Permission> getPermissions() {
+  private List<Permission> makeTestPermissions() {
     Permission permissionView = SecurityHelper.permissionOf(PERMISSION3, DOMAIN_ACCOUNT, Constants.Actions.VIEW);
     Permission permissionCreate = SecurityHelper.permissionOf(PERMISSION1, DOMAIN_ACCOUNT, Constants.Actions.CREATE);
     Permission permissionUpdate = SecurityHelper.permissionOf(PERMISSION2, DOMAIN_ACCOUNT, Constants.Actions.UPDATE);
@@ -113,8 +113,8 @@ public class RoleNodeResourceTest {
     return List.of(permissionView, permissionCreate, permissionUpdate, permissionDelete);
   }
 
-  private List<Permission> prepPermissions() {
-    List<Permission> permissions = this.getPermissions();
+  private List<Permission> savePermissionsRest() {
+    List<Permission> permissions = this.makeTestPermissions();
     List<Permission> permissionsResult = given()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON)
@@ -131,32 +131,13 @@ public class RoleNodeResourceTest {
     return permissions;
   }
 
-  private RoleNode prepRoleNode1() {
-    RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
+  private RoleNode getRoleNodeRest(String uuid) {
     List<RoleNode> result = given()
       //.log().all()
       .contentType(ContentType.JSON)
       .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
       .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
-      .and()
-      .body(List.of(roleNode))
-      .when()
-      .post(ROLE_NODE_ENDPOINT)
-      .then()
-      .statusCode(200)
-      .extract()
-      .body().jsonPath().getList("data", RoleNode.class);
-    assertEquals(1, result.size());
-    return result.getFirst();
-  }
-
-  private RoleNode getRoleNode2() {
-    List<RoleNode> result = given()
-      //.log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
-      .get(ROLE_NODE_ENDPOINT + "/" + UUID2)
+      .get(ROLE_NODE_ENDPOINT + "/" + uuid)
       .then()
       .statusCode(200)
       .extract()
@@ -167,6 +148,12 @@ public class RoleNodeResourceTest {
 
   @Test
   @Order(10)
+  @Tag("RoleNodeResourceTest.createRoleNodeForEntity")
+  @Tag("RoleNodeResourceTest.updateEntityRoleNode")
+  @Tag("RoleNodeResourceTest.addPermissionToRoleNode")
+  @Tag("RoleNodeResourceTest.getRoleNodePermissions")
+  @Tag("RoleNodeResourceTest.addTemplatePermissionToRoleNode")
+  @Tag("RoleNodeResourceTest.deleteEntityRoleNode")
   public void createRoleNodeForEntity() {
     RoleNode roleNode = SecurityHelper.roleNodeOf(UUID1, ENTITY1, ENTITY1_ID, null);
     List<RoleNode> result = given()
@@ -213,6 +200,7 @@ public class RoleNodeResourceTest {
 
   @Test
   @Order(20)
+  @Tag("RoleNodeResourceTest.updateEntityRoleNode")
   public void updateEntityRoleNode() {
     List<RoleNode> result = given()
       //.log().all()
@@ -273,43 +261,12 @@ public class RoleNodeResourceTest {
 
   @Test
   @Order(30)
-  public void deleteEntityRoleNode() {
-
-    RoleNode node = new RoleNode();
-    node.setUuid(UUID1);
-
-    given()
-      //.log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
-      .and()
-      .body(List.of(node))
-      .when()
-      .delete(ROLE_NODE_ENDPOINT)
-      .then()
-      .statusCode(200);
-
-    List<RoleNode> result = given()
-      //.log().all()
-      .contentType(ContentType.JSON)
-      .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-      .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
-      .get(ROLE_NODE_ENDPOINT + "/" + UUID1)
-      .then()
-      .statusCode(200)
-      .extract()
-      .body().jsonPath().getList("data", RoleNode.class);
-    assertTrue(result.isEmpty());
-  }
-
-  @Test
-  @Order(40)
+  @Tag("RoleNodeResourceTest.addPermissionToRoleNode")
   public void addPermissionToRoleNode() {
-    this.prepDomain();
-    List<Permission> permissions = this.prepPermissions();
-    RoleNode roleNode1 = this.prepRoleNode1();
-    RoleNode roleNode2 = this.getRoleNode2();
+    this.saveDomainRest();
+    List<Permission> permissions = this.savePermissionsRest();
+    RoleNode roleNode1 = this.getRoleNodeRest(UUID1);
+    RoleNode roleNode2 = this.getRoleNodeRest(UUID2);
 
     List<RoleNodePermission> roleNodePermissions1 = SecurityHelper.prepRoleNodePermissions(
         RoleNodePermission.class, roleNode1, permissions, null, null
@@ -352,7 +309,8 @@ public class RoleNodeResourceTest {
   }
 
   @Test
-  @Order(50)
+  @Order(40)
+  @Tag("RoleNodeResourceTest.getRoleNodePermissions")
   public void getRoleNodePermissions() {
     RoleNodePermissionParams params = new RoleNodePermissionParams();
     params.setRoleNodeId(UUID1);
@@ -391,7 +349,8 @@ public class RoleNodeResourceTest {
   }
 
   @Test
-  @Order(60)
+  @Order(50)
+  @Tag("RoleNodeResourceTest.addTemplatePermissionToRoleNode")
   public void addTemplatePermissionToRoleNode() {
 
     RoleNode roleNodeTpl = SecurityHelper.roleNodeOf(
@@ -418,7 +377,7 @@ public class RoleNodeResourceTest {
     assertEquals(roleNodeTpl.getEntity(), respRole.getEntity());
 
     List<RoleNodePermissionTemplate> roleNodePermissions1 = SecurityHelper.prepRoleNodePermissions(
-        RoleNodePermissionTemplate.class, roleNodeTpl, this.getPermissions(), TPL_TARGET_NAME, null
+        RoleNodePermissionTemplate.class, roleNodeTpl, this.makeTestPermissions(), TPL_TARGET_NAME, null
     );
 
     //store all permissions on role node
@@ -461,5 +420,37 @@ public class RoleNodeResourceTest {
       assertInstanceOf(RoleNodePermissionTemplate.class, p);
       assertNotNull(((RoleNodePermissionTemplate)p).getTarget());
     }
+  }
+
+  @Test
+  @Order(60)
+  @Tag("RoleNodeResourceTest.deleteEntityRoleNode")
+  public void deleteEntityRoleNode() {
+    RoleNode node = new RoleNode();
+    node.setUuid(UUID1);
+
+    given()
+        //.log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
+        .and()
+        .body(List.of(node))
+        .when()
+        .delete(ROLE_NODE_ENDPOINT)
+        .then()
+        .statusCode(200);
+
+    List<RoleNode> result = given()
+        //.log().all()
+        .contentType(ContentType.JSON)
+        .accept(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic(ADMIN_USER, TEST_PASSWORD)
+        .get(ROLE_NODE_ENDPOINT + "/" + UUID1)
+        .then()
+        .statusCode(200)
+        .extract()
+        .body().jsonPath().getList("data", RoleNode.class);
+    assertTrue(result.isEmpty());
   }
 }
