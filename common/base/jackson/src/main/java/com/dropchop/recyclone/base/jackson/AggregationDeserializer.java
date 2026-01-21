@@ -90,8 +90,9 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
           for (JsonNode sortElement : sortNode) {
             String fieldName = sortElement.get("field").asText();
             String value = sortElement.get("value").asText();
-            if (sortElement.has("numericType")) {
-              sortList.add(new Sort(fieldName, value, sortElement.get("numericType").asText()));
+            JsonNode ntNode = sortElement.get("numericType");
+            if (ntNode.isTextual() && !ntNode.isNull()) {
+              sortList.add(new Sort(fieldName, value, ntNode.asText()));
             } else {
               sortList.add(new Sort(fieldName, value));
             }
