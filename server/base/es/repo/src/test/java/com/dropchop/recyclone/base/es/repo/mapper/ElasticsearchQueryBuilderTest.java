@@ -1044,4 +1044,76 @@ public class ElasticsearchQueryBuilderTest {
     JSONAssert.assertEquals(correctJson, json, true);
   }
 
+  @Test
+  public void testTopHitsNumericTypeAggregation() throws JsonProcessingException, JSONException {
+    QueryParams params = QueryParams.builder().aggregate(
+        aggs(
+            dateHistogram(
+                "price_histogram",
+                "price",
+                "seconds",
+                terms(
+                    "price_sum",
+                    "price",
+                    filter(
+                        includes("include_ports")
+                    ),
+                    topHits(
+                        "NewsSegmentHits",
+                        50,
+                        List.of(new Sort("clickCount", "desc", "long")))
+                )
+            )
+        )
+    ).build();
+
+    String correctJson = """
+       {
+         "query" : {
+           "match_all" : { }
+         },
+         "aggs" : {
+           "price_histogram" : {
+             "date_histogram" : {
+               "field" : "price",
+               "calendar_interval" : "seconds"
+             },
+             "aggs" : {
+               "price_sum" : {
+                 "terms" : {
+                   "field" : "price",
+                   "include" : [ "include_ports" ]
+                 },
+                 "aggs": {
+                   "NewsSegmentHits": {
+                     "top_hits": {
+                       "size": 50,
+                       "sort": [
+                         {
+                           "clickCount": {
+                             "order": "desc",
+                             "numeric_type": "long"
+                           }
+                         }
+                       ]
+                     }
+                   }
+                 }
+               }
+             }
+           }
+         },
+         "from": 0,
+         "size": 100
+       }
+       """;
+
+    DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
+    ObjectMapperFactory factory = new ObjectMapperFactory();
+    ObjectMapper ob = factory.createObjectMapper();
+    QueryNodeObject correct = es.build(params);
+
+    String json = ob.writeValueAsString(correct);
+    JSONAssert.assertEquals(correctJson, json, true);
+  }
 }

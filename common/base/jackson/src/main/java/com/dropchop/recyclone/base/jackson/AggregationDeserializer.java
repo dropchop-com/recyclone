@@ -30,15 +30,6 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
       list.add(inputNode.asText());
     }
     return list;
-    /*
-    return Arrays.stream(input
-        .replaceAll("^\\[|]$", "")
-        .replaceAll("\"", "")
-        .trim()
-        .split("\\s*,\\s*"))
-      .filter(s -> !s.isEmpty())
-      .collect(Collectors.toList());
-     */
   }
 
   private void addFilterNodes(JsonNode filterNode, Aggregation agg) {
@@ -99,7 +90,11 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
           for (JsonNode sortElement : sortNode) {
             String fieldName = sortElement.get("field").asText();
             String value = sortElement.get("value").asText();
-            sortList.add(new Sort(fieldName, value));
+            if (sortElement.has("numericType")) {
+              sortList.add(new Sort(fieldName, value, sortElement.get("numericType").asText()));
+            } else {
+              sortList.add(new Sort(fieldName, value));
+            }
           }
           hits.setSort(sortList);
         }
@@ -170,7 +165,9 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
       if (aggs != null && !aggs.isEmpty()) {
         for (JsonNode obType : aggs) {
-          aggregations.add(deserializeStep(obType.fields().next()));
+          aggregations.add(
+              deserializeStep(obType.properties().iterator().next())
+          );
         }
       }
 
@@ -189,7 +186,9 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
 
     for (JsonNode ob : node) {
       try {
-        aggregations.add(deserializeStep(ob.fields().next()));
+        aggregations.add(
+            deserializeStep(ob.properties().iterator().next())
+        );
       } catch (Exception e) {
         throw new RuntimeException(e);
       }

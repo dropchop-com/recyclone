@@ -298,7 +298,7 @@ public class AggregationDeserializerTest {
             topHits(
                 "TermsAggregation",
                 50,
-                List.of(new Sort("clickCounter", "desc")))
+                List.of(new Sort("clickCounter", "desc", "long")))
         )
     );
 

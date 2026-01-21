@@ -8,9 +8,16 @@ import lombok.Setter;
 public class Sort {
   private String field;
   private String value;
+  private String numericType;
 
   public Sort(String field, String value) {
     this.field = field;
     this.value = value;
+  }
+
+  public Sort(String field, String value, String numericType) {
+    this.field = field;
+    this.value = value;
+    this.numericType = numericType;
   }
 }

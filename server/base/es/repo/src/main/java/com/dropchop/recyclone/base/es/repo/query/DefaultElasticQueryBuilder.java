@@ -354,7 +354,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       TopHitsNodeObject topHitsNode = new TopHitsNodeObject();
       topHitsNode.setSize(topHits.getSize());
       for (Sort s : topHits.getSort()) {
-        topHitsNode.addSort(s.getField(), s.getValue());
+        topHitsNode.addSort(s.getField(), s.getValue(), s.getNumericType());
       }
       if (topHits.getFilter() != null) {
         if (topHits.getFilter().getInclude() != null) {

@@ -70,6 +70,12 @@ public class TopHitsNodeObject extends QueryNodeObject {
     }
   }
 
+  public void addSort(String field, String order, String numericType) {
+    SortNodeObject sortNode = new SortNodeObject(this, field, order, numericType);
+    this.sort.add(sortNode);
+    updateSortArray();
+  }
+
   public void addSort(String field, String order) {
     SortNodeObject sortNode = new SortNodeObject(this, field, order);
     this.sort.add(sortNode);

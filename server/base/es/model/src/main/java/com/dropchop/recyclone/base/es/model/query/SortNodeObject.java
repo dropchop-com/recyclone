@@ -11,12 +11,18 @@ public class SortNodeObject extends QueryNodeObject {
   private String order;
   private String mode;
   private String missing;
+  private String numericType;
 
-  public SortNodeObject(IQueryNode parent, String field, String order) {
+  public SortNodeObject(IQueryNode parent, String field, String order, String numericType) {
     super(parent);
     this.field = field;
     this.order = order;
+    this.numericType = numericType;
     this.put(field, createSortConfig());
+  }
+
+  public SortNodeObject(IQueryNode parent, String field, String order) {
+    this(parent, field, order, null);
   }
 
   public SortNodeObject(IQueryNode parent, String field) {
@@ -41,6 +47,10 @@ public class SortNodeObject extends QueryNodeObject {
 
     if (this.missing != null) {
       config.put("missing", this.missing);
+    }
+
+    if (this.numericType != null) {
+      config.put("numeric_type", this.numericType);
     }
 
     return config;
