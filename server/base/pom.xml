@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.dropchop.recyclone</groupId>
     <artifactId>recyclone-server</artifactId>
-    <version>2.0.12</version>
+    <version>2.0.13-SNAPSHOT</version>
   </parent>
 
   <modules>
