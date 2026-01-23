@@ -151,6 +151,13 @@ class RecycloneProcessor {
     additionalBeanBuildItemProducer.produce(
         AdditionalBeanBuildItem
             .builder()
+            .addBeanClasses(ParamsProxyUnwrapper.class)
+            .setUnremovable()
+            .build()
+    );
+    additionalBeanBuildItemProducer.produce(
+        AdditionalBeanBuildItem
+            .builder()
             .addBeanClasses(ParamsFactoryDeserializerModifier.class)
             .setUnremovable()
             .build()
