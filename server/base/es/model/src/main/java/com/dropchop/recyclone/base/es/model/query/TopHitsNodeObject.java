@@ -6,27 +6,20 @@ import com.dropchop.recyclone.base.api.model.query.operator.filter.Include;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @Setter
 @SuppressWarnings("unused")
 public class TopHitsNodeObject extends QueryNodeObject {
   private Integer size;
   private Integer from;
-  private List<SortNodeObject> sort;
   private Filter filter;
   private QueryNodeObject source;
 
+  private final SortNodeObject sort = new SortNodeObject(this);
+
   public TopHitsNodeObject(IQueryNode parent, Integer size) {
     super(parent);
-    if (parent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) parent).put("top_hits", this);
-    }
     this.size = size;
-    this.sort = new ArrayList<>();
-
     if (size != null) {
       this.put("size", size);
     }
@@ -38,18 +31,6 @@ public class TopHitsNodeObject extends QueryNodeObject {
 
   public TopHitsNodeObject() {
     this(null);
-  }
-
-  @Override
-  public void setParent(IQueryNode parent) {
-    IQueryNode prevParent = this.getParent();
-    if (prevParent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) prevParent).remove("top_hits");
-    }
-    super.setParent(parent);
-    if (parent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) parent).put("top_hits", this);
-    }
   }
 
   public void setSize(Integer size) {
@@ -71,15 +52,13 @@ public class TopHitsNodeObject extends QueryNodeObject {
   }
 
   public void addSort(String field, String order, String numericType) {
-    SortNodeObject sortNode = new SortNodeObject(this, field, order, numericType);
-    this.sort.add(sortNode);
-    updateSortArray();
+    this.sort.addSort(field, order, numericType);
+    this.putAll(this.sort);
   }
 
   public void addSort(String field, String order) {
-    SortNodeObject sortNode = new SortNodeObject(this, field, order);
-    this.sort.add(sortNode);
-    updateSortArray();
+    this.sort.addSort(field, order);
+    this.putAll(this.sort);
   }
 
   public void addSort(String field) {
@@ -90,16 +69,6 @@ public class TopHitsNodeObject extends QueryNodeObject {
     this.sort.clear();
     this.remove("sort");
   }
-
-  private void updateSortArray() {
-    if (!sort.isEmpty()) {
-      QueryNodeList sortList = new QueryNodeList(this);
-      sortList.addAll(sort);
-
-      this.put("sort", sortList);
-    }
-  }
-
 
   public void setSource(Include includes, Exclude excludes) {
     QueryNodeObject sourceConfig = new QueryNodeObject(this);

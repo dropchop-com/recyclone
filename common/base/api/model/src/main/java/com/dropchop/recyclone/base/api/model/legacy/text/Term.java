@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.dto.model.text;
+package com.dropchop.recyclone.base.api.model.legacy.text;
 
 import java.io.Serializable;
 

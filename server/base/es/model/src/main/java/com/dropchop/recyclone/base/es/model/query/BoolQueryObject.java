@@ -5,25 +5,22 @@ import lombok.Setter;
 
 @Getter
 @SuppressWarnings("unused")
-public class BoolQueryObject extends QueryNodeObject{
-  IQueryNodeList must;
-  IQueryNodeList should;
-  IQueryNodeList mustNot;
-  IQueryNodeList filter;
+public class BoolQueryObject extends QueryNodeObject {
+  private final IQueryNodeList must = new QueryNodeList(this);
+  private final IQueryNodeList should = new QueryNodeList(this);
+  private final IQueryNodeList mustNot = new QueryNodeList(this);
+  private final IQueryNodeList filter = new QueryNodeList(this);
+  private final QueryNodeObject self = new QueryNodeObject();
+
   @Setter
   private int minimumShouldMatch;
+  @Setter
   private int numClauses;
 
   public BoolQueryObject(IQueryNode parent, int minimumShouldMatch) {
     super(parent);
-    if (parent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) parent).put("bool", this);
-    }
-    must = new QueryNodeList(this);
-    mustNot = new QueryNodeList(this);
-    filter = new QueryNodeList(this);
-    should = new QueryNodeList(this);
     this.minimumShouldMatch = minimumShouldMatch;
+    this.put("bool", this.self);
   }
 
   public BoolQueryObject(IQueryNode parent) {
@@ -34,30 +31,12 @@ public class BoolQueryObject extends QueryNodeObject{
     this(null);
   }
 
-  @Override
-  public void setParent(IQueryNode parent) {
-    IQueryNode prevParent = this.getParent();
-    if (prevParent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) prevParent).remove("bool");
-    }
-    super.setParent(parent);
-    if (parent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) parent).put("bool", this);
-    }
-  }
-
   private void add(IQueryNode node, IQueryNodeList list, String name) {
-    if (node instanceof BoolQueryObject) {
-      QueryNodeObject container = new QueryNodeObject(this);
-      node.setParent(container);
-      node = container;
-    }
-
     list.add(node);
     if (list.size() == 1) {
-      this.put(name, list.getFirst());
+      this.self.put(name, list.getFirst());
     } else {
-      this.put(name, list);
+      this.self.put(name, list);
     }
     numClauses++;
   }
@@ -77,10 +56,7 @@ public class BoolQueryObject extends QueryNodeObject{
   public void should(IQueryNode node) {
     this.add(node, should, "should");
     if (minimumShouldMatch > -1) {
-      this.put("minimum_should_match", minimumShouldMatch);
+      this.self.put("minimum_should_match", minimumShouldMatch);
     }
-  }
-
-  public void put() {
   }
 }

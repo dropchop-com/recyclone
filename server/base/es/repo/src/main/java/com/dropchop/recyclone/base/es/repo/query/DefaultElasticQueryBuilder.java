@@ -7,264 +7,132 @@ import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
-import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
-import com.dropchop.recyclone.base.dto.model.text.ExpressionToken;
-import com.dropchop.recyclone.base.dto.model.text.Filter;
-import com.dropchop.recyclone.base.dto.model.text.LegacyExpressionParser;
 import com.dropchop.recyclone.base.es.model.query.*;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @ApplicationScoped
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
+  protected QueryNodeObject mapConditionField(int level, QueryFieldListener listener, Field<?> field,
+                                              QueryNodeObject parentNodeObject) {
+    OperatorNodeObject operatorNode = new OperatorNodeObject(parentNodeObject);
+    String fieldName = field.getName();
+    ConditionOperator operator;
+
+    if (field instanceof ConditionedField conditionedField) {
+      operator = conditionedField.get(fieldName);
+      if (operator == null) {
+        operator = new Eq<>(null);
+      }
+    } else {
+      Object val = field.get(field.getName());
+      operator = new Eq<>(val);
+    }
+
+    if (operator instanceof Eq<?> eq) {
+      Object val = eq.get$eq();
+      if (val == null) {
+        operatorNode.addNullSearch(fieldName);
+      } else {
+        operatorNode.addEqOperator(fieldName, eq.get$eq());
+      }
+    } else if (operator instanceof Gt<?> gt) {
+      operatorNode.addRangeOperator(fieldName, "gt", gt.get$gt());
+    } else if (operator instanceof Lt<?> lt) {
+      operatorNode.addRangeOperator(fieldName, "lt", lt.get$lt());
+    } else if (operator instanceof Gte<?> gte) {
+      operatorNode.addRangeOperator(fieldName, "gte", gte.get$gte());
+    } else if (operator instanceof Lte<?> lte) {
+      operatorNode.addRangeOperator(fieldName, "lte", lte.get$lte());
+    } else if (operator instanceof In<?> in) {
+      operatorNode.addInOperator(fieldName, in.get$in());
+    } else if (operator instanceof ClosedInterval<?> interval) {
+      operatorNode.addClosedInterval(fieldName, interval.get$gte(), interval.get$lte());
+    } else if (operator instanceof OpenInterval<?> interval) {
+      operatorNode.addOpenInterval(fieldName, interval.get$gte(), interval.get$lt());
+    } else if (operator instanceof ClosedOpenInterval<?> interval) {
+      operatorNode.addClosedOpenInterval(fieldName, interval.get$gte(), interval.get$lt());
+    } else if (operator instanceof OpenClosedInterval<?> interval) {
+      operatorNode.addOpenClosedInterval(fieldName, interval.get$gt(), interval.get$lte());
+    } else if (operator instanceof Match<?> textMatch) {
+      operatorNode.addTextSearch(fieldName, textMatch);
+    } else {
+      throw new ServiceException(
+          ErrorCode.internal_error, "Unsupported query operator: [" + operator.getClass().getName() + "]"
+      );
+    }
+    return operatorNode;
+  }
+
   protected QueryNodeObject mapCondition(int level, QueryFieldListener listener,
                                          Condition condition, Condition parentCond,
                                          QueryNodeObject parentNodeObject) {
+    if (condition == null) {
+      return null;
+    }
+
+    // force bool.must on top level if not logical condition
+    if (level == 0 && !(condition instanceof LogicalCondition)) {
+      BoolQueryObject boolQuery = new BoolQueryObject();
+      QueryNodeObject subQueryContainer = mapCondition(level + 1, listener, condition, null, boolQuery);
+      boolQuery.must(subQueryContainer);
+      return boolQuery;
+    }
+
     if (condition instanceof LogicalCondition logicalCondition) {
-      BoolQueryObject query = new BoolQueryObject();
+      BoolQueryObject query = new BoolQueryObject(parentNodeObject);
       if (listener != null) {
-        listener.on(0, null, condition, parentNodeObject);
+        listener.on(0, condition, parentNodeObject);
       }
 
       for (Iterator<Condition> it = logicalCondition.iterator(); it.hasNext(); ) {
         Condition subCondition = it.next();
-        BoolQueryObject queryContainer = new BoolQueryObject();
+        QueryNodeObject subQueryContainer = mapCondition(level + 1, listener, subCondition, condition, query);
         if (condition instanceof And) {
-          query.must(mapCondition(level + 1, listener, subCondition, condition, queryContainer));
+          query.must(subQueryContainer);
         } else if (condition instanceof Or) {
-          query.should(mapCondition(level + 1, listener, subCondition, condition, queryContainer));
+          query.should(subQueryContainer);
         } else if (condition instanceof Not) {
-          query.mustNot(mapCondition(level + 1, listener, subCondition, condition, queryContainer));
+          query.mustNot(subQueryContainer);
         }
       }
       return query;
     } else if (condition instanceof ConditionedField conditionedField) {
-      String fieldName = conditionedField.getName();
-      ConditionOperator operator = (ConditionOperator) conditionedField.values().toArray()[0];
-      return mapConditionField(level, listener, fieldName, operator);
-    } else if (condition instanceof Knn knnCondition) {
-      KnnNodeObject knnNode = new KnnNodeObject(null, knnCondition);
-      QueryNodeObject queryNodeObject = new QueryNodeObject();
-      QueryNodeObject mustObject = new QueryNodeObject();
-
-      if ((knnCondition).get$knn().getFilter() != null) {
-        QueryNodeObject filterQuery = mapCondition(
-            level + 1, listener, (knnCondition).get$knn().getFilter(), null, null);
-        knnNode.addFilter(filterQuery);
-      }
+      QueryNodeObject mappedField = mapConditionField(level, listener, conditionedField, parentNodeObject);
       if (listener != null) {
-        listener.on(0, null, condition, knnNode);
+        listener.on(level, conditionedField, mappedField);
       }
-      queryNodeObject.put("knn", knnNode);
-
-      if (parentCond != null) {
-        return queryNodeObject;
-      }
-
-      mustObject.put("must", queryNodeObject);
-      return mustObject;
+      return mappedField;
     } else if (condition instanceof Field<?> field) {
-      String fieldName = field.getName();
-
-      if (field.iterator().next() instanceof ZonedDateTime) {
-        OperatorNodeObject operator = new OperatorNodeObject();
-        if (field.iterator().next() instanceof ZonedDateTime date) {
-          operator.addClosedInterval(fieldName, date, date);
-        }
-        if (listener != null) {
-          listener.on(0, fieldName, condition, operator);
-        }
-        return operator;
-      }
-
-      if (field.iterator().next() == null) {
-        OperatorNodeObject operator = new OperatorNodeObject();
-        operator.addNullSearch(fieldName);
-        if (listener != null) {
-          listener.on(0, fieldName, condition, operator);
-        }
-        return operator;
-      }
-
-      QueryNodeObject mustWrapper = new QueryNodeObject();
-      QueryNodeObject query = new QueryNodeObject();
-      QueryNodeObject termWrapper = new QueryNodeObject();
-      query.put(fieldName, field.iterator().next());
-      termWrapper.put("term", query);
-      mustWrapper.put("must", termWrapper);
-
-      if (parentNodeObject == null) {
-        if (listener != null) {
-          listener.on(0, fieldName, condition, mustWrapper);
-        }
-        return mustWrapper;
-      }
-
+      QueryNodeObject mappedField = mapConditionField(level, listener, field, parentNodeObject);
       if (listener != null) {
-        listener.on(0, fieldName, condition, termWrapper);
+        listener.on(level, field, mappedField);
       }
-      return termWrapper;
+      return mappedField;
+    } else if (condition instanceof Knn knnCondition) {
+      QueryNodeObject filterQuery = null;
+      KnnNodeObject knnNode = new KnnNodeObject(
+          null, knnCondition, mapCondition(
+              level + 1, listener, (knnCondition).get$knn().getFilter(), null, null
+          )
+      );
+      if (listener != null) {
+        listener.on(0, condition, knnNode);
+      }
+
+      return knnNode;
     }
 
     return parentNodeObject;
-  }
-
-  protected QueryNodeObject mapTextCondition(Match<?> textMatch, BoolQueryObject previousCondition) {
-    return previousCondition;
-  }
-
-  private QueryNodeObject expressionToQueryNode(String defaultField, ExpressionToken token) {
-    if (token instanceof com.dropchop.recyclone.base.dto.model.text.Or orToken) {
-      BoolQueryObject orBool = new BoolQueryObject();
-      for (ExpressionToken part : orToken.getExpressionTokens()) {
-        QueryNodeObject child = expressionToQueryNode(defaultField, part);
-        orBool.should(child);
-      }
-      orBool.setMinimumShouldMatch(1);
-      return orBool;
-    }
-
-    String field = defaultField;
-    if (token instanceof Filter filter && filter.getName() != null && !filter.getName().isEmpty()) {
-      field = filter.getName();
-    }
-
-    if (token instanceof com.dropchop.recyclone.base.dto.model.text.Phrase phrase) {
-      String phraseText = phrase.getExpression().toString();
-      QueryNodeObject matchPhrase = new QueryNodeObject();
-      QueryNodeObject conf = new QueryNodeObject();
-      conf.put("query", phraseText);
-      Map<String, Object> meta = phrase.getMetaData();
-      if (meta != null) {
-        copyIfPresent(meta, conf, "slop");
-        copyIfPresent(meta, conf, "boost");
-        copyIfPresent(meta, conf, "analyzer");
-      }
-      QueryNodeObject wrapper = new QueryNodeObject();
-      wrapper.put(field, conf);
-      matchPhrase.put("match_phrase", wrapper);
-      return matchPhrase;
-    }
-    String term = token.getExpression().toString();
-    if (token.isPrefix() || term.indexOf('*') >= 0) {
-      QueryNodeObject wildcard = new QueryNodeObject();
-      QueryNodeObject conf = new QueryNodeObject();
-      conf.put("value", term);
-      conf.put("case_insensitive", true);
-      Map<String, Object> meta = token.getMetaData();
-      if (meta != null) {
-        copyIfPresent(meta, conf, "boost");
-      }
-      QueryNodeObject wrapper = new QueryNodeObject();
-      wrapper.put(field, conf);
-      wildcard.put("wildcard", wrapper);
-      return wildcard;
-    } else {
-      QueryNodeObject match = new QueryNodeObject();
-      QueryNodeObject conf = new QueryNodeObject();
-      conf.put("query", term);
-      Map<String, Object> meta = token.getMetaData();
-      if (meta != null) {
-        copyIfPresent(meta, conf, "fuzziness");
-        copyIfPresent(meta, conf, "boost");
-        copyIfPresent(meta, conf, "analyzer");
-        copyIfPresent(meta, conf, "operator");
-      }
-      QueryNodeObject wrapper = new QueryNodeObject();
-      wrapper.put(field, conf);
-      match.put("match", wrapper);
-      return match;
-    }
-  }
-
-  private QueryNodeObject mapAdvancedText(String defaultField, String value) {
-    List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
-
-    BoolQueryObject inner = new BoolQueryObject();
-    for (ExpressionToken token : tokens) {
-      QueryNodeObject node = expressionToQueryNode(defaultField, token);
-      if (token.isMustNot()) {
-        inner.mustNot(node);
-      } else if (token.isMust()) {
-        inner.must(node);
-      } else {
-        inner.should(node);
-      }
-    }
-    if (!inner.containsKey("must") && !inner.containsKey("must_not") && inner.getShould() != null) {
-      inner.setMinimumShouldMatch(1);
-    }
-
-    QueryNodeObject wrapper = new QueryNodeObject();
-    wrapper.put("bool", inner);
-    return wrapper;
-  }
-
-
-  private void copyIfPresent(Map<String, Object> meta, QueryNodeObject to, String key) {
-    Object v = meta.get(key);
-    if (v != null) to.put(key, v);
-  }
-
-  protected OperatorNodeObject mapConditionField(int level, QueryFieldListener listener, String field,
-                                                 ConditionOperator operator) {
-    OperatorNodeObject operatorNode = new OperatorNodeObject();
-
-    if (operator instanceof Eq) {
-      operatorNode.addEqOperator(field, ((Eq<?>) operator).get$eq());
-    } else if (operator instanceof Gt<?> gt) {
-      operatorNode.addRangeOperator(field, "gt", gt.get$gt());
-    } else if (operator instanceof Lt<?> lt) {
-      operatorNode.addRangeOperator(field, "lt", lt.get$lt());
-    } else if (operator instanceof Gte<?> gte) {
-      operatorNode.addRangeOperator(field, "gte", gte.get$gte());
-    } else if (operator instanceof Lte<?> lte) {
-      operatorNode.addRangeOperator(field, "lte", lte.get$lte());
-    } else if (operator instanceof In<?> in) {
-      operatorNode.addInOperator(field, in.get$in());
-    } else if (operator instanceof ClosedInterval<?> interval) {
-      operatorNode.addClosedInterval(field, interval.get$gte(), interval.get$lte());
-    } else if (operator instanceof OpenInterval<?> interval) {
-      operatorNode.addOpenInterval(field, interval.get$gte(), interval.get$lt());
-    } else if (operator instanceof ClosedOpenInterval<?> interval) {
-      operatorNode.addClosedOpenInterval(field, interval.get$gte(), interval.get$lt());
-    } else if (operator instanceof OpenClosedInterval<?> interval) {
-      operatorNode.addOpenClosedInterval(field, interval.get$gt(), interval.get$lte());
-    } else if (operator instanceof Match<?> textMatch) {
-      Object raw = textMatch.get$match();
-      if (raw instanceof AdvancedText text) {
-        QueryNodeObject advancedQuery = mapAdvancedText(field, text.getValue());
-        if (!advancedQuery.isEmpty()) {
-          OperatorNodeObject wrapper = new OperatorNodeObject();
-          wrapper.putAll(advancedQuery);
-          if (listener != null) {
-            listener.on(level, field, operator, wrapper);
-          }
-          return wrapper;
-        }
-      }
-      operatorNode.addTextSearch(field, textMatch);
-    } else if (operator == null) {
-      operatorNode.addNullSearch(field);
-    } else {
-      operatorNode.addEqOperator(field, operator);
-    }
-
-    if (listener != null) {
-      listener.on(level, field, operator, operatorNode);
-    }
-    return operatorNode;
   }
 
   @Override
@@ -385,32 +253,14 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     if (condition == null) {
       return false;
     }
-
+    if (condition instanceof Knn) {
+      return true;
+    }
     if (condition instanceof LogicalCondition logicalCondition) {
       Iterator<Condition> iterator = logicalCondition.iterator();
       return iterator.hasNext();
     }
-
-    return true;
-  }
-
-  protected void ensureBoolQueryStructure(QueryNodeObject query) {
-    if (!query.containsKey("bool")) {
-      Object existingQuery = null;
-      if (query.containsKey("match_all")) {
-        existingQuery = query.get("match_all");
-        query.remove("match_all");
-      }
-
-      BoolQueryObject boolQuery = new BoolQueryObject();
-      if (existingQuery != null) {
-        QueryNodeObject matchAllWrapper = new QueryNodeObject();
-        matchAllWrapper.put("match_all", existingQuery);
-        boolQuery.must(matchAllWrapper);
-      }
-
-      query.put("bool", boolQuery);
-    }
+    return false;
   }
 
   @Override
@@ -494,21 +344,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     }
 
     Condition condition = params.getCondition();
-    boolean makeBoolQuery = condition instanceof LogicalCondition logicalCondition
-        && logicalCondition.iterator().hasNext();
-    if (!makeBoolQuery) {
-      makeBoolQuery = condition instanceof Knn;
-    }
-    if (makeBoolQuery) {
-      QueryNodeObject conditions = mapCondition(
-          0, fieldListener, condition, null, null
-      );
-      query.put("bool", conditions);
-      queryContainer.put("query", query);
+    if (hasActualConditions(condition)) {
+      QueryNodeObject boolQuery = mapCondition(0, fieldListener, condition, null, null);
+      queryContainer.put("query", boolQuery);
     } else {
-      MatchAllObject matchAll = new MatchAllObject();
-      query.put("match_all", matchAll);
-      queryContainer.put("query", query);
+      queryContainer.put("query", new MatchAllObject());
     }
 
     ResultFilter.ContentFilter filter = params.tryGetResultContentFilter();

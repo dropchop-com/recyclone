@@ -14,7 +14,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.query.Condition;
-import com.dropchop.recyclone.base.api.model.query.ConditionOperator;
+import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
@@ -301,22 +301,22 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     QueryNodeObject query = builder.build(
         new QueryFieldListener() {
           @Override
-          public void on(int level, String fieldName, Condition condition, QueryNodeObject node) {
+          public void on(int level, Condition condition, QueryNodeObject node) {
             if (level == 0) {
               validationData.setRootCondition(condition);
             }
             for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
-              decorator.onBuiltField(fieldName, condition, node);
+              decorator.onBuiltField(condition, node);
             }
           }
 
           @Override
-          public void on(int level, String fieldName, ConditionOperator operator, QueryNodeObject node) {
+          public void on(int level, Field<?> field, QueryNodeObject node) {
             if (level == 0) {
-              validationData.addRootField(fieldName);
+              validationData.addRootField(field.getName());
             }
             for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
-              decorator.onBuiltField(fieldName, operator, node);
+              decorator.onBuiltField(field, node);
             }
           }
         },

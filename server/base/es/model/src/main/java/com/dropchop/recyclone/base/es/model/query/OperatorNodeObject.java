@@ -1,19 +1,26 @@
 package com.dropchop.recyclone.base.es.model.query;
 
+import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionToken;
+import com.dropchop.recyclone.base.api.model.legacy.text.Filter;
+import com.dropchop.recyclone.base.api.model.legacy.text.LegacyExpressionParser;
+import com.dropchop.recyclone.base.api.model.legacy.text.Or;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
-import com.dropchop.recyclone.base.es.model.query.parser.ClauseFactory;
-import com.dropchop.recyclone.base.es.model.query.parser.TextParser;
 
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class OperatorNodeObject extends QueryNodeObject {
 
   public OperatorNodeObject() {
     super();
+  }
+
+  public OperatorNodeObject(IQueryNode parent) {
+    super(parent);
   }
 
   public <T> void addEqOperator(String field, T value) {
@@ -82,6 +89,100 @@ public class OperatorNodeObject extends QueryNodeObject {
     this.put("bool", nullNode);
   }
 
+  private void copyIfPresent(Map<String, Object> meta, QueryNodeObject to, String key) {
+    Object v = meta.get(key);
+    if (v != null) to.put(key, v);
+  }
+
+  //TODO: consolidate
+  private QueryNodeObject expressionToQueryNode(String defaultField, ExpressionToken token) {
+    if (token instanceof Or orToken) {
+      BoolQueryObject orBool = new BoolQueryObject();
+      for (ExpressionToken part : orToken.getExpressionTokens()) {
+        QueryNodeObject child = expressionToQueryNode(defaultField, part);
+        orBool.should(child);
+      }
+      orBool.setMinimumShouldMatch(1);
+      return orBool;
+    }
+
+    String field = defaultField;
+    if (token instanceof Filter filter && filter.getName() != null && !filter.getName().isEmpty()) {
+      field = filter.getName();
+    }
+
+    if (token instanceof com.dropchop.recyclone.base.api.model.legacy.text.Phrase phrase) {
+      String phraseText = phrase.getExpression().toString();
+      QueryNodeObject matchPhrase = new QueryNodeObject();
+      QueryNodeObject conf = new QueryNodeObject();
+      conf.put("query", phraseText);
+      Map<String, Object> meta = phrase.getMetaData();
+      if (meta != null) {
+        copyIfPresent(meta, conf, "slop");
+        copyIfPresent(meta, conf, "boost");
+        copyIfPresent(meta, conf, "analyzer");
+      }
+      QueryNodeObject wrapper = new QueryNodeObject();
+      wrapper.put(field, conf);
+      matchPhrase.put("match_phrase", wrapper);
+      return matchPhrase;
+    }
+    String term = token.getExpression().toString();
+    if (token.isPrefix() || term.indexOf('*') >= 0) {
+      QueryNodeObject wildcard = new QueryNodeObject();
+      QueryNodeObject conf = new QueryNodeObject();
+      conf.put("value", term);
+      conf.put("case_insensitive", true);
+      Map<String, Object> meta = token.getMetaData();
+      if (meta != null) {
+        copyIfPresent(meta, conf, "boost");
+      }
+      QueryNodeObject wrapper = new QueryNodeObject();
+      wrapper.put(field, conf);
+      wildcard.put("wildcard", wrapper);
+      return wildcard;
+    } else {
+      QueryNodeObject match = new QueryNodeObject();
+      QueryNodeObject conf = new QueryNodeObject();
+      conf.put("query", term);
+      Map<String, Object> meta = token.getMetaData();
+      if (meta != null) {
+        copyIfPresent(meta, conf, "fuzziness");
+        copyIfPresent(meta, conf, "boost");
+        copyIfPresent(meta, conf, "analyzer");
+        copyIfPresent(meta, conf, "operator");
+      }
+      QueryNodeObject wrapper = new QueryNodeObject();
+      wrapper.put(field, conf);
+      match.put("match", wrapper);
+      return match;
+    }
+  }
+
+  //TODO: consolidate
+  private QueryNodeObject mapAdvancedText(String defaultField, String value) {
+    List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
+
+    BoolQueryObject inner = new BoolQueryObject();
+    for (ExpressionToken token : tokens) {
+      QueryNodeObject node = expressionToQueryNode(defaultField, token);
+      if (token.isMustNot()) {
+        inner.mustNot(node);
+      } else if (token.isMust()) {
+        inner.must(node);
+      } else {
+        inner.should(node);
+      }
+    }
+    if (!inner.containsKey("must") && !inner.containsKey("must_not") && inner.getShould() != null) {
+      inner.setMinimumShouldMatch(1);
+    }
+
+    QueryNodeObject wrapper = new QueryNodeObject();
+    wrapper.put("bool", inner);
+    return wrapper;
+  }
+
   public void addTextSearch(String field, Match<?> match) {
     Object text = match.getText();
     if (text instanceof Wildcard wildcard) {
@@ -130,7 +231,7 @@ public class OperatorNodeObject extends QueryNodeObject {
       nameObject.put(field, paramsObject);
       this.put("match_phrase", nameObject);
     } else if(text instanceof AdvancedText advancedText) {
-      List<String> tokens = new TextParser(advancedText.getValue()).parse();
+      /*List<String> tokens = new TextParser(advancedText.getValue()).parse();
 
       ClauseFactory factory = new ClauseFactory(field);
       SpanNearObject spanNear = new SpanNearObject(
@@ -143,7 +244,15 @@ public class OperatorNodeObject extends QueryNodeObject {
         spanNear.addClause(clause);
       }
 
-      this.put("span_near", spanNear);
+      this.put("span_near", spanNear);*/
+      QueryNodeObject advancedQuery = mapAdvancedText(field, advancedText.getValue());
+      if (!advancedQuery.isEmpty()) {
+        //OperatorNodeObject wrapper = new OperatorNodeObject();
+        //wrapper.putAll(advancedQuery);
+        //TODO: fix
+        //return wrapper;
+        this.putAll(advancedQuery);
+      }
     }
   }
 }

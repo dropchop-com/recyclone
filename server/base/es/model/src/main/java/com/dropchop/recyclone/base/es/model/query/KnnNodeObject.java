@@ -2,7 +2,6 @@ package com.dropchop.recyclone.base.es.model.query;
 
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
-import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.KnnCondition;
 import com.dropchop.recyclone.base.api.model.query.condition.Knn;
 import lombok.Getter;
@@ -14,9 +13,10 @@ public class KnnNodeObject extends QueryNodeObject {
   private final float[] queryVector;
   private final String queryString;
   private final Integer k;
-  private final Condition filter;
   private final Float similarity;
   private final Integer numCandidates;
+  private final QueryNodeObject filter;
+  private final QueryNodeObject self = new QueryNodeObject();
 
   private void validateAndBuild() {
     if (field == null || field.isEmpty()) {
@@ -27,9 +27,9 @@ public class KnnNodeObject extends QueryNodeObject {
     }
 
     if (queryVector != null && queryVector.length > 0) {
-      this.put("query_vector", queryVector);
+      this.self.put("query_vector", queryVector);
     } else if (queryString != null && !queryString.isBlank()) {
-      this.put("query_vector", new float[]{});
+      this.self.put("query_vector", new float[]{});
     } else {
       throw new ServiceException(
           ErrorCode.parameter_validation_error,
@@ -37,22 +37,32 @@ public class KnnNodeObject extends QueryNodeObject {
       );
     }
 
-    this.put("field", field);
+    this.self.put("field", field);
 
     if (k != null) {
-      this.put("k", k);
+      this.self.put("k", k);
     }
 
     if (similarity != null) {
-      this.put("similarity", similarity);
+      this.self.put("similarity", similarity);
     }
 
     if (numCandidates != null) {
-      this.put("num_candidates", numCandidates);
+      this.self.put("num_candidates", numCandidates);
     }
+
+    if (filter != null) {
+      if (filter instanceof BoolQueryObject boolQuery) {
+        this.self.put("filter", boolQuery);
+      } else {
+        this.self.put("filter", filter);
+      }
+    }
+
+    this.put("knn", self);
   }
 
-  public KnnNodeObject(IQueryNode parent, Knn knnQuery) {
+  public KnnNodeObject(IQueryNode parent, Knn knnQuery, QueryNodeObject filterQuery) {
     super(parent);
     this.field = knnQuery.get$knn().getName();
     KnnCondition<?> condition = knnQuery.get$knn();
@@ -68,7 +78,10 @@ public class KnnNodeObject extends QueryNodeObject {
       this.queryString = null;
     }
     this.k = condition.getTopK();
-    this.filter = condition.getFilter();
+    this.filter = filterQuery;
+    if (filterQuery != null) {
+      this.filter.setParent(this);
+    }
     this.similarity = condition.getSimilarity();
     this.numCandidates = condition.getNumCandidates();
 
@@ -77,9 +90,9 @@ public class KnnNodeObject extends QueryNodeObject {
 
   public void replaceQueryVector(float[] queryVector) {
     if (queryVector == null || queryVector.length == 0) {
-      this.remove("query_vector");
+      this.self.remove("query_vector");
     } else {
-      this.put("query_vector", queryVector);
+      this.self.put("query_vector", queryVector);
     }
   }
 
@@ -93,46 +106,25 @@ public class KnnNodeObject extends QueryNodeObject {
 
   public void replaceSimilarity(Float similarity) {
     if (similarity == null) {
-      this.remove("similarity");
+      this.self.remove("similarity");
       return;
     }
-    this.put("similarity", similarity);
+    this.self.put("similarity", similarity);
   }
 
   public void replaceTopK(Integer topK) {
     if (topK == null) {
-      this.remove("k");
+      this.self.remove("k");
       return;
     }
-    this.put("k", topK);
+    this.self.put("k", topK);
   }
 
   public void replaceNumCandidates(Integer numCandidates) {
     if (numCandidates == null) {
-      this.remove("num_candidates");
+      this.self.remove("num_candidates");
       return;
     }
-    this.put("num_candidates", numCandidates);
-  }
-
-  public KnnNodeObject addFilter(QueryNodeObject filterQuery) {
-    if (filter != null && filterQuery != null) {
-      QueryNodeObject wrappedFilter = new QueryNodeObject(this);
-      wrappedFilter.put("bool", filterQuery);
-      this.put("filter", wrappedFilter);
-    }
-    return this;
-  }
-
-  @Override
-  public void setParent(IQueryNode parent) {
-    IQueryNode prevParent = this.getParent();
-    if (prevParent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) prevParent).remove("knn");
-    }
-    super.setParent(parent);
-    if (parent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) parent).put("knn", this);
-    }
+    this.self.put("num_candidates", numCandidates);
   }
 }

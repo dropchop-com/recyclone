@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.dto.model.text;
+package com.dropchop.recyclone.base.api.model.legacy.text;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Phrase extends ExpressionToken implements Serializable {
+public class Or extends ExpressionToken implements Serializable {
   private List<ExpressionToken> expressionTokens = new LinkedList<>();
 }

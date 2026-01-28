@@ -8,6 +8,7 @@ public class SpanNearObject extends QueryNodeObject {
   private final IQueryNodeList clauses;
   private final Integer slop;
   private final Boolean inOrder;
+  private final QueryNodeObject self = new QueryNodeObject();
 
   public SpanNearObject(IQueryNode parent, Integer slop, Boolean inOrder) {
     super(parent);
@@ -15,9 +16,10 @@ public class SpanNearObject extends QueryNodeObject {
     this.inOrder = inOrder;
     this.slop = slop;
 
-    this.put("clauses", clauses);
-    this.put("in_order", inOrder);
-    this.put("slop", slop);
+    this.self.put("clauses", clauses);
+    this.self.put("in_order", inOrder);
+    this.self.put("slop", slop);
+    this.put("span_near", this.self);
   }
 
   public SpanNearObject addClause(IQueryNode clause) {
@@ -29,17 +31,5 @@ public class SpanNearObject extends QueryNodeObject {
       clauses.add(clause);
     }
     return this;
-  }
-
-  @Override
-  public void setParent(IQueryNode parent) {
-    IQueryNode prevParent = this.getParent();
-    if (prevParent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) prevParent).remove("span_near");
-    }
-    super.setParent(parent);
-    if (parent instanceof IQueryNodeObject) {
-      ((IQueryNodeObject) parent).put("span_near", this);
-    }
   }
 }

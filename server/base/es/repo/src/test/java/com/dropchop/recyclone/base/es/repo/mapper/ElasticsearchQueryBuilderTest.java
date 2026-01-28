@@ -80,141 +80,105 @@ public class ElasticsearchQueryBuilderTest {
 
     String expectedJson = """
       {
-         "query": {
-           "bool": {
-             "must": [
-               {
-                 "bool": {
-                   "should": [
-                     {
-                       "range": {
-                         "updated": {
-                           "gte": "2024-09-19T10:12:01.123+02",
-                           "lt": "2024-09-20T11:00:01.123+02"
-                         }
-                       }
-                     },
-                     {
-                       "bool": {
-                         "must": [
-                           {
-                             "terms": {
-                               "neki": [
-                                 "one",
-                                 "two",
-                                 "three"
-                               ]
-                             }
-                           },
-                           {
-                             "range": {
-                               "created": {
-                                 "lt": "2024-09-19T10:12:01.123+02"
-                               }
-                             }
-                           }
-                         ]
-                       }
-                     },
-                     {
-                       "range": {
-                         "modified": {
-                           "gte": "2024-09-19T10:12:01.123+02",
-                           "lte": "2024-09-19T10:12:01.123+02"
-                         }
-                       }
-                     },
-                     {
-                       "bool": {
-                         "must_not": {
-                           "terms": {
-                             "uuid": [
-                               "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db",
-                               "c456c510-3939-4e2a-98d1-3d02c5d2c609"
-                             ]
-                           }
-                         }
-                       }
-                     }
-                   ],
-                   "minimum_should_match": 1
-                 }
-               },
-               {
-                 "terms": {
-                   "type": [
-                     1,
-                     2,
-                     3
-                   ]
-                 }
-               },
-               {
-                 "range": {
-                   "created": {
-                     "gte": "2024-09-19T10:12:01.123+02",
-                     "lte": "2024-09-19T10:12:01.123+02"
-                   }
-                 }
-               },
-               {
-                 "bool": {
-                   "must_not": {
-                     "exists": {
-                       "field": "miki"
-                     }
-                   }
-                 }
-               },
-               {
-                 "terms": {
-                   "type2": [
-                     1,
-                     2,
-                     3
-                   ]
-                 }
-               },
-               {
-                 "term": {
-                   "type4": "type8"
-                 }
-               }
-             ]
-           }
-         },
-         "aggs": {
-            "watch_max": {
-                "max": {
-                    "field": "watch"
-                }
-            },
-            "nested_nested_worker_cardinality": {
-                "cardinality": {
-                    "field": "worker"
-                }
-            },
-            "nested_nested_worker_dateHistogram": {
-                "date_histogram": {
-                    "calendar_interval": "month",
-                    "field": "worker"
-                }
-            },
-            "nested_worker_terms": {
-                "aggs": {
-                    "neste_min": {
-                        "min": {
-                            "field": "worker"
-                        }
+        "from" : 0,
+        "size" : 100,
+        "query" : {
+          "bool" : {
+            "must" : [ {
+              "bool" : {
+                "should" : [ {
+                  "range" : {
+                    "updated" : {
+                      "gte" : "2024-09-19T10:12:01.123+02",
+                      "lt" : "2024-09-20T11:00:01.123+02"
                     }
-                },
-                "terms": {
-                    "field": "worker"
+                  }
+                }, {
+                  "bool" : {
+                    "must" : [ {
+                      "terms" : {
+                        "neki" : [ "one", "two", "three" ]
+                      }
+                    }, {
+                      "range" : {
+                        "created" : {
+                          "lt" : "2024-09-19T10:12:01.123+02"
+                        }
+                      }
+                    } ]
+                  }
+                }, {
+                  "term" : {
+                    "modified" : "2024-09-19T10:12:01.123+02"
+                  }
+                }, {
+                  "bool" : {
+                    "must_not" : {
+                      "terms" : {
+                        "uuid" : [ "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609" ]
+                      }
+                    }
+                  }
+                } ],
+                "minimum_should_match" : 1
+              }
+            }, {
+              "terms" : {
+                "type" : [ 1, 2, 3 ]
+              }
+            }, {
+              "term" : {
+                "created" : "2024-09-19T10:12:01.123+02"
+              }
+            }, {
+              "bool" : {
+                "must_not" : {
+                  "exists" : {
+                    "field" : "miki"
+                  }
                 }
-            }
+              }
+            }, {
+              "terms" : {
+                "type2" : [ 1, 2, 3 ]
+              }
+            }, {
+              "term" : {
+                "type4" : "type8"
+              }
+            } ]
+          }
         },
-        "from": 0,
-        "size": 100
+        "aggs" : {
+          "watch_max" : {
+            "max" : {
+              "field" : "watch"
+            }
+          },
+          "nested_nested_worker_cardinality" : {
+            "cardinality" : {
+              "field" : "worker"
+            }
+          },
+          "nested_nested_worker_dateHistogram" : {
+            "date_histogram" : {
+              "field" : "worker",
+              "calendar_interval" : "month"
+            }
+          },
+          "nested_worker_terms" : {
+            "terms" : {
+              "field" : "worker"
+            },
+            "aggs" : {
+              "neste_min" : {
+                "min" : {
+                  "field" : "worker"
+                }
+              }
+            }
+          }
+        }
       }
       """;
 
@@ -677,30 +641,29 @@ public class ElasticsearchQueryBuilderTest {
       .build();
 
     String expectedJson = """
-      
-          {
-         "from" : 0,
-         "size" : 100,
-         "query" : {
-           "bool" : {
-             "must" : [ {
-               "term" : {
-                 "title" : "smartphone"
-               }
-             }, {
-               "term" : {
-                 "category" : "electronics"
-               }
-             }, {
-               "knn" : {
-                 "field" : "product_embedding",
-                 "query_vector" : [ 0.5, 0.3, 0.8 ],
-                 "k" : 5
-               }
-             } ]
-           }
+      {
+       "from" : 0,
+       "size" : 100,
+       "query" : {
+         "bool" : {
+           "must" : [ {
+             "term" : {
+               "title" : "smartphone"
+             }
+           }, {
+             "term" : {
+               "category" : "electronics"
+             }
+           }, {
+             "knn" : {
+               "field" : "product_embedding",
+               "query_vector" : [ 0.5, 0.3, 0.8 ],
+               "k" : 5
+             }
+           } ]
          }
        }
+      }
       """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
@@ -939,29 +902,29 @@ public class ElasticsearchQueryBuilderTest {
       .build();
 
     String expectedJson = """
-  {
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "term": {
-              "category": "electronics"
-            }
-          },
-          {
-            "knn": {
-              "field": "product_embedding",
-              "query_vector": [0.1, 0.2, 0.3],
-              "k": 5
-            }
+      {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "category": "electronics"
+                }
+              },
+              {
+                "knn": {
+                  "field": "product_embedding",
+                  "query_vector": [0.1, 0.2, 0.3],
+                  "k": 5
+                }
+              }
+            ]
           }
-        ]
+        },
+        "from": 0,
+        "size": 100
       }
-    },
-    "from": 0,
-    "size": 100
-  }
-  """;
+      """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
