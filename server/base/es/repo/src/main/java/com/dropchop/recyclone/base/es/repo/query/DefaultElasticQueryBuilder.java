@@ -291,7 +291,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       sortOrder.put("sort", sortEntries);
       return sortOrder;
     } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
-      QueryObject defaultSort = hasDefaultSort.getSortOrder();
+      IQueryObject defaultSort = hasDefaultSort.getSortOrder();
       if ((defaultSort == null || defaultSort.isEmpty()) && useSearchAfter) {
         throw new ServiceException(
             ErrorCode.internal_error, "No sort order received from index config for deep pagination!"

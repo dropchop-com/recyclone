@@ -6,6 +6,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
 import com.dropchop.recyclone.base.es.model.query.QueryObject;
 
 /**
@@ -25,7 +26,7 @@ public interface HasClassBasedDefaultSort extends HasDefaultSort, ClassIndexConf
     }
   }
 
-  default QueryObject getSortOrder() {
+  default IQueryObject getSortOrder() {
     QueryObject defaultSort = new QueryObject();
     Class<?> rootClass = getRootClass();
     if (HasCreated.class.isAssignableFrom(rootClass)) {
