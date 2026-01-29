@@ -4,12 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@SuppressWarnings("unused")
 public class Bool extends QueryObject {
   private final IQueryList must = new QueryList(this);
   private final IQueryList should = new QueryList(this);
   private final IQueryList mustNot = new QueryList(this);
-  private final IQueryList filter = new QueryList(this);
   private final IQueryObject self = new QueryObject();
 
   @Setter
@@ -41,16 +39,17 @@ public class Bool extends QueryObject {
     numClauses++;
   }
 
+  @Override
+  public boolean isEmpty() {
+    return this.must.isEmpty() && this.should.isEmpty() && this.mustNot.isEmpty();
+  }
+
   public void must(IQueryNode node) {
     this.add(node, must, "must");
   }
 
   public void mustNot(IQueryNode node) {
     this.add(node, mustNot, "must_not");
-  }
-
-  public void filter(IQueryNode node) {
-    this.add(node, filter, "filter");
   }
 
   public void should(IQueryNode node) {

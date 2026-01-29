@@ -8,6 +8,7 @@ import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.Sort;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
+import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.*;
 import com.dropchop.recyclone.base.es.model.query.Knn;

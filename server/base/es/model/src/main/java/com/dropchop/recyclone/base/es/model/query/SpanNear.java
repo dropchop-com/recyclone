@@ -17,8 +17,12 @@ public class SpanNear extends QueryObject {
     this.slop = slop;
 
     this.self.put("clauses", clauses);
-    this.self.put("in_order", inOrder);
-    this.self.put("slop", slop);
+    if (inOrder != null) {
+      this.self.put("in_order", inOrder);
+    }
+    if (slop != null) {
+      this.self.put("slop", slop);
+    }
     this.put("span_near", this.self);
   }
 

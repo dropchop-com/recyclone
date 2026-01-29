@@ -21,6 +21,7 @@ import java.util.*;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 19. 09. 24.
  */
+@SuppressWarnings({"SpellCheckingInspection", "RedundantSuppression"})
 public class ConditionDeserializer extends JsonDeserializer<Condition> {
 
   private Object parseValidate(String name, JsonNode node) throws IOException {
@@ -29,6 +30,40 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
       throw new IllegalArgumentException("Invalid query field value at [" + name + "]!");
     }
     return value;
+  }
+
+  private <T> T getOrNull(JsonNode node, String name, Class<T> tClass) {
+    if (!(node.has(name) && node.get(name).isValueNode())) {
+      return null;
+    }
+    if (node.isNull()) {
+      return null;
+    }
+    if (tClass == Boolean.class) {
+      //noinspection unchecked
+      return (T) (Boolean.valueOf(node.asBoolean()));
+    }
+    if (tClass == Integer.class) {
+      //noinspection unchecked
+      return (T) (Integer.valueOf(node.asInt()));
+    }
+    if (tClass == Long.class) {
+      //noinspection unchecked
+      return (T) (Long.valueOf(node.asLong()));
+    }
+    if (tClass == String.class) {
+      //noinspection unchecked
+      return (T) (node.asText());
+    }
+    if (tClass == Float.class) {
+      //noinspection unchecked
+      return (T) (Float.valueOf(Double.valueOf(node.asDouble()).floatValue()));
+    }
+    if (tClass == Double.class) {
+      //noinspection unchecked
+      return (T) (Double.valueOf(node.asDouble()));
+    }
+    return null;
   }
 
   private Condition parseConditionedField(String name, Map<String, JsonNode> fields) throws IOException {
@@ -59,7 +94,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
     if (fields.size() == 2) {
       String cname1 = cNames.getFirst();
       String cname2 = cNames.getLast();
-      if (cname1.startsWith("$lt") && cname2.startsWith("$gt")) { // swap values in list
+      if (cname1.startsWith("$lt") && cname2.startsWith("$gt")) { // swap values in a list
         Collections.swap(cNames, 0, cNames.size() - 1);
         Collections.swap(cClasses, 0, cClasses.size() - 1);
       }
@@ -92,19 +127,10 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
         }
         if (operatorName.endsWith("match")) {
           try {
-            String conditionValue = valueNode.get("value").asText();
-            Boolean caseInsensitive = valueNode.has("caseInsensitive")
-              ? valueNode.get("caseInsensitive").asBoolean()
-              : null;
-
-            Integer slop = valueNode.has("slop")
-              ? valueNode.get("slop").asInt()
-              : null;
-
-            Boolean inOrder = valueNode.has("inOrder")
-              ? valueNode.get("inOrder").asBoolean()
-              : null;
-
+            String conditionValue = getOrNull(valueNode, "value", String.class);
+            Boolean caseInsensitive = getOrNull(valueNode, "caseInsensitive", Boolean.class);
+            Integer slop = getOrNull(valueNode, "slop", Integer.class);
+            Boolean inOrder = getOrNull(valueNode, "inOrder", Boolean.class);
             return new ConditionedField(
               name, new Match<>(new AdvancedText(conditionValue, caseInsensitive, slop, inOrder))
             );
@@ -116,15 +142,9 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           }
         } else if (operatorName.endsWith("matchPhrase")) {
           try {
-            String conditionValue = valueNode.get("value").asText();
-            String analyzer = valueNode.has("analyzer")
-              ? valueNode.get("analyzer").asText()
-              : null;
-
-            Integer slop = valueNode.has("slop")
-              ? valueNode.get("slop").asInt()
-              : null;
-
+            String conditionValue = getOrNull(valueNode, "value", String.class);
+            String analyzer = getOrNull(valueNode, "analyzer", String.class);
+            Integer slop = getOrNull(valueNode, "slop", Integer.class);
             return new ConditionedField(name, new Match<>(new Phrase(conditionValue, analyzer, slop)));
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
@@ -134,15 +154,9 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
           }
         } else if (operatorName.endsWith("matchWildcard")) {
           try {
-            String conditionValue = valueNode.get("value").asText();
-            Boolean caseInsensitive = valueNode.has("caseInsensitive")
-              ? valueNode.get("caseInsensitive").asBoolean()
-              : null;
-
-            Float boost = valueNode.has("boost")
-              ? Double.valueOf(valueNode.get("boost").asDouble()).floatValue()
-              : null;
-
+            String conditionValue = getOrNull(valueNode, "value", String.class);
+            Boolean caseInsensitive = getOrNull(valueNode, "caseInsensitive", Boolean.class);
+            Float boost = getOrNull(valueNode, "boost", Float.class);
             return new ConditionedField(name, new Match<>(new Wildcard(conditionValue, caseInsensitive, boost)));
           } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
@@ -185,8 +199,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
     if (node.isObject()) {
       Map<String, JsonNode> fields = new LinkedHashMap<>();
       int numOps = 0;
-      for (Iterator<Map.Entry<String, JsonNode>> iterator = node.fields(); iterator.hasNext(); ) {
-        Map.Entry<String, JsonNode> entry = iterator.next();
+      for (Map.Entry<String, JsonNode> entry : node.properties()) {
         String fname = entry.getKey();
         if (fname.startsWith("$")) {
           numOps++;
@@ -260,7 +273,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
             for (int i = 0; i < queryValueNode.size(); i++) {
               queryVector[i] = (float) queryValueNode.get(i).asDouble();
             }
-            if (queryVector.length <= 0) {
+            if (queryVector.length == 0) {
               throw new IllegalArgumentException(
                   "Invalid KNN query: 'value' is required and must be an array with at least one element at ["
                       + name + "]!"
@@ -279,27 +292,15 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
             );
           }
 
-          Integer k = null;
-          JsonNode kNode = valueNode.get("topK");
-          if (kNode != null && kNode.isIntegralNumber()) {
-            k = kNode.asInt();
-          }
-          Integer numCandidates = null;
-          JsonNode numNode = valueNode.get("numCandidates");
-          if (numNode != null && numNode.isIntegralNumber()) {
-            numCandidates = numNode.asInt();
-          }
+          Integer k = getOrNull(valueNode, "k", Integer.class);
+          Integer numCandidates = getOrNull(valueNode, "numCandidates", Integer.class);
           Condition filter = null;
           JsonNode filterNode = valueNode.get("filter");
           if (filterNode != null && filterNode.isObject()) {
             String filterName = filterNode.fieldNames().next();
             filter = parseCondition(filterName, filterNode.get(filterName));
           }
-          Float similarity = null;
-          JsonNode similarityNode = valueNode.get("similarity");
-          if (similarityNode != null && similarityNode.isNumber()) {
-            similarity = (float) similarityNode.asDouble();
-          }
+          Float similarity = getOrNull(valueNode, "similarity", Float.class);
           if (queryVector != null) {
             return new Knn(new KnnEmbeddingCondition(field, queryVector, k, similarity, numCandidates, filter));
           } else {
@@ -318,7 +319,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
     // the root of condition hierarchy
     ObjectCodec oc = jp.getCodec();
     JsonNode node = oc.readTree(jp);
-    Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
+    Iterator<Map.Entry<String, JsonNode>> iterator = node.properties().iterator();
     if (iterator.hasNext()) {
       Map.Entry<String, JsonNode> entry = iterator.next();
       String name = entry.getKey();

@@ -35,6 +35,21 @@ public class ExpressionToken implements Serializable {
     return expression.substring(len - 1).equals("*");
   }
 
+  public boolean isWildcard() {
+    if (expression.length() <= 1) {
+      return false;
+    }
+    for (int i = 0; i < expression.length(); i++) {
+      if (expression.charAt(i) == '*' && i < expression.length() - 1) {
+        return true;
+      }
+      if (expression.charAt(i) == '?') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public void setStartEnd(int start, int end) {
     this.start = start;
     this.end = end;

@@ -8,28 +8,20 @@ import com.dropchop.recyclone.base.jackson.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.List;
 
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.*;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.aggs;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.avg;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.cardinality;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.dateHistogram;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.min;
-import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.terms;
 import static com.dropchop.recyclone.base.api.model.query.Aggregation.topHits;
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
-import static com.dropchop.recyclone.base.api.model.query.Condition.knn;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
-import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.includes;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 01. 2026.
  */
+@SuppressWarnings({"SpellCheckingInspection", "RedundantSuppression"})
 class DefaultElasticQueryBuilderTest {
 
   @Test
@@ -89,108 +81,108 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String expectedJson = """
-      {
-        "from" : 0,
-        "size" : 100,
-        "query" : {
-          "bool" : {
-            "must" : [ {
-              "bool" : {
-                "should" : [ {
-                  "range" : {
-                    "updated" : {
-                      "gte" : "2024-09-19T10:12:01.123+02",
-                      "lt" : "2024-09-20T11:00:01.123+02"
-                    }
-                  }
-                }, {
-                  "bool" : {
-                    "must" : [ {
-                      "terms" : {
-                        "neki" : [ "one", "two", "three" ]
-                      }
-                    }, {
-                      "range" : {
-                        "created" : {
-                          "lt" : "2024-09-19T10:12:01.123+02"
-                        }
-                      }
-                    } ]
-                  }
-                }, {
-                  "term" : {
-                    "modified" : "2024-09-19T10:12:01.123+02"
-                  }
-                }, {
-                  "bool" : {
-                    "must_not" : {
-                      "terms" : {
-                        "uuid" : [ "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609" ]
-                      }
-                    }
-                  }
-                } ],
-                "minimum_should_match" : 1
-              }
-            }, {
-              "terms" : {
-                "type" : [ 1, 2, 3 ]
-              }
-            }, {
-              "term" : {
-                "created" : "2024-09-19T10:12:01.123+02"
-              }
-            }, {
-              "bool" : {
-                "must_not" : {
-                  "exists" : {
-                    "field" : "miki"
+    {
+      "from" : 0,
+      "size" : 100,
+      "query" : {
+        "bool" : {
+          "must" : [ {
+            "bool" : {
+              "should" : [ {
+                "range" : {
+                  "updated" : {
+                    "gte" : "2024-09-19T10:12:01.123+02",
+                    "lt" : "2024-09-20T11:00:01.123+02"
                   }
                 }
+              }, {
+                "bool" : {
+                  "must" : [ {
+                    "terms" : {
+                      "neki" : [ "one", "two", "three" ]
+                    }
+                  }, {
+                    "range" : {
+                      "created" : {
+                        "lt" : "2024-09-19T10:12:01.123+02"
+                      }
+                    }
+                  } ]
+                }
+              }, {
+                "term" : {
+                  "modified" : "2024-09-19T10:12:01.123+02"
+                }
+              }, {
+                "bool" : {
+                  "must_not" : {
+                    "terms" : {
+                      "uuid" : [ "6ad7cbc2-fdc3-4eb3-bb64-ba6a510004db", "c456c510-3939-4e2a-98d1-3d02c5d2c609" ]
+                    }
+                  }
+                }
+              } ],
+              "minimum_should_match" : 1
+            }
+          }, {
+            "terms" : {
+              "type" : [ 1, 2, 3 ]
+            }
+          }, {
+            "term" : {
+              "created" : "2024-09-19T10:12:01.123+02"
+            }
+          }, {
+            "bool" : {
+              "must_not" : {
+                "exists" : {
+                  "field" : "miki"
+                }
               }
-            }, {
-              "terms" : {
-                "type2" : [ 1, 2, 3 ]
-              }
-            }, {
-              "term" : {
-                "type4" : "type8"
-              }
-            } ]
+            }
+          }, {
+            "terms" : {
+              "type2" : [ 1, 2, 3 ]
+            }
+          }, {
+            "term" : {
+              "type4" : "type8"
+            }
+          } ]
+        }
+      },
+      "aggs" : {
+        "watch_max" : {
+          "max" : {
+            "field" : "watch"
           }
         },
-        "aggs" : {
-          "watch_max" : {
-            "max" : {
-              "field" : "watch"
-            }
+        "nested_nested_worker_cardinality" : {
+          "cardinality" : {
+            "field" : "worker"
+          }
+        },
+        "nested_nested_worker_dateHistogram" : {
+          "date_histogram" : {
+            "field" : "worker",
+            "calendar_interval" : "month"
+          }
+        },
+        "nested_worker_terms" : {
+          "terms" : {
+            "field" : "worker"
           },
-          "nested_nested_worker_cardinality" : {
-            "cardinality" : {
-              "field" : "worker"
-            }
-          },
-          "nested_nested_worker_dateHistogram" : {
-            "date_histogram" : {
-              "field" : "worker",
-              "calendar_interval" : "month"
-            }
-          },
-          "nested_worker_terms" : {
-            "terms" : {
-              "field" : "worker"
-            },
-            "aggs" : {
-              "neste_min" : {
-                "min" : {
-                  "field" : "worker"
-                }
+          "aggs" : {
+            "neste_min" : {
+              "min" : {
+                "field" : "worker"
               }
             }
           }
         }
       }
-      """;
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
 
@@ -240,8 +232,6 @@ class DefaultElasticQueryBuilderTest {
   }
 
   @Test
-  @Disabled
-  // NOT HOW IT WORKS ANYMORE
   public void processAdvancedText() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
         and(
@@ -249,50 +239,50 @@ class DefaultElasticQueryBuilderTest {
         )
     ).build();
 
-    String correctJson =
-        """
-          {
-            "query": {
-              "bool": {
-                "must": {
-                  "span_near": {
-                    "in_order": false,
-                    "clauses": [
-                      {
-                        "span_multi": {
-                          "match": {
-                            "prefix": {
-                              "text": {
-                                "value": "krem"
-                              }
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "span_term": {
-                          "text": {
-                            "value": "proti"
-                          }
-                        }
-                      },
-                      {
-                        "span_term": {
-                          "text": {
-                            "value": "gubam"
+    String correctJson = """
+    {
+      "query" : {
+        "bool" : {
+          "must" : {
+            "bool" : {
+              "should" : {
+                "span_near" : {
+                  "clauses" : [ {
+                    "span_multi" : {
+                      "match" : {
+                        "prefix" : {
+                          "text" : {
+                            "value" : "krem"
                           }
                         }
                       }
-                    ],
-                    "slop": 1
-                  }
+                    }
+                  }, {
+                    "span_term" : {
+                      "text" : {
+                        "value" : "proti"
+                      }
+                    }
+                  }, {
+                    "span_term" : {
+                      "text" : {
+                        "value" : "gubam"
+                      }
+                    }
+                  } ],
+                  "in_order" : false,
+                  "slop" : 1
                 }
-              }
-            },
-            "from": 0,
-            "size": 100
+              },
+              "minimum_should_match" : 1
+            }
           }
-          """;
+        }
+      },
+      "from" : 0,
+      "size" : 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -304,8 +294,6 @@ class DefaultElasticQueryBuilderTest {
   }
 
   @Test
-  @Disabled
-  // NOT HOW IT WORKS ANYMORE
   public void processAdvancedSearchTestWithWildcard() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
         and(
@@ -313,52 +301,56 @@ class DefaultElasticQueryBuilderTest {
         )
     ).build();
 
-    String correctJson =
-        """
-          {
-            "query" : {
-              "bool" : {
-                "must" : {
-                  "span_near" : {
-                    "clauses" : [ {
-                      "span_multi" : {
-                        "match" : {
-                          "wildcard" : {
-                            "case_insensitive": true,
-                            "text" : {
-                              "value" : "kr*m*"
-                            }
+    String correctJson = """
+    {
+      "query" : {
+        "bool" : {
+          "must" : {
+            "bool" : {
+              "should" : {
+                "span_near" : {
+                  "clauses" : [ {
+                    "span_multi" : {
+                      "match" : {
+                        "wildcard" : {
+                          "text" : {
+                            "value" : "kr*m*",
+                            "case_insensitive" : true
                           }
                         }
                       }
-                    }, {
-                      "span_multi" : {
-                        "match" : {
-                          "wildcard" : {
-                            "case_insensitive": true,
-                            "text" : {
-                              "value" : "pr*ti"
-                            }
+                    }
+                  }, {
+                    "span_multi" : {
+                      "match" : {
+                        "wildcard" : {
+                          "text" : {
+                            "value" : "pr*ti",
+                            "case_insensitive" : true
                           }
                         }
                       }
-                    }, {
-                      "span_term" : {
-                        "text" : {
-                          "value" : "gubam"
-                        }
+                    }
+                  }, {
+                    "span_term" : {
+                      "text" : {
+                        "value" : "gubam"
                       }
-                    } ],
-                    "in_order" : true,
-                    "slop" : 0
-                  }
+                    }
+                  } ],
+                  "in_order" : true,
+                  "slop" : 0
                 }
-              }
-            },
-            "from": 0,
-            "size": 100
+              },
+              "minimum_should_match" : 1
+            }
           }
-          """;
+        }
+      },
+      "from" : 0,
+      "size" : 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -370,8 +362,6 @@ class DefaultElasticQueryBuilderTest {
   }
 
   @Test
-  @Disabled
-  // NOT HOW IT WORKS ANYMORE
   public void processAdvancedTextAutoCase() throws JsonProcessingException, JSONException {
     QueryParams params = QueryParams.builder().condition(
         and(
@@ -379,43 +369,44 @@ class DefaultElasticQueryBuilderTest {
         )
     ).build();
 
-    String correctJson =
-        """
-          {
-            "query": {
-              "bool": {
-                "must": {
-                  "span_near": {
-                    "in_order": true,
-                    "clauses": [
-                      {
-                        "span_term": {
-                          "text": {
-                            "value": "nivea"
-                          }
-                        }
-                      },
-                      {
-                        "span_multi": {
-                          "match": {
-                            "prefix": {
-                              "text": {
-                                "value": "krem"
-                              }
-                            }
+    String correctJson = """
+    {
+      "query" : {
+        "bool" : {
+          "must" : {
+            "bool" : {
+              "should" : {
+                "span_near" : {
+                  "clauses" : [ {
+                    "span_term" : {
+                      "text" : {
+                        "value" : "nivea"
+                      }
+                    }
+                  }, {
+                    "span_multi" : {
+                      "match" : {
+                        "prefix" : {
+                          "text" : {
+                            "value" : "krem"
                           }
                         }
                       }
-                    ],
-                    "slop": 0
-                  }
+                    }
+                  } ],
+                  "in_order" : true,
+                  "slop" : 0
                 }
-              }
-            },
-            "from": 0,
-            "size": 100
+              },
+              "minimum_should_match" : 1
+            }
           }
-          """;
+        }
+      },
+      "from" : 0,
+      "size" : 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -446,30 +437,30 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String correctJson = """
-       {
-         "query" : {
-           "match_all" : { }
+    {
+      "query" : {
+       "match_all" : { }
+      },
+      "aggs" : {
+       "price_histogram" : {
+         "date_histogram" : {
+           "field" : "price",
+           "calendar_interval" : "seconds"
          },
          "aggs" : {
-           "price_histogram" : {
-             "date_histogram" : {
+           "price_sum" : {
+             "terms" : {
                "field" : "price",
-               "calendar_interval" : "seconds"
-             },
-             "aggs" : {
-               "price_sum" : {
-                 "terms" : {
-                   "field" : "price",
-                   "include" : [ "include_ports" ]
-                 }
-               }
+               "include" : [ "include_ports" ]
              }
            }
-         },
-         "from": 0,
-         "size": 100
+         }
        }
-       """;
+     },
+     "from": 0,
+     "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -500,30 +491,30 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String correctJson = """
-      {
-        "query" : {
-          "match_all" : { }
-        },
-        "aggs" : {
-          "price_histogram" : {
-            "date_histogram" : {
-              "field" : "price",
-              "calendar_interval" : "seconds"
-            },
-            "aggs" : {
-              "price_sum" : {
-                "terms" : {
-                  "field" : "price",
-                  "exclude" : [ "exclude_ports_1", "exclude_ports_2" ]
-                }
+    {
+      "query" : {
+        "match_all" : { }
+      },
+      "aggs" : {
+        "price_histogram" : {
+          "date_histogram" : {
+            "field" : "price",
+            "calendar_interval" : "seconds"
+          },
+          "aggs" : {
+            "price_sum" : {
+              "terms" : {
+                "field" : "price",
+                "exclude" : [ "exclude_ports_1", "exclude_ports_2" ]
               }
             }
           }
-        },
-        "from": 0,
-        "size": 100
-      }
-      """;
+        }
+      },
+      "from": 0,
+      "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -555,31 +546,31 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String correctJson = """
-      {
-        "query" : {
-          "match_all" : { }
-        },
-        "aggs" : {
-          "price_histogram" : {
-            "date_histogram" : {
-              "field" : "price",
-              "calendar_interval" : "seconds"
-            },
-            "aggs" : {
-              "price_sum" : {
-                "terms" : {
-                  "field" : "price",
-                  "include" : "include_ports.*",
-                  "exclude": "exclude_ports.*"
-                }
+    {
+      "query" : {
+        "match_all" : { }
+      },
+      "aggs" : {
+        "price_histogram" : {
+          "date_histogram" : {
+            "field" : "price",
+            "calendar_interval" : "seconds"
+          },
+          "aggs" : {
+            "price_sum" : {
+              "terms" : {
+                "field" : "price",
+                "include" : "include_ports.*",
+                "exclude": "exclude_ports.*"
               }
             }
           }
-        },
-        "from": 0,
-        "size": 100
-      }
-      """;
+        }
+      },
+      "from": 0,
+      "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -607,29 +598,29 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String correctJson = """
-      {
-        "query" : {
-          "match_all" : { }
-        },
-        "aggs" : {
-          "price_histogram" : {
-            "date_histogram" : {
-              "field" : "price",
-              "calendar_interval" : "seconds"
-            },
-            "aggs" : {
-              "price_sum" : {
-                "terms" : {
-                  "field" : "price"
-                }
+    {
+      "query" : {
+        "match_all" : { }
+      },
+      "aggs" : {
+        "price_histogram" : {
+          "date_histogram" : {
+            "field" : "price",
+            "calendar_interval" : "seconds"
+          },
+          "aggs" : {
+            "price_sum" : {
+              "terms" : {
+                "field" : "price"
               }
             }
           }
-        },
-        "from": 0,
-        "size": 100
-      }
-      """;
+        }
+      },
+      "from": 0,
+      "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -651,30 +642,30 @@ class DefaultElasticQueryBuilderTest {
         .build();
 
     String expectedJson = """
-      {
-       "from" : 0,
-       "size" : 100,
-       "query" : {
-         "bool" : {
-           "must" : [ {
-             "term" : {
-               "title" : "smartphone"
-             }
-           }, {
-             "term" : {
-               "category" : "electronics"
-             }
-           }, {
-             "knn" : {
-               "field" : "product_embedding",
-               "query_vector" : [ 0.5, 0.3, 0.8 ],
-               "k" : 5
-             }
-           } ]
-         }
+    {
+     "from" : 0,
+     "size" : 100,
+     "query" : {
+       "bool" : {
+         "must" : [ {
+           "term" : {
+             "title" : "smartphone"
+           }
+         }, {
+           "term" : {
+             "category" : "electronics"
+           }
+         }, {
+           "knn" : {
+             "field" : "product_embedding",
+             "query_vector" : [ 0.5, 0.3, 0.8 ],
+             "k" : 5
+           }
+         } ]
        }
-      }
-      """;
+     }
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -706,47 +697,47 @@ class DefaultElasticQueryBuilderTest {
         .build();
 
     String expectedJson = """
-      {
-        "from" : 0,
-        "size" : 100,
-        "query" : {
-          "bool" : {
-            "must" : {
-              "knn" : {
-                "field" : "article_embedding",
-                "query_vector" : [ 0.2, 0.4, 0.6, 0.8 ],
-                "k" : 12,
-                "similarity" : 0.7,
-                "filter" : {
-                  "bool" : {
-                    "should" : [ {
-                      "bool" : {
-                        "must" : [ {
-                          "term" : {
-                            "status" : "published"
+    {
+      "from" : 0,
+      "size" : 100,
+      "query" : {
+        "bool" : {
+          "must" : {
+            "knn" : {
+              "field" : "article_embedding",
+              "query_vector" : [ 0.2, 0.4, 0.6, 0.8 ],
+              "k" : 12,
+              "similarity" : 0.7,
+              "filter" : {
+                "bool" : {
+                  "should" : [ {
+                    "bool" : {
+                      "must" : [ {
+                        "term" : {
+                          "status" : "published"
+                        }
+                      }, {
+                        "range" : {
+                          "views" : {
+                            "gte" : 1000
                           }
-                        }, {
-                          "range" : {
-                            "views" : {
-                              "gte" : 1000
-                            }
-                          }
-                        } ]
-                      }
-                    }, {
-                      "term" : {
-                        "featured" : true
-                      }
-                    } ],
-                    "minimum_should_match" : 1
-                  }
+                        }
+                      } ]
+                    }
+                  }, {
+                    "term" : {
+                      "featured" : true
+                    }
+                  } ],
+                  "minimum_should_match" : 1
                 }
               }
             }
           }
         }
       }
-      """;
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -771,40 +762,40 @@ class DefaultElasticQueryBuilderTest {
         .build();
 
     String expectedJson = """
-      {
-        "from" : 0,
-        "size" : 100,
-        "query" : {
-          "bool" : {
-            "must" : {
-              "knn" : {
-                "field" : "user_behavior_embedding",
-                "query_vector" : [ 0.3, 0.7, 0.9 ],
-                "k" : 20
-              }
-            }
-          }
-        },
-        "aggs" : {
-          "category_breakdown" : {
-            "terms" : {
-              "field" : "category",
-              "size" : 10
-            }
-          },
-          "avg_price" : {
-            "avg" : {
-              "field" : "price"
-            }
-          },
-          "unique_brands" : {
-            "cardinality" : {
-              "field" : "brand"
+    {
+      "from" : 0,
+      "size" : 100,
+      "query" : {
+        "bool" : {
+          "must" : {
+            "knn" : {
+              "field" : "user_behavior_embedding",
+              "query_vector" : [ 0.3, 0.7, 0.9 ],
+              "k" : 20
             }
           }
         }
+      },
+      "aggs" : {
+        "category_breakdown" : {
+          "terms" : {
+            "field" : "category",
+            "size" : 10
+          }
+        },
+        "avg_price" : {
+          "avg" : {
+            "field" : "price"
+          }
+        },
+        "unique_brands" : {
+          "cardinality" : {
+            "field" : "brand"
+          }
+        }
       }
-      """;
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -834,64 +825,64 @@ class DefaultElasticQueryBuilderTest {
         .build();
 
     String expectedJson = """
-        {
-          "from" : 0,
-          "size" : 100,
-          "query" : {
+    {
+      "from" : 0,
+      "size" : 100,
+      "query" : {
+        "bool" : {
+          "must" : [ {
             "bool" : {
-              "must" : [ {
-                "bool" : {
-                  "should" : [ {
-                    "terms" : {
-                      "category" : [ "electronics", "gadgets" ]
-                    }
-                  }, {
-                    "term" : {
-                      "brand" : "Apple"
-                    }
-                  } ],
-                  "minimum_should_match" : 1
+              "should" : [ {
+                "terms" : {
+                  "category" : [ "electronics", "gadgets" ]
                 }
               }, {
-                "range" : {
-                  "price" : {
-                    "gte" : 50.0,
-                    "lt" : 1000.0
-                  }
+                "term" : {
+                  "brand" : "Apple"
                 }
-              }, {
-                "bool" : {
-                  "must_not" : {
-                    "term" : {
-                      "discontinued" : true
-                    }
-                  }
-                }
-              }, {
-                "knn" : {
-                  "field" : "product_features",
-                  "query_vector" : [ 0.4, 0.6, 0.2, 0.8 ],
-                  "k" : 10
-                }
-              } ]
+              } ],
+              "minimum_should_match" : 1
             }
-          },
-          "aggs" : {
-            "top_categories" : {
-              "terms" : {
-                "field" : "category",
-                "size" : 5
-              }
-            },
-            "sales_over_time" : {
-              "date_histogram" : {
-                "field" : "created",
-                "calendar_interval" : "month"
+          }, {
+            "range" : {
+              "price" : {
+                "gte" : 50.0,
+                "lt" : 1000.0
               }
             }
+          }, {
+            "bool" : {
+              "must_not" : {
+                "term" : {
+                  "discontinued" : true
+                }
+              }
+            }
+          }, {
+            "knn" : {
+              "field" : "product_features",
+              "query_vector" : [ 0.4, 0.6, 0.2, 0.8 ],
+              "k" : 10
+            }
+          } ]
+        }
+      },
+      "aggs" : {
+        "top_categories" : {
+          "terms" : {
+            "field" : "category",
+            "size" : 5
+          }
+        },
+        "sales_over_time" : {
+          "date_histogram" : {
+            "field" : "created",
+            "calendar_interval" : "month"
           }
         }
-      """;
+      }
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -912,29 +903,29 @@ class DefaultElasticQueryBuilderTest {
         .build();
 
     String expectedJson = """
-      {
-        "query": {
-          "bool": {
-            "must": [
-              {
-                "term": {
-                  "category": "electronics"
-                }
-              },
-              {
-                "knn": {
-                  "field": "product_embedding",
-                  "query_vector": [0.1, 0.2, 0.3],
-                  "k": 5
-                }
+    {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "category": "electronics"
               }
-            ]
-          }
-        },
-        "from": 0,
-        "size": 100
-      }
-      """;
+            },
+            {
+              "knn": {
+                "field": "product_embedding",
+                "query_vector": [0.1, 0.2, 0.3],
+                "k": 5
+              }
+            }
+          ]
+        }
+      },
+      "from": 0,
+      "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -969,44 +960,44 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String correctJson = """
-       {
-         "query" : {
-           "match_all" : { }
+    {
+      "query" : {
+       "match_all" : { }
+      },
+      "aggs" : {
+       "price_histogram" : {
+         "date_histogram" : {
+           "field" : "price",
+           "calendar_interval" : "seconds"
          },
          "aggs" : {
-           "price_histogram" : {
-             "date_histogram" : {
+           "price_sum" : {
+             "terms" : {
                "field" : "price",
-               "calendar_interval" : "seconds"
+               "include" : [ "include_ports" ]
              },
-             "aggs" : {
-               "price_sum" : {
-                 "terms" : {
-                   "field" : "price",
-                   "include" : [ "include_ports" ]
-                 },
-                 "aggs": {
-                   "NewsSegmentHits": {
-                     "top_hits": {
-                       "size": 50,
-                       "sort": [
-                         {
-                           "clickCount": {
-                             "order": "desc"
-                           }
-                         }
-                       ]
+             "aggs": {
+               "NewsSegmentHits": {
+                 "top_hits": {
+                   "size": 50,
+                   "sort": [
+                     {
+                       "clickCount": {
+                         "order": "desc"
+                       }
                      }
-                   }
+                   ]
                  }
                }
              }
            }
-         },
-         "from": 0,
-         "size": 100
+         }
        }
-       """;
+      },
+      "from": 0,
+      "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();
@@ -1041,45 +1032,45 @@ class DefaultElasticQueryBuilderTest {
     ).build();
 
     String correctJson = """
-       {
-         "query" : {
-           "match_all" : { }
+    {
+     "query" : {
+       "match_all" : { }
+     },
+     "aggs" : {
+       "price_histogram" : {
+         "date_histogram" : {
+           "field" : "price",
+           "calendar_interval" : "seconds"
          },
          "aggs" : {
-           "price_histogram" : {
-             "date_histogram" : {
+           "price_sum" : {
+             "terms" : {
                "field" : "price",
-               "calendar_interval" : "seconds"
+               "include" : [ "include_ports" ]
              },
-             "aggs" : {
-               "price_sum" : {
-                 "terms" : {
-                   "field" : "price",
-                   "include" : [ "include_ports" ]
-                 },
-                 "aggs": {
-                   "NewsSegmentHits": {
-                     "top_hits": {
-                       "size": 50,
-                       "sort": [
-                         {
-                           "clickCount": {
-                             "order": "desc",
-                             "numeric_type": "long"
-                           }
-                         }
-                       ]
+             "aggs": {
+               "NewsSegmentHits": {
+                 "top_hits": {
+                   "size": 50,
+                   "sort": [
+                     {
+                       "clickCount": {
+                         "order": "desc",
+                         "numeric_type": "long"
+                       }
                      }
-                   }
+                   ]
                  }
                }
              }
            }
-         },
-         "from": 0,
-         "size": 100
+         }
        }
-       """;
+     },
+     "from": 0,
+     "size": 100
+    }
+    """;
 
     DefaultElasticQueryBuilder es = new DefaultElasticQueryBuilder();
     ObjectMapperFactory factory = new ObjectMapperFactory();

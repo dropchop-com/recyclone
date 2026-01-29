@@ -1,8 +1,7 @@
 package com.dropchop.recyclone.base.es.model.query;
 
-import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionToken;
-import com.dropchop.recyclone.base.api.model.legacy.text.Filter;
 import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionParser;
+import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionToken;
 import com.dropchop.recyclone.base.api.model.legacy.text.Or;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
@@ -94,119 +93,100 @@ public class Operator extends QueryObject {
     if (v != null) to.put(key, v);
   }
 
-  //TODO: consolidate
-  private QueryObject expressionToQueryNode(String defaultField, ExpressionToken token) {
-    if (token instanceof Or orToken) {
-      Bool orBool = new Bool();
-      for (ExpressionToken part : orToken.getExpressionTokens()) {
-        QueryObject child = expressionToQueryNode(defaultField, part);
-        orBool.should(child);
-      }
-      orBool.setMinimumShouldMatch(1);
-      return orBool;
-    }
-
-    String field = defaultField;
-    if (token instanceof Filter filter && filter.getName() != null && !filter.getName().isEmpty()) {
-      field = filter.getName();
-    }
-
-    if (token instanceof com.dropchop.recyclone.base.api.model.legacy.text.Phrase phrase) {
-      String phraseText = phrase.getExpression().toString();
-      QueryObject matchPhrase = new QueryObject();
-      QueryObject conf = new QueryObject();
-      conf.put("query", phraseText);
-      Map<String, Object> meta = phrase.getMetaData();
-      if (meta != null) {
-        copyIfPresent(meta, conf, "slop");
-        copyIfPresent(meta, conf, "boost");
-        copyIfPresent(meta, conf, "analyzer");
-      }
-      QueryObject wrapper = new QueryObject();
-      wrapper.put(field, conf);
-      matchPhrase.put("match_phrase", wrapper);
-      return matchPhrase;
-    }
-    String term = token.getExpression().toString();
-    if (token.isPrefix() || term.indexOf('*') >= 0) {
-      QueryObject wildcard = new QueryObject();
-      QueryObject conf = new QueryObject();
-      conf.put("value", term);
-      conf.put("case_insensitive", true);
-      Map<String, Object> meta = token.getMetaData();
-      if (meta != null) {
-        copyIfPresent(meta, conf, "boost");
-      }
-      QueryObject wrapper = new QueryObject();
-      wrapper.put(field, conf);
-      wildcard.put("wildcard", wrapper);
-      return wildcard;
-    } else {
-      QueryObject match = new QueryObject();
-      QueryObject conf = new QueryObject();
-      conf.put("query", term);
-      Map<String, Object> meta = token.getMetaData();
-      if (meta != null) {
-        copyIfPresent(meta, conf, "fuzziness");
-        copyIfPresent(meta, conf, "boost");
-        copyIfPresent(meta, conf, "analyzer");
-        copyIfPresent(meta, conf, "operator");
-      }
-      QueryObject wrapper = new QueryObject();
-      wrapper.put(field, conf);
-      match.put("match", wrapper);
-      return match;
-    }
-  }
-
-  //TODO: consolidate
-  private QueryObject mapAdvancedText(String defaultField, String value) {
-    List<ExpressionToken> tokens = ExpressionParser.parse(value, false, true, true);
-
-    Bool inner = new Bool();
-    for (ExpressionToken token : tokens) {
-      QueryObject node = expressionToQueryNode(defaultField, token);
-      if (token.isMustNot()) {
-        inner.mustNot(node);
-      } else if (token.isMust()) {
-        inner.must(node);
+  private void mapAdvancedText(Bool query, String fieldName, AdvancedText advancedText, List<ExpressionToken> tokens) {
+    for(ExpressionToken token : tokens) {
+      IQueryObject subQuery = null;
+      if (token instanceof com.dropchop.recyclone.base.api.model.legacy.text.Phrase phrase) {
+        List<ExpressionToken> subTokens = phrase.getExpressionTokens();
+        if (subTokens.size() == 1) {
+          StringBuilder sequence = subTokens.getFirst().getExpression();
+          if (sequence.length() <= 1) {
+            continue;
+          }
+          //subQuery = new QueryNodeObject.MatchNodeObject(name, sequence.toString());
+        } else if (subTokens.size() > 1) {
+          SpanNear spanQuery = new SpanNear(query, advancedText.getSlop(), advancedText.getInOrder());
+          boolean added = false;
+          for (ExpressionToken subToken : subTokens) {
+            if (subToken.isWildcard()) {
+              StringBuilder sequence = subToken.getExpression();
+              spanQuery.addClause(new SpanMulti(query, new com.dropchop.recyclone.base.es.model.query.Wildcard(
+                  query, fieldName, sequence.toString().toLowerCase(), advancedText.getCaseInsensitive()
+              )));
+              added = true;
+            } else if (subToken.isPrefix()) {
+              StringBuilder sequence = subToken.getExpression();
+              String tokenVal = sequence.substring(0, sequence.length() - 1);
+              if (tokenVal.isEmpty()) {
+                continue;
+              }
+              spanQuery.addClause(new SpanMulti(
+                  query,
+                  new Prefix(query, fieldName, tokenVal.toLowerCase(), advancedText.getCaseInsensitive())
+              ));
+              added = true;
+            } else {
+              StringBuilder sequence = subToken.getExpression();
+              if (sequence.length() <= 0) {
+                continue;
+              }
+              spanQuery.addClause(new SpanTerm(query, fieldName, sequence.toString().toLowerCase()));
+              added = true;
+            }
+          }
+          if (!added) {
+            continue;
+          }
+          subQuery = spanQuery;
+        }
+      } else if (token instanceof Or orTokens) {
+        this.mapAdvancedText(query, fieldName, advancedText, orTokens.getExpressionTokens());
+      } else if (token.isWildcard()) {
+        StringBuilder sequence = token.getExpression();
+        String tok = sequence.toString().toLowerCase();
+        subQuery = new com.dropchop.recyclone.base.es.model.query.Wildcard(
+            query, fieldName, tok, advancedText.getCaseInsensitive()
+        );
+      } else if (token.isPrefix()) {
+        StringBuilder sequence = token.getExpression();
+        if (sequence.length() <= 1) {
+          continue;
+        }
+        String tok = sequence.toString().toLowerCase();
+        if (sequence.charAt(sequence.length() - 1) == '*') {
+          tok = sequence.substring(0, sequence.length() - 1).toLowerCase();
+        }
+        subQuery = new Prefix(query, fieldName, tok, advancedText.getCaseInsensitive());
       } else {
-        inner.should(node);
+        StringBuilder sequence = token.getExpression();
+        if (sequence.length() <= 0) {
+          continue;
+        }
+        subQuery = new com.dropchop.recyclone.base.es.model.query.Match(query, fieldName, sequence.toString());
+      }
+      if (subQuery == null) {
+        continue;
+      }
+
+      if (token.isMust()) {
+        query.must(subQuery);
+      } else if (token.isMustNot()) {
+        query.mustNot(subQuery);
+      } else {
+        query.should(subQuery);
       }
     }
-    if (!inner.containsKey("must") && !inner.containsKey("must_not") && !inner.getShould().isEmpty()) {
-      inner.setMinimumShouldMatch(1);
-    }
-
-    QueryObject wrapper = new QueryObject();
-    wrapper.put("bool", inner);
-    return wrapper;
   }
+
 
   public void addTextSearch(String field, Match<?> match) {
     Object text = match.getText();
     if (text instanceof Wildcard wildcard) {
-      //QueryObject wildcardObject = new QueryObject();
-      QueryObject nameObject = new QueryObject();
-      QueryObject valueObject = new QueryObject();
-      QueryObject paramsObject = new QueryObject();
-      valueObject.put("value", wildcard.getValue());
-
-      if (wildcard.getBoost() != null) {
-        QueryObject boostObject = new QueryObject();
-        boostObject.put("boost", wildcard.getBoost());
-        paramsObject.putAll(boostObject);
-      }
-
-      if (wildcard.getCaseInsensitive() != null) {
-        QueryObject caseObject = new QueryObject();
-        caseObject.put("case_insensitive", wildcard.getCaseInsensitive());
-        paramsObject.putAll(caseObject);
-      }
-
-      paramsObject.putAll(valueObject);
-      nameObject.put(field, paramsObject);
-      this.put("wildcard", nameObject);
+      this.putAll(
+          new com.dropchop.recyclone.base.es.model.query.Wildcard(
+              this, field, wildcard.getValue(), wildcard.getCaseInsensitive(), wildcard.getBoost()
+          )
+      );
     } else if (text instanceof Phrase phrase) {
       QueryObject nameObject = new QueryObject();
       QueryObject paramsObject = new QueryObject();
@@ -215,8 +195,7 @@ public class Operator extends QueryObject {
       valueObject.put("query", phrase.getValue());
       paramsObject.putAll(valueObject);
 
-      //Cant seem to figure out how phrase.getAnalyzer() returns "null" instead of null
-      if(phrase.getAnalyzer() != null && !"null".equals(phrase.getAnalyzer())) {
+      if(phrase.getAnalyzer() != null) {
         QueryObject anaObject = new QueryObject();
         anaObject.put("analyzer", phrase.getAnalyzer());
         paramsObject.putAll(anaObject);
@@ -231,27 +210,12 @@ public class Operator extends QueryObject {
       nameObject.put(field, paramsObject);
       this.put("match_phrase", nameObject);
     } else if(text instanceof AdvancedText advancedText) {
-      /*List<String> tokens = new TextParser(advancedText.getValue()).parse();
-
-      ClauseFactory factory = new ClauseFactory(field);
-      SpanNear spanNear = new SpanNear(
-          null, advancedText.getSlop(), advancedText.getInOrder()
-      );
-
-      for (String token : tokens) {
-        QueryObject clause = factory.createClause(token, advancedText.getCaseInsensitive());
-        clause.setParent(spanNear);
-        spanNear.addClause(clause);
-      }
-
-      this.put("span_near", spanNear);*/
-      QueryObject advancedQuery = mapAdvancedText(field, advancedText.getValue());
-      if (!advancedQuery.isEmpty()) {
-        //Operator wrapper = new Operator();
-        //wrapper.putAll(advancedQuery);
-        //TODO: fix
-        //return wrapper;
-        this.putAll(advancedQuery);
+      String value = advancedText.getValue();
+      Bool query = new Bool(this);
+      List<ExpressionToken> tokens = ExpressionParser.parse(value, false, true, true);
+      mapAdvancedText(query, field, advancedText, tokens);
+      if (!query.isEmpty()) {
+        this.putAll(query);
       }
     }
   }
