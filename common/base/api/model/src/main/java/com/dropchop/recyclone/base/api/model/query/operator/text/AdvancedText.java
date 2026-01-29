@@ -10,14 +10,14 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @SuppressWarnings("unused")
+@JsonInclude(NON_NULL)
 public class AdvancedText extends Text {
 
-  @JsonInclude(NON_NULL)
   private Boolean caseInsensitive = null;
 
-  private Integer slop = 0;
+  private Integer slop = null;
 
-  private Boolean inOrder = true;
+  private Boolean inOrder = null;
 
   public AdvancedText() {
   }

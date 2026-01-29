@@ -337,9 +337,7 @@ class DefaultElasticQueryBuilderTest {
                         "value" : "gubam"
                       }
                     }
-                  } ],
-                  "in_order" : true,
-                  "slop" : 0
+                  } ]
                 }
               },
               "minimum_should_match" : 1
@@ -393,9 +391,7 @@ class DefaultElasticQueryBuilderTest {
                         }
                       }
                     }
-                  } ],
-                  "in_order" : true,
-                  "slop" : 0
+                  } ]
                 }
               },
               "minimum_should_match" : 1

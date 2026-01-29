@@ -41,27 +41,27 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
     }
     if (tClass == Boolean.class) {
       //noinspection unchecked
-      return (T) (Boolean.valueOf(node.asBoolean()));
+      return (T) (Boolean.valueOf(node.get(name).asBoolean()));
     }
     if (tClass == Integer.class) {
       //noinspection unchecked
-      return (T) (Integer.valueOf(node.asInt()));
+      return (T) (Integer.valueOf(node.get(name).asInt()));
     }
     if (tClass == Long.class) {
       //noinspection unchecked
-      return (T) (Long.valueOf(node.asLong()));
+      return (T) (Long.valueOf(node.get(name).asLong()));
     }
     if (tClass == String.class) {
       //noinspection unchecked
-      return (T) (node.asText());
+      return (T) (node.get(name).asText());
     }
     if (tClass == Float.class) {
       //noinspection unchecked
-      return (T) (Float.valueOf(Double.valueOf(node.asDouble()).floatValue()));
+      return (T) (Float.valueOf(Double.valueOf(node.get(name).asDouble()).floatValue()));
     }
     if (tClass == Double.class) {
       //noinspection unchecked
-      return (T) (Double.valueOf(node.asDouble()));
+      return (T) (Double.valueOf(node.get(name).asDouble()));
     }
     return null;
   }
@@ -292,7 +292,7 @@ public class ConditionDeserializer extends JsonDeserializer<Condition> {
             );
           }
 
-          Integer k = getOrNull(valueNode, "k", Integer.class);
+          Integer k = getOrNull(valueNode, "topK", Integer.class);
           Integer numCandidates = getOrNull(valueNode, "numCandidates", Integer.class);
           Condition filter = null;
           JsonNode filterNode = valueNode.get("filter");
