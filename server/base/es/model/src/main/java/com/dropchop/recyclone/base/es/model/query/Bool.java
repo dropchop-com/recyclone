@@ -5,33 +5,33 @@ import lombok.Setter;
 
 @Getter
 @SuppressWarnings("unused")
-public class BoolQueryObject extends QueryNodeObject {
-  private final IQueryNodeList must = new QueryNodeList(this);
-  private final IQueryNodeList should = new QueryNodeList(this);
-  private final IQueryNodeList mustNot = new QueryNodeList(this);
-  private final IQueryNodeList filter = new QueryNodeList(this);
-  private final QueryNodeObject self = new QueryNodeObject();
+public class Bool extends QueryObject {
+  private final IQueryList must = new QueryList(this);
+  private final IQueryList should = new QueryList(this);
+  private final IQueryList mustNot = new QueryList(this);
+  private final IQueryList filter = new QueryList(this);
+  private final IQueryObject self = new QueryObject();
 
   @Setter
   private int minimumShouldMatch;
   @Setter
   private int numClauses;
 
-  public BoolQueryObject(IQueryNode parent, int minimumShouldMatch) {
+  public Bool(IQueryNode parent, int minimumShouldMatch) {
     super(parent);
     this.minimumShouldMatch = minimumShouldMatch;
     this.put("bool", this.self);
   }
 
-  public BoolQueryObject(IQueryNode parent) {
+  public Bool(IQueryNode parent) {
     this(parent, 1);
   }
 
-  public BoolQueryObject() {
+  public Bool() {
     this(null);
   }
 
-  private void add(IQueryNode node, IQueryNodeList list, String name) {
+  private void add(IQueryNode node, IQueryList list, String name) {
     list.add(node);
     if (list.size() == 1) {
       this.self.put(name, list.getFirst());

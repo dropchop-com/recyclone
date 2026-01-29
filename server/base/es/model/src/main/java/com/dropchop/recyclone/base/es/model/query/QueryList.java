@@ -9,21 +9,17 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
- * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 01. 20.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 01. 2026.
  */
 @SuppressWarnings("unused")
-public interface IQueryNodeList extends IQueryNode, List<Object> {
-}
-
-@SuppressWarnings("unused")
-class QueryNodeList extends QueryNode implements IQueryNodeList {
+class QueryList extends QueryNode implements IQueryList {
 
   private final List<Object> delegate = new ArrayList<>();
 
-  public QueryNodeList() {
+  public QueryList() {
   }
 
-  public QueryNodeList(IQueryNode parent) {
+  public QueryList(IQueryNode parent) {
     super(parent);
   }
 

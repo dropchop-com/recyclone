@@ -6,8 +6,8 @@ import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
-import com.dropchop.recyclone.base.es.model.query.IQueryNodeObject;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
+import com.dropchop.recyclone.base.es.model.query.QueryObject;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -84,7 +84,7 @@ public class DateBasedIndexConfig extends IngestPipelineIndexConfig
   }
 
   @SuppressWarnings("unused")
-  protected ZonedDateTime getDateTimeFromQuery(QueryNodeObject query) {
+  protected ZonedDateTime getDateTimeFromQuery(QueryObject query) {
     UUID uuid = query.getNestedValue(UUID.class, "uuid");
     if (uuid != null) {
       return Uuid.toInstant(uuid).atZone(ZoneId.systemDefault());
@@ -102,7 +102,7 @@ public class DateBasedIndexConfig extends IngestPipelineIndexConfig
   }
 
   @Override
-  public String getReadIndexName(IQueryNodeObject query) {
+  public String getReadIndexName(IQueryObject query) {
     if (indexPostfix == null) {
       log.warn(
           "No index name generator configured for search in index config [{}]!",

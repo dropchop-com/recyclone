@@ -6,14 +6,14 @@ import com.dropchop.recyclone.base.api.model.marker.HasUuid;
 import com.dropchop.recyclone.base.api.model.marker.state.HasCreated;
 import com.dropchop.recyclone.base.api.model.marker.state.HasModified;
 import com.dropchop.recyclone.base.api.model.marker.state.HasPublished;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.QueryObject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3/26/25.
  */
 public interface HasClassBasedDefaultSort extends HasDefaultSort, ClassIndexConfig, HasSearchAfterTieBreaker {
 
-  default void appendTieBreaker(QueryNodeObject defaultSort, Class<?> rootClass) {
+  default void appendTieBreaker(QueryObject defaultSort, Class<?> rootClass) {
     if (HasUuid.class.isAssignableFrom(rootClass)) {
       defaultSort.put("uuid", "desc");
     }
@@ -25,8 +25,8 @@ public interface HasClassBasedDefaultSort extends HasDefaultSort, ClassIndexConf
     }
   }
 
-  default QueryNodeObject getSortOrder() {
-    QueryNodeObject defaultSort = new QueryNodeObject();
+  default QueryObject getSortOrder() {
+    QueryObject defaultSort = new QueryObject();
     Class<?> rootClass = getRootClass();
     if (HasCreated.class.isAssignableFrom(rootClass)) {
       defaultSort.put("created", "desc");

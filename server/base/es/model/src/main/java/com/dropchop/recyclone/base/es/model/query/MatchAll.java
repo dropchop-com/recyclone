@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 @SuppressWarnings("unused")
-public class MatchAllObject extends QueryNodeObject {
+public class MatchAll extends QueryObject {
   private final Float boost;
-  private final QueryNodeObject self = new QueryNodeObject();
+  private final QueryObject self = new QueryObject();
 
-  public MatchAllObject(IQueryNode parent, Float boost) {
+  public MatchAll(IQueryNode parent, Float boost) {
     super(parent);
     this.boost = boost;
     if (boost != null) {
@@ -17,11 +17,11 @@ public class MatchAllObject extends QueryNodeObject {
     this.put("match_all", this.self);
   }
 
-  public MatchAllObject(IQueryNode parent) {
+  public MatchAll(IQueryNode parent) {
     this(parent, null);
   }
 
-  public MatchAllObject() {
+  public MatchAll() {
     this(null);
   }
 }

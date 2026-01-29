@@ -21,8 +21,7 @@ import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
 import com.dropchop.recyclone.base.api.repo.ctx.RepositoryExecContext;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.base.EsEntity;
-import com.dropchop.recyclone.base.es.model.query.IQueryNodeObject;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
 import com.dropchop.recyclone.base.es.repo.QueryResponseParser.SearchResultMetadata;
 import com.dropchop.recyclone.base.es.repo.config.*;
 import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
@@ -123,7 +122,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public String encodeCondition(IQueryNodeObject queryNodeObject) {
+  public String encodeCondition(IQueryObject queryNodeObject) {
     String result;
     try {
       result = getObjectMapper().writeValueAsString(
@@ -257,7 +256,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     return delete(List.of(entity)).getFirst();
   }
 
-  protected Request buildRequestForSearch(IQueryNodeObject query, String endpoint) {
+  protected Request buildRequestForSearch(IQueryObject query, String endpoint) {
     ElasticIndexConfig indexConfig = this.getElasticIndexConfig();
     String indexName;
     String postfix = "";
@@ -294,14 +293,14 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     }
   }
 
-  protected <S extends E> QueryNodeObject buildQuery(ElasticIndexConfig config, ElasticQueryBuilder builder,
-                                                     QueryParams params,
-                                                     List<ElasticCriteriaDecorator<S>> criteriaDecorators) {
+  protected <S extends E> IQueryObject buildQuery(ElasticIndexConfig config, ElasticQueryBuilder builder,
+                                                  QueryParams params,
+                                                  List<ElasticCriteriaDecorator<S>> criteriaDecorators) {
     ValidationData validationData = new ValidationData();
-    QueryNodeObject query = builder.build(
+    IQueryObject query = builder.build(
         new QueryFieldListener() {
           @Override
-          public void on(int level, Condition condition, QueryNodeObject node) {
+          public void on(int level, Condition condition, IQueryObject node) {
             if (level == 0) {
               validationData.setRootCondition(condition);
             }
@@ -311,7 +310,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
           }
 
           @Override
-          public void on(int level, Field<?> field, QueryNodeObject node) {
+          public void on(int level, Field<?> field, IQueryObject node) {
             if (level == 0) {
               validationData.addRootField(field.getName());
             }
@@ -330,7 +329,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public IQueryNodeObject provideCondition(QueryParams queryParams, List<CriteriaDecorator<?, ?>> decorators) {
+  public IQueryObject provideCondition(QueryParams queryParams, List<CriteriaDecorator<?, ?>> decorators) {
     List<ElasticCriteriaDecorator<E>> criteriaDecorators = new ArrayList<>();
     for (CriteriaDecorator<?, ?> decorator : decorators) {
       if (decorator instanceof ElasticCriteriaDecorator<?> dec) {
@@ -343,13 +342,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public IQueryNodeObject provideCondition(QueryParams queryParams) {
+  public IQueryObject provideCondition(QueryParams queryParams) {
     return this.provideCondition(queryParams, Collections.emptyList());
   }
 
-  private IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(ElasticIndexConfig config,
-                                                                         QueryParams queryParams,
-                                                                         List<CriteriaDecorator<?, ?>> decorators) {
+  private IQueryObject provideConditionWithMaxSizeWithoutAggregation(ElasticIndexConfig config,
+                                                                     QueryParams queryParams,
+                                                                     List<CriteriaDecorator<?, ?>> decorators) {
     List<ElasticCriteriaDecorator<E>> criteriaDecorators = new ArrayList<>();
     for (CriteriaDecorator<?, ?> decorator : decorators) {
       if (decorator instanceof ElasticCriteriaDecorator<?> dec) {
@@ -358,7 +357,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
         criteriaDecorators.add(elasticCriteriaDecorator);
       }
     }
-    IQueryNodeObject result;
+    IQueryObject result;
     ResultFilter<?, ?> rf = queryParams.tryGetResultFilter();
     String conditionString;
     if (rf != null) {
@@ -382,13 +381,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   @Override
-  public IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams,
-                                                                        List<CriteriaDecorator<?, ?>> decorators) {
+  public IQueryObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams,
+                                                                    List<CriteriaDecorator<?, ?>> decorators) {
     return provideConditionWithMaxSizeWithoutAggregation(getElasticIndexConfig(), queryParams, decorators);
   }
 
   @Override
-  public IQueryNodeObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams) {
+  public IQueryObject provideConditionWithMaxSizeWithoutAggregation(QueryParams queryParams) {
     return provideConditionWithMaxSizeWithoutAggregation(
         getElasticIndexConfig(), queryParams, Collections.emptyList()
     );
@@ -417,7 +416,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     }
 
     QueryParams params = context.getParams();
-    QueryNodeObject queryObject = buildQuery(null, getElasticQueryBuilder(), params, criteriaDecorators);
+    IQueryObject queryObject = buildQuery(null, getElasticQueryBuilder(), params, criteriaDecorators);
     //query does not allow this in delete
     queryObject.remove("from");
 
@@ -426,7 +425,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       query = getObjectMapper().writeValueAsString(queryObject);
     } catch (JsonProcessingException e) {
       throw new ServiceException(
-          ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e
+          ErrorCode.internal_error, "Unable to serialize QueryObject", e
       );
     }
 
@@ -469,7 +468,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
   }
 
   protected <X> SearchResultMetadata executeSearch(QueryParams params,
-                                                   QueryNodeObject queryObject,
+                                                   IQueryObject queryObject,
                                                    Class<X> resultClass,
                                                    List<QueryResultConsumer<X>> queryListeners,
                                                    List<AggregationResultConsumer> aggListeners,
@@ -480,7 +479,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     try {
       query = objectMapper.writeValueAsString(queryObject);
     } catch (IOException e) {
-      throw new ServiceException(ErrorCode.internal_error, "Unable to serialize QueryNodeObject", e);
+      throw new ServiceException(ErrorCode.internal_error, "Unable to serialize QueryObject", e);
     }
 
     Request request = null;
@@ -593,7 +592,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       queryParams.tryGetResultFilter().setSize(indexConfig.getSizeOfPagination());
     }
 
-    QueryNodeObject query = buildQuery(
+    IQueryObject query = buildQuery(
         indexConfig,
         queryBuilder,
         queryParams,
@@ -646,7 +645,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
     ElasticExecContext<S> context = getRepositoryExecContext(mapContext);
     Class<S> cls = context.getRootClass();
 
-    QueryNodeObject queryObject;
+    IQueryObject queryObject;
     if (!ids.isEmpty()) {
       if (HasCode.class.isAssignableFrom(cls)) {
         queryParams.condition(and(field("code", in(strIds))));

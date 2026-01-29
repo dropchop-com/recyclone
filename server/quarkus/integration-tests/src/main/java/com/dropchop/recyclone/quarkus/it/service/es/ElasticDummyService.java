@@ -5,7 +5,7 @@ import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.service.ElasticCrudServiceImpl;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.es.model.query.IQueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.entity.es.EsDummy;
 import com.dropchop.recyclone.quarkus.it.repo.es.ElasticDummyMapperProvider;
@@ -40,7 +40,7 @@ public class ElasticDummyService extends ElasticCrudServiceImpl<Dummy, EsDummy, 
   @Override
   public Result<Dummy> search() {
     QueryParams queryParams = this.executionContext.getParams();
-    IQueryNodeObject query = this.repository.provideCondition(queryParams);
+    IQueryObject query = this.repository.provideCondition(queryParams);
     return super.search();
   }
 }

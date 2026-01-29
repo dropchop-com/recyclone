@@ -5,10 +5,13 @@ import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
+import com.dropchop.recyclone.base.api.model.query.aggregation.Sort;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.*;
+import com.dropchop.recyclone.base.es.model.query.Knn;
+import com.dropchop.recyclone.base.es.model.query.TopHits;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,9 +25,9 @@ import java.util.List;
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
-  protected QueryNodeObject mapConditionField(int level, QueryFieldListener listener, Field<?> field,
-                                              QueryNodeObject parentNodeObject) {
-    OperatorNodeObject operatorNode = new OperatorNodeObject(parentNodeObject);
+  protected IQueryObject mapConditionField(int level, QueryFieldListener listener, Field<?> field,
+                                           IQueryObject parentNodeObject) {
+    Operator operatorNode = new Operator(parentNodeObject);
     String fieldName = field.getName();
     ConditionOperator operator;
 
@@ -73,30 +76,29 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return operatorNode;
   }
 
-  protected QueryNodeObject mapCondition(int level, QueryFieldListener listener,
-                                         Condition condition, Condition parentCond,
-                                         QueryNodeObject parentNodeObject) {
+  protected IQueryObject mapCondition(int level, QueryFieldListener listener, Condition condition,
+                                      Condition parentCond, IQueryObject parentNodeObject) {
     if (condition == null) {
       return null;
     }
 
     // force bool.must on top level if not logical condition
     if (level == 0 && !(condition instanceof LogicalCondition)) {
-      BoolQueryObject boolQuery = new BoolQueryObject();
-      QueryNodeObject subQueryContainer = mapCondition(level + 1, listener, condition, null, boolQuery);
+      Bool boolQuery = new Bool();
+      IQueryObject subQueryContainer = mapCondition(level + 1, listener, condition, null, boolQuery);
       boolQuery.must(subQueryContainer);
       return boolQuery;
     }
 
     if (condition instanceof LogicalCondition logicalCondition) {
-      BoolQueryObject query = new BoolQueryObject(parentNodeObject);
+      Bool query = new Bool(parentNodeObject);
       if (listener != null) {
         listener.on(0, condition, parentNodeObject);
       }
 
       for (Iterator<Condition> it = logicalCondition.iterator(); it.hasNext(); ) {
         Condition subCondition = it.next();
-        QueryNodeObject subQueryContainer = mapCondition(level + 1, listener, subCondition, condition, query);
+        IQueryObject subQueryContainer = mapCondition(level + 1, listener, subCondition, condition, query);
         if (condition instanceof And) {
           query.must(subQueryContainer);
         } else if (condition instanceof Or) {
@@ -107,20 +109,20 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       }
       return query;
     } else if (condition instanceof ConditionedField conditionedField) {
-      QueryNodeObject mappedField = mapConditionField(level, listener, conditionedField, parentNodeObject);
+      IQueryObject mappedField = mapConditionField(level, listener, conditionedField, parentNodeObject);
       if (listener != null) {
         listener.on(level, conditionedField, mappedField);
       }
       return mappedField;
     } else if (condition instanceof Field<?> field) {
-      QueryNodeObject mappedField = mapConditionField(level, listener, field, parentNodeObject);
+      IQueryObject mappedField = mapConditionField(level, listener, field, parentNodeObject);
       if (listener != null) {
         listener.on(level, field, mappedField);
       }
       return mappedField;
-    } else if (condition instanceof Knn knnCondition) {
-      QueryNodeObject filterQuery = null;
-      KnnNodeObject knnNode = new KnnNodeObject(
+    } else if (condition instanceof com.dropchop.recyclone.base.api.model.query.condition.Knn knnCondition) {
+      IQueryObject filterQuery = null;
+      Knn knnNode = new Knn(
           null, knnCondition, mapCondition(
               level + 1, listener, (knnCondition).get$knn().getFilter(), null, null
           )
@@ -136,11 +138,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
   @Override
-  public QueryNodeObject buildAggregation(Aggregation aggregation) {
-    QueryNodeObject node = new QueryNodeObject();
+  public QueryObject buildAggregation(Aggregation aggregation) {
+    QueryObject node = new QueryObject();
 
     if (aggregation instanceof Terms terms) {
-      QueryNodeObject termsNode = new QueryNodeObject();
+      QueryObject termsNode = new QueryObject();
       termsNode.put("field", terms.getField());
 
       if (terms.getSize() != null) {
@@ -182,7 +184,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       }
       node.put("terms", termsNode);
     } else if (aggregation instanceof DateHistogram dh) {
-      QueryNodeObject dhNode = new QueryNodeObject();
+      QueryObject dhNode = new QueryObject();
       dhNode.put("field", dh.getField());
       dhNode.put("calendar_interval", dh.getCalendar_interval());
       String tz = dh.getTime_zone();
@@ -191,35 +193,35 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       }
       node.put("date_histogram", dhNode);
     } else if (aggregation instanceof Avg) {
-      QueryNodeObject avg = new QueryNodeObject();
+      QueryObject avg = new QueryObject();
       avg.put("field", aggregation.getField());
       node.put("avg", avg);
     } else if (aggregation instanceof Count) {
-      QueryNodeObject count = new QueryNodeObject();
+      QueryObject count = new QueryObject();
       count.put("field", aggregation.getField());
       node.put("value_count", count);
     } else if (aggregation instanceof Max) {
-      QueryNodeObject max = new QueryNodeObject();
+      QueryObject max = new QueryObject();
       max.put("field", aggregation.getField());
       node.put("max", max);
     } else if (aggregation instanceof Min) {
-      QueryNodeObject min = new QueryNodeObject();
+      QueryObject min = new QueryObject();
       min.put("field", aggregation.getField());
       node.put("min", min);
     } else if (aggregation instanceof Sum) {
-      QueryNodeObject sum = new QueryNodeObject();
+      QueryObject sum = new QueryObject();
       sum.put("field", aggregation.getField());
       node.put("sum", sum);
     } else if (aggregation instanceof Cardinality) {
-      QueryNodeObject cardinality = new QueryNodeObject();
+      QueryObject cardinality = new QueryObject();
       cardinality.put("field", aggregation.getField());
       node.put("cardinality", cardinality);
     } else if (aggregation instanceof Stats) {
-      QueryNodeObject stats = new QueryNodeObject();
+      QueryObject stats = new QueryObject();
       stats.put("field", aggregation.getField());
       node.put("stats", stats);
-    } else if (aggregation instanceof TopHits topHits) {
-      TopHitsNodeObject topHitsNode = new TopHitsNodeObject();
+    } else if (aggregation instanceof com.dropchop.recyclone.base.api.model.query.aggregation.TopHits topHits) {
+      TopHits topHitsNode = new TopHits();
       topHitsNode.setSize(topHits.getSize());
       for (Sort s : topHits.getSort()) {
         topHitsNode.addSort(s.getField(), s.getValue(), s.getNumericType());
@@ -234,7 +236,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
     if (aggregation instanceof BucketAggregation bucket) {
       if (bucket.getAggs() != null && !bucket.getAggs().isEmpty()) {
-        QueryNodeObject subAggs = new QueryNodeObject();
+        QueryObject subAggs = new QueryObject();
         for (Aggregation sub : bucket.getAggs()) {
           if (sub instanceof Aggregation.Wrapper) {
             subAggs.put(sub.getName(), buildAggregation(((Aggregation.Wrapper) sub).iterator().next()));
@@ -253,7 +255,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     if (condition == null) {
       return false;
     }
-    if (condition instanceof Knn) {
+    if (condition instanceof com.dropchop.recyclone.base.api.model.query.condition.Knn) {
       return true;
     }
     if (condition instanceof LogicalCondition logicalCondition) {
@@ -274,13 +276,12 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return requestSize + requestFrom >= maxSize;  // we would overflow allowed elastic maximum
   }
 
-  protected QueryNodeObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig,
-                                           boolean useSearchAfter) {
-    QueryNodeObject sortOrder = new QueryNodeObject();
+  protected IQueryObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig, boolean useSearchAfter) {
+    IQueryObject sortOrder = new QueryObject();
     if (!sortList.isEmpty()) {
-      List<QueryNodeObject> sortEntries = sortList.stream()
+      List<IQueryObject> sortEntries = sortList.stream()
           .map(sort -> {
-            QueryNodeObject sortEntry = new QueryNodeObject();
+            IQueryObject sortEntry = new QueryObject();
             if (sort.startsWith("-")) {
               sortEntry.put(sort.substring(1), "desc");
             } else {
@@ -295,16 +296,16 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       sortOrder.put("sort", sortEntries);
       return sortOrder;
     } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
-      QueryNodeObject defaultSort = hasDefaultSort.getSortOrder();
+      QueryObject defaultSort = hasDefaultSort.getSortOrder();
       if ((defaultSort == null || defaultSort.isEmpty()) && useSearchAfter) {
         throw new ServiceException(
             ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
         );
       }
       if (defaultSort != null && !defaultSort.isEmpty()) {
-        List<QueryNodeObject> sortEntries = defaultSort.entrySet().stream().map(
+        List<QueryObject> sortEntries = defaultSort.entrySet().stream().map(
             e -> {
-              QueryNodeObject sortEntry = new QueryNodeObject();
+              QueryObject sortEntry = new QueryObject();
               sortEntry.put(e.getKey(), e.getValue());
               return sortEntry;
             }
@@ -317,12 +318,12 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
   @Override
-  public QueryNodeObject build(QueryFieldListener fieldListener, ElasticIndexConfig indexConfig, QueryParams params) {
-    QueryNodeObject query = new QueryNodeObject();
-    QueryNodeObject queryContainer = new QueryNodeObject();
+  public IQueryObject build(QueryFieldListener fieldListener, ElasticIndexConfig indexConfig, QueryParams params) {
+    IQueryObject query = new QueryObject();
+    IQueryObject queryContainer = new QueryObject();
 
     boolean useSearchAfterMode = useSearchAfter(indexConfig, params);
-    QueryNodeObject sort = buildSortOrder(params.tryGetResultFilter().getSort(), indexConfig, useSearchAfterMode);
+    IQueryObject sort = buildSortOrder(params.tryGetResultFilter().getSort(), indexConfig, useSearchAfterMode);
 
     int size = params.tryGetResultFilter().size();
     int from = params.tryGetResultFilter().from();
@@ -345,15 +346,15 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
     Condition condition = params.getCondition();
     if (hasActualConditions(condition)) {
-      QueryNodeObject boolQuery = mapCondition(0, fieldListener, condition, null, null);
+      IQueryObject boolQuery = mapCondition(0, fieldListener, condition, null, null);
       queryContainer.put("query", boolQuery);
     } else {
-      queryContainer.put("query", new MatchAllObject());
+      queryContainer.put("query", new MatchAll());
     }
 
     ResultFilter.ContentFilter filter = params.tryGetResultContentFilter();
     if (filter != null) {
-      QueryNodeObject source = new QueryNodeObject();
+      QueryObject source = new QueryObject();
       List<String> excludes = filter.getExcludes();
       if (excludes != null && !excludes.isEmpty()) {
         source.put("excludes", excludes);
@@ -370,7 +371,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     // Handle aggregations
     AggregationList aggsQuery = params.getAggregate();
     if (aggsQuery != null && !aggsQuery.isEmpty()) {
-      QueryNodeObject aggregations = new QueryNodeObject();
+      QueryObject aggregations = new QueryObject();
       for (Aggregation agg : params.getAggregate()) {
         if (agg instanceof Aggregation.Wrapper) {
           aggregations.put(agg.getName(), buildAggregation(((Aggregation.Wrapper) agg).iterator().next()));
@@ -385,11 +386,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
 
-  public QueryNodeObject build(QueryFieldListener fieldListener, QueryParams params) {
+  public IQueryObject build(QueryFieldListener fieldListener, QueryParams params) {
     return build(fieldListener, null, params);
   }
 
-  public QueryNodeObject build(QueryParams params) {
+  public IQueryObject build(QueryParams params) {
     return build(null, null, params);
   }
 }

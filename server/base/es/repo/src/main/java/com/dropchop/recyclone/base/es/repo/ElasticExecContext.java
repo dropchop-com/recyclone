@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.es.repo;
 
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.repo.ctx.BaseRepoExecContext;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,14 +15,14 @@ import lombok.ToString;
 @SuppressWarnings("UnusedReturnValue")
 public class ElasticExecContext<E> extends BaseRepoExecContext<E> {
 
-  QueryNodeObject query;
+  IQueryObject query;
   ElasticIndexConfig indexConfig;
 
   public ElasticExecContext(@NonNull Class<E> rootClass, @NonNull String rootAlias) {
     super(rootClass, rootAlias);
   }
 
-  public void init(ElasticIndexConfig indexConfig, QueryNodeObject query) {
+  public void init(ElasticIndexConfig indexConfig, IQueryObject query) {
     this.setIndexConfig(indexConfig);
     this.setQuery(query);
     super.bindListeners();

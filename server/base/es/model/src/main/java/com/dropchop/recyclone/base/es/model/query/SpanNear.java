@@ -4,15 +4,15 @@ import lombok.Getter;
 
 @Getter
 @SuppressWarnings("unused")
-public class SpanNearObject extends QueryNodeObject {
-  private final IQueryNodeList clauses;
+public class SpanNear extends QueryObject {
+  private final IQueryList clauses;
   private final Integer slop;
   private final Boolean inOrder;
-  private final QueryNodeObject self = new QueryNodeObject();
+  private final IQueryObject self = new QueryObject();
 
-  public SpanNearObject(IQueryNode parent, Integer slop, Boolean inOrder) {
+  public SpanNear(IQueryNode parent, Integer slop, Boolean inOrder) {
     super(parent);
-    this.clauses = new QueryNodeList(this);
+    this.clauses = new QueryList(this);
     this.inOrder = inOrder;
     this.slop = slop;
 
@@ -22,9 +22,9 @@ public class SpanNearObject extends QueryNodeObject {
     this.put("span_near", this.self);
   }
 
-  public SpanNearObject addClause(IQueryNode clause) {
-    if (clause instanceof BoolQueryObject) {
-      QueryNodeObject container = new QueryNodeObject(this);
+  public SpanNear addClause(IQueryNode clause) {
+    if (clause instanceof Bool) {
+      QueryObject container = new QueryObject(this);
       clause.setParent(container);
       clauses.add(container);
     } else {

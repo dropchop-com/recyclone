@@ -1,10 +1,9 @@
 package com.dropchop.recyclone.base.es.model.query;
 
+import java.util.Map;
+
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 17. 01. 20.
  */
-@SuppressWarnings("unused")
-public interface IQueryNode {
-  IQueryNode getParent();
-  void setParent(IQueryNode parent);
+public interface IQueryObject extends IQueryNode, Map<String, Object> {
 }

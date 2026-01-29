@@ -3,7 +3,7 @@ package com.dropchop.recyclone.base.es.repo;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.api.repo.ctx.CriteriaDecorator;
-import com.dropchop.recyclone.base.es.model.query.QueryNodeObject;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +23,8 @@ public abstract class ElasticCriteriaDecorator<E> implements CriteriaDecorator<E
    * @param field the field
    * @param node  the query node object that the field is part of
    */
-  public void onBuiltField(Field<?> field, QueryNodeObject node) {
+  @SuppressWarnings("unused")
+  public void onBuiltField(Field<?> field, IQueryObject node) {
   }
 
   /**
@@ -32,7 +33,8 @@ public abstract class ElasticCriteriaDecorator<E> implements CriteriaDecorator<E
    * @param condition the condition associated with the field being built
    * @param node      the query node object that the field is part of
    */
-  public void onBuiltField(Condition condition, QueryNodeObject node) {
+  @SuppressWarnings("unused")
+  public void onBuiltField(Condition condition, IQueryObject node) {
   }
 
   @Override

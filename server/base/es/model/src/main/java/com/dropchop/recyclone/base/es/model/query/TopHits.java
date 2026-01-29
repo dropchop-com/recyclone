@@ -9,15 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public class TopHitsNodeObject extends QueryNodeObject {
+public class TopHits extends QueryObject {
   private Integer size;
   private Integer from;
   private Filter filter;
-  private QueryNodeObject source;
+  private IQueryObject source;
 
-  private final SortNodeObject sort = new SortNodeObject(this);
+  private final Sort sort = new Sort(this);
 
-  public TopHitsNodeObject(IQueryNode parent, Integer size) {
+  public TopHits(IQueryNode parent, Integer size) {
     super(parent);
     this.size = size;
     if (size != null) {
@@ -25,11 +25,11 @@ public class TopHitsNodeObject extends QueryNodeObject {
     }
   }
 
-  public TopHitsNodeObject(IQueryNode parent) {
+  public TopHits(IQueryNode parent) {
     this(parent, null);
   }
 
-  public TopHitsNodeObject() {
+  public TopHits() {
     this(null);
   }
 
@@ -71,7 +71,7 @@ public class TopHitsNodeObject extends QueryNodeObject {
   }
 
   public void setSource(Include includes, Exclude excludes) {
-    QueryNodeObject sourceConfig = new QueryNodeObject(this);
+    QueryObject sourceConfig = new QueryObject(this);
 
     if (includes != null) {
       sourceConfig.put("includes", includes.getValue());

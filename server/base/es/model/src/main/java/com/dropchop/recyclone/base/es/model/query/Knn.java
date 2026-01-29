@@ -3,20 +3,19 @@ package com.dropchop.recyclone.base.es.model.query;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.KnnCondition;
-import com.dropchop.recyclone.base.api.model.query.condition.Knn;
 import lombok.Getter;
 
 @Getter
 @SuppressWarnings("unused")
-public class KnnNodeObject extends QueryNodeObject {
+public class Knn extends QueryObject {
   private final String field;
   private final float[] queryVector;
   private final String queryString;
   private final Integer k;
   private final Float similarity;
   private final Integer numCandidates;
-  private final QueryNodeObject filter;
-  private final QueryNodeObject self = new QueryNodeObject();
+  private final IQueryObject filter;
+  private final IQueryObject self = new QueryObject();
 
   private void validateAndBuild() {
     if (field == null || field.isEmpty()) {
@@ -52,7 +51,7 @@ public class KnnNodeObject extends QueryNodeObject {
     }
 
     if (filter != null) {
-      if (filter instanceof BoolQueryObject boolQuery) {
+      if (filter instanceof Bool boolQuery) {
         this.self.put("filter", boolQuery);
       } else {
         this.self.put("filter", filter);
@@ -62,7 +61,7 @@ public class KnnNodeObject extends QueryNodeObject {
     this.put("knn", self);
   }
 
-  public KnnNodeObject(IQueryNode parent, Knn knnQuery, QueryNodeObject filterQuery) {
+  public Knn(IQueryNode parent, com.dropchop.recyclone.base.api.model.query.condition.Knn knnQuery, IQueryObject filterQuery) {
     super(parent);
     this.field = knnQuery.get$knn().getName();
     KnnCondition<?> condition = knnQuery.get$knn();

@@ -11,14 +11,14 @@ import java.util.function.Function;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.org> on 4. 01. 24.
  */
 @SuppressWarnings("unused")
-public class QueryNodeObject extends QueryNode implements IQueryNodeObject {
+public class QueryObject extends QueryNode implements IQueryObject {
 
   private final Map<String, Object> delegate = new LinkedHashMap<>();
 
-  public QueryNodeObject() {
+  public QueryObject() {
   }
 
-  public QueryNodeObject(IQueryNode parent) {
+  public QueryObject(IQueryNode parent) {
     super(parent);
   }
 
@@ -153,24 +153,24 @@ public class QueryNodeObject extends QueryNode implements IQueryNodeObject {
     return getNestedValue(this, keys);
   }
 
-  private static Object getNestedValue(QueryNodeObject node, String targetKey) {
+  private static Object getNestedValue(QueryObject node, String targetKey) {
     if (node == null) return null;
 
     if (node.containsKey(targetKey)) {
-      if(node.get(targetKey) instanceof QueryNodeObject) {
-        return ((QueryNodeObject)node.get(targetKey)).values().iterator().next();
+      if(node.get(targetKey) instanceof QueryObject) {
+        return ((QueryObject)node.get(targetKey)).values().iterator().next();
       }
       return node.get(targetKey);
     }
 
     for (Object value : node.values()) {
-      if (value instanceof QueryNodeObject) {
-        Object result = getNestedValue((QueryNodeObject) value, targetKey);
+      if (value instanceof QueryObject) {
+        Object result = getNestedValue((QueryObject) value, targetKey);
         if (result != null) return result;
-      } else if (value instanceof QueryNodeList) {
-        for (Object item : (QueryNodeList) value) {
-          if (item instanceof QueryNodeObject) {
-            Object result = getNestedValue((QueryNodeObject) item, targetKey);
+      } else if (value instanceof QueryList) {
+        for (Object item : (QueryList) value) {
+          if (item instanceof QueryObject) {
+            Object result = getNestedValue((QueryObject) item, targetKey);
             if (result != null) return result;
           }
         }
@@ -178,7 +178,6 @@ public class QueryNodeObject extends QueryNode implements IQueryNodeObject {
     }
     return null;
   }
-
 
   @SuppressWarnings("unchecked")
   public <T> T getNestedValue(Class<T> type, String keys) {

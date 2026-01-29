@@ -6,14 +6,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public class SortFieldNodeObject extends QueryNodeObject {
+public class SortField extends QueryObject {
   private String field;
   private String order;
   private String mode;
   private String missing;
   private String numericType;
 
-  public SortFieldNodeObject(IQueryNode parent, String field, String order, String numericType) {
+  public SortField(IQueryNode parent, String field, String order, String numericType) {
     super(parent);
     this.field = field;
     this.order = order;
@@ -21,24 +21,24 @@ public class SortFieldNodeObject extends QueryNodeObject {
     this.put(field, createSortConfig());
   }
 
-  public SortFieldNodeObject(IQueryNode parent, String field, String order) {
+  public SortField(IQueryNode parent, String field, String order) {
     this(parent, field, order, null);
   }
 
-  public SortFieldNodeObject(IQueryNode parent, String field) {
+  public SortField(IQueryNode parent, String field) {
     this(parent, field, "asc");
   }
 
-  public SortFieldNodeObject(String field, String order) {
+  public SortField(String field, String order) {
     this(null, field, order);
   }
 
-  public SortFieldNodeObject(String field) {
+  public SortField(String field) {
     this(null, field, "asc");
   }
 
-  private QueryNodeObject createSortConfig() {
-    QueryNodeObject config = new QueryNodeObject(this);
+  private QueryObject createSortConfig() {
+    QueryObject config = new QueryObject(this);
     config.put("order", this.order);
 
     if (this.mode != null) {
