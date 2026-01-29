@@ -2,7 +2,7 @@ package com.dropchop.recyclone.base.es.model.query;
 
 import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionToken;
 import com.dropchop.recyclone.base.api.model.legacy.text.Filter;
-import com.dropchop.recyclone.base.api.model.legacy.text.LegacyExpressionParser;
+import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionParser;
 import com.dropchop.recyclone.base.api.model.legacy.text.Or;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
@@ -161,7 +161,7 @@ public class Operator extends QueryObject {
 
   //TODO: consolidate
   private QueryObject mapAdvancedText(String defaultField, String value) {
-    List<ExpressionToken> tokens = LegacyExpressionParser.parse(value, false, true, true);
+    List<ExpressionToken> tokens = ExpressionParser.parse(value, false, true, true);
 
     Bool inner = new Bool();
     for (ExpressionToken token : tokens) {

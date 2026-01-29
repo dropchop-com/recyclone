@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @SuppressWarnings("unused")
-public class LegacyExpressionParser {
+public class ExpressionParser {
   @SuppressWarnings("RegExpRedundantEscape")
   public static String  SPECIAL_CHARS = "\\s\"'’`*\\(\\)\\{\\}…+\\-–_&!?.,;#@\\|:/\\[\\]\\\\";
   public static Pattern PUNCTATION = Pattern.compile("(?U)[" + SPECIAL_CHARS + "]");
