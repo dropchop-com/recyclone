@@ -25,22 +25,10 @@ import java.util.List;
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
-  protected IQueryObject mapConditionField(int level, QueryFieldListener listener, Field<?> field,
-                                           IQueryObject parentNodeObject) {
+  protected IQueryObject mapField(int level, QueryFieldListener listener, Field<?> field, ConditionOperator operator,
+                                  IQueryObject parentNodeObject) {
     Operator operatorNode = new Operator(parentNodeObject);
     String fieldName = field.getName();
-    ConditionOperator operator;
-
-    if (field instanceof ConditionedField conditionedField) {
-      operator = conditionedField.get(fieldName);
-      if (operator == null) {
-        operator = new Eq<>(null);
-      }
-    } else {
-      Object val = field.get(field.getName());
-      operator = new Eq<>(val);
-    }
-
     if (operator instanceof Eq<?> eq) {
       Object val = eq.get$eq();
       if (val == null) {
@@ -109,13 +97,19 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       }
       return query;
     } else if (condition instanceof ConditionedField conditionedField) {
-      IQueryObject mappedField = mapConditionField(level, listener, conditionedField, parentNodeObject);
+      ConditionOperator operator = conditionedField.get(conditionedField.getName());
+      if (operator == null) {
+        operator = new Eq<>(null);
+      }
+      IQueryObject mappedField = mapField(level, listener, conditionedField, operator, parentNodeObject);
       if (listener != null) {
         listener.on(level, conditionedField, mappedField);
       }
       return mappedField;
     } else if (condition instanceof Field<?> field) {
-      IQueryObject mappedField = mapConditionField(level, listener, field, parentNodeObject);
+      Object val = field.get(field.getName());
+      ConditionOperator operator = new Eq<>(val); // implicit synthetic Eq operator when Field type
+      IQueryObject mappedField = mapField(level, listener, field, operator, parentNodeObject);
       if (listener != null) {
         listener.on(level, field, mappedField);
       }
@@ -128,7 +122,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
           )
       );
       if (listener != null) {
-        listener.on(0, condition, knnNode);
+        listener.on(level, condition, knnNode);
       }
 
       return knnNode;
@@ -139,6 +133,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
   @Override
   public QueryObject buildAggregation(Aggregation aggregation) {
+    // TODO: refactor aggregation construction with delegation to QueryObject
     QueryObject node = new QueryObject();
 
     if (aggregation instanceof Terms terms) {
