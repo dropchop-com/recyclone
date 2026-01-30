@@ -82,8 +82,6 @@ class DefaultElasticQueryBuilderTest {
 
     String expectedJson = """
     {
-      "from" : 0,
-      "size" : 100,
       "query" : {
         "bool" : {
           "must" : [ {
@@ -133,14 +131,6 @@ class DefaultElasticQueryBuilderTest {
               "created" : "2024-09-19T10:12:01.123+02"
             }
           }, {
-            "bool" : {
-              "must_not" : {
-                "exists" : {
-                  "field" : "miki"
-                }
-              }
-            }
-          }, {
             "terms" : {
               "type2" : [ 1, 2, 3 ]
             }
@@ -148,7 +138,12 @@ class DefaultElasticQueryBuilderTest {
             "term" : {
               "type4" : "type8"
             }
-          } ]
+          } ],
+          "must_not" : {
+            "exists" : {
+              "field" : "miki"
+            }
+          }
         }
       },
       "aggs" : {
@@ -180,7 +175,9 @@ class DefaultElasticQueryBuilderTest {
             }
           }
         }
-      }
+      },
+      "from" : 0,
+      "size" : 100
     }
     """;
 

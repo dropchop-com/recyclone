@@ -13,11 +13,11 @@ public class OpenInterval<T> extends BinaryValueOperator<T> {
     super(value1, value2);
   }
 
-  public T get$gte() {
+  public T get$gt() {
     return super.getValue1();
   }
 
-  public void set$gte(T value1) {
+  public void set$gt(T value1) {
     super.setValue1(value1);
   }
 

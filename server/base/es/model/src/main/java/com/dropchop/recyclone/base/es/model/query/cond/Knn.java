@@ -1,24 +1,28 @@
-package com.dropchop.recyclone.base.es.model.query;
+package com.dropchop.recyclone.base.es.model.query.cond;
 
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.KnnCondition;
+import com.dropchop.recyclone.base.es.model.query.IQueryNode;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
+import com.dropchop.recyclone.base.es.model.query.QueryObject;
 import lombok.Getter;
 
 @Getter
 @SuppressWarnings("unused")
 public class Knn extends QueryObject {
-  private final String field;
-  private final float[] queryVector;
+  private String fieldName;
+  private float[] queryVector;
+  private Integer k;
+  private Float similarity;
+  private Integer numCandidates;
+
   private final String queryString;
-  private final Integer k;
-  private final Float similarity;
-  private final Integer numCandidates;
   private final IQueryObject filter;
   private final IQueryObject self = new QueryObject();
 
   private void validateAndBuild() {
-    if (field == null || field.isEmpty()) {
+    if (fieldName == null || fieldName.isEmpty()) {
       throw new ServiceException(
           ErrorCode.parameter_validation_error,
           "kNN query must have a field specified"
@@ -36,7 +40,7 @@ public class Knn extends QueryObject {
       );
     }
 
-    this.self.put("field", field);
+    this.self.put("field", fieldName);
 
     if (k != null) {
       this.self.put("k", k);
@@ -61,9 +65,10 @@ public class Knn extends QueryObject {
     this.put("knn", self);
   }
 
-  public Knn(IQueryNode parent, com.dropchop.recyclone.base.api.model.query.condition.Knn knnQuery, IQueryObject filterQuery) {
+  public Knn(IQueryNode parent, com.dropchop.recyclone.base.api.model.query.condition.Knn knnQuery,
+             IQueryObject filterQuery) {
     super(parent);
-    this.field = knnQuery.get$knn().getName();
+    this.fieldName = knnQuery.get$knn().getName();
     KnnCondition<?> condition = knnQuery.get$knn();
     Object value = condition.getValue();
     if (value instanceof float[] floats) {
@@ -87,43 +92,52 @@ public class Knn extends QueryObject {
     validateAndBuild();
   }
 
-  public void replaceQueryVector(float[] queryVector) {
+  public void setQueryVector(float[] queryVector) {
     if (queryVector == null || queryVector.length == 0) {
       this.self.remove("query_vector");
+      this.queryVector = null;
     } else {
       this.self.put("query_vector", queryVector);
+      this.queryVector = queryVector;
     }
   }
 
   public void removeQueryVector() {
-    replaceQueryVector(null);
+    setQueryVector(null);
   }
 
-  public void renameField(String field) {
-    this.put("field", field);
+  public void setFieldName(String field) {
+    this.fieldName = field;
+    this.self.put("field", field);
   }
 
-  public void replaceSimilarity(Float similarity) {
+  public void setSimilarity(Float similarity) {
     if (similarity == null) {
       this.self.remove("similarity");
-      return;
+      this.similarity = null;
+    } else {
+      this.self.put("similarity", similarity);
+      this.similarity = similarity;
     }
-    this.self.put("similarity", similarity);
   }
 
-  public void replaceTopK(Integer topK) {
+  public void setTopK(Integer topK) {
     if (topK == null) {
       this.self.remove("k");
-      return;
+      this.k = null;
+    } else {
+      this.self.put("k", topK);
+      this.k = topK;
     }
-    this.self.put("k", topK);
   }
 
-  public void replaceNumCandidates(Integer numCandidates) {
+  public void setNumCandidates(Integer numCandidates) {
     if (numCandidates == null) {
       this.self.remove("num_candidates");
-      return;
+      this.numCandidates = null;
+    } else {
+      this.self.put("num_candidates", numCandidates);
+      this.numCandidates = numCandidates;
     }
-    this.self.put("num_candidates", numCandidates);
   }
 }

@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 01. 2026.
  */
 @SuppressWarnings("unused")
-class QueryList extends QueryNode implements IQueryList {
+public class QueryList extends QueryNode implements IQueryList {
 
   private final List<Object> delegate = new ArrayList<>();
 

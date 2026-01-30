@@ -6,13 +6,18 @@ import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.Sort;
+import com.dropchop.recyclone.base.api.model.query.aggregation.Terms;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
+import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
+import com.dropchop.recyclone.base.api.model.query.operator.text.Text;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.*;
-import com.dropchop.recyclone.base.es.model.query.Knn;
-import com.dropchop.recyclone.base.es.model.query.TopHits;
+import com.dropchop.recyclone.base.es.model.query.cond.*;
+import com.dropchop.recyclone.base.es.model.query.cond.Knn;
+import com.dropchop.recyclone.base.es.model.query.cond.TopHits;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,43 +31,92 @@ import java.util.List;
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
 
-  protected IQueryObject mapField(int level, QueryFieldListener listener, Field<?> field, ConditionOperator operator,
+  protected IQueryObject mapField(int level, QueryFieldListener listener,
+                                  Field<?> field,
+                                  ConditionOperator operator,
                                   IQueryObject parentNodeObject) {
-    Operator operatorNode = new Operator(parentNodeObject);
+    IQueryObject fieldNode;
     String fieldName = field.getName();
     if (operator instanceof Eq<?> eq) {
       Object val = eq.get$eq();
       if (val == null) {
-        operatorNode.addNullSearch(fieldName);
+        fieldNode = new Exists(parentNodeObject, fieldName);
       } else {
-        operatorNode.addEqOperator(fieldName, eq.get$eq());
+        fieldNode = new Term(parentNodeObject, fieldName, eq.get$eq());
       }
     } else if (operator instanceof Gt<?> gt) {
-      operatorNode.addRangeOperator(fieldName, "gt", gt.get$gt());
+      fieldNode = new Range(parentNodeObject, fieldName, gt);
     } else if (operator instanceof Lt<?> lt) {
-      operatorNode.addRangeOperator(fieldName, "lt", lt.get$lt());
+      fieldNode = new Range(parentNodeObject, fieldName, lt);
     } else if (operator instanceof Gte<?> gte) {
-      operatorNode.addRangeOperator(fieldName, "gte", gte.get$gte());
+      fieldNode = new Range(parentNodeObject, fieldName, gte);
     } else if (operator instanceof Lte<?> lte) {
-      operatorNode.addRangeOperator(fieldName, "lte", lte.get$lte());
+      fieldNode = new Range(parentNodeObject, fieldName, lte);
     } else if (operator instanceof In<?> in) {
-      operatorNode.addInOperator(fieldName, in.get$in());
+      fieldNode = new com.dropchop.recyclone.base.es.model.query.cond.Terms(
+          parentNodeObject, fieldName, in.get$in()
+      );
     } else if (operator instanceof ClosedInterval<?> interval) {
-      operatorNode.addClosedInterval(fieldName, interval.get$gte(), interval.get$lte());
+      fieldNode = new Range(parentNodeObject, fieldName, interval);
     } else if (operator instanceof OpenInterval<?> interval) {
-      operatorNode.addOpenInterval(fieldName, interval.get$gte(), interval.get$lt());
+      fieldNode = new Range(parentNodeObject, fieldName, interval);
     } else if (operator instanceof ClosedOpenInterval<?> interval) {
-      operatorNode.addClosedOpenInterval(fieldName, interval.get$gte(), interval.get$lt());
+      fieldNode = new Range(parentNodeObject, fieldName, interval);
     } else if (operator instanceof OpenClosedInterval<?> interval) {
-      operatorNode.addOpenClosedInterval(fieldName, interval.get$gt(), interval.get$lte());
+      fieldNode = new Range(parentNodeObject, fieldName, interval);
     } else if (operator instanceof Match<?> textMatch) {
-      operatorNode.addTextSearch(fieldName, textMatch);
+      Text text = textMatch.getText();
+      //noinspection IfCanBeSwitch
+      if (text instanceof com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard wildcard) {
+        fieldNode = new com.dropchop.recyclone.base.es.model.query.cond.Wildcard(
+            parentNodeObject, fieldName, text.getValue(), wildcard.getCaseInsensitive(), wildcard.getBoost()
+        );
+      } else if (text instanceof Phrase phrase) {
+        fieldNode = new MatchPhrase(
+            parentNodeObject, fieldName, text.getValue(), phrase.getSlop(), phrase.getAnalyzer()
+        );
+      } else if(text instanceof AdvancedText advancedText) {
+        fieldNode = new com.dropchop.recyclone.base.es.model.query.cond.MatchText(
+            parentNodeObject, fieldName, advancedText
+        );
+      } else {
+        throw new IllegalArgumentException("Unsupported match text type: " + text.getClass().getName());
+      }
     } else {
       throw new ServiceException(
           ErrorCode.internal_error, "Unsupported query operator: [" + operator.getClass().getName() + "]"
       );
     }
-    return operatorNode;
+    return fieldNode;
+  }
+
+  private boolean mustHandleNull(ConditionOperator operator) {
+    if (operator == null) {
+      return true;
+    }
+    if (operator instanceof Eq<?> eq) {
+      return eq.get$eq() == null;
+    }
+    return false;
+  }
+
+  private IQueryObject mapFieldCondition(int level, QueryFieldListener listener, Field<?> field,
+                                         ConditionOperator operator, IQueryObject parentNodeObject) {
+    IQueryObject mappedField = mapField(level, listener, field, operator, parentNodeObject);
+    if (listener != null) {
+      listener.on(level, field, mappedField);
+    }
+    if (mappedField instanceof Exists exists && operator instanceof Eq<?> eq && eq.get$eq() == null) {
+      if (parentNodeObject instanceof Bool bool) {
+        bool.mustNot(mappedField);
+        return null; // this field was mapped here instead upon return from mapCondition
+      } else {
+        Bool boolQuery = new Bool(parentNodeObject);
+        boolQuery.mustNot(mappedField);
+        return boolQuery;
+      }
+    }
+    return mappedField;
   }
 
   protected IQueryObject mapCondition(int level, QueryFieldListener listener, Condition condition,
@@ -75,6 +129,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     if (level == 0 && !(condition instanceof LogicalCondition)) {
       Bool boolQuery = new Bool();
       IQueryObject subQueryContainer = mapCondition(level + 1, listener, condition, null, boolQuery);
+      if (subQueryContainer == null) {
+        return boolQuery;
+      }
       boolQuery.must(subQueryContainer);
       return boolQuery;
     }
@@ -88,6 +145,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       for (Iterator<Condition> it = logicalCondition.iterator(); it.hasNext(); ) {
         Condition subCondition = it.next();
         IQueryObject subQueryContainer = mapCondition(level + 1, listener, subCondition, condition, query);
+        if (subQueryContainer == null) {
+          continue;
+        }
         if (condition instanceof And) {
           query.must(subQueryContainer);
         } else if (condition instanceof Or) {
@@ -102,19 +162,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       if (operator == null) {
         operator = new Eq<>(null);
       }
-      IQueryObject mappedField = mapField(level, listener, conditionedField, operator, parentNodeObject);
-      if (listener != null) {
-        listener.on(level, conditionedField, mappedField);
-      }
-      return mappedField;
+      return mapFieldCondition(level, listener, conditionedField, operator, parentNodeObject);
     } else if (condition instanceof Field<?> field) {
       Object val = field.get(field.getName());
       ConditionOperator operator = new Eq<>(val); // implicit synthetic Eq operator when Field type
-      IQueryObject mappedField = mapField(level, listener, field, operator, parentNodeObject);
-      if (listener != null) {
-        listener.on(level, field, mappedField);
-      }
-      return mappedField;
+      return mapFieldCondition(level, listener, field, operator, parentNodeObject);
     } else if (condition instanceof com.dropchop.recyclone.base.api.model.query.condition.Knn knnCondition) {
       IQueryObject filterQuery = null;
       Knn knnNode = new Knn(
@@ -133,7 +185,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   }
 
   @Override
-  public QueryObject buildAggregation(Aggregation aggregation) {
+  public QueryObject buildAggregation(QueryFieldListener listener, Aggregation aggregation) {
     // TODO: refactor aggregation construction with delegation to QueryObject
     QueryObject node = new QueryObject();
 
@@ -235,10 +287,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
         QueryObject subAggs = new QueryObject();
         for (Aggregation sub : bucket.getAggs()) {
           if (sub instanceof Aggregation.Wrapper) {
-            subAggs.put(sub.getName(), buildAggregation(((Aggregation.Wrapper) sub).iterator().next()));
-          } else {
-            subAggs.put(sub.getName(), buildAggregation(sub));
+            // unwrap Aggregation
+            sub = ((Aggregation.Wrapper) sub).iterator().next();
           }
+          IQueryObject subAggObj = buildAggregation(listener, sub);
+          subAggs.put(sub.getName(), subAggObj);
         }
         node.put("aggs", subAggs);
       }
@@ -370,10 +423,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       QueryObject aggregations = new QueryObject();
       for (Aggregation agg : params.getAggregate()) {
         if (agg instanceof Aggregation.Wrapper) {
-          aggregations.put(agg.getName(), buildAggregation(((Aggregation.Wrapper) agg).iterator().next()));
-        } else {
-          aggregations.put(agg.getName(), buildAggregation(agg));
+          // unwrap Aggregation
+          agg = ((Aggregation.Wrapper) agg).iterator().next();
         }
+        IQueryObject aggObj = buildAggregation(fieldListener, agg);
+        aggregations.put(agg.getName(), aggObj);
       }
       queryContainer.put("aggs", aggregations);
     }

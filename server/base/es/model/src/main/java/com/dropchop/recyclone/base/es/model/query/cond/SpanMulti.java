@@ -1,4 +1,8 @@
-package com.dropchop.recyclone.base.es.model.query;
+package com.dropchop.recyclone.base.es.model.query.cond;
+
+import com.dropchop.recyclone.base.es.model.query.IQueryNode;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
+import com.dropchop.recyclone.base.es.model.query.QueryObject;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 29. 01. 2026.

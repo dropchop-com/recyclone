@@ -58,16 +58,16 @@ public class DummyResourceTest {
 
   @Test
   @Order(5)
-  @Tag("create")
-  @Tag("searchByCode")
-  @Tag("searchByTitleTranslation")
-  @Tag("dummyQueryAggregations")
-  @Tag("wildcardSearch")
-  @Tag("matchPhraseSearch")
-  @Tag("advancedTextSearch")
-  @Tag("deleteById")
-  @Tag("deleteByQuery")
-  @Tag("aggregationsWithFilters")
+  @Tag("DummyResourceTest.create")
+  @Tag("DummyResourceTest.searchByCode")
+  @Tag("DummyResourceTest.searchByTitleTranslation")
+  @Tag("DummyResourceTest.dummyQueryAggregations")
+  @Tag("DummyResourceTest.wildcardSearch")
+  @Tag("DummyResourceTest.matchPhraseSearch")
+  @Tag("DummyResourceTest.advancedTextSearch")
+  @Tag("DummyResourceTest.deleteById")
+  @Tag("DummyResourceTest.deleteByQuery")
+  @Tag("DummyResourceTest.aggregationsWithFilters")
   public void create() {
     List<Dummy> dummies = this.dummyMockData.createMockDummies();
 
@@ -90,7 +90,7 @@ public class DummyResourceTest {
 
   @Test
   @Order(10)
-  @Tag("searchByCode")
+  @Tag("DummyResourceTest.searchByCode")
   public void searchByCode() {
     QueryParams params = QueryParams.builder()
       .or(
@@ -121,12 +121,12 @@ public class DummyResourceTest {
 
   @Test
   @Order(20)
-  @Tag("searchByTitleTranslation")
+  @Tag("DummyResourceTest.searchByTitleTranslation")
   public void searchByTitleTranslation() {
     QueryParams params = QueryParams.builder()
       .and(
         field("translations.lang", "de"),
-        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+        field("created", gte(Iso8601.fromIso("2025-09-19T10:12:01.123")))
       )
       .build();
 
@@ -151,10 +151,10 @@ public class DummyResourceTest {
 
   @Test
   @Order(30)
-  @Tag("dummyQueryAggregations")
+  @Tag("DummyResourceTest.dummyQueryAggregations")
   public void dummyQueryAggregations() {
     QueryParams params = QueryParams.builder().and(
-     field("created", gte(Iso8601.fromIso("2020-09-19T10:12:01.123")))
+     field("created", gte(Iso8601.fromIso("2025-09-19T10:12:01.123")))
     ).aggs(
       terms("languages", "lang",
         count("number", "lang")
@@ -179,10 +179,10 @@ public class DummyResourceTest {
   }
 
   @Test
-  @Tag("aggregationsWithFilters")
+  @Tag("DummyResourceTest.aggregationsWithFilters")
   public void aggregationsWithFilters() {
     QueryParams params = QueryParams.builder().and(
-      field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+      field("created", gte(Iso8601.fromIso("2025-09-19T10:12:01.123")))
     ).aggs(
       terms(
         "languages",
@@ -212,12 +212,12 @@ public class DummyResourceTest {
 
   @Test
   @Order(30)
-  @Tag("dummySearchNull")
+  @Tag("DummyResourceTest.dummySearchNull")
   public void dummySearchNull() {
     QueryParams params = QueryParams.builder()
       .and(
         field("languages.name", "ru"),
-        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+        field("created", gte(Iso8601.fromIso("2025-09-19T10:12:01.123")))
       )
       .build();
 
@@ -241,12 +241,12 @@ public class DummyResourceTest {
 
   @Test
   @Order(40)
-  @Tag("wildcardSearch")
+  @Tag("DummyResourceTest.wildcardSearch")
   public void wildcardSearch() {
     QueryParams s = QueryParams.builder()
       .or(
         wildcard("title", "Dum*", true, 1.2f),
-        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+        field("created", gte(Iso8601.fromIso("2025-09-19T10:12:01.123")))
       )
       .build();
 
@@ -270,12 +270,12 @@ public class DummyResourceTest {
 
   @Test
   @Order(40)
-  @Tag("matchPhraseSearch")
+  @Tag("DummyResourceTest.matchPhraseSearch")
   public void matchPhraseSearch() {
     QueryParams s = QueryParams.builder()
       .and(
         phrase("title", "Dummy 3", 2),
-        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+        field("created", gte(Iso8601.fromIso("2025-01-19T10:12:01.123")))
       )
       .build();
 
@@ -299,13 +299,13 @@ public class DummyResourceTest {
 
   @Test
   @Order(40)
-  @Tag("advancedTextSearch")
+  @Tag("DummyResourceTest.advancedTextSearch")
   @Disabled
   public void advancedTextSearch() {
     QueryParams s = QueryParams.builder()
       .and(
         advancedText("title", "\"Dum* 5\""),
-        field("created", lte(Iso8601.fromIso("2026-09-19T10:12:01.123")))
+        field("created", gte(Iso8601.fromIso("2025-09-19T10:12:01.123")))
       )
       .build();
 
@@ -329,7 +329,7 @@ public class DummyResourceTest {
 
   @Test
   @Order(60)
-  @Tag("deleteById")
+  @Tag("DummyResourceTest.deleteById")
   public void deleteById() {
     CodeParams params1 = CodeParams.builder()
       .modifyPolicy(List.of(WAIT_FOR))
@@ -356,7 +356,7 @@ public class DummyResourceTest {
 
   @Test
   @Order(70)
-  @Tag("deleteByQuery")
+  @Tag("DummyResourceTest.deleteByQuery")
   public void deleteByQuery() {
     QueryParams s = QueryParams.builder()
       .modifyPolicy(List.of(WAIT_FOR))

@@ -1,8 +1,12 @@
-package com.dropchop.recyclone.base.es.model.query;
+package com.dropchop.recyclone.base.es.model.query.cond;
 
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Exclude;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Include;
+import com.dropchop.recyclone.base.es.model.query.IQueryNode;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
+import com.dropchop.recyclone.base.es.model.query.QueryObject;
+import com.dropchop.recyclone.base.es.model.query.Sort;
 import lombok.Getter;
 import lombok.Setter;
 

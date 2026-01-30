@@ -12,5 +12,5 @@ public interface ElasticQueryBuilder {
   IQueryObject build(QueryFieldListener fieldListener, ElasticIndexConfig indexConfig, QueryParams params);
   IQueryObject build(QueryFieldListener fieldListener, QueryParams params);
   IQueryObject build(QueryParams params);
-  IQueryObject buildAggregation(Aggregation aggregation);
+  IQueryObject buildAggregation(QueryFieldListener listener, Aggregation aggregation);
 }

@@ -1,5 +1,6 @@
-package com.dropchop.recyclone.base.es.model.query;
+package com.dropchop.recyclone.base.es.model.query.cond;
 
+import com.dropchop.recyclone.base.es.model.query.*;
 import lombok.Getter;
 
 @Getter

@@ -1,4 +1,4 @@
-package com.dropchop.recyclone.base.es.model.query;
+package com.dropchop.recyclone.base.es.model.query.cond;
 
 import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionParser;
 import com.dropchop.recyclone.base.api.model.legacy.text.ExpressionToken;
@@ -7,6 +7,9 @@ import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Wildcard;
+import com.dropchop.recyclone.base.es.model.query.IQueryNode;
+import com.dropchop.recyclone.base.es.model.query.IQueryObject;
+import com.dropchop.recyclone.base.es.model.query.QueryObject;
 
 import java.util.List;
 import java.util.Map;
@@ -110,7 +113,7 @@ public class Operator extends QueryObject {
           for (ExpressionToken subToken : subTokens) {
             if (subToken.isWildcard()) {
               StringBuilder sequence = subToken.getExpression();
-              spanQuery.addClause(new SpanMulti(query, new com.dropchop.recyclone.base.es.model.query.Wildcard(
+              spanQuery.addClause(new SpanMulti(query, new com.dropchop.recyclone.base.es.model.query.cond.Wildcard(
                   query, fieldName, sequence.toString().toLowerCase(), advancedText.getCaseInsensitive()
               )));
               added = true;
@@ -144,7 +147,7 @@ public class Operator extends QueryObject {
       } else if (token.isWildcard()) {
         StringBuilder sequence = token.getExpression();
         String tok = sequence.toString().toLowerCase();
-        subQuery = new com.dropchop.recyclone.base.es.model.query.Wildcard(
+        subQuery = new com.dropchop.recyclone.base.es.model.query.cond.Wildcard(
             query, fieldName, tok, advancedText.getCaseInsensitive()
         );
       } else if (token.isPrefix()) {
@@ -162,7 +165,7 @@ public class Operator extends QueryObject {
         if (sequence.length() <= 0) {
           continue;
         }
-        subQuery = new com.dropchop.recyclone.base.es.model.query.Match(query, fieldName, sequence.toString());
+        subQuery = new com.dropchop.recyclone.base.es.model.query.cond.Match(query, fieldName, sequence.toString());
       }
       if (subQuery == null) {
         continue;
@@ -183,15 +186,14 @@ public class Operator extends QueryObject {
     Object text = match.getText();
     if (text instanceof Wildcard wildcard) {
       this.putAll(
-          new com.dropchop.recyclone.base.es.model.query.Wildcard(
+          new com.dropchop.recyclone.base.es.model.query.cond.Wildcard(
               this, field, wildcard.getValue(), wildcard.getCaseInsensitive(), wildcard.getBoost()
           )
       );
     } else if (text instanceof Phrase phrase) {
-      QueryObject nameObject = new QueryObject();
+
       QueryObject paramsObject = new QueryObject();
       QueryObject valueObject = new QueryObject();
-
       valueObject.put("query", phrase.getValue());
       paramsObject.putAll(valueObject);
 
@@ -207,6 +209,7 @@ public class Operator extends QueryObject {
         paramsObject.putAll(caseObject);
       }
 
+      QueryObject nameObject = new QueryObject();
       nameObject.put(field, paramsObject);
       this.put("match_phrase", nameObject);
     } else if(text instanceof AdvancedText advancedText) {
