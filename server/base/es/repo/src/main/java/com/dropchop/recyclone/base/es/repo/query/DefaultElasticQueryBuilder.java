@@ -109,7 +109,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     if (mappedField instanceof Exists exists && operator instanceof Eq<?> eq && eq.get$eq() == null) {
       if (parentNodeObject instanceof Bool bool) {
         bool.mustNot(mappedField);
-        return null; // this field was mapped here instead upon return from mapCondition
+        return null; // this field was mapped here instead upon return from mapCondition (we reuse bool parent)
       } else {
         Bool boolQuery = new Bool(parentNodeObject);
         boolQuery.mustNot(mappedField);
@@ -129,7 +129,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     if (level == 0 && !(condition instanceof LogicalCondition)) {
       Bool boolQuery = new Bool();
       IQueryObject subQueryContainer = mapCondition(level + 1, listener, condition, null, boolQuery);
-      if (subQueryContainer == null) {
+      if (subQueryContainer == null) { // null is returned when callee already handled this condition (Not Exists)
         return boolQuery;
       }
       boolQuery.must(subQueryContainer);
@@ -145,7 +145,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
       for (Iterator<Condition> it = logicalCondition.iterator(); it.hasNext(); ) {
         Condition subCondition = it.next();
         IQueryObject subQueryContainer = mapCondition(level + 1, listener, subCondition, condition, query);
-        if (subQueryContainer == null) {
+        if (subQueryContainer == null) { // null is returned when callee already handled this condition (Not Exists)
           continue;
         }
         if (condition instanceof And) {
@@ -184,9 +184,75 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return parentNodeObject;
   }
 
-  @Override
+  public QueryObject buildAggregationNew(QueryFieldListener listener, Aggregation aggregation) {
+    if (aggregation == null) {
+      return null;
+    }
+
+    if (aggregation instanceof Aggregation.Wrapper) {
+      aggregation = ((Aggregation.Wrapper) aggregation).iterator().next();
+    }
+
+    QueryObject node;
+
+    if (aggregation instanceof Terms terms) {
+      com.dropchop.recyclone.base.es.model.query.agg.Terms termsNode =
+          new com.dropchop.recyclone.base.es.model.query.agg.Terms(terms.getField());
+      termsNode.setSize(terms.getSize());
+      termsNode.setFilter(terms.getFilter());
+      node = termsNode;
+    } else if (aggregation instanceof DateHistogram dh) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.DateHistogram(
+          dh.getField(), dh.getCalendar_interval(), dh.getTime_zone()
+      );
+    } else if (aggregation instanceof Avg) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Avg(aggregation.getField());
+    } else if (aggregation instanceof Count) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Count(aggregation.getField());
+    } else if (aggregation instanceof Max) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Max(aggregation.getField());
+    } else if (aggregation instanceof Min) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Min(aggregation.getField());
+    } else if (aggregation instanceof Sum) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Sum(aggregation.getField());
+    } else if (aggregation instanceof Cardinality) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Cardinality(aggregation.getField());
+    } else if (aggregation instanceof Stats) {
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Stats(aggregation.getField());
+    } else if (aggregation instanceof com.dropchop.recyclone.base.api.model.query.aggregation.TopHits topHits) {
+      com.dropchop.recyclone.base.es.model.query.agg.TopHits topHitsNode =
+          new com.dropchop.recyclone.base.es.model.query.agg.TopHits();
+      topHitsNode.setSize(topHits.getSize());
+      if (topHits.getSort() != null) {
+        for (Sort s : topHits.getSort()) {
+          topHitsNode.addSort(s.getField(), s.getValue(), s.getNumericType());
+        }
+      }
+      if (topHits.getFilter() != null && topHits.getFilter().getInclude() != null) {
+        topHitsNode.setSourceIncludes(topHits.getFilter().getInclude());
+      }
+      node = topHitsNode;
+    } else {
+      node = new QueryObject();
+    }
+
+    if (aggregation instanceof BucketAggregation bucket) {
+      if (bucket.getAggs() != null && !bucket.getAggs().isEmpty()
+          && node instanceof com.dropchop.recyclone.base.es.model.query.agg.AggregationBucket bucketNode) {
+        for (Aggregation sub : bucket.getAggs()) {
+          if (sub instanceof Aggregation.Wrapper) {
+            sub = ((Aggregation.Wrapper) sub).iterator().next();
+          }
+          IQueryObject subAggObj = buildAggregation(listener, sub);
+          bucketNode.addAgg(sub.getName(), subAggObj);
+        }
+      }
+    }
+
+    return node;
+  }
+
   public QueryObject buildAggregation(QueryFieldListener listener, Aggregation aggregation) {
-    // TODO: refactor aggregation construction with delegation to QueryObject
     QueryObject node = new QueryObject();
 
     if (aggregation instanceof Terms terms) {
