@@ -12,7 +12,7 @@ public class Terms extends QueryField {
 
   public <T> Terms(IQueryNode parent, String fieldName, Collection<T> values) {
     super(parent, fieldName, values);
-    self.put(this.fieldName, values);
-    this.put("terms", self);
+    body.put(this.fieldName, values);
+    this.put("terms", body);
   }
 }

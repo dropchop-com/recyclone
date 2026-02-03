@@ -15,6 +15,9 @@ public class Terms extends BucketAggregation implements HasFiltering {
   private Integer size = null;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Integer shardSize = null;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Filter filter = null;
 
   public Terms(String name, String field, Aggregation... aggs) {
@@ -28,6 +31,12 @@ public class Terms extends BucketAggregation implements HasFiltering {
   public Terms(String name, String field, Integer size, Aggregation... aggs) {
     super(name, field, aggs);
     this.size = size;
+  }
+
+  public Terms(String name, String field, Integer size, Integer shardSize, Aggregation... aggs) {
+    super(name, field, aggs);
+    this.size = size;
+    this.shardSize = shardSize;
   }
 
   public Terms(String name, String field, Filter filter, AggregationList aggs) {
@@ -44,6 +53,12 @@ public class Terms extends BucketAggregation implements HasFiltering {
   public Terms(String name, String field, Integer size, AggregationList aggs) {
     super(name, field, aggs);
     this.size = size;
+  }
+
+  public Terms(String name, String field, Integer size, Integer shardSize, AggregationList aggs) {
+    super(name, field, aggs);
+    this.size = size;
+    this.shardSize = shardSize;
   }
 
   public Terms(String name, String field) {

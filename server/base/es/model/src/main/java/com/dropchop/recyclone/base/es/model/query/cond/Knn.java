@@ -19,7 +19,7 @@ public class Knn extends QueryObject {
 
   private final String queryString;
   private final IQueryObject filter;
-  private final IQueryObject self = new QueryObject();
+  private final IQueryObject body = new QueryObject();
 
   private void validateAndBuild() {
     if (fieldName == null || fieldName.isEmpty()) {
@@ -30,9 +30,9 @@ public class Knn extends QueryObject {
     }
 
     if (queryVector != null && queryVector.length > 0) {
-      this.self.put("query_vector", queryVector);
+      this.body.put("query_vector", queryVector);
     } else if (queryString != null && !queryString.isBlank()) {
-      this.self.put("query_vector", new float[]{});
+      this.body.put("query_vector", new float[]{});
     } else {
       throw new ServiceException(
           ErrorCode.parameter_validation_error,
@@ -40,29 +40,29 @@ public class Knn extends QueryObject {
       );
     }
 
-    this.self.put("field", fieldName);
+    this.body.put("field", fieldName);
 
     if (k != null) {
-      this.self.put("k", k);
+      this.body.put("k", k);
     }
 
     if (similarity != null) {
-      this.self.put("similarity", similarity);
+      this.body.put("similarity", similarity);
     }
 
     if (numCandidates != null) {
-      this.self.put("num_candidates", numCandidates);
+      this.body.put("num_candidates", numCandidates);
     }
 
     if (filter != null) {
       if (filter instanceof Bool boolQuery) {
-        this.self.put("filter", boolQuery);
+        this.body.put("filter", boolQuery);
       } else {
-        this.self.put("filter", filter);
+        this.body.put("filter", filter);
       }
     }
 
-    this.put("knn", self);
+    this.put("knn", body);
   }
 
   public Knn(IQueryNode parent, com.dropchop.recyclone.base.api.model.query.condition.Knn knnQuery,
@@ -94,10 +94,10 @@ public class Knn extends QueryObject {
 
   public void setQueryVector(float[] queryVector) {
     if (queryVector == null || queryVector.length == 0) {
-      this.self.remove("query_vector");
+      this.body.remove("query_vector");
       this.queryVector = null;
     } else {
-      this.self.put("query_vector", queryVector);
+      this.body.put("query_vector", queryVector);
       this.queryVector = queryVector;
     }
   }
@@ -108,35 +108,35 @@ public class Knn extends QueryObject {
 
   public void setFieldName(String field) {
     this.fieldName = field;
-    this.self.put("field", field);
+    this.body.put("field", field);
   }
 
   public void setSimilarity(Float similarity) {
     if (similarity == null) {
-      this.self.remove("similarity");
+      this.body.remove("similarity");
       this.similarity = null;
     } else {
-      this.self.put("similarity", similarity);
+      this.body.put("similarity", similarity);
       this.similarity = similarity;
     }
   }
 
   public void setTopK(Integer topK) {
     if (topK == null) {
-      this.self.remove("k");
+      this.body.remove("k");
       this.k = null;
     } else {
-      this.self.put("k", topK);
+      this.body.put("k", topK);
       this.k = topK;
     }
   }
 
   public void setNumCandidates(Integer numCandidates) {
     if (numCandidates == null) {
-      this.self.remove("num_candidates");
+      this.body.remove("num_candidates");
       this.numCandidates = null;
     } else {
-      this.self.put("num_candidates", numCandidates);
+      this.body.put("num_candidates", numCandidates);
       this.numCandidates = numCandidates;
     }
   }

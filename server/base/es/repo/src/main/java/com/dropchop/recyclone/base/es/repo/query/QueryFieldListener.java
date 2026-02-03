@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.query;
 
+import com.dropchop.recyclone.base.api.model.query.Aggregation;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.es.model.query.IQueryObject;
@@ -10,4 +11,5 @@ import com.dropchop.recyclone.base.es.model.query.IQueryObject;
 public interface QueryFieldListener {
   void on(int level, Condition condition, IQueryObject node);
   void on(int level, Field<?> field, IQueryObject node);
+  void on(int level, Aggregation aggregation, IQueryObject node);
 }

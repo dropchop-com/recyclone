@@ -6,33 +6,33 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
+ */
 @Getter
 @SuppressWarnings("unused")
 public class Terms extends AggregationBucket {
   private String field;
   private Integer size;
+  private Integer shardSize;
   private Object include;
   private Object exclude;
 
-  public Terms(IQueryNode parent, String field) {
+  public Terms(IQueryNode parent, String field, Integer size, Integer shardSize, Filter filter) {
     super(parent, "terms");
     setField(field);
-  }
-
-  public Terms(String field) {
-    this(null, field);
-  }
-
-  public Terms() {
-    this(null, null);
-  }
-
-  public void setField(String field) {
-    this.field = field;
-    if (field == null) {
-      body.remove("field");
+    setSize(size);
+    setShardSize(shardSize);
+    if (filter == null) {
+      setInclude(null);
+      setExclude(null);
     } else {
-      body.put("field", field);
+      if (filter.getInclude() != null) {
+        setInclude(filter.getInclude().getValue());
+      }
+      if (filter.getExclude() != null) {
+        setExclude(filter.getExclude().getValue());
+      }
     }
   }
 
@@ -42,6 +42,24 @@ public class Terms extends AggregationBucket {
       body.remove("size");
     } else {
       body.put("size", size);
+    }
+  }
+
+  public void setShardSize(Integer shardSize) {
+    this.shardSize = shardSize;
+    if (shardSize == null) {
+      body.remove("shard_size");
+    } else {
+      body.put("shard_size", shardSize);
+    }
+  }
+
+  public void setField(String field) {
+    this.field = field;
+    if (field == null) {
+      body.remove("field");
+    } else {
+      body.put("field", field);
     }
   }
 

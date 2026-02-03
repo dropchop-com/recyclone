@@ -16,7 +16,7 @@ public class Match extends QueryField {
     super(parent, fieldName, prefixValue.toString());
     IQueryObject field = new QueryObject();
     field.put("query", prefixValue);
-    self.put(fieldName, field);
-    this.put("match", self);
+    body.put(fieldName, field);
+    this.put("match", body);
   }
 }

@@ -12,7 +12,7 @@ public class Exists extends QueryField {
 
   public Exists(IQueryNode parent, String fieldName) {
     super(parent, fieldName, null);
-    self.put("field", this.fieldName);
-    this.put("exists", self);
+    body.put("field", this.fieldName);
+    this.put("exists", body);
   }
 }

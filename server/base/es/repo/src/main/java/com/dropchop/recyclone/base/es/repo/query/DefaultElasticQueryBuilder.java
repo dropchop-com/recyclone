@@ -184,7 +184,8 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return parentNodeObject;
   }
 
-  public QueryObject buildAggregationNew(QueryFieldListener listener, Aggregation aggregation) {
+  protected QueryObject _buildAggregation(int level, IQueryNode parent, QueryFieldListener listener,
+                                          Aggregation aggregation) {
     if (aggregation == null) {
       return null;
     }
@@ -196,44 +197,37 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     QueryObject node;
 
     if (aggregation instanceof Terms terms) {
-      com.dropchop.recyclone.base.es.model.query.agg.Terms termsNode =
-          new com.dropchop.recyclone.base.es.model.query.agg.Terms(terms.getField());
-      termsNode.setSize(terms.getSize());
-      termsNode.setFilter(terms.getFilter());
-      node = termsNode;
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Terms(
+          parent, terms.getField(), terms.getSize(), terms.getShardSize(), terms.getFilter()
+      );
     } else if (aggregation instanceof DateHistogram dh) {
       node = new com.dropchop.recyclone.base.es.model.query.agg.DateHistogram(
-          dh.getField(), dh.getCalendar_interval(), dh.getTime_zone()
+          parent, dh.getField(), dh.getCalendarInterval(), dh.getTimeZone()
       );
     } else if (aggregation instanceof Avg) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Avg(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Avg(parent, aggregation.getField());
     } else if (aggregation instanceof Count) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Count(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Count(parent, aggregation.getField());
     } else if (aggregation instanceof Max) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Max(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Max(parent, aggregation.getField());
     } else if (aggregation instanceof Min) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Min(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Min(parent, aggregation.getField());
     } else if (aggregation instanceof Sum) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Sum(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Sum(parent, aggregation.getField());
     } else if (aggregation instanceof Cardinality) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Cardinality(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Cardinality(parent, aggregation.getField());
     } else if (aggregation instanceof Stats) {
-      node = new com.dropchop.recyclone.base.es.model.query.agg.Stats(aggregation.getField());
+      node = new com.dropchop.recyclone.base.es.model.query.agg.Stats(parent, aggregation.getField());
     } else if (aggregation instanceof com.dropchop.recyclone.base.api.model.query.aggregation.TopHits topHits) {
-      com.dropchop.recyclone.base.es.model.query.agg.TopHits topHitsNode =
-          new com.dropchop.recyclone.base.es.model.query.agg.TopHits();
-      topHitsNode.setSize(topHits.getSize());
-      if (topHits.getSort() != null) {
-        for (Sort s : topHits.getSort()) {
-          topHitsNode.addSort(s.getField(), s.getValue(), s.getNumericType());
-        }
-      }
-      if (topHits.getFilter() != null && topHits.getFilter().getInclude() != null) {
-        topHitsNode.setSourceIncludes(topHits.getFilter().getInclude());
-      }
-      node = topHitsNode;
+      node = new com.dropchop.recyclone.base.es.model.query.agg.TopHits(
+          parent, topHits.getSize(), topHits.getSort(), topHits.getFilter()
+      );
     } else {
       node = new QueryObject();
+    }
+
+    if (listener != null) {
+      listener.on(level, aggregation, node);
     }
 
     if (aggregation instanceof BucketAggregation bucket) {
@@ -243,7 +237,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
           if (sub instanceof Aggregation.Wrapper) {
             sub = ((Aggregation.Wrapper) sub).iterator().next();
           }
-          IQueryObject subAggObj = buildAggregation(listener, sub);
+          IQueryObject subAggObj = _buildAggregation(level + 1, node, listener, sub);
           bucketNode.addAgg(sub.getName(), subAggObj);
         }
       }
@@ -252,7 +246,12 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return node;
   }
 
+  @Override
   public QueryObject buildAggregation(QueryFieldListener listener, Aggregation aggregation) {
+    return _buildAggregation(0, null, listener, aggregation);
+  }
+
+  public QueryObject buildAggregation2(QueryFieldListener listener, Aggregation aggregation) {
     QueryObject node = new QueryObject();
 
     if (aggregation instanceof Terms terms) {
@@ -300,8 +299,8 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     } else if (aggregation instanceof DateHistogram dh) {
       QueryObject dhNode = new QueryObject();
       dhNode.put("field", dh.getField());
-      dhNode.put("calendar_interval", dh.getCalendar_interval());
-      String tz = dh.getTime_zone();
+      dhNode.put("calendar_interval", dh.getCalendarInterval());
+      String tz = dh.getTimeZone();
       if (tz != null && !tz.isBlank()) {
         dhNode.put("time_zone", tz);
       }

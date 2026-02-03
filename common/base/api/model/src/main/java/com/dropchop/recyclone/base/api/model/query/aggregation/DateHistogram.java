@@ -10,37 +10,37 @@ import java.util.Arrays;
 @Setter
 @SuppressWarnings("unused")
 public class DateHistogram extends BucketAggregation {
-  private String calendar_interval;
-  private String time_zone;
+  private String calendarInterval;
+  private String timeZone;
 
-  public DateHistogram(String name, String field, String calendar_interval, String time_zone, Aggregation... aggs) {
-    this(name, field, calendar_interval, time_zone, new AggregationList(Arrays.asList(aggs)));
+  public DateHistogram(String name, String field, String calendarInterval, String timeZone, Aggregation... aggs) {
+    this(name, field, calendarInterval, timeZone, new AggregationList(Arrays.asList(aggs)));
   }
 
-  public DateHistogram(String name, String field, String calendar_interval, String time_zone, AggregationList aggs) {
+  public DateHistogram(String name, String field, String calendarInterval, String timeZone, AggregationList aggs) {
     super(name, field, aggs);
-    this.calendar_interval = calendar_interval;
-    this.time_zone = time_zone;
+    this.calendarInterval = calendarInterval;
+    this.timeZone = timeZone;
   }
 
-  public DateHistogram(String name, String field, String calendar_interval, String time_zone) {
+  public DateHistogram(String name, String field, String calendarInterval, String timeZone) {
     super(name, field);
-    this.calendar_interval = calendar_interval;
-    this.time_zone = time_zone;
+    this.calendarInterval = calendarInterval;
+    this.timeZone = timeZone;
   }
 
-  public DateHistogram(String name, String field, String calendar_interval, Aggregation... aggs) {
-    this(name, field, calendar_interval, new AggregationList(Arrays.asList(aggs)));
+  public DateHistogram(String name, String field, String calendarInterval, Aggregation... aggs) {
+    this(name, field, calendarInterval, new AggregationList(Arrays.asList(aggs)));
   }
 
-  public DateHistogram(String name, String field, String calendar_interval, AggregationList aggs) {
+  public DateHistogram(String name, String field, String calendarInterval, AggregationList aggs) {
     super(name, field, aggs);
-    this.calendar_interval = calendar_interval;
+    this.calendarInterval = calendarInterval;
   }
 
-  public DateHistogram(String name, String field, String calendar_interval) {
+  public DateHistogram(String name, String field, String calendarInterval) {
     super(name, field);
-    this.calendar_interval = calendar_interval;
+    this.calendarInterval = calendarInterval;
   }
 
   public DateHistogram() {

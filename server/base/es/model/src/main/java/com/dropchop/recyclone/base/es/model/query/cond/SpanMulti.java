@@ -10,12 +10,12 @@ import com.dropchop.recyclone.base.es.model.query.QueryObject;
 public class SpanMulti extends QueryObject {
 
   @SuppressWarnings("FieldCanBeLocal")
-  private final IQueryObject self = new QueryObject(this);
+  private final IQueryObject body = new QueryObject(this);
 
   public SpanMulti(IQueryNode parent, IQueryNode child) {
     super(parent);
     child.setParent(this);
-    self.put("match", child);
-    this.put("span_multi", self);
+    body.put("match", child);
+    this.put("span_multi", body);
   }
 }

@@ -8,15 +8,15 @@ import lombok.Getter;
 @SuppressWarnings("unused")
 public class MatchAll extends QueryObject {
   private final Float boost;
-  private final QueryObject self = new QueryObject();
+  private final QueryObject body = new QueryObject();
 
   public MatchAll(IQueryNode parent, Float boost) {
     super(parent);
     this.boost = boost;
     if (boost != null) {
-      this.self.put("boost", boost);
+      this.body.put("boost", boost);
     }
-    this.put("match_all", this.self);
+    this.put("match_all", this.body);
   }
 
   public MatchAll(IQueryNode parent) {

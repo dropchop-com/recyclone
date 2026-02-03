@@ -36,7 +36,7 @@ public class MatchPhrase extends QueryField {
       paramsObject.putAll(caseObject);
     }
 
-    self.put(fieldName, paramsObject);
-    this.put("match_phrase", self);
+    body.put(fieldName, paramsObject);
+    this.put("match_phrase", body);
   }
 }

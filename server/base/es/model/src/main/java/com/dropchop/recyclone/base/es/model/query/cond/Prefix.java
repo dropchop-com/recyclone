@@ -23,8 +23,8 @@ public class Prefix extends QueryField {
     if (caseInsensitive != null) {
       field.put("case_insensitive", caseInsensitive);
     }
-    self.put(this.fieldName, field);
-    this.put("prefix", self);
+    body.put(this.fieldName, field);
+    this.put("prefix", body);
   }
 
   public Prefix(IQueryNode parent, String fieldName, CharSequence prefixValue) {

@@ -9,7 +9,7 @@ public class SpanNear extends QueryObject {
   private final IQueryList clauses;
   private final Integer slop;
   private final Boolean inOrder;
-  private final IQueryObject self = new QueryObject();
+  private final IQueryObject body = new QueryObject();
 
   public SpanNear(IQueryNode parent, Integer slop, Boolean inOrder) {
     super(parent);
@@ -17,14 +17,14 @@ public class SpanNear extends QueryObject {
     this.inOrder = inOrder;
     this.slop = slop;
 
-    this.self.put("clauses", clauses);
+    this.body.put("clauses", clauses);
     if (inOrder != null) {
-      this.self.put("in_order", inOrder);
+      this.body.put("in_order", inOrder);
     }
     if (slop != null) {
-      this.self.put("slop", slop);
+      this.body.put("slop", slop);
     }
-    this.put("span_near", this.self);
+    this.put("span_near", this.body);
   }
 
   public SpanNear addClause(IQueryNode clause) {

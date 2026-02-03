@@ -2,16 +2,11 @@ package com.dropchop.recyclone.base.es.model.query.agg;
 
 import com.dropchop.recyclone.base.es.model.query.IQueryNode;
 
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
+ */
 public class Count extends AggregationField {
   public Count(IQueryNode parent, String field) {
     super(parent, "value_count", field);
-  }
-
-  public Count(String field) {
-    this(null, field);
-  }
-
-  public Count() {
-    this(null, null);
   }
 }

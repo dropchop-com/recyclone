@@ -11,7 +11,7 @@ public class QueryField extends QueryObject {
 
   @JsonIgnore
   @SuppressWarnings("FieldCanBeLocal")
-  protected final IQueryObject self;
+  protected final IQueryObject body;
 
   @JsonIgnore
   protected final Object value;
@@ -24,9 +24,9 @@ public class QueryField extends QueryObject {
     this.fieldName = fieldName;
     this.value = value;
     if (isSelf) {
-      this.self = this;
+      this.body = this;
     } else {
-      this.self = new QueryObject(this);
+      this.body = new QueryObject(this);
     }
   }
 

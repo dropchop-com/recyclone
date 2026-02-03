@@ -26,8 +26,8 @@ public class Range extends QueryField {
     if (op2 != null && val2 != null) {
       operatorNode.put(op2, val2);
     }
-    self.put(field, operatorNode);
-    this.put("range", self);
+    body.put(field, operatorNode);
+    this.put("range", body);
   }
 
   public <T> Range(IQueryNode parent, String field, Gt<T> op) {

@@ -10,6 +10,8 @@ import com.dropchop.recyclone.base.es.model.query.Sort;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @SuppressWarnings("unused")
@@ -21,17 +23,18 @@ public class TopHits extends Aggregation {
 
   private final Sort sort = new Sort(this);
 
-  public TopHits(IQueryNode parent, Integer size) {
+  public TopHits(IQueryNode parent, Integer size,
+                 List<com.dropchop.recyclone.base.api.model.query.aggregation.Sort> sort, Filter filter) {
     super(parent, "top_hits");
     setSize(size);
-  }
-
-  public TopHits(IQueryNode parent) {
-    this(parent, null);
-  }
-
-  public TopHits() {
-    this(null, null);
+    if (sort != null) {
+      for (com.dropchop.recyclone.base.api.model.query.aggregation.Sort s : sort) {
+        this.addSort(s.getField(), s.getValue(), s.getNumericType());
+      }
+    }
+    if (filter != null && filter.getInclude() != null) {
+      this.setSourceIncludes(filter.getInclude());
+    }
   }
 
   public void setSize(Integer size) {

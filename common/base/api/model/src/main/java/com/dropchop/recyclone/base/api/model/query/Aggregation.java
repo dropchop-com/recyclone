@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base interface that marks aggregation description bearing object.
@@ -92,11 +93,13 @@ public interface Aggregation {
     return new Cardinality(name, field);
   }
 
-  static DateHistogram dateHistogram(String name, String field, String calendar_interval, String time_zone, Aggregation... subAggregations) {
+  static DateHistogram dateHistogram(String name, String field, String calendar_interval,
+                                     String time_zone, Aggregation... subAggregations) {
     return new DateHistogram(name, field, calendar_interval, time_zone, subAggregations);
   }
 
-  static DateHistogram dateHistogram(String name, String field, String calendar_interval, Aggregation... subAggregations) {
+  static DateHistogram dateHistogram(String name, String field, String calendar_interval,
+                                     Aggregation... subAggregations) {
     return new DateHistogram(name, field, calendar_interval, subAggregations);
   }
 
@@ -236,40 +239,59 @@ public interface Aggregation {
       return new Cardinality(name, field);
     }
 
-    public static DateHistogram dateHistogram(String name, String field, String calendarInterval, String timeZone, Aggregation... aggs) {
+    public static DateHistogram dateHistogram(String name, String field, String calendarInterval,
+                                              String timeZone, Aggregation... aggs) {
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
       return new DateHistogram(
-          name, field, calendarInterval, timeZone, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new))
+          name, field, calendarInterval, timeZone,
+          aggsStream.map(Wrapper::new).collect(Collectors.toCollection(AggregationList::new))
       );
     }
 
-    public static DateHistogram dateHistogram(String name, String field, String calendarInterval, Aggregation... aggs) {
+    public static DateHistogram dateHistogram(String name, String field, String calendarInterval,
+                                              Aggregation... aggs) {
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
       return new DateHistogram(
           name,
           field,
           calendarInterval,
-          (AggregationList) Arrays.stream(aggs).map(Wrapper::new).collect(Collectors.toCollection(AggregationList::new))
+          (AggregationList)aggsStream.collect(Collectors.toCollection(AggregationList::new))
       );
     }
 
     public static Terms terms(String name, String field, Aggregation... aggs) {
-      return new Terms(name, field, Arrays.stream(aggs).map(Wrapper::new)
-          .collect(Collectors.toCollection(AggregationList::new)));
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
+      return new Terms(
+          name, field, aggsStream.collect(Collectors.toCollection(AggregationList::new))
+      );
     }
 
     public static Terms terms(String name, String field, Integer size, Aggregation... aggs) {
-      return new Terms(name, field, size, Arrays.stream(aggs).map(Wrapper::new)
-        .collect(Collectors.toCollection(AggregationList::new)));
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
+      return new Terms(
+          name, field, size, aggsStream.collect(Collectors.toCollection(AggregationList::new))
+      );
+    }
+
+    public static Terms terms(String name, String field, Integer size, Integer shardSize, Aggregation... aggs) {
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
+      return new Terms(
+          name, field, size, shardSize, aggsStream.collect(Collectors.toCollection(AggregationList::new))
+      );
     }
 
     public static Terms terms(String name, String field, Filter filter, Aggregation... aggs) {
-      return new Terms(name, field, filter, Arrays.stream(aggs).map(Wrapper::new)
-        .collect(Collectors.toCollection(AggregationList::new)));
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
+      return new Terms(
+          name, field, filter, aggsStream.collect(Collectors.toCollection(AggregationList::new))
+      );
     }
 
     public static Terms terms(String name, String field, Integer size, Filter filter, Aggregation... aggs) {
-      return new Terms(name, field, size, filter, Arrays.stream(aggs).map(Wrapper::new)
-        .collect(Collectors.toCollection(AggregationList::new)));
+      Stream<Wrapper> aggsStream = Arrays.stream(aggs).map(Wrapper::new);
+      return new Terms(
+          name, field, size, filter, aggsStream.collect(Collectors.toCollection(AggregationList::new))
+      );
     }
   }
 }

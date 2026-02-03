@@ -7,6 +7,8 @@ import lombok.Getter;
 
 /**
  * Base bucket aggregation with optional sub-aggregations.
+ *
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
  */
 @Getter
 public abstract class AggregationBucket extends Aggregation {

@@ -4,12 +4,15 @@ import com.dropchop.recyclone.base.es.model.query.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
+ */
 @Getter
 public class Bool extends QueryObject {
   private final IQueryList must = new QueryList(this);
   private final IQueryList should = new QueryList(this);
   private final IQueryList mustNot = new QueryList(this);
-  private final IQueryObject self = new QueryObject();
+  private final IQueryObject body = new QueryObject();
 
   @Setter
   private int minimumShouldMatch;
@@ -19,7 +22,7 @@ public class Bool extends QueryObject {
   public Bool(IQueryNode parent, int minimumShouldMatch) {
     super(parent);
     this.minimumShouldMatch = minimumShouldMatch;
-    this.put("bool", this.self);
+    this.put("bool", this.body);
   }
 
   public Bool(IQueryNode parent) {
@@ -33,9 +36,9 @@ public class Bool extends QueryObject {
   private void add(IQueryNode node, IQueryList list, String name) {
     list.add(node);
     if (list.size() == 1) {
-      this.self.put(name, list.getFirst());
+      this.body.put(name, list.getFirst());
     } else {
-      this.self.put(name, list);
+      this.body.put(name, list);
     }
     numClauses++;
   }
@@ -56,7 +59,7 @@ public class Bool extends QueryObject {
   public void should(IQueryNode node) {
     this.add(node, should, "should");
     if (minimumShouldMatch > -1) {
-      this.self.put("minimum_should_match", minimumShouldMatch);
+      this.body.put("minimum_should_match", minimumShouldMatch);
     }
   }
 }

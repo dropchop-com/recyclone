@@ -63,8 +63,8 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
       if (cClass.equals(DateHistogram.class)) {
         String timeZone = null;
         String interval = null;
-        JsonNode intervalNode = entry.getValue().get("calendar_interval");
-        JsonNode tzNode = entry.getValue().get("time_zone");
+        JsonNode intervalNode = entry.getValue().get("calendarInterval");
+        JsonNode tzNode = entry.getValue().get("timeZone");
         if (intervalNode != null && intervalNode.isTextual()) {
           interval = intervalNode.asText();
         }
@@ -105,6 +105,7 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         return hits;
       } else if (cClass.equals(Terms.class)) {
         JsonNode sizeNode = entry.getValue().get("size");
+        JsonNode shardSizeNode = entry.getValue().get("shardSize");
         JsonNode filterNode = entry.getValue().get("filter");
 
         Terms terms = new Terms();
@@ -116,20 +117,19 @@ public class AggregationDeserializer extends JsonDeserializer<AggregationList> {
         if (sizeNode != null) {
           size = sizeNode.asInt();
         }
+        terms.setSize(size);
 
-        if (size != null) {
-          if (subAggregations.isEmpty()) {
-            terms.setSize(size);
-          } else {
-            terms.setSize(size);
-            terms.setAggs(subAggregations);
-          }
+        Integer shardSize = null;
+        if (shardSizeNode != null) {
+          shardSize = shardSizeNode.asInt();
         }
-
+        terms.setShardSize(shardSize);
+        if (!subAggregations.isEmpty()) {
+          terms.setAggs(subAggregations);
+        }
         if (filterNode != null) {
           this.addFilterNodes(filterNode, terms);
         }
-
         return terms;
       }
 

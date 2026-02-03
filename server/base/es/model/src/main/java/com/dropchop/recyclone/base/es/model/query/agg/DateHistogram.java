@@ -3,6 +3,9 @@ package com.dropchop.recyclone.base.es.model.query.agg;
 import com.dropchop.recyclone.base.es.model.query.IQueryNode;
 import lombok.Getter;
 
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
+ */
 @Getter
 @SuppressWarnings("unused")
 public class DateHistogram extends AggregationBucket {
@@ -15,22 +18,6 @@ public class DateHistogram extends AggregationBucket {
     setField(field);
     setCalendarInterval(calendarInterval);
     setTimeZone(timeZone);
-  }
-
-  public DateHistogram(IQueryNode parent, String field, String calendarInterval) {
-    this(parent, field, calendarInterval, null);
-  }
-
-  public DateHistogram(String field, String calendarInterval, String timeZone) {
-    this(null, field, calendarInterval, timeZone);
-  }
-
-  public DateHistogram(String field, String calendarInterval) {
-    this(null, field, calendarInterval, null);
-  }
-
-  public DateHistogram() {
-    this(null, null, null, null);
   }
 
   public void setField(String field) {

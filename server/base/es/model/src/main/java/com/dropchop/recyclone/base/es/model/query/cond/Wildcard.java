@@ -28,8 +28,8 @@ public class Wildcard extends QueryField {
     if (boost != null) {
       field.put("boost", boost);
     }
-    self.put(fieldName, field);
-    this.put("wildcard", self);
+    body.put(fieldName, field);
+    this.put("wildcard", body);
   }
 
   public Wildcard(IQueryNode parent, String fieldName, CharSequence prefixValue, Boolean caseInsensitive) {

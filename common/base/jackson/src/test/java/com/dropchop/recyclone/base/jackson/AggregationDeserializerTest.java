@@ -62,8 +62,8 @@ public class AggregationDeserializerTest {
               "aggs": [],
               "name": "nested_nested_worker_dateHistogram",
               "field": "worker",
-              "calendar_interval": "month",
-              "time_zone": "+01:00"
+              "calendarInterval": "month",
+              "timeZone": "+01:00"
             }
           },
           {

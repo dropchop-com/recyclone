@@ -16,7 +16,7 @@ public class SpanTerm extends QueryField {
     super(parent, fieldName, termValue.toString());
     IQueryObject field = new QueryObject(this);
     field.put("value", this.value);
-    self.put(this.fieldName, field);
-    this.put("span_term", self);
+    body.put(this.fieldName, field);
+    this.put("span_term", body);
   }
 }

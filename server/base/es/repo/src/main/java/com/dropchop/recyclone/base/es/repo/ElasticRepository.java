@@ -13,6 +13,7 @@ import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasCode;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.marker.HasUuid;
+import com.dropchop.recyclone.base.api.model.query.Aggregation;
 import com.dropchop.recyclone.base.api.model.query.Condition;
 import com.dropchop.recyclone.base.api.model.query.Field;
 import com.dropchop.recyclone.base.api.model.query.aggregation.AggregationList;
@@ -316,6 +317,13 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
             }
             for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
               decorator.onBuiltField(field, node);
+            }
+          }
+
+          @Override
+          public void on(int level, Aggregation aggregation, IQueryObject node) {
+            for (ElasticCriteriaDecorator<S> decorator : criteriaDecorators) {
+              decorator.onBuiltAggregation(aggregation, node);
             }
           }
         },

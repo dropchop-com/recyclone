@@ -7,6 +7,7 @@ import lombok.Getter;
 
 /**
  * Base elastic aggregation node.
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
  */
 @Getter
 public abstract class Aggregation extends QueryObject {

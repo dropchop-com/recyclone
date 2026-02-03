@@ -5,6 +5,8 @@ import lombok.Getter;
 
 /**
  * Base field-backed aggregation node.
+ *
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 30. 01. 2026.
  */
 @Getter
 public abstract class AggregationField extends Aggregation {
