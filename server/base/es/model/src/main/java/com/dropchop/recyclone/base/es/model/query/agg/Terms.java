@@ -15,8 +15,8 @@ public class Terms extends AggregationBucket {
   private String field;
   private Integer size;
   private Integer shardSize;
-  private Object include;
-  private Object exclude;
+  private List<String> includes;
+  private List<String> excludes;
 
   public Terms(IQueryNode parent, String field, Integer size, Integer shardSize, Filter filter) {
     super(parent, "terms");
@@ -24,14 +24,14 @@ public class Terms extends AggregationBucket {
     setSize(size);
     setShardSize(shardSize);
     if (filter == null) {
-      setInclude(null);
-      setExclude(null);
+      setIncludes(null);
+      setExcludes(null);
     } else {
       if (filter.getInclude() != null) {
-        setInclude(filter.getInclude().getValue());
+        setIncludes(filter.getInclude().getValue());
       }
       if (filter.getExclude() != null) {
-        setExclude(filter.getExclude().getValue());
+        setExcludes(filter.getExclude().getValue());
       }
     }
   }
@@ -63,9 +63,9 @@ public class Terms extends AggregationBucket {
     }
   }
 
-  public void setInclude(List<String> includes) {
+  public void setIncludes(List<String> includes) {
     Object value = toIncludeExcludeValue(includes);
-    this.include = value;
+    this.includes = includes;
     if (value == null) {
       body.remove("include");
     } else {
@@ -73,9 +73,9 @@ public class Terms extends AggregationBucket {
     }
   }
 
-  public void setExclude(List<String> excludes) {
+  public void setExcludes(List<String> excludes) {
     Object value = toIncludeExcludeValue(excludes);
-    this.exclude = value;
+    this.excludes = excludes;
     if (value == null) {
       body.remove("exclude");
     } else {
@@ -85,15 +85,15 @@ public class Terms extends AggregationBucket {
 
   public void setFilter(Filter filter) {
     if (filter == null) {
-      setInclude(null);
-      setExclude(null);
+      setIncludes(null);
+      setExcludes(null);
       return;
     }
     if (filter.getInclude() != null) {
-      setInclude(filter.getInclude().getValue());
+      setIncludes(filter.getInclude().getValue());
     }
     if (filter.getExclude() != null) {
-      setExclude(filter.getExclude().getValue());
+      setExcludes(filter.getExclude().getValue());
     }
   }
 
