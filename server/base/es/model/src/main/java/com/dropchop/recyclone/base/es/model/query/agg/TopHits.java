@@ -3,10 +3,8 @@ package com.dropchop.recyclone.base.es.model.query.agg;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Exclude;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Filter;
 import com.dropchop.recyclone.base.api.model.query.operator.filter.Include;
-import com.dropchop.recyclone.base.es.model.query.IQueryNode;
-import com.dropchop.recyclone.base.es.model.query.IQueryObject;
-import com.dropchop.recyclone.base.es.model.query.QueryObject;
-import com.dropchop.recyclone.base.es.model.query.Sort;
+import com.dropchop.recyclone.base.es.model.query.*;
+import com.dropchop.recyclone.base.es.model.query.SortField.Order;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +27,7 @@ public class TopHits extends Aggregation {
     setSize(size);
     if (sort != null) {
       for (com.dropchop.recyclone.base.api.model.query.aggregation.Sort s : sort) {
-        this.addSort(s.getField(), s.getValue(), s.getNumericType());
+        this.addSort(s.getField(), Order.valueOf(s.getValue().toUpperCase()), s.getNumericType());
       }
     }
     if (filter != null && filter.getInclude() != null) {
@@ -55,18 +53,18 @@ public class TopHits extends Aggregation {
     }
   }
 
-  public void addSort(String field, String order, String numericType) {
+  public void addSort(String field, Order order, String numericType) {
     this.sort.addSort(field, order, numericType);
     body.putAll(this.sort);
   }
 
-  public void addSort(String field, String order) {
+  public void addSort(String field, Order order) {
     this.sort.addSort(field, order);
     body.putAll(this.sort);
   }
 
   public void addSort(String field) {
-    addSort(field, "asc");
+    addSort(field, Order.ASC);
   }
 
   public void clearSort() {

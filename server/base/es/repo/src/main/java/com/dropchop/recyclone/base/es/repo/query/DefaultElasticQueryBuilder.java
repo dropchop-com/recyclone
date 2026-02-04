@@ -5,7 +5,6 @@ import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
-import com.dropchop.recyclone.base.api.model.query.aggregation.Sort;
 import com.dropchop.recyclone.base.api.model.query.aggregation.Terms;
 import com.dropchop.recyclone.base.api.model.query.condition.*;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
@@ -15,9 +14,9 @@ import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Text;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.*;
+import com.dropchop.recyclone.base.es.model.query.Sort;
 import com.dropchop.recyclone.base.es.model.query.cond.*;
 import com.dropchop.recyclone.base.es.model.query.cond.Knn;
-import com.dropchop.recyclone.base.es.model.query.cond.TopHits;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Iterator;
 import java.util.List;
+
+import static com.dropchop.recyclone.base.es.model.query.SortField.Order.ASC;
+import static com.dropchop.recyclone.base.es.model.query.SortField.Order.DESC;
 
 @Slf4j
 @ApplicationScoped
@@ -251,120 +253,6 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return _buildAggregation(0, null, listener, aggregation);
   }
 
-  public QueryObject buildAggregation2(QueryFieldListener listener, Aggregation aggregation) {
-    QueryObject node = new QueryObject();
-
-    if (aggregation instanceof Terms terms) {
-      QueryObject termsNode = new QueryObject();
-      termsNode.put("field", terms.getField());
-
-      if (terms.getSize() != null) {
-        termsNode.put("size", terms.getSize());
-      }
-
-      if (terms.getFilter() != null) {
-        if (terms.getFilter().getInclude() != null) {
-          List<String> includes = terms.getFilter().getInclude().getValue();
-          if (includes != null && !includes.isEmpty()) {
-            if (includes.size() == 1) {
-              String include = includes.getFirst();
-              if (include.contains("*")) { // detect if it is a regex -> don't pass it as an array
-                termsNode.put("include", include);
-              } else {
-                termsNode.put("include", includes);
-              }
-            } else {
-              termsNode.put("include", includes);
-            }
-          }
-        }
-
-        if (terms.getFilter().getExclude() != null) {
-          List<String> excludes = terms.getFilter().getExclude().getValue();
-          if (excludes != null && !excludes.isEmpty()) {
-            if (excludes.size() == 1) {
-              String exclude = excludes.getFirst();
-              if (exclude.contains("*")) { // detect if it is a regex -> don't pass it as an array
-                termsNode.put("exclude", exclude);
-              } else {
-                termsNode.put("exclude", excludes);
-              }
-            } else {
-              termsNode.put("exclude", excludes);
-            }
-          }
-        }
-      }
-      node.put("terms", termsNode);
-    } else if (aggregation instanceof DateHistogram dh) {
-      QueryObject dhNode = new QueryObject();
-      dhNode.put("field", dh.getField());
-      dhNode.put("calendar_interval", dh.getCalendarInterval());
-      String tz = dh.getTimeZone();
-      if (tz != null && !tz.isBlank()) {
-        dhNode.put("time_zone", tz);
-      }
-      node.put("date_histogram", dhNode);
-    } else if (aggregation instanceof Avg) {
-      QueryObject avg = new QueryObject();
-      avg.put("field", aggregation.getField());
-      node.put("avg", avg);
-    } else if (aggregation instanceof Count) {
-      QueryObject count = new QueryObject();
-      count.put("field", aggregation.getField());
-      node.put("value_count", count);
-    } else if (aggregation instanceof Max) {
-      QueryObject max = new QueryObject();
-      max.put("field", aggregation.getField());
-      node.put("max", max);
-    } else if (aggregation instanceof Min) {
-      QueryObject min = new QueryObject();
-      min.put("field", aggregation.getField());
-      node.put("min", min);
-    } else if (aggregation instanceof Sum) {
-      QueryObject sum = new QueryObject();
-      sum.put("field", aggregation.getField());
-      node.put("sum", sum);
-    } else if (aggregation instanceof Cardinality) {
-      QueryObject cardinality = new QueryObject();
-      cardinality.put("field", aggregation.getField());
-      node.put("cardinality", cardinality);
-    } else if (aggregation instanceof Stats) {
-      QueryObject stats = new QueryObject();
-      stats.put("field", aggregation.getField());
-      node.put("stats", stats);
-    } else if (aggregation instanceof com.dropchop.recyclone.base.api.model.query.aggregation.TopHits topHits) {
-      TopHits topHitsNode = new TopHits();
-      topHitsNode.setSize(topHits.getSize());
-      for (Sort s : topHits.getSort()) {
-        topHitsNode.addSort(s.getField(), s.getValue(), s.getNumericType());
-      }
-      if (topHits.getFilter() != null) {
-        if (topHits.getFilter().getInclude() != null) {
-          topHitsNode.setSourceIncludes(topHits.getFilter().getInclude());
-        }
-      }
-      node.put("top_hits", topHitsNode);
-    }
-
-    if (aggregation instanceof BucketAggregation bucket) {
-      if (bucket.getAggs() != null && !bucket.getAggs().isEmpty()) {
-        QueryObject subAggs = new QueryObject();
-        for (Aggregation sub : bucket.getAggs()) {
-          if (sub instanceof Aggregation.Wrapper) {
-            // unwrap Aggregation
-            sub = ((Aggregation.Wrapper) sub).iterator().next();
-          }
-          IQueryObject subAggObj = buildAggregation(listener, sub);
-          subAggs.put(sub.getName(), subAggObj);
-        }
-        node.put("aggs", subAggs);
-      }
-    }
-
-    return node;
-  }
-
   protected boolean hasActualConditions(Condition condition) {
     if (condition == null) {
       return false;
@@ -390,41 +278,31 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return requestSize + requestFrom >= maxSize;  // we would overflow allowed elastic maximum
   }
 
-  protected IQueryObject buildSortOrder(List<String> sortList, ElasticIndexConfig indexConfig, boolean useSearchAfter) {
-    IQueryObject sortOrder = new QueryObject();
+
+  protected Sort buildSortOrder(IQueryNode parent, List<String> sortList, ElasticIndexConfig indexConfig,
+                                boolean useSearchAfter) {
+    Sort sortOrder;
     if (!sortList.isEmpty()) {
-      List<IQueryObject> sortEntries = sortList.stream()
-          .map(sort -> {
-            IQueryObject sortEntry = new QueryObject();
-            if (sort.startsWith("-")) {
-              sortEntry.put(sort.substring(1), "desc");
-            } else {
-              if (sort.startsWith("+")) {
-                sort = sort.substring(1);
-              }
-              sortEntry.put(sort, "asc");
-            }
-            return sortEntry;
-          })
-          .toList();
-      sortOrder.put("sort", sortEntries);
-      return sortOrder;
+      sortOrder = new Sort(parent);
+      for (String sort : sortList) {
+        if (sort.startsWith("-")) {
+          sortOrder.addSort(sort.substring(1), DESC);
+        } else {
+          if (sort.startsWith("+")) {
+            sort = sort.substring(1);
+          }
+          sortOrder.addSort(sort, ASC);
+        }
+      }
     } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
-      IQueryObject defaultSort = hasDefaultSort.getSortOrder();
-      if ((defaultSort == null || defaultSort.isEmpty()) && useSearchAfter) {
+      sortOrder = hasDefaultSort.getSortOrder();
+      sortOrder.setParent(parent);
+      if ((sortOrder.isEmpty()) && useSearchAfter) {
         throw new ServiceException(
             ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
         );
       }
-      if (defaultSort != null && !defaultSort.isEmpty()) {
-        List<QueryObject> sortEntries = defaultSort.entrySet().stream().map(
-            e -> {
-              QueryObject sortEntry = new QueryObject();
-              sortEntry.put(e.getKey(), e.getValue());
-              return sortEntry;
-            }
-        ).toList();
-        sortOrder.put("sort", sortEntries);
+      if (!sortOrder.isEmpty()) {
         return sortOrder;
       }
     }
@@ -434,10 +312,10 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
   @Override
   public IQueryObject build(QueryFieldListener fieldListener, ElasticIndexConfig indexConfig, QueryParams params) {
     IQueryObject query = new QueryObject();
-    IQueryObject queryContainer = new QueryObject();
+    IQueryObject queryBody = new QueryObject();
 
     boolean useSearchAfterMode = useSearchAfter(indexConfig, params);
-    IQueryObject sort = buildSortOrder(params.tryGetResultFilter().getSort(), indexConfig, useSearchAfterMode);
+    Sort sort = buildSortOrder(query, params.tryGetResultFilter().getSort(), indexConfig, useSearchAfterMode);
 
     int size = params.tryGetResultFilter().size();
     int from = params.tryGetResultFilter().from();
@@ -448,22 +326,22 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
             ErrorCode.parameter_validation_error, "Sort must be defined when using search-after mode!"
         );
       }
-      queryContainer.put("size", size);
+      queryBody.put("size", size);
     } else {
-      queryContainer.put("from", from);
-      queryContainer.put("size", size);
+      queryBody.put("from", from);
+      queryBody.put("size", size);
     }
 
     if (sort != null) {
-      queryContainer.putAll(sort);
+      queryBody.putAll(sort);
     }
 
     Condition condition = params.getCondition();
     if (hasActualConditions(condition)) {
       IQueryObject boolQuery = mapCondition(0, fieldListener, condition, null, null);
-      queryContainer.put("query", boolQuery);
+      queryBody.put("query", boolQuery);
     } else {
-      queryContainer.put("query", new MatchAll());
+      queryBody.put("query", new MatchAll());
     }
 
     ResultFilter.ContentFilter filter = params.tryGetResultContentFilter();
@@ -478,7 +356,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
         source.put("includes", includes);
       }
       if (!source.isEmpty()) {
-        queryContainer.put("_source", source);
+        queryBody.put("_source", source);
       }
     }
 
@@ -494,12 +372,11 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
         IQueryObject aggObj = buildAggregation(fieldListener, agg);
         aggregations.put(agg.getName(), aggObj);
       }
-      queryContainer.put("aggs", aggregations);
+      queryBody.put("aggs", aggregations);
     }
 
-    return queryContainer;
+    return queryBody;
   }
-
 
   public IQueryObject build(QueryFieldListener fieldListener, QueryParams params) {
     return build(fieldListener, null, params);

@@ -7,13 +7,16 @@ import lombok.Setter;
 @Setter
 @SuppressWarnings("unused")
 public class SortField extends QueryObject {
+
+  public enum Order {ASC, DESC}
+
   private String field;
-  private String order;
+  private Order order;
   private String mode;
   private String missing;
   private String numericType;
 
-  public SortField(IQueryNode parent, String field, String order, String numericType) {
+  public SortField(IQueryNode parent, String field, Order order, String numericType) {
     super(parent);
     this.field = field;
     this.order = order;
@@ -21,25 +24,25 @@ public class SortField extends QueryObject {
     this.put(field, createSortConfig());
   }
 
-  public SortField(IQueryNode parent, String field, String order) {
+  public SortField(IQueryNode parent, String field, Order order) {
     this(parent, field, order, null);
   }
 
   public SortField(IQueryNode parent, String field) {
-    this(parent, field, "asc");
+    this(parent, field, Order.ASC);
   }
 
-  public SortField(String field, String order) {
+  public SortField(String field, Order order) {
     this(null, field, order);
   }
 
   public SortField(String field) {
-    this(null, field, "asc");
+    this(null, field, Order.ASC);
   }
 
   private QueryObject createSortConfig() {
     QueryObject config = new QueryObject(this);
-    config.put("order", this.order);
+    config.put("order", this.order.toString().toLowerCase());
 
     if (this.mode != null) {
       config.put("mode", this.mode);
@@ -56,7 +59,7 @@ public class SortField extends QueryObject {
     return config;
   }
 
-  public void setOrder(String order) {
+  public void setOrder(Order order) {
     this.order = order;
     this.put(field, createSortConfig());
   }
