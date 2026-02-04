@@ -34,17 +34,17 @@ public interface HasClassBasedDefaultSort extends HasDefaultSort, ClassIndexConf
       defaultSort.addSort("created", DESC);
       appendTieBreaker(defaultSort, rootClass);
     } else if (HasModified.class.isAssignableFrom(rootClass)) {
-      defaultSort.put("modified", DESC);
+      defaultSort.addSort("modified", DESC);
       appendTieBreaker(defaultSort, rootClass);
     } else if (HasPublished.class.isAssignableFrom(rootClass)) {
-      defaultSort.put("published", DESC);
+      defaultSort.addSort("published", DESC);
       appendTieBreaker(defaultSort, rootClass);
     } else if (HasUuid.class.isAssignableFrom(rootClass)) {
-      defaultSort.put("uuid", DESC);
+      defaultSort.addSort("uuid", DESC);
     } else if (HasCode.class.isAssignableFrom(rootClass)) {
-      defaultSort.put("code", DESC);
+      defaultSort.addSort("code", DESC);
     } else if (HasId.class.isAssignableFrom(rootClass)) {
-      defaultSort.put("id", DESC);
+      defaultSort.addSort("id", DESC);
     } else {
       return null;
     }
