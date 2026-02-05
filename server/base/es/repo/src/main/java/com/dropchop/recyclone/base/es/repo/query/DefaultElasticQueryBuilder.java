@@ -6,7 +6,10 @@ import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.query.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.*;
 import com.dropchop.recyclone.base.api.model.query.aggregation.Terms;
-import com.dropchop.recyclone.base.api.model.query.condition.*;
+import com.dropchop.recyclone.base.api.model.query.condition.And;
+import com.dropchop.recyclone.base.api.model.query.condition.LogicalCondition;
+import com.dropchop.recyclone.base.api.model.query.condition.Not;
+import com.dropchop.recyclone.base.api.model.query.condition.Or;
 import com.dropchop.recyclone.base.api.model.query.operator.*;
 import com.dropchop.recyclone.base.api.model.query.operator.Match;
 import com.dropchop.recyclone.base.api.model.query.operator.text.AdvancedText;
@@ -14,9 +17,9 @@ import com.dropchop.recyclone.base.api.model.query.operator.text.Phrase;
 import com.dropchop.recyclone.base.api.model.query.operator.text.Text;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.base.es.model.query.*;
+import com.dropchop.recyclone.base.es.model.query.Query;
 import com.dropchop.recyclone.base.es.model.query.Sort;
 import com.dropchop.recyclone.base.es.model.query.cond.*;
-import com.dropchop.recyclone.base.es.model.query.cond.Knn;
 import com.dropchop.recyclone.base.es.repo.config.ElasticIndexConfig;
 import com.dropchop.recyclone.base.es.repo.config.HasDefaultSort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,6 +35,62 @@ import static com.dropchop.recyclone.base.es.model.query.SortField.Order.DESC;
 @ApplicationScoped
 @SuppressWarnings({"IfCanBeSwitch", "unused"})
 public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
+
+  @Override
+  public boolean useSearchAfter(ElasticIndexConfig indexConfig, QueryParams queryParams) {
+    if (indexConfig == null) {
+      return false;
+    }
+    int requestSize = queryParams.tryGetResultFilter().getSize();
+    int requestFrom = queryParams.tryGetResultFilter().getFrom();
+    int maxSize = indexConfig.getSizeOfPagination();
+    return requestSize + requestFrom >= maxSize;  // we would overflow allowed elastic maximum
+  }
+
+
+  protected Sort buildSortOrder(IQueryNode parent, List<String> sortList, ElasticIndexConfig indexConfig,
+                                boolean useSearchAfter) {
+    Sort sortOrder;
+    if (!sortList.isEmpty()) {
+      sortOrder = new Sort(parent);
+      for (String sort : sortList) {
+        if (sort.startsWith("-")) {
+          sortOrder.addSort(sort.substring(1), DESC);
+        } else {
+          if (sort.startsWith("+")) {
+            sort = sort.substring(1);
+          }
+          sortOrder.addSort(sort, ASC);
+        }
+      }
+    } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
+      sortOrder = hasDefaultSort.getSortOrder();
+      sortOrder.setParent(parent);
+      if ((sortOrder.isEmpty()) && useSearchAfter) {
+        throw new ServiceException(
+            ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
+        );
+      }
+      if (!sortOrder.isEmpty()) {
+        return sortOrder;
+      }
+    }
+    return null;
+  }
+
+  protected boolean hasActualConditions(Condition condition) {
+    if (condition == null) {
+      return false;
+    }
+    if (condition instanceof com.dropchop.recyclone.base.api.model.query.condition.Knn) {
+      return true;
+    }
+    if (condition instanceof LogicalCondition logicalCondition) {
+      Iterator<Condition> iterator = logicalCondition.iterator();
+      return iterator.hasNext();
+    }
+    return false;
+  }
 
   protected IQueryObject mapField(int level, QueryFieldListener listener,
                                   Field<?> field,
@@ -253,66 +312,9 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
     return _buildAggregation(0, null, listener, aggregation);
   }
 
-  protected boolean hasActualConditions(Condition condition) {
-    if (condition == null) {
-      return false;
-    }
-    if (condition instanceof com.dropchop.recyclone.base.api.model.query.condition.Knn) {
-      return true;
-    }
-    if (condition instanceof LogicalCondition logicalCondition) {
-      Iterator<Condition> iterator = logicalCondition.iterator();
-      return iterator.hasNext();
-    }
-    return false;
-  }
-
-  @Override
-  public boolean useSearchAfter(ElasticIndexConfig indexConfig, QueryParams queryParams) {
-    if (indexConfig == null) {
-      return false;
-    }
-    int requestSize = queryParams.tryGetResultFilter().getSize();
-    int requestFrom = queryParams.tryGetResultFilter().getFrom();
-    int maxSize = indexConfig.getSizeOfPagination();
-    return requestSize + requestFrom >= maxSize;  // we would overflow allowed elastic maximum
-  }
-
-
-  protected Sort buildSortOrder(IQueryNode parent, List<String> sortList, ElasticIndexConfig indexConfig,
-                                boolean useSearchAfter) {
-    Sort sortOrder;
-    if (!sortList.isEmpty()) {
-      sortOrder = new Sort(parent);
-      for (String sort : sortList) {
-        if (sort.startsWith("-")) {
-          sortOrder.addSort(sort.substring(1), DESC);
-        } else {
-          if (sort.startsWith("+")) {
-            sort = sort.substring(1);
-          }
-          sortOrder.addSort(sort, ASC);
-        }
-      }
-    } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
-      sortOrder = hasDefaultSort.getSortOrder();
-      sortOrder.setParent(parent);
-      if ((sortOrder.isEmpty()) && useSearchAfter) {
-        throw new ServiceException(
-            ErrorCode.internal_error, "No sort order received from index config for deep pagination!"
-        );
-      }
-      if (!sortOrder.isEmpty()) {
-        return sortOrder;
-      }
-    }
-    return null;
-  }
-
   @Override
   public IQueryObject build(QueryFieldListener fieldListener, ElasticIndexConfig indexConfig, QueryParams params) {
-    IQueryObject query = new QueryObject();
-    IQueryObject queryBody = new QueryObject();
+    Query query = new Query();
 
     boolean useSearchAfterMode = useSearchAfter(indexConfig, params);
     Sort sort = buildSortOrder(query, params.tryGetResultFilter().getSort(), indexConfig, useSearchAfterMode);
@@ -326,56 +328,32 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
             ErrorCode.parameter_validation_error, "Sort must be defined when using search-after mode!"
         );
       }
-      queryBody.put("size", size);
+      query.setSize(size);
     } else {
-      queryBody.put("from", from);
-      queryBody.put("size", size);
+      query.setSize(size);
+      query.setFrom(from);
     }
 
     if (sort != null) {
-      queryBody.putAll(sort);
+      query.setSort(sort);
     }
 
     Condition condition = params.getCondition();
     if (hasActualConditions(condition)) {
       IQueryObject boolQuery = mapCondition(0, fieldListener, condition, null, null);
-      queryBody.put("query", boolQuery);
+      query.setQuery(boolQuery);
     } else {
-      queryBody.put("query", new MatchAll());
+      query.setQuery(new MatchAll());
     }
 
     ResultFilter.ContentFilter filter = params.tryGetResultContentFilter();
-    if (filter != null) {
-      QueryObject source = new QueryObject();
-      List<String> excludes = filter.getExcludes();
-      if (excludes != null && !excludes.isEmpty()) {
-        source.put("excludes", excludes);
-      }
-      List<String> includes = filter.getIncludes();
-      if (includes != null && !includes.isEmpty()) {
-        source.put("includes", includes);
-      }
-      if (!source.isEmpty()) {
-        queryBody.put("_source", source);
-      }
-    }
+    query.setFilter(filter);
 
     // Handle aggregations
-    AggregationList aggsQuery = params.getAggregate();
-    if (aggsQuery != null && !aggsQuery.isEmpty()) {
-      QueryObject aggregations = new QueryObject();
-      for (Aggregation agg : params.getAggregate()) {
-        if (agg instanceof Aggregation.Wrapper) {
-          // unwrap Aggregation
-          agg = ((Aggregation.Wrapper) agg).iterator().next();
-        }
-        IQueryObject aggObj = buildAggregation(fieldListener, agg);
-        aggregations.put(agg.getName(), aggObj);
-      }
-      queryBody.put("aggs", aggregations);
-    }
+    AggregationList aggsList = params.getAggregate();
+    query.setAggs(aggsList, aggregation -> buildAggregation(fieldListener, aggregation));
 
-    return queryBody;
+    return query;
   }
 
   public IQueryObject build(QueryFieldListener fieldListener, QueryParams params) {
