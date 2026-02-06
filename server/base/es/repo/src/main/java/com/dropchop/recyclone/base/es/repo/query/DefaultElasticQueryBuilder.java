@@ -63,6 +63,7 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
           sortOrder.addSort(sort, ASC);
         }
       }
+      return sortOrder;
     } else if (indexConfig instanceof HasDefaultSort hasDefaultSort) {
       sortOrder = hasDefaultSort.getSortOrder();
       sortOrder.setParent(parent);
