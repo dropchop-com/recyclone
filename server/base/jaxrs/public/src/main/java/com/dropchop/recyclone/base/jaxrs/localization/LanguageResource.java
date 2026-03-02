@@ -1,6 +1,7 @@
 package com.dropchop.recyclone.base.jaxrs.localization;
 
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
@@ -17,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class LanguageResource extends ClassicReadByCodeResource<Language, CodeParams> implements
+public class LanguageResource extends ClassicReadByCodeResource<Language, CodeTitleParams> implements
     com.dropchop.recyclone.base.api.jaxrs.localization.LanguageResource {
 
   @Inject
@@ -38,7 +39,7 @@ public class LanguageResource extends ClassicReadByCodeResource<Language, CodePa
   }
 
   @Override
-  public Result<Language> search(CodeParams parameters) {
+  public Result<Language> search(CodeTitleParams parameters) {
     return service.search();
   }
 }

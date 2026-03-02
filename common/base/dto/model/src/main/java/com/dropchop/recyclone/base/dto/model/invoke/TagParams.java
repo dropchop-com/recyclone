@@ -66,4 +66,5 @@ public class TagParams extends TypeParams {
   @Builder.Default
   private List<Tag> tags = new ArrayList<>();
 
+  private String title;
 }

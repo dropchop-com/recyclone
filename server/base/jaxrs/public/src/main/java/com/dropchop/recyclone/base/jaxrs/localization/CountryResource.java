@@ -1,10 +1,10 @@
 package com.dropchop.recyclone.base.jaxrs.localization;
 
-import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
-import com.dropchop.recyclone.base.dto.model.localization.Country;
-import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
 import com.dropchop.recyclone.base.api.service.localization.CountryService;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
+import com.dropchop.recyclone.base.dto.model.localization.Country;
+import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +17,14 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class CountryResource extends ClassicReadByCodeResource<Country, CodeParams> implements
+public class CountryResource extends ClassicReadByCodeResource<Country, CodeTitleParams> implements
     com.dropchop.recyclone.base.api.jaxrs.localization.CountryResource {
 
   @Inject
   CountryService service;
 
   @Inject
-  CodeParams params;
+  CodeTitleParams params;
 
   @Override
   public Result<Country> get() {
@@ -38,7 +38,7 @@ public class CountryResource extends ClassicReadByCodeResource<Country, CodePara
   }
 
   @Override
-  public Result<Country> search(CodeParams parameters) {
+  public Result<Country> search(CodeTitleParams parameters) {
     return service.search();
   }
 }

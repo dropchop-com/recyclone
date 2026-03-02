@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 import com.dropchop.recyclone.base.api.model.security.Constants.Domains;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
 import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
@@ -46,10 +47,10 @@ public interface CountryResource {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<Country> search(CodeParams parameters);
+  Result<Country> search(CodeTitleParams parameters);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  List<Country> searchRest(CodeParams parameters);
+  List<Country> searchRest(CodeTitleParams parameters);
 }
