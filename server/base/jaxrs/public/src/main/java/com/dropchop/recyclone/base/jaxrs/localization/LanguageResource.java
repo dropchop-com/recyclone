@@ -1,11 +1,10 @@
 package com.dropchop.recyclone.base.jaxrs.localization;
 
-import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
+import com.dropchop.recyclone.base.api.service.localization.LanguageService;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
 import com.dropchop.recyclone.base.dto.model.localization.Language;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
-import com.dropchop.recyclone.base.api.service.localization.LanguageService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class LanguageResource extends ClassicReadByCodeResource<Language, CodeTi
   LanguageService service;
 
   @Inject
-  CodeParams params;
+  CodeTitleParams params;
 
   @Override
   public Result<Language> get() {
