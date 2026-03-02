@@ -34,10 +34,7 @@ import org.jboss.jandex.IndexView;
 import org.jboss.logging.Logger;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class RecycloneProcessor {
@@ -203,6 +200,15 @@ class RecycloneProcessor {
       "com.dropchop.recyclone.base.api.common.RecycloneType"
   );
 
+  private final Collection<DotName> SVC_IFACES = List.of(
+      DotName.createSimple("com.dropchop.recyclone.base.api.service.ReadService"),
+      DotName.createSimple("com.dropchop.recyclone.base.api.service.CrudService"),
+      DotName.createSimple("com.dropchop.recyclone.base.api.service.ReadOnlyService"),
+      DotName.createSimple("com.dropchop.recyclone.base.api.service.QueryService"),
+      DotName.createSimple("com.dropchop.recyclone.base.api.service.ByIdService"),
+      DotName.createSimple("com.dropchop.recyclone.base.api.service.EntityByIdService")
+  );
+
 
   @SuppressWarnings("SameParameterValue")
   private void addItemsForProducer(IndexView index, Class<?> rootIface, Class<?> selector, Set<String> unremovable,
@@ -227,6 +233,7 @@ class RecycloneProcessor {
         handled.add(impl);
         Set<DotName> intersection = new HashSet<>(impl.interfaceNames());
         intersection.retainAll(serviceNames);
+        intersection.removeAll(SVC_IFACES);
         if (intersection.isEmpty()) {
           log.infof("Empty service intersection [%s].", impl.name());
           continue;

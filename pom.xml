@@ -118,14 +118,14 @@
     <aspectj.version>1.9.25.1</aspectj.version>
     <lombok.version>1.18.42</lombok.version>
     <jackson.version>2.20.1</jackson.version>
-    <apache.shiro.version>2.0.6</apache.shiro.version>
+    <apache.shiro.version>2.1.0</apache.shiro.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <jjwt.version>0.13.0</jjwt.version>
     <jsonassert.version>1.5.3</jsonassert.version>
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.30.6</quarkus.platform.version>
+    <quarkus.platform.version>3.30.8</quarkus.platform.version>
   </properties>
 
   <dependencyManagement>
