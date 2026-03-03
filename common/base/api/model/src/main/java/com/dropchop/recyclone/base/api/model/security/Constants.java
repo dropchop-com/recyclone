@@ -61,6 +61,9 @@ public interface Constants {
 
   interface Domains {
     String ALL = "*";
+    String LOCALIZATION = Localization.class.getSimpleName().toUpperCase();
+    String SECURITY = Security.class.getSimpleName().toUpperCase();
+    String TAGGING = Tagging.class.getSimpleName().toUpperCase();
 
     interface Localization {
       String LANGUAGE = "localization.language";
