@@ -61,16 +61,12 @@ public interface Constants {
 
   interface Domains {
     String ALL = "*";
-    String LOCALIZATION = Localization.class.getSimpleName().toUpperCase();
-    String SECURITY = Security.class.getSimpleName().toUpperCase();
-    String TAGGING = Tagging.class.getSimpleName().toUpperCase();
 
     interface Localization {
       String LANGUAGE = "localization.language";
       String COUNTRY = "localization.country";
       String DICTIONARY_TERM = "localization.dictionary_term";
     }
-
 
     interface Security {
       String ACTION = "security.action";
@@ -96,8 +92,8 @@ public interface Constants {
     String CREATE = "create";
     String DELETE = "delete";
     String UPDATE = "update";
-    //on tuesdays it's covered by update on fridays a see it as a separate action ... a možda i nije
-    String DEACTIVATE = "deactivate";
     String SEARCH = "search";
+    String EXECUTE = "execute";
+    String DEACTIVATE = "deactivate";
   }
 }
