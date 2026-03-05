@@ -10,6 +10,9 @@ import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.rest.ResultStatus;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.security.AuthenticationCompletionException;
+import io.quarkus.security.ForbiddenException;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ConstrainedTo;
 import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.core.Response;
@@ -82,6 +85,7 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
     } else {
       //swap cause attributes could be immutable.
       attributes = new LinkedHashSet<>(attributes);
+      statusMessage.setDetails(attributes);
     }
     attributes.add(new AttributeString(MDC_REQUEST_ID, requestId));
   }
@@ -122,15 +126,23 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
     } else {
       ResultStatus status = new ResultStatus();
       StatusMessage statusMessage = new StatusMessage();
+      //noinspection IfCanBeSwitch
       if (e instanceof JsonMappingException) {
         statusMessage.setCode(ErrorCode.data_validation_error);
+      } else if (e instanceof BadRequestException) {
+        statusMessage.setCode(ErrorCode.data_validation_error);
+      } else if (e instanceof AuthenticationCompletionException) {
+        statusMessage.setCode(ErrorCode.authentication_error);
+      } else if (e instanceof ForbiddenException) {
+        statusMessage.setCode(ErrorCode.authorization_error);
       } else {
         statusMessage.setCode(ErrorCode.internal_error);
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        statusMessage.setDetails(Set.of(new AttributeString("trace", sw.toString())));
       }
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      statusMessage.setDetails(Set.of(new AttributeString("trace", sw.toString())));
+
       injectRequestId(statusMessage);
       statusMessage.setText(e.getMessage());
       setErrorCodeResponseStatus(builder, statusMessage);

@@ -2,12 +2,16 @@ package com.dropchop.recyclone.quarkus.deployment.rest;
 
 import com.dropchop.recyclone.base.api.model.utils.Strings;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneBuildConfig;
-import com.dropchop.recyclone.quarkus.runtime.rest.*;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
+import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ContentTypeFilter;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeature;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.dropchop.recyclone.quarkus.runtime.rest.openapi.OasFilter;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -15,8 +19,13 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
-import io.quarkus.resteasy.reactive.spi.*;
+import io.quarkus.resteasy.reactive.spi.AdditionalResourceClassBuildItem;
+import io.quarkus.resteasy.reactive.spi.ContainerRequestFilterBuildItem;
+import io.quarkus.resteasy.reactive.spi.DynamicFeatureBuildItem;
+import io.quarkus.resteasy.reactive.spi.ExceptionMapperBuildItem;
 import io.quarkus.runtime.configuration.ConfigUtils;
+import io.quarkus.security.AuthenticationCompletionException;
+import io.quarkus.security.ForbiddenException;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.runtime.util.JandexUtil;
@@ -629,9 +638,7 @@ public class RestProcessor {
   }
 
   @BuildStep
-  void addJaxRsFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer,
-                        BuildProducer<ContainerRequestFilterBuildItem> requestFilterBuildItemBuildProducer,
-                        BuildProducer<ExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
+  void addJaxRsDynamicFeatures(BuildProducer<DynamicFeatureBuildItem> dynamicFeatureBuildProducer) {
     dynamicFeatureBuildProducer.produce(
         new DynamicFeatureBuildItem(
             RestDynamicFeature.class.getName(), true
@@ -642,18 +649,50 @@ public class RestProcessor {
             ShiroDynamicFeature.class.getName(), true
         )
     );
+  }
+
+  @BuildStep
+  void addJaxRsExceptionMapperFeatures(BuildProducer<ExceptionMapperBuildItem> exceptionMapperBuildItemBuildProducer) {
+    exceptionMapperBuildItemBuildProducer.produce(
+        new ExceptionMapperBuildItem.Builder(
+            ServiceErrorExceptionMapper.class.getName(),
+            Exception.class.getName()
+        ).setRegisterAsBean(true).build()
+    );
+    exceptionMapperBuildItemBuildProducer.produce(
+        new ExceptionMapperBuildItem.Builder(
+            ServiceErrorExceptionMapper.class.getName(),
+            MismatchedInputException.class.getName()
+        ).setRegisterAsBean(true).build()
+    );
+    exceptionMapperBuildItemBuildProducer.produce(
+        new ExceptionMapperBuildItem.Builder(
+            ServiceErrorExceptionMapper.class.getName(),
+            MismatchedInputException.class.getName()
+        ).setRegisterAsBean(true).build()
+    );
+    exceptionMapperBuildItemBuildProducer.produce(
+        new ExceptionMapperBuildItem.Builder(
+            ServiceErrorExceptionMapper.class.getName(),
+            AuthenticationCompletionException.class.getName()
+        ).setRegisterAsBean(true).build()
+    );
+    exceptionMapperBuildItemBuildProducer.produce(
+        new ExceptionMapperBuildItem.Builder(
+            ServiceErrorExceptionMapper.class.getName(),
+            ForbiddenException.class.getName()
+        ).setRegisterAsBean(true).build()
+    );
+  }
+
+  @BuildStep
+  void addJaxRsFilterFeatures(BuildProducer<ContainerRequestFilterBuildItem> requestFilterBuildItemBuildProducer) {
     requestFilterBuildItemBuildProducer.produce(
         new ContainerRequestFilterBuildItem.Builder(
             ContentTypeFilter.class.getName()
         ).setRegisterAsBean(true)
             .setPreMatching(true)
             .build()
-    );
-    exceptionMapperBuildItemBuildProducer.produce(
-        new ExceptionMapperBuildItem.Builder(
-            ServiceErrorExceptionMapper.class.getName(),
-            Exception.class.getName()
-        ).setRegisterAsBean(true).build()
     );
   }
 
