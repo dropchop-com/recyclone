@@ -65,17 +65,18 @@ public interface HasTags<T extends Tag<T, TT>, TT extends TitleTranslation> {
     return null;
   }
 
-  default <X extends Tag<T, TT>> X getFirstTagByType(Class<X> tClass) {
+  default <X extends Tag<T, TT>> List<X> getFirstTagByType(Class<X> tClass) {
+    List<X> typedTags = new LinkedList<>();
     for (T tag : getTags()) {
       if (tag == null) {
         continue;
       }
       if (tClass.isInstance(tag)) {
         //noinspection unchecked
-        return (X)tag;
+        typedTags.add((X)tag);
       }
     }
-    return null;
+    return typedTags;
   }
 
   List<T> getTags();
