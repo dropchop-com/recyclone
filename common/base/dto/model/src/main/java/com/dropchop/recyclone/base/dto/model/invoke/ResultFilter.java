@@ -189,6 +189,7 @@ public class ResultFilter
       copyRf.setLang(lfDefault);
     }
     if (rf != null) {
+      copyRf.setSort(new ArrayList<>(rf.getSort()));
       copyRf.setSize(rf.getSize());
       copyRf.setFrom(rf.getFrom());
       copyRf.setVersion(rf.getVersion());

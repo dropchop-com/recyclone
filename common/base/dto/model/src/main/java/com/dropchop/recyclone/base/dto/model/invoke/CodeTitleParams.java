@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.invoke;
 
+import com.dropchop.recyclone.base.api.model.marker.HasTitle;
 import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter;
 import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.LanguageFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,11 +19,12 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @SuperBuilder
 @RequiredArgsConstructor
 @JsonInclude(NON_EMPTY)
-public class CodeTitleParams extends CodeParams implements com.dropchop.recyclone.base.api.model.invoke.CodeTitleParams<
+public class CodeTitleParams extends CodeParams
+    implements com.dropchop.recyclone.base.api.model.invoke.CodeTitleParams<
     ResultFilter,
     ContentFilter,
     LanguageFilter,
-    ResultFilterDefaults> {
+    ResultFilterDefaults>, HasTitle {
 
   String title;
 
