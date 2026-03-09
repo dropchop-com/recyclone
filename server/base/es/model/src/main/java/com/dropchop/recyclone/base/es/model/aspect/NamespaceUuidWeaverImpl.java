@@ -1,7 +1,6 @@
 package com.dropchop.recyclone.base.es.model.aspect;
 
 import com.dropchop.recyclone.base.api.model.aspect.NamespaceUuidWeaver;
-import com.dropchop.recyclone.base.api.model.marker.HasAlternativeNameCompute;
 import com.dropchop.recyclone.base.api.model.marker.HasUuidV3;
 import com.dropchop.recyclone.base.api.model.utils.Uuid;
 import org.aspectj.lang.annotation.After;
@@ -18,19 +17,7 @@ public class NamespaceUuidWeaverImpl implements NamespaceUuidWeaver {
 
   public static void compute(Object oModel, String name) {
     HasUuidV3 model = (HasUuidV3)oModel;
-    String newName = oModel.getClass().getSimpleName() + "." + name;
-    if (model instanceof HasAlternativeNameCompute altCompute) {
-      String tmp = altCompute.computeName(name);
-      if (tmp != null && !tmp.isEmpty()) {
-        newName = tmp;
-      }
-    }
-    UUID newUuid;
-    if (newName.startsWith("Es") && Character.isUpperCase(newName.charAt(2))) {
-      newUuid = Uuid.getNameBasedV3(newName.substring(2));
-    } else {
-      newUuid = Uuid.getNameBasedV3(newName);
-    }
+    UUID newUuid = Uuid.getNameBasedV3(oModel, name);
     log.trace("Will change uuid {} with {} based on name {}", model.getUuid(), newUuid, name);
     model.setUuid(newUuid);
   }

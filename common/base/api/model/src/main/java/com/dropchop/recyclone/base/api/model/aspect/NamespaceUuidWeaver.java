@@ -22,7 +22,7 @@ public interface NamespaceUuidWeaver {
       return;
     }
     HasUuidV3 model = (HasUuidV3)oModel;
-    UUID newUuid = Uuid.getNameBasedV3(oModel.getClass(), name);
+    UUID newUuid = Uuid.getNameBasedV3(oModel, name);
     log.trace("Will change uuid {} with {} based on name {}", model.getUuid(), newUuid, name);
     model.setUuid(newUuid);
   }
@@ -33,7 +33,7 @@ public interface NamespaceUuidWeaver {
       return;
     }
     HasUuidV3 model = (HasUuidV3)oModel;
-    UUID newUuid = Uuid.getNameBasedV3(oModel.getClass(), code);
+    UUID newUuid = Uuid.getNameBasedV3(oModel, code);
     log.trace("Will change uuid {} with {} based on code {}", model.getUuid(), newUuid, code);
     model.setUuid(newUuid);
     log.trace("Changed uuid to {} based on code {}", model.getUuid(), code);

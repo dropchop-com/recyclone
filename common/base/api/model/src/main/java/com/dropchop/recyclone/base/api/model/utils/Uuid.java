@@ -1,5 +1,7 @@
 package com.dropchop.recyclone.base.api.model.utils;
 
+import com.dropchop.recyclone.base.api.model.marker.HasAlternativeNameCompute;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -201,6 +203,25 @@ public interface Uuid {
   static UUID getNameBasedV3(Class<?> clazz, String name) {
     String newName = clazz.getSimpleName() + "." + name;
     return getNameBasedV3(newName);
+  }
+
+  static UUID getNameBasedV3(Object oModel, String name) {
+    String newName = oModel.getClass().getSimpleName() + "." + name;
+    if (oModel instanceof HasAlternativeNameCompute altCompute) {
+      String tmp = altCompute.computeName(name);
+      if (tmp != null && !tmp.isEmpty()) {
+        newName = tmp;
+      }
+    }
+    UUID newUuid;
+    if (newName.startsWith("Jpa") && Character.isUpperCase(newName.charAt(3))) {
+      newUuid = Uuid.getNameBasedV3(newName.substring(3));
+    } else if (newName.startsWith("Es") && Character.isUpperCase(newName.charAt(2))) {
+      newUuid = Uuid.getNameBasedV3(newName.substring(2));
+    } else {
+      newUuid = Uuid.getNameBasedV3(newName);
+    }
+    return newUuid;
   }
 
   static UUID getTimeBased() {
