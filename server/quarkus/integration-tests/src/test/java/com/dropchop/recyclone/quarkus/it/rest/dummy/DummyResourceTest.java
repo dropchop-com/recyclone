@@ -24,8 +24,8 @@ import static com.dropchop.recyclone.base.api.model.query.Aggregation.Wrapper.te
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
 import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_JSON_DROPCHOP_RESULT;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.content;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.result;
 import static com.dropchop.recyclone.quarkus.it.rest.Constants.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
@@ -98,7 +98,7 @@ public class DummyResourceTest {
         field("code", "asdlasdadsa4dsds4d"),
         field("code", "4d5as45s1ds4d5ss8sd6s")
       )
-      .filter(rf().size(100).content(cf().treeLevel(5)))
+      .filter(result(content(5)).size(100))
       .build();
 
     List<Dummy> dummies = given()

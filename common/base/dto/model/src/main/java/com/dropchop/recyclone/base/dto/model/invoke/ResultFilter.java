@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
@@ -60,8 +61,20 @@ public class ResultFilter
     }
 
     @JsonIgnore
+    public ContentFilter includes(String ... includes) {
+      this.includes.addAll(Arrays.asList(includes));
+      return this;
+    }
+
+    @JsonIgnore
     public ContentFilter excludes(List<String> excludes) {
       this.excludes = excludes;
+      return this;
+    }
+
+    @JsonIgnore
+    public ContentFilter excludes(String ... excludes) {
+      this.excludes.addAll(Arrays.asList(excludes));
       return this;
     }
 
@@ -80,8 +93,14 @@ public class ResultFilter
     /**
      * Syntactic sugar starting point.
      */
-    public static ContentFilter cf() {
+    public static ContentFilter content() {
       return new ContentFilter();
+    }
+
+    public static ContentFilter content(int treeLevel) {
+      ContentFilter contentFilter = new ContentFilter();
+      contentFilter.setTreeLevel(treeLevel);
+      return contentFilter;
     }
   }
 
@@ -108,9 +127,16 @@ public class ResultFilter
     /**
      * Syntactic sugar starting point.
      */
-    @SuppressWarnings("unused")
-    public static LanguageFilter lf() {
-      return new LanguageFilter();
+    public static LanguageFilter lang(String translation) {
+      LanguageFilter languageFilter = new LanguageFilter();
+      languageFilter.setTranslation(translation);
+      return languageFilter;
+    }
+
+    public static LanguageFilter lang(String search, String translation) {
+      LanguageFilter languageFilter = lang(translation);
+      languageFilter.setSearch(search);
+      return languageFilter;
     }
   }
 
@@ -155,6 +181,18 @@ public class ResultFilter
   }
 
   @Override
+  public ResultFilter state(String state) {
+    this.states.add(state);
+    return this;
+  }
+
+  @SuppressWarnings("unused")
+  public ResultFilter states(String ... states) {
+    this.states.addAll(Arrays.asList(states));
+    return this;
+  }
+
+  @Override
   public String toString() {
     return this.getClass().getSimpleName();
   }
@@ -162,8 +200,27 @@ public class ResultFilter
   /**
    * Syntactic sugar chaining starting point.
    */
-  public static ResultFilter rf() {
+  public static ResultFilter result() {
     return new ResultFilter();
+  }
+
+  public static ResultFilter result(LanguageFilter languageFilter) {
+    ResultFilter resultFilter = new ResultFilter();
+    resultFilter.setLang(languageFilter);
+    return resultFilter;
+  }
+
+  public static ResultFilter result(ContentFilter contentFilter) {
+    ResultFilter resultFilter = new ResultFilter();
+    resultFilter.setContent(contentFilter);
+    return resultFilter;
+  }
+
+  public static ResultFilter result(LanguageFilter languageFilter, ContentFilter contentFilter) {
+    ResultFilter resultFilter = new ResultFilter();
+    resultFilter.setLang(languageFilter);
+    resultFilter.setContent(contentFilter);
+    return resultFilter;
   }
 
   public static ResultFilter copy(com.dropchop.recyclone.base.api.model.invoke.ResultFilter<?, ?> rf,

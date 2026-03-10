@@ -24,8 +24,8 @@ import java.util.UUID;
 
 import static com.dropchop.recyclone.base.api.model.query.Condition.*;
 import static com.dropchop.recyclone.base.api.model.query.ConditionOperator.*;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.content;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.result;
 import static com.dropchop.recyclone.quarkus.it.rest.Constants.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
@@ -184,7 +184,7 @@ public class EventsResourceTest {
   public void search() {
     EventParams params = EventParams
         .builder()
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .or(
             field("uuid", EVENT_ID),
             and(
@@ -256,7 +256,7 @@ public class EventsResourceTest {
         .or(
             field("uuid", EVENT_ID)
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     events = given()
@@ -299,7 +299,7 @@ public class EventsResourceTest {
   @Tag("deleteMultiple")
   public void deleteMultiple() {
     EventParams params = EventParams.builder()
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     //same as before just for multiple events
@@ -364,7 +364,7 @@ public class EventsResourceTest {
         .and(
           field("trace.name", EVENT_TRACE_NAME)
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -394,7 +394,7 @@ public class EventsResourceTest {
         .not(
           field("trace.name", EVENT_TRACE_NAME)
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -424,7 +424,7 @@ public class EventsResourceTest {
         .and(
             field("uuid", expectedUuid)
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -455,7 +455,7 @@ public class EventsResourceTest {
             field("trace.name", EVENT_TRACE_NAME),
             field("unit", expectedUnit) // isn't used until we implement MATCH type search
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -495,7 +495,7 @@ public class EventsResourceTest {
             field("trace.name", EVENT_TRACE_NAME),
             wildcard("unit", "Mock_Unit") /*need to add support to handle "text" fields*/
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -525,7 +525,7 @@ public class EventsResourceTest {
         .and(
             field("created", gteLt(startDate, endDate))
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -554,7 +554,7 @@ public class EventsResourceTest {
         .and(
             field("created", gtLt(startDate, endDate))
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -592,7 +592,7 @@ public class EventsResourceTest {
         .and(
             field("created", gtLt(startDate, endDate))
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -636,7 +636,7 @@ public class EventsResourceTest {
             field("type", in("Backend", "frontend")),
             field("value", in(1.0, 2.0))
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -682,7 +682,7 @@ public class EventsResourceTest {
             field("type", in("Backend", "frontend")),
             field("value", in(1.0, 2.0, 3.0))
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -719,7 +719,7 @@ public class EventsResourceTest {
                 field("action", "SUBMIT_FORM_FRONTEND")
             )
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -754,7 +754,7 @@ public class EventsResourceTest {
                 field("application", "Lupitpole-frontend")
             )
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -788,7 +788,7 @@ public class EventsResourceTest {
             ),
             field("action", "FETCH_DATA")
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -825,7 +825,7 @@ public class EventsResourceTest {
                 field("action", "SUBMIT_FORM_FRONTEND")
             )
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -864,7 +864,7 @@ public class EventsResourceTest {
                 field("action", "SUBMIT_FORM_FRONTEND")
             )
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()
@@ -891,7 +891,7 @@ public class EventsResourceTest {
         .and(
             field("source.subject.name", "Source_Subject")
         )
-        .filter(rf().size(100).content(cf().treeLevel(5)))
+        .filter(result(content(5)).size(100))
         .build();
 
     List<Event> events = given()

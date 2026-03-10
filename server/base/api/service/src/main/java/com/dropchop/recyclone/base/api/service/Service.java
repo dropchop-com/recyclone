@@ -6,8 +6,8 @@ import com.dropchop.recyclone.base.dto.model.invoke.ResultFilter;
 
 import java.util.UUID;
 
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.cf;
-import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.rf;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.ContentFilter.content;
+import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.result;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 21. 04. 22.
@@ -26,6 +26,6 @@ public interface Service {
   }
 
   default MappingContext getStaticMappingContext(String requestId, int treeLevel) {
-    return getStaticMappingContext(requestId, rf().content(cf().treeLevel(treeLevel)));
+    return getStaticMappingContext(requestId, result(content(treeLevel)));
   }
 }
