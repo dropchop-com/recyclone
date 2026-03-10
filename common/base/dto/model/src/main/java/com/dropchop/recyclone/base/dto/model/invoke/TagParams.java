@@ -1,8 +1,10 @@
 package com.dropchop.recyclone.base.dto.model.invoke;
 
 import com.dropchop.recyclone.base.api.model.base.State;
+import com.dropchop.recyclone.base.api.model.marker.HasTags;
 import com.dropchop.recyclone.base.api.model.marker.HasTitle;
 import com.dropchop.recyclone.base.api.model.marker.state.HasDeactivated;
+import com.dropchop.recyclone.base.dto.model.localization.TitleDescriptionTranslation;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,7 +26,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @SuperBuilder
 @NoArgsConstructor
 @JsonInclude(NON_EMPTY)
-public class TagParams extends TypeParams implements HasTitle {
+public class TagParams extends TypeParams implements HasTitle, HasTags<Tag, TitleDescriptionTranslation> {
 
   /**
    * Custom @Singular implementation.
