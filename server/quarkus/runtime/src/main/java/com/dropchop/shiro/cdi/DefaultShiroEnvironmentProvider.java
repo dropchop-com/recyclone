@@ -11,10 +11,12 @@ import com.dropchop.shiro.realm.ShiroMapRealm;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.realm.Realm;
@@ -37,7 +39,7 @@ public class DefaultShiroEnvironmentProvider {
 
   @Produces
   public CacheManager getCacheManager() {
-    return null;
+    return new MemoryConstrainedCacheManager();
   }
 
   @Produces
@@ -46,16 +48,19 @@ public class DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @ApplicationScoped
   public PermissionResolver getPermissionResolver() {
     return new WildcardPermissionResolver();
   }
 
   @Produces
+  @ApplicationScoped
   public EventBus getEventBus() {
     return new DefaultEventBus();
   }
 
   @Produces
+  @Singleton
   public List<Realm> getRealms() {
     return List.of(new ShiroMapRealm(Collections.emptyMap(), Collections.emptyMap()));
   }
@@ -64,6 +69,7 @@ public class DefaultShiroEnvironmentProvider {
   RecycloneBuildConfig recycloneConfig;
 
   @Produces
+  @Singleton
   public ApiKeyConfig getApiKeyConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
       for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
@@ -88,6 +94,7 @@ public class DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @Singleton
   public JwtConfig getJwtConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
       for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
@@ -119,6 +126,7 @@ public class DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @Singleton
   public BasicConfig getBasicConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
       for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
@@ -140,6 +148,7 @@ public class DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @Singleton
   public BearerConfig getBearerConfig() {
     if (!recycloneConfig.rest().security().mechanisms().isEmpty()) {
       for (Security.Mechanism mechanism : recycloneConfig.rest().security().mechanisms()) {
@@ -161,6 +170,7 @@ public class DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @Singleton
   public ShiroEnabledFilters getEnabledFilters() {
     return ShiroEnabledFilters.of(
         BasicHttpAuthenticationFilter.class,

@@ -24,66 +24,57 @@ import java.util.List;
 public class ShiroEnvironment extends ShiroAbstractEnvironment {
 
   @Produces
+  @ApplicationScoped
   @SuppressWarnings("CdiInjectionPointsInspection")
   protected SessionsSecurityManager securityManager(List<Realm> realms) {
     return super.securityManager(realms);
   }
 
-  @Produces
   @Override
   protected SessionManager sessionManager() {
     return super.sessionManager();
   }
 
-  @Produces
   @Override
   protected SubjectDAO subjectDAO() {
     return super.subjectDAO();
   }
 
-  @Produces
   @Override
   protected SessionStorageEvaluator sessionStorageEvaluator() {
     return super.sessionStorageEvaluator();
   }
 
-  @Produces
   @Override
   protected SubjectFactory subjectFactory() {
     return super.subjectFactory();
   }
 
-  @Produces
   @Override
   protected SessionFactory sessionFactory() {
     return super.sessionFactory();
   }
 
-  @Produces
   @Override
   protected SessionDAO sessionDAO() {
     return super.sessionDAO();
   }
 
-  @Produces
   @Override
   protected Authorizer authorizer() {
     return super.authorizer();
   }
 
-  @Produces
   @Override
   protected AuthenticationStrategy authenticationStrategy() {
     return super.authenticationStrategy();
   }
 
-  @Produces
   @Override
   protected Authenticator authenticator() {
     return super.authenticator();
   }
 
-  @Produces
   @Override
   protected RememberMeManager rememberMeManager() {
     return super.rememberMeManager();

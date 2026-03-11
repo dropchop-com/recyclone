@@ -19,6 +19,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.apache.shiro.realm.Realm;
 
 import java.util.List;
@@ -82,6 +83,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @Singleton
   public List<Realm> getRealms() {
     return List.of(
         new ShiroMapRealm(
@@ -109,6 +111,7 @@ public class ApplicationConfiguration extends DefaultShiroEnvironmentProvider {
   }
 
   @Produces
+  @Singleton
   @Override
   public ShiroEnabledFilters getEnabledFilters() {
     return super.getEnabledFilters().append(ApiKeyHttpAuthenticationFilter.class);
