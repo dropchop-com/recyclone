@@ -16,7 +16,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @SuperBuilder
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @JsonInclude(NON_EMPTY)
-public class LoginParameters extends Params {
+public class LoginParams extends Params {
 
   private String requestId;
 

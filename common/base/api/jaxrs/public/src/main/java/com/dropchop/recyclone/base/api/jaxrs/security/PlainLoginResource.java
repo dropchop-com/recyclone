@@ -1,7 +1,7 @@
 package com.dropchop.recyclone.base.api.jaxrs.security;
 
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
-import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
+import com.dropchop.recyclone.base.dto.model.invoke.LoginParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.base.dto.model.security.*;
 import jakarta.ws.rs.POST;
@@ -16,14 +16,14 @@ import static com.dropchop.recyclone.base.api.model.rest.MediaType.APPLICATION_J
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 01. 08. 2025
  */
 @Path(LOGIN_PLAIN)
-@DynamicExecContext(LoginParameters.class)
+@DynamicExecContext(LoginParams.class)
 public interface PlainLoginResource {
 
   @POST
   @Produces({APPLICATION_JSON_DROPCHOP_RESULT})
-  Result<User> loginPlain(LoginParameters params);
+  Result<User> loginPlain(LoginParams params);
 
   @POST
   @Produces({MediaType.APPLICATION_JSON})
-  User loginPlainRest(LoginParameters params);
+  User loginPlainRest(LoginParams params);
 }

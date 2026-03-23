@@ -1,6 +1,6 @@
 package com.dropchop.recyclone.base.dto.model.security;
 
-import com.dropchop.recyclone.base.dto.model.invoke.LoginParameters;
+import com.dropchop.recyclone.base.dto.model.invoke.LoginParams;
 import com.dropchop.recyclone.base.dto.model.invoke.Params;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -40,7 +40,7 @@ public class AuthorizationRequest extends Params {
 
   Boolean rememberMe;
 
-  public static <R extends AuthorizationRequest> LoginParameters toLoginParameters(R req) {
+  public static <R extends AuthorizationRequest> LoginParams toLoginParameters(R req) {
     String scopeStr = req.getScope();
     Set<String> domainPrefixes = new LinkedHashSet<>();
     if (scopeStr != null && !scopeStr.isBlank()) {
@@ -51,15 +51,15 @@ public class AuthorizationRequest extends Params {
       }
     }
 
-    LoginParameters loginParameters = new LoginParameters();
-    loginParameters.setLoginName(req.getUsername());
-    loginParameters.setPassword(req.getPassword());
-    loginParameters.setDomainPrefix(domainPrefixes);
-    loginParameters.setRememberMe(req.getRememberMe());
-    return loginParameters;
+    LoginParams loginParams = new LoginParams();
+    loginParams.setLoginName(req.getUsername());
+    loginParams.setPassword(req.getPassword());
+    loginParams.setDomainPrefix(domainPrefixes);
+    loginParams.setRememberMe(req.getRememberMe());
+    return loginParams;
   }
 
-  public LoginParameters toLoginParameters() {
+  public LoginParams toLoginParameters() {
     return toLoginParameters(this);
   }
 }

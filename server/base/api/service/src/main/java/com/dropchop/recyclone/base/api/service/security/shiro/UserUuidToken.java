@@ -1,12 +1,14 @@
-package com.dropchop.shiro.token;
+package com.dropchop.recyclone.base.api.service.security.shiro;
 
 import org.apache.shiro.authc.AuthenticationToken;
 
-public class UuidApiKeyToken implements AuthenticationToken {
-
+/**
+ * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 03. 2026.
+ */
+public class UserUuidToken implements AuthenticationToken {
   private final String uuidToken;
 
-  public UuidApiKeyToken(String uuidToken) {
+  public UserUuidToken(String uuidToken) {
     this.uuidToken = uuidToken;
   }
 
