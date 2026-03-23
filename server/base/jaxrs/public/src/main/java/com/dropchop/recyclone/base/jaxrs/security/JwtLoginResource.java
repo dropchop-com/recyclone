@@ -1,10 +1,8 @@
 package com.dropchop.recyclone.base.jaxrs.security;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
-import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContextContainer;
-import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
 import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
@@ -133,27 +131,7 @@ public class JwtLoginResource extends BaseLoginResource
   @Override
   public OauthLikeResponse loginJwtRest(OauthLikeRequest params) {
     OauthLikeResponse response = new OauthLikeResponse();
-    try {
-      loginJwt(params, response);
-      return response;
-    } catch (ServiceException e) {
-      if (!e.getStatusMessages().isEmpty()) {
-        ErrorCode errorCode = e.getStatusMessages().getFirst().getCode();
-        String message = e.getStatusMessages().getFirst().getText();
-        if (errorCode != null && message != null) {
-          response.setError(String.valueOf(errorCode.toString()));
-          response.setErrorDescription(message);
-        } else if (errorCode != null) {
-          response.setError(String.valueOf(errorCode.toString()));
-          response.setErrorDescription(e.getMessage());
-        } else if (message != null) {
-          response.setError(message);
-          response.setErrorDescription(e.getMessage());
-        } else {
-          response.setError(e.getMessage());
-        }
-      }
-    }
+    loginJwt(params, response);
     return response;
   }
 }
