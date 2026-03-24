@@ -124,6 +124,37 @@ public class ExecContextInitializer implements ContainerRequestFilter {
     return sb.isEmpty() ? "" : sb.toString();
   }
 
+  private void injectValues(HasAttributes hasAttributes, ContainerRequestContext requestContext) {
+    Instance<HttpServerRequest> inst = CDI.current().select(HttpServerRequest.class);
+    try {
+      HttpServerRequest request = inst.get();
+      String clientAddress = request.getHeader("X-Forwarded-For");
+      String clientHost = null;
+      if (clientAddress == null) {
+        clientAddress = request.remoteAddress().hostAddress();
+        clientHost = request.remoteAddress().host();
+      }
+      if (clientHost != null) {
+        hasAttributes.setAttributeValue(REQ_CLIENT_HOST, clientHost);
+      }
+      if (clientAddress != null) {
+        hasAttributes.setAttributeValue(REQ_CLIENT_ADDRESS, clientAddress);
+      }
+    } catch (ContextNotActiveException e) {
+      log.warn("CDI context not active to obtain HttpServerRequest!", e);
+    } catch (Exception e) {
+      log.warn("CDI context not active!", e);
+    }
+
+    hasAttributes.setAttributeValue(REQ_METHOD, requestContext.getMethod());
+    hasAttributes.setAttributeValue(REQ_PATH, requestContext.getUriInfo().getPath());
+    hasAttributes.setAttributeValue(REQ_URI, requestContext.getUriInfo().getRequestUri().toString());
+    hasAttributes.setAttributeValue(REQ_URI_HOST, requestContext.getUriInfo().getRequestUri().getHost());
+    hasAttributes.setAttributeValue(REQ_URI_QUERY, requestContext.getUriInfo().getRequestUri().getQuery());
+    hasAttributes.setAttributeValue(REQ_URI_FRAGMENT, requestContext.getUriInfo().getRequestUri().getFragment());
+    hasAttributes.setAttributeValue(REQ_URI_SCHEME, requestContext.getUriInfo().getRequestUri().getScheme());
+  }
+
   /**
    * This is the starting request initialization entry point
    */
@@ -134,34 +165,11 @@ public class ExecContextInitializer implements ContainerRequestFilter {
     MDC.put(MDC_SHORT_REQUEST_PATH, shortenPath(path));
     ExecContext<?> execContext = execContextBinder.bind(execContextClass, dataClass, paramsClass);
     if (execContext instanceof HasAttributes hasAttributes) {
-      Instance<HttpServerRequest> inst = CDI.current().select(HttpServerRequest.class);
-      try {
-        HttpServerRequest request = inst.get();
-        String clientAddress = request.getHeader("X-Forwarded-For");
-        String clientHost = null;
-        if (clientAddress == null) {
-          clientAddress = request.remoteAddress().hostAddress();
-          clientHost = request.remoteAddress().host();
-        }
-        if (clientHost != null) {
-          hasAttributes.setAttributeValue(REQ_CLIENT_HOST, clientHost);
-        }
-        if (clientAddress != null) {
-          hasAttributes.setAttributeValue(REQ_CLIENT_ADDRESS, clientAddress);
-        }
-      } catch (ContextNotActiveException e) {
-        log.warn("CDI context not active to obtain HttpServerRequest!", e);
-      } catch (Exception e) {
-        log.warn("CDI context not active!", e);
-      }
-
-      hasAttributes.setAttributeValue(REQ_METHOD, requestContext.getMethod());
-      hasAttributes.setAttributeValue(REQ_PATH, requestContext.getUriInfo().getPath());
-      hasAttributes.setAttributeValue(REQ_URI, requestContext.getUriInfo().getRequestUri().toString());
-      hasAttributes.setAttributeValue(REQ_URI_HOST, requestContext.getUriInfo().getRequestUri().getHost());
-      hasAttributes.setAttributeValue(REQ_URI_QUERY, requestContext.getUriInfo().getRequestUri().getQuery());
-      hasAttributes.setAttributeValue(REQ_URI_FRAGMENT, requestContext.getUriInfo().getRequestUri().getFragment());
-      hasAttributes.setAttributeValue(REQ_URI_SCHEME, requestContext.getUriInfo().getRequestUri().getScheme());
+      injectValues(hasAttributes, requestContext);
+    }
+    Params params = execContext.tryGetParams();
+    if (params instanceof HasAttributes hasAttributes) {
+      injectValues(hasAttributes, requestContext);
     }
     requestContext.setProperty(Constants.InternalContextVariables.RECYCLONE_EXEC_CONTEXT_PROVIDER, execContext);
     if (execContext instanceof ParamsExecContext<?> paramsExecContext) {
