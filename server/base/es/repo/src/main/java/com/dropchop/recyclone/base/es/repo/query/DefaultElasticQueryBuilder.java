@@ -134,9 +134,17 @@ public class DefaultElasticQueryBuilder implements ElasticQueryBuilder {
             parentNodeObject, fieldName, text.getValue(), wildcard.getCaseInsensitive(), wildcard.getBoost()
         );
       } else if (text instanceof Phrase phrase) {
-        fieldNode = new MatchPhrase(
-            parentNodeObject, fieldName, text.getValue(), phrase.getSlop(), phrase.getAnalyzer()
-        );
+        if (phrase.isMatchPrefix()) {
+          fieldNode = new MatchPhrasePrefix(
+              parentNodeObject, fieldName, phrase.getPrefix(),
+              phrase.getSlop(), phrase.getAnalyzer(), phrase.getMaxExpansions()
+          );
+        } else {
+          fieldNode = new MatchPhrase(
+              parentNodeObject, fieldName, text.getValue(),
+              phrase.getSlop(), phrase.getAnalyzer()
+          );
+        }
       } else if(text instanceof AdvancedText advancedText) {
         fieldNode = new com.dropchop.recyclone.base.es.model.query.cond.MatchText(
             parentNodeObject, fieldName, advancedText
