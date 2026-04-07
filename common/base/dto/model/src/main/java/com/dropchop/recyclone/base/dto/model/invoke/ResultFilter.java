@@ -181,6 +181,12 @@ public class ResultFilter
   }
 
   @Override
+  public ResultFilter sort(List<String> sort) {
+    this.setSort(sort);
+    return this;
+  }
+
+  @Override
   public ResultFilter state(String state) {
     this.states.add(state);
     return this;
