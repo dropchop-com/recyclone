@@ -2,6 +2,7 @@ package com.dropchop.recyclone.base.api.service;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Dto;
+import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
@@ -39,12 +40,12 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     );
   }
 
-  protected Result<D> search(CommonExecContext<D, ?> execContext, boolean doAuthorization) {
+  protected Result<D> search(CommonExecContext<D, ?> execContext, Authorizer<E> authorizer) {
     ProfileTimer timer = new ProfileTimer();
 
     CrudRepository<E, ID> repository = getRepository();
     FilteringMapperProvider<D, E, ?> mapperProvider = getMapperProvider();
-    MappingContext mapContext = mapperProvider.getMappingContextForRead(getExecutionContext());
+    MappingContext mapContext = mapperProvider.getMappingContextForRead(execContext);
 
     // Create aggregation collector
     Map<String, AggregationResult> aggregations = new LinkedHashMap<>();
@@ -55,15 +56,9 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     List<E> entities = repository.find(context);
     log.debug("Found {} entities in [{}]ms", entities.size(), timer.mark());
 
-    boolean mustCheckItemPermissions = execContext.hasRequiredPermissions()
-            && doAuthorization
-            && !(this instanceof SkipInstanceLevelPermissionCheck);
-
-    if (mustCheckItemPermissions) {
+    if (authorizer.mustAuthorize()) {
       entities = entities.stream()
-          .filter(
-              e -> authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(e.identifier()))
-          )
+          .filter(authorizer::authorize)
           .collect(Collectors.toList());
     }
 
@@ -77,7 +72,18 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
   @Transactional
   public Result<D> search() {
     CommonExecContext<D, ?> context = getExecutionContext();
-    return search(context, true);
+    return search(context, new Authorizer<>() {
+      @Override
+      public boolean mustAuthorize() {
+        return !context.hasRequiredPermissions()
+            || ElasticCrudServiceImpl.this instanceof SkipInstanceLevelPermissionCheck;
+      }
+
+      @Override
+      public boolean authorize(E entity) {
+        return authorizationService.isPermitted(getExecutionContext().getSecurityDomainAction(entity.identifier()));
+      }
+    });
   }
 
   @Transactional
