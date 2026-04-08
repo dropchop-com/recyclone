@@ -2,7 +2,6 @@ package com.dropchop.recyclone.base.api.service;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.api.model.base.Dto;
-import com.dropchop.recyclone.base.api.model.base.Entity;
 import com.dropchop.recyclone.base.api.model.invoke.CommonExecContext;
 import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
 import com.dropchop.recyclone.base.api.model.invoke.Params;
@@ -22,7 +21,10 @@ import com.dropchop.recyclone.base.es.repo.listener.AggregationResultConsumer;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -75,8 +77,8 @@ public abstract class ElasticCrudServiceImpl<D extends Dto, E extends EsEntity, 
     return search(context, new Authorizer<>() {
       @Override
       public boolean mustAuthorize() {
-        return !context.hasRequiredPermissions()
-            || ElasticCrudServiceImpl.this instanceof SkipInstanceLevelPermissionCheck;
+        return context.hasRequiredPermissions()
+            && !(ElasticCrudServiceImpl.this instanceof SkipInstanceLevelPermissionCheck);
       }
 
       @Override
