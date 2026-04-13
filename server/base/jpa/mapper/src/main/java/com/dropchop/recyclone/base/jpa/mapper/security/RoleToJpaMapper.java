@@ -1,8 +1,9 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
-import com.dropchop.recyclone.base.dto.model.security.Role;
 import com.dropchop.recyclone.base.api.mapper.IgnoreLanguageToEntityMapper;
+import com.dropchop.recyclone.base.dto.model.security.Role;
+import com.dropchop.recyclone.base.jpa.mapper.localization.TitleDescriptionTranslationToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaRole;
 import org.mapstruct.*;
 
@@ -17,7 +18,8 @@ import org.mapstruct.*;
     builder = @Builder(disableBuilder = true),
     uses = {
         EntityFactoryInvoker.class,
-        PermissionToJpaMapper.class
+        PermissionToJpaMapper.class,
+        TitleDescriptionTranslationToJpaMapper.class
     }
 )
 public interface RoleToJpaMapper extends IgnoreLanguageToEntityMapper<Role, JpaRole> {

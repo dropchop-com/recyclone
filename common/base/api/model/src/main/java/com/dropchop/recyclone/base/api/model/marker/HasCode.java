@@ -6,5 +6,5 @@ package com.dropchop.recyclone.base.api.model.marker;
 public interface HasCode {
 
   String getCode();
-  void setCode(String id);
+  void setCode(String code);
 }

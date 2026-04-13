@@ -17,7 +17,8 @@ import org.mapstruct.*;
   nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
   nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
   uses = {
-      EntityFactoryInvoker.class, UserToJpaMapper.class
+      EntityFactoryInvoker.class,
+      UserToJpaMapper.class
   },
   injectionStrategy = InjectionStrategy.CONSTRUCTOR,
   builder = @Builder(disableBuilder = true)

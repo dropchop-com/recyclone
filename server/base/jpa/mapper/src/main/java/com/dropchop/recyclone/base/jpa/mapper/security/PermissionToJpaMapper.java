@@ -1,8 +1,9 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
-import com.dropchop.recyclone.base.dto.model.security.Permission;
 import com.dropchop.recyclone.base.api.mapper.IgnoreLanguageToEntityMapper;
+import com.dropchop.recyclone.base.dto.model.security.Permission;
+import com.dropchop.recyclone.base.jpa.mapper.localization.TitleDescriptionTranslationToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaPermission;
 import org.mapstruct.*;
 
@@ -19,6 +20,7 @@ import org.mapstruct.*;
         EntityFactoryInvoker.class,
         ActionToJpaMapper.class,
         DomainToJpaMapper.class,
+        TitleDescriptionTranslationToJpaMapper.class
     }
 )
 public interface PermissionToJpaMapper extends IgnoreLanguageToEntityMapper<Permission, JpaPermission> {

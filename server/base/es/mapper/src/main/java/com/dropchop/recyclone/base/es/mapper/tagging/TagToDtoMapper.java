@@ -22,5 +22,7 @@ public interface TagToDtoMapper extends ToDtoMapper<Tag, EsTag> {
   @SubclassMapping( source = EsShared.class, target = Shared.class)
   @SubclassMapping( source = EsCountryGroup.class, target = CountryGroup.class)
   @SubclassMapping( source = EsLanguageGroup.class, target = LanguageGroup.class)
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "getFirstTagByType", ignore = true)
   Tag toDto(EsTag tag, @Context MappingContext context);
 }

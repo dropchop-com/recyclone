@@ -18,7 +18,8 @@ import org.mapstruct.*;
     builder = @Builder(disableBuilder = true),
     uses = {
         EntityFactoryInvoker.class,
-        TagToJpaMapper.class
+        TagToJpaMapper.class,
+        TitleTranslationToJpaMapper.class
     }
 )
 public interface CountryToJpaMapper extends IgnoreFtbtLanguageToEntityMapper<Country, JpaCountry> {

@@ -1,21 +1,23 @@
 package com.dropchop.recyclone.quarkus.it.mapper.jpa;
 
-import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
-import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
+import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
+import com.dropchop.recyclone.quarkus.it.model.entity.jpa.JpaDummy;
 import org.mapstruct.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 10. 03. 22.
  */
 @Mapper(
-  componentModel = "jakarta-cdi",
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  uses = EntityFactoryInvoker.class,
-  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-  builder = @Builder(disableBuilder = true)
+    componentModel = "jakarta-cdi",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+    builder = @Builder(disableBuilder = true),
+    uses = {
+        EntityFactoryInvoker.class
+    }
 )
 public interface DummyToJpaMapper extends ToEntityMapper<Dummy, JpaDummy> {
 }

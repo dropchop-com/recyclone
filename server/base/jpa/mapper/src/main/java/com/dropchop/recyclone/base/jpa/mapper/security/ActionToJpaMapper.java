@@ -1,8 +1,9 @@
 package com.dropchop.recyclone.base.jpa.mapper.security;
 
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
-import com.dropchop.recyclone.base.dto.model.security.Action;
 import com.dropchop.recyclone.base.api.mapper.IgnoreLanguageToEntityMapper;
+import com.dropchop.recyclone.base.dto.model.security.Action;
+import com.dropchop.recyclone.base.jpa.mapper.localization.TitleDescriptionTranslationToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.security.JpaAction;
 import org.mapstruct.*;
 
@@ -16,7 +17,8 @@ import org.mapstruct.*;
     injectionStrategy = InjectionStrategy.CONSTRUCTOR,
     builder = @Builder(disableBuilder = true),
     uses = {
-        EntityFactoryInvoker.class
+        EntityFactoryInvoker.class,
+        TitleDescriptionTranslationToJpaMapper.class
     }
 )
 public interface ActionToJpaMapper extends IgnoreLanguageToEntityMapper<Action, JpaAction> {

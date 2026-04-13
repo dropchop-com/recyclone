@@ -10,12 +10,15 @@ import org.mapstruct.*;
  * @author Armando Ota <armando.ota@dropchop.com>
  */
 @Mapper(
-  componentModel = "jakarta-cdi",
-  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-  nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-  injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-  builder = @Builder(disableBuilder = true),
-  uses = {EntityFactoryInvoker.class}
+    componentModel = "jakarta-cdi",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+    builder = @Builder(disableBuilder = true),
+    uses = {
+        EntityFactoryInvoker.class,
+        RoleNodePermissionToJpaMapper.class
+    }
 )
 public interface RoleNodeToJpaMapper extends ToEntityMapper<RoleNode, JpaRoleNode> {
 }

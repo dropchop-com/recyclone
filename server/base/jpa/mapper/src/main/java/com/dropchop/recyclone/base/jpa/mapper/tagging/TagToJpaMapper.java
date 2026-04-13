@@ -2,6 +2,7 @@ package com.dropchop.recyclone.base.jpa.mapper.tagging;
 
 import com.dropchop.recyclone.base.api.mapper.MappingContext;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
+import com.dropchop.recyclone.base.jpa.mapper.localization.TitleDescriptionTranslationToJpaMapper;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaTag;
 import com.dropchop.recyclone.base.api.mapper.EntityFactoryInvoker;
 import com.dropchop.recyclone.base.api.mapper.ToEntityMapper;
@@ -16,7 +17,10 @@ import org.mapstruct.*;
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
     injectionStrategy = InjectionStrategy.CONSTRUCTOR,
     builder = @Builder(disableBuilder = true),
-    uses = {EntityFactoryInvoker.class}
+    uses = {
+        EntityFactoryInvoker.class,
+        TitleDescriptionTranslationToJpaMapper.class
+    }
 )
 public interface TagToJpaMapper extends ToEntityMapper<Tag, JpaTag> {
   @Override

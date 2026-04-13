@@ -22,6 +22,7 @@ import org.mapstruct.*;
 )
 public interface UserAccountToDtoMapper extends ToDtoMapper<UserAccount, JpaUserAccount> {
 
+  @Mapping(target = "id", ignore = true)
   @SubclassMapping( source = JpaLoginAccount.class, target = LoginAccount.class)
   @SubclassMapping( source = JpaTokenAccount.class, target = TokenAccount.class)
   UserAccount toDto(JpaUserAccount entity, @Context MappingContext context);
