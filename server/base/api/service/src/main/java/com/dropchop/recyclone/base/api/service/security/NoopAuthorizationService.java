@@ -22,6 +22,12 @@ public class NoopAuthorizationService implements AuthorizationService, Authentic
   }
 
   @Override
+  public Subject current() {
+    log.warn("Using [{}]", NoopAuthorizationService.class);
+    return null;
+  }
+
+  @Override
   public boolean isPermitted(String domain, String action) {
     log.warn("Using [{}]", NoopAuthorizationService.class);
     return true;

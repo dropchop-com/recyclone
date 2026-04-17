@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.jaxrs.security;
 
+import com.dropchop.recyclone.base.api.jaxrs.security.JwtTokenRefreshResource;
 import com.dropchop.recyclone.base.api.model.rest.ResultCode;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.base.api.rest.ClassicRestResource;
@@ -12,8 +13,6 @@ import com.dropchop.recyclone.base.dto.model.security.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UsernamePasswordToken;
 
 import static com.dropchop.recyclone.base.jaxrs.security.JwtLoginDecorator.USER_ATTR_REMEMBER_ME;
 
@@ -22,8 +21,8 @@ import static com.dropchop.recyclone.base.jaxrs.security.JwtLoginDecorator.USER_
  */
 @Getter
 @RequestScoped
-public class JwtLoginResource extends BaseLoginResource
-    implements ClassicRestResource<User>, com.dropchop.recyclone.base.api.jaxrs.security.JwtLoginResource {
+public class JwtIdTokenResource extends BaseLoginResource
+    implements ClassicRestResource<User>, JwtTokenRefreshResource {
 
   @Inject
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
@@ -36,18 +35,14 @@ public class JwtLoginResource extends BaseLoginResource
   @Inject
   JwtLoginDecorator jwtLoginDecorator;
 
-
   @Override
-  public Result<AuthorizationResponse> loginJwt(AuthorizationRequest params) {
+  public Result<AuthorizationResponse> jwtToken(AuthorizationRequest params) {
     ProfileTimer timer = new ProfileTimer();
     params.tryGetResultContentFilter().setTreeLevel(100);
     AuthorizationResponse response = new AuthorizationResponse();
     jwtLoginDecorator.createJwt(params, response, req -> {
       LoginParams loginParams = req.toLoginParameters();
-      AuthenticationToken token = new UsernamePasswordToken(
-          loginParams.getLoginName(), loginParams.getPassword(), false
-      );
-      User user = this.login(token, loginParams.getDomainPrefix());
+      User user = this.loadAuthenticated(loginParams.getDomainPrefix());
       user.setAttributeValue(USER_ATTR_REMEMBER_ME, loginParams.getRememberMe());
       return user;
     });
@@ -59,14 +54,11 @@ public class JwtLoginResource extends BaseLoginResource
   }
 
   @Override
-  public OauthLikeResponse loginJwtRest(OauthLikeRequest params) {
+  public OauthLikeResponse jwtTokenRest(OauthLikeRequest params) {
     OauthLikeResponse response = new OauthLikeResponse();
     jwtLoginDecorator.createJwt(params, response, req -> {
       LoginParams loginParams = req.toLoginParameters();
-      AuthenticationToken token = new UsernamePasswordToken(
-          loginParams.getLoginName(), loginParams.getPassword(), false
-      );
-      User user = login(token, loginParams.getDomainPrefix());
+      User user = this.loadAuthenticated(loginParams.getDomainPrefix());
       user.setAttributeValue(USER_ATTR_REMEMBER_ME, loginParams.getRememberMe());
       return user;
     });

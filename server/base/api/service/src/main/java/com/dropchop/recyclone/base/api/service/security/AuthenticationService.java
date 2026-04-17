@@ -9,4 +9,5 @@ import org.apache.shiro.subject.Subject;
 public interface AuthenticationService {
 
   Subject login(AuthenticationToken token);
+  Subject current();
 }

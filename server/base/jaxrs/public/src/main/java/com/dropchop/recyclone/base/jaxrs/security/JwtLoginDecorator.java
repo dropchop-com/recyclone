@@ -64,23 +64,11 @@ public class JwtLoginDecorator {
     claims.put(Claims.u.name(), user);
   }
 
-  public <R extends AuthorizationRequest, S extends AuthorizationResponse> void loginJwt(
-      R req, S resp, Function<R, User> login) {
-    User user = login.apply(req);
-    User simplifiedUser = user.cloneSimplified();
-    resp.setUser(simplifiedUser);
-
-    Map<String, Object> claims = new HashMap<>();
-    fillAccessClaims(req, simplifiedUser, claims);
-    // keep the access token simple
-    String accessToken;
+  private String createIdToken(User user, Map<String, Object> claims) {
     int timeoutSeconds = jwtConfig.getTimeoutSeconds();
     if (user.getAttributeValue(USER_ATTR_REMEMBER_ME, Boolean.FALSE)) {
       timeoutSeconds = jwtConfig.getLongTimeoutSeconds();
     }
-    accessToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
-    resp.setAccessToken(accessToken);
-
     // we respond with id token i.e., all user data but,
     // we remove all fields for which simplified attributes are present
     List<String> permissionsInAttributes = user.getAttributeValue(USER_ATTR_PERMISSIONS, new ArrayList<>());
@@ -97,8 +85,27 @@ public class JwtLoginDecorator {
     }
 
     fillIdClaims(user, claims);
-    // add more data to access token
-    String idToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
+    return jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
+  }
+
+  public <R extends AuthorizationRequest, S extends AuthorizationResponse> void createJwt(
+      R req, S resp, Function<R, User> userProvider) {
+    User user = userProvider.apply(req);
+    User simplifiedUser = user.cloneSimplified();
+    resp.setUser(simplifiedUser);
+
+    Map<String, Object> claims = new HashMap<>();
+    fillAccessClaims(req, simplifiedUser, claims);
+    // keep the access token simple
+    String accessToken;
+    int timeoutSeconds = jwtConfig.getTimeoutSeconds();
+    if (user.getAttributeValue(USER_ATTR_REMEMBER_ME, Boolean.FALSE)) {
+      timeoutSeconds = jwtConfig.getLongTimeoutSeconds();
+    }
+    accessToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
+    resp.setAccessToken(accessToken);
+
+    String idToken = this.createIdToken(user, claims);
     resp.setIdToken(idToken);
 
     resp.setCode(req.getRequestId());

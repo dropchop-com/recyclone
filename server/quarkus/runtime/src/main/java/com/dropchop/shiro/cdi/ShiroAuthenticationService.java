@@ -39,18 +39,7 @@ public class ShiroAuthenticationService implements AuthenticationService {
     return subject;
   }
 
-  /*private ThreadState bindSubject() {
-    ThreadContext.bind(shiroSecurityManager);
-    Subject subject = new Subject.Builder(shiroSecurityManager).buildSubject();
-    ThreadContext.bind(subject);
-    ThreadState threadState = new SubjectThreadState(subject);
-    threadState.bind();
-    return threadState;
-  }*/
-
   public void bindSubject(ContainerRequestContext requestContext) {
-    //ThreadState threadState = this.bindSubject();
-    //requestContext.setProperty(SHIRO_REQ_INTERNAL_THREAD_STATE, threadState);
     requestContext.setProperty(SHIRO_REQ_INTERNAL_SERVICE, this);
     requestContext.setSecurityContext(new ShiroSecurityContext(requestContext));
   }
@@ -88,5 +77,9 @@ public class ShiroAuthenticationService implements AuthenticationService {
       log.warn("Authentication failed for token [{}]", token, e);
       throw e;
     }
+  }
+
+  public Subject current() {
+    return getSubject();
   }
 }

@@ -28,31 +28,7 @@ public abstract class BaseLoginResource {
 
   public abstract SecurityLoadingService getSecurityLoadingService();
 
-  public User login(AuthenticationToken token, Set<String> permissionPrefixes) {
-    Set<Attribute<?>> details = Collections.emptySet();
-    if (token instanceof UsernamePasswordToken usernamePasswordToken) {
-      details = Set.of(
-          new AttributeString("username", usernamePasswordToken.getUsername())
-      );
-      //prefixes = loginParams.getDomainPrefix();
-    }
-    if (token instanceof UserUuidToken userUuidToken) {
-      details = Set.of(
-          new AttributeString("userid", String.valueOf(userUuidToken.getPrincipal()))
-      );
-      //prefixes = loginParams.getDomainPrefix();
-    }
-    Subject subject;
-    try {
-      subject = getAuthenticationService().login(token);
-    } catch (AuthenticationException e) {
-      throw new ServiceException(
-          new StatusMessage(
-              ErrorCode.authentication_error, "Invalid credentials!",
-              details
-          )
-      );
-    }
+  private User loadUserData(Subject subject, Set<String> permissionPrefixes, Set<Attribute<?>> details) {
     Object principal = subject.getPrincipal();
     if (!(principal instanceof User user)) {
       throw new ServiceException(
@@ -66,5 +42,52 @@ public abstract class BaseLoginResource {
 
     user = getSecurityLoadingService().loadUserData(user, permissionPrefixes);
     return user;
+  }
+
+  public User login(AuthenticationToken token, Set<String> permissionPrefixes) {
+    Set<Attribute<?>> details = Collections.emptySet();
+    if (token instanceof UsernamePasswordToken usernamePasswordToken) {
+      details = Set.of(
+          new AttributeString("username", usernamePasswordToken.getUsername())
+      );
+    }
+    if (token instanceof UserUuidToken userUuidToken) {
+      details = Set.of(
+          new AttributeString("userid", String.valueOf(userUuidToken.getPrincipal()))
+      );
+    }
+    Subject subject;
+    try {
+      subject = getAuthenticationService().login(token);
+    } catch (AuthenticationException e) {
+      throw new ServiceException(
+          new StatusMessage(
+              ErrorCode.authentication_error, "Invalid credentials!",
+              details
+          )
+      );
+    }
+    return loadUserData(subject, permissionPrefixes, details);
+  }
+
+  public User loadAuthenticated(Set<String> permissionPrefixes) {
+    Subject subject = getAuthenticationService().current();
+    if (subject == null) {
+      throw new ServiceException(
+          new StatusMessage(
+              ErrorCode.authentication_error, "No authenticated user found!",
+              Collections.emptySet()
+          )
+      );
+    }
+    if (!subject.isAuthenticated()) {
+      throw new ServiceException(
+          new StatusMessage(
+              ErrorCode.authentication_error, "User is not authenticated!",
+              Collections.emptySet()
+          )
+      );
+    }
+    return loadUserData(subject, permissionPrefixes, Collections.emptySet());
   }
 }
