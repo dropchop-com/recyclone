@@ -115,4 +115,15 @@ public class CountryRepositoryTest {
       this.countryRepository.save(tmpCountry);
     });
   }
+
+  @Test
+  @Transactional
+  @Order(3)
+  public void findByCode() {
+    th.transact(() -> {
+      JpaCountry tmpCountry = this.countryRepository.findById(coUkCode);
+      Assertions.assertEquals("uk", tmpCountry.getCode());
+      this.countryRepository.save(tmpCountry);
+    });
+  }
 }
