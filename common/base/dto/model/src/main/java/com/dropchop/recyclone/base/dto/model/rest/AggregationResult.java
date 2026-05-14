@@ -50,6 +50,9 @@ public class AggregationResult {
     @JsonProperty("type")
     private String type;
 
+    @JsonProperty("name")
+    private String name;
+
     @JsonProperty("title")
     private String title;
 
