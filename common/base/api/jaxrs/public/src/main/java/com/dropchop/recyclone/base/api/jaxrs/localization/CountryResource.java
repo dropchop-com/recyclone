@@ -34,12 +34,12 @@ public interface CountryResource {
   List<Country> getRest();
 
   @GET
-  @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
+  @Path("{code : [a-zA-Z]{2}(([\\-\\w])*(%2A)*)*}")
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
   Result<Country> getByCode(@PathParam("code") String code);
 
   @GET
-  @Path("{code : [a-z]{2}(([\\-\\w])*(%2A)*)*}")
+  @Path("{code : [a-zA-Z]{2}(([\\-\\w])*(%2A)*)*}")
   @Produces(MediaType.APPLICATION_JSON)
   List<Country> getByCodeRest(@PathParam("code") String code);
 
