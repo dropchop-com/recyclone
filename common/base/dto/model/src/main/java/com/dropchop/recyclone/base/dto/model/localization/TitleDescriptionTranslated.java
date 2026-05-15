@@ -90,5 +90,8 @@ public class TitleDescriptionTranslated
     if (container.getTitle() != null) {
       this.setTitle(container.getTitle());
     }
+    if (container.getName() != null) {
+      this.setName(container.getName());
+    }
   }
 }
