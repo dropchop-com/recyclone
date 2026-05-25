@@ -6,6 +6,7 @@ import com.dropchop.recyclone.base.dto.model.invoke.TagParams;
 import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ByTagsCriteriaDecorator<E> extends BlazeCriteriaDecorator<E> {
 
@@ -17,7 +18,9 @@ public class ByTagsCriteriaDecorator<E> extends BlazeCriteriaDecorator<E> {
     if (params instanceof TagParams tagParams) {
       List<Tag> tags = tagParams.getTags();
       if (tags != null && !tags.isEmpty()) {
-        cb.where(alias + DELIM + "tags.uuid").in(tags.stream().map(Tag::getId).toList());
+        cb.where(alias + DELIM + "tags.uuid").in(
+            tags.stream().map(Tag::getId).map(UUID::fromString).toList()
+        );
       }
     }
   }
