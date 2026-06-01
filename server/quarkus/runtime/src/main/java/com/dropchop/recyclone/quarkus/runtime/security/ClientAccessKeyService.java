@@ -5,6 +5,7 @@ import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.security.AccessKey;
 import com.dropchop.recyclone.base.api.model.security.ClientKeyConfig;
 import com.dropchop.recyclone.base.api.model.security.ClientKeyConfigs;
+import com.dropchop.recyclone.base.api.service.security.shiro.UserUuidToken;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig.Rest.Security.ClientAccessKeys;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig.Rest.Security.ClientAccessKeys.KeyConfig;
@@ -75,12 +76,12 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
           );
           accessKeys.put(accessKey, accessEncryptedKey);
         }
-      } else if (token instanceof HostAuthenticationToken bearerToken) {
+      } else if (token instanceof HostAuthenticationToken || token instanceof UserUuidToken) {
         AccessKey accessKey = new AccessKey(
             clientId,
             ZonedDateTime.now(),
             identifiable.getId(),
-            String.valueOf(bearerToken.getCredentials())
+            String.valueOf(token.getCredentials())
         );
         if (clientKeyConfig.getSecret() != null && clientKeyConfig.getSalt() != null) {
           String accessEncryptedKey = AccessKey.encrypt(
