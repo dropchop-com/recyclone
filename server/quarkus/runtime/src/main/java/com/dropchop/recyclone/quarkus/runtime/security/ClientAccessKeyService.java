@@ -56,40 +56,79 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
     return keyConfigMap;
   }
 
+  protected EncryptedAccessKey createAccessKey(String clientKeyId, ClientKeyConfig config,
+                                               HasId identifiable, String loginName, char[] secret) {
+    AccessKey accessKey = new AccessKey(
+        clientKeyId,
+        ZonedDateTime.now(),
+        identifiable.getId(),
+        loginName,
+        secret
+    );
+    if (config.getSecret() != null && config.getSalt() != null) {
+      String accessEncryptedKey = AccessKey.encrypt(
+          config, accessKey
+      );
+      return new EncryptedAccessKey(accessKey, accessEncryptedKey);
+    }
+    throw new IllegalArgumentException("Missing config secret or salt!");
+  }
+
+  protected EncryptedAccessKey createAccessKey(String clientKeyId, ClientKeyConfig config,
+                                               HasId identifiable, String token) {
+    AccessKey accessKey = new AccessKey(
+        clientKeyId,
+        ZonedDateTime.now(),
+        identifiable.getId(),
+        token
+    );
+    if (config.getSecret() != null && config.getSalt() != null) {
+      String accessEncryptedKey = AccessKey.encrypt(
+          config, accessKey
+      );
+      return new EncryptedAccessKey(accessKey, accessEncryptedKey);
+    }
+    throw new IllegalArgumentException("Missing config secret or salt!");
+  }
+
+  protected EncryptedAccessKey createAccessKey(String clientKeyId, ClientKeyConfig config,
+                                               HasId identifiable, AuthenticationToken token) {
+    if (token instanceof UsernamePasswordToken upToken) {
+      return this.createAccessKey(clientKeyId, config, identifiable, upToken.getUsername(), upToken.getPassword());
+    } else if (token instanceof HostAuthenticationToken || token instanceof UserUuidToken) {
+      return this.createAccessKey(clientKeyId, config, identifiable, String.valueOf(token.getCredentials()));
+    } else {
+      throw new IllegalArgumentException("Unsupported authentication token type: " + token.getClass().getName());
+    }
+  }
+
+  @Override
+  public EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable,
+                                String loginName, char[] secret) {
+    ClientKeyConfig config = loadAccessKeysConfig().get(configName);
+    if (config == null) {
+      throw new IllegalArgumentException("Client key configuration not found for name: " + configName);
+    }
+    return this.createAccessKey(clientKeyId, config, identifiable, loginName, secret);
+  }
+
+  @Override
+  public EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable, String token) {
+    ClientKeyConfig config = loadAccessKeysConfig().get(configName);
+    if (config == null) {
+      throw new IllegalArgumentException("Client key configuration not found for name: " + configName);
+    }
+    return this.createAccessKey(clientKeyId, config, identifiable, token);
+  }
+
   @Override
   public Map<AccessKey, String> createAccessKeys(HasId identifiable, AuthenticationToken token) {
     Map<AccessKey, String> accessKeys = new LinkedHashMap<>();
     for (Map.Entry<String, ClientKeyConfig> configEntry : loadAccessKeysConfig().entrySet()) {
-      String clientId = configEntry.getKey();
+      String clientKeyId = configEntry.getKey();
       ClientKeyConfig clientKeyConfig = configEntry.getValue();
-      if (token instanceof UsernamePasswordToken upToken) {
-        AccessKey accessKey = new AccessKey(
-            clientId,
-            ZonedDateTime.now(),
-            identifiable.getId(),
-            upToken.getUsername(),
-            upToken.getPassword()
-        );
-        if (clientKeyConfig.getSecret() != null && clientKeyConfig.getSalt() != null) {
-          String accessEncryptedKey = AccessKey.encrypt(
-              clientKeyConfig, accessKey
-          );
-          accessKeys.put(accessKey, accessEncryptedKey);
-        }
-      } else if (token instanceof HostAuthenticationToken || token instanceof UserUuidToken) {
-        AccessKey accessKey = new AccessKey(
-            clientId,
-            ZonedDateTime.now(),
-            identifiable.getId(),
-            String.valueOf(token.getCredentials())
-        );
-        if (clientKeyConfig.getSecret() != null && clientKeyConfig.getSalt() != null) {
-          String accessEncryptedKey = AccessKey.encrypt(
-              clientKeyConfig, accessKey
-          );
-          accessKeys.put(accessKey, accessEncryptedKey);
-        }
-      }
+      EncryptedAccessKey encryptedAccessKey = this.createAccessKey(clientKeyId, clientKeyConfig, identifiable, token);
+      accessKeys.put(encryptedAccessKey.accessKey(), encryptedAccessKey.encryptedKey());
     }
     return accessKeys;
   }

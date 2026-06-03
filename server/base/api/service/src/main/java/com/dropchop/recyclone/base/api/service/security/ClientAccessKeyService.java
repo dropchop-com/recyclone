@@ -10,7 +10,15 @@ import java.util.Map;
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 04. 08. 2025
  */
+@SuppressWarnings("unused")
 public interface ClientAccessKeyService {
+
+  record EncryptedAccessKey(AccessKey accessKey, String encryptedKey) {
+  }
+
   ClientKeyConfigs loadAccessKeysConfig();
+  EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable,
+                                     String loginName, char[] secret);
+  EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable, String token);
   Map<AccessKey, String> createAccessKeys(HasId identifiable, AuthenticationToken token);
 }
