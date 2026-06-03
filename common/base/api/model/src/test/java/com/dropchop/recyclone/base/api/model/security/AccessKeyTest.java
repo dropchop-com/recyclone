@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
  */
 class AccessKeyTest {
   /**
-   * Tests the encryption of an AccessKey with user_password type.
+   * Tests the encryption of an AccessKey with the user_password type.
    */
   @Test
   public void testEncryptUserPasswordType() {
@@ -20,7 +20,7 @@ class AccessKeyTest {
     );
     ZonedDateTime created = ZonedDateTime.now();
     AccessKey accessKey = new AccessKey(
-        "testClient", created, "cac6d703-a941-4fc0-bb23-1201a5976718", "nikola", "dev1234".toCharArray()
+        "testClient", created, "cac6d703-a941-4fc0-bb23-1201a5976718", "nikola", "dev1234".toCharArray(), true
     );
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, accessKey);
@@ -38,7 +38,7 @@ class AccessKeyTest {
         "testClient", URI.create("example.com"), "testSecret123!", "testSalt123!"
     );
     ZonedDateTime created = ZonedDateTime.now();
-    AccessKey accessKey = new AccessKey("testClient", created, "testUserId", "testToken");
+    AccessKey accessKey = new AccessKey("testClient", created, "testUserId", "testToken", true);
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, accessKey);
 
@@ -86,7 +86,7 @@ class AccessKeyTest {
     );
     ZonedDateTime created = ZonedDateTime.now();
     AccessKey originalKey = new AccessKey(
-        "testClient", created, "testUserId", "testUserName", "testPassword".toCharArray()
+        "testClient", created, "testUserId", "testUserName", "testPassword".toCharArray(), true
     );
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, originalKey);
@@ -113,7 +113,7 @@ class AccessKeyTest {
         "testClient", URI.create("example.com"), "testSecret123!", "testSalt123!"
     );
     ZonedDateTime created = ZonedDateTime.now();
-    AccessKey originalKey = new AccessKey("testClient", created, "testUserId", "testToken");
+    AccessKey originalKey = new AccessKey("testClient", created, "testUserId", "testToken", true);
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, originalKey);
     AccessKey decryptedKey = AccessKey.decrypt(clientKeyConfig, encryptedKey);

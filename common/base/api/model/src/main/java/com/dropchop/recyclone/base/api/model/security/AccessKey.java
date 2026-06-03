@@ -18,6 +18,10 @@ import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Objects;
 
+/**
+ * AccessKey is a model class that represents a single access key information
+ * and supports encryption / decryption if needed.
+ */
 @Getter
 @SuppressWarnings("unused")
 public class AccessKey {
@@ -37,8 +41,10 @@ public class AccessKey {
   private final String userName;
   private final char[] password;
   private final ZonedDateTime created;
+  private final boolean encryptionEnabled;
 
-  public AccessKey(String clientId, ZonedDateTime created, String userId, String userName, char[] password) {
+  public AccessKey(String clientId, ZonedDateTime created, String userId, String userName, char[] password,
+                   boolean encryptionEnabled) {
     this.clientId = clientId;
     this.userId = userId;
     this.created = created;
@@ -46,9 +52,10 @@ public class AccessKey {
     this.type = Type.user_password;
     this.userName = userName;
     this.password = password;
+    this.encryptionEnabled = encryptionEnabled;
   }
 
-  public AccessKey(String clientId, ZonedDateTime created, String userId, String token) {
+  public AccessKey(String clientId, ZonedDateTime created, String userId, String token, boolean encryptionEnabled) {
     this.clientId = clientId;
     this.userId = userId;
     this.created = created;
@@ -56,6 +63,7 @@ public class AccessKey {
     this.type = Type.user_token;
     this.userName = null;
     this.password = null;
+    this.encryptionEnabled = encryptionEnabled;
   }
 
   @Override
@@ -136,18 +144,36 @@ public class AccessKey {
   }
 
   public static String encrypt(ClientKeyConfig config, String userId, String userName, String password) {
+    if (config.getSecret() == null || config.getSecret().isBlank()) {
+      throw new IllegalArgumentException("Secret cannot be null or blank!");
+    }
+    if (config.getSalt() == null || config.getSalt().isBlank()) {
+      throw new IllegalArgumentException("Salt cannot be null or blank!");
+    }
     return encrypt(
         config, new AccessKey(
-            config.getClientId(), ZonedDateTime.now(), userId, userName, password.toCharArray()
+            config.getClientId(), ZonedDateTime.now(), userId, userName, password.toCharArray(), true
         )
     );
   }
 
   public static String encrypt(ClientKeyConfig config, String userId, String token) {
-    return encrypt(config, new AccessKey(config.getClientId(), ZonedDateTime.now(), userId, token));
+    if (config.getSecret() == null || config.getSecret().isBlank()) {
+      throw new IllegalArgumentException("Secret cannot be null or blank!");
+    }
+    if (config.getSalt() == null || config.getSalt().isBlank()) {
+      throw new IllegalArgumentException("Salt cannot be null or blank!");
+    }
+    return encrypt(config, new AccessKey(config.getClientId(), ZonedDateTime.now(), userId, token, true));
   }
 
   public static AccessKey decrypt(ClientKeyConfig config, String base64CipherText) {
+    if (config.getSecret() == null || config.getSecret().isBlank()) {
+      throw new IllegalArgumentException("Secret cannot be null or blank!");
+    }
+    if (config.getSalt() == null || config.getSalt().isBlank()) {
+      throw new IllegalArgumentException("Salt cannot be null or blank!");
+    }
     byte[] input = Base64.getDecoder().decode(base64CipherText);
 
     // 1. Extract the clientId (plaintext), up to the first occurrence of "::"
@@ -227,7 +253,7 @@ public class AccessKey {
       String userId = parts[2];
       String userName = parts[3];
       String password = parts[4];
-      return new AccessKey(clientId, created, userId, userName, password.toCharArray());
+      return new AccessKey(clientId, created, userId, userName, password.toCharArray(), true);
     } else if (type == Type.user_token) {
       if (parts.length != 4) {
         throw new RuntimeException(
@@ -236,7 +262,7 @@ public class AccessKey {
       }
       String userId = parts[2];
       String token = parts[3];
-      return new AccessKey(clientId, created, userId, token);
+      return new AccessKey(clientId, created, userId, token, true);
     } else {
       throw new RuntimeException("Unhandled access key type: " + type);
     }

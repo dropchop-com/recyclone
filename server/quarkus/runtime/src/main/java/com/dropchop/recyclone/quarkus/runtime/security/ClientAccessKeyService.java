@@ -63,15 +63,17 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
         ZonedDateTime.now(),
         identifiable.getId(),
         loginName,
-        secret
+        secret,
+        config.getSecret() != null && config.getSalt() != null
     );
     if (config.getSecret() != null && config.getSalt() != null) {
       String accessEncryptedKey = AccessKey.encrypt(
           config, accessKey
       );
       return new EncryptedAccessKey(accessKey, accessEncryptedKey);
+    } else {
+      return new EncryptedAccessKey(accessKey, config.getSecret());
     }
-    throw new IllegalArgumentException("Missing config secret or salt!");
   }
 
   protected EncryptedAccessKey createAccessKey(String clientKeyId, ClientKeyConfig config,
@@ -80,7 +82,8 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
         clientKeyId,
         ZonedDateTime.now(),
         identifiable.getId(),
-        token
+        token,
+        config.getSecret() != null && config.getSalt() != null
     );
     if (config.getSecret() != null && config.getSalt() != null) {
       String accessEncryptedKey = AccessKey.encrypt(
