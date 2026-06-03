@@ -87,8 +87,9 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
           config, accessKey
       );
       return new EncryptedAccessKey(accessKey, accessEncryptedKey);
+    } else {
+      return new EncryptedAccessKey(accessKey, config.getSecret());
     }
-    throw new IllegalArgumentException("Missing config secret or salt!");
   }
 
   protected EncryptedAccessKey createAccessKey(String clientKeyId, ClientKeyConfig config,

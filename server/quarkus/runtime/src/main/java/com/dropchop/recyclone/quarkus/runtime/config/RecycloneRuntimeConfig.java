@@ -52,11 +52,13 @@ public interface RecycloneRuntimeConfig {
 
           /**
            * REST secret for the named access key config.
+           * If salt is not provided, secret will be used as-is and exposed without any encryption processing!
            */
           Optional<String> secret();
 
           /**
            * REST salt for the named access key config.
+           * If salt is not provided, secret will be used as-is and exposed without any encryption processing!
            */
           Optional<String> salt();
 
