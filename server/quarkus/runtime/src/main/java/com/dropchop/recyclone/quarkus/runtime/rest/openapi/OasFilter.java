@@ -14,7 +14,7 @@ import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import com.dropchop.shiro.filter.CustomKeyHttpAuthenticationFilter;
-import io.smallrye.openapi.api.models.OperationImpl;
+import io.smallrye.openapi.model.Extensions;
 import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.*;
@@ -175,14 +175,14 @@ public class OasFilter implements OASFilter {
     //rewrite paths if set
     Paths paths = openAPI.getPaths();
     if (paths != null) {
-      // the code seems complex but here's what it does:
+      // the code seems complex, but here's what it does:
       // - list every path item
       // - identify the correct method from rest mapping which has the correct path built-in
       // - normalize @Path("/foo/bar/{identifier: pattern}") to "/foo/bar/{identifier}"
       // - replace the part w/o the prefixes /rest/prefix/foo/bar/baz =̣> /rest/prefix/internal/foo/bar/baz
-      //   given that we have /foo/bar/baz          in the restMethod.path property and
+      //   given that we have /foo/bar/baz in the restMethod.path property and
       //                      /internal/foo/bar/baz in the restMethod.rewrittenPath property.
-      // - replacement is done with copying to a new structures and cleaning old ones hence the complexity.
+      // - replacement is done with copying to a new structure and cleaning the old one, hence the complexity.
       //   (we must keep every other REST resource intact)
       Map<String, PathItem> rewrittenItems = new LinkedHashMap<>();
       Map<String, PathItem> removeItems = new HashMap<>();
@@ -190,9 +190,11 @@ public class OasFilter implements OASFilter {
         String original = item.getKey();
         PathItem originalItem = item.getValue();
         Map<PathItem.HttpMethod, Operation> removeOps = new HashMap<>();
-        for (Map.Entry<PathItem.HttpMethod, Operation> op : originalItem.getOperations().entrySet()) {
-          if (op.getValue() instanceof OperationImpl opImpl) {
-            RestMethod restMethod = this.restMapping.getMethod(opImpl.getMethodRef());
+        for (Map.Entry<PathItem.HttpMethod, Operation> ops : originalItem.getOperations().entrySet()) {
+          //if (op.getValue() instanceof OperationImpl opImpl) {
+            Operation op = ops.getValue();
+            String methodRef = Extensions.getMethodRef(op);
+            RestMethod restMethod = this.restMapping.getMethod(methodRef);
             if (restMethod == null) {
               continue;
             }
@@ -208,10 +210,10 @@ public class OasFilter implements OASFilter {
               continue;
             }
             PathItem newPathItem = rewrittenItems.computeIfAbsent(tmp, x -> OASFactory.createPathItem());
-            removeOps.put(op.getKey(), opImpl);
-            newPathItem.setOperation(op.getKey(), opImpl);
+            removeOps.put(ops.getKey(), op);
+            newPathItem.setOperation(ops.getKey(), op);
           }
-        }
+        //}
         for (Map.Entry<PathItem.HttpMethod, Operation> op : removeOps.entrySet()) {
           originalItem.setOperation(op.getKey(), null);
         }
@@ -404,20 +406,18 @@ public class OasFilter implements OASFilter {
 
   @Override
   public Operation filterOperation(Operation operation) {
-    if (!(operation instanceof OperationImpl op)) {
-      return operation;
-    }
+    String methodRef = Extensions.getMethodRef(operation);
     List<Mechanism> securityMechanisms = this.buildConfig.rest().security().mechanisms();
     if (!securityMechanisms.isEmpty()) {
       List<SecurityRequirement> securityRequirements = createSecurityRequirements(securityMechanisms);
-      op.setSecurity(securityRequirements);
+      operation.setSecurity(securityRequirements);
     }
-    RestMethod method = this.restMapping.getMethod(op.getMethodRef());
+    RestMethod method = this.restMapping.getMethod(methodRef);
     if (method == null) {
       return operation;
     }
 
-    if (shouldSkip(method, op.getMethodRef())) {
+    if (shouldSkip(method, methodRef)) {
       return null;
     }
 
