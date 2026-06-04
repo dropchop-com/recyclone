@@ -67,4 +67,18 @@ public class Result<T> implements com.dropchop.recyclone.base.api.model.rest.Res
   public static <T> Result<T> success(List<T> data, ResultStats stats) {
     return new Result<T>().toSuccess(data, 0, stats);
   }
+
+  public static <T> Result<T> success(ResultStats stats) {
+    ResultStatus status = new ResultStatus(ResultCode.success, 0, 0, stats, null, null);
+    Result<T> result = new Result<>();
+    result.setStatus(status);
+    return result;
+  }
+
+  public static <T> Result<T> success() {
+    ResultStatus status = new ResultStatus(ResultCode.success, 0, 0, null, null, null);
+    Result<T> result = new Result<>();
+    result.setStatus(status);
+    return result;
+  }
 }
