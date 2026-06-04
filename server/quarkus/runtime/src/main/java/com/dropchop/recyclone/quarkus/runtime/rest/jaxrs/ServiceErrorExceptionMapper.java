@@ -17,6 +17,8 @@ import jakarta.ws.rs.ConstrainedTo;
 import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -133,7 +135,11 @@ public class ServiceErrorExceptionMapper implements ExceptionMapper<Exception> {
         statusMessage.setCode(ErrorCode.data_validation_error);
       } else if (e instanceof AuthenticationCompletionException) {
         statusMessage.setCode(ErrorCode.authentication_error);
+      } else if (e instanceof AuthenticationException) {
+        statusMessage.setCode(ErrorCode.authentication_error);
       } else if (e instanceof ForbiddenException) {
+        statusMessage.setCode(ErrorCode.authorization_error);
+      } else if (e instanceof AuthorizationException) {
         statusMessage.setCode(ErrorCode.authorization_error);
       } else {
         statusMessage.setCode(ErrorCode.internal_error);
