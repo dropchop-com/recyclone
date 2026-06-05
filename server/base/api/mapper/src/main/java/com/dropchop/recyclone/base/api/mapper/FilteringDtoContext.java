@@ -48,11 +48,17 @@ public class FilteringDtoContext extends MappingContext {
     if (source == null) {
       return;
     }
-    String curr = state.pollField();
+    PathSegment field = state.pollFieldSegment();
     PathSegment parent = state.currentSegment();
     boolean isCollection = Objects.isCollectionLike(source);
     PathSegment segment;
-    if (parent instanceof CollectionPathSegment) {
+    if (field != null) {
+      if (isCollection) {
+        segment = new CollectionPathSegment(parent, field.name, source);
+      } else {
+        segment = new PathSegment(parent, field.name, source);
+      }
+    } else if (parent instanceof CollectionPathSegment) {
       if (isCollection) {
         segment = new CollectionPathSegment(parent, null, source);
       } else {
@@ -60,15 +66,15 @@ public class FilteringDtoContext extends MappingContext {
       }
     } else {
       if (isCollection) {
-        segment = new CollectionPathSegment(parent, curr == null ? ROOT_OBJECT : curr, source);
+        segment = new CollectionPathSegment(parent, ROOT_OBJECT, source);
       } else {
-        segment = new PathSegment(parent, curr == null ? ROOT_OBJECT : curr, source);
+        segment = new PathSegment(parent, ROOT_OBJECT, source);
       }
     }
     state.pushSegment(segment);
     if (filter != null) {
       // we precompute "dive" for path segment so that, we don't repeat exact same
-      // computation for each property in filter(@TargetPropertyName String propName) method
+      // computation for each property in filter (@TargetPropertyName String propName) method
       // (remember: we can't return true or false for continuation here due to Mapstruct API)
       segment
         .dive(filter.dive(segment));
@@ -81,7 +87,7 @@ public class FilteringDtoContext extends MappingContext {
    * Test if property can be mapped
    *
    * @param propName property name
-   * @return true if property is ok false if not.
+   * @return true if property is ok, false if not.
    */
   public boolean filter(@TargetPropertyName String propName) {
     PathSegment curr = state.currentSegment();
@@ -101,7 +107,7 @@ public class FilteringDtoContext extends MappingContext {
     if (segment.nestable()) {
       if (filter != null && filter.propertyDive(segment)) {
         //log.info("Property [{}] dive.", segment);
-        state.pushField(propName);
+        state.pushFieldSegment(segment);
         return true;
       } else {
         return false;
@@ -150,6 +156,8 @@ public class FilteringDtoContext extends MappingContext {
     PathSegment segment = state.pollSegment();
     if (segment.parent instanceof CollectionPathSegment cps) {
       cps.incCurrentIndex();
+    } else if (segment.parent == null) {
+      state.clearFieldSegments();
     }
     swapTranslations(target);
     //log.info("End object [{}] -> [{}].", ignoredSource.getClass().getSimpleName(), segment);

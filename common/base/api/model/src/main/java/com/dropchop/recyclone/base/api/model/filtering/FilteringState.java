@@ -13,6 +13,7 @@ import java.util.LinkedList;
 public class FilteringState {
   private final Deque<Boolean> starts = new LinkedList<>();
   private final Deque<String> fields = new LinkedList<>();
+  private final Deque<PathSegment> fieldSegments = new LinkedList<>();
   private final Deque<PathSegment> segments = new LinkedList<>();
   private final Deque<Object> objects = new LinkedList<>();
   public void pushSegment(PathSegment segment) {
@@ -49,6 +50,18 @@ public class FilteringState {
 
   public String currentField() {
     return fields.peekLast();
+  }
+
+  public void pushFieldSegment(PathSegment fieldSegment) {
+    fieldSegments.offerLast(fieldSegment);
+  }
+
+  public PathSegment pollFieldSegment() {
+    return fieldSegments.pollLast();
+  }
+
+  public void clearFieldSegments() {
+    fieldSegments.clear();
   }
 
   public void divePassed() {

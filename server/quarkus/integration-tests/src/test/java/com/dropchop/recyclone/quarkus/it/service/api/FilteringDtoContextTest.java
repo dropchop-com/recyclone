@@ -293,6 +293,36 @@ class FilteringDtoContextTest {
   }
 
   @Test
+  void filterExplicitNestedCollectionIncludeDoesNotDuplicateCollectionProperty() {
+    List<JpaNode> roots = createTree();
+
+    MappingContext mappingContext = new FilteringDtoContext();
+    mappingContext.setTotalCount(roots.size());
+    mappingContext.setRequiredPermissions(List.of(Permission.compose(Security.DOMAIN, VIEW)));
+
+    CodeParams params = new CodeParams();
+    params.filter().content().treeLevel(3);
+    params.filter().content().include("children.children.code");
+    mappingContext.setParams(params);
+
+    List<Node> result = mapper.toDtosResult(roots, mappingContext).getData();
+    assertNotNull(result);
+    assertEquals(2, result.size());
+
+    Node root = result.getFirst();
+    assertNull(root.getCode());
+    assertNotNull(root.getChildren());
+
+    Node child = root.getChildren().getFirst();
+    assertNull(child.getCode());
+    assertNotNull(child.getChildren());
+
+    Node grandChild = child.getChildren().getFirst();
+    assertNotNull(grandChild.getCode());
+    assertNull(grandChild.getChildren());
+  }
+
+  @Test
   void filterContentTreeLevelOneDetailAllIdTest() {
     List<JpaNode> roots = createTree();
 

@@ -66,7 +66,8 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
     if (startsWithAny) {
       this.path[0] = "**";
     }
-    boolean result = Strings.matchPath(this.path, segment.indexedPath, true);
+    boolean result = Strings.matchPath(this.path, segment.path, true)
+      || Strings.matchPath(this.path, segment.indexedPath, true);
     //log.info("Match result [{}] of pat [{}] against [{}].",
       //result, String.join(PATH_DELIM, this.path), String.join(PATH_DELIM, path.indexedPath));
     if (startsWithAny) {
@@ -109,7 +110,10 @@ public class FilterSegment extends PathSegment implements Predicate<PathSegment>
       return precomputedNest != null ? precomputedNest : nest(segment);
     }
 
-    return Strings.matchPath(this.path, segment.level, segment.indexedPath, segment.level, true);
+    int pathEnd = segment.path.length - 1;
+    int indexedPathEnd = segment.indexedPath.length - 1;
+    return Strings.matchPath(this.path, pathEnd, segment.path, pathEnd, true)
+      || Strings.matchPath(this.path, indexedPathEnd, segment.indexedPath, indexedPathEnd, true);
   }
 
   @SuppressWarnings("SameParameterValue")
