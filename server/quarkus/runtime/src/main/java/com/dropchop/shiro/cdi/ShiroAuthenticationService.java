@@ -79,6 +79,11 @@ public class ShiroAuthenticationService implements AuthenticationService {
     }
   }
 
+  public void logout() {
+    Subject subject = getSubject();
+    subject.logout();
+  }
+
   public Subject current() {
     return getSubject();
   }

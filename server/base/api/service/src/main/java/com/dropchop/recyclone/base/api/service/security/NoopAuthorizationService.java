@@ -51,5 +51,8 @@ public class NoopAuthorizationService implements AuthorizationService, Authentic
     return true;
   }
 
-
+  @Override
+  public void logout() {
+    log.warn("Using [{}]", NoopAuthorizationService.class);
+  }
 }
