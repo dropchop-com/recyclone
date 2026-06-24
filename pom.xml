@@ -118,7 +118,7 @@
     <aspectj.version>1.9.25.1</aspectj.version>
     <lombok.version>1.18.46</lombok.version>
     <jackson.version>2.21.3</jackson.version>
-    <apache.shiro.version>2.2.0</apache.shiro.version>
+    <apache.shiro.version>2.2.1</apache.shiro.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <jjwt.version>0.13.0</jjwt.version>
     <jsonassert.version>1.5.3</jsonassert.version>
