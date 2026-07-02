@@ -1,6 +1,7 @@
 package com.dropchop.shiro.filter;
 
 import com.dropchop.recyclone.base.api.config.JwtConfig;
+import com.dropchop.recyclone.base.api.model.security.jwt.JwtClaims;
 import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
@@ -120,7 +121,13 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
       final User user = new User();
       user.setId(jwtSubjectString);
       ctx.setProperty(JWT_AUTHENTICATED_REQUEST_CLAIMS, claims);
-      return new JwtShiroToken(user, this.jwtConfig.getIssuer(), encodedToken, true);
+      return new JwtShiroToken(
+          user,
+          this.jwtConfig.getIssuer(),
+          encodedToken,
+          claims.get(JwtClaims.grant_type.name(), String.class),
+          true
+      );
     } catch (MalformedJwtException jwtEx) {
       log.warn("Invalid JWT: {}",principalsAndCredentials[0], jwtEx);
       return createBearerToken("", ctx);

@@ -10,6 +10,7 @@ public class JwtShiroToken extends BearerToken {
 
   private final String host;
   private final String rawToken;
+  private final String grantType;
 
   /**
    *  Returns {@code true} if this token was validated on creation, {@code false} otherwise.
@@ -17,11 +18,12 @@ public class JwtShiroToken extends BearerToken {
    */
   private final boolean validated;
 
-  public JwtShiroToken(User subject, String host, String rawToken, boolean isValidated) {
+  public JwtShiroToken(User subject, String host, String rawToken, String grantType, boolean isValidated) {
     super(rawToken);
     this.host = host;
     this.subject = subject;
     this.rawToken = rawToken;
+    this.grantType = grantType;
     this.validated = isValidated;
   }
 
@@ -46,5 +48,9 @@ public class JwtShiroToken extends BearerToken {
 
   public boolean isValidated() {
     return validated;
+  }
+
+  public String getGrantType() {
+    return grantType;
   }
 }
