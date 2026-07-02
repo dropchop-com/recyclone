@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.jaxrs.security;
 import com.dropchop.recyclone.base.api.config.JwtConfig;
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.api.model.marker.HasAttributes;
+import com.dropchop.recyclone.base.api.model.security.jwt.JwtClaims;
 import com.dropchop.recyclone.base.api.service.security.JwtService;
 import com.dropchop.recyclone.base.dto.model.security.AuthorizationRequest;
 import com.dropchop.recyclone.base.dto.model.security.AuthorizationResponse;
@@ -36,13 +37,6 @@ public class JwtLoginDecorator {
   public interface UserProvider<R extends AuthorizationRequest, U extends User> extends Function<R, U> {
   }
 
-  public enum Claims {
-    auth_time,
-    iat,
-    client_ip,
-    u,
-  }
-
   public static final String USER_ATTR_ACCESS_KEY = "accessKey";
   public static final String USER_ATTR_REMEMBER_ME = "remember_me";
   public static final String USER_ATTR_PERMISSIONS = "permissions";
@@ -61,12 +55,12 @@ public class JwtLoginDecorator {
   }
 
   private <R extends AuthorizationRequest> void fillAccessClaims(R req, User user, Map<String, Object> claims) {
-    claims.put(Claims.auth_time.name(), ZonedDateTime.now().toEpochSecond());
-    claims.put(Claims.iat.name(), ZonedDateTime.now().toEpochSecond());
+    claims.put(JwtClaims.auth_time.name(), ZonedDateTime.now().toEpochSecond());
+    claims.put(JwtClaims.iat.name(), ZonedDateTime.now().toEpochSecond());
     if (req instanceof HasAttributes hasAttributes) {
       String clientAddress = hasAttributes.getAttributeValue(ExecContext.ReqAttributeNames.REQ_CLIENT_ADDRESS);
       if (clientAddress != null) {
-        claims.put(Claims.client_ip.name(), clientAddress);
+        claims.put(JwtClaims.client_ip.name(), clientAddress);
       }
     }
     user.getAttributes().forEach(attr -> {
@@ -77,7 +71,7 @@ public class JwtLoginDecorator {
   }
 
   private void fillIdClaims(User user, Map<String, Object> claims) {
-    claims.put(Claims.u.name(), user);
+    claims.put(JwtClaims.u.name(), user);
   }
 
   private String createIdToken(User user, ClaimValues claims, ClaimsDecorator<User> claimsDecorator) {
