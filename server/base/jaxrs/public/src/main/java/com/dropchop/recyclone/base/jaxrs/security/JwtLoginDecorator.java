@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -19,6 +20,21 @@ import java.util.function.Function;
  */
 @RequestScoped
 public class JwtLoginDecorator {
+
+  public static class ClaimValues extends LinkedHashMap<String, Object> {
+  }
+
+  public static class IdTokenClaimValues extends ClaimValues {
+  }
+
+  public static class AccessTokenClaimValues extends ClaimValues {
+  }
+
+  public interface ClaimsDecorator<U extends User> extends BiConsumer<U, ClaimValues> {
+  }
+
+  public interface UserProvider<R extends AuthorizationRequest, U extends User> extends Function<R, U> {
+  }
 
   public enum Claims {
     auth_time,
@@ -64,7 +80,7 @@ public class JwtLoginDecorator {
     claims.put(Claims.u.name(), user);
   }
 
-  private String createIdToken(User user, Map<String, Object> claims) {
+  private String createIdToken(User user, ClaimValues claims, ClaimsDecorator<User> claimsDecorator) {
     int timeoutSeconds = jwtConfig.getTimeoutSeconds();
     if (user.getAttributeValue(USER_ATTR_REMEMBER_ME, Boolean.FALSE)) {
       timeoutSeconds = jwtConfig.getLongTimeoutSeconds();
@@ -85,31 +101,48 @@ public class JwtLoginDecorator {
     }
 
     fillIdClaims(user, claims);
+    if (claimsDecorator != null) {
+      claimsDecorator.accept(user, claims);
+    }
     return jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
   }
 
   public <R extends AuthorizationRequest, S extends AuthorizationResponse> void createJwt(
-      R req, S resp, Function<R, User> userProvider) {
+      R req,
+      S resp,
+      UserProvider<R, User> userProvider,
+      ClaimsDecorator<User> claimsDecorator) {
     User user = userProvider.apply(req);
     User simplifiedUser = user.cloneSimplified();
     resp.setUser(simplifiedUser);
 
-    Map<String, Object> claims = new HashMap<>();
-    fillAccessClaims(req, simplifiedUser, claims);
+    ClaimValues claimValues = new AccessTokenClaimValues();
+    fillAccessClaims(req, simplifiedUser, claimValues);
+    if (claimsDecorator != null) {
+      claimsDecorator.accept(user, claimValues);
+    }
     // keep the access token simple
     String accessToken;
     int timeoutSeconds = jwtConfig.getTimeoutSeconds();
     if (user.getAttributeValue(USER_ATTR_REMEMBER_ME, Boolean.FALSE)) {
       timeoutSeconds = jwtConfig.getLongTimeoutSeconds();
     }
-    accessToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claims);
+    accessToken = jwtService.encode(jwtConfig, timeoutSeconds, user.getUuid().toString(), claimValues);
     resp.setAccessToken(accessToken);
-
-    String idToken = this.createIdToken(user, claims);
+    IdTokenClaimValues idClaimValues = new IdTokenClaimValues();
+    idClaimValues.putAll(claimValues);
+    String idToken = this.createIdToken(user, idClaimValues, claimsDecorator);
     resp.setIdToken(idToken);
 
     resp.setCode(req.getRequestId());
     resp.setTokenType("Bearer");
     resp.setExpiresIn(timeoutSeconds);
+  }
+
+  public <R extends AuthorizationRequest, S extends AuthorizationResponse> void createJwt(
+      R req,
+      S resp,
+      UserProvider<R, User> userProvider) {
+    this.createJwt(req, resp, userProvider, null);
   }
 }
