@@ -19,6 +19,7 @@ public interface ClientAccessKeyService {
   ClientKeyConfigs loadAccessKeysConfig();
   EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable,
                                      String loginName, char[] secret);
-  EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable, String token);
+  EncryptedAccessKey createAccessKey(AccessKey.Type type, String clientKeyId, String configName,
+                                     HasId identifiable, String token);
   Map<AccessKey, String> createAccessKeys(HasId identifiable, AuthenticationToken token);
 }

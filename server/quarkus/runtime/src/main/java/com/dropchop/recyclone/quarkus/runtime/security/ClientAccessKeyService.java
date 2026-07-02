@@ -3,8 +3,10 @@ package com.dropchop.recyclone.quarkus.runtime.security;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.api.model.marker.HasId;
 import com.dropchop.recyclone.base.api.model.security.AccessKey;
+import com.dropchop.recyclone.base.api.model.security.AccessKey.Type;
 import com.dropchop.recyclone.base.api.model.security.ClientKeyConfig;
 import com.dropchop.recyclone.base.api.model.security.ClientKeyConfigs;
+import com.dropchop.recyclone.base.api.service.security.shiro.ImpersonateToken;
 import com.dropchop.recyclone.base.api.service.security.shiro.UserUuidToken;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig;
 import com.dropchop.recyclone.quarkus.runtime.config.RecycloneRuntimeConfig.Rest.Security.ClientAccessKeys;
@@ -76,9 +78,10 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
     }
   }
 
-  protected EncryptedAccessKey createAccessKey(String clientKeyId, ClientKeyConfig config,
+  protected EncryptedAccessKey createAccessKey(Type type, String clientKeyId, ClientKeyConfig config,
                                                HasId identifiable, String token) {
     AccessKey accessKey = new AccessKey(
+        type,
         clientKeyId,
         ZonedDateTime.now(),
         identifiable.getId(),
@@ -100,7 +103,15 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
     if (token instanceof UsernamePasswordToken upToken) {
       return this.createAccessKey(clientKeyId, config, identifiable, upToken.getUsername(), upToken.getPassword());
     } else if (token instanceof HostAuthenticationToken || token instanceof UserUuidToken) {
-      return this.createAccessKey(clientKeyId, config, identifiable, String.valueOf(token.getCredentials()));
+      if (token instanceof ImpersonateToken) {
+        return this.createAccessKey(
+            Type.user_token, clientKeyId, config, identifiable, String.valueOf(token.getCredentials())
+        );
+      } else {
+        return this.createAccessKey(
+            Type.user_token, clientKeyId, config, identifiable, String.valueOf(token.getCredentials())
+        );
+      }
     } else {
       throw new IllegalArgumentException("Unsupported authentication token type: " + token.getClass().getName());
     }
@@ -117,12 +128,12 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
   }
 
   @Override
-  public EncryptedAccessKey createAccessKey(String clientKeyId, String configName, HasId identifiable, String token) {
+  public EncryptedAccessKey createAccessKey(AccessKey.Type type, String clientKeyId, String configName, HasId identifiable, String token) {
     ClientKeyConfig config = loadAccessKeysConfig().get(configName);
     if (config == null) {
       throw new IllegalArgumentException("Client key configuration not found for name: " + configName);
     }
-    return this.createAccessKey(clientKeyId, config, identifiable, token);
+    return this.createAccessKey(type, clientKeyId, config, identifiable, token);
   }
 
   @Override

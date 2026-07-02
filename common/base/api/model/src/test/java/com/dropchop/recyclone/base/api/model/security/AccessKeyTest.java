@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.api.model.security;
 
+import com.dropchop.recyclone.base.api.model.security.AccessKey.Type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ class AccessKeyTest {
         "testClient", URI.create("example.com"), "testSecret123!", "testSalt123!"
     );
     ZonedDateTime created = ZonedDateTime.now();
-    AccessKey accessKey = new AccessKey("testClient", created, "testUserId", "testToken", true);
+    AccessKey accessKey = new AccessKey(Type.user_token, "testClient", created, "testUserId", "testToken", true);
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, accessKey);
 
@@ -70,7 +71,7 @@ class AccessKeyTest {
         "testClient", URI.create("example.com"), "testSecret123!", "testSalt123!"
     );
 
-    String encryptedKey = AccessKey.encrypt(clientKeyConfig, "testUserId", "testToken");
+    String encryptedKey = AccessKey.encrypt(clientKeyConfig, Type.user_token, "testUserId", "testToken");
 
     Assertions.assertNotNull(encryptedKey, "Encrypted key should not be null");
     Assertions.assertFalse(encryptedKey.isEmpty(), "Encrypted key should not be empty");
@@ -113,7 +114,7 @@ class AccessKeyTest {
         "testClient", URI.create("example.com"), "testSecret123!", "testSalt123!"
     );
     ZonedDateTime created = ZonedDateTime.now();
-    AccessKey originalKey = new AccessKey("testClient", created, "testUserId", "testToken", true);
+    AccessKey originalKey = new AccessKey(Type.user_token, "testClient", created, "testUserId", "testToken", true);
 
     String encryptedKey = AccessKey.encrypt(clientKeyConfig, originalKey);
     AccessKey decryptedKey = AccessKey.decrypt(clientKeyConfig, encryptedKey);

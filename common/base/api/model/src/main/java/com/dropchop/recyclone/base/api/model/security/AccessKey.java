@@ -32,6 +32,7 @@ public class AccessKey {
   public enum Type {
     user_password,
     user_token,
+    impersonate_token
   }
 
   private final String clientId;
@@ -55,12 +56,13 @@ public class AccessKey {
     this.encryptionEnabled = encryptionEnabled;
   }
 
-  public AccessKey(String clientId, ZonedDateTime created, String userId, String token, boolean encryptionEnabled) {
+  public AccessKey(AccessKey.Type type, String clientId, ZonedDateTime created, String userId, String token,
+                   boolean encryptionEnabled) {
     this.clientId = clientId;
     this.userId = userId;
     this.created = created;
     this.token = token;
-    this.type = Type.user_token;
+    this.type = type;
     this.userName = null;
     this.password = null;
     this.encryptionEnabled = encryptionEnabled;
@@ -157,14 +159,14 @@ public class AccessKey {
     );
   }
 
-  public static String encrypt(ClientKeyConfig config, String userId, String token) {
+  public static String encrypt(ClientKeyConfig config, AccessKey.Type type, String userId, String token) {
     if (config.getSecret() == null || config.getSecret().isBlank()) {
       throw new IllegalArgumentException("Secret cannot be null or blank!");
     }
     if (config.getSalt() == null || config.getSalt().isBlank()) {
       throw new IllegalArgumentException("Salt cannot be null or blank!");
     }
-    return encrypt(config, new AccessKey(config.getClientId(), ZonedDateTime.now(), userId, token, true));
+    return encrypt(config, new AccessKey(type, config.getClientId(), ZonedDateTime.now(), userId, token, true));
   }
 
   public static AccessKey decrypt(ClientKeyConfig config, String base64CipherText) {
@@ -254,7 +256,7 @@ public class AccessKey {
       String userName = parts[3];
       String password = parts[4];
       return new AccessKey(clientId, created, userId, userName, password.toCharArray(), true);
-    } else if (type == Type.user_token) {
+    } else if (type == Type.user_token || type == Type.impersonate_token) {
       if (parts.length != 4) {
         throw new RuntimeException(
             "Invalid access key format for user_token type! Expected 3 parts but got " + parts.length
@@ -262,7 +264,7 @@ public class AccessKey {
       }
       String userId = parts[2];
       String token = parts[3];
-      return new AccessKey(clientId, created, userId, token, true);
+      return new AccessKey(type, clientId, created, userId, token, true);
     } else {
       throw new RuntimeException("Unhandled access key type: " + type);
     }
