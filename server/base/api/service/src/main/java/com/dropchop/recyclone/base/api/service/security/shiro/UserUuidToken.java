@@ -6,6 +6,7 @@ import org.apache.shiro.authc.AuthenticationToken;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 03. 2026.
  */
 public class UserUuidToken implements AuthenticationToken {
+
   private final String uuidToken;
 
   public UserUuidToken(String uuidToken) {

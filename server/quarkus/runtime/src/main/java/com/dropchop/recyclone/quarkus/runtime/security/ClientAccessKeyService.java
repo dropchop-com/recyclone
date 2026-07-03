@@ -102,9 +102,11 @@ public class ClientAccessKeyService implements com.dropchop.recyclone.base.api.s
                                                HasId identifiable, AuthenticationToken token) {
     if (token instanceof UsernamePasswordToken upToken) {
       return this.createAccessKey(clientKeyId, config, identifiable, upToken.getUsername(), upToken.getPassword());
-    } else if (token instanceof ImpersonateToken) {
+    } else if (token instanceof ImpersonateToken impersonateToken) {
+      String type = impersonateToken.getType();
       return this.createAccessKey(
-          Type.impersonate_token, clientKeyId, config, identifiable, String.valueOf(token.getCredentials())
+          Type.impersonate_token, clientKeyId, config, identifiable,
+          (type != null && !type.isBlank() ? type : "user") + "=" + impersonateToken.getCredentials()
       );
     } else if (token instanceof HostAuthenticationToken || token instanceof UserUuidToken) {
       return this.createAccessKey(
