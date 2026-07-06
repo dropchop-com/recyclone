@@ -3,6 +3,7 @@ package com.dropchop.shiro.filter;
 import com.dropchop.recyclone.base.api.config.JwtConfig;
 import com.dropchop.recyclone.base.api.model.security.jwt.JwtClaims;
 import com.dropchop.recyclone.base.api.service.security.JwtService;
+import com.dropchop.recyclone.base.api.service.security.shiro.ImpersonateToken;
 import com.dropchop.recyclone.base.dto.model.security.User;
 import com.dropchop.shiro.token.JwtShiroToken;
 import io.jsonwebtoken.Claims;
@@ -121,11 +122,16 @@ public class JwtAuthenticationFilter extends HeaderHttpAuthenticationFilter {
       final User user = new User();
       user.setId(jwtSubjectString);
       ctx.setProperty(JWT_AUTHENTICATED_REQUEST_CLAIMS, claims);
+      String grantType = claims.get(JwtClaims.grant_type.name(), String.class);
+      String grantedBy = claims.get(JwtClaims.grant_by.name(), String.class);
+      if (grantType != null && !grantType.isBlank() && grantedBy != null && !grantedBy.isBlank()) {
+        return new ImpersonateToken(user.getId(), grantType, grantedBy);
+      }
       return new JwtShiroToken(
           user,
           this.jwtConfig.getIssuer(),
           encodedToken,
-          claims.get(JwtClaims.grant_type.name(), String.class),
+          grantType,
           true
       );
     } catch (MalformedJwtException jwtEx) {

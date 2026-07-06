@@ -56,8 +56,10 @@ public class JwtEveryResponseFilter extends HeaderHttpAuthenticationFilter imple
         Date issuedAt = sourceClaims.getIssuedAt();
         timeout = ((expiration.getTime() - issuedAt.getTime()) / 1000);
         String grantType = sourceClaims.get(JwtClaims.grant_type.name(), String.class);
-        if (grantType != null && !grantType.isBlank()) {
+        String grantBy = sourceClaims.get(JwtClaims.grant_by.name(), String.class);
+        if (grantType != null && !grantType.isBlank() && grantBy != null && !grantBy.isBlank()) {
           responseClaims.put(JwtClaims.grant_type.name(), grantType);
+          responseClaims.put(JwtClaims.grant_by.name(), grantBy);
         }
       }
       String newToken = jwtService.encode(this.jwtConfig, timeout, user.getId(), responseClaims);

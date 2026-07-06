@@ -8,5 +8,6 @@ public enum JwtClaims {
   iat,
   client_ip,
   u,
-  grant_type
+  grant_type,
+  grant_by
 }
