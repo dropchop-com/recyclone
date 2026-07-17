@@ -106,7 +106,7 @@ public class ElasticsearchInitializer {
   }
 
   @Inject
-  @SuppressWarnings("CdiInjectionPointsInspection")
+  @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
   RestClient restClient;
 
   private final Template markerTemplate = new Template(
@@ -269,15 +269,29 @@ public class ElasticsearchInitializer {
     return doc.substring(idx + 1, endIdx);
   }
 
+  private void requireDumpValue(String value, String fieldName, Template template, int lineNumber)
+      throws IOException {
+    if (value == null || value.isBlank()) {
+      throw new IOException(
+          "Invalid Elasticsearch dump JSON in [" + template.templatePath + "] at line [" + lineNumber
+              + "]: missing field [" + fieldName + "]"
+      );
+    }
+  }
+
   private void applyData(Template template, String baseUrl) throws IOException {
     List<String> lines = Arrays.asList(template.template.split("\n"));
     if (lines.size() <= 1) {
       log.warn("Invalid template format [{}]", template.templatePath);
       return;
     }
+    if (!template.templatePath.toLowerCase().endsWith(".jsonl")) {
+      log.warn("Invalid template suffix [{}]", template.templatePath);
+      return;
+    }
     boolean bulkFormat = lines
         .getFirst()
-        .replace("\\s+", "")
+        .replaceAll("\\s+", "")
         .toLowerCase()
         .startsWith("{\"index\":");
 
@@ -292,10 +306,18 @@ public class ElasticsearchInitializer {
       StringBuilder bulkBody = new StringBuilder();
       if (!bulkFormat) {
         // why would it be simple? this is an elastic dump file with index doc per line
-        for (String line : chunk) {
+        for (int j = 0; j < chunk.size(); j++) {
+          String line = chunk.get(j);
+          if (line.isBlank()) {
+            continue;
+          }
+          int lineNumber = i + j + 1;
           String indexName = extractFieldValue("_index", line);
           String id = extractFieldValue("_id", line);
           String sourceString = extractSource(line);
+          requireDumpValue(indexName, "_index", template, lineNumber);
+          requireDumpValue(id, "_id", template, lineNumber);
+          requireDumpValue(sourceString, "_source", template, lineNumber);
 
           bulkBody.append("{ \"index\" : { \"_index\" : \"");
           bulkBody.append(indexName);
