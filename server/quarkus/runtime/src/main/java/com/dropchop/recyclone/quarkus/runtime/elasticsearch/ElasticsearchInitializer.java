@@ -142,6 +142,10 @@ public class ElasticsearchInitializer {
                 log.debug("Skipping non [{}] profile template [{}]", profileKey, resource);
                 return;
               }
+              if (templates instanceof Data && !resource.toLowerCase().endsWith(".jsonl")) {
+                log.debug("Skipping non JSONL data template [{}]", resource);
+                return;
+              }
               try (BufferedReader br = Files.newBufferedReader(filePath, UTF_8)) {
                 int nameCount = filePath.getNameCount();
                 Path lastTwo = nameCount >= 2
@@ -283,10 +287,6 @@ public class ElasticsearchInitializer {
     List<String> lines = Arrays.asList(template.template.split("\n"));
     if (lines.size() <= 1) {
       log.warn("Invalid template format [{}]", template.templatePath);
-      return;
-    }
-    if (!template.templatePath.toLowerCase().endsWith(".jsonl")) {
-      log.warn("Invalid template suffix [{}]", template.templatePath);
       return;
     }
     boolean bulkFormat = lines
