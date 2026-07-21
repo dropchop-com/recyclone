@@ -3,6 +3,7 @@ package com.dropchop.recyclone.base.jaxrs.localization;
 import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
 import com.dropchop.recyclone.base.api.service.localization.DictionaryTermService;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
 import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.enterprise.context.RequestScoped;
@@ -17,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 @SuppressWarnings("CdiInjectionPointsInspection")
-public class DictionaryTermResource extends ClassicReadByCodeResource<DictionaryTerm, CodeParams> implements
+public class DictionaryTermResource extends ClassicReadByCodeResource<DictionaryTerm, CodeTitleParams> implements
     com.dropchop.recyclone.base.api.jaxrs.localization.DictionaryTermResource {
 
   @Inject
@@ -38,7 +39,7 @@ public class DictionaryTermResource extends ClassicReadByCodeResource<Dictionary
   }
 
   @Override
-  public Result<DictionaryTerm> search(CodeParams parameters) {
+  public Result<DictionaryTerm> search(CodeTitleParams parameters) {
     return service.search();
   }
 }

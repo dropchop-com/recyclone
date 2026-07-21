@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.rest.Constants.Paths;
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
 import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.ws.rs.*;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 12. 01. 22.
  */
 @Path(Paths.Localization.DICTIONARY_TERM)
-@DynamicExecContext(CodeParams.class)
+@DynamicExecContext(CodeTitleParams.class)
 public interface DictionaryTermResource {
 
   @GET
@@ -40,10 +41,10 @@ public interface DictionaryTermResource {
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
-  Result<DictionaryTerm> search(CodeParams parameters);
+  Result<DictionaryTerm> search(CodeTitleParams parameters);
 
   @POST
   @Path(Paths.SEARCH_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
-  List<DictionaryTerm> searchRest(CodeParams parameters);
+  List<DictionaryTerm> searchRest(CodeTitleParams parameters);
 }
