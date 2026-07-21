@@ -7,10 +7,8 @@ import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 import com.dropchop.recyclone.base.api.model.security.Constants.Domains;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
-import com.dropchop.recyclone.base.dto.model.invoke.TagParams;
 import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import jakarta.ws.rs.*;
 
 import java.util.List;

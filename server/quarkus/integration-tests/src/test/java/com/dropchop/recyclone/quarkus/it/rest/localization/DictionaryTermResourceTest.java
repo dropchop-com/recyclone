@@ -2,7 +2,6 @@ package com.dropchop.recyclone.quarkus.it.rest.localization;
 
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeTitleParams;
-import com.dropchop.recyclone.base.dto.model.localization.Country;
 import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.quarkus.it.rest.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;

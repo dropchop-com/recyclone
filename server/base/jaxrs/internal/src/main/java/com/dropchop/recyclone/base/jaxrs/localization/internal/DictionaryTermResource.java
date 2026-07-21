@@ -2,10 +2,8 @@ package com.dropchop.recyclone.base.jaxrs.localization.internal;
 
 import com.dropchop.recyclone.base.api.rest.ClassicModifyResource;
 import com.dropchop.recyclone.base.api.service.localization.DictionaryTermService;
-import com.dropchop.recyclone.base.api.service.tagging.TagService;
 import com.dropchop.recyclone.base.dto.model.localization.DictionaryTerm;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
-import com.dropchop.recyclone.base.dto.model.tagging.Tag;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
