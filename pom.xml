@@ -76,10 +76,10 @@
 
   <properties>
     <clean-plugin.version>3.5.0</clean-plugin.version>
-    <resources-plugin.version>3.4.0</resources-plugin.version>
+    <resources-plugin.version>3.5.0</resources-plugin.version>
     <source-plugin.version>3.4.0</source-plugin.version>
-    <compiler-plugin.version>3.14.1</compiler-plugin.version>
-    <surefire-plugin.version>3.5.4</surefire-plugin.version>
+    <compiler-plugin.version>3.15.0</compiler-plugin.version>
+    <surefire-plugin.version>3.5.6</surefire-plugin.version>
     <failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
     <jar-plugin.version>3.5.0</jar-plugin.version>
     <gpg-plugin.version>3.2.8</gpg-plugin.version>
@@ -87,7 +87,7 @@
     <deploy-plugin.version>3.1.4</deploy-plugin.version>
     <release-plugin.version>3.3.1</release-plugin.version>
     <flatten-plugin.version>1.7.3</flatten-plugin.version>
-    <site-plugin.version>3.21.0</site-plugin.version>
+    <site-plugin.version>3.22.0</site-plugin.version>
     <project-info-reports-plugin.version>3.9.0</project-info-reports-plugin.version>
     <javadoc-plugin.version>3.12.0</javadoc-plugin.version>
     <aspectj-plugin.version>1.16.0</aspectj-plugin.version>
@@ -95,10 +95,10 @@
     <antrun-plugin.version>3.2.0</antrun-plugin.version>
     <build-helper-plugin.version>3.6.1</build-helper-plugin.version>
     <war-plugin.version>3.5.1</war-plugin.version>
-    <frontend-plugin.version>2.0.0</frontend-plugin.version>
+    <frontend-plugin.version>2.0.1</frontend-plugin.version>
     <exec-plugin.version>3.6.3</exec-plugin.version>
-    <central-publishing-plugin.version>0.10.0</central-publishing-plugin.version>
-    <docker-plugin.version>0.48.0</docker-plugin.version>
+    <central-publishing-plugin.version>0.11.0</central-publishing-plugin.version>
+    <docker-plugin.version>0.48.1</docker-plugin.version>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>21</maven.compiler.source>
@@ -114,10 +114,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <slf4j.version>2.0.18</slf4j.version>
-    <logback.version>1.5.33</logback.version>
+    <logback.version>1.5.38</logback.version>
     <aspectj.version>1.9.25.1</aspectj.version>
     <lombok.version>1.18.46</lombok.version>
-    <jackson.version>2.21.3</jackson.version>
+    <jackson.version>2.22.0</jackson.version>
     <apache.shiro.version>2.2.1</apache.shiro.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <jjwt.version>0.13.0</jjwt.version>
@@ -125,7 +125,7 @@
 
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.36.1</quarkus.platform.version>
+    <quarkus.platform.version>3.37.3</quarkus.platform.version>
   </properties>
 
   <dependencyManagement>
