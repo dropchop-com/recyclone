@@ -2,8 +2,7 @@ package com.dropchop.recyclone.quarkus.it.rest;
 
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Event.EVENTS;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.INTERNAL_SEGMENT;
-import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Localization.COUNTRY;
-import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Localization.LANGUAGE;
+import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Localization.*;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.PUBLIC_SEGMENT;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Security.*;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Paths.Tagging.TAG;
@@ -19,6 +18,8 @@ public class Constants {
   public static final String LANG_ENDPOINT = "/api" + PUBLIC_SEGMENT + LANGUAGE;
   public static final String COUNTRY_ENDPOINT = "/api" + PUBLIC_SEGMENT + COUNTRY;
   public static final String TAG_ENDPOINT = "/api" + INTERNAL_SEGMENT + TAG;
+  public static final String DICTIONARY_TERM_PUBLIC_ENDPOINT = "/api" + PUBLIC_SEGMENT + DICTIONARY_TERM;
+  public static final String DICTIONARY_TERM_INTERNAL_ENDPOINT = "/api" + INTERNAL_SEGMENT + DICTIONARY_TERM;
   public static final String EVENTS_ENDPOINT = "/api" + INTERNAL_SEGMENT + EVENTS;
   public static final String USER_ENDPOINT = "/api" + INTERNAL_SEGMENT + USER;
   public static final String PERM_ENDPOINT = "/api" + INTERNAL_SEGMENT + PERMISSION;
@@ -26,4 +27,5 @@ public class Constants {
   public static final String ROLE_NODE_ENDPOINT = "/api" + INTERNAL_SEGMENT + ROLE_NODE;
   public static final String ROLE_ENDPOINT = "/api" + INTERNAL_SEGMENT + ROLE;
   public static final String ROLE_PERM_ENDPOINT = ROLE_ENDPOINT + PERMISSION_SEGMENT;
+
 }
