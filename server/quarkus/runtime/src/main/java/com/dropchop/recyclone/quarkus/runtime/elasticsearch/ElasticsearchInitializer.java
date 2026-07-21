@@ -389,6 +389,11 @@ public class ElasticsearchInitializer {
       log.info("Found container init folder [{}]", dockerFolder);
       return dockerFolder;
     }
+    dockerFolder = currentDir.resolve(Path.of("config", "docker", "elasticsearch", "init.d"));
+    if (Files.exists(dockerFolder) && Files.isReadable(dockerFolder)) {
+      log.info("Found container init folder [{}]", dockerFolder);
+      return dockerFolder;
+    }
     dockerFolder = currentDir.resolve(Path.of("src", "main", "docker", "elasticsearch", "init.d"));
     if (Files.exists(dockerFolder) && Files.isReadable(dockerFolder)) {
       log.info("Found container init folder [{}]", dockerFolder);
