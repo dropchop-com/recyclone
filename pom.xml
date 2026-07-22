@@ -419,6 +419,7 @@
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
+              <checksums>required</checksums>
               <excludeArtifacts>
                 <artifact>recyclone</artifact>
                 <artifact>recyclone-common</artifact>
