@@ -7,7 +7,7 @@ import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.elasticsearch.client.Response;
+import co.elastic.clients.transport.rest5_client.low_level.Response;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,10 +27,10 @@ public class BulkResponseParser {
     List<S> successfullyProcessedEntities = new ArrayList<>();
     List<StatusMessage> errorMessages = new ArrayList<>();
     List<S> entitiesToProcess = new ArrayList<>(entitiesOrIds);
-    if (response.getStatusLine().getStatusCode() != 200) {
+    if (response.getStatusCode() != 200) {
       throw new ServiceException(
           ErrorCode.internal_error,
-          "Bulk request failed with status code: " + response.getStatusLine().getStatusCode()
+          "Bulk request failed with status code: " + response.getStatusCode()
       );
     }
     InputStream content;

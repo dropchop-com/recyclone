@@ -38,10 +38,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.util.EntityUtils;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import co.elastic.clients.transport.rest5_client.low_level.Request;
+import co.elastic.clients.transport.rest5_client.low_level.Response;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 
 import java.io.IOException;
 import java.util.*;
@@ -101,7 +102,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
 
   public abstract ObjectMapper getObjectMapper();
 
-  public abstract RestClient getElasticsearchClient();
+  public abstract Rest5Client getElasticsearchClient();
 
   public String getClassAlias(Class<?> cls) {
     return cls.getSimpleName().toLowerCase();
@@ -441,27 +442,33 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
       Request request = this.buildRequestForSearch(queryObject, ENDPOINT_DELETE_BY_QUERY);
       request.setJsonEntity(query);
       Response response = getElasticsearchClient().performRequest(request);
-      if (response.getStatusLine().getStatusCode() == 200) {
+      if (response.getStatusCode() == 200) {
         String responseBody = EntityUtils.toString(response.getEntity());
         JsonNode jsonResponse = getObjectMapper().readTree(responseBody);
         return jsonResponse.get("deleted").asInt();
-      } else if (response.getStatusLine().getStatusCode() == 404) {
+      } else if (response.getStatusCode() == 404) {
         throw new ServiceException(
             ErrorCode.data_missing_error, "Missing data for query",
             Set.of(
-                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+                new AttributeString("status", String.valueOf(response.getStatusCode())),
                 new AttributeString("delete query", query)
             )
         );
       } else {
         throw new ServiceException(
-            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+            ErrorCode.data_error, "Unexpected response status: " + response.getStatusCode(),
             Set.of(
-                new AttributeDecimal("status", response.getStatusLine().getStatusCode()),
+                new AttributeDecimal("status", response.getStatusCode()),
                 new AttributeString("query", query)
             )
         );
       }
+    } catch (ParseException e) {
+      throw new ServiceException(
+          ErrorCode.internal_error,
+          "Unable parse delete query response",
+          Set.of(new AttributeString("delete query", query)), e
+      );
     } catch (IOException e) {
       throw new ServiceException(
           ErrorCode.internal_error,
@@ -511,7 +518,7 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
         );
       }
 
-      if (response.getStatusLine().getStatusCode() == 200) {
+      if (response.getStatusCode() == 200) {
         QueryResponseParser parser = new QueryResponseParser(objectMapper, searchAfterMode);
         SearchResultMetadata searchResultMetadata;
         searchResultMetadata = parser.parse(
@@ -522,19 +529,19 @@ public abstract class ElasticRepository<E extends EsEntity, ID> implements
             aggListeners
         );
         return searchResultMetadata;
-      } else if (response.getStatusLine().getStatusCode() == 404) {
+      } else if (response.getStatusCode() == 404) {
         throw new ServiceException(
             ErrorCode.data_missing_error, "Missing data for query",
             Set.of(
-                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+                new AttributeString("status", String.valueOf(response.getStatusCode())),
                 new AttributeString("query", query)
             )
         );
       } else {
         throw new ServiceException(
-            ErrorCode.data_error, "Unexpected response status: " + response.getStatusLine().getStatusCode(),
+            ErrorCode.data_error, "Unexpected response status: " + response.getStatusCode(),
             Set.of(
-                new AttributeString("status", String.valueOf(response.getStatusLine().getStatusCode())),
+                new AttributeString("status", String.valueOf(response.getStatusCode())),
                 new AttributeString("query", query)
             )
         );

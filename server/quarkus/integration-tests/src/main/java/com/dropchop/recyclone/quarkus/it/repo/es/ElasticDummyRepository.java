@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.it.repo.es;
 
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
 import com.dropchop.recyclone.base.es.repo.config.ClassStaticIndexConfig;
@@ -12,7 +13,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.RestClient;
 
 import java.util.Collection;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class ElasticDummyRepository extends ElasticRepository<EsDummy, String>
   ObjectMapper objectMapper;
 
   @Inject
-  RestClient elasticsearchClient;
+  Rest5Client elasticsearchClient;
 
   @Inject
   DefaultElasticQueryBuilder elasticQueryBuilder;

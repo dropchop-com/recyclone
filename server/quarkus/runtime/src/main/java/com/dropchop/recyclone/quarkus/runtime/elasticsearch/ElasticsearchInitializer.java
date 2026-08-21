@@ -1,15 +1,15 @@
 package com.dropchop.recyclone.quarkus.runtime.elasticsearch;
 
+import co.elastic.clients.transport.rest5_client.low_level.Request;
+import co.elastic.clients.transport.rest5_client.low_level.Response;
+import co.elastic.clients.transport.rest5_client.low_level.ResponseException;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +107,7 @@ public class ElasticsearchInitializer {
 
   @Inject
   @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
-  RestClient restClient;
+  Rest5Client restClient;
 
   private final Template markerTemplate = new Template(
       ".initialized_marker_template", null,
@@ -170,11 +170,11 @@ public class ElasticsearchInitializer {
     Request request = new Request("GET", templateUrl);
     try {
       Response response = restClient.performRequest(request);
-      int statusCode = response.getStatusLine().getStatusCode();
+      int statusCode = response.getStatusCode();
       return statusCode != 404;
     } catch (IOException e) {
       if (e instanceof ResponseException re) {
-        int statusCode = re.getResponse().getStatusLine().getStatusCode();
+        int statusCode = re.getResponse().getStatusCode();
         return statusCode != 404;
       }
       throw e;

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.base.es.repo.events;
 
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import com.dropchop.recyclone.base.api.common.RecycloneType;
 import com.dropchop.recyclone.base.es.model.events.EsEvent;
 import com.dropchop.recyclone.base.es.repo.ElasticRepository;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.elasticsearch.client.RestClient;
 
 import java.util.UUID;
 
@@ -30,7 +30,7 @@ public class EsEventRepository extends ElasticRepository<EsEvent, UUID> {
   ObjectMapper objectMapper;
 
   @Inject
-  RestClient elasticsearchClient;
+  Rest5Client elasticsearchClient;
 
   @Inject
   DefaultElasticQueryBuilder elasticQueryBuilder;

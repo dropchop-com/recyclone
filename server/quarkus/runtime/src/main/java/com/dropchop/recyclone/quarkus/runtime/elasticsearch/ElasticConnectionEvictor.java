@@ -3,7 +3,8 @@ package com.dropchop.recyclone.quarkus.runtime.elasticsearch;
 import io.quarkus.runtime.ShutdownEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
-import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
+import org.apache.hc.core5.pool.ConnPoolControl;
+import org.apache.hc.core5.util.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class ElasticConnectionEvictor {
    * Idempotent start. Safe if called multiple times or from multiple threads.
    * Pass the SAME connection manager you install into the HTTP client.
    */
-  public void start(PoolingNHttpClientConnectionManager connManager) {
+  public void start(ConnPoolControl<?> connManager) {
     if (connManager == null) {
       return;
     }
@@ -54,8 +55,8 @@ public class ElasticConnectionEvictor {
 
     ScheduledFuture<?> newTask = scheduler.scheduleAtFixedRate(() -> {
       try {
-        connManager.closeExpiredConnections();
-        connManager.closeIdleConnections(IDLE_THRESHOLD.toMillis(), TimeUnit.MILLISECONDS);
+        connManager.closeExpired();
+        connManager.closeIdle(TimeValue.of(IDLE_THRESHOLD));
         log.info("Eviction idle threshold [{}] reached for connection manager [{}].", IDLE_THRESHOLD, connManager);
       } catch (RejectedExecutionException ex) {
         // Usually means shutdown in progress
@@ -80,6 +81,7 @@ public class ElasticConnectionEvictor {
     if (curr != null) {
       curr.cancel(false);
     }
+    scheduler.shutdown();
     try {
       if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
         scheduler.shutdownNow();

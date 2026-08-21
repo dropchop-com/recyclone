@@ -172,19 +172,14 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
       }
     }
 
-    if (forValue == null) {
-      if (size < 0) {
+    if (size < 0) {
+      if (forValue == null) {
         writeState.add(new ArrayStartState(() -> delegate.writeStartArray()));
       } else {
-        //noinspection deprecation
-        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(size)));
+        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(forValue)));
       }
     } else {
-      if (size < 0) {
-        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(forValue)));
-      } else {
-        writeState.add(new ArrayStartState(() -> delegate.writeStartArray(forValue, size)));
-      }
+      writeState.add(new ArrayStartState(() -> delegate.writeStartArray(forValue, size)));
     }
   }
 
@@ -198,6 +193,8 @@ public class FilteringJsonGenerator extends JsonGeneratorDelegate {
     this.writeStartArray(forValue, -1);
   }
 
+  // Jackson retains this deprecated overload for compatibility; keep it intercepted
+  // so callers cannot bypass this generator's filtering state.
   @Override
   public void writeStartArray(int size) {
     this.writeStartArray(null, size);

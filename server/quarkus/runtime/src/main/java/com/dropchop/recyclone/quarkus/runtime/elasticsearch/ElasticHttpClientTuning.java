@@ -1,38 +1,30 @@
 package com.dropchop.recyclone.quarkus.runtime.elasticsearch;
 
 import io.quarkus.elasticsearch.restclient.lowlevel.ElasticsearchClientConfig;
+import io.quarkus.elasticsearch.restclient.lowlevel.ElasticsearchClientConfigConfigurer;
 import jakarta.inject.Inject;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.reactor.IOReactorException;
-import org.elasticsearch.client.RestClientBuilder;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClientBuilder;
+import org.apache.hc.core5.pool.ConnPoolControl;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 23. 10. 2025.
  */
 @ElasticsearchClientConfig
-public class ElasticHttpClientTuning implements RestClientBuilder.HttpClientConfigCallback {
+public class ElasticHttpClientTuning implements ElasticsearchClientConfigConfigurer {
 
   @Inject
   ElasticConnectionEvictor evictor;
 
   @Override
-  public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-    // Enable TCP keepalive
-    IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-        .setSoKeepAlive(true)
-        .build();
+  public void accept(HttpAsyncClientBuilder httpClientBuilder) {
+    // HttpComponents 5 enables SO_KEEPALIVE by default. Do not replace the
+    // IOReactorConfig here, as that would discard Quarkus's configured I/O thread count.
 
-    // Create a connection manager with proper cleanup
-    PoolingNHttpClientConnectionManager connManager;
-    try {
-      connManager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
-    } catch (IOReactorException e) {
-      throw new RuntimeException(e);
+    // Quarkus configures the pool before invoking custom configurers. Reuse it so
+    // its connection limits, timeouts and TLS settings are retained.
+    if (!(httpClientBuilder.getConnManager() instanceof ConnPoolControl<?> connPool)) {
+      throw new IllegalStateException("Elasticsearch HTTP client is not using a connection pool");
     }
-    evictor.start(connManager);
-    return httpClientBuilder.setConnectionManager(connManager);
+    evictor.start(connPool);
   }
 }

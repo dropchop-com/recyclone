@@ -18,7 +18,7 @@ import com.dropchop.recyclone.base.jpa.model.security.JpaTokenAccount;
 import com.dropchop.recyclone.base.jpa.model.tagging.JpaLanguageGroup;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.app.RecycloneApplicationImpl;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import jakarta.inject.Inject;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -32,9 +32,9 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class RegistryTest {
 
-    // Start unit test with your extension loaded
+    // Start the test application with this extension loaded
     @RegisterExtension
-    static final QuarkusUnitTest unitTest = new QuarkusUnitTest()
+    static final QuarkusExtensionTest extensionTest = new QuarkusExtensionTest()
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
             .addClasses(
                 ActionToDtoMapper.class,

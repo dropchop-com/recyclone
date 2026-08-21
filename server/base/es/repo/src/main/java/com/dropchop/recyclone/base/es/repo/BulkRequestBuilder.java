@@ -8,7 +8,7 @@ import com.dropchop.recyclone.base.es.repo.config.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.elasticsearch.client.Request;
+import co.elastic.clients.transport.rest5_client.low_level.Request;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -23,6 +23,7 @@ import static com.dropchop.recyclone.base.es.repo.BulkRequestBuilder.MethodType.
  */
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("ClassCanBeRecord")
 public class BulkRequestBuilder {
 
   public static final String BULK_ENDPOINT = "/_bulk";
@@ -132,51 +133,4 @@ public class BulkRequestBuilder {
     request.setJsonEntity(bulkRequestBody.toString());
     return request;
   }
-
-  /*public <X extends ID> int deleteById(Collection<X> ids) {
-    if (ids == null || ids.isEmpty()) {
-      return 0;
-    }
-
-    Class<E> rootClass = getRootClass();
-    StringBuilder bulkRequestBody = new StringBuilder();
-    ObjectMapper objectMapper = getObjectMapper();
-    ElasticIndexConfig indexConfig = getElasticIndexConfig();
-    String defaultAlias = indexConfig.getDefaultAlias();
-    for (X id : ids) {
-      bulkRequestBody
-        .append("{ \"delete\" : { \"_index\" : \"")
-        .append(indexConfig.getIndexName(rootClass))
-        .append("\", \"_id\" : \"")
-        .append(id.toString())
-        .append("\" } }\n");
-    }
-
-    Request request = new Request("POST", "/_bulk");
-    request.setJsonEntity(bulkRequestBody.toString());
-
-    try {
-      Response response = getElasticsearchClient().performRequest(request);
-      JsonNode responseBody = objectMapper.readTree(response.getEntity().getContent());
-
-      int deletedCount = 0;
-      if (responseBody.has("items")) {
-        for (JsonNode item : responseBody.get("items")) {
-          JsonNode deleteResult = item.get("delete");
-          if (deleteResult != null && "deleted".equals(deleteResult.get("result").asText())) {
-            deletedCount++;
-          }
-        }
-      }
-
-      return deletedCount;
-    } catch (IOException e) {
-      throw new ServiceException(
-        ErrorCode.data_error,
-        "Failed to delete entities by ID",
-        Set.of(new AttributeString("error", e.getMessage()))
-      );
-    }
-    return 0;
-  }*/
 }
