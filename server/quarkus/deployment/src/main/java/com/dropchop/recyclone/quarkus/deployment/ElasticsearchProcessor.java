@@ -38,7 +38,7 @@ public class ElasticsearchProcessor {
         additionalBeanBuildItemProducer.produce(
             AdditionalBeanBuildItem
                 .builder()
-                .addBeanClasses(ElasticsearchInitializer.class)
+                .addBeanClasses(ElasticsearchInitializer.class, ElasticsearchDataApplier.class)
                 .setUnremovable()
                 .build()
         );

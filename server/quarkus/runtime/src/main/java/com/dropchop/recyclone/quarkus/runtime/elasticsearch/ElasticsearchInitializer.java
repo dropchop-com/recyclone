@@ -1,9 +1,5 @@
 package com.dropchop.recyclone.quarkus.runtime.elasticsearch;
 
-import co.elastic.clients.transport.rest5_client.low_level.Request;
-import co.elastic.clients.transport.rest5_client.low_level.Response;
-import co.elastic.clients.transport.rest5_client.low_level.ResponseException;
-import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.eventbus.EventBus;
@@ -19,12 +15,10 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,11 +34,11 @@ public class ElasticsearchInitializer {
   private static final Logger log = LoggerFactory.getLogger(ElasticsearchInitializer.class);
 
   private static class Template {
-    public final String name;
-    public final String templatePath;
-    public final String template;
+    private final String name;
+    private final String templatePath;
+    private final String template;
 
-    public Template(String nameOrFileName, String classPath, String template) {
+    private Template(String nameOrFileName, String classPath, String template) {
       int pos = nameOrFileName.lastIndexOf(".");
       if (pos > 0) {
         this.name = nameOrFileName.substring(0, pos);
@@ -57,57 +51,53 @@ public class ElasticsearchInitializer {
   }
 
   private static class Templates {
-    public final String resourcePath;
-    public final String baseUrl;
-    public final List<Template> templates = new ArrayList<>();
+    private final String resourcePath;
+    private final String baseUrl;
+    private final List<Template> templates = new ArrayList<>();
 
-    public Templates(String resourcePath, String baseUrl) {
+    private Templates(String resourcePath, String baseUrl) {
       this.resourcePath = resourcePath;
       this.baseUrl = baseUrl;
     }
   }
 
   private static class IngestPipeline extends Templates {
-    public IngestPipeline() {
+    private IngestPipeline() {
       super("ingest-pipeline", "_ingest/pipeline");
     }
   }
 
   private static class ComponentTemplate extends Templates {
-    public ComponentTemplate() {
+    private ComponentTemplate() {
       super("component-template", "_component_template");
     }
   }
 
   private static class IlmPolicy extends Templates {
-    public IlmPolicy() {
+    private IlmPolicy() {
       super("ilm-policy", "_ilm/policy");
     }
   }
 
   private static class IndexTemplate extends Templates {
-    public static final String BASE_URL = "_index_template";
+    private static final String BASE_URL = "_index_template";
 
-    public IndexTemplate() {
+    private IndexTemplate() {
       super("index-template", BASE_URL);
     }
   }
 
   private static class Data extends Templates {
-    public Data() {
+    private Data() {
       super("data", "_bulk");
     }
   }
 
   private static class EmptyData extends Templates {
-    public EmptyData() {
+    private EmptyData() {
       super("empty", "");
     }
   }
-
-  @Inject
-  @SuppressWarnings({"CdiInjectionPointsInspection", "RedundantSuppression"})
-  Rest5Client restClient;
 
   private final Template markerTemplate = new Template(
       ".initialized_marker_template", null,
@@ -123,264 +113,12 @@ public class ElasticsearchInitializer {
       new Data()
   );
 
-  private void loadTemplateResources(String profileKey, Path initPath) throws IOException {
-    for (Templates templates : templatesList) {
-      Path resourcePath = initPath.resolve(templates.resourcePath);
-      if (!Files.exists(resourcePath)) {
-        continue;
-      }
-      if (!Files.isReadable(resourcePath)) {
-        log.warn("Unable to read templates folder [{}]", resourcePath);
-        continue;
-      }
-      try (Stream<Path> paths = Files.list(resourcePath)) {
-        paths.filter(Files::isRegularFile)
-            .filter(Files::isReadable)
-            .forEach(filePath -> {
-              String resource = filePath.getFileName().toString();
-              if (resource.startsWith("%") && !resource.startsWith("%" + profileKey + ".")) {
-                log.debug("Skipping non [{}] profile template [{}]", profileKey, resource);
-                return;
-              }
-              if (templates instanceof Data && !resource.toLowerCase().endsWith(".jsonl")) {
-                log.debug("Skipping non JSONL data template [{}]", resource);
-                return;
-              }
-              try (BufferedReader br = Files.newBufferedReader(filePath, UTF_8)) {
-                int nameCount = filePath.getNameCount();
-                Path lastTwo = nameCount >= 2
-                    ? filePath.subpath(nameCount - 2, nameCount)
-                    : filePath;
-                //log.debug("Reading template [{}]", lastTwo);
-                String text = br.lines().collect(Collectors.joining("\n"));
-                Template template = new Template(resource, filePath.toAbsolutePath().toString(), text);
-                templates.templates.add(template);
-                log.info("Read template path [{}]", lastTwo);
-              } catch (IOException e) {
-                throw new UncheckedIOException(e);
-              }
-            });
-      } catch (UncheckedIOException e) {
-        throw e.getCause();
-      }
-    }
-  }
+  @Inject
+  ElasticsearchDataApplier dataApplier;
 
-  private boolean checkTemplateExists(String templateUrl) throws IOException {
-    Request request = new Request("GET", templateUrl);
-    try {
-      Response response = restClient.performRequest(request);
-      int statusCode = response.getStatusCode();
-      return statusCode != 404;
-    } catch (IOException e) {
-      if (e instanceof ResponseException re) {
-        int statusCode = re.getResponse().getStatusCode();
-        return statusCode != 404;
-      }
-      throw e;
-    }
-  }
-
-  private boolean checkInitMarkerTemplateExists() throws IOException {
-    return checkTemplateExists(IndexTemplate.BASE_URL + "/" + markerTemplate.name);
-  }
-
-  private void apply(String templateUrl, String templateSource, String method) throws IOException {
-    Request request = new Request(method, templateUrl);
-    if (templateSource != null && !templateSource.isBlank()) {
-      request.setJsonEntity(templateSource);
-    }
-    restClient.performRequest(request);
-  }
-
-  private void applyTemplate(String templateUrl, String templateSource) throws IOException {
-    apply(templateUrl, templateSource, "PUT");
-  }
-
-  private void applyInitMarkerTemplate() throws IOException {
-    applyTemplate(IndexTemplate.BASE_URL + "/" + markerTemplate.name, markerTemplate.template);
-  }
-
-  private void applyEmptyData(Template template) throws IOException {
-    String json = template.template;
-    json = json.replace("{", "").replace("}", "").trim();
-
-    // Split entries by commas
-    String[] entries = json.split(",");
-
-    int count = 0;
-    String name = "";
-    String unit = "";
-
-    for (String entry : entries) {
-      String[] parts = entry.split(":");
-      String key = parts[0].replace("\"", "").trim();
-      String value = parts[1].replace("\"", "").trim();
-      switch (key) {
-        case "count" -> count = Integer.parseInt(value);
-        case "name" -> name = value;
-        case "unit" -> unit = value;
-      }
-    }
-
-    if (name.isBlank() || unit.isBlank()) {
-      log.warn("Invalid template format [{}] missing name and unit", template.templatePath);
-      return;
-    }
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(name);
-    for (int i = 0; i < count; i++) {
-      LocalDate now = LocalDate.now();
-      LocalDate timeAgo;
-      if (unit.equals("days")) {
-        timeAgo = now.minusDays(i);
-      } else if (unit.equals("months")) {
-        timeAgo = now.minusMonths(i);
-      } else {
-        log.warn("Invalid template format [{}] unknown unit [{}]", template.templatePath, unit);
-        continue;
-      }
-      String index = timeAgo.format(formatter);
-      if (!checkTemplateExists("/" + index)) {
-        apply("/" + index, null, "PUT");
-      }
-    }
-  }
-
-  private String extractSource(String doc) {
-    String sourceField = "\"_source\":";
-    int idx = doc.indexOf(sourceField);
-    if (idx == -1) {
-      return null;
-    }
-    idx = doc.indexOf('{', idx);
-    if (idx == -1) {
-      return null;
-    }
-    return doc.substring(idx, doc.length() - 1);
-  }
-
-  private String extractFieldValue(String fieldName, String doc) {
-    int idx = doc.indexOf(fieldName);
-    if (idx == -1) {
-      return null;
-    }
-    idx = doc.indexOf('"', idx + fieldName.length() + 1); // third " in "_field_name": "value"
-    if (idx == -1) {
-      return null;
-    }
-    int endIdx = doc.indexOf('"', idx + 1); // fourth " in "_field_name": "value"
-    return doc.substring(idx + 1, endIdx);
-  }
-
-  private void requireDumpValue(String value, String fieldName, Template template, int lineNumber)
-      throws IOException {
-    if (value == null || value.isBlank()) {
-      throw new IOException(
-          "Invalid Elasticsearch dump JSON in [" + template.templatePath + "] at line [" + lineNumber
-              + "]: missing field [" + fieldName + "]"
-      );
-    }
-  }
-
-  private void applyData(Template template, String baseUrl) throws IOException {
-    List<String> lines = Arrays.asList(template.template.split("\n"));
-    if (lines.size() <= 1) {
-      log.warn("Invalid template format [{}]", template.templatePath);
-      return;
-    }
-    boolean bulkFormat = lines
-        .getFirst()
-        .replaceAll("\\s+", "")
-        .toLowerCase()
-        .startsWith("{\"index\":");
-
-    //lazy heuristics i.e. 2500 chunkSize can fail if docs are big
-    //(default is 100 mb fro http.max_content_length in your elasticsearch.yml)
-    //bulk format has command + \n + content sequence so we need to stop at an odd index
-    int chunkSize = 2499;
-    int chunkIdx = 0;
-    int maxChunkIdx = lines.size() / chunkSize;
-    for (int i = 0; i < lines.size(); i += chunkSize) {
-      List<String> chunk = lines.subList(i, Math.min(i + chunkSize, lines.size()));
-      StringBuilder bulkBody = new StringBuilder();
-      if (!bulkFormat) {
-        // why would it be simple? this is an elastic dump file with index doc per line
-        for (int j = 0; j < chunk.size(); j++) {
-          String line = chunk.get(j);
-          if (line.isBlank()) {
-            continue;
-          }
-          int lineNumber = i + j + 1;
-          String indexName = extractFieldValue("_index", line);
-          String id = extractFieldValue("_id", line);
-          String sourceString = extractSource(line);
-          requireDumpValue(indexName, "_index", template, lineNumber);
-          requireDumpValue(id, "_id", template, lineNumber);
-          requireDumpValue(sourceString, "_source", template, lineNumber);
-
-          bulkBody.append("{ \"index\" : { \"_index\" : \"");
-          bulkBody.append(indexName);
-          bulkBody.append("\", \"_id\" : \"");
-          bulkBody.append(id);
-          bulkBody.append("\" } }\n");
-          bulkBody.append(sourceString);
-          bulkBody.append("\n");
-        }
-      } else {
-        for (String line : chunk) {
-          if (line.isBlank()) {
-            continue;
-          }
-          bulkBody.append(line);
-          bulkBody.append("\n");
-        }
-      }
-      if (chunkIdx == maxChunkIdx) { // last chunk
-        apply(baseUrl + "?refresh=wait_for", bulkBody.toString(), "POST");
-      } else {
-        apply(baseUrl, bulkBody.toString(), "POST");
-      }
-      log.debug("Applied data [{}][{}]", template.name, chunkIdx);
-      chunkIdx++;
-    }
-  }
-
-  private void applyMissingTemplates() {
-    for (Templates templates : templatesList) {
-      if (templates instanceof Data dataTemplate) {
-        for (Template template : templates.templates) {
-          try {
-            applyData(template, dataTemplate.baseUrl);
-          } catch (IOException e) {
-            log.error("Failed to apply data template [{}]!", template.name, e);
-          }
-        }
-      } else if (templates instanceof EmptyData) {
-        for (Template template : templates.templates) {
-          try {
-            applyEmptyData(template);
-          } catch (IOException e) {
-            log.error("Failed to apply data template [{}]!", template.name, e);
-          }
-        }
-      } else {
-        for (Template template : templates.templates) {
-          String templateUrl = templates.baseUrl + "/" + template.name;
-          try {
-            log.debug("Applying template [{}]", templateUrl);
-            if (!checkTemplateExists(templateUrl)) {
-              applyTemplate(templateUrl, template.template);
-            } else {
-              log.info("Template [{}] already exists", templateUrl);
-            }
-          } catch (IOException e) {
-            log.error("Failed to apply template [{}]!", templateUrl, e);
-          }
-        }
-      }
-    }
-  }
+  @Inject
+  @SuppressWarnings("CdiInjectionPointsInspection")
+  EventBus eventBus;
 
   private Path isDockerFolder(Path currentDir) {
     log.info("Searching for container init folder in [{}]", currentDir);
@@ -419,8 +157,95 @@ public class ElasticsearchInitializer {
     return dockerFolder;
   }
 
-  @Inject
-  EventBus eventBus;
+  private void loadTemplateResources(String profileKey, Path initPath) throws IOException {
+    for (Templates templates : templatesList) {
+      Path resourcePath = initPath.resolve(templates.resourcePath);
+      if (!Files.exists(resourcePath)) {
+        continue;
+      }
+      if (!Files.isReadable(resourcePath)) {
+        log.warn("Unable to read templates folder [{}]", resourcePath);
+        continue;
+      }
+      try (Stream<Path> paths = Files.list(resourcePath)) {
+        paths.filter(Files::isRegularFile)
+            .filter(Files::isReadable)
+            .forEach(filePath -> {
+              String resource = filePath.getFileName().toString();
+              if (resource.startsWith("%") && !resource.startsWith("%" + profileKey + ".")) {
+                log.debug("Skipping non [{}] profile template [{}]", profileKey, resource);
+                return;
+              }
+              if (templates instanceof Data && !resource.toLowerCase(Locale.ROOT).endsWith(".jsonl")) {
+                log.debug("Skipping non JSONL data template [{}]", resource);
+                return;
+              }
+              try (BufferedReader br = Files.newBufferedReader(filePath, UTF_8)) {
+                int nameCount = filePath.getNameCount();
+                Path lastTwo = nameCount >= 2
+                    ? filePath.subpath(nameCount - 2, nameCount)
+                    : filePath;
+                String text = br.lines().collect(Collectors.joining("\n"));
+                Template template = new Template(resource, filePath.toAbsolutePath().toString(), text);
+                templates.templates.add(template);
+                log.info("Read template path [{}]", lastTwo);
+              } catch (IOException e) {
+                throw new UncheckedIOException(e);
+              }
+            });
+      } catch (UncheckedIOException e) {
+        throw e.getCause();
+      }
+    }
+  }
+
+  private boolean initMarkerTemplateExists() throws IOException {
+    return dataApplier.templateExists(IndexTemplate.BASE_URL + "/" + markerTemplate.name);
+  }
+
+  private void initializeMarkerTemplate() throws IOException {
+    dataApplier.applyTemplate(
+        IndexTemplate.BASE_URL + "/" + markerTemplate.name, markerTemplate.template
+    );
+  }
+
+  private void initializeTemplates() {
+    for (Templates templates : templatesList) {
+      if (templates instanceof Data) {
+        for (Template template : templates.templates) {
+          try {
+            dataApplier.applyData(
+                template.name, template.templatePath, template.template, templates.baseUrl
+            );
+          } catch (IOException e) {
+            log.error("Failed to apply data template [{}]!", template.name, e);
+          }
+        }
+      } else if (templates instanceof EmptyData) {
+        for (Template template : templates.templates) {
+          try {
+            dataApplier.applyEmptyData(template.templatePath, template.template);
+          } catch (IOException e) {
+            log.error("Failed to apply data template [{}]!", template.name, e);
+          }
+        }
+      } else {
+        for (Template template : templates.templates) {
+          String templateUrl = templates.baseUrl + "/" + template.name;
+          try {
+            log.debug("Applying template [{}]", templateUrl);
+            if (!dataApplier.templateExists(templateUrl)) {
+              dataApplier.applyTemplate(templateUrl, template.template);
+            } else {
+              log.info("Template [{}] already exists", templateUrl);
+            }
+          } catch (IOException e) {
+            log.error("Failed to apply template [{}]!", templateUrl, e);
+          }
+        }
+      }
+    }
+  }
 
   public void onStart(@Observes StartupEvent event) throws IOException {
     if (!LaunchMode.current().isDevOrTest()) {
@@ -436,14 +261,15 @@ public class ElasticsearchInitializer {
     }
 
     String profileKey = LaunchMode.current().getDefaultProfile();
-    if (checkInitMarkerTemplateExists()) {
+    if (initMarkerTemplateExists()) {
       log.info("Elasticsearch already initialized, the marker template [{}] exists!", markerTemplate.name);
       eventBus.send(CACHE_STORAGE_INIT, "initialized");
       return;
     }
     loadTemplateResources(profileKey, configPath);
-    applyMissingTemplates();
-    applyInitMarkerTemplate();
+    initializeTemplates();
+    initializeMarkerTemplate();
+    dataApplier.refresh();
     eventBus.send(CACHE_STORAGE_INIT, "initialized");
   }
 }
