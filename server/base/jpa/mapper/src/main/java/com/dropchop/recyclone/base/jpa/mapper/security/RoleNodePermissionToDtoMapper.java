@@ -25,7 +25,7 @@ public interface RoleNodePermissionToDtoMapper extends ToDtoMapper<RoleNodePermi
   @Override
   @SubclassMapping( source = JpaRoleNodePermissionTemplate.class, target = RoleNodePermissionTemplate.class)
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "roleNode", ignore = true)
+  //@Mapping(target = "roleNode", ignore = true)
   @Mapping(target = "type", ignore = true)
   RoleNodePermission toDto(JpaRoleNodePermission node, @Context MappingContext context);
 }
