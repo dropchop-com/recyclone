@@ -151,6 +151,10 @@ public interface Condition {
     return new ConditionedField(name, new Match<>(new Phrase(value, slop)));
   }
 
+  static ConditionedField phrase(String name, String value, Integer slop, Integer maxExpansions) {
+    return new ConditionedField(name, new Match<>(new Phrase(value, slop, maxExpansions)));
+  }
+
   static ConditionedField phrase(String name, String value, String analyzer) {
     return new ConditionedField(name, new Match<>(new Phrase(value, analyzer)));
   }
