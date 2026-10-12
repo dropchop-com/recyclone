@@ -2,7 +2,7 @@ name: recyclone-dev
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.5
     networks:
       - net
     ports:
@@ -22,7 +22,7 @@ services:
       - data-es:/usr/share/elasticsearch/data
 
   postgres:
-    image: postgres:17
+    image: postgres:18
     ports:
       - '24054:5432'
     environment:

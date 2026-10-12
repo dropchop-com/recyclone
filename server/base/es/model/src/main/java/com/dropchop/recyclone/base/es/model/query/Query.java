@@ -18,6 +18,7 @@ public class Query extends QueryObject {
   private Integer size;
   private Sort sort;
   private ContentFilter filter;
+  private Boolean excludeVectors;
   private IQueryObject query;
   private QueryObject aggs;
 
@@ -48,10 +49,12 @@ public class Query extends QueryObject {
     }
   }
 
-  public void setFilter(ContentFilter filter) {
-    this.filter = filter;
+  private void updateSource() {
+    QueryObject source = new QueryObject();
+    if (excludeVectors != null) {
+      source.put("exclude_vectors", excludeVectors);
+    }
     if (filter != null) {
-      QueryObject source = new QueryObject();
       List<String> excludes = filter.getExcludes();
       if (excludes != null && !excludes.isEmpty()) {
         source.put("excludes", excludes);
@@ -60,12 +63,22 @@ public class Query extends QueryObject {
       if (includes != null && !includes.isEmpty()) {
         source.put("includes", includes);
       }
-      if (!source.isEmpty()) {
-        this.put("_source", source);
-      }
+    }
+    if (!source.isEmpty()) {
+      this.put("_source", source);
     } else {
       this.remove("_source");
     }
+  }
+
+  public void setFilter(ContentFilter filter) {
+    this.filter = filter;
+    updateSource();
+  }
+
+  public void setExcludeVectors(Boolean excludeVectors) {
+    this.excludeVectors = excludeVectors;
+    updateSource();
   }
 
   public void setQuery(IQueryObject query) {
