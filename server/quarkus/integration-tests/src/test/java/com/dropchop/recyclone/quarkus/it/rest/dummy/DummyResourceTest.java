@@ -1,18 +1,24 @@
 package com.dropchop.recyclone.quarkus.it.rest.dummy;
 
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
 import com.dropchop.recyclone.base.api.model.utils.Iso8601;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
 import com.dropchop.recyclone.base.dto.model.invoke.QueryParams;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.rest.dummy.mock.DummyMockData;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.security.ForbiddenException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
+import io.restassured.specification.RequestSpecification;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -29,12 +35,14 @@ import static com.dropchop.recyclone.base.dto.model.invoke.ResultFilter.result;
 import static com.dropchop.recyclone.quarkus.it.rest.Constants.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static jakarta.ws.rs.core.HttpHeaders.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 7. 03. 24.
  */
-@Slf4j
 @QuarkusTest
 @SuppressWarnings("unchecked")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -48,12 +56,78 @@ public class DummyResourceTest {
   ObjectMapper mapper;
 
   private static final String Q_ENDPOINT = "/api/public/test/dummy/query";
+  private static final String CONDITIONAL_ENDPOINT = "/api/public/test/dummy/conditional/updated";
 
   @BeforeEach
   public void setUp() {
     RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
       objectMapperConfig().jackson2ObjectMapperFactory((type, s) -> mapper)
     );
+  }
+
+  private ValidatableResponse conditionalWrite(String ifMatch) {
+    RequestSpecification request = given()
+        .contentType(ContentType.JSON)
+        .accept(APPLICATION_JSON_DROPCHOP_RESULT)
+        .auth().preemptive().basic("admin1", TEST_PASSWORD)
+        .body("{\"expectedRevision\":\"forged\"}");
+    if (ifMatch != null) {
+      request.header(IF_MATCH, ifMatch);
+    }
+    return request.put(CONDITIONAL_ENDPOINT).then();
+  }
+
+  @Test
+  void handlesOptimisticConcurrencyPreconditions() {
+    conditionalWrite(null)
+        .statusCode(428)
+        .body("status.message.code", equalTo(ErrorCode.precondition_required_error.name()))
+        .header(ETAG, nullValue());
+    conditionalWrite("W/\"current\"")
+        .statusCode(400)
+        .body("status.message.code", equalTo(ErrorCode.precondition_validation_error.name()))
+        .header(ETAG, nullValue());
+    conditionalWrite("\"previous\"")
+        .statusCode(412)
+        .body("status.message.code", equalTo(ErrorCode.precondition_failed_error.name()))
+        .header(ETAG, nullValue());
+    String current = conditionalWrite("\"current\"")
+        .statusCode(200)
+        .header(ETAG, equalTo("\"updated\""))
+        .extract().body().asString();
+    assertEquals(current, conditionalWrite("\"current\"").statusCode(200).extract().body().asString());
+  }
+
+  @Test
+  void reportsRetryAfterWhenSpecified() {
+    ServiceErrorExceptionMapper exceptionMapper = new ServiceErrorExceptionMapper();
+    ServiceException failure = new ServiceException(ErrorCode.service_unavailable_error, "Temporarily unavailable");
+    try (Response response = exceptionMapper.toResponse(failure.retryAfter(0))) {
+      assertEquals(503, response.getStatus());
+      assertEquals("0", response.getHeaderString(RETRY_AFTER));
+    }
+
+    failure.setRetryAfter(null);
+    try (Response response = exceptionMapper.toResponse(failure)) {
+      assertEquals(503, response.getStatus());
+      assertNull(response.getHeaderString(RETRY_AFTER));
+    }
+  }
+
+  @Test
+  void mapsInsufficientPermissionsToForbidden() {
+    ServiceErrorExceptionMapper exceptionMapper = new ServiceErrorExceptionMapper();
+    ServiceException failure = new ServiceException(ErrorCode.insufficient_permissions_error, "Role required");
+    try (Response response = exceptionMapper.toResponse(failure)) {
+      assertEquals(403, response.getStatus());
+    }
+    try (Response response = exceptionMapper.toResponse(new ForbiddenException())) {
+      assertEquals(403, response.getStatus());
+      assertTrue(response.getEntity().toString().contains(ErrorCode.insufficient_permissions_error.name()));
+    }
+    try (Response response = exceptionMapper.toResponse(new ServiceException(ErrorCode.authentication_error, "Login required"))) {
+      assertEquals(401, response.getStatus());
+    }
   }
 
   @Test

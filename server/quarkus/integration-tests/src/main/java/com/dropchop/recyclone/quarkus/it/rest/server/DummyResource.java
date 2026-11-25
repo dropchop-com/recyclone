@@ -1,17 +1,23 @@
 package com.dropchop.recyclone.quarkus.it.rest.server;
 
 import com.dropchop.recyclone.base.api.common.RecycloneType;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.WriteParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.dto.invoke.DummyQueryParams;
 import com.dropchop.recyclone.quarkus.it.service.api.DummyService;
-import com.dropchop.recyclone.base.api.rest.ClassicReadByCodeResource;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ResponseEntityTag;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.EntityTag;
 
 import java.util.List;
 
+import static com.dropchop.recyclone.base.api.jaxrs.concurrency.OptimisticConcurrency.requireExpectedRevision;
 import static com.dropchop.recyclone.base.api.model.marker.Constants.Implementation.RECYCLONE_ES_DEFAULT;
 
 /**
@@ -28,6 +34,9 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
 
   @Inject
   CodeParams codeParams;
+
+  @Inject
+  ResponseEntityTag responseEntityTag;
 
   @Override
   public Result<Dummy> getByCode(String code) {
@@ -54,5 +63,14 @@ public class DummyResource extends ClassicReadByCodeResource<Dummy, CodeParams> 
   @Override
   public List<Dummy> queryRest(DummyQueryParams params) {
     return service.search().getData();
+  }
+
+  @Override
+  public Result<Dummy> conditionalWrite(String id, WriteParams params) {
+    if (!"current".equals(requireExpectedRevision(params))) {
+      throw new ServiceException(ErrorCode.precondition_failed_error, "Revision changed");
+    }
+    responseEntityTag.set(new EntityTag(id));
+    return Result.success();
   }
 }

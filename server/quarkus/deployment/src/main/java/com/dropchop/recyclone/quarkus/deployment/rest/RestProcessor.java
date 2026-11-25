@@ -7,11 +7,13 @@ import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestRecorder;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ContentTypeFilter;
+import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ResponseEntityTag;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.RestDynamicFeature;
 import com.dropchop.recyclone.quarkus.runtime.rest.jaxrs.ServiceErrorExceptionMapper;
 import com.dropchop.recyclone.quarkus.runtime.rest.openapi.OasFilter;
 import com.dropchop.shiro.jaxrs.ShiroDynamicFeature;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -27,6 +29,7 @@ import io.quarkus.runtime.configuration.ConfigUtils;
 import io.quarkus.security.AuthenticationCompletionException;
 import io.quarkus.security.ForbiddenException;
 import io.quarkus.smallrye.openapi.deployment.spi.AddToOpenAPIDefinitionBuildItem;
+import io.quarkus.smallrye.openapi.deployment.spi.OpenAPISPIConstants;
 import io.smallrye.openapi.jaxrs.JaxRsConstants;
 import io.smallrye.openapi.runtime.util.JandexUtil;
 import io.smallrye.openapi.spring.SpringConstants;
@@ -109,7 +112,7 @@ public class RestProcessor {
   @SuppressWarnings("SameParameterValue")
   private static DotName getClassAnnotationValueIfDifferent(AnnotationInstance annotation, String property,
                                                             DotName defaultType) {
-    AnnotationValue value = annotation.value(property);
+    AnnotationValue value = annotation == null ? null : annotation.value(property);
     if (value == null) {
       return null;
     }
@@ -120,7 +123,7 @@ public class RestProcessor {
   @SuppressWarnings("SameParameterValue")
   private static boolean getBooleanAnnotationValue(AnnotationInstance annotation, String property,
                                                    boolean defaultType) {
-    AnnotationValue value = annotation.value(property);
+    AnnotationValue value = annotation == null ? null : annotation.value(property);
     if (value == null) {
       return defaultType;
     }
@@ -246,13 +249,15 @@ public class RestProcessor {
   }
 
   private DotName[] computeParamDataClass(ClassInfo apiClass, MethodInfo method, IndexView indexView) {
-    AnnotationInstance dynamicExecAnnotation = apiClass.annotation(DYN_CTX_ANNO);
-
-    DotName tmpDataClass = getClassAnnotationValueIfDifferent(
-        dynamicExecAnnotation, "dataClass", ANNO_DATA_CLASS
-    );
-    DotName methodParamClass = null;
-    if (!method.hasAnnotation(GET_ANNOTATION)) {
+    AnnotationInstance methodContext = method.declaredAnnotation(DYN_CTX_ANNO);
+    DotName tmpDataClass = getClassAnnotationValueIfDifferent(methodContext, "dataClass", ANNO_DATA_CLASS);
+    if (tmpDataClass == null) {
+      tmpDataClass = getClassAnnotationValueIfDifferent(
+          apiClass.declaredAnnotation(DYN_CTX_ANNO), "dataClass", ANNO_DATA_CLASS
+      );
+    }
+    DotName methodParamClass = getClassAnnotationValueIfDifferent(methodContext, "value", ANNO_VALUE);
+    if (methodParamClass == null && !method.hasAnnotation(GET_ANNOTATION)) {
       List<Type> types = method.parameterTypes();
       if (types.size() != 1) {
         log.warnf("Contract violation: The rest method should have only one parameter class [%s]", method);
@@ -445,7 +450,9 @@ public class RestProcessor {
       }
       MethodInfo method = ai.target().asMethod();
       ClassInfo apiClass = method.declaringClass();
-      if (!apiClass.hasAnnotation(DYN_CTX_ANNO)) {
+      AnnotationInstance classContext = apiClass.declaredAnnotation(DYN_CTX_ANNO);
+      AnnotationInstance methodContext = method.declaredAnnotation(DYN_CTX_ANNO);
+      if (classContext == null && methodContext == null) {
         continue;
       }
 
@@ -464,11 +471,7 @@ public class RestProcessor {
       String methodSegment = computeMethodPathSegment(apiClass, method);
       String methodPath = path + methodSegment;
 
-      AnnotationInstance dynamicExecAnnotation = apiClass.annotation(DYN_CTX_ANNO);
-      // Extract and check values from @DynamicExecContext
-      DotName classParamClass = getClassAnnotationValueIfDifferent(
-          dynamicExecAnnotation, "value", ANNO_VALUE
-      );
+      DotName classParamClass = getClassAnnotationValueIfDifferent(classContext, "value", ANNO_VALUE);
 
       DotName[] computed = computeParamDataClass(apiClass, method, indexView);
       DotName methodParamClass = computed[0];
@@ -476,9 +479,12 @@ public class RestProcessor {
       String segment = extractSecondFromLastPathSegment(path);
 
       DotName execContextClass = getClassAnnotationValueIfDifferent(
-          dynamicExecAnnotation, "execContextClass", ANNO_EXEC_CTX_CLASS
+          classContext, "execContextClass", ANNO_EXEC_CTX_CLASS
       );
-      boolean internal = getBooleanAnnotationValue(dynamicExecAnnotation, "internal", ANNO_INTERNAL);
+      DotName methodContextClass = getClassAnnotationValueIfDifferent(
+          methodContext, "execContextClass", ANNO_EXEC_CTX_CLASS
+      );
+      boolean internal = getBooleanAnnotationValue(classContext, "internal", ANNO_INTERNAL);
 
       Collection<String> implementors = indexView.getAllKnownImplementations(apiClass.name())
               .stream().map(c -> c.name().toString()).collect(Collectors.toSet());
@@ -541,7 +547,7 @@ public class RestProcessor {
           implMethodRefDescr[1],
           methodParamClass != null ? methodParamClass.toString() : null,
           dataClass != null ? dataClass.toString() : null,
-          execContextClass != null ? execContextClass.toString() : null,
+          methodContextClass != null ? methodContextClass.toString() : null,
           action,
           method.name(),
           verb,
@@ -632,9 +638,17 @@ public class RestProcessor {
   void filterOpenAPI(RestMappingBuildItem restMappingBuildItem,
                      RecycloneBuildConfig recycloneBuildConfig,
                      BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionBuildItemBuildProducer) {
-    addToOpenAPIDefinitionBuildItemBuildProducer.produce(new AddToOpenAPIDefinitionBuildItem(
-        new OasFilter(recycloneBuildConfig, restMappingBuildItem.getMapping())
-    ));
+    addToOpenAPIDefinitionBuildItemBuildProducer.produce(
+        new AddToOpenAPIDefinitionBuildItem(
+            new OasFilter(recycloneBuildConfig, restMappingBuildItem.getMapping()),
+            OpenAPISPIConstants.DEFAULT_DOCUMENT_NAME
+        )
+    );
+  }
+
+  @BuildStep
+  AdditionalBeanBuildItem responseEntityTagBean() {
+    return new AdditionalBeanBuildItem(ResponseEntityTag.class);
   }
 
   @BuildStep

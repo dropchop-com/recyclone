@@ -5,13 +5,20 @@ import com.dropchop.recyclone.base.api.model.security.Constants.Actions;
 import com.dropchop.recyclone.base.api.model.security.annotations.Logical;
 import com.dropchop.recyclone.base.api.model.security.annotations.RequiresPermissions;
 import com.dropchop.recyclone.base.dto.model.invoke.CodeParams;
+import com.dropchop.recyclone.base.dto.model.invoke.WriteParams;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import com.dropchop.recyclone.quarkus.it.model.api.Constants;
 import com.dropchop.recyclone.quarkus.it.model.dto.Dummy;
 import com.dropchop.recyclone.quarkus.it.model.dto.invoke.DummyQueryParams;
 import com.dropchop.recyclone.base.api.model.rest.DynamicExecContext;
 import com.dropchop.recyclone.base.api.model.rest.MediaType;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 
 import java.util.List;
 
@@ -64,4 +71,11 @@ public interface DummyResource {
   @Path(Paths.QUERY_SEGMENT)
   @Produces(MediaType.APPLICATION_JSON)
   List<Dummy> queryRest(DummyQueryParams params);
+
+  @PUT
+  @Path("/conditional/{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON_DROPCHOP_RESULT)
+  @DynamicExecContext(value = WriteParams.class, dataClass = Dummy.class)
+  Result<Dummy> conditionalWrite(@PathParam("id") String id, WriteParams params);
 }

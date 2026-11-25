@@ -14,5 +14,10 @@ public enum ErrorCode {
   process_error,
   quota_error,
   internal_error,
-  unknown_error
+  unknown_error,
+  precondition_required_error,
+  precondition_validation_error,
+  precondition_failed_error,
+  service_unavailable_error,
+  insufficient_permissions_error
 }

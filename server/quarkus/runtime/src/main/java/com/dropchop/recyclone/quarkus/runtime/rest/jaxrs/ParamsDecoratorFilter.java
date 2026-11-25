@@ -1,9 +1,18 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
+import com.dropchop.recyclone.base.api.jaxrs.concurrency.OptimisticConcurrency;
 import com.dropchop.recyclone.base.api.model.attr.AttributeString;
-import com.dropchop.recyclone.base.api.model.invoke.*;
-import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.base.api.model.invoke.CommonParams;
+import com.dropchop.recyclone.base.api.model.invoke.ErrorCode;
+import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
+import com.dropchop.recyclone.base.api.model.invoke.Params;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilter;
 import com.dropchop.recyclone.base.api.model.invoke.ResultFilter.LanguageFilter;
+import com.dropchop.recyclone.base.api.model.invoke.ResultFilterDefaults;
+import com.dropchop.recyclone.base.api.model.invoke.ServiceException;
+import com.dropchop.recyclone.base.api.model.invoke.StatusMessage;
+import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVariables;
+import com.dropchop.recyclone.base.api.model.marker.HasOptimisticConcurrency;
 import com.dropchop.recyclone.base.api.model.utils.ProfileTimer;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMethod;
@@ -23,6 +32,7 @@ import java.util.Set;
 
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Params.Header;
 import static com.dropchop.recyclone.base.api.model.rest.Constants.Params.Query;
+import static jakarta.ws.rs.core.HttpHeaders.IF_MATCH;
 
 /**
  * Fills Params object obtained from ExecContext with request parameters
@@ -283,7 +293,8 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
       log.warn("Missing parameter type for {}!", requestContext.getUriInfo());
       return;
     }
-    if (!CommonParams.class.isAssignableFrom(paramType) || CommonParams.class.equals(paramType)) {
+    if ((!CommonParams.class.isAssignableFrom(paramType) || CommonParams.class.equals(paramType))
+        && !HasOptimisticConcurrency.class.isAssignableFrom(paramType)) {
       return;
     }
     ExecContext<?> execContext = (ExecContext<?>)requestContext
@@ -292,7 +303,10 @@ public class ParamsDecoratorFilter implements ContainerRequestFilter {
       log.warn("Missing {} in {}!", ExecContext.class.getSimpleName(), ContainerRequestContext.class.getSimpleName());
       return;
     }
-    Params params = (Params)requestContext.getProperty(InternalContextVariables.RECYCLONE_PARAMS);
+    Params params = (Params) requestContext.getProperty(InternalContextVariables.RECYCLONE_PARAMS);
+    if (params instanceof HasOptimisticConcurrency optimisticConcurrency) {
+      OptimisticConcurrency.bindIfMatch(optimisticConcurrency, requestContext.getHeaderString(IF_MATCH));
+    }
     if (params instanceof CommonParams<?, ?, ?, ?> commonParams) {
       decorate(commonParams, requestContext);
       log.debug(

@@ -4,6 +4,7 @@ import com.dropchop.recyclone.base.api.model.invoke.Constants.InternalContextVar
 import com.dropchop.recyclone.base.api.model.invoke.ExecContext;
 import com.dropchop.recyclone.base.dto.model.rest.Result;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.ext.WriterInterceptor;
 import jakarta.ws.rs.ext.WriterInterceptorContext;
 import org.slf4j.Logger;
@@ -12,7 +13,14 @@ import org.slf4j.MDC;
 
 import java.io.IOException;
 
-import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.*;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_PERSON_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_PERSON_NAME;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_REQUEST_PATH;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_SHORT_PERSON_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_SHORT_REQUEST_ID;
+import static com.dropchop.recyclone.base.api.model.invoke.ExecContext.MDC_SHORT_REQUEST_PATH;
+import static jakarta.ws.rs.core.HttpHeaders.ETAG;
 
 /**
  * @author Nikola Ivačič <nikola.ivacic@dropchop.com> on 3. 05. 24.
@@ -49,14 +57,16 @@ public class ExecContextTerminator implements WriterInterceptor {
       context.proceed();
       return;
     }
-    if (!(entity instanceof Result)) {
+    Object tag = context.getHeaders().getFirst(ETAG);
+    boolean strongTag = tag instanceof EntityTag entityTag && !entityTag.isWeak();
+    if (!(entity instanceof Result<?> result) || strongTag) {
       clearMdc();
       context.proceed();
       return;
     }
     log.trace("[{}].aroundWriteTo done.", this.getClass().getSimpleName());
-    ((Result<?>) entity).setId(execContext.getId());
-    ((Result<?>) entity).getStatus().setTime(execContext.getExecTime());
+    result.setId(execContext.getId());
+    result.getStatus().setTime(execContext.getExecTime());
     context.proceed();
     clearMdc();
   }

@@ -1,5 +1,6 @@
 package com.dropchop.recyclone.quarkus.runtime.rest.jaxrs;
 
+import com.dropchop.recyclone.base.api.jaxrs.concurrency.EntityTagResponseFilter;
 import com.dropchop.recyclone.quarkus.runtime.invoke.ExecContextBinder;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestClass;
 import com.dropchop.recyclone.quarkus.runtime.rest.RestMapping;
@@ -14,7 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
-import static jakarta.ws.rs.Priorities.*;
+import static jakarta.ws.rs.Priorities.AUTHENTICATION;
+import static jakarta.ws.rs.Priorities.HEADER_DECORATOR;
+import static jakarta.ws.rs.Priorities.USER;
 
 @SuppressWarnings({"CdiInjectionPointsInspection", "unused"})
 public class RestDynamicFeature implements DynamicFeature {
@@ -26,6 +29,9 @@ public class RestDynamicFeature implements DynamicFeature {
 
   @Inject
   ExecContextBinder execContextBinder;
+
+  @Inject
+  ResponseEntityTag responseEntityTag;
 
   @ConfigProperty(name = "quarkus.recyclone.rest.default-params")
   String defaultParamsClassName;
@@ -87,6 +93,7 @@ public class RestDynamicFeature implements DynamicFeature {
     );
 
     // Output chain
+    featureContext.register(new EntityTagResponseFilter(responseEntityTag::get), USER);
     featureContext.register( // terminate and fill result vars from exec context and clear MDC
         new ExecContextTerminator(),
         USER

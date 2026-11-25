@@ -75,6 +75,10 @@
     <!-- recyclone -->
     <dependency>
       <groupId>com.dropchop.recyclone</groupId>
+      <artifactId>recyclone-base-api-jaxrs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dropchop.recyclone</groupId>
       <artifactId>recyclone-base-dto-model</artifactId>
     </dependency>
     <dependency>

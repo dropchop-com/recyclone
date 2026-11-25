@@ -19,6 +19,11 @@ public class ServiceException extends RuntimeException {
 
   private List<StatusMessage> statusMessages = new ArrayList<>();
 
+  /**
+   * Optional retry delay in whole seconds. A null value leaves the delay unspecified.
+   */
+  private Long retryAfter;
+
   private static String constructMessage(StatusMessage message, Throwable cause) {
     String prefix = ServiceException.class.getSimpleName() + ": ";
 
@@ -83,6 +88,18 @@ public class ServiceException extends RuntimeException {
       throw new NullPointerException("Missing messages argument");
     }
     this.statusMessages = statusMessages;
+  }
+
+  public void setRetryAfter(Long retryAfter) {
+    if (retryAfter != null && retryAfter < 0) {
+      throw new IllegalArgumentException("Retry delay must be nonnegative");
+    }
+    this.retryAfter = retryAfter;
+  }
+
+  public ServiceException retryAfter(long seconds) {
+    setRetryAfter(seconds);
+    return this;
   }
 
   public Optional<ErrorCode> getLastErrorCode() {

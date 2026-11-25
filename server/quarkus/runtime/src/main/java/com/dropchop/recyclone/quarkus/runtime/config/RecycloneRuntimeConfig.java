@@ -25,6 +25,13 @@ public interface RecycloneRuntimeConfig {
   interface Rest {
 
     /**
+     * Negotiate service error bodies using Accept.
+     * Plain JSON includes a message for bad requests.
+     */
+    @WithDefault("false")
+    boolean negotiateServiceErrors();
+
+    /**
      * REST Runtime Security information.
      */
     Security security();
